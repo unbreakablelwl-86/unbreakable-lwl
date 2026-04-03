@@ -51,6 +51,10 @@ interface SocialPost {
   status: string;
   scheduled_at: string | null;
   created_at: string;
+  meta_status?: string | null;
+  meta_post_id?: string | null;
+  published_at?: string | null;
+  publish_error?: string | null;
 }
 
 export function SocialCommandCentre() {
