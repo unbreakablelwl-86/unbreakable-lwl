@@ -480,7 +480,7 @@ export function SocialCommandCentre() {
         {/* STATS TAB */}
         <TabsContent value="stats" className="space-y-4 mt-4">
           <p className="text-[10px] text-primary font-display tracking-widest">CONTENT OVERVIEW</p>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-4 gap-3">
             <Card><CardContent className="pt-4 text-center">
               <p className="text-2xl font-black text-primary">{savedPosts.length}</p>
               <p className="text-[10px] text-muted-foreground tracking-wider mt-1">GENERATED</p>
@@ -492,6 +492,10 @@ export function SocialCommandCentre() {
             <Card><CardContent className="pt-4 text-center">
               <p className="text-2xl font-black text-primary">{scheduled.length}</p>
               <p className="text-[10px] text-muted-foreground tracking-wider mt-1">SCHEDULED</p>
+            </CardContent></Card>
+            <Card><CardContent className="pt-4 text-center">
+              <p className="text-2xl font-black text-primary">{published.length}</p>
+              <p className="text-[10px] text-muted-foreground tracking-wider mt-1">PUBLISHED</p>
             </CardContent></Card>
           </div>
 
