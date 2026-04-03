@@ -24,7 +24,7 @@ import { SessionNotesView, SessionMedia } from './SessionNotesView';
 import { SessionResultsView } from './SessionResultsView';
 import { AIFeedbackView } from './AIFeedbackView';
 import { ProgressMetricsView } from './ProgressMetricsView';
-import { CompactRestTimer } from './CompactRestTimer';
+
 import { DailyHabitDiary, HabitState } from './DailyHabitDiary';
 import { ExerciseCoachingPanel } from './ExerciseCoachingPanel';
 import { ExerciseSwapSheet } from './ExerciseSwapSheet';
@@ -432,13 +432,6 @@ export function ActiveWorkoutModal({
               )}
             </AnimatePresence>
           </Card>
-
-          {/* Always-visible Rest Timer */}
-          <CompactRestTimer
-            exerciseType={timerExerciseType as 'strength' | 'hypertrophy'}
-            onComplete={() => {}}
-            onDismiss={() => {}}
-          />
 
           {/* Action Tiles */}
           <SessionActionTiles

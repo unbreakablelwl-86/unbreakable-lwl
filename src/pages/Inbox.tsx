@@ -33,7 +33,6 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { NewMessageDialog } from '@/components/inbox/NewMessageDialog';
 import { ChatMediaUpload, ChatMediaAttachment } from '@/components/inbox/ChatMediaUpload';
-import { DeleteMessageDialog } from '@/components/inbox/DeleteMessageDialog';
 import { DeleteConfirmModal } from '@/components/tracker/DeleteConfirmModal';
 
 export default function Inbox() {
@@ -62,8 +61,6 @@ export default function Inbox() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   
   // Delete states
-  const [deleteMessageDialogOpen, setDeleteMessageDialogOpen] = useState(false);
-  const [selectedMessageForDelete, setSelectedMessageForDelete] = useState<Message | null>(null);
   const [deleteConvoModalOpen, setDeleteConvoModalOpen] = useState(false);
   const [convoToDelete, setConvoToDelete] = useState<string | null>(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
@@ -233,14 +230,8 @@ export default function Inbox() {
     }
   };
 
-  // Handle delete message (via dialog - legacy)
-  const handleDeleteMessage = (msg: Message) => {
-    setSelectedMessageForDelete(msg);
-    setDeleteMessageDialogOpen(true);
-  };
-
-  // Direct delete handlers (no intermediate dialog)
-  const handleDeleteForMeDirect = async (msg: Message) => {
+  // Direct delete handlers
+  const handleDeleteForMe = async (msg: Message) => {
     const { error } = await deleteMessageForMe(msg.id);
     if (error) {
       toast.error('Failed to delete message');
@@ -250,7 +241,7 @@ export default function Inbox() {
     }
   };
 
-  const handleDeleteForEveryoneDirect = async (msg: Message) => {
+  const handleDeleteForEveryone = async (msg: Message) => {
     const { error } = await deleteMessageForEveryone(msg.id);
     if (error) {
       toast.error('Failed to delete message');
@@ -258,40 +249,6 @@ export default function Inbox() {
       setMessages(prev => prev.filter(m => m.id !== msg.id));
       toast.success('Message deleted for everyone');
     }
-  };
-
-  const handleDeleteForMe = async () => {
-    if (!selectedMessageForDelete) return;
-    setDeleteLoading(true);
-    
-    const { error } = await deleteMessageForMe(selectedMessageForDelete.id);
-    if (error) {
-      toast.error('Failed to delete message');
-    } else {
-      setMessages(prev => prev.filter(m => m.id !== selectedMessageForDelete.id));
-      toast.success('Message deleted');
-    }
-    
-    setDeleteLoading(false);
-    setDeleteMessageDialogOpen(false);
-    setSelectedMessageForDelete(null);
-  };
-
-  const handleDeleteForEveryone = async () => {
-    if (!selectedMessageForDelete) return;
-    setDeleteLoading(true);
-    
-    const { error } = await deleteMessageForEveryone(selectedMessageForDelete.id);
-    if (error) {
-      toast.error('Failed to delete message');
-    } else {
-      setMessages(prev => prev.filter(m => m.id !== selectedMessageForDelete.id));
-      toast.success('Message deleted for everyone');
-    }
-    
-    setDeleteLoading(false);
-    setDeleteMessageDialogOpen(false);
-    setSelectedMessageForDelete(null);
   };
 
   // Handle swipe to delete conversation
@@ -605,11 +562,11 @@ export default function Inbox() {
                                   </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="start">
-                                  <DropdownMenuItem onClick={() => handleDeleteForMeDirect(msg)} className="text-muted-foreground">
+                                  <DropdownMenuItem onClick={() => handleDeleteForMe(msg)} className="text-muted-foreground">
                                     <Trash2 className="w-4 h-4 mr-2" />
                                     Delete for me
                                   </DropdownMenuItem>
-                                  <DropdownMenuItem onClick={() => handleDeleteForEveryoneDirect(msg)} className="text-destructive">
+                                  <DropdownMenuItem onClick={() => handleDeleteForEveryone(msg)} className="text-destructive">
                                     <Trash2 className="w-4 h-4 mr-2" />
                                     Delete for everyone
                                   </DropdownMenuItem>
@@ -675,7 +632,7 @@ export default function Inbox() {
                                   </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end">
-                                  <DropdownMenuItem onClick={() => handleDeleteForMeDirect(msg)} className="text-destructive">
+                                  <DropdownMenuItem onClick={() => handleDeleteForMe(msg)} className="text-destructive">
                                     <Trash2 className="w-4 h-4 mr-2" />
                                     Delete for me
                                   </DropdownMenuItem>
@@ -768,19 +725,6 @@ export default function Inbox() {
           )}
         </div>
       </div>
-
-      {/* Delete Message Dialog */}
-      <DeleteMessageDialog
-        isOpen={deleteMessageDialogOpen}
-        onClose={() => {
-          setDeleteMessageDialogOpen(false);
-          setSelectedMessageForDelete(null);
-        }}
-        onDeleteForMe={handleDeleteForMe}
-        onDeleteForEveryone={handleDeleteForEveryone}
-        isOwnMessage={selectedMessageForDelete?.sender_id === user?.id}
-        loading={deleteLoading}
-      />
 
       {/* Delete Conversation Modal */}
       <DeleteConfirmModal
