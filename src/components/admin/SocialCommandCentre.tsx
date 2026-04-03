@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { useMetaCredentials } from '@/hooks/useMetaCredentials';
 import { toast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -8,7 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
-import { Zap, Save, Calendar, BarChart3, Copy, Trash2, RefreshCw, Loader2, Image } from 'lucide-react';
+import { Zap, Save, Calendar, BarChart3, Copy, Trash2, RefreshCw, Loader2, Image, Send, Facebook, Instagram } from 'lucide-react';
 
 const PLATFORMS = [
   { id: 'instagram', label: '📸 INSTA' },
@@ -50,10 +51,15 @@ interface SocialPost {
   status: string;
   scheduled_at: string | null;
   created_at: string;
+  meta_status?: string | null;
+  meta_post_id?: string | null;
+  published_at?: string | null;
+  publish_error?: string | null;
 }
 
 export function SocialCommandCentre() {
   const { user } = useAuth();
+  const { hasCredentials, publishToMeta } = useMetaCredentials();
   const [activeTab, setActiveTab] = useState('create');
   const [platform, setPlatform] = useState('');
   const [contentType, setContentType] = useState('');
@@ -69,6 +75,7 @@ export function SocialCommandCentre() {
   const [schedulePostId, setSchedulePostId] = useState('');
   const [scheduleDate, setScheduleDate] = useState('');
   const [loading, setLoading] = useState(false);
+  const [publishing, setPublishing] = useState<string | null>(null);
 
   useEffect(() => {
     fetchSavedPosts();
@@ -185,6 +192,33 @@ export function SocialCommandCentre() {
     }
   };
 
+  const handlePublishToMeta = async (post: SocialPost, targetPlatform: 'facebook' | 'instagram' | 'both') => {
+    if (!hasCredentials) {
+      toast({ title: 'Meta credentials not set', description: 'Add your Meta API credentials in Settings first.', variant: 'destructive' });
+      return;
+    }
+    setPublishing(post.id);
+    try {
+      const { data, error } = await publishToMeta({
+        post_id: post.id,
+        platform: targetPlatform,
+        content: post.content,
+        image_url: post.image_url || undefined,
+      });
+      if (error) throw error;
+      if (data?.success) {
+        toast({ title: '🚀 Published!', description: `Posted to ${targetPlatform === 'both' ? 'Facebook & Instagram' : targetPlatform}` });
+      } else if (data?.errors) {
+        toast({ title: 'Partial publish', description: data.errors.join('; '), variant: 'destructive' });
+      }
+      fetchSavedPosts();
+    } catch (err: any) {
+      toast({ title: 'Publish failed', description: err.message, variant: 'destructive' });
+    } finally {
+      setPublishing(null);
+    }
+  };
+
   const copyPostContent = (content: string) => {
     navigator.clipboard.writeText(content);
     toast({ title: 'Copied!' });
@@ -192,6 +226,7 @@ export function SocialCommandCentre() {
 
   const drafts = savedPosts.filter(p => p.status === 'draft');
   const scheduled = savedPosts.filter(p => p.status === 'scheduled');
+  const published = savedPosts.filter(p => p.meta_status === 'published');
   const platformCounts = savedPosts.reduce((acc, p) => {
     acc[p.platform] = (acc[p.platform] || 0) + 1;
     return acc;
@@ -319,20 +354,56 @@ export function SocialCommandCentre() {
               <Card key={post.id}>
                 <CardContent className="pt-4 space-y-3">
                   <div className="flex items-center justify-between">
-                    <div className="flex gap-2">
+                    <div className="flex flex-wrap gap-1.5">
                       <Badge className="font-display text-[9px]">{post.platform.toUpperCase()}</Badge>
                       <Badge variant="outline" className="font-display text-[9px]">{post.content_type}</Badge>
                       <Badge variant={post.status === 'scheduled' ? 'default' : 'secondary'}
                         className="font-display text-[9px]">{post.status.toUpperCase()}</Badge>
+                      {post.meta_status === 'published' && (
+                        <Badge className="bg-green-500/20 text-green-400 font-display text-[9px]">✅ PUBLISHED</Badge>
+                      )}
+                      {post.meta_status === 'partial' && (
+                        <Badge className="bg-yellow-500/20 text-yellow-400 font-display text-[9px]">⚠️ PARTIAL</Badge>
+                      )}
                     </div>
                   </div>
                   <p className="text-xs text-muted-foreground line-clamp-3">{post.content}</p>
                   {post.image_url && (
                     <img src={post.image_url} alt="Post image" className="w-full rounded-lg max-h-48 object-cover" />
                   )}
-                  <div className="flex gap-2">
+                  {post.publish_error && (
+                    <p className="text-[10px] text-destructive bg-destructive/10 rounded p-2">{post.publish_error}</p>
+                  )}
+                  <div className="flex flex-wrap gap-2">
                     <Button variant="outline" size="sm" onClick={() => copyPostContent(post.content)}
                       className="text-[10px] font-display gap-1"><Copy className="w-3 h-3" />COPY</Button>
+                    
+                    {hasCredentials && post.meta_status !== 'published' && (
+                      <>
+                        <Button variant="outline" size="sm"
+                          onClick={() => handlePublishToMeta(post, 'facebook')}
+                          disabled={publishing === post.id}
+                          className="text-[10px] font-display gap-1 border-blue-500/30 text-blue-400 hover:bg-blue-500/10">
+                          {publishing === post.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Facebook className="w-3 h-3" />}
+                          FB
+                        </Button>
+                        <Button variant="outline" size="sm"
+                          onClick={() => handlePublishToMeta(post, 'instagram')}
+                          disabled={publishing === post.id || !post.image_url}
+                          className="text-[10px] font-display gap-1 border-pink-500/30 text-pink-400 hover:bg-pink-500/10">
+                          {publishing === post.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Instagram className="w-3 h-3" />}
+                          IG
+                        </Button>
+                        <Button variant="outline" size="sm"
+                          onClick={() => handlePublishToMeta(post, 'both')}
+                          disabled={publishing === post.id || !post.image_url}
+                          className="text-[10px] font-display gap-1 border-primary/30 text-primary hover:bg-primary/10">
+                          {publishing === post.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Send className="w-3 h-3" />}
+                          BOTH
+                        </Button>
+                      </>
+                    )}
+                    
                     <Button variant="outline" size="sm" onClick={() => handleDelete(post.id)}
                       className="text-[10px] font-display gap-1 text-destructive border-destructive/30 hover:bg-destructive/10">
                       <Trash2 className="w-3 h-3" />DELETE
@@ -409,7 +480,7 @@ export function SocialCommandCentre() {
         {/* STATS TAB */}
         <TabsContent value="stats" className="space-y-4 mt-4">
           <p className="text-[10px] text-primary font-display tracking-widest">CONTENT OVERVIEW</p>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-4 gap-3">
             <Card><CardContent className="pt-4 text-center">
               <p className="text-2xl font-black text-primary">{savedPosts.length}</p>
               <p className="text-[10px] text-muted-foreground tracking-wider mt-1">GENERATED</p>
@@ -421,6 +492,10 @@ export function SocialCommandCentre() {
             <Card><CardContent className="pt-4 text-center">
               <p className="text-2xl font-black text-primary">{scheduled.length}</p>
               <p className="text-[10px] text-muted-foreground tracking-wider mt-1">SCHEDULED</p>
+            </CardContent></Card>
+            <Card><CardContent className="pt-4 text-center">
+              <p className="text-2xl font-black text-primary">{published.length}</p>
+              <p className="text-[10px] text-muted-foreground tracking-wider mt-1">PUBLISHED</p>
             </CardContent></Card>
           </div>
 

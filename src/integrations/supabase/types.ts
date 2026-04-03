@@ -205,6 +205,39 @@ export type Database = {
           },
         ]
       }
+      coach_meta_credentials: {
+        Row: {
+          created_at: string
+          facebook_page_id: string
+          id: string
+          instagram_account_id: string | null
+          page_access_token: string
+          page_name: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          facebook_page_id: string
+          id?: string
+          instagram_account_id?: string | null
+          page_access_token: string
+          page_name?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          facebook_page_id?: string
+          id?: string
+          instagram_account_id?: string | null
+          page_access_token?: string
+          page_name?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       coaching_assignments: {
         Row: {
           assigned_by: string | null
@@ -2187,7 +2220,11 @@ export type Database = {
           image_prompt: string | null
           image_url: string | null
           inspiration: string | null
+          meta_post_id: string | null
+          meta_status: string | null
           platform: string
+          publish_error: string | null
+          published_at: string | null
           scheduled_at: string | null
           status: string
           tone: string | null
@@ -2203,7 +2240,11 @@ export type Database = {
           image_prompt?: string | null
           image_url?: string | null
           inspiration?: string | null
+          meta_post_id?: string | null
+          meta_status?: string | null
           platform: string
+          publish_error?: string | null
+          published_at?: string | null
           scheduled_at?: string | null
           status?: string
           tone?: string | null
@@ -2219,7 +2260,11 @@ export type Database = {
           image_prompt?: string | null
           image_url?: string | null
           inspiration?: string | null
+          meta_post_id?: string | null
+          meta_status?: string | null
           platform?: string
+          publish_error?: string | null
+          published_at?: string | null
           scheduled_at?: string | null
           status?: string
           tone?: string | null

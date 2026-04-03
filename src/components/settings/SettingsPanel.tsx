@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useUserRole } from '@/hooks/useUserRole';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
@@ -43,13 +44,14 @@ import { useProfile } from '@/hooks/useProfile';
 import { toast } from 'sonner';
 
 import { BlockedUsersSection } from './BlockedUsersSection';
-
+import { MetaCredentialsForm } from './MetaCredentialsForm';
 export function SettingsPanel() {
   const { settings, loading, updateSettings, toggleTheme } = useUserSettings();
   const { preferences: aiPreferences, isLoading: aiLoading, updatePreferences } = useAIPreferences();
   const { profile, updateProfile } = useProfile();
   const { signOut } = useAuth();
   const [saving, setSaving] = useState(false);
+  const { isAdmin, isCoach } = useUserRole();
 
   if (loading || !settings) {
     return (
@@ -568,6 +570,9 @@ export function SettingsPanel() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Meta Credentials — coaches/admins only */}
+      {(isAdmin || isCoach) && <MetaCredentialsForm />}
 
       {/* Nutrition Goals removed - managed via Fuel section */}
 
