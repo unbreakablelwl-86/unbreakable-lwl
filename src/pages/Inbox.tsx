@@ -61,8 +61,6 @@ export default function Inbox() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   
   // Delete states
-  const [deleteMessageDialogOpen, setDeleteMessageDialogOpen] = useState(false);
-  const [selectedMessageForDelete, setSelectedMessageForDelete] = useState<Message | null>(null);
   const [deleteConvoModalOpen, setDeleteConvoModalOpen] = useState(false);
   const [convoToDelete, setConvoToDelete] = useState<string | null>(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
