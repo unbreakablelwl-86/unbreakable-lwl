@@ -33,7 +33,6 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { NewMessageDialog } from '@/components/inbox/NewMessageDialog';
 import { ChatMediaUpload, ChatMediaAttachment } from '@/components/inbox/ChatMediaUpload';
-import { DeleteMessageDialog } from '@/components/inbox/DeleteMessageDialog';
 import { DeleteConfirmModal } from '@/components/tracker/DeleteConfirmModal';
 
 export default function Inbox() {
