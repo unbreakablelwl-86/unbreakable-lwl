@@ -562,11 +562,11 @@ export default function Inbox() {
                                   </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="start">
-                                  <DropdownMenuItem onClick={() => handleDeleteForMeDirect(msg)} className="text-muted-foreground">
+                                  <DropdownMenuItem onClick={() => handleDeleteForMe(msg)} className="text-muted-foreground">
                                     <Trash2 className="w-4 h-4 mr-2" />
                                     Delete for me
                                   </DropdownMenuItem>
-                                  <DropdownMenuItem onClick={() => handleDeleteForEveryoneDirect(msg)} className="text-destructive">
+                                  <DropdownMenuItem onClick={() => handleDeleteForEveryone(msg)} className="text-destructive">
                                     <Trash2 className="w-4 h-4 mr-2" />
                                     Delete for everyone
                                   </DropdownMenuItem>
