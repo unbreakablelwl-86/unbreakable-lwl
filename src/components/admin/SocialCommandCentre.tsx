@@ -354,20 +354,56 @@ export function SocialCommandCentre() {
               <Card key={post.id}>
                 <CardContent className="pt-4 space-y-3">
                   <div className="flex items-center justify-between">
-                    <div className="flex gap-2">
+                    <div className="flex flex-wrap gap-1.5">
                       <Badge className="font-display text-[9px]">{post.platform.toUpperCase()}</Badge>
                       <Badge variant="outline" className="font-display text-[9px]">{post.content_type}</Badge>
                       <Badge variant={post.status === 'scheduled' ? 'default' : 'secondary'}
                         className="font-display text-[9px]">{post.status.toUpperCase()}</Badge>
+                      {post.meta_status === 'published' && (
+                        <Badge className="bg-green-500/20 text-green-400 font-display text-[9px]">✅ PUBLISHED</Badge>
+                      )}
+                      {post.meta_status === 'partial' && (
+                        <Badge className="bg-yellow-500/20 text-yellow-400 font-display text-[9px]">⚠️ PARTIAL</Badge>
+                      )}
                     </div>
                   </div>
                   <p className="text-xs text-muted-foreground line-clamp-3">{post.content}</p>
                   {post.image_url && (
                     <img src={post.image_url} alt="Post image" className="w-full rounded-lg max-h-48 object-cover" />
                   )}
-                  <div className="flex gap-2">
+                  {post.publish_error && (
+                    <p className="text-[10px] text-destructive bg-destructive/10 rounded p-2">{post.publish_error}</p>
+                  )}
+                  <div className="flex flex-wrap gap-2">
                     <Button variant="outline" size="sm" onClick={() => copyPostContent(post.content)}
                       className="text-[10px] font-display gap-1"><Copy className="w-3 h-3" />COPY</Button>
+                    
+                    {hasCredentials && post.meta_status !== 'published' && (
+                      <>
+                        <Button variant="outline" size="sm"
+                          onClick={() => handlePublishToMeta(post, 'facebook')}
+                          disabled={publishing === post.id}
+                          className="text-[10px] font-display gap-1 border-blue-500/30 text-blue-400 hover:bg-blue-500/10">
+                          {publishing === post.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Facebook className="w-3 h-3" />}
+                          FB
+                        </Button>
+                        <Button variant="outline" size="sm"
+                          onClick={() => handlePublishToMeta(post, 'instagram')}
+                          disabled={publishing === post.id || !post.image_url}
+                          className="text-[10px] font-display gap-1 border-pink-500/30 text-pink-400 hover:bg-pink-500/10">
+                          {publishing === post.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Instagram className="w-3 h-3" />}
+                          IG
+                        </Button>
+                        <Button variant="outline" size="sm"
+                          onClick={() => handlePublishToMeta(post, 'both')}
+                          disabled={publishing === post.id || !post.image_url}
+                          className="text-[10px] font-display gap-1 border-primary/30 text-primary hover:bg-primary/10">
+                          {publishing === post.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Send className="w-3 h-3" />}
+                          BOTH
+                        </Button>
+                      </>
+                    )}
+                    
                     <Button variant="outline" size="sm" onClick={() => handleDelete(post.id)}
                       className="text-[10px] font-display gap-1 text-destructive border-destructive/30 hover:bg-destructive/10">
                       <Trash2 className="w-3 h-3" />DELETE
