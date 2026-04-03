@@ -51,6 +51,7 @@ export function SettingsPanel() {
   const { profile, updateProfile } = useProfile();
   const { signOut } = useAuth();
   const [saving, setSaving] = useState(false);
+  const { isAdmin, isCoach } = useUserRole();
 
   if (loading || !settings) {
     return (
