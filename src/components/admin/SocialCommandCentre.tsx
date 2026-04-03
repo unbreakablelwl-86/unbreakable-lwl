@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { useMetaCredentials } from '@/hooks/useMetaCredentials';
 import { toast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -8,7 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
-import { Zap, Save, Calendar, BarChart3, Copy, Trash2, RefreshCw, Loader2, Image } from 'lucide-react';
+import { Zap, Save, Calendar, BarChart3, Copy, Trash2, RefreshCw, Loader2, Image, Send, Facebook, Instagram } from 'lucide-react';
 
 const PLATFORMS = [
   { id: 'instagram', label: '📸 INSTA' },
