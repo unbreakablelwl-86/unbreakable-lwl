@@ -571,6 +571,9 @@ export function SettingsPanel() {
         </CardContent>
       </Card>
 
+      {/* Meta Credentials — coaches/admins only */}
+      {(isAdmin || isCoach) && <MetaCredentialsForm />}
+
       {/* Nutrition Goals removed - managed via Fuel section */}
 
       {/* Sign Out */}
