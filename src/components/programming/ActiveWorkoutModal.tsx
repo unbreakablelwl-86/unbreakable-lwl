@@ -433,13 +433,6 @@ export function ActiveWorkoutModal({
             </AnimatePresence>
           </Card>
 
-          {/* Always-visible Rest Timer */}
-          <CompactRestTimer
-            exerciseType={timerExerciseType as 'strength' | 'hypertrophy'}
-            onComplete={() => {}}
-            onDismiss={() => {}}
-          />
-
           {/* Action Tiles */}
           <SessionActionTiles
             onOpenLogging={() => setActiveTool('logging')}

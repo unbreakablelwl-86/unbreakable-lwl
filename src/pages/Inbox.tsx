@@ -726,19 +726,6 @@ export default function Inbox() {
         </div>
       </div>
 
-      {/* Delete Message Dialog */}
-      <DeleteMessageDialog
-        isOpen={deleteMessageDialogOpen}
-        onClose={() => {
-          setDeleteMessageDialogOpen(false);
-          setSelectedMessageForDelete(null);
-        }}
-        onDeleteForMe={handleDeleteForMe}
-        onDeleteForEveryone={handleDeleteForEveryone}
-        isOwnMessage={selectedMessageForDelete?.sender_id === user?.id}
-        loading={deleteLoading}
-      />
-
       {/* Delete Conversation Modal */}
       <DeleteConfirmModal
         isOpen={deleteConvoModalOpen}
