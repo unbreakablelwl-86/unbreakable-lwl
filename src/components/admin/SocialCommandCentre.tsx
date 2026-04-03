@@ -59,6 +59,7 @@ interface SocialPost {
 
 export function SocialCommandCentre() {
   const { user } = useAuth();
+  const { hasCredentials, publishToMeta } = useMetaCredentials();
   const [activeTab, setActiveTab] = useState('create');
   const [platform, setPlatform] = useState('');
   const [contentType, setContentType] = useState('');
@@ -74,6 +75,7 @@ export function SocialCommandCentre() {
   const [schedulePostId, setSchedulePostId] = useState('');
   const [scheduleDate, setScheduleDate] = useState('');
   const [loading, setLoading] = useState(false);
+  const [publishing, setPublishing] = useState<string | null>(null);
 
   useEffect(() => {
     fetchSavedPosts();
