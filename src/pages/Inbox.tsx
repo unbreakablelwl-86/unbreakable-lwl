@@ -230,14 +230,8 @@ export default function Inbox() {
     }
   };
 
-  // Handle delete message (via dialog - legacy)
-  const handleDeleteMessage = (msg: Message) => {
-    setSelectedMessageForDelete(msg);
-    setDeleteMessageDialogOpen(true);
-  };
-
-  // Direct delete handlers (no intermediate dialog)
-  const handleDeleteForMeDirect = async (msg: Message) => {
+  // Direct delete handlers
+  const handleDeleteForMe = async (msg: Message) => {
     const { error } = await deleteMessageForMe(msg.id);
     if (error) {
       toast.error('Failed to delete message');
@@ -247,7 +241,7 @@ export default function Inbox() {
     }
   };
 
-  const handleDeleteForEveryoneDirect = async (msg: Message) => {
+  const handleDeleteForEveryone = async (msg: Message) => {
     const { error } = await deleteMessageForEveryone(msg.id);
     if (error) {
       toast.error('Failed to delete message');
@@ -255,40 +249,6 @@ export default function Inbox() {
       setMessages(prev => prev.filter(m => m.id !== msg.id));
       toast.success('Message deleted for everyone');
     }
-  };
-
-  const handleDeleteForMe = async () => {
-    if (!selectedMessageForDelete) return;
-    setDeleteLoading(true);
-    
-    const { error } = await deleteMessageForMe(selectedMessageForDelete.id);
-    if (error) {
-      toast.error('Failed to delete message');
-    } else {
-      setMessages(prev => prev.filter(m => m.id !== selectedMessageForDelete.id));
-      toast.success('Message deleted');
-    }
-    
-    setDeleteLoading(false);
-    setDeleteMessageDialogOpen(false);
-    setSelectedMessageForDelete(null);
-  };
-
-  const handleDeleteForEveryone = async () => {
-    if (!selectedMessageForDelete) return;
-    setDeleteLoading(true);
-    
-    const { error } = await deleteMessageForEveryone(selectedMessageForDelete.id);
-    if (error) {
-      toast.error('Failed to delete message');
-    } else {
-      setMessages(prev => prev.filter(m => m.id !== selectedMessageForDelete.id));
-      toast.success('Message deleted for everyone');
-    }
-    
-    setDeleteLoading(false);
-    setDeleteMessageDialogOpen(false);
-    setSelectedMessageForDelete(null);
   };
 
   // Handle swipe to delete conversation
