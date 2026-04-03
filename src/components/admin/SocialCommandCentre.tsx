@@ -192,6 +192,33 @@ export function SocialCommandCentre() {
     }
   };
 
+  const handlePublishToMeta = async (post: SocialPost, targetPlatform: 'facebook' | 'instagram' | 'both') => {
+    if (!hasCredentials) {
+      toast({ title: 'Meta credentials not set', description: 'Add your Meta API credentials in Settings first.', variant: 'destructive' });
+      return;
+    }
+    setPublishing(post.id);
+    try {
+      const { data, error } = await publishToMeta({
+        post_id: post.id,
+        platform: targetPlatform,
+        content: post.content,
+        image_url: post.image_url || undefined,
+      });
+      if (error) throw error;
+      if (data?.success) {
+        toast({ title: '🚀 Published!', description: `Posted to ${targetPlatform === 'both' ? 'Facebook & Instagram' : targetPlatform}` });
+      } else if (data?.errors) {
+        toast({ title: 'Partial publish', description: data.errors.join('; '), variant: 'destructive' });
+      }
+      fetchSavedPosts();
+    } catch (err: any) {
+      toast({ title: 'Publish failed', description: err.message, variant: 'destructive' });
+    } finally {
+      setPublishing(null);
+    }
+  };
+
   const copyPostContent = (content: string) => {
     navigator.clipboard.writeText(content);
     toast({ title: 'Copied!' });
@@ -199,6 +226,7 @@ export function SocialCommandCentre() {
 
   const drafts = savedPosts.filter(p => p.status === 'draft');
   const scheduled = savedPosts.filter(p => p.status === 'scheduled');
+  const published = savedPosts.filter(p => p.meta_status === 'published');
   const platformCounts = savedPosts.reduce((acc, p) => {
     acc[p.platform] = (acc[p.platform] || 0) + 1;
     return acc;
