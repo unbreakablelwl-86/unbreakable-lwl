@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useMetaCredentials } from '@/hooks/useMetaCredentials';
+import { useProfile } from '@/hooks/useProfile';
 import { toast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -9,7 +10,13 @@ import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
-import { Zap, Save, Calendar, BarChart3, Copy, Trash2, RefreshCw, Loader2, Image, Send, Facebook, Instagram } from 'lucide-react';
+import { MetaCredentialsForm } from '@/components/settings/MetaCredentialsForm';
+import { SocialMediaUpload } from './SocialMediaUpload';
+import {
+  Zap, Save, Calendar, BarChart3, Copy, Trash2, RefreshCw, Loader2,
+  Image, Send, Facebook, Instagram, Key, TrendingUp, Trophy, Heart,
+  MessageSquare, Share2, Eye, FileText,
+} from 'lucide-react';
 
 const PLATFORMS = [
   { id: 'instagram', label: '📸 INSTA' },
@@ -55,10 +62,24 @@ interface SocialPost {
   meta_post_id?: string | null;
   published_at?: string | null;
   publish_error?: string | null;
+  likes?: number;
+  saves?: number;
+  comments_count?: number;
+  shares?: number;
+  reach?: number;
+  impressions?: number;
+  engagement_rate?: number;
+  last_synced_at?: string | null;
+  coach_name?: string | null;
+  custom_image_url?: string | null;
+  custom_video_url?: string | null;
+  script?: string | null;
+  user_id?: string;
 }
 
 export function SocialCommandCentre() {
   const { user } = useAuth();
+  const { profile } = useProfile();
   const { hasCredentials, publishToMeta } = useMetaCredentials();
   const [activeTab, setActiveTab] = useState('create');
   const [platform, setPlatform] = useState('');
@@ -66,12 +87,16 @@ export function SocialCommandCentre() {
   const [tone, setTone] = useState('');
   const [context, setContext] = useState('');
   const [inspiration, setInspiration] = useState('');
+  const [script, setScript] = useState('');
+  const [customImageUrl, setCustomImageUrl] = useState('');
+  const [customVideoUrl, setCustomVideoUrl] = useState('');
   const [generating, setGenerating] = useState(false);
   const [generatingImage, setGeneratingImage] = useState(false);
   const [generatedPost, setGeneratedPost] = useState('');
   const [generatedImagePrompt, setGeneratedImagePrompt] = useState('');
   const [generatedImageUrl, setGeneratedImageUrl] = useState('');
   const [savedPosts, setSavedPosts] = useState<SocialPost[]>([]);
+  const [allPosts, setAllPosts] = useState<SocialPost[]>([]);
   const [schedulePostId, setSchedulePostId] = useState('');
   const [scheduleDate, setScheduleDate] = useState('');
   const [loading, setLoading] = useState(false);
@@ -79,6 +104,7 @@ export function SocialCommandCentre() {
 
   useEffect(() => {
     fetchSavedPosts();
+    fetchAllPosts();
   }, [user]);
 
   const fetchSavedPosts = async () => {
@@ -86,8 +112,19 @@ export function SocialCommandCentre() {
     const { data } = await supabase
       .from('social_posts')
       .select('*')
+      .eq('user_id', user.id)
       .order('created_at', { ascending: false });
     if (data) setSavedPosts(data as SocialPost[]);
+  };
+
+  const fetchAllPosts = async () => {
+    if (!user) return;
+    const { data } = await supabase
+      .from('social_posts')
+      .select('*')
+      .eq('meta_status', 'published')
+      .order('engagement_rate', { ascending: false });
+    if (data) setAllPosts(data as SocialPost[]);
   };
 
   const handleGenerate = async () => {
@@ -104,7 +141,6 @@ export function SocialCommandCentre() {
       const { data, error } = await supabase.functions.invoke('generate-social-content', {
         body: { platform, contentType, tone, context, inspiration },
       });
-
       if (error) throw error;
       setGeneratedPost(data.post || '');
       setGeneratedImagePrompt(data.imagePrompt || '');
@@ -118,12 +154,10 @@ export function SocialCommandCentre() {
   const handleGenerateImage = async () => {
     if (!generatedImagePrompt) return;
     setGeneratingImage(true);
-
     try {
       const { data, error } = await supabase.functions.invoke('generate-social-image', {
         body: { prompt: generatedImagePrompt },
       });
-
       if (error) throw error;
       if (data?.imageUrl) {
         setGeneratedImageUrl(data.imageUrl);
@@ -152,13 +186,20 @@ export function SocialCommandCentre() {
         tone: tone || null,
         content: generatedPost,
         image_prompt: generatedImagePrompt || null,
-        image_url: generatedImageUrl || null,
+        image_url: generatedImageUrl || customImageUrl || null,
         status: 'draft',
         context: context || null,
         inspiration: inspiration || null,
+        coach_name: profile?.display_name || null,
+        custom_image_url: customImageUrl || null,
+        custom_video_url: customVideoUrl || null,
+        script: script || null,
       });
       if (error) throw error;
       toast({ title: 'Post saved!' });
+      setCustomImageUrl('');
+      setCustomVideoUrl('');
+      setScript('');
       fetchSavedPosts();
     } catch (err: any) {
       toast({ title: 'Save failed', description: err.message, variant: 'destructive' });
@@ -194,7 +235,8 @@ export function SocialCommandCentre() {
 
   const handlePublishToMeta = async (post: SocialPost, targetPlatform: 'facebook' | 'instagram' | 'both') => {
     if (!hasCredentials) {
-      toast({ title: 'Meta credentials not set', description: 'Add your Meta API credentials in Settings first.', variant: 'destructive' });
+      toast({ title: 'Meta credentials not set', description: 'Add your Meta API credentials in the API tab.', variant: 'destructive' });
+      setActiveTab('api');
       return;
     }
     setPublishing(post.id);
@@ -203,7 +245,7 @@ export function SocialCommandCentre() {
         post_id: post.id,
         platform: targetPlatform,
         content: post.content,
-        image_url: post.image_url || undefined,
+        image_url: post.custom_image_url || post.image_url || undefined,
       });
       if (error) throw error;
       if (data?.success) {
@@ -227,10 +269,29 @@ export function SocialCommandCentre() {
   const drafts = savedPosts.filter(p => p.status === 'draft');
   const scheduled = savedPosts.filter(p => p.status === 'scheduled');
   const published = savedPosts.filter(p => p.meta_status === 'published');
-  const platformCounts = savedPosts.reduce((acc, p) => {
-    acc[p.platform] = (acc[p.platform] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
+
+  // Engagement analytics
+  const topPerformers = [...allPosts].sort((a, b) => (b.engagement_rate || 0) - (a.engagement_rate || 0)).slice(0, 10);
+  const totalLikes = allPosts.reduce((s, p) => s + (p.likes || 0), 0);
+  const totalShares = allPosts.reduce((s, p) => s + (p.shares || 0), 0);
+  const totalComments = allPosts.reduce((s, p) => s + (p.comments_count || 0), 0);
+  const totalReach = allPosts.reduce((s, p) => s + (p.reach || 0), 0);
+  const avgEngagement = allPosts.length > 0
+    ? (allPosts.reduce((s, p) => s + (p.engagement_rate || 0), 0) / allPosts.length).toFixed(1)
+    : '0';
+
+  // Best performing content type/tone combos
+  const comboMap: Record<string, { count: number; totalEngagement: number }> = {};
+  allPosts.forEach(p => {
+    const key = `${p.content_type} × ${p.tone || 'no-tone'}`;
+    if (!comboMap[key]) comboMap[key] = { count: 0, totalEngagement: 0 };
+    comboMap[key].count++;
+    comboMap[key].totalEngagement += (p.engagement_rate || 0);
+  });
+  const bestCombos = Object.entries(comboMap)
+    .map(([combo, stats]) => ({ combo, avg: stats.count > 0 ? stats.totalEngagement / stats.count : 0, count: stats.count }))
+    .sort((a, b) => b.avg - a.avg)
+    .slice(0, 5);
 
   return (
     <div className="space-y-6">
@@ -238,7 +299,7 @@ export function SocialCommandCentre() {
         <span className="text-2xl">🔥</span>
         <div>
           <h2 className="font-display text-lg text-foreground tracking-wider">SOCIAL COMMAND CENTRE</h2>
-          <p className="text-[10px] text-muted-foreground tracking-widest">CONTENT GENERATOR • ADMIN ONLY</p>
+          <p className="text-[10px] text-muted-foreground tracking-widest">CONTENT GENERATOR • PUBLISH • TRACK</p>
         </div>
       </div>
 
@@ -247,7 +308,8 @@ export function SocialCommandCentre() {
           <TabsTrigger value="create" className="font-display gap-1.5 text-xs"><Zap className="w-3.5 h-3.5" />CREATE</TabsTrigger>
           <TabsTrigger value="saved" className="font-display gap-1.5 text-xs"><Save className="w-3.5 h-3.5" />SAVED</TabsTrigger>
           <TabsTrigger value="schedule" className="font-display gap-1.5 text-xs"><Calendar className="w-3.5 h-3.5" />SCHEDULE</TabsTrigger>
-          <TabsTrigger value="stats" className="font-display gap-1.5 text-xs"><BarChart3 className="w-3.5 h-3.5" />STATS</TabsTrigger>
+          <TabsTrigger value="analytics" className="font-display gap-1.5 text-xs"><TrendingUp className="w-3.5 h-3.5" />ANALYTICS</TabsTrigger>
+          <TabsTrigger value="api" className="font-display gap-1.5 text-xs"><Key className="w-3.5 h-3.5" />API</TabsTrigger>
         </TabsList>
 
         {/* CREATE TAB */}
@@ -292,6 +354,24 @@ export function SocialCommandCentre() {
             <p className="text-[10px] text-primary font-display tracking-widest">💡 INSPIRATION — PASTE POSTS YOU LOVE</p>
             <Textarea placeholder="Paste examples of posts you like the style of..."
               value={inspiration} onChange={e => setInspiration(e.target.value)} className="min-h-[60px]" />
+          </CardContent></Card>
+
+          <Card><CardContent className="pt-5 space-y-3">
+            <p className="text-[10px] text-primary font-display tracking-widest">📝 SCRIPT / NOTES</p>
+            <Textarea placeholder="Add your own script or notes for this post..."
+              value={script} onChange={e => setScript(e.target.value)} className="min-h-[60px]" />
+          </CardContent></Card>
+
+          {/* Media Upload */}
+          <Card><CardContent className="pt-5">
+            <SocialMediaUpload
+              onImageUploaded={setCustomImageUrl}
+              onVideoUploaded={setCustomVideoUrl}
+              currentImageUrl={customImageUrl}
+              currentVideoUrl={customVideoUrl}
+              onClearImage={() => setCustomImageUrl('')}
+              onClearVideo={() => setCustomVideoUrl('')}
+            />
           </CardContent></Card>
 
           <Button className="w-full font-display tracking-widest text-xs py-6" onClick={handleGenerate}
@@ -368,9 +448,34 @@ export function SocialCommandCentre() {
                     </div>
                   </div>
                   <p className="text-xs text-muted-foreground line-clamp-3">{post.content}</p>
-                  {post.image_url && (
-                    <img src={post.image_url} alt="Post image" className="w-full rounded-lg max-h-48 object-cover" />
+
+                  {/* Show uploaded media */}
+                  {(post.custom_image_url || post.image_url) && (
+                    <img src={post.custom_image_url || post.image_url || ''} alt="Post image" className="w-full rounded-lg max-h-48 object-cover" />
                   )}
+                  {post.custom_video_url && (
+                    <video src={post.custom_video_url} controls className="w-full rounded-lg max-h-48" />
+                  )}
+                  {post.script && (
+                    <div className="bg-muted/50 rounded-lg p-2">
+                      <p className="text-[9px] text-primary font-display tracking-wider mb-1">📝 SCRIPT</p>
+                      <p className="text-xs text-muted-foreground line-clamp-2">{post.script}</p>
+                    </div>
+                  )}
+
+                  {/* Engagement stats if published */}
+                  {post.meta_status === 'published' && (post.likes || post.shares || post.comments_count) ? (
+                    <div className="flex gap-3 text-[10px] text-muted-foreground">
+                      <span className="flex items-center gap-1"><Heart className="w-3 h-3 text-red-400" />{post.likes || 0}</span>
+                      <span className="flex items-center gap-1"><MessageSquare className="w-3 h-3 text-blue-400" />{post.comments_count || 0}</span>
+                      <span className="flex items-center gap-1"><Share2 className="w-3 h-3 text-green-400" />{post.shares || 0}</span>
+                      <span className="flex items-center gap-1"><Eye className="w-3 h-3 text-purple-400" />{post.reach || 0}</span>
+                      {post.engagement_rate ? (
+                        <Badge variant="outline" className="text-[8px] font-display">{post.engagement_rate}% ER</Badge>
+                      ) : null}
+                    </div>
+                  ) : null}
+
                   {post.publish_error && (
                     <p className="text-[10px] text-destructive bg-destructive/10 rounded p-2">{post.publish_error}</p>
                   )}
@@ -389,14 +494,14 @@ export function SocialCommandCentre() {
                         </Button>
                         <Button variant="outline" size="sm"
                           onClick={() => handlePublishToMeta(post, 'instagram')}
-                          disabled={publishing === post.id || !post.image_url}
+                          disabled={publishing === post.id || (!post.image_url && !post.custom_image_url)}
                           className="text-[10px] font-display gap-1 border-pink-500/30 text-pink-400 hover:bg-pink-500/10">
                           {publishing === post.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Instagram className="w-3 h-3" />}
                           IG
                         </Button>
                         <Button variant="outline" size="sm"
                           onClick={() => handlePublishToMeta(post, 'both')}
-                          disabled={publishing === post.id || !post.image_url}
+                          disabled={publishing === post.id || (!post.image_url && !post.custom_image_url)}
                           className="text-[10px] font-display gap-1 border-primary/30 text-primary hover:bg-primary/10">
                           {publishing === post.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Send className="w-3 h-3" />}
                           BOTH
@@ -420,7 +525,7 @@ export function SocialCommandCentre() {
           <Card><CardContent className="pt-5 space-y-4">
             <p className="text-[10px] text-primary font-display tracking-widest">📅 SCHEDULE A SAVED POST</p>
             <p className="text-xs text-muted-foreground">
-              Save a post first, then schedule it here. Copy into Buffer, Meta Business Suite or Hootsuite for auto-posting.
+              Schedule posts for publishing. Scheduled posts with Meta credentials will auto-publish at the set time.
             </p>
 
             <div className="space-y-2">
@@ -468,8 +573,19 @@ export function SocialCommandCentre() {
                       </Badge>
                     </div>
                     <p className="text-xs text-muted-foreground line-clamp-2">{post.content}</p>
-                    <Button variant="outline" size="sm" onClick={() => copyPostContent(post.content)}
-                      className="text-[10px] font-display gap-1"><Copy className="w-3 h-3" />COPY</Button>
+                    <div className="flex gap-2">
+                      <Button variant="outline" size="sm" onClick={() => copyPostContent(post.content)}
+                        className="text-[10px] font-display gap-1"><Copy className="w-3 h-3" />COPY</Button>
+                      {hasCredentials && post.meta_status !== 'published' && (
+                        <Button variant="outline" size="sm"
+                          onClick={() => handlePublishToMeta(post, 'both')}
+                          disabled={publishing === post.id}
+                          className="text-[10px] font-display gap-1 border-primary/30 text-primary hover:bg-primary/10">
+                          {publishing === post.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Send className="w-3 h-3" />}
+                          PUBLISH NOW
+                        </Button>
+                      )}
+                    </div>
                   </CardContent>
                 </Card>
               ))}
@@ -477,50 +593,134 @@ export function SocialCommandCentre() {
           )}
         </TabsContent>
 
-        {/* STATS TAB */}
-        <TabsContent value="stats" className="space-y-4 mt-4">
-          <p className="text-[10px] text-primary font-display tracking-widest">CONTENT OVERVIEW</p>
-          <div className="grid grid-cols-4 gap-3">
+        {/* ANALYTICS TAB */}
+        <TabsContent value="analytics" className="space-y-4 mt-4">
+          <p className="text-[10px] text-primary font-display tracking-widest">📊 ENGAGEMENT ANALYTICS</p>
+
+          {/* Overview Stats */}
+          <div className="grid grid-cols-2 gap-3">
             <Card><CardContent className="pt-4 text-center">
               <p className="text-2xl font-black text-primary">{savedPosts.length}</p>
-              <p className="text-[10px] text-muted-foreground tracking-wider mt-1">GENERATED</p>
-            </CardContent></Card>
-            <Card><CardContent className="pt-4 text-center">
-              <p className="text-2xl font-black text-primary">{drafts.length}</p>
-              <p className="text-[10px] text-muted-foreground tracking-wider mt-1">DRAFTS</p>
-            </CardContent></Card>
-            <Card><CardContent className="pt-4 text-center">
-              <p className="text-2xl font-black text-primary">{scheduled.length}</p>
-              <p className="text-[10px] text-muted-foreground tracking-wider mt-1">SCHEDULED</p>
+              <p className="text-[10px] text-muted-foreground tracking-wider mt-1">TOTAL POSTS</p>
             </CardContent></Card>
             <Card><CardContent className="pt-4 text-center">
               <p className="text-2xl font-black text-primary">{published.length}</p>
               <p className="text-[10px] text-muted-foreground tracking-wider mt-1">PUBLISHED</p>
             </CardContent></Card>
+            <Card><CardContent className="pt-4 text-center">
+              <p className="text-2xl font-black text-red-400">{totalLikes}</p>
+              <p className="text-[10px] text-muted-foreground tracking-wider mt-1">TOTAL LIKES</p>
+            </CardContent></Card>
+            <Card><CardContent className="pt-4 text-center">
+              <p className="text-2xl font-black text-blue-400">{totalComments}</p>
+              <p className="text-[10px] text-muted-foreground tracking-wider mt-1">COMMENTS</p>
+            </CardContent></Card>
+            <Card><CardContent className="pt-4 text-center">
+              <p className="text-2xl font-black text-green-400">{totalShares}</p>
+              <p className="text-[10px] text-muted-foreground tracking-wider mt-1">SHARES</p>
+            </CardContent></Card>
+            <Card><CardContent className="pt-4 text-center">
+              <p className="text-2xl font-black text-purple-400">{totalReach}</p>
+              <p className="text-[10px] text-muted-foreground tracking-wider mt-1">TOTAL REACH</p>
+            </CardContent></Card>
           </div>
 
-          {Object.keys(platformCounts).length > 0 && (
+          <Card><CardContent className="pt-5 space-y-2">
+            <div className="flex items-center justify-between">
+              <p className="text-[10px] text-primary font-display tracking-widest">📈 AVG ENGAGEMENT RATE</p>
+              <p className="text-xl font-black text-primary">{avgEngagement}%</p>
+            </div>
+          </CardContent></Card>
+
+          {/* Best Performing Content Combos */}
+          {bestCombos.length > 0 && (
             <Card><CardContent className="pt-5 space-y-3">
-              <p className="text-[10px] text-primary font-display tracking-widest">📊 CONTENT BREAKDOWN</p>
-              {Object.entries(platformCounts).map(([plat, count]) => (
-                <div key={plat} className="flex items-center justify-between">
-                  <span className="text-xs text-muted-foreground font-display tracking-wider">{plat.toUpperCase()}</span>
-                  <span className="text-xs font-bold text-primary">{count}</span>
+              <p className="text-[10px] text-primary font-display tracking-widest flex items-center gap-1.5">
+                <Trophy className="w-3.5 h-3.5" /> BEST PERFORMING COMBOS
+              </p>
+              <p className="text-[10px] text-muted-foreground">Content type × tone combinations ranked by engagement</p>
+              {bestCombos.map((combo, i) => (
+                <div key={combo.combo} className="flex items-center justify-between py-2 border-b border-border last:border-0">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-black text-primary w-5">#{i + 1}</span>
+                    <span className="text-xs text-foreground">{combo.combo}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Badge variant="outline" className="text-[8px] font-display">{combo.avg.toFixed(1)}% ER</Badge>
+                    <span className="text-[9px] text-muted-foreground">{combo.count} posts</span>
+                  </div>
                 </div>
               ))}
             </CardContent></Card>
           )}
 
+          {/* Top Performing Posts Across All Coaches */}
           <Card><CardContent className="pt-5 space-y-3">
-            <p className="text-[10px] text-primary font-display tracking-widest">💡 POSTING TIPS FOR UNBREAKABLE</p>
+            <p className="text-[10px] text-primary font-display tracking-widest flex items-center gap-1.5">
+              <TrendingUp className="w-3.5 h-3.5" /> TOP PERFORMING POSTS
+            </p>
+            <p className="text-[10px] text-muted-foreground">Highest engagement across all coaches</p>
+            {topPerformers.length === 0 ? (
+              <p className="text-xs text-muted-foreground italic py-4 text-center">No published posts with engagement data yet. Engagement metrics sync after publishing to Meta.</p>
+            ) : (
+              topPerformers.map((post, i) => (
+                <div key={post.id} className="border border-border rounded-lg p-3 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-black text-primary">#{i + 1}</span>
+                      <Badge className="font-display text-[9px]">{post.platform.toUpperCase()}</Badge>
+                      <Badge variant="outline" className="font-display text-[9px]">{post.content_type}</Badge>
+                    </div>
+                    {post.engagement_rate ? (
+                      <Badge className="bg-primary/20 text-primary font-display text-[9px]">{post.engagement_rate}% ER</Badge>
+                    ) : null}
+                  </div>
+                  <p className="text-xs text-muted-foreground line-clamp-2">{post.content}</p>
+                  <div className="flex gap-3 text-[10px] text-muted-foreground">
+                    <span className="flex items-center gap-1"><Heart className="w-3 h-3 text-red-400" />{post.likes || 0}</span>
+                    <span className="flex items-center gap-1"><MessageSquare className="w-3 h-3 text-blue-400" />{post.comments_count || 0}</span>
+                    <span className="flex items-center gap-1"><Share2 className="w-3 h-3 text-green-400" />{post.shares || 0}</span>
+                    <span className="flex items-center gap-1"><Eye className="w-3 h-3 text-purple-400" />{post.reach || 0}</span>
+                  </div>
+                  {post.coach_name && (
+                    <p className="text-[9px] text-muted-foreground font-display tracking-wider">BY {post.coach_name.toUpperCase()}</p>
+                  )}
+                </div>
+              ))
+            )}
+          </CardContent></Card>
+
+          {/* Content Strategy Tips */}
+          <Card><CardContent className="pt-5 space-y-3">
+            <p className="text-[10px] text-primary font-display tracking-widest">💡 CONTENT STRATEGY</p>
             <ul className="space-y-2 text-xs text-muted-foreground">
               <li>📸 <strong>Instagram</strong> — 4-7x per week. Reels get 3x more reach.</li>
               <li>🎵 <strong>TikTok</strong> — Post daily. Raw and real beats polished every time.</li>
               <li>👥 <strong>Facebook</strong> — Share into fitness groups. Community drives reach.</li>
               <li>⏰ <strong>Best times</strong> — 6-8am and 6-9pm weekdays.</li>
               <li>🔥 <strong>Top content</strong> — Real Talk and Transformation posts win in fitness.</li>
+              <li>📊 <strong>Track everything</strong> — Engagement data syncs from Meta after publishing.</li>
             </ul>
           </CardContent></Card>
+        </TabsContent>
+
+        {/* API TAB — Meta Credentials */}
+        <TabsContent value="api" className="space-y-4 mt-4">
+          <MetaCredentialsForm />
+          
+          {!hasCredentials && (
+            <Card className="border-primary/30">
+              <CardContent className="pt-5 space-y-3">
+                <p className="text-[10px] text-primary font-display tracking-widest">🔗 WHY CONNECT?</p>
+                <ul className="space-y-2 text-xs text-muted-foreground">
+                  <li>✅ Publish directly to Facebook & Instagram from here</li>
+                  <li>✅ Track engagement metrics (likes, shares, comments, reach)</li>
+                  <li>✅ See best performing content across all coaches</li>
+                  <li>✅ Learn what content types and tones work best</li>
+                </ul>
+              </CardContent>
+            </Card>
+          )}
         </TabsContent>
       </Tabs>
     </div>
