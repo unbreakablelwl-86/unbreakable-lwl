@@ -44,7 +44,6 @@ import { useProfile } from '@/hooks/useProfile';
 import { toast } from 'sonner';
 
 import { BlockedUsersSection } from './BlockedUsersSection';
-import { MetaCredentialsForm } from './MetaCredentialsForm';
 export function SettingsPanel() {
   const { settings, loading, updateSettings, toggleTheme } = useUserSettings();
   const { preferences: aiPreferences, isLoading: aiLoading, updatePreferences } = useAIPreferences();
