@@ -2212,60 +2212,96 @@ export type Database = {
       }
       social_posts: {
         Row: {
+          coach_name: string | null
+          comments_count: number | null
           content: string
           content_type: string
           context: string | null
           created_at: string
+          custom_image_url: string | null
+          custom_video_url: string | null
+          engagement_rate: number | null
           id: string
           image_prompt: string | null
           image_url: string | null
+          impressions: number | null
           inspiration: string | null
+          last_synced_at: string | null
+          likes: number | null
           meta_post_id: string | null
           meta_status: string | null
           platform: string
           publish_error: string | null
           published_at: string | null
+          reach: number | null
+          saves: number | null
           scheduled_at: string | null
+          script: string | null
+          shares: number | null
           status: string
           tone: string | null
           updated_at: string
           user_id: string
         }
         Insert: {
+          coach_name?: string | null
+          comments_count?: number | null
           content: string
           content_type: string
           context?: string | null
           created_at?: string
+          custom_image_url?: string | null
+          custom_video_url?: string | null
+          engagement_rate?: number | null
           id?: string
           image_prompt?: string | null
           image_url?: string | null
+          impressions?: number | null
           inspiration?: string | null
+          last_synced_at?: string | null
+          likes?: number | null
           meta_post_id?: string | null
           meta_status?: string | null
           platform: string
           publish_error?: string | null
           published_at?: string | null
+          reach?: number | null
+          saves?: number | null
           scheduled_at?: string | null
+          script?: string | null
+          shares?: number | null
           status?: string
           tone?: string | null
           updated_at?: string
           user_id: string
         }
         Update: {
+          coach_name?: string | null
+          comments_count?: number | null
           content?: string
           content_type?: string
           context?: string | null
           created_at?: string
+          custom_image_url?: string | null
+          custom_video_url?: string | null
+          engagement_rate?: number | null
           id?: string
           image_prompt?: string | null
           image_url?: string | null
+          impressions?: number | null
           inspiration?: string | null
+          last_synced_at?: string | null
+          likes?: number | null
           meta_post_id?: string | null
           meta_status?: string | null
           platform?: string
           publish_error?: string | null
           published_at?: string | null
+          reach?: number | null
+          saves?: number | null
           scheduled_at?: string | null
+          script?: string | null
+          shares?: number | null
           status?: string
           tone?: string | null
           updated_at?: string
