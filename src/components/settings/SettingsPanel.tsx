@@ -44,7 +44,6 @@ import { useProfile } from '@/hooks/useProfile';
 import { toast } from 'sonner';
 
 import { BlockedUsersSection } from './BlockedUsersSection';
-import { MetaCredentialsForm } from './MetaCredentialsForm';
 export function SettingsPanel() {
   const { settings, loading, updateSettings, toggleTheme } = useUserSettings();
   const { preferences: aiPreferences, isLoading: aiLoading, updatePreferences } = useAIPreferences();
@@ -571,8 +570,7 @@ export function SettingsPanel() {
         </CardContent>
       </Card>
 
-      {/* Meta Credentials — coaches/admins only */}
-      {(isAdmin || isCoach) && <MetaCredentialsForm />}
+      {/* Meta Credentials moved to Social Command Centre */}
 
       {/* Nutrition Goals removed - managed via Fuel section */}
 
