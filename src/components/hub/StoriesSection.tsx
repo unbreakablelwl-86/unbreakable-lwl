@@ -794,6 +794,13 @@ export function StoriesSection() {
                 </div>
               )}
             </div>
+
+            {/* Floating hearts from double-tap */}
+            <AnimatePresence>
+              {floatingHearts.map(heart => (
+                <FloatingHeart key={heart.id} id={heart.id} x={heart.x} y={heart.y} onDone={removeHeart} />
+              ))}
+            </AnimatePresence>
           </motion.div>
         )}
       </AnimatePresence>
