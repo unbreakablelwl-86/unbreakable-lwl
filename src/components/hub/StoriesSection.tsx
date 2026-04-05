@@ -640,22 +640,24 @@ export function StoriesSection() {
                         </div>
                       )}
 
-                       {/* Swipe nav arrows for multi-media — positioned as visible buttons */}
+                       {/* Slide nav arrows — mid-screen sides */}
                        {mediaArr.length > 1 && (
-                         <div className="absolute bottom-24 left-0 right-0 z-20 flex items-center justify-between px-3" data-story-controls>
+                         <>
                            <button
-                             className={`w-8 h-8 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center text-white transition-opacity ${activeMediaSlide === 0 ? 'opacity-0 pointer-events-none' : 'opacity-80'}`}
+                             data-story-controls
+                             className={`absolute left-2 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-white transition-opacity ${activeMediaSlide === 0 ? 'opacity-0 pointer-events-none' : 'opacity-70 hover:opacity-100'}`}
                              onClick={(e) => { e.stopPropagation(); setActiveMediaSlide(prev => Math.max(0, prev - 1)); }}
                            >
-                             ‹
+                             <ChevronLeft className="w-5 h-5" />
                            </button>
                            <button
-                             className={`w-8 h-8 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center text-white transition-opacity ${activeMediaSlide === mediaArr.length - 1 ? 'opacity-0 pointer-events-none' : 'opacity-80'}`}
+                             data-story-controls
+                             className={`absolute right-2 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-white transition-opacity ${activeMediaSlide === mediaArr.length - 1 ? 'opacity-0 pointer-events-none' : 'opacity-70 hover:opacity-100'}`}
                              onClick={(e) => { e.stopPropagation(); setActiveMediaSlide(prev => Math.min(mediaArr.length - 1, prev + 1)); }}
                            >
-                             ›
+                             <ChevronRight className="w-5 h-5" />
                            </button>
-                         </div>
+                         </>
                        )}
 
                       {currentSlide.type === 'video' ? (
