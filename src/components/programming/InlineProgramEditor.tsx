@@ -154,6 +154,52 @@ export function InlineProgramEditor({ programId, programData, onClose, onSaved }
     try {
       await updateProgram.mutateAsync({ programId, programData: data });
 
+      // Sync pending session planners with updated programme exercises
+      try {
+        const updatedDays = data.templateWeek?.days || data.weeks?.[0]?.days || [];
+        // Fetch all pending planners for this programme
+        const { data: pendingPlanners } = await supabase
+          .from('session_planners')
+          .select('id, day_number')
+          .eq('program_id', programId)
+          .eq('status', 'pending');
+
+        if (pendingPlanners && pendingPlanners.length > 0) {
+          const updates = pendingPlanners.map(planner => {
+            // day_number is 1-indexed, match to training days (skip rest days)
+            const trainingDays = updatedDays.filter((d: WorkoutDay) => {
+              const type = (d.sessionType || '').toLowerCase();
+              return type !== 'rest' && type !== 'off' && type !== 'recovery';
+            });
+            const dayIdx = (planner.day_number - 1) % trainingDays.length;
+            const matchedDay = trainingDays[dayIdx];
+            if (!matchedDay) return null;
+
+            return supabase
+              .from('session_planners')
+              .update({
+                session_type: matchedDay.sessionType,
+                planned_exercises: (matchedDay.exercises || []).map((ex: Exercise) => ({
+                  name: ex.name,
+                  equipment: ex.equipment,
+                  sets: typeof ex.sets === 'number' ? ex.sets : parseInt(String(ex.sets)) || 3,
+                  reps: ex.reps,
+                  intensity: ex.intensity,
+                  rest: ex.rest,
+                  notes: ex.notes,
+                })),
+                warmup: matchedDay.warmup,
+                cooldown: matchedDay.cooldown,
+              })
+              .eq('id', planner.id);
+          });
+
+          await Promise.all(updates.filter(Boolean));
+        }
+      } catch (syncErr) {
+        console.error('Failed to sync session planners:', syncErr);
+      }
+
       try {
         const { data: program } = await supabase
           .from('training_programs')
