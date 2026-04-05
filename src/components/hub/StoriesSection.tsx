@@ -74,6 +74,10 @@ export function StoriesSection() {
     setFloatingHearts(prev => [...prev, ...newHearts]);
   }, []);
 
+  const STORY_DURATION = 5000;
+  const [viewedUsers, setViewedUsers] = useState<Set<string>>(new Set());
+  const [activeMediaSlide, setActiveMediaSlide] = useState(0);
+
   const handlePublishStory = async (data: {
     content: string | null;
     image_url: string | null;
