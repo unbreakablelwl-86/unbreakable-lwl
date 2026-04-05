@@ -3,12 +3,38 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useStories, Story } from '@/hooks/useStories';
 import { useAuth } from '@/hooks/useAuth';
 import { useProfile } from '@/hooks/useProfile';
-import { Plus, X, Trash2, Play, Pause, Volume2, VolumeX, Share2 } from 'lucide-react';
+import { Plus, X, Trash2, Play, Pause, Volume2, VolumeX, Share2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
 import { StoryEditor } from './StoryEditor';
 import { StoryTextOverlay, TextOverlayData } from './StoryTextOverlay';
+
+// Floating heart component for double-tap like
+function FloatingHeart({ id, x, y, onDone }: { id: number; x: number; y: number; onDone: (id: number) => void }) {
+  const colors = ['#E8620A', '#FFFFFF', '#1C1C1E']; // orange, white, black
+  const color = colors[Math.floor(Math.random() * colors.length)];
+  const hearts = ['🧡', '🤍', '🖤'];
+  const heart = color === '#E8620A' ? hearts[0] : color === '#FFFFFF' ? hearts[1] : hearts[2];
+  const drift = (Math.random() - 0.5) * 80;
+
+  useEffect(() => {
+    const timer = setTimeout(() => onDone(id), 1200);
+    return () => clearTimeout(timer);
+  }, [id, onDone]);
+
+  return (
+    <motion.div
+      initial={{ opacity: 1, scale: 0.5, x: 0, y: 0 }}
+      animate={{ opacity: 0, scale: 1.8, x: drift, y: -200 }}
+      transition={{ duration: 1.2, ease: 'easeOut' }}
+      className="absolute pointer-events-none z-50 text-4xl"
+      style={{ left: x, top: y }}
+    >
+      {heart}
+    </motion.div>
+  );
+}
 
 export function StoriesSection() {
   const { user } = useAuth();
@@ -30,9 +56,25 @@ export function StoriesSection() {
   const [progress, setProgress] = useState(0);
   const touchStartRef = useRef<{ x: number; y: number } | null>(null);
 
-  const STORY_DURATION = 5000;
+  // Double-tap like state
+  const lastTapRef = useRef<{ time: number; x: number; y: number } | null>(null);
+  const [floatingHearts, setFloatingHearts] = useState<Array<{ id: number; x: number; y: number }>>([]);
+  const heartIdRef = useRef(0);
 
-  // Track which stories have been viewed this session
+  const removeHeart = useCallback((id: number) => {
+    setFloatingHearts(prev => prev.filter(h => h.id !== id));
+  }, []);
+
+  const spawnHearts = useCallback((x: number, y: number) => {
+    const newHearts = Array.from({ length: 5 }, () => ({
+      id: ++heartIdRef.current,
+      x: x + (Math.random() - 0.5) * 40,
+      y: y + (Math.random() - 0.5) * 30,
+    }));
+    setFloatingHearts(prev => [...prev, ...newHearts]);
+  }, []);
+
+  const STORY_DURATION = 5000;
   const [viewedUsers, setViewedUsers] = useState<Set<string>>(new Set());
   const [activeMediaSlide, setActiveMediaSlide] = useState(0);
 
@@ -325,8 +367,18 @@ export function StoriesSection() {
       return;
     }
 
-    // Tap zones navigation
+    // Tap zones navigation + double-tap like
     if (Math.abs(dx) < 10 && Math.abs(dy) < 10) {
+      const now = Date.now();
+      const last = lastTapRef.current;
+      if (last && now - last.time < 350 && Math.abs(endX - last.x) < 50 && Math.abs(endY - last.y) < 50) {
+        // Double tap — spawn hearts
+        lastTapRef.current = null;
+        suppressNextClick();
+        spawnHearts(endX, endY);
+        return;
+      }
+      lastTapRef.current = { time: now, x: endX, y: endY };
       suppressNextClick();
       const screenWidth = window.innerWidth;
       if (endX < screenWidth / 3) {
@@ -341,6 +393,16 @@ export function StoriesSection() {
     if (suppressClickRef.current) return;
     const target = e.target as HTMLElement;
     if (target.closest('[data-story-controls]')) return;
+
+    // Double-tap detection for desktop
+    const now = Date.now();
+    const last = lastTapRef.current;
+    if (last && now - last.time < 350 && Math.abs(e.clientX - last.x) < 50 && Math.abs(e.clientY - last.y) < 50) {
+      lastTapRef.current = null;
+      spawnHearts(e.clientX, e.clientY);
+      return;
+    }
+    lastTapRef.current = { time: now, x: e.clientX, y: e.clientY };
 
     const screenWidth = window.innerWidth;
     if (e.clientX < screenWidth / 3) {
@@ -578,22 +640,24 @@ export function StoriesSection() {
                         </div>
                       )}
 
-                       {/* Swipe nav arrows for multi-media — positioned as visible buttons */}
+                       {/* Slide nav arrows — mid-screen sides */}
                        {mediaArr.length > 1 && (
-                         <div className="absolute bottom-24 left-0 right-0 z-20 flex items-center justify-between px-3" data-story-controls>
+                         <>
                            <button
-                             className={`w-8 h-8 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center text-white transition-opacity ${activeMediaSlide === 0 ? 'opacity-0 pointer-events-none' : 'opacity-80'}`}
+                             data-story-controls
+                             className={`absolute left-2 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-white transition-opacity ${activeMediaSlide === 0 ? 'opacity-0 pointer-events-none' : 'opacity-70 hover:opacity-100'}`}
                              onClick={(e) => { e.stopPropagation(); setActiveMediaSlide(prev => Math.max(0, prev - 1)); }}
                            >
-                             ‹
+                             <ChevronLeft className="w-5 h-5" />
                            </button>
                            <button
-                             className={`w-8 h-8 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center text-white transition-opacity ${activeMediaSlide === mediaArr.length - 1 ? 'opacity-0 pointer-events-none' : 'opacity-80'}`}
+                             data-story-controls
+                             className={`absolute right-2 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-white transition-opacity ${activeMediaSlide === mediaArr.length - 1 ? 'opacity-0 pointer-events-none' : 'opacity-70 hover:opacity-100'}`}
                              onClick={(e) => { e.stopPropagation(); setActiveMediaSlide(prev => Math.min(mediaArr.length - 1, prev + 1)); }}
                            >
-                             ›
+                             <ChevronRight className="w-5 h-5" />
                            </button>
-                         </div>
+                         </>
                        )}
 
                       {currentSlide.type === 'video' ? (
@@ -730,6 +794,13 @@ export function StoriesSection() {
                 </div>
               )}
             </div>
+
+            {/* Floating hearts from double-tap */}
+            <AnimatePresence>
+              {floatingHearts.map(heart => (
+                <FloatingHeart key={heart.id} id={heart.id} x={heart.x} y={heart.y} onDone={removeHeart} />
+              ))}
+            </AnimatePresence>
           </motion.div>
         )}
       </AnimatePresence>
