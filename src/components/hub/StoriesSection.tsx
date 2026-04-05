@@ -3,12 +3,38 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useStories, Story } from '@/hooks/useStories';
 import { useAuth } from '@/hooks/useAuth';
 import { useProfile } from '@/hooks/useProfile';
-import { Plus, X, Trash2, Play, Pause, Volume2, VolumeX, Share2 } from 'lucide-react';
+import { Plus, X, Trash2, Play, Pause, Volume2, VolumeX, Share2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
 import { StoryEditor } from './StoryEditor';
 import { StoryTextOverlay, TextOverlayData } from './StoryTextOverlay';
+
+// Floating heart component for double-tap like
+function FloatingHeart({ id, x, y, onDone }: { id: number; x: number; y: number; onDone: (id: number) => void }) {
+  const colors = ['#E8620A', '#FFFFFF', '#1C1C1E']; // orange, white, black
+  const color = colors[Math.floor(Math.random() * colors.length)];
+  const hearts = ['🧡', '🤍', '🖤'];
+  const heart = color === '#E8620A' ? hearts[0] : color === '#FFFFFF' ? hearts[1] : hearts[2];
+  const drift = (Math.random() - 0.5) * 80;
+
+  useEffect(() => {
+    const timer = setTimeout(() => onDone(id), 1200);
+    return () => clearTimeout(timer);
+  }, [id, onDone]);
+
+  return (
+    <motion.div
+      initial={{ opacity: 1, scale: 0.5, x: 0, y: 0 }}
+      animate={{ opacity: 0, scale: 1.8, x: drift, y: -200 }}
+      transition={{ duration: 1.2, ease: 'easeOut' }}
+      className="absolute pointer-events-none z-50 text-4xl"
+      style={{ left: x, top: y }}
+    >
+      {heart}
+    </motion.div>
+  );
+}
 
 export function StoriesSection() {
   const { user } = useAuth();
@@ -30,11 +56,23 @@ export function StoriesSection() {
   const [progress, setProgress] = useState(0);
   const touchStartRef = useRef<{ x: number; y: number } | null>(null);
 
-  const STORY_DURATION = 5000;
+  // Double-tap like state
+  const lastTapRef = useRef<{ time: number; x: number; y: number } | null>(null);
+  const [floatingHearts, setFloatingHearts] = useState<Array<{ id: number; x: number; y: number }>>([]);
+  const heartIdRef = useRef(0);
 
-  // Track which stories have been viewed this session
-  const [viewedUsers, setViewedUsers] = useState<Set<string>>(new Set());
-  const [activeMediaSlide, setActiveMediaSlide] = useState(0);
+  const removeHeart = useCallback((id: number) => {
+    setFloatingHearts(prev => prev.filter(h => h.id !== id));
+  }, []);
+
+  const spawnHearts = useCallback((x: number, y: number) => {
+    const newHearts = Array.from({ length: 5 }, () => ({
+      id: ++heartIdRef.current,
+      x: x + (Math.random() - 0.5) * 40,
+      y: y + (Math.random() - 0.5) * 30,
+    }));
+    setFloatingHearts(prev => [...prev, ...newHearts]);
+  }, []);
 
   const handlePublishStory = async (data: {
     content: string | null;
