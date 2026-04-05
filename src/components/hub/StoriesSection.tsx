@@ -367,8 +367,18 @@ export function StoriesSection() {
       return;
     }
 
-    // Tap zones navigation
+    // Tap zones navigation + double-tap like
     if (Math.abs(dx) < 10 && Math.abs(dy) < 10) {
+      const now = Date.now();
+      const last = lastTapRef.current;
+      if (last && now - last.time < 350 && Math.abs(endX - last.x) < 50 && Math.abs(endY - last.y) < 50) {
+        // Double tap — spawn hearts
+        lastTapRef.current = null;
+        suppressNextClick();
+        spawnHearts(endX, endY);
+        return;
+      }
+      lastTapRef.current = { time: now, x: endX, y: endY };
       suppressNextClick();
       const screenWidth = window.innerWidth;
       if (endX < screenWidth / 3) {
@@ -383,6 +393,16 @@ export function StoriesSection() {
     if (suppressClickRef.current) return;
     const target = e.target as HTMLElement;
     if (target.closest('[data-story-controls]')) return;
+
+    // Double-tap detection for desktop
+    const now = Date.now();
+    const last = lastTapRef.current;
+    if (last && now - last.time < 350 && Math.abs(e.clientX - last.x) < 50 && Math.abs(e.clientY - last.y) < 50) {
+      lastTapRef.current = null;
+      spawnHearts(e.clientX, e.clientY);
+      return;
+    }
+    lastTapRef.current = { time: now, x: e.clientX, y: e.clientY };
 
     const screenWidth = window.innerWidth;
     if (e.clientX < screenWidth / 3) {
