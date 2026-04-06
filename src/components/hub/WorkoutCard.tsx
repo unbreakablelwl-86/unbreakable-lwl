@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { Card } from '@/components/ui/card';
 import { ClickableAvatar } from '@/components/ClickableAvatar';
 import { ClickableUsername } from '@/components/ClickableUsername';
 import { Button } from '@/components/ui/button';
-import { Heart, MessageCircle, Dumbbell, Clock, Globe, Users, Lock } from 'lucide-react';
+import { Dumbbell, MessageCircle, Clock, Globe, Users, Lock } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/hooks/useAuth';
 import { PostMenu } from '@/components/tracker/PostMenu';
 import { ShareMenu } from '@/components/tracker/ShareMenu';
