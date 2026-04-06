@@ -773,10 +773,22 @@ export function StoriesSection() {
               )}
             </div>
 
-            {/* Floating hearts from double-tap */}
+            {/* Like button at bottom */}
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30" data-story-controls>
+              <button
+                className={`w-12 h-12 rounded-full backdrop-blur-sm flex items-center justify-center transition-colors ${
+                  storyLiked ? 'bg-primary text-primary-foreground' : 'bg-black/40 text-white hover:bg-white/20'
+                }`}
+                onClick={(e) => { e.stopPropagation(); handleStoryLike(); }}
+              >
+                <Dumbbell className="w-6 h-6" />
+              </button>
+            </div>
+
+            {/* Floating dumbbells from like */}
             <AnimatePresence>
-              {floatingHearts.map(heart => (
-                <FloatingHeart key={heart.id} id={heart.id} x={heart.x} y={heart.y} onDone={removeHeart} />
+              {floatingDumbbells.map(d => (
+                <FloatingDumbbell key={d.id} id={d.id} x={d.x} y={d.y} onDone={removeDumbbell} />
               ))}
             </AnimatePresence>
           </motion.div>
