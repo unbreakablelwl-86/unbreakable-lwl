@@ -35,8 +35,22 @@ export function StatusCard({ post, onKudos, onDelete, onToggleComments, onUpdate
   const [showFullscreen, setShowFullscreen] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
+  const [floatingDumbbells, setFloatingDumbbells] = useState<{ id: number; x: number; y: number; rotate: number }[]>([]);
   const videoRef = useRef<HTMLVideoElement>(null);
   const { quality, setQuality, initializeQuality } = useVideoQuality();
+
+  const spawnDumbbells = useCallback(() => {
+    const newDumbbells = Array.from({ length: 4 }, (_, i) => ({
+      id: Date.now() + i,
+      x: (Math.random() - 0.5) * 60,
+      y: -(80 + Math.random() * 80),
+      rotate: Math.random() * 360,
+    }));
+    setFloatingDumbbells(prev => [...prev, ...newDumbbells]);
+    setTimeout(() => {
+      setFloatingDumbbells(prev => prev.filter(d => !newDumbbells.find(n => n.id === d.id)));
+    }, 1000);
+  }, []);
 
   // Initialize video quality detection
   useEffect(() => {
