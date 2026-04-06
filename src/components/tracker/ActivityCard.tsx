@@ -30,8 +30,22 @@ export function ActivityCard({ run, onKudos, onDelete, onToggleComments, onUpdat
   const [isLiking, setIsLiking] = useState(false);
   const [showComments, setShowComments] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [floatingDumbbells, setFloatingDumbbells] = useState<{ id: number; x: number; y: number; rotate: number }[]>([]);
 
   const isOwner = user?.id === run.user_id;
+
+  const spawnDumbbells = useCallback(() => {
+    const newDumbbells = Array.from({ length: 4 }, (_, i) => ({
+      id: Date.now() + i,
+      x: (Math.random() - 0.5) * 60,
+      y: -(80 + Math.random() * 80),
+      rotate: Math.random() * 360,
+    }));
+    setFloatingDumbbells(prev => [...prev, ...newDumbbells]);
+    setTimeout(() => {
+      setFloatingDumbbells(prev => prev.filter(d => !newDumbbells.find(n => n.id === d.id)));
+    }, 1000);
+  }, []);
 
   const formatDuration = (seconds: number) => {
     const hours = Math.floor(seconds / 3600);
