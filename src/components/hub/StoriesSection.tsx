@@ -10,28 +10,25 @@ import { formatDistanceToNow } from 'date-fns';
 import { StoryEditor } from './StoryEditor';
 import { StoryTextOverlay, TextOverlayData } from './StoryTextOverlay';
 
-// Floating heart component for double-tap like
-function FloatingHeart({ id, x, y, onDone }: { id: number; x: number; y: number; onDone: (id: number) => void }) {
-  const colors = ['#E8620A', '#FFFFFF', '#1C1C1E']; // orange, white, black
-  const color = colors[Math.floor(Math.random() * colors.length)];
-  const hearts = ['🧡', '🤍', '🖤'];
-  const heart = color === '#E8620A' ? hearts[0] : color === '#FFFFFF' ? hearts[1] : hearts[2];
-  const drift = (Math.random() - 0.5) * 80;
+// Floating dumbbell component for like animation
+function FloatingDumbbell({ id, x, y, onDone }: { id: number; x: number; y: number; onDone: (id: number) => void }) {
+  const drift = (Math.random() - 0.5) * 60;
+  const rotation = Math.random() * 360;
 
   useEffect(() => {
-    const timer = setTimeout(() => onDone(id), 1200);
+    const timer = setTimeout(() => onDone(id), 1000);
     return () => clearTimeout(timer);
   }, [id, onDone]);
 
   return (
     <motion.div
-      initial={{ opacity: 1, scale: 0.5, x: 0, y: 0 }}
-      animate={{ opacity: 0, scale: 1.8, x: drift, y: -200 }}
-      transition={{ duration: 1.2, ease: 'easeOut' }}
-      className="absolute pointer-events-none z-50 text-4xl"
+      initial={{ opacity: 1, scale: 0.6, x: 0, y: 0, rotate: 0 }}
+      animate={{ opacity: 0, scale: 1.2, x: drift, y: -140, rotate: rotation }}
+      transition={{ duration: 0.8, ease: 'easeOut' }}
+      className="absolute pointer-events-none z-50"
       style={{ left: x, top: y }}
     >
-      {heart}
+      <Dumbbell className="w-5 h-5 text-primary" />
     </motion.div>
   );
 }
