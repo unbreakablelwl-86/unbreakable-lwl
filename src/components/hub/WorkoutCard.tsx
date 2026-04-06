@@ -183,7 +183,21 @@ export function WorkoutCard({ workout, onKudos, onDelete, onToggleComments, onUp
         </div>
 
         {/* Actions */}
-        <div className="border-t border-border px-4 py-3 flex items-center justify-between">
+        <div className="border-t border-border px-4 py-3 flex items-center justify-between relative overflow-visible">
+          <AnimatePresence>
+            {floatingDumbbells.map((d) => (
+              <motion.div
+                key={d.id}
+                initial={{ opacity: 1, y: 0, x: 0, rotate: 0 }}
+                animate={{ opacity: 0, y: d.y, x: d.x, rotate: d.rotate }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.8, ease: 'easeOut' }}
+                className="absolute left-8 bottom-8 pointer-events-none z-50"
+              >
+                <Dumbbell className="w-4 h-4 text-primary" />
+              </motion.div>
+            ))}
+          </AnimatePresence>
           <div className="flex items-center gap-4">
             <Button
               variant="ghost"
@@ -196,7 +210,7 @@ export function WorkoutCard({ workout, onKudos, onDelete, onToggleComments, onUp
                 animate={workout.has_kudos ? { scale: [1, 1.3, 1] } : {}}
                 transition={{ duration: 0.3 }}
               >
-                <Heart className={`w-5 h-5 ${workout.has_kudos ? 'fill-primary' : ''}`} />
+                <Dumbbell className={`w-5 h-5 ${workout.has_kudos ? 'fill-primary' : ''}`} />
               </motion.div>
               <span>{workout.kudos_count || 0}</span>
             </Button>
