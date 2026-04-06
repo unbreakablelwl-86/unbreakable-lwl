@@ -161,6 +161,7 @@ export function StoriesSection() {
     setIsPaused(false);
     setIsPlaying(true);
     setProgress(0);
+    setStoryLiked(false);
   };
 
   const nextStory = useCallback(() => {
