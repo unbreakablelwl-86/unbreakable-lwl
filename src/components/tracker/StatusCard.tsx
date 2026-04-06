@@ -64,6 +64,7 @@ export function StatusCard({ post, onKudos, onDelete, onToggleComments, onUpdate
   const handleKudos = async () => {
     if (!user) return;
     setIsLiking(true);
+    spawnDumbbells();
     await onKudos(post.id);
     setIsLiking(false);
   };
