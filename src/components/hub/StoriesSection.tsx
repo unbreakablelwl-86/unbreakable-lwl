@@ -382,16 +382,6 @@ export function StoriesSection() {
     const target = e.target as HTMLElement;
     if (target.closest('[data-story-controls]')) return;
 
-    // Double-tap detection for desktop
-    const now = Date.now();
-    const last = lastTapRef.current;
-    if (last && now - last.time < 350 && Math.abs(e.clientX - last.x) < 50 && Math.abs(e.clientY - last.y) < 50) {
-      lastTapRef.current = null;
-      spawnHearts(e.clientX, e.clientY);
-      return;
-    }
-    lastTapRef.current = { time: now, x: e.clientX, y: e.clientY };
-
     const screenWidth = window.innerWidth;
     if (e.clientX < screenWidth / 3) {
       prevSlideOrStory();
