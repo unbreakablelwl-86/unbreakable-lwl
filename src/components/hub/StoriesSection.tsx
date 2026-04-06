@@ -3,35 +3,32 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useStories, Story } from '@/hooks/useStories';
 import { useAuth } from '@/hooks/useAuth';
 import { useProfile } from '@/hooks/useProfile';
-import { Plus, X, Trash2, Play, Pause, Volume2, VolumeX, Share2, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Plus, X, Trash2, Play, Pause, Volume2, VolumeX, Share2, ChevronLeft, ChevronRight, Dumbbell } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
 import { StoryEditor } from './StoryEditor';
 import { StoryTextOverlay, TextOverlayData } from './StoryTextOverlay';
 
-// Floating heart component for double-tap like
-function FloatingHeart({ id, x, y, onDone }: { id: number; x: number; y: number; onDone: (id: number) => void }) {
-  const colors = ['#E8620A', '#FFFFFF', '#1C1C1E']; // orange, white, black
-  const color = colors[Math.floor(Math.random() * colors.length)];
-  const hearts = ['🧡', '🤍', '🖤'];
-  const heart = color === '#E8620A' ? hearts[0] : color === '#FFFFFF' ? hearts[1] : hearts[2];
-  const drift = (Math.random() - 0.5) * 80;
+// Floating dumbbell component for like animation
+function FloatingDumbbell({ id, x, y, onDone }: { id: number; x: number; y: number; onDone: (id: number) => void }) {
+  const drift = (Math.random() - 0.5) * 60;
+  const rotation = Math.random() * 360;
 
   useEffect(() => {
-    const timer = setTimeout(() => onDone(id), 1200);
+    const timer = setTimeout(() => onDone(id), 1000);
     return () => clearTimeout(timer);
   }, [id, onDone]);
 
   return (
     <motion.div
-      initial={{ opacity: 1, scale: 0.5, x: 0, y: 0 }}
-      animate={{ opacity: 0, scale: 1.8, x: drift, y: -200 }}
-      transition={{ duration: 1.2, ease: 'easeOut' }}
-      className="absolute pointer-events-none z-50 text-4xl"
+      initial={{ opacity: 1, scale: 0.6, x: 0, y: 0, rotate: 0 }}
+      animate={{ opacity: 0, scale: 1.2, x: drift, y: -140, rotate: rotation }}
+      transition={{ duration: 0.8, ease: 'easeOut' }}
+      className="absolute pointer-events-none z-50"
       style={{ left: x, top: y }}
     >
-      {heart}
+      <Dumbbell className="w-5 h-5 text-primary" />
     </motion.div>
   );
 }
@@ -56,22 +53,23 @@ export function StoriesSection() {
   const [progress, setProgress] = useState(0);
   const touchStartRef = useRef<{ x: number; y: number } | null>(null);
 
-  // Double-tap like state
-  const lastTapRef = useRef<{ time: number; x: number; y: number } | null>(null);
-  const [floatingHearts, setFloatingHearts] = useState<Array<{ id: number; x: number; y: number }>>([]);
-  const heartIdRef = useRef(0);
+  // Like state for story viewer
+  const [floatingDumbbells, setFloatingDumbbells] = useState<Array<{ id: number; x: number; y: number }>>([]);
+  const dumbbellIdRef = useRef(0);
+  const [storyLiked, setStoryLiked] = useState(false);
 
-  const removeHeart = useCallback((id: number) => {
-    setFloatingHearts(prev => prev.filter(h => h.id !== id));
+  const removeDumbbell = useCallback((id: number) => {
+    setFloatingDumbbells(prev => prev.filter(d => d.id !== id));
   }, []);
 
-  const spawnHearts = useCallback((x: number, y: number) => {
-    const newHearts = Array.from({ length: 5 }, () => ({
-      id: ++heartIdRef.current,
-      x: x + (Math.random() - 0.5) * 40,
-      y: y + (Math.random() - 0.5) * 30,
+  const handleStoryLike = useCallback(() => {
+    setStoryLiked(true);
+    const newDumbbells = Array.from({ length: 4 }, () => ({
+      id: ++dumbbellIdRef.current,
+      x: window.innerWidth / 2 + (Math.random() - 0.5) * 40 - 12,
+      y: window.innerHeight - 80,
     }));
-    setFloatingHearts(prev => [...prev, ...newHearts]);
+    setFloatingDumbbells(prev => [...prev, ...newDumbbells]);
   }, []);
 
   const STORY_DURATION = 5000;
@@ -163,6 +161,7 @@ export function StoriesSection() {
     setIsPaused(false);
     setIsPlaying(true);
     setProgress(0);
+    setStoryLiked(false);
   };
 
   const nextStory = useCallback(() => {
@@ -367,18 +366,8 @@ export function StoriesSection() {
       return;
     }
 
-    // Tap zones navigation + double-tap like
+    // Tap zones navigation (no double-tap)
     if (Math.abs(dx) < 10 && Math.abs(dy) < 10) {
-      const now = Date.now();
-      const last = lastTapRef.current;
-      if (last && now - last.time < 350 && Math.abs(endX - last.x) < 50 && Math.abs(endY - last.y) < 50) {
-        // Double tap — spawn hearts
-        lastTapRef.current = null;
-        suppressNextClick();
-        spawnHearts(endX, endY);
-        return;
-      }
-      lastTapRef.current = { time: now, x: endX, y: endY };
       suppressNextClick();
       const screenWidth = window.innerWidth;
       if (endX < screenWidth / 3) {
@@ -393,16 +382,6 @@ export function StoriesSection() {
     if (suppressClickRef.current) return;
     const target = e.target as HTMLElement;
     if (target.closest('[data-story-controls]')) return;
-
-    // Double-tap detection for desktop
-    const now = Date.now();
-    const last = lastTapRef.current;
-    if (last && now - last.time < 350 && Math.abs(e.clientX - last.x) < 50 && Math.abs(e.clientY - last.y) < 50) {
-      lastTapRef.current = null;
-      spawnHearts(e.clientX, e.clientY);
-      return;
-    }
-    lastTapRef.current = { time: now, x: e.clientX, y: e.clientY };
 
     const screenWidth = window.innerWidth;
     if (e.clientX < screenWidth / 3) {
@@ -795,10 +774,22 @@ export function StoriesSection() {
               )}
             </div>
 
-            {/* Floating hearts from double-tap */}
+            {/* Like button at bottom */}
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30" data-story-controls>
+              <button
+                className={`w-12 h-12 rounded-full backdrop-blur-sm flex items-center justify-center transition-colors ${
+                  storyLiked ? 'bg-primary text-primary-foreground' : 'bg-black/40 text-white hover:bg-white/20'
+                }`}
+                onClick={(e) => { e.stopPropagation(); handleStoryLike(); }}
+              >
+                <Dumbbell className="w-6 h-6" />
+              </button>
+            </div>
+
+            {/* Floating dumbbells from like */}
             <AnimatePresence>
-              {floatingHearts.map(heart => (
-                <FloatingHeart key={heart.id} id={heart.id} x={heart.x} y={heart.y} onDone={removeHeart} />
+              {floatingDumbbells.map(d => (
+                <FloatingDumbbell key={d.id} id={d.id} x={d.x} y={d.y} onDone={removeDumbbell} />
               ))}
             </AnimatePresence>
           </motion.div>

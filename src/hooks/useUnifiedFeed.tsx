@@ -357,41 +357,45 @@ export function useUnifiedFeed() {
     return items.sort((a, b) => b.data.timestamp.getTime() - a.data.timestamp.getTime());
   }, [runs, posts, workouts, milestones, blockedUsers, friends, user]);
 
-  // Kudos toggles
+  // Kudos toggles with optimistic updates
   const toggleRunKudos = async (runId: string) => {
     if (!user) return;
     const run = runs.find((r) => r.id === runId);
     if (!run) return;
-    if (run.has_kudos) {
+    const wasLiked = run.has_kudos;
+    // Optimistic update
+    setRuns(prev => prev.map(r => r.id === runId ? { ...r, has_kudos: !wasLiked, kudos_count: (r.kudos_count || 0) + (wasLiked ? -1 : 1) } : r));
+    if (wasLiked) {
       await supabase.from('kudos').delete().eq('run_id', runId).eq('user_id', user.id);
     } else {
       await supabase.from('kudos').insert({ run_id: runId, user_id: user.id });
     }
-    fetchAll(true);
   };
 
   const togglePostKudos = async (postId: string) => {
     if (!user) return;
     const post = posts.find((p) => p.id === postId);
     if (!post) return;
-    if (post.has_kudos) {
+    const wasLiked = post.has_kudos;
+    setPosts(prev => prev.map(p => p.id === postId ? { ...p, has_kudos: !wasLiked, kudos_count: (p.kudos_count || 0) + (wasLiked ? -1 : 1) } : p));
+    if (wasLiked) {
       await supabase.from('post_kudos').delete().eq('post_id', postId).eq('user_id', user.id);
     } else {
       await supabase.from('post_kudos').insert({ post_id: postId, user_id: user.id });
     }
-    fetchAll(true);
   };
 
   const toggleWorkoutKudos = async (workoutId: string) => {
     if (!user) return;
     const workout = workouts.find((w) => w.id === workoutId);
     if (!workout) return;
-    if (workout.has_kudos) {
+    const wasLiked = workout.has_kudos;
+    setWorkouts(prev => prev.map(w => w.id === workoutId ? { ...w, has_kudos: !wasLiked, kudos_count: (w.kudos_count || 0) + (wasLiked ? -1 : 1) } : w));
+    if (wasLiked) {
       await supabase.from('workout_kudos').delete().eq('workout_id', workoutId).eq('user_id', user.id);
     } else {
       await supabase.from('workout_kudos').insert({ workout_id: workoutId, user_id: user.id });
     }
-    fetchAll(true);
   };
 
   // Delete actions
