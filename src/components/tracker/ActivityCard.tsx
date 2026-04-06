@@ -68,6 +68,7 @@ export function ActivityCard({ run, onKudos, onDelete, onToggleComments, onUpdat
   const handleKudos = async () => {
     if (!user) return;
     setIsLiking(true);
+    spawnDumbbells();
     await onKudos(run.id);
     setIsLiking(false);
   };
