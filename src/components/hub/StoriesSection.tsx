@@ -53,22 +53,23 @@ export function StoriesSection() {
   const [progress, setProgress] = useState(0);
   const touchStartRef = useRef<{ x: number; y: number } | null>(null);
 
-  // Double-tap like state
-  const lastTapRef = useRef<{ time: number; x: number; y: number } | null>(null);
-  const [floatingHearts, setFloatingHearts] = useState<Array<{ id: number; x: number; y: number }>>([]);
-  const heartIdRef = useRef(0);
+  // Like state for story viewer
+  const [floatingDumbbells, setFloatingDumbbells] = useState<Array<{ id: number; x: number; y: number }>>([]);
+  const dumbbellIdRef = useRef(0);
+  const [storyLiked, setStoryLiked] = useState(false);
 
-  const removeHeart = useCallback((id: number) => {
-    setFloatingHearts(prev => prev.filter(h => h.id !== id));
+  const removeDumbbell = useCallback((id: number) => {
+    setFloatingDumbbells(prev => prev.filter(d => d.id !== id));
   }, []);
 
-  const spawnHearts = useCallback((x: number, y: number) => {
-    const newHearts = Array.from({ length: 5 }, () => ({
-      id: ++heartIdRef.current,
-      x: x + (Math.random() - 0.5) * 40,
-      y: y + (Math.random() - 0.5) * 30,
+  const handleStoryLike = useCallback(() => {
+    setStoryLiked(true);
+    const newDumbbells = Array.from({ length: 4 }, () => ({
+      id: ++dumbbellIdRef.current,
+      x: window.innerWidth / 2 + (Math.random() - 0.5) * 40 - 12,
+      y: window.innerHeight - 80,
     }));
-    setFloatingHearts(prev => [...prev, ...newHearts]);
+    setFloatingDumbbells(prev => [...prev, ...newDumbbells]);
   }, []);
 
   const STORY_DURATION = 5000;
