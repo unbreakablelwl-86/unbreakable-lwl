@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { ClickableAvatar } from '@/components/ClickableAvatar';
 import { ClickableUsername } from '@/components/ClickableUsername';
