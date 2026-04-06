@@ -49,6 +49,7 @@ export function WorkoutCard({ workout, onKudos, onDelete, onToggleComments, onUp
   const handleKudos = async () => {
     if (!user || isLiking) return;
     setIsLiking(true);
+    spawnDumbbells();
     await onKudos(workout.id);
     setIsLiking(false);
   };
