@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { Card } from '@/components/ui/card';
 import { ClickableAvatar } from '@/components/ClickableAvatar';
 import { ClickableUsername } from '@/components/ClickableUsername';
 import { Button } from '@/components/ui/button';
-import { Heart, MessageCircle, Dumbbell, Clock, Globe, Users, Lock } from 'lucide-react';
+import { Dumbbell, MessageCircle, Clock, Globe, Users, Lock } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/hooks/useAuth';
 import { PostMenu } from '@/components/tracker/PostMenu';
 import { ShareMenu } from '@/components/tracker/ShareMenu';
@@ -29,12 +29,27 @@ export function WorkoutCard({ workout, onKudos, onDelete, onToggleComments, onUp
   const [isLiking, setIsLiking] = useState(false);
   const [showComments, setShowComments] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [floatingDumbbells, setFloatingDumbbells] = useState<{ id: number; x: number; y: number; rotate: number }[]>([]);
 
   const isOwner = user?.id === workout.user_id;
+
+  const spawnDumbbells = useCallback(() => {
+    const newDumbbells = Array.from({ length: 4 }, (_, i) => ({
+      id: Date.now() + i,
+      x: (Math.random() - 0.5) * 60,
+      y: -(80 + Math.random() * 80),
+      rotate: Math.random() * 360,
+    }));
+    setFloatingDumbbells(prev => [...prev, ...newDumbbells]);
+    setTimeout(() => {
+      setFloatingDumbbells(prev => prev.filter(d => !newDumbbells.find(n => n.id === d.id)));
+    }, 1000);
+  }, []);
 
   const handleKudos = async () => {
     if (!user || isLiking) return;
     setIsLiking(true);
+    spawnDumbbells();
     await onKudos(workout.id);
     setIsLiking(false);
   };
@@ -168,7 +183,21 @@ export function WorkoutCard({ workout, onKudos, onDelete, onToggleComments, onUp
         </div>
 
         {/* Actions */}
-        <div className="border-t border-border px-4 py-3 flex items-center justify-between">
+        <div className="border-t border-border px-4 py-3 flex items-center justify-between relative overflow-visible">
+          <AnimatePresence>
+            {floatingDumbbells.map((d) => (
+              <motion.div
+                key={d.id}
+                initial={{ opacity: 1, y: 0, x: 0, rotate: 0 }}
+                animate={{ opacity: 0, y: d.y, x: d.x, rotate: d.rotate }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.8, ease: 'easeOut' }}
+                className="absolute left-8 bottom-8 pointer-events-none z-50"
+              >
+                <Dumbbell className="w-4 h-4 text-primary" />
+              </motion.div>
+            ))}
+          </AnimatePresence>
           <div className="flex items-center gap-4">
             <Button
               variant="ghost"
@@ -181,7 +210,7 @@ export function WorkoutCard({ workout, onKudos, onDelete, onToggleComments, onUp
                 animate={workout.has_kudos ? { scale: [1, 1.3, 1] } : {}}
                 transition={{ duration: 0.3 }}
               >
-                <Heart className={`w-5 h-5 ${workout.has_kudos ? 'fill-primary' : ''}`} />
+                <Dumbbell className={`w-5 h-5 ${workout.has_kudos ? 'fill-primary' : ''}`} />
               </motion.div>
               <span>{workout.kudos_count || 0}</span>
             </Button>

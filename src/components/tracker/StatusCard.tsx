@@ -1,13 +1,13 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { ClickableAvatar } from '@/components/ClickableAvatar';
 import { ClickableUsername } from '@/components/ClickableUsername';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Heart, MessageCircle, Globe, Users, Lock, Play, Pause, Volume2, VolumeX, Maximize } from 'lucide-react';
+import { Dumbbell, MessageCircle, Globe, Users, Lock, Play, Pause, Volume2, VolumeX, Maximize } from 'lucide-react';
 import { PostWithProfile } from '@/hooks/usePosts';
 import { useAuth } from '@/hooks/useAuth';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { PostMenu } from './PostMenu';
 import { PostCommentSection } from './PostCommentSection';
 import { ShareMenu } from './ShareMenu';
@@ -35,8 +35,22 @@ export function StatusCard({ post, onKudos, onDelete, onToggleComments, onUpdate
   const [showFullscreen, setShowFullscreen] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
+  const [floatingDumbbells, setFloatingDumbbells] = useState<{ id: number; x: number; y: number; rotate: number }[]>([]);
   const videoRef = useRef<HTMLVideoElement>(null);
   const { quality, setQuality, initializeQuality } = useVideoQuality();
+
+  const spawnDumbbells = useCallback(() => {
+    const newDumbbells = Array.from({ length: 4 }, (_, i) => ({
+      id: Date.now() + i,
+      x: (Math.random() - 0.5) * 60,
+      y: -(80 + Math.random() * 80),
+      rotate: Math.random() * 360,
+    }));
+    setFloatingDumbbells(prev => [...prev, ...newDumbbells]);
+    setTimeout(() => {
+      setFloatingDumbbells(prev => prev.filter(d => !newDumbbells.find(n => n.id === d.id)));
+    }, 1000);
+  }, []);
 
   // Initialize video quality detection
   useEffect(() => {
@@ -50,6 +64,7 @@ export function StatusCard({ post, onKudos, onDelete, onToggleComments, onUpdate
   const handleKudos = async () => {
     if (!user) return;
     setIsLiking(true);
+    spawnDumbbells();
     await onKudos(post.id);
     setIsLiking(false);
   };
@@ -238,11 +253,25 @@ export function StatusCard({ post, onKudos, onDelete, onToggleComments, onUpdate
         )}
 
         {/* Actions */}
-        <div className="flex items-center gap-2 px-4 py-3 border-t border-border">
+        <div className="flex items-center gap-2 px-4 py-3 border-t border-border relative overflow-visible">
+          <AnimatePresence>
+            {floatingDumbbells.map((d) => (
+              <motion.div
+                key={d.id}
+                initial={{ opacity: 1, y: 0, x: 0, rotate: 0 }}
+                animate={{ opacity: 0, y: d.y, x: d.x, rotate: d.rotate }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.8, ease: 'easeOut' }}
+                className="absolute left-8 bottom-8 pointer-events-none z-50"
+              >
+                <Dumbbell className="w-4 h-4 text-primary" />
+              </motion.div>
+            ))}
+          </AnimatePresence>
           <Button
             variant="ghost"
             size="sm"
-            className={`flex-1 ${post.has_kudos ? 'text-primary' : 'text-muted-foreground'}`}
+            className={`gap-2 ${post.has_kudos ? 'text-primary' : 'text-muted-foreground'}`}
             onClick={handleKudos}
             disabled={!user || isLiking}
           >
@@ -250,22 +279,18 @@ export function StatusCard({ post, onKudos, onDelete, onToggleComments, onUpdate
               animate={isLiking ? { scale: [1, 1.3, 1] } : {}}
               transition={{ duration: 0.3 }}
             >
-              <Heart className={`w-5 h-5 mr-2 ${post.has_kudos ? 'fill-primary' : ''}`} />
+              <Dumbbell className={`w-5 h-5 ${post.has_kudos ? 'fill-primary' : ''}`} />
             </motion.div>
-            <span className="font-display tracking-wide">
-              {post.kudos_count || 0} Like{post.kudos_count !== 1 ? 's' : ''}
-            </span>
+            <span>{post.kudos_count || 0}</span>
           </Button>
           <Button
             variant="ghost"
             size="sm"
-            className={`flex-1 ${showComments ? 'text-primary' : 'text-muted-foreground'}`}
+            className={`gap-2 ${showComments ? 'text-primary' : 'text-muted-foreground'}`}
             onClick={() => setShowComments(!showComments)}
           >
-            <MessageCircle className={`w-5 h-5 mr-2 ${showComments ? 'fill-primary/20' : ''}`} />
-            <span className="font-display tracking-wide">
-              {post.comments_count || 0}
-            </span>
+            <MessageCircle className={`w-5 h-5 ${showComments ? 'fill-primary/20' : ''}`} />
+            <span>{post.comments_count || 0}</span>
           </Button>
           <ShareMenu 
             onShareToStory={handleShareToStory}
