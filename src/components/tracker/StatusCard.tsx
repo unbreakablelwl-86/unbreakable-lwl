@@ -4,7 +4,7 @@ import { ClickableAvatar } from '@/components/ClickableAvatar';
 import { ClickableUsername } from '@/components/ClickableUsername';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Heart, MessageCircle, Globe, Users, Lock, Play, Pause, Volume2, VolumeX, Maximize } from 'lucide-react';
+import { Dumbbell, MessageCircle, Globe, Users, Lock, Play, Pause, Volume2, VolumeX, Maximize } from 'lucide-react';
 import { PostWithProfile } from '@/hooks/usePosts';
 import { useAuth } from '@/hooks/useAuth';
 import { motion } from 'framer-motion';
