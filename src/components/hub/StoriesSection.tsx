@@ -495,7 +495,8 @@ export function StoriesSection() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 60 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-50 bg-black"
+            className="fixed inset-0 z-50 bg-black overflow-hidden"
+            style={{ touchAction: 'none' }}
             onClick={handleViewerClick}
             onTouchStart={handleViewerTouchStart}
             onTouchEnd={handleViewerTouchEnd}
