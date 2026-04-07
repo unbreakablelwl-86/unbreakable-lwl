@@ -93,6 +93,16 @@ const QUICK_TEMPLATES = [
       { name: 'Bicep Curls', sets: 3, reps: '12-15', equipment: 'dumbbell' },
     ],
   },
+  {
+    name: 'Conditioning',
+    exercises: [
+      { name: 'Kettlebell Swings', sets: 4, reps: '15', equipment: 'kettlebell' },
+      { name: 'Battle Ropes', sets: 4, reps: '30s', equipment: 'cardio' },
+      { name: 'Sled Push', sets: 4, reps: '20m', equipment: 'cardio' },
+      { name: 'Burpees', sets: 3, reps: '10', equipment: 'bodyweight' },
+      { name: 'Medicine Ball Slams', sets: 3, reps: '12', equipment: 'cardio' },
+    ],
+  },
 ];
 
 export function ManualWorkoutBuilder() {
