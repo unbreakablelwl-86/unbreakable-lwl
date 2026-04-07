@@ -495,7 +495,8 @@ export function StoriesSection() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 60 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-50 bg-black"
+            className="fixed inset-0 z-50 bg-black overflow-hidden"
+            style={{ touchAction: 'none' }}
             onClick={handleViewerClick}
             onTouchStart={handleViewerTouchStart}
             onTouchEnd={handleViewerTouchEnd}
@@ -774,15 +775,16 @@ export function StoriesSection() {
               )}
             </div>
 
-            {/* Like button at bottom */}
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30" data-story-controls>
+            {/* Like button at bottom - safe area aware */}
+            <div className="absolute bottom-0 left-0 right-0 z-30 flex justify-center pb-[calc(env(safe-area-inset-bottom,16px)+16px)]" data-story-controls>
               <button
-                className={`w-12 h-12 rounded-full backdrop-blur-sm flex items-center justify-center transition-colors ${
-                  storyLiked ? 'bg-primary text-primary-foreground' : 'bg-black/40 text-white hover:bg-white/20'
+                className={`w-14 h-14 rounded-full backdrop-blur-md flex items-center justify-center transition-all shadow-lg ${
+                  storyLiked ? 'bg-primary text-primary-foreground scale-110' : 'bg-black/50 text-white hover:bg-white/20'
                 }`}
                 onClick={(e) => { e.stopPropagation(); handleStoryLike(); }}
+                onTouchEnd={(e) => { e.stopPropagation(); e.preventDefault(); handleStoryLike(); }}
               >
-                <Dumbbell className="w-6 h-6" />
+                <Dumbbell className="w-7 h-7" />
               </button>
             </div>
 
