@@ -52,6 +52,8 @@ const EQUIPMENT_OPTIONS = [
   { value: 'machine', label: 'Machine' },
   { value: 'cable', label: 'Cable' },
   { value: 'kettlebell', label: 'Kettlebell' },
+  { value: 'bands', label: 'Resistance Bands' },
+  { value: 'cardio', label: 'Cardio / Circuit' },
 ];
 
 const QUICK_TEMPLATES = [
