@@ -12,7 +12,7 @@ import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar,
 } from 'recharts';
 import { 
-  TrendingUp, Calendar, Clock, Zap, Target, Award, Activity,
+  TrendingUp, Calendar, Zap, Target, Award, Activity,
   Dumbbell, Timer, Footprints, Bike, Flame, Waves, Droplets, Medal, ArrowRight,
 } from 'lucide-react';
 import { format, startOfWeek, endOfWeek, subWeeks, parseISO, differenceInWeeks } from 'date-fns';
