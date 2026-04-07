@@ -258,8 +258,6 @@ export function CombinedStatsView({ onViewRecords }: CombinedStatsViewProps) {
   const workoutStats = useMemo(() => {
     if (!completedWorkouts.length) return null;
     const totalWorkouts = completedWorkouts.length;
-    const totalTime = completedWorkouts.reduce((sum, w) => sum + (w.duration_seconds || 0), 0);
-    const avgDuration = totalTime / totalWorkouts;
 
     // Streak calculation
     const sortedDates = [...new Set(completedWorkouts.map(w => format(parseISO(w.started_at), 'yyyy-MM-dd')))].sort().reverse();
@@ -275,6 +273,24 @@ export function CombinedStatsView({ onViewRecords }: CombinedStatsViewProps) {
       }
     }
 
+    // This week vs last week sessions
+    const thisWeekStart = startOfWeek(new Date());
+    const lastWeekStart = startOfWeek(subWeeks(new Date(), 1));
+    const lastWeekEnd = endOfWeek(lastWeekStart);
+    const thisWeekSessions = completedWorkouts.filter(w => parseISO(w.started_at) >= thisWeekStart).length;
+    const lastWeekSessions = completedWorkouts.filter(w => {
+      const d = parseISO(w.started_at);
+      return d >= lastWeekStart && d <= lastWeekEnd;
+    }).length;
+
+    // Best week ever
+    const weekMap = new Map<string, number>();
+    completedWorkouts.forEach(w => {
+      const key = format(startOfWeek(parseISO(w.started_at)), 'yyyy-MM-dd');
+      weekMap.set(key, (weekMap.get(key) || 0) + 1);
+    });
+    const bestWeek = Math.max(...weekMap.values(), 0);
+
     // Programme adherence calculation
     let adherencePercent: number | null = null;
     let programProgress: { current: number; total: number; name: string } | null = null;
@@ -286,8 +302,6 @@ export function CombinedStatsView({ onViewRecords }: CombinedStatsViewProps) {
       const weeksElapsed = Math.max(1, differenceInWeeks(new Date(), startedAt) + 1);
       const cappedWeeks = Math.min(weeksElapsed, durationWeeks);
       const expectedSessions = cappedWeeks * daysPerWeek;
-
-      // Count sessions linked to this programme
       const programSessions = completedWorkouts.filter(w => w.program_id === activeProgram.id).length;
       adherencePercent = expectedSessions > 0 ? Math.min(100, Math.round((programSessions / expectedSessions) * 100)) : 0;
 
@@ -312,7 +326,7 @@ export function CombinedStatsView({ onViewRecords }: CombinedStatsViewProps) {
       };
     });
 
-    return { totalWorkouts, totalTime, avgDuration, streak, weeklyData: last8Weeks, adherencePercent, programProgress };
+    return { totalWorkouts, streak, thisWeekSessions, lastWeekSessions, bestWeek, weeklyData: last8Weeks, adherencePercent, programProgress };
   }, [completedWorkouts, activeProgram]);
 
   const formatDuration = (seconds: number) => {
