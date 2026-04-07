@@ -53,7 +53,8 @@ export type ExerciseCategory =
   | 'compound' 
   | 'isolation' 
   | 'cardio' 
-  | 'plyometric';
+  | 'plyometric'
+  | 'circuit';
 
 export type SplitType = 
   | 'full_body' 
