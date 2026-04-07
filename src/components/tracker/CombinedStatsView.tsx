@@ -258,8 +258,6 @@ export function CombinedStatsView({ onViewRecords }: CombinedStatsViewProps) {
   const workoutStats = useMemo(() => {
     if (!completedWorkouts.length) return null;
     const totalWorkouts = completedWorkouts.length;
-    const totalTime = completedWorkouts.reduce((sum, w) => sum + (w.duration_seconds || 0), 0);
-    const avgDuration = totalTime / totalWorkouts;
 
     // Streak calculation
     const sortedDates = [...new Set(completedWorkouts.map(w => format(parseISO(w.started_at), 'yyyy-MM-dd')))].sort().reverse();
@@ -275,6 +273,24 @@ export function CombinedStatsView({ onViewRecords }: CombinedStatsViewProps) {
       }
     }
 
+    // This week vs last week sessions
+    const thisWeekStart = startOfWeek(new Date());
+    const lastWeekStart = startOfWeek(subWeeks(new Date(), 1));
+    const lastWeekEnd = endOfWeek(lastWeekStart);
+    const thisWeekSessions = completedWorkouts.filter(w => parseISO(w.started_at) >= thisWeekStart).length;
+    const lastWeekSessions = completedWorkouts.filter(w => {
+      const d = parseISO(w.started_at);
+      return d >= lastWeekStart && d <= lastWeekEnd;
+    }).length;
+
+    // Best week ever
+    const weekMap = new Map<string, number>();
+    completedWorkouts.forEach(w => {
+      const key = format(startOfWeek(parseISO(w.started_at)), 'yyyy-MM-dd');
+      weekMap.set(key, (weekMap.get(key) || 0) + 1);
+    });
+    const bestWeek = Math.max(...weekMap.values(), 0);
+
     // Programme adherence calculation
     let adherencePercent: number | null = null;
     let programProgress: { current: number; total: number; name: string } | null = null;
@@ -286,8 +302,6 @@ export function CombinedStatsView({ onViewRecords }: CombinedStatsViewProps) {
       const weeksElapsed = Math.max(1, differenceInWeeks(new Date(), startedAt) + 1);
       const cappedWeeks = Math.min(weeksElapsed, durationWeeks);
       const expectedSessions = cappedWeeks * daysPerWeek;
-
-      // Count sessions linked to this programme
       const programSessions = completedWorkouts.filter(w => w.program_id === activeProgram.id).length;
       adherencePercent = expectedSessions > 0 ? Math.min(100, Math.round((programSessions / expectedSessions) * 100)) : 0;
 
@@ -312,7 +326,7 @@ export function CombinedStatsView({ onViewRecords }: CombinedStatsViewProps) {
       };
     });
 
-    return { totalWorkouts, totalTime, avgDuration, streak, weeklyData: last8Weeks, adherencePercent, programProgress };
+    return { totalWorkouts, streak, thisWeekSessions, lastWeekSessions, bestWeek, weeklyData: last8Weeks, adherencePercent, programProgress };
   }, [completedWorkouts, activeProgram]);
 
   const formatDuration = (seconds: number) => {
@@ -419,10 +433,12 @@ export function CombinedStatsView({ onViewRecords }: CombinedStatsViewProps) {
               <div className="grid grid-cols-2 gap-4">
                 {[
                   { icon: Dumbbell, label: 'Total Workouts', value: workoutStats.totalWorkouts.toString() },
-                  { icon: Clock, label: 'Total Time', value: formatDuration(workoutStats.totalTime) },
-                  { icon: Target, label: 'Avg Duration', value: formatDuration(workoutStats.avgDuration) },
+                  { icon: Flame, label: 'Streak', value: `${workoutStats.streak} days` },
+                  { icon: Calendar, label: 'This Week', value: workoutStats.thisWeekSessions.toString() },
+                  { icon: TrendingUp, label: 'Last Week', value: workoutStats.lastWeekSessions.toString() },
+                  { icon: Award, label: 'Best Week', value: workoutStats.bestWeek.toString() },
                   ...(workoutStats.adherencePercent !== null
-                    ? [{ icon: TrendingUp, label: 'Adherence', value: `${workoutStats.adherencePercent}%` }]
+                    ? [{ icon: Target, label: 'Adherence', value: `${workoutStats.adherencePercent}%` }]
                     : []),
                 ].map((stat, index) => (
                   <motion.div
@@ -468,26 +484,10 @@ export function CombinedStatsView({ onViewRecords }: CombinedStatsViewProps) {
                 </Card>
               )}
 
-              {/* Streak Counter */}
-              <Card className="bg-card border-primary/20 p-6 neon-border-subtle">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-muted-foreground font-display tracking-wide">CURRENT STREAK</p>
-                    <p className="font-display text-4xl text-primary neon-glow-subtle mt-1">
-                      {workoutStats.streak}
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-1">consecutive days</p>
-                  </div>
-                  <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center shadow-[0_0_20px_hsl(var(--primary)/0.2)]">
-                    <Flame className="w-8 h-8 text-primary" />
-                  </div>
-                </div>
-              </Card>
-
               {/* Weekly Sessions Bar Chart */}
               <Card className="bg-card border-primary/20 p-6 neon-border-subtle">
                 <h3 className="font-display text-xl text-foreground mb-4 tracking-wide">
-                  WEEKLY <span className="text-primary">ATTENDANCE</span>
+                  WEEKLY <span className="text-primary">CONSISTENCY</span>
                 </h3>
                 <div className="h-56">
                   <ResponsiveContainer width="100%" height="100%">
