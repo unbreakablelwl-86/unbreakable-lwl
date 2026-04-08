@@ -763,23 +763,10 @@ export function StoriesSection() {
               )}
             </div>
 
-            {/* Like button at bottom - safe area aware */}
-            <div className="absolute bottom-0 left-0 right-0 z-30 flex justify-center pb-[calc(env(safe-area-inset-bottom,16px)+16px)]" data-story-controls>
-              <button
-                className={`w-14 h-14 rounded-full backdrop-blur-md flex items-center justify-center transition-all shadow-lg ${
-                  storyLiked ? 'bg-primary text-primary-foreground scale-110' : 'bg-black/50 text-white hover:bg-white/20'
-                }`}
-                onClick={(e) => { e.stopPropagation(); handleStoryLike(); }}
-                onTouchEnd={(e) => { e.stopPropagation(); e.preventDefault(); handleStoryLike(); }}
-              >
-                <Dumbbell className="w-7 h-7" />
-              </button>
-            </div>
-
             {/* Floating dumbbells from like */}
             <AnimatePresence>
               {floatingDumbbells.map(d => (
-                <FloatingDumbbell key={d.id} id={d.id} x={d.x} y={d.y} onDone={removeDumbbell} />
+                <FloatingDumbbell key={d.id} id={d.id} x={d.x} y={d.y} color={d.color} onDone={removeDumbbell} />
               ))}
             </AnimatePresence>
           </motion.div>
