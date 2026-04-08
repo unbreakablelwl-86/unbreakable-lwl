@@ -57,9 +57,7 @@ export function StoriesSection() {
   const [floatingDumbbells, setFloatingDumbbells] = useState<Array<{ id: number; x: number; y: number; color: string }>>([]);
   const [progress, setProgress] = useState(0);
   const touchStartRef = useRef<{ x: number; y: number } | null>(null);
-
   // Like state for story viewer
-  const [floatingDumbbells, setFloatingDumbbells] = useState<Array<{ id: number; x: number; y: number }>>([]);
   const dumbbellIdRef = useRef(0);
   const [storyLiked, setStoryLiked] = useState(false);
 
