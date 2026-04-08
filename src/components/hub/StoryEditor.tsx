@@ -448,7 +448,7 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
         video_url: firstVideo?.url || null,
         visibility,
         text_overlays: allOverlays,
-        background_color: mediaItems.length === 0 ? bgColor : null,
+        background_color: bgColor,
         media_items: uploadedMedia,
       });
       toast.success('Story published!');
