@@ -565,6 +565,16 @@ export function StoriesSection() {
               </div>
 
               <div className="flex items-center gap-2" data-story-controls>
+                {/* Like button */}
+                <button
+                  className={`w-9 h-9 rounded-full backdrop-blur-sm flex items-center justify-center transition-all ${
+                    storyLiked ? 'bg-primary text-primary-foreground scale-110' : 'bg-black/40 text-white hover:bg-white/20'
+                  }`}
+                  onClick={(e) => { e.stopPropagation(); handleStoryLike(); }}
+                  onTouchEnd={(e) => { e.stopPropagation(); e.preventDefault(); handleStoryLike(); }}
+                >
+                  <Dumbbell className="w-4 h-4" />
+                </button>
                 {/* Share button */}
                 <button
                   className="w-9 h-9 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/20 transition-colors"
@@ -576,7 +586,7 @@ export function StoriesSection() {
                 {/* Delete button - only own stories */}
                 {isOwnStory && (
                   <button
-                    className="w-9 h-9 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-red-400 hover:bg-red-500/30 transition-colors disabled:opacity-50"
+                    className="w-9 h-9 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-destructive hover:bg-destructive/30 transition-colors disabled:opacity-50"
                     onClick={(e) => { e.stopPropagation(); handleDeleteStory(currentStory.id); }}
                     disabled={deleting}
                     title="Delete"
