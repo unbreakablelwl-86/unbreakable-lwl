@@ -67,9 +67,8 @@ Return ONLY the message text, nothing else.`
     });
 
     if (!response.ok) {
-      if (response.status === 429) return new Response(JSON.stringify({ error: "Rate limited" }), { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } });
-      if (response.status === 402) return new Response(JSON.stringify({ error: "Payment required" }), { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } });
-      throw new Error("AI service unavailable");
+      // For 402 (payment) and 429 (rate limit), fall through to fallback quotes
+      throw new Error(`AI service error: ${response.status}`);
     }
 
     const aiResponse = await response.json();
