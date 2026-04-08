@@ -504,7 +504,7 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
       <div
         ref={canvasRef}
         className="flex-1 relative overflow-hidden"
-        style={{ backgroundColor: !hasMedia ? bgColor : '#000' }}
+        style={{ backgroundColor: bgColor }}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
