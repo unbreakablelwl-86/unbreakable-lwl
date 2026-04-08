@@ -32,7 +32,7 @@ function FloatingDumbbell({ id, x, y, color, onDone }: { id: number; x: number; 
       className="absolute pointer-events-none z-50"
       style={{ left: x, top: y }}
     >
-      <Dumbbell className="w-6 h-6" style={{ color }} />
+      <Dumbbell className="w-8 h-8" style={{ color }} />
     </motion.div>
   );
 }

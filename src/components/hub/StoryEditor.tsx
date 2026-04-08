@@ -4,6 +4,7 @@ import {
   Type, Trash2, X, Check, Image, Video, Palette,
   AlignLeft, AlignCenter, AlignRight, Bold, Loader2,
   Globe, Users, Lock, Undo2, Square, Minus, Plus,
+  Crop, Move, Maximize2,
 } from 'lucide-react';
 import { TextOverlayData, DEFAULT_OVERLAY, StoryTextOverlay, FONT_OPTIONS } from './StoryTextOverlay';
 import { Slider } from '@/components/ui/slider';
@@ -13,6 +14,20 @@ import { toast } from 'sonner';
 import { Progress } from '@/components/ui/progress';
 import { uploadMediaFile, validateVideoDuration, type MediaUploadItem } from '@/lib/mediaUpload';
 import { motion, AnimatePresence } from 'framer-motion';
+
+interface MediaTransform {
+  scale: number;
+  x: number; // % offset from center
+  y: number; // % offset from center
+}
+
+interface CropState {
+  active: boolean;
+  top: number;    // % from top
+  left: number;   // % from left
+  bottom: number; // % from bottom
+  right: number;  // % from right
+}
 
 const PRESET_COLORS = [
   '#FFFFFF', '#000000', '#FF3B30', '#FF9500', '#FFCC00',
@@ -135,10 +150,28 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
   const hasMedia = mediaItems.length > 0;
   const currentMedia = mediaItems[activeMediaIndex];
 
+  // Per-media transform state (resize/reposition)
+  const [mediaTransforms, setMediaTransforms] = useState<Record<number, MediaTransform>>({});
+  const [mediaCrops, setMediaCrops] = useState<Record<number, CropState>>({});
+  const [mediaEditMode, setMediaEditMode] = useState<'none' | 'move' | 'crop'>('none');
+  const mediaDragRef = useRef<{ startX: number; startY: number; startTX: number; startTY: number } | null>(null);
+  const mediaPinchRef = useRef<{ dist: number; scale: number } | null>(null);
+  const cropDragRef = useRef<{ edge: string; startX: number; startY: number; startCrop: CropState } | null>(null);
+
+  const getMediaTransform = (idx: number): MediaTransform => mediaTransforms[idx] || { scale: 1, x: 0, y: 0 };
+  const getMediaCrop = (idx: number): CropState => mediaCrops[idx] || { active: false, top: 0, left: 0, bottom: 0, right: 0 };
+
+  const updateMediaTransform = useCallback((idx: number, updates: Partial<MediaTransform>) => {
+    setMediaTransforms(prev => ({ ...prev, [idx]: { ...prev[idx] || { scale: 1, x: 0, y: 0 }, ...updates } }));
+  }, []);
+
+  const updateMediaCrop = useCallback((idx: number, updates: Partial<CropState>) => {
+    setMediaCrops(prev => ({ ...prev, [idx]: { ...prev[idx] || { active: false, top: 0, left: 0, bottom: 0, right: 0 }, ...updates } }));
+  }, []);
+
   const cycleVisibility = () => {
     setVisibility(v => v === 'public' ? 'friends' : v === 'friends' ? 'private' : 'public');
   };
-
   const visIcon = visibility === 'public' ? <Globe className="w-4 h-4" /> : visibility === 'friends' ? <Users className="w-4 h-4" /> : <Lock className="w-4 h-4" />;
 
   const pushUndo = () => {
@@ -448,7 +481,7 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
         video_url: firstVideo?.url || null,
         visibility,
         text_overlays: allOverlays,
-        background_color: mediaItems.length === 0 ? bgColor : null,
+        background_color: bgColor,
         media_items: uploadedMedia,
       });
       toast.success('Story published!');
@@ -504,31 +537,135 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
       <div
         ref={canvasRef}
         className="flex-1 relative overflow-hidden"
-        style={{ backgroundColor: !hasMedia ? bgColor : '#000' }}
+        style={{ backgroundColor: bgColor }}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
         onPointerDown={handleCanvasPointerDown}
       >
-        {/* Current media display */}
-        {hasMedia && currentMedia && (
-          <>
-            {currentMedia.type === 'image' ? (
-              <img
-                src={currentMedia.uploadedUrl || currentMedia.previewUrl}
-                alt="Story media"
-                className="absolute inset-0 w-full h-full object-contain pointer-events-none"
-                draggable={false}
-              />
-            ) : (
-              <video
-                src={currentMedia.uploadedUrl || currentMedia.previewUrl}
-                autoPlay loop muted playsInline
-                className="absolute inset-0 w-full h-full object-contain pointer-events-none"
-              />
-            )}
-          </>
-        )}
+        {/* Current media display — interactive resize/crop */}
+        {hasMedia && currentMedia && (() => {
+          const t = getMediaTransform(activeMediaIndex);
+          const crop = getMediaCrop(activeMediaIndex);
+          const mediaStyle: React.CSSProperties = {
+            transform: `translate(${t.x}%, ${t.y}%) scale(${t.scale})`,
+            clipPath: crop.active ? `inset(${crop.top}% ${crop.right}% ${crop.bottom}% ${crop.left}%)` : undefined,
+            transition: mediaDragRef.current || mediaPinchRef.current ? 'none' : 'transform 0.15s ease',
+          };
+          return (
+            <div
+              className="absolute inset-0 flex items-center justify-center"
+              style={{ cursor: mediaEditMode === 'move' ? 'grab' : mediaEditMode === 'crop' ? 'crosshair' : 'default' }}
+              onPointerDown={(e) => {
+                if (mediaEditMode === 'move') {
+                  e.stopPropagation();
+                  mediaDragRef.current = { startX: e.clientX, startY: e.clientY, startTX: t.x, startTY: t.y };
+                  (e.target as HTMLElement).setPointerCapture(e.pointerId);
+                }
+              }}
+              onPointerMove={(e) => {
+                if (mediaDragRef.current && canvasRef.current) {
+                  e.stopPropagation();
+                  const rect = canvasRef.current.getBoundingClientRect();
+                  const dx = ((e.clientX - mediaDragRef.current.startX) / rect.width) * 100;
+                  const dy = ((e.clientY - mediaDragRef.current.startY) / rect.height) * 100;
+                  updateMediaTransform(activeMediaIndex, {
+                    x: mediaDragRef.current.startTX + dx,
+                    y: mediaDragRef.current.startTY + dy,
+                  });
+                }
+              }}
+              onPointerUp={() => { mediaDragRef.current = null; }}
+              onTouchStart={(e) => {
+                if (e.touches.length === 2 && mediaEditMode !== 'crop') {
+                  e.stopPropagation();
+                  const dx = e.touches[0].clientX - e.touches[1].clientX;
+                  const dy = e.touches[0].clientY - e.touches[1].clientY;
+                  mediaPinchRef.current = { dist: Math.sqrt(dx * dx + dy * dy), scale: t.scale };
+                }
+              }}
+              onTouchMove={(e) => {
+                if (e.touches.length === 2 && mediaPinchRef.current) {
+                  e.stopPropagation();
+                  const dx = e.touches[0].clientX - e.touches[1].clientX;
+                  const dy = e.touches[0].clientY - e.touches[1].clientY;
+                  const dist = Math.sqrt(dx * dx + dy * dy);
+                  const newScale = Math.max(0.3, Math.min(5, mediaPinchRef.current.scale * (dist / mediaPinchRef.current.dist)));
+                  updateMediaTransform(activeMediaIndex, { scale: newScale });
+                }
+              }}
+              onTouchEnd={() => { mediaPinchRef.current = null; }}
+            >
+              {currentMedia.type === 'image' ? (
+                <img
+                  src={currentMedia.uploadedUrl || currentMedia.previewUrl}
+                  alt="Story media"
+                  className="max-w-full max-h-full object-contain select-none"
+                  style={mediaStyle}
+                  draggable={false}
+                />
+              ) : (
+                <video
+                  src={currentMedia.uploadedUrl || currentMedia.previewUrl}
+                  autoPlay loop muted playsInline
+                  className="max-w-full max-h-full object-contain select-none"
+                  style={mediaStyle}
+                />
+              )}
+
+              {/* Crop overlay handles */}
+              {mediaEditMode === 'crop' && (
+                <div className="absolute inset-0 z-10">
+                  {/* Dim cropped-out areas */}
+                  <div className="absolute inset-0 pointer-events-none">
+                    <div className="absolute top-0 left-0 right-0 bg-black/50" style={{ height: `${crop.top}%` }} />
+                    <div className="absolute bottom-0 left-0 right-0 bg-black/50" style={{ height: `${crop.bottom}%` }} />
+                    <div className="absolute bg-black/50" style={{ top: `${crop.top}%`, bottom: `${crop.bottom}%`, left: 0, width: `${crop.left}%` }} />
+                    <div className="absolute bg-black/50" style={{ top: `${crop.top}%`, bottom: `${crop.bottom}%`, right: 0, width: `${crop.right}%` }} />
+                    {/* Crop border */}
+                    <div className="absolute border-2 border-white/80" style={{ top: `${crop.top}%`, left: `${crop.left}%`, right: `${crop.right}%`, bottom: `${crop.bottom}%` }} />
+                  </div>
+                  {/* Drag handles for each edge */}
+                  {(['top', 'bottom', 'left', 'right'] as const).map(edge => (
+                    <div
+                      key={edge}
+                      className={`absolute z-20 ${
+                        edge === 'top' || edge === 'bottom' ? 'left-1/3 right-1/3 h-6 cursor-ns-resize' : 'top-1/3 bottom-1/3 w-6 cursor-ew-resize'
+                      }`}
+                      style={{
+                        [edge]: `calc(${crop[edge]}% - 12px)`,
+                      }}
+                      onPointerDown={(e) => {
+                        e.stopPropagation();
+                        cropDragRef.current = { edge, startX: e.clientX, startY: e.clientY, startCrop: { ...crop } };
+                        (e.target as HTMLElement).setPointerCapture(e.pointerId);
+                      }}
+                      onPointerMove={(e) => {
+                        if (!cropDragRef.current || cropDragRef.current.edge !== edge || !canvasRef.current) return;
+                        const rect = canvasRef.current.getBoundingClientRect();
+                        const cr = cropDragRef.current;
+                        if (edge === 'top' || edge === 'bottom') {
+                          const dy = ((e.clientY - cr.startY) / rect.height) * 100;
+                          const val = Math.max(0, Math.min(45, cr.startCrop[edge] + (edge === 'top' ? dy : -dy)));
+                          updateMediaCrop(activeMediaIndex, { [edge]: val, active: true });
+                        } else {
+                          const dx = ((e.clientX - cr.startX) / rect.width) * 100;
+                          const val = Math.max(0, Math.min(45, cr.startCrop[edge] + (edge === 'left' ? dx : -dx)));
+                          updateMediaCrop(activeMediaIndex, { [edge]: val, active: true });
+                        }
+                      }}
+                      onPointerUp={() => { cropDragRef.current = null; }}
+                    >
+                      <div className={`absolute bg-white rounded-full shadow-lg ${
+                        edge === 'top' || edge === 'bottom' ? 'left-1/2 -translate-x-1/2 w-8 h-1.5' : 'top-1/2 -translate-y-1/2 h-8 w-1.5'
+                      } ${edge === 'top' ? 'top-2' : edge === 'bottom' ? 'bottom-2' : edge === 'left' ? 'left-2' : 'right-2'}`} />
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        })()}
 
         {/* Media dot indicators */}
         {mediaItems.length > 1 && (
@@ -827,12 +964,49 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
         )}
       </AnimatePresence>
 
+      {/* Media edit mode toolbar — shows when media is present */}
+      {hasMedia && !isDragging && mediaEditMode !== 'none' && (
+        <div className="absolute bottom-16 left-0 right-0 z-30 px-4 animate-in slide-in-from-bottom-2">
+          <div className="flex items-center gap-2 bg-black/60 backdrop-blur-md rounded-full px-3 py-2 justify-center">
+            {mediaEditMode === 'move' && (
+              <>
+                <span className="text-white/50 text-[10px] shrink-0">Scale</span>
+                <Slider
+                  value={[getMediaTransform(activeMediaIndex).scale * 100]}
+                  onValueChange={([v]) => updateMediaTransform(activeMediaIndex, { scale: v / 100 })}
+                  min={30} max={500} step={5}
+                  className="flex-1 max-w-[200px]"
+                />
+                <span className="text-white text-[10px] font-display w-8 text-center shrink-0">{Math.round(getMediaTransform(activeMediaIndex).scale * 100)}%</span>
+              </>
+            )}
+            {mediaEditMode === 'crop' && (
+              <span className="text-white/70 text-xs font-display">Drag edges to crop</span>
+            )}
+            <button
+              className="ml-2 px-3 py-1 rounded-full bg-primary text-primary-foreground text-xs font-display"
+              onClick={() => {
+                if (mediaEditMode === 'crop') {
+                  const crop = getMediaCrop(activeMediaIndex);
+                  if (crop.top > 0 || crop.bottom > 0 || crop.left > 0 || crop.right > 0) {
+                    updateMediaCrop(activeMediaIndex, { active: true });
+                  }
+                }
+                setMediaEditMode('none');
+              }}
+            >
+              Done
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Bottom toolbar — clean Instagram-style */}
       {!isDragging && (
         <div className="absolute bottom-0 left-0 right-0 z-30 pb-[env(safe-area-inset-bottom,8px)]">
           <div className="flex items-center justify-between px-4 py-3">
             {/* Left side tools */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
               <button
                 className="w-11 h-11 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center text-white active:scale-90 transition-transform"
                 onClick={(e) => { e.stopPropagation(); addTextOverlay(); }}
@@ -852,6 +1026,24 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
               >
                 <Palette className="w-5 h-5" />
               </button>
+              {/* Move/resize media button */}
+              {hasMedia && (
+                <button
+                  className={`w-11 h-11 rounded-full backdrop-blur-sm flex items-center justify-center text-white active:scale-90 transition-transform ${mediaEditMode === 'move' ? 'bg-white/25' : 'bg-white/10'}`}
+                  onClick={(e) => { e.stopPropagation(); setMediaEditMode(mediaEditMode === 'move' ? 'none' : 'move'); }}
+                >
+                  <Maximize2 className="w-5 h-5" />
+                </button>
+              )}
+              {/* Crop media button */}
+              {hasMedia && (
+                <button
+                  className={`w-11 h-11 rounded-full backdrop-blur-sm flex items-center justify-center text-white active:scale-90 transition-transform ${mediaEditMode === 'crop' ? 'bg-white/25' : 'bg-white/10'}`}
+                  onClick={(e) => { e.stopPropagation(); setMediaEditMode(mediaEditMode === 'crop' ? 'none' : 'crop'); }}
+                >
+                  <Crop className="w-5 h-5" />
+                </button>
+              )}
             </div>
 
             {/* Share button — right side */}
