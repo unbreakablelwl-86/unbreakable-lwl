@@ -3,32 +3,36 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useStories, Story } from '@/hooks/useStories';
 import { useAuth } from '@/hooks/useAuth';
 import { useProfile } from '@/hooks/useProfile';
-import { Plus, X, Trash2, Play, Pause, Volume2, VolumeX, Share2, ChevronLeft, ChevronRight, Dumbbell } from 'lucide-react';
+import { Plus, X, Trash2, Volume2, VolumeX, Share2, ChevronLeft, ChevronRight, Dumbbell } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
 import { StoryEditor } from './StoryEditor';
 import { StoryTextOverlay, TextOverlayData } from './StoryTextOverlay';
 
-// Floating dumbbell component for like animation
-function FloatingDumbbell({ id, x, y, onDone }: { id: number; x: number; y: number; onDone: (id: number) => void }) {
-  const drift = (Math.random() - 0.5) * 60;
-  const rotation = Math.random() * 360;
+// Tri-color floating dumbbell for like animation
+const DUMBBELL_COLORS = ['hsl(var(--primary))', '#FFFFFF', '#1C1C1E'];
+
+function FloatingDumbbell({ id, x, y, color, onDone }: { id: number; x: number; y: number; color: string; onDone: (id: number) => void }) {
+  const drift = (Math.random() - 0.5) * 120;
+  const rotation = (Math.random() - 0.5) * 540;
+  const floatHeight = -(200 + Math.random() * 200);
+  const scale = 0.7 + Math.random() * 0.6;
 
   useEffect(() => {
-    const timer = setTimeout(() => onDone(id), 1000);
+    const timer = setTimeout(() => onDone(id), 1400);
     return () => clearTimeout(timer);
   }, [id, onDone]);
 
   return (
     <motion.div
-      initial={{ opacity: 1, scale: 0.6, x: 0, y: 0, rotate: 0 }}
-      animate={{ opacity: 0, scale: 1.2, x: drift, y: -140, rotate: rotation }}
-      transition={{ duration: 0.8, ease: 'easeOut' }}
+      initial={{ opacity: 1, scale: 0.4, x: 0, y: 0, rotate: 0 }}
+      animate={{ opacity: 0, scale, x: drift, y: floatHeight, rotate: rotation }}
+      transition={{ duration: 1.3, ease: [0.25, 0.46, 0.45, 0.94] }}
       className="absolute pointer-events-none z-50"
       style={{ left: x, top: y }}
     >
-      <Dumbbell className="w-5 h-5 text-primary" />
+      <Dumbbell className="w-6 h-6" style={{ color }} />
     </motion.div>
   );
 }
@@ -50,11 +54,10 @@ export function StoriesSection() {
   const suppressClickRef = useRef(false);
   const suppressClickTimerRef = useRef<number | null>(null);
   const touchStartedOnControlsRef = useRef(false);
+  const [floatingDumbbells, setFloatingDumbbells] = useState<Array<{ id: number; x: number; y: number; color: string }>>([]);
   const [progress, setProgress] = useState(0);
   const touchStartRef = useRef<{ x: number; y: number } | null>(null);
-
   // Like state for story viewer
-  const [floatingDumbbells, setFloatingDumbbells] = useState<Array<{ id: number; x: number; y: number }>>([]);
   const dumbbellIdRef = useRef(0);
   const [storyLiked, setStoryLiked] = useState(false);
 
@@ -64,10 +67,11 @@ export function StoriesSection() {
 
   const handleStoryLike = useCallback(() => {
     setStoryLiked(true);
-    const newDumbbells = Array.from({ length: 4 }, () => ({
+    const newDumbbells = Array.from({ length: 6 }, (_, i) => ({
       id: ++dumbbellIdRef.current,
-      x: window.innerWidth / 2 + (Math.random() - 0.5) * 40 - 12,
-      y: window.innerHeight - 80,
+      x: window.innerWidth * (0.2 + Math.random() * 0.6),
+      y: window.innerHeight * (0.4 + Math.random() * 0.4),
+      color: DUMBBELL_COLORS[i % 3],
     }));
     setFloatingDumbbells(prev => [...prev, ...newDumbbells]);
   }, []);
@@ -317,6 +321,27 @@ export function StoriesSection() {
     }
   }, [showViewer, activeUserIndex, groupedStories]);
 
+  // Lock body scroll when story viewer is open
+  useEffect(() => {
+    if (showViewer) {
+      document.body.style.overflow = 'hidden';
+      document.body.style.touchAction = 'none';
+      document.body.style.position = 'fixed';
+      document.body.style.inset = '0';
+    } else {
+      document.body.style.overflow = '';
+      document.body.style.touchAction = '';
+      document.body.style.position = '';
+      document.body.style.inset = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.touchAction = '';
+      document.body.style.position = '';
+      document.body.style.inset = '';
+    };
+  }, [showViewer]);
+
   useEffect(() => {
     return () => {
       if (suppressClickTimerRef.current) {
@@ -559,6 +584,16 @@ export function StoriesSection() {
               </div>
 
               <div className="flex items-center gap-2" data-story-controls>
+                {/* Like button */}
+                <button
+                  className={`w-9 h-9 rounded-full backdrop-blur-sm flex items-center justify-center transition-all ${
+                    storyLiked ? 'bg-primary text-primary-foreground scale-110' : 'bg-black/40 text-white hover:bg-white/20'
+                  }`}
+                  onClick={(e) => { e.stopPropagation(); handleStoryLike(); }}
+                  onTouchEnd={(e) => { e.stopPropagation(); e.preventDefault(); handleStoryLike(); }}
+                >
+                  <Dumbbell className="w-4 h-4" />
+                </button>
                 {/* Share button */}
                 <button
                   className="w-9 h-9 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/20 transition-colors"
@@ -570,7 +605,7 @@ export function StoriesSection() {
                 {/* Delete button - only own stories */}
                 {isOwnStory && (
                   <button
-                    className="w-9 h-9 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-red-400 hover:bg-red-500/30 transition-colors disabled:opacity-50"
+                    className="w-9 h-9 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-destructive hover:bg-destructive/30 transition-colors disabled:opacity-50"
                     onClick={(e) => { e.stopPropagation(); handleDeleteStory(currentStory.id); }}
                     disabled={deleting}
                     title="Delete"
@@ -656,22 +691,9 @@ export function StoriesSection() {
                         />
                       )}
 
-                      {/* Video controls for multi-media video */}
+                      {/* Mute toggle only for video */}
                       {currentSlide.type === 'video' && (
-                        <div className="absolute bottom-20 right-4 flex flex-col gap-2 z-10" data-story-controls>
-                          <button
-                            className="w-10 h-10 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center text-white"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              if (storyVideoRef.current) {
-                                if (isPlaying) storyVideoRef.current.pause();
-                                else storyVideoRef.current.play();
-                                setIsPlaying(!isPlaying);
-                              }
-                            }}
-                          >
-                            {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
-                          </button>
+                        <div className="absolute bottom-20 right-4 z-10" data-story-controls>
                           <button
                             className="w-10 h-10 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center text-white"
                             onClick={(e) => {
@@ -703,20 +725,7 @@ export function StoriesSection() {
                           autoPlay loop muted={isMuted} playsInline
                           onEnded={nextSlideOrStory}
                         />
-                        <div className="absolute bottom-20 right-4 flex flex-col gap-2 z-10" data-story-controls>
-                          <button
-                            className="w-10 h-10 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center text-white"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              if (storyVideoRef.current) {
-                                if (isPlaying) storyVideoRef.current.pause();
-                                else storyVideoRef.current.play();
-                                setIsPlaying(!isPlaying);
-                              }
-                            }}
-                          >
-                            {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
-                          </button>
+                        <div className="absolute bottom-20 right-4 z-10" data-story-controls>
                           <button
                             className="w-10 h-10 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center text-white"
                             onClick={(e) => {
@@ -775,23 +784,10 @@ export function StoriesSection() {
               )}
             </div>
 
-            {/* Like button at bottom - safe area aware */}
-            <div className="absolute bottom-0 left-0 right-0 z-30 flex justify-center pb-[calc(env(safe-area-inset-bottom,16px)+16px)]" data-story-controls>
-              <button
-                className={`w-14 h-14 rounded-full backdrop-blur-md flex items-center justify-center transition-all shadow-lg ${
-                  storyLiked ? 'bg-primary text-primary-foreground scale-110' : 'bg-black/50 text-white hover:bg-white/20'
-                }`}
-                onClick={(e) => { e.stopPropagation(); handleStoryLike(); }}
-                onTouchEnd={(e) => { e.stopPropagation(); e.preventDefault(); handleStoryLike(); }}
-              >
-                <Dumbbell className="w-7 h-7" />
-              </button>
-            </div>
-
             {/* Floating dumbbells from like */}
             <AnimatePresence>
               {floatingDumbbells.map(d => (
-                <FloatingDumbbell key={d.id} id={d.id} x={d.x} y={d.y} onDone={removeDumbbell} />
+                <FloatingDumbbell key={d.id} id={d.id} x={d.x} y={d.y} color={d.color} onDone={removeDumbbell} />
               ))}
             </AnimatePresence>
           </motion.div>
