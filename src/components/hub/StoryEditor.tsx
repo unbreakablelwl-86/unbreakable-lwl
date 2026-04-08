@@ -543,25 +543,129 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
         onTouchEnd={handleTouchEnd}
         onPointerDown={handleCanvasPointerDown}
       >
-        {/* Current media display */}
-        {hasMedia && currentMedia && (
-          <>
-            {currentMedia.type === 'image' ? (
-              <img
-                src={currentMedia.uploadedUrl || currentMedia.previewUrl}
-                alt="Story media"
-                className="absolute inset-0 w-full h-full object-contain pointer-events-none"
-                draggable={false}
-              />
-            ) : (
-              <video
-                src={currentMedia.uploadedUrl || currentMedia.previewUrl}
-                autoPlay loop muted playsInline
-                className="absolute inset-0 w-full h-full object-contain pointer-events-none"
-              />
-            )}
-          </>
-        )}
+        {/* Current media display — interactive resize/crop */}
+        {hasMedia && currentMedia && (() => {
+          const t = getMediaTransform(activeMediaIndex);
+          const crop = getMediaCrop(activeMediaIndex);
+          const mediaStyle: React.CSSProperties = {
+            transform: `translate(${t.x}%, ${t.y}%) scale(${t.scale})`,
+            clipPath: crop.active ? `inset(${crop.top}% ${crop.right}% ${crop.bottom}% ${crop.left}%)` : undefined,
+            transition: mediaDragRef.current || mediaPinchRef.current ? 'none' : 'transform 0.15s ease',
+          };
+          return (
+            <div
+              className="absolute inset-0 flex items-center justify-center"
+              style={{ cursor: mediaEditMode === 'move' ? 'grab' : mediaEditMode === 'crop' ? 'crosshair' : 'default' }}
+              onPointerDown={(e) => {
+                if (mediaEditMode === 'move') {
+                  e.stopPropagation();
+                  mediaDragRef.current = { startX: e.clientX, startY: e.clientY, startTX: t.x, startTY: t.y };
+                  (e.target as HTMLElement).setPointerCapture(e.pointerId);
+                }
+              }}
+              onPointerMove={(e) => {
+                if (mediaDragRef.current && canvasRef.current) {
+                  e.stopPropagation();
+                  const rect = canvasRef.current.getBoundingClientRect();
+                  const dx = ((e.clientX - mediaDragRef.current.startX) / rect.width) * 100;
+                  const dy = ((e.clientY - mediaDragRef.current.startY) / rect.height) * 100;
+                  updateMediaTransform(activeMediaIndex, {
+                    x: mediaDragRef.current.startTX + dx,
+                    y: mediaDragRef.current.startTY + dy,
+                  });
+                }
+              }}
+              onPointerUp={() => { mediaDragRef.current = null; }}
+              onTouchStart={(e) => {
+                if (e.touches.length === 2 && mediaEditMode !== 'crop') {
+                  e.stopPropagation();
+                  const dx = e.touches[0].clientX - e.touches[1].clientX;
+                  const dy = e.touches[0].clientY - e.touches[1].clientY;
+                  mediaPinchRef.current = { dist: Math.sqrt(dx * dx + dy * dy), scale: t.scale };
+                }
+              }}
+              onTouchMove={(e) => {
+                if (e.touches.length === 2 && mediaPinchRef.current) {
+                  e.stopPropagation();
+                  const dx = e.touches[0].clientX - e.touches[1].clientX;
+                  const dy = e.touches[0].clientY - e.touches[1].clientY;
+                  const dist = Math.sqrt(dx * dx + dy * dy);
+                  const newScale = Math.max(0.3, Math.min(5, mediaPinchRef.current.scale * (dist / mediaPinchRef.current.dist)));
+                  updateMediaTransform(activeMediaIndex, { scale: newScale });
+                }
+              }}
+              onTouchEnd={() => { mediaPinchRef.current = null; }}
+            >
+              {currentMedia.type === 'image' ? (
+                <img
+                  src={currentMedia.uploadedUrl || currentMedia.previewUrl}
+                  alt="Story media"
+                  className="max-w-full max-h-full object-contain select-none"
+                  style={mediaStyle}
+                  draggable={false}
+                />
+              ) : (
+                <video
+                  src={currentMedia.uploadedUrl || currentMedia.previewUrl}
+                  autoPlay loop muted playsInline
+                  className="max-w-full max-h-full object-contain select-none"
+                  style={mediaStyle}
+                />
+              )}
+
+              {/* Crop overlay handles */}
+              {mediaEditMode === 'crop' && (
+                <div className="absolute inset-0 z-10">
+                  {/* Dim cropped-out areas */}
+                  <div className="absolute inset-0 pointer-events-none">
+                    <div className="absolute top-0 left-0 right-0 bg-black/50" style={{ height: `${crop.top}%` }} />
+                    <div className="absolute bottom-0 left-0 right-0 bg-black/50" style={{ height: `${crop.bottom}%` }} />
+                    <div className="absolute bg-black/50" style={{ top: `${crop.top}%`, bottom: `${crop.bottom}%`, left: 0, width: `${crop.left}%` }} />
+                    <div className="absolute bg-black/50" style={{ top: `${crop.top}%`, bottom: `${crop.bottom}%`, right: 0, width: `${crop.right}%` }} />
+                    {/* Crop border */}
+                    <div className="absolute border-2 border-white/80" style={{ top: `${crop.top}%`, left: `${crop.left}%`, right: `${crop.right}%`, bottom: `${crop.bottom}%` }} />
+                  </div>
+                  {/* Drag handles for each edge */}
+                  {(['top', 'bottom', 'left', 'right'] as const).map(edge => (
+                    <div
+                      key={edge}
+                      className={`absolute z-20 ${
+                        edge === 'top' || edge === 'bottom' ? 'left-1/3 right-1/3 h-6 cursor-ns-resize' : 'top-1/3 bottom-1/3 w-6 cursor-ew-resize'
+                      }`}
+                      style={{
+                        [edge]: `calc(${crop[edge]}% - 12px)`,
+                      }}
+                      onPointerDown={(e) => {
+                        e.stopPropagation();
+                        cropDragRef.current = { edge, startX: e.clientX, startY: e.clientY, startCrop: { ...crop } };
+                        (e.target as HTMLElement).setPointerCapture(e.pointerId);
+                      }}
+                      onPointerMove={(e) => {
+                        if (!cropDragRef.current || cropDragRef.current.edge !== edge || !canvasRef.current) return;
+                        const rect = canvasRef.current.getBoundingClientRect();
+                        const cr = cropDragRef.current;
+                        if (edge === 'top' || edge === 'bottom') {
+                          const dy = ((e.clientY - cr.startY) / rect.height) * 100;
+                          const val = Math.max(0, Math.min(45, cr.startCrop[edge] + (edge === 'top' ? dy : -dy)));
+                          updateMediaCrop(activeMediaIndex, { [edge]: val, active: true });
+                        } else {
+                          const dx = ((e.clientX - cr.startX) / rect.width) * 100;
+                          const val = Math.max(0, Math.min(45, cr.startCrop[edge] + (edge === 'left' ? dx : -dx)));
+                          updateMediaCrop(activeMediaIndex, { [edge]: val, active: true });
+                        }
+                      }}
+                      onPointerUp={() => { cropDragRef.current = null; }}
+                    >
+                      <div className={`absolute bg-white rounded-full shadow-lg ${
+                        edge === 'top' || edge === 'bottom' ? 'left-1/2 -translate-x-1/2 w-8 h-1.5' : 'top-1/2 -translate-y-1/2 h-8 w-1.5'
+                      } ${edge === 'top' ? 'top-2' : edge === 'bottom' ? 'bottom-2' : edge === 'left' ? 'left-2' : 'right-2'}`} />
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        })()}
 
         {/* Media dot indicators */}
         {mediaItems.length > 1 && (
