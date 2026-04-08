@@ -54,6 +54,7 @@ export function StoriesSection() {
   const suppressClickRef = useRef(false);
   const suppressClickTimerRef = useRef<number | null>(null);
   const touchStartedOnControlsRef = useRef(false);
+  const [floatingDumbbells, setFloatingDumbbells] = useState<Array<{ id: number; x: number; y: number; color: string }>>([]);
   const [progress, setProgress] = useState(0);
   const touchStartRef = useRef<{ x: number; y: number } | null>(null);
 
