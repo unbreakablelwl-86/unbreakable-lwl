@@ -4,6 +4,7 @@ import {
   Type, Trash2, X, Check, Image, Video, Palette,
   AlignLeft, AlignCenter, AlignRight, Bold, Loader2,
   Globe, Users, Lock, Undo2, Square, Minus, Plus,
+  Crop, Move, Maximize2,
 } from 'lucide-react';
 import { TextOverlayData, DEFAULT_OVERLAY, StoryTextOverlay, FONT_OPTIONS } from './StoryTextOverlay';
 import { Slider } from '@/components/ui/slider';
@@ -13,6 +14,20 @@ import { toast } from 'sonner';
 import { Progress } from '@/components/ui/progress';
 import { uploadMediaFile, validateVideoDuration, type MediaUploadItem } from '@/lib/mediaUpload';
 import { motion, AnimatePresence } from 'framer-motion';
+
+interface MediaTransform {
+  scale: number;
+  x: number; // % offset from center
+  y: number; // % offset from center
+}
+
+interface CropState {
+  active: boolean;
+  top: number;    // % from top
+  left: number;   // % from left
+  bottom: number; // % from bottom
+  right: number;  // % from right
+}
 
 const PRESET_COLORS = [
   '#FFFFFF', '#000000', '#FF3B30', '#FF9500', '#FFCC00',
