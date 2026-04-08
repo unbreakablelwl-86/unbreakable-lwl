@@ -964,12 +964,49 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
         )}
       </AnimatePresence>
 
+      {/* Media edit mode toolbar — shows when media is present */}
+      {hasMedia && !isDragging && mediaEditMode !== 'none' && (
+        <div className="absolute bottom-16 left-0 right-0 z-30 px-4 animate-in slide-in-from-bottom-2">
+          <div className="flex items-center gap-2 bg-black/60 backdrop-blur-md rounded-full px-3 py-2 justify-center">
+            {mediaEditMode === 'move' && (
+              <>
+                <span className="text-white/50 text-[10px] shrink-0">Scale</span>
+                <Slider
+                  value={[getMediaTransform(activeMediaIndex).scale * 100]}
+                  onValueChange={([v]) => updateMediaTransform(activeMediaIndex, { scale: v / 100 })}
+                  min={30} max={500} step={5}
+                  className="flex-1 max-w-[200px]"
+                />
+                <span className="text-white text-[10px] font-display w-8 text-center shrink-0">{Math.round(getMediaTransform(activeMediaIndex).scale * 100)}%</span>
+              </>
+            )}
+            {mediaEditMode === 'crop' && (
+              <span className="text-white/70 text-xs font-display">Drag edges to crop</span>
+            )}
+            <button
+              className="ml-2 px-3 py-1 rounded-full bg-primary text-primary-foreground text-xs font-display"
+              onClick={() => {
+                if (mediaEditMode === 'crop') {
+                  const crop = getMediaCrop(activeMediaIndex);
+                  if (crop.top > 0 || crop.bottom > 0 || crop.left > 0 || crop.right > 0) {
+                    updateMediaCrop(activeMediaIndex, { active: true });
+                  }
+                }
+                setMediaEditMode('none');
+              }}
+            >
+              Done
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Bottom toolbar — clean Instagram-style */}
       {!isDragging && (
         <div className="absolute bottom-0 left-0 right-0 z-30 pb-[env(safe-area-inset-bottom,8px)]">
           <div className="flex items-center justify-between px-4 py-3">
             {/* Left side tools */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
               <button
                 className="w-11 h-11 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center text-white active:scale-90 transition-transform"
                 onClick={(e) => { e.stopPropagation(); addTextOverlay(); }}
@@ -989,6 +1026,24 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
               >
                 <Palette className="w-5 h-5" />
               </button>
+              {/* Move/resize media button */}
+              {hasMedia && (
+                <button
+                  className={`w-11 h-11 rounded-full backdrop-blur-sm flex items-center justify-center text-white active:scale-90 transition-transform ${mediaEditMode === 'move' ? 'bg-white/25' : 'bg-white/10'}`}
+                  onClick={(e) => { e.stopPropagation(); setMediaEditMode(mediaEditMode === 'move' ? 'none' : 'move'); }}
+                >
+                  <Maximize2 className="w-5 h-5" />
+                </button>
+              )}
+              {/* Crop media button */}
+              {hasMedia && (
+                <button
+                  className={`w-11 h-11 rounded-full backdrop-blur-sm flex items-center justify-center text-white active:scale-90 transition-transform ${mediaEditMode === 'crop' ? 'bg-white/25' : 'bg-white/10'}`}
+                  onClick={(e) => { e.stopPropagation(); setMediaEditMode(mediaEditMode === 'crop' ? 'none' : 'crop'); }}
+                >
+                  <Crop className="w-5 h-5" />
+                </button>
+              )}
             </div>
 
             {/* Share button — right side */}
