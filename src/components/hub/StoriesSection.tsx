@@ -321,6 +321,27 @@ export function StoriesSection() {
     }
   }, [showViewer, activeUserIndex, groupedStories]);
 
+  // Lock body scroll when story viewer is open
+  useEffect(() => {
+    if (showViewer) {
+      document.body.style.overflow = 'hidden';
+      document.body.style.touchAction = 'none';
+      document.body.style.position = 'fixed';
+      document.body.style.inset = '0';
+    } else {
+      document.body.style.overflow = '';
+      document.body.style.touchAction = '';
+      document.body.style.position = '';
+      document.body.style.inset = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.touchAction = '';
+      document.body.style.position = '';
+      document.body.style.inset = '';
+    };
+  }, [showViewer]);
+
   useEffect(() => {
     return () => {
       if (suppressClickTimerRef.current) {
