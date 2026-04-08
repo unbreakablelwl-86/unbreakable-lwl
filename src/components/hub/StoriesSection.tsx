@@ -10,25 +10,29 @@ import { formatDistanceToNow } from 'date-fns';
 import { StoryEditor } from './StoryEditor';
 import { StoryTextOverlay, TextOverlayData } from './StoryTextOverlay';
 
-// Floating dumbbell component for like animation
-function FloatingDumbbell({ id, x, y, onDone }: { id: number; x: number; y: number; onDone: (id: number) => void }) {
-  const drift = (Math.random() - 0.5) * 60;
-  const rotation = Math.random() * 360;
+// Tri-color floating dumbbell for like animation
+const DUMBBELL_COLORS = ['hsl(var(--primary))', '#FFFFFF', '#1C1C1E'];
+
+function FloatingDumbbell({ id, x, y, color, onDone }: { id: number; x: number; y: number; color: string; onDone: (id: number) => void }) {
+  const drift = (Math.random() - 0.5) * 120;
+  const rotation = (Math.random() - 0.5) * 540;
+  const floatHeight = -(200 + Math.random() * 200);
+  const scale = 0.7 + Math.random() * 0.6;
 
   useEffect(() => {
-    const timer = setTimeout(() => onDone(id), 1000);
+    const timer = setTimeout(() => onDone(id), 1400);
     return () => clearTimeout(timer);
   }, [id, onDone]);
 
   return (
     <motion.div
-      initial={{ opacity: 1, scale: 0.6, x: 0, y: 0, rotate: 0 }}
-      animate={{ opacity: 0, scale: 1.2, x: drift, y: -140, rotate: rotation }}
-      transition={{ duration: 0.8, ease: 'easeOut' }}
+      initial={{ opacity: 1, scale: 0.4, x: 0, y: 0, rotate: 0 }}
+      animate={{ opacity: 0, scale, x: drift, y: floatHeight, rotate: rotation }}
+      transition={{ duration: 1.3, ease: [0.25, 0.46, 0.45, 0.94] }}
       className="absolute pointer-events-none z-50"
       style={{ left: x, top: y }}
     >
-      <Dumbbell className="w-5 h-5 text-primary" />
+      <Dumbbell className="w-6 h-6" style={{ color }} />
     </motion.div>
   );
 }
