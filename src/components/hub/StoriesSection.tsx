@@ -672,22 +672,9 @@ export function StoriesSection() {
                         />
                       )}
 
-                      {/* Video controls for multi-media video */}
+                      {/* Mute toggle only for video */}
                       {currentSlide.type === 'video' && (
-                        <div className="absolute bottom-20 right-4 flex flex-col gap-2 z-10" data-story-controls>
-                          <button
-                            className="w-10 h-10 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center text-white"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              if (storyVideoRef.current) {
-                                if (isPlaying) storyVideoRef.current.pause();
-                                else storyVideoRef.current.play();
-                                setIsPlaying(!isPlaying);
-                              }
-                            }}
-                          >
-                            {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
-                          </button>
+                        <div className="absolute bottom-20 right-4 z-10" data-story-controls>
                           <button
                             className="w-10 h-10 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center text-white"
                             onClick={(e) => {
