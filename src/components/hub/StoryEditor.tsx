@@ -150,10 +150,28 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
   const hasMedia = mediaItems.length > 0;
   const currentMedia = mediaItems[activeMediaIndex];
 
+  // Per-media transform state (resize/reposition)
+  const [mediaTransforms, setMediaTransforms] = useState<Record<number, MediaTransform>>({});
+  const [mediaCrops, setMediaCrops] = useState<Record<number, CropState>>({});
+  const [mediaEditMode, setMediaEditMode] = useState<'none' | 'move' | 'crop'>('none');
+  const mediaDragRef = useRef<{ startX: number; startY: number; startTX: number; startTY: number } | null>(null);
+  const mediaPinchRef = useRef<{ dist: number; scale: number } | null>(null);
+  const cropDragRef = useRef<{ edge: string; startX: number; startY: number; startCrop: CropState } | null>(null);
+
+  const getMediaTransform = (idx: number): MediaTransform => mediaTransforms[idx] || { scale: 1, x: 0, y: 0 };
+  const getMediaCrop = (idx: number): CropState => mediaCrops[idx] || { active: false, top: 0, left: 0, bottom: 0, right: 0 };
+
+  const updateMediaTransform = useCallback((idx: number, updates: Partial<MediaTransform>) => {
+    setMediaTransforms(prev => ({ ...prev, [idx]: { ...prev[idx] || { scale: 1, x: 0, y: 0 }, ...updates } }));
+  }, []);
+
+  const updateMediaCrop = useCallback((idx: number, updates: Partial<CropState>) => {
+    setMediaCrops(prev => ({ ...prev, [idx]: { ...prev[idx] || { active: false, top: 0, left: 0, bottom: 0, right: 0 }, ...updates } }));
+  }, []);
+
   const cycleVisibility = () => {
     setVisibility(v => v === 'public' ? 'friends' : v === 'friends' ? 'private' : 'public');
   };
-
   const visIcon = visibility === 'public' ? <Globe className="w-4 h-4" /> : visibility === 'friends' ? <Users className="w-4 h-4" /> : <Lock className="w-4 h-4" />;
 
   const pushUndo = () => {
