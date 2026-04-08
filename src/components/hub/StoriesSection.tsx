@@ -68,10 +68,11 @@ export function StoriesSection() {
 
   const handleStoryLike = useCallback(() => {
     setStoryLiked(true);
-    const newDumbbells = Array.from({ length: 4 }, () => ({
+    const newDumbbells = Array.from({ length: 6 }, (_, i) => ({
       id: ++dumbbellIdRef.current,
-      x: window.innerWidth / 2 + (Math.random() - 0.5) * 40 - 12,
-      y: window.innerHeight - 80,
+      x: window.innerWidth * (0.2 + Math.random() * 0.6),
+      y: window.innerHeight * (0.4 + Math.random() * 0.4),
+      color: DUMBBELL_COLORS[i % 3],
     }));
     setFloatingDumbbells(prev => [...prev, ...newDumbbells]);
   }, []);
