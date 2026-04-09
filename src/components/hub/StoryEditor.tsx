@@ -4,7 +4,7 @@ import {
   Type, Trash2, X, Check, Image, Video, Palette,
   AlignLeft, AlignCenter, AlignRight, Bold, Loader2,
   Globe, Users, Lock, Undo2, Square, Minus, Plus,
-  Crop, Move, Maximize2,
+  Move, Maximize2,
 } from 'lucide-react';
 import { TextOverlayData, DEFAULT_OVERLAY, StoryTextOverlay, FONT_OPTIONS } from './StoryTextOverlay';
 import { Slider } from '@/components/ui/slider';
@@ -21,13 +21,6 @@ interface MediaTransform {
   y: number; // % offset from center
 }
 
-interface CropState {
-  active: boolean;
-  top: number;    // % from top
-  left: number;   // % from left
-  bottom: number; // % from bottom
-  right: number;  // % from right
-}
 
 const PRESET_COLORS = [
   '#FFFFFF', '#000000', '#FF3B30', '#FF9500', '#FFCC00',
@@ -152,22 +145,18 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
 
   // Per-media transform state (resize/reposition)
   const [mediaTransforms, setMediaTransforms] = useState<Record<number, MediaTransform>>({});
-  const [mediaCrops, setMediaCrops] = useState<Record<number, CropState>>({});
-  const [mediaEditMode, setMediaEditMode] = useState<'none' | 'move' | 'crop'>('none');
+  const [mediaEditMode, setMediaEditMode] = useState<'none' | 'move'>('none');
   const mediaDragRef = useRef<{ startX: number; startY: number; startTX: number; startTY: number } | null>(null);
   const mediaPinchRef = useRef<{ dist: number; scale: number } | null>(null);
-  const cropDragRef = useRef<{ edge: string; startX: number; startY: number; startCrop: CropState } | null>(null);
+  
 
   const getMediaTransform = (idx: number): MediaTransform => mediaTransforms[idx] || { scale: 1, x: 0, y: 0 };
-  const getMediaCrop = (idx: number): CropState => mediaCrops[idx] || { active: false, top: 0, left: 0, bottom: 0, right: 0 };
+  
 
   const updateMediaTransform = useCallback((idx: number, updates: Partial<MediaTransform>) => {
     setMediaTransforms(prev => ({ ...prev, [idx]: { ...prev[idx] || { scale: 1, x: 0, y: 0 }, ...updates } }));
   }, []);
 
-  const updateMediaCrop = useCallback((idx: number, updates: Partial<CropState>) => {
-    setMediaCrops(prev => ({ ...prev, [idx]: { ...prev[idx] || { active: false, top: 0, left: 0, bottom: 0, right: 0 }, ...updates } }));
-  }, []);
 
   const cycleVisibility = () => {
     setVisibility(v => v === 'public' ? 'friends' : v === 'friends' ? 'private' : 'public');
