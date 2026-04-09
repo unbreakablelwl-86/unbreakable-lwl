@@ -14,25 +14,25 @@ import { StoryTextOverlay, TextOverlayData } from './StoryTextOverlay';
 const DUMBBELL_COLORS = ['hsl(var(--primary))', '#FFFFFF', '#1C1C1E'];
 
 function FloatingDumbbell({ id, x, y, color, onDone }: { id: number; x: number; y: number; color: string; onDone: (id: number) => void }) {
-  const drift = (Math.random() - 0.5) * 120;
-  const rotation = (Math.random() - 0.5) * 540;
-  const floatHeight = -(200 + Math.random() * 200);
-  const scale = 0.7 + Math.random() * 0.6;
+  const drift = (Math.random() - 0.5) * 160;
+  const rotation = (Math.random() - 0.5) * 360;
+  const floatHeight = -(250 + Math.random() * 250);
+  const finalScale = 1.0 + Math.random() * 0.5;
 
   useEffect(() => {
-    const timer = setTimeout(() => onDone(id), 1400);
+    const timer = setTimeout(() => onDone(id), 1800);
     return () => clearTimeout(timer);
   }, [id, onDone]);
 
   return (
     <motion.div
-      initial={{ opacity: 1, scale: 0.4, x: 0, y: 0, rotate: 0 }}
-      animate={{ opacity: 0, scale, x: drift, y: floatHeight, rotate: rotation }}
-      transition={{ duration: 1.3, ease: [0.25, 0.46, 0.45, 0.94] }}
+      initial={{ opacity: 1, scale: 0.8, x: 0, y: 0, rotate: 0 }}
+      animate={{ opacity: [1, 1, 0.9, 0], scale: finalScale, x: drift, y: floatHeight, rotate: rotation }}
+      transition={{ duration: 1.6, ease: [0.25, 0.46, 0.45, 0.94], opacity: { times: [0, 0.4, 0.7, 1] } }}
       className="absolute pointer-events-none z-50"
       style={{ left: x, top: y }}
     >
-      <Dumbbell className="w-8 h-8" style={{ color }} />
+      <Dumbbell className="w-12 h-12 drop-shadow-lg" style={{ color, filter: `drop-shadow(0 0 6px ${color}44)` }} />
     </motion.div>
   );
 }
