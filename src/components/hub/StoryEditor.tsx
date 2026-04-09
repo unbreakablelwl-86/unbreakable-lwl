@@ -551,6 +551,7 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
             transform: `translate(${t.x}%, ${t.y}%) scale(${t.scale})`,
             clipPath: crop.active ? `inset(${crop.top}% ${crop.right}% ${crop.bottom}% ${crop.left}%)` : undefined,
             transition: mediaDragRef.current || mediaPinchRef.current ? 'none' : 'transform 0.15s ease',
+            transformOrigin: 'center center',
           };
           return (
             <div
@@ -600,7 +601,7 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
                 <img
                   src={currentMedia.uploadedUrl || currentMedia.previewUrl}
                   alt="Story media"
-                  className="max-w-full max-h-full object-contain select-none"
+                  className="max-w-full max-h-full object-contain select-none pointer-events-none"
                   style={mediaStyle}
                   draggable={false}
                 />
@@ -608,32 +609,39 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
                 <video
                   src={currentMedia.uploadedUrl || currentMedia.previewUrl}
                   autoPlay loop muted playsInline
-                  className="max-w-full max-h-full object-contain select-none"
+                  className="max-w-full max-h-full object-contain select-none pointer-events-none"
                   style={mediaStyle}
                 />
               )}
 
-              {/* Crop overlay handles */}
+              {/* Crop overlay with grid + improved handles */}
               {mediaEditMode === 'crop' && (
                 <div className="absolute inset-0 z-10">
-                  {/* Dim cropped-out areas */}
                   <div className="absolute inset-0 pointer-events-none">
-                    <div className="absolute top-0 left-0 right-0 bg-black/50" style={{ height: `${crop.top}%` }} />
-                    <div className="absolute bottom-0 left-0 right-0 bg-black/50" style={{ height: `${crop.bottom}%` }} />
-                    <div className="absolute bg-black/50" style={{ top: `${crop.top}%`, bottom: `${crop.bottom}%`, left: 0, width: `${crop.left}%` }} />
-                    <div className="absolute bg-black/50" style={{ top: `${crop.top}%`, bottom: `${crop.bottom}%`, right: 0, width: `${crop.right}%` }} />
-                    {/* Crop border */}
-                    <div className="absolute border-2 border-white/80" style={{ top: `${crop.top}%`, left: `${crop.left}%`, right: `${crop.right}%`, bottom: `${crop.bottom}%` }} />
+                    <div className="absolute top-0 left-0 right-0 bg-black/60" style={{ height: `${crop.top}%` }} />
+                    <div className="absolute bottom-0 left-0 right-0 bg-black/60" style={{ height: `${crop.bottom}%` }} />
+                    <div className="absolute bg-black/60" style={{ top: `${crop.top}%`, bottom: `${crop.bottom}%`, left: 0, width: `${crop.left}%` }} />
+                    <div className="absolute bg-black/60" style={{ top: `${crop.top}%`, bottom: `${crop.bottom}%`, right: 0, width: `${crop.right}%` }} />
+                    {/* Crop border with rule-of-thirds grid */}
+                    <div className="absolute border border-white/60" style={{ top: `${crop.top}%`, left: `${crop.left}%`, right: `${crop.right}%`, bottom: `${crop.bottom}%` }}>
+                      <div className="absolute inset-0 grid grid-cols-3 grid-rows-3">
+                        {Array.from({ length: 9 }).map((_, i) => (
+                          <div key={i} className="border border-white/15" />
+                        ))}
+                      </div>
+                    </div>
                   </div>
-                  {/* Drag handles for each edge */}
+                  {/* Edge drag handles — wider touch targets */}
                   {(['top', 'bottom', 'left', 'right'] as const).map(edge => (
                     <div
                       key={edge}
                       className={`absolute z-20 ${
-                        edge === 'top' || edge === 'bottom' ? 'left-1/3 right-1/3 h-6 cursor-ns-resize' : 'top-1/3 bottom-1/3 w-6 cursor-ew-resize'
+                        edge === 'top' || edge === 'bottom'
+                          ? 'left-[15%] right-[15%] h-10 cursor-ns-resize flex items-center justify-center'
+                          : 'top-[15%] bottom-[15%] w-10 cursor-ew-resize flex items-center justify-center'
                       }`}
                       style={{
-                        [edge]: `calc(${crop[edge]}% - 12px)`,
+                        [edge]: `calc(${crop[edge]}% - 20px)`,
                       }}
                       onPointerDown={(e) => {
                         e.stopPropagation();
@@ -656,9 +664,9 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
                       }}
                       onPointerUp={() => { cropDragRef.current = null; }}
                     >
-                      <div className={`absolute bg-white rounded-full shadow-lg ${
-                        edge === 'top' || edge === 'bottom' ? 'left-1/2 -translate-x-1/2 w-8 h-1.5' : 'top-1/2 -translate-y-1/2 h-8 w-1.5'
-                      } ${edge === 'top' ? 'top-2' : edge === 'bottom' ? 'bottom-2' : edge === 'left' ? 'left-2' : 'right-2'}`} />
+                      <div className={`bg-white rounded-full shadow-lg ${
+                        edge === 'top' || edge === 'bottom' ? 'w-10 h-1.5' : 'h-10 w-1.5'
+                      }`} />
                     </div>
                   ))}
                 </div>
