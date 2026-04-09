@@ -532,20 +532,18 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
         onTouchEnd={handleTouchEnd}
         onPointerDown={handleCanvasPointerDown}
       >
-        {/* Current media display — interactive resize/crop */}
+        {/* Current media display — interactive resize */}
         {hasMedia && currentMedia && (() => {
           const t = getMediaTransform(activeMediaIndex);
-          const crop = getMediaCrop(activeMediaIndex);
           const mediaStyle: React.CSSProperties = {
             transform: `translate(${t.x}%, ${t.y}%) scale(${t.scale})`,
-            clipPath: crop.active ? `inset(${crop.top}% ${crop.right}% ${crop.bottom}% ${crop.left}%)` : undefined,
             transition: mediaDragRef.current || mediaPinchRef.current ? 'none' : 'transform 0.15s ease',
             transformOrigin: 'center center',
           };
           return (
             <div
               className="absolute inset-0 flex items-center justify-center"
-              style={{ cursor: mediaEditMode === 'move' ? 'grab' : mediaEditMode === 'crop' ? 'crosshair' : 'default' }}
+              style={{ cursor: mediaEditMode === 'move' ? 'grab' : 'default' }}
               onPointerDown={(e) => {
                 if (mediaEditMode === 'move') {
                   e.stopPropagation();
@@ -567,7 +565,7 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
               }}
               onPointerUp={() => { mediaDragRef.current = null; }}
               onTouchStart={(e) => {
-                if (e.touches.length === 2 && mediaEditMode !== 'crop') {
+                if (e.touches.length === 2) {
                   e.stopPropagation();
                   const dx = e.touches[0].clientX - e.touches[1].clientX;
                   const dy = e.touches[0].clientY - e.touches[1].clientY;
@@ -603,63 +601,6 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
                 />
               )}
 
-              {/* Crop overlay with grid + improved handles */}
-              {mediaEditMode === 'crop' && (
-                <div className="absolute inset-0 z-10">
-                  <div className="absolute inset-0 pointer-events-none">
-                    <div className="absolute top-0 left-0 right-0 bg-black/60" style={{ height: `${crop.top}%` }} />
-                    <div className="absolute bottom-0 left-0 right-0 bg-black/60" style={{ height: `${crop.bottom}%` }} />
-                    <div className="absolute bg-black/60" style={{ top: `${crop.top}%`, bottom: `${crop.bottom}%`, left: 0, width: `${crop.left}%` }} />
-                    <div className="absolute bg-black/60" style={{ top: `${crop.top}%`, bottom: `${crop.bottom}%`, right: 0, width: `${crop.right}%` }} />
-                    {/* Crop border with rule-of-thirds grid */}
-                    <div className="absolute border border-white/60" style={{ top: `${crop.top}%`, left: `${crop.left}%`, right: `${crop.right}%`, bottom: `${crop.bottom}%` }}>
-                      <div className="absolute inset-0 grid grid-cols-3 grid-rows-3">
-                        {Array.from({ length: 9 }).map((_, i) => (
-                          <div key={i} className="border border-white/15" />
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                  {/* Edge drag handles — wider touch targets */}
-                  {(['top', 'bottom', 'left', 'right'] as const).map(edge => (
-                    <div
-                      key={edge}
-                      className={`absolute z-20 ${
-                        edge === 'top' || edge === 'bottom'
-                          ? 'left-[15%] right-[15%] h-10 cursor-ns-resize flex items-center justify-center'
-                          : 'top-[15%] bottom-[15%] w-10 cursor-ew-resize flex items-center justify-center'
-                      }`}
-                      style={{
-                        [edge]: `calc(${crop[edge]}% - 20px)`,
-                      }}
-                      onPointerDown={(e) => {
-                        e.stopPropagation();
-                        cropDragRef.current = { edge, startX: e.clientX, startY: e.clientY, startCrop: { ...crop } };
-                        (e.target as HTMLElement).setPointerCapture(e.pointerId);
-                      }}
-                      onPointerMove={(e) => {
-                        if (!cropDragRef.current || cropDragRef.current.edge !== edge || !canvasRef.current) return;
-                        const rect = canvasRef.current.getBoundingClientRect();
-                        const cr = cropDragRef.current;
-                        if (edge === 'top' || edge === 'bottom') {
-                          const dy = ((e.clientY - cr.startY) / rect.height) * 100;
-                          const val = Math.max(0, Math.min(45, cr.startCrop[edge] + (edge === 'top' ? dy : -dy)));
-                          updateMediaCrop(activeMediaIndex, { [edge]: val, active: true });
-                        } else {
-                          const dx = ((e.clientX - cr.startX) / rect.width) * 100;
-                          const val = Math.max(0, Math.min(45, cr.startCrop[edge] + (edge === 'left' ? dx : -dx)));
-                          updateMediaCrop(activeMediaIndex, { [edge]: val, active: true });
-                        }
-                      }}
-                      onPointerUp={() => { cropDragRef.current = null; }}
-                    >
-                      <div className={`bg-white rounded-full shadow-lg ${
-                        edge === 'top' || edge === 'bottom' ? 'w-10 h-1.5' : 'h-10 w-1.5'
-                      }`} />
-                    </div>
-                  ))}
-                </div>
-              )}
             </div>
           );
         })()}
@@ -977,26 +918,9 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
                 <span className="text-white text-[10px] font-display w-8 text-center shrink-0">{Math.round(getMediaTransform(activeMediaIndex).scale * 100)}%</span>
               </>
             )}
-            {mediaEditMode === 'crop' && (
-              <>
-                <span className="text-white/70 text-xs font-display">Drag edges to crop</span>
-                <button
-                  className="px-2 py-1 rounded-full bg-white/15 text-white text-[10px] font-display"
-                  onClick={() => updateMediaCrop(activeMediaIndex, { top: 0, left: 0, bottom: 0, right: 0, active: false })}
-                >
-                  Reset
-                </button>
-              </>
-            )}
             <button
               className="ml-2 px-3 py-1 rounded-full bg-primary text-primary-foreground text-xs font-display"
               onClick={() => {
-                if (mediaEditMode === 'crop') {
-                  const crop = getMediaCrop(activeMediaIndex);
-                  if (crop.top > 0 || crop.bottom > 0 || crop.left > 0 || crop.right > 0) {
-                    updateMediaCrop(activeMediaIndex, { active: true });
-                  }
-                }
                 setMediaEditMode('none');
               }}
             >
@@ -1038,15 +962,6 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
                   onClick={(e) => { e.stopPropagation(); setMediaEditMode(mediaEditMode === 'move' ? 'none' : 'move'); }}
                 >
                   <Maximize2 className="w-5 h-5" />
-                </button>
-              )}
-              {/* Crop media button */}
-              {hasMedia && (
-                <button
-                  className={`w-11 h-11 rounded-full backdrop-blur-sm flex items-center justify-center text-white active:scale-90 transition-transform ${mediaEditMode === 'crop' ? 'bg-white/25' : 'bg-white/10'}`}
-                  onClick={(e) => { e.stopPropagation(); setMediaEditMode(mediaEditMode === 'crop' ? 'none' : 'crop'); }}
-                >
-                  <Crop className="w-5 h-5" />
                 </button>
               )}
             </div>
