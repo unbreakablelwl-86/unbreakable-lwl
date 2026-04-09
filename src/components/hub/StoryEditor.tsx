@@ -989,7 +989,15 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
               </>
             )}
             {mediaEditMode === 'crop' && (
-              <span className="text-white/70 text-xs font-display">Drag edges to crop</span>
+              <>
+                <span className="text-white/70 text-xs font-display">Drag edges to crop</span>
+                <button
+                  className="px-2 py-1 rounded-full bg-white/15 text-white text-[10px] font-display"
+                  onClick={() => updateMediaCrop(activeMediaIndex, { top: 0, left: 0, bottom: 0, right: 0, active: false })}
+                >
+                  Reset
+                </button>
+              </>
             )}
             <button
               className="ml-2 px-3 py-1 rounded-full bg-primary text-primary-foreground text-xs font-display"
