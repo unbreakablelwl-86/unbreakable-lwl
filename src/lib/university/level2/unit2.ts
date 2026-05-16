@@ -6,6 +6,7 @@ import ch4EnergyBalance from '@/assets/university/u2-ch4-tdee-breakdown.png';
 import ch5FoodLabels from '@/assets/university/u2-ch5-marketing-claims.png';
 import ch6NutrientTiming from '@/assets/university/u2-ch6-meal-frequency.png';
 import ch7BalancedPlate from '@/assets/university/u2-ch7-plate-model.png';
+import ch8MythEvaluation from '@/assets/university/l2-u2-ch8-myth-evaluation.png';
 
 export const level2Unit2: Unit = {
   number: 2,
@@ -665,7 +666,8 @@ export const level2Unit2: Unit = {
             'Dose and context — Many substances are harmful at high doses but fine at normal levels. Sugar isn\'t poison. Saturated fat isn\'t deadly. Context and quantity matter.',
             'The "too good to be true" test — If it sounds like a miracle, it probably isn\'t. Real nutrition science is boring: eat mostly whole foods, get enough protein, maintain a healthy weight. That\'s it.',
           ],
-          imagePlaceholder: 'Flowchart for evaluating nutrition claims: Who benefits? → What does the research say? → Is it correlation or causation? → Does dose/context matter? → Is it too good to be true?',
+          imageUrl: ch8MythEvaluation,
+          imageAlt: 'Five-step flowchart for evaluating nutrition claims: who benefits, what research says, correlation vs causation, dose and context, and too-good-to-be-true test',
         },
       ],
       unbreakableInsight: 'The loudest voices in nutrition usually have the weakest evidence. The supplement that promises to "melt fat" while you sleep, the diet that demonises an entire food group, the influencer who found the "one thing" nobody else knows — they\'re all selling something. Eat real food. Don\'t overcomplicate it.',

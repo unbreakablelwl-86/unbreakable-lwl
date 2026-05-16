@@ -4,6 +4,7 @@ import ch2DisciplineVsMotivation from '@/assets/university/mindl2-u3-ch2-discipl
 import ch3HabitFormation from '@/assets/university/mindl2-u3-ch3-habit-formation.png';
 import ch4EmotionalRegulation from '@/assets/university/mindl2-u3-ch4-emotional-regulation.png';
 import ch5Visualisation from '@/assets/university/mindl2-u3-ch5-visualisation.png';
+import ch6DopamineLoop from '@/assets/university/mindl2-u3-ch6-dopamine-loop.png';
 
 
 export const mindsetL2Unit3: Unit = {
@@ -291,7 +292,8 @@ export const mindsetL2Unit3: Unit = {
             'Infinite scroll — removes natural stopping cues, leading to extended mindless consumption',
             'Comparison culture — constant exposure to curated highlight reels lowers self-esteem and increases anxiety',
           ],
-          imagePlaceholder: 'Diagram showing the dopamine feedback loop: notification → anticipation (dopamine release) → check phone → brief reward → dopamine drop → seek next notification',
+          imageUrl: ch6DopamineLoop,
+          imageAlt: 'Circular diagram showing the dopamine feedback loop: notification, anticipation, check phone, brief reward, dopamine drop, seek next stimulus',
         },
         {
           heading: 'The Impact on Training and Performance',

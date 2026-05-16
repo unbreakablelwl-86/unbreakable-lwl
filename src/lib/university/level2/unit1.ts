@@ -16,6 +16,11 @@ import ch5EnergySystems from '@/assets/university/ch5-energy-systems.png';
 import ch5AtpBreakdown from '@/assets/university/ch5-atp-breakdown.png';
 import ch5EnergyTimeline from '@/assets/university/ch5-energy-timeline.png';
 import ch5RepRanges from '@/assets/university/ch5-rep-ranges.png';
+import ch6RespiratoryPathway from '@/assets/university/l2-u1-ch6-respiratory-pathway.png';
+import ch6BreathingComparison from '@/assets/university/l2-u1-ch6-breathing-comparison.png';
+import ch7MotorUnitRecruitment from '@/assets/university/l2-u1-ch7-motor-unit-recruitment.png';
+import ch8PostureDeviations from '@/assets/university/l2-u1-ch8-posture-deviations.png';
+import ch8MobilityAreas from '@/assets/university/l2-u1-ch8-mobility-areas.png';
 
 export const level2Unit1: Unit = {
   number: 1,
@@ -383,7 +388,8 @@ export const level2Unit1: Unit = {
             'When you inhale, air enters through your nose or mouth and travels down the trachea (windpipe). The trachea splits into two bronchi — one for each lung. These branch into smaller and smaller tubes called bronchioles, which end in tiny air sacs called alveoli.',
             'The alveoli are where the magic happens. There are roughly 300 million of them in your lungs, creating a surface area about the size of a tennis court. This massive surface area allows efficient gas exchange — oxygen passes into your blood, and carbon dioxide passes out.',
           ],
-          imagePlaceholder: 'Diagram showing the respiratory pathway from nose/mouth through trachea, bronchi, bronchioles, to alveoli with labelled structures',
+          imageUrl: ch6RespiratoryPathway,
+          imageAlt: 'Diagram showing the respiratory pathway from nose/mouth through trachea, bronchi, bronchioles, to alveoli with gas exchange details',
         },
         {
           heading: 'Gas Exchange & Oxygen Delivery',
@@ -413,7 +419,8 @@ export const level2Unit1: Unit = {
             'Breathing too fast — hyperventilation reduces CO2 levels, causing light-headedness and tingling',
             'Forgetting to breathe at all — surprisingly common during focused efforts. Your muscles need oxygen to perform.',
           ],
-          imagePlaceholder: 'Side-by-side comparison of diaphragmatic breathing (belly expands) vs shallow chest breathing (shoulders rise), showing correct vs incorrect technique',
+          imageUrl: ch6BreathingComparison,
+          imageAlt: 'Side-by-side comparison of diaphragmatic breathing versus shallow chest breathing, showing correct and incorrect technique',
         },
       ],
       unbreakableInsight: 'Your muscles don\'t just need to be strong — they need oxygen. If your breathing is off, your performance ceiling drops no matter how much muscle you\'ve built. Master the basics: breathe through your diaphragm, time it to your reps, and stop holding your breath through entire sets.',
@@ -452,7 +459,8 @@ export const level2Unit1: Unit = {
             'A motor unit consists of a single motor neuron and all the muscle fibres it controls. When the neuron fires, every fibre in that motor unit contracts. Small motor units control fine movements (writing, eye movements). Large motor units control powerful movements (jumping, heavy lifting).',
             'Your body recruits motor units in order — small ones first, large ones only when more force is needed. This is called the Size Principle. It\'s why light weights feel easy — you\'re only using small motor units. As the load increases, larger motor units are recruited to produce more force.',
           ],
-          imagePlaceholder: 'Diagram showing motor unit recruitment: small motor units firing at low force, progressively larger motor units activating as force demand increases',
+          imageUrl: ch7MotorUnitRecruitment,
+          imageAlt: 'Progressive bar chart showing motor unit recruitment from light load to maximal load following the size principle',
         },
         {
           heading: 'Why Beginners Get Stronger Before They Get Bigger',
@@ -533,7 +541,8 @@ export const level2Unit1: Unit = {
             'Kyphosis — excessive rounding of the upper back. Can be structural or habitual. Limits overhead pressing ability and increases shoulder impingement risk.',
             'Lateral imbalances — one shoulder higher than the other, hips shifted to one side, or rotation through the torso. Often caused by carrying bags on one side or sport-specific dominance.',
           ],
-          imagePlaceholder: 'Side-view posture comparison showing ideal alignment, upper crossed syndrome (rounded shoulders/forward head), and lower crossed syndrome (excessive lumbar curve/anterior pelvic tilt)',
+          imageUrl: ch8PostureDeviations,
+          imageAlt: 'Diagram showing common postural deviations: upper crossed syndrome, lower crossed syndrome, and lateral imbalance with causes and effects',
         },
         {
           heading: 'Flexibility vs Mobility',
@@ -559,7 +568,8 @@ export const level2Unit1: Unit = {
             'Ankles — need dorsiflexion. Limited ankle mobility forces the torso forward in a squat and can cause knee tracking issues.',
             'Shoulders — need flexion, external rotation, and extension. Limited shoulder mobility restricts overhead pressing and back squat bar position.',
           ],
-          imagePlaceholder: 'Four-panel diagram showing key mobility assessments: overhead reach (thoracic), deep squat (hips/ankles), ankle dorsiflexion test (ankles), and shoulder flexion against a wall (shoulders)',
+          imageUrl: ch8MobilityAreas,
+          imageAlt: 'Key mobility areas for gym users: thoracic spine, shoulders, hips, and ankles with specific limitations each causes',
         },
         {
           heading: 'A Practical Approach to Mobility',

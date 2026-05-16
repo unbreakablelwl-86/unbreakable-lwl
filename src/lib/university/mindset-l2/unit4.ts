@@ -3,6 +3,7 @@ import ch1MorningRoutine from '@/assets/university/mindl2-u4-ch1-morning-routine
 import ch2StressInoculation from '@/assets/university/mindl2-u4-ch2-stress-inoculation.png';
 import ch3Mindfulness from '@/assets/university/mindl2-u4-ch3-mindfulness.png';
 import ch4ResilienceProtocol from '@/assets/university/mindl2-u4-ch4-resilience-protocol.png';
+import ch5SleepStages from '@/assets/university/mindl2-u4-ch5-sleep-stages.png';
 
 
 export const mindsetL2Unit4: Unit = {
@@ -236,7 +237,8 @@ export const mindsetL2Unit4: Unit = {
           paragraphs: [
             'Deep sleep (N3) dominates the first half of the night. REM sleep dominates the second half. This is why cutting sleep short costs you REM, and going to bed too late costs you deep sleep. Both matter — you need a full 7-9 hours to cycle through all stages adequately.',
           ],
-          imagePlaceholder: 'Hypnogram showing sleep stages across an 8-hour night: cycles between N1, N2, N3, and REM, with deep sleep dominant early and REM dominant late',
+          imageUrl: ch5SleepStages,
+          imageAlt: 'Hypnogram showing sleep architecture across an 8-hour night with deep sleep dominant early and REM dominant later',
         },
         {
           heading: 'What Destroys Sleep Quality',

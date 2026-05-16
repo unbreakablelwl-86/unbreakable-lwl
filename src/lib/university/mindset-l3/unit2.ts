@@ -4,6 +4,7 @@ import ch2ColdScience from '@/assets/university/mindl3-u2-ch2-cold-science.png';
 import ch3HeatExposure from '@/assets/university/mindl3-u2-ch3-heat-exposure.png';
 import ch4SportBreathing from '@/assets/university/mindl3-u2-ch4-sport-breathing.png';
 import ch5ContrastTherapy from '@/assets/university/mindl3-u2-ch5-contrast-therapy.png';
+import ch6AltitudeTimeline from '@/assets/university/mindl3-u2-ch6-altitude-timeline.png';
 
 export const mindsetL3Unit2: Unit = {
   number: 2,
@@ -318,7 +319,8 @@ export const mindsetL3Unit2: Unit = {
             'Mitochondrial efficiency improves — cells become better at using available oxygen',
             'Ventilatory response adapts — breathing becomes more efficient, extracting more oxygen per breath',
           ],
-          imagePlaceholder: 'Timeline diagram showing acute responses (hours) transitioning to chronic adaptations (weeks) during altitude exposure, with key physiological changes at each stage',
+          imageUrl: ch6AltitudeTimeline,
+          imageAlt: 'Timeline showing acute altitude responses transitioning to chronic adaptations over weeks, with accessible training methods listed',
         },
         {
           heading: 'Training Methods',
