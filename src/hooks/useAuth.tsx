@@ -32,7 +32,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     supabase.auth.getSession().then(({ data: { session }, error }) => {
       // If there's a refresh token error, clear local storage
       if (error && error.message?.includes('Refresh Token')) {
-        localStorage.removeItem('sb-beqcnuqfxgghscbpxuxb-auth-token');
+        localStorage.removeItem('sb-vlwcoqilwyfcrsxodtdx-auth-token');
         setSession(null);
         setUser(null);
       } else {
