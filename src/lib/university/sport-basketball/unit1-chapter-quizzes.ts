@@ -36,7 +36,7 @@ export const sportBasketballUnit1ChapterQuizzes: ChapterQuiz[] = [
   cq(1, 5, [
     { type: 'multiple_choice', question: 'What is the most common basketball injury?', options: ['ACL tear', 'Concussion', 'Ankle sprain (25-30% of all injuries)', 'Hamstring strain'], correctAnswer: 2, explanation: 'Ankle sprains account for 25-30% of basketball injuries.' },
     { type: 'multiple_choice', question: 'How much do ACL prevention programmes reduce injury risk?', options: ['10-20%', '30-40%', '50-70%', '100%'], correctAnswer: 2, explanation: 'Prevention programmes reduce ACL injuries by 50-70%.' },
-    { type: 'multiple_choice', question: 'What percentage of basketball players experience jumper\'s knee?', options: ['5-10%', '15-20%', '30-45%', '70%+'], correctAnswer: 2, explanation: 'Patellar tendinopathy affects 30-45% of basketball players.' },
+    { type: 'multiple_choice', question: "What percentage of basketball players experience jumper\'s knee?", options: ['5-10%', '15-20%', '30-45%', '70%+'], correctAnswer: 2, explanation: 'Patellar tendinopathy affects 30-45% of basketball players.' },
     { type: 'multiple_choice', question: 'What is the strongest predictor of future ankle sprain?', options: ['Body weight', 'Court surface', 'Previous ankle sprain with residual weakness', 'Shoe type'], correctAnswer: 2, explanation: 'Previous sprain creating residual weakness is the strongest predictor.' },
     { type: 'multiple_choice', question: 'Why are female players at greater ACL risk?', options: ['They play harder', 'Biomechanical and hormonal factors create 2-4x higher risk', 'The sport is different', 'They do not warm up'], correctAnswer: 1, explanation: 'Multiple factors contribute to higher ACL risk in female athletes.' },
   ]),

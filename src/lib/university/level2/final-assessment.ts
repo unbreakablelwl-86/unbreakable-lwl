@@ -312,7 +312,7 @@ export const level2FinalAssessment: UnitAssessment = {
         'The body adapting to burn only fat for fuel',
       ],
       correctAnswer: 0,
-      explanation: 'Metabolic adaptation is the body\'s reduction in total energy expenditure during prolonged caloric restriction. BMR decreases, NEAT decreases subconsciously, and hormonal changes (reduced leptin, thyroid output) make continued fat loss harder. This is why aggressive deficits are unsustainable.',
+      explanation: "Metabolic adaptation is the body\'s reduction in total energy expenditure during prolonged caloric restriction. BMR decreases, NEAT decreases subconsciously, and hormonal changes (reduced leptin, thyroid output) make continued fat loss harder. This is why aggressive deficits are unsustainable.",
     },
 
     // ── Food Labels ──
@@ -463,7 +463,7 @@ export const level2FinalAssessment: UnitAssessment = {
         '10 minutes of leg stretches',
       ],
       correctAnswer: 0,
-      explanation: 'An effective warm-up is specific to the session. RAMP ensures elevated heart rate, activated stabilisers, mobilised working joints, and progressive loading to the session\'s demands — all within 10 minutes.',
+      explanation: "An effective warm-up is specific to the session. RAMP ensures elevated heart rate, activated stabilisers, mobilised working joints, and progressive loading to the session\'s demands — all within 10 minutes.",
     },
 
     // ── Resistance Training ──
@@ -677,7 +677,7 @@ export const level2FinalAssessment: UnitAssessment = {
         'Full-body sessions all 3 days, training each major movement pattern each session',
       ],
       correctAnswer: 3,
-      explanation: 'Full-body training 3 days per week is optimal for beginners: it provides high training frequency per muscle group (3× per week), maximises motor learning through repetition, and matches the beginner\'s lower recovery demands.',
+      explanation: "Full-body training 3 days per week is optimal for beginners: it provides high training frequency per muscle group (3× per week), maximises motor learning through repetition, and matches the beginner\'s lower recovery demands.",
     },
     {
       type: 'multiple_choice',
@@ -908,7 +908,7 @@ export const level2FinalAssessment: UnitAssessment = {
         'The maximum heart rate during exercise',
       ],
       correctAnswer: 0,
-      explanation: 'Cardiac output = heart rate × stroke volume. It represents the total volume of blood pumped per minute and increases significantly during exercise to meet the working muscles\' oxygen demands.',
+      explanation: "Cardiac output = heart rate × stroke volume. It represents the total volume of blood pumped per minute and increases significantly during exercise to meet the working muscles\' oxygen demands.",
     },
     {
       type: 'multiple_choice',

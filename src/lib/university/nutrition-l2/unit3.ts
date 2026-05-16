@@ -329,7 +329,7 @@ export const nutritionL2Unit3: Unit = {
           heading: 'Why Meal Prep Works',
           paragraphs: [
             'Meal preparation is the practice of cooking and portioning meals in advance — typically for 3–5 days. It removes the daily decision of "what should I eat?" and replaces it with a ready-made healthy option.',
-            'The biggest benefit is consistency. When healthy food is ready and accessible, you eat it. When it isn\'t, you reach for convenience options that are often higher in calories and lower in nutrients.',
+            "The biggest benefit is consistency. When healthy food is ready and accessible, you eat it. When it isn\'t, you reach for convenience options that are often higher in calories and lower in nutrients.",
           ],
           imageUrl: ch6BatchCooking,
           imageAlt: 'Batch cooking workflow diagram',

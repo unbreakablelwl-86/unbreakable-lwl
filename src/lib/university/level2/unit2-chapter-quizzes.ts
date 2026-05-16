@@ -71,7 +71,7 @@ export const unit2ChapterQuizzes: ChapterQuiz[] = [
         scenario: 'You feel lethargic during workouts despite sleeping well. Your daily diet is very low in carbohydrates.',
         options: ['Too much fibre', 'Insufficient carbohydrates for training energy', 'Too much protein', 'Excess fat intake'],
         correctAnswer: 1,
-        explanation: 'Carbohydrates are the body\'s preferred fuel source for moderate-to-high intensity exercise. Very low carb intake often causes fatigue during training.',
+        explanation: "Carbohydrates are the body\'s preferred fuel source for moderate-to-high intensity exercise. Very low carb intake often causes fatigue during training.",
       },
       {
         type: 'multiple_choice',

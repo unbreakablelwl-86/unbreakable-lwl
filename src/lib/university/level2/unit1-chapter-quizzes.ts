@@ -281,7 +281,7 @@ export const unit1ChapterQuizzes: ChapterQuiz[] = [
         scenario: 'After 8 weeks of consistent running, you notice your resting heart rate has dropped from 72 bpm to 64 bpm.',
         options: ['Your heart has become more efficient (cardiac adaptation)', 'Your blood pressure has increased', 'You are overtraining', 'You are dehydrated'],
         correctAnswer: 0,
-        explanation: 'A lower resting heart rate is a sign of improved cardiovascular fitness — your heart pumps more blood per beat (increased stroke volume), so it doesn\'t need to beat as often.',
+        explanation: "A lower resting heart rate is a sign of improved cardiovascular fitness — your heart pumps more blood per beat (increased stroke volume), so it doesn\'t need to beat as often.",
       },
       {
         type: 'multiple_choice',
@@ -348,7 +348,7 @@ export const unit1ChapterQuizzes: ChapterQuiz[] = [
         question: 'ATP stands for:',
         options: ['Adenosine triphosphate', 'Active tissue protein', 'Amino transfer process', 'Aerobic training pathway'],
         correctAnswer: 0,
-        explanation: 'Adenosine triphosphate (ATP) is the body\'s energy currency — all movement requires ATP, regardless of which system produces it.',
+        explanation: "Adenosine triphosphate (ATP) is the body\'s energy currency — all movement requires ATP, regardless of which system produces it.",
       },
       {
         type: 'multiple_choice',
@@ -500,9 +500,9 @@ export const unit1ChapterQuizzes: ChapterQuiz[] = [
       {
         type: 'multiple_choice',
         question: 'What is proprioception?',
-        options: ['The ability to see your muscles in a mirror', 'The body\'s sense of its own position in space without visual input', 'A type of stretching technique', 'The sensation of muscle soreness after training'],
+        options: ['The ability to see your muscles in a mirror', "The body\'s sense of its own position in space without visual input", 'A type of stretching technique', 'The sensation of muscle soreness after training'],
         correctAnswer: 1,
-        explanation: 'Proprioception is the body\'s ability to sense its position, movement, and force without relying on vision, using specialised receptors in muscles, tendons, and joints.',
+        explanation: "Proprioception is the body\'s ability to sense its position, movement, and force without relying on vision, using specialised receptors in muscles, tendons, and joints.",
       },
       {
         type: 'scenario',

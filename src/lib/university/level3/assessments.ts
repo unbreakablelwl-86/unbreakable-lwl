@@ -85,7 +85,7 @@ export const level3Unit1Assessment: UnitAssessment = {
       question: 'Adaptive thermogenesis describes:',
       options: ['Your body burning more calories over time', 'A reduction in energy expenditure beyond what weight loss alone predicts', 'Higher metabolism from eating more protein', 'Increased appetite after exercise'],
       correctAnswer: 1,
-      explanation: 'Adaptive thermogenesis is the body\'s defence mechanism — reducing metabolic rate beyond the expected drop from reduced body mass during prolonged dieting.',
+      explanation: "Adaptive thermogenesis is the body\'s defence mechanism — reducing metabolic rate beyond the expected drop from reduced body mass during prolonged dieting.",
     },
     {
       type: 'multiple_choice',

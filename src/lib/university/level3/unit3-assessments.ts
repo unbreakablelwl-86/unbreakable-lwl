@@ -121,7 +121,7 @@ export const level3Unit3Assessment: UnitAssessment = {
     {
       type: 'multiple_choice',
       question: 'When building a 12-week programme, the first step should be:',
-      options: ['Copying someone else\'s programme exactly', 'Choosing exercises randomly', 'Defining the primary goal and identifying the training phase structure', 'Jumping straight into week 1'],
+      options: ["Copying someone else\'s programme exactly", 'Choosing exercises randomly', 'Defining the primary goal and identifying the training phase structure', 'Jumping straight into week 1'],
       correctAnswer: 2,
       explanation: 'Effective programme design starts with a clear goal and structured phases — everything else (exercise selection, volume, intensity) flows from that foundation.',
     },
