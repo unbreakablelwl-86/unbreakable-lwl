@@ -326,6 +326,7 @@ export type Database = {
         Row: {
           age_years: number | null
           allergies: string | null
+          city: string | null
           bench_max_kg: number | null
           biggest_challenge: string | null
           created_at: string
@@ -363,6 +364,7 @@ export type Database = {
           allergies?: string | null
           bench_max_kg?: number | null
           biggest_challenge?: string | null
+          city?: string | null
           created_at?: string
           days_per_week?: number | null
           deadlift_max_kg?: number | null
@@ -398,6 +400,7 @@ export type Database = {
           allergies?: string | null
           bench_max_kg?: number | null
           biggest_challenge?: string | null
+          city?: string | null
           created_at?: string
           days_per_week?: number | null
           deadlift_max_kg?: number | null

@@ -39,6 +39,7 @@ export interface CoachUserContext {
     sleepQuality: string | null;
     stressLevel: string | null;
     injuries: string | null;
+    city: string | null;
   } | null;
   recentWorkouts: {
     date: string;
@@ -291,6 +292,7 @@ export function useCoachContext() {
         sleepQuality: coachingProfile.sleep_quality,
         stressLevel: coachingProfile.stress_level,
         injuries: coachingProfile.injuries,
+        city: coachingProfile.city,
       } : null,
       recentWorkouts,
       recentNutrition,
@@ -332,6 +334,7 @@ export function useCoachContext() {
       if (cp.ageYears) statsParts.push(`Age: ${cp.ageYears}`);
       if (cp.heightCm) statsParts.push(`Height: ${cp.heightCm}cm`);
       if (cp.weightKg) statsParts.push(`Weight: ${cp.weightKg}kg`);
+      if (cp.city) statsParts.push(`City: ${cp.city}`);
       if (statsParts.length) parts.push(`USER STATS: ${statsParts.join(', ')}`);
 
       const powerParts: string[] = [];
@@ -566,7 +569,7 @@ export function useCoachContext() {
         nutritionGoal: targetCoachingProfile.nutrition_goal, allergies: targetCoachingProfile.allergies, mealsPerDay: targetCoachingProfile.meals_per_day,
         primaryMotivation: targetCoachingProfile.primary_motivation, biggestChallenge: targetCoachingProfile.biggest_challenge,
         sleepHours: targetCoachingProfile.sleep_hours, sleepQuality: targetCoachingProfile.sleep_quality, stressLevel: targetCoachingProfile.stress_level,
-        injuries: targetCoachingProfile.injuries,
+        injuries: targetCoachingProfile.injuries, city: targetCoachingProfile.city,
       } : null,
       recentWorkouts,
       recentNutrition,
