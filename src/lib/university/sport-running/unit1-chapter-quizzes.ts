@@ -1,0 +1,64 @@
+import type { ChapterQuiz } from '../types';
+
+function cq(unit: number, ch: number, questions: any[]): ChapterQuiz {
+  return { unitNumber: unit, chapterNumber: ch, questionBank: questions, pickCount: 5, passMarkPercent: 80 };
+}
+
+export const sportRunningUnit1ChapterQuizzes: ChapterQuiz[] = [
+  cq(1, 1, [
+    { type: 'multiple_choice', question: 'What energy system dominates the 100m sprint?', options: ['Aerobic', 'Phosphocreatine (anaerobic alactic)', 'Fat oxidation', 'Lactate system only'], correctAnswer: 1, explanation: 'The 100m is almost entirely fuelled by the phosphocreatine system.' },
+    { type: 'multiple_choice', question: 'What VO2max do middle-distance athletes typically require?', options: ['40-50 mL/kg/min', '55-65 mL/kg/min', '70-80+ mL/kg/min', '90+ mL/kg/min'], correctAnswer: 2, explanation: 'Middle-distance athletes need 70-80+ mL/kg/min for competitive performance.' },
+    { type: 'multiple_choice', question: 'What are the three key determinants of marathon performance?', options: ['Speed, power, flexibility', 'VO2max, lactate threshold, running economy', 'Body weight, leg length, arm swing', 'Training volume, diet, sleep'], correctAnswer: 1, explanation: 'VO2max, lactate threshold, and running economy determine endurance performance.' },
+    { type: 'multiple_choice', question: 'What makes the 400m especially demanding?', options: ['It is the longest sprint', 'Near-maximal effort for 45-55s creates extreme lactic acid', 'It requires hurdles', 'The curve is tight'], correctAnswer: 1, explanation: 'Sustained near-maximal effort creates extreme metabolic stress.' },
+    { type: 'multiple_choice', question: 'What distinguishes elite marathon runners physiologically?', options: ['Larger muscles', 'Superior running economy — less oxygen used at any given pace', 'Higher body fat', 'Longer legs only'], correctAnswer: 1, explanation: 'Running economy is a key differentiator at elite endurance levels.' },
+  ]),
+  cq(1, 2, [
+    { type: 'multiple_choice', question: 'By how much can heavy strength training improve running economy?', options: ['0.5-1%', '2-8%', '15-20%', 'It cannot improve economy'], correctAnswer: 1, explanation: '8-12 weeks of heavy lower-body training improves economy by 2-8%.' },
+    { type: 'multiple_choice', question: 'What rep range improves neuromuscular efficiency for runners?', options: ['15-20 reps', '10-12 reps', '3-5 reps at 80-90% max', '50+ reps'], correctAnswer: 2, explanation: 'Heavy resistance at 3-5 reps improves neural efficiency.' },
+    { type: 'multiple_choice', question: 'Why are calf raises important for runners?', options: ['Bigger calves look good', 'They build Achilles tendon resilience', 'They improve arm swing', 'They only help sprinters'], correctAnswer: 1, explanation: 'Calf strengthening builds Achilles tendon resilience against running impact.' },
+    { type: 'multiple_choice', question: 'When should heavy leg sessions occur relative to key running sessions?', options: ['Day before key sessions', 'On hard running days (same day)', 'Only on rest days', 'Any day is fine'], correctAnswer: 1, explanation: 'Pairing hard sessions prevents interference with recovery days.' },
+    { type: 'multiple_choice', question: 'How many strength sessions per week for most runners?', options: ['None needed', '1 session', '2 sessions', '5 sessions'], correctAnswer: 2, explanation: 'Two sessions per week is sufficient for strength maintenance and development.' },
+  ]),
+  cq(1, 3, [
+    { type: 'multiple_choice', question: 'Why should endurance runners train at high velocities?', options: ['To become sprinters', 'It develops neuromuscular qualities and makes race pace feel easier', 'It burns more calories', 'Coaches require it'], correctAnswer: 1, explanation: 'Speed work creates physiological headroom for race pace.' },
+    { type: 'multiple_choice', question: 'What is the key acceleration coaching point?', options: ['Lift knees as high as possible', 'Push backwards against the ground for forward propulsion', 'Stay perfectly upright', 'Take the longest possible strides'], correctAnswer: 1, explanation: 'Force applied backwards into the ground returns as forward propulsion.' },
+    { type: 'multiple_choice', question: 'Why are hill sprints effective for all runners?', options: ['They are trendy', 'They develop power and strength with reduced impact forces and injury risk', 'Hills are everywhere', 'They only help endurance runners'], correctAnswer: 1, explanation: 'The incline reduces impact while developing running-specific power.' },
+    { type: 'multiple_choice', question: 'When should speed sessions be performed?', options: ['When fatigued for mental toughness', 'When fresh — early in the week after a rest day', 'Only the day before races', 'At any time'], correctAnswer: 1, explanation: 'Speed work requires neural freshness for quality movement patterns.' },
+    { type: 'multiple_choice', question: 'What is speed endurance?', options: ['Running fast for fun', 'The ability to maintain high speeds as fatigue develops', 'Sprinting on the endurance spectrum', 'It does not exist as a concept'], correctAnswer: 1, explanation: 'Speed endurance sustains velocity despite metabolic fatigue.' },
+  ]),
+  cq(1, 4, [
+    { type: 'multiple_choice', question: 'What is the 80/20 rule in running training?', options: ['80% sprinting, 20% walking', '80% easy/aerobic, 20% higher intensity', '80% hard, 20% easy', 'Run 80 miles per week'], correctAnswer: 1, explanation: 'Research supports 80% easy and 20% high-intensity distribution.' },
+    { type: 'multiple_choice', question: 'What is the most impactful session for distance runners?', options: ['Long slow run', 'Lactate threshold training', 'Sprint intervals', 'Hill repeats'], correctAnswer: 1, explanation: 'Threshold training increases the speed at which lactate accumulates.' },
+    { type: 'multiple_choice', question: 'What intensity are VO2max intervals performed at?', options: ['Easy jog pace', 'Threshold pace', '3K-5K race pace', 'All-out sprint'], correctAnswer: 2, explanation: 'VO2max intervals are performed at 3K-5K race pace.' },
+    { type: 'multiple_choice', question: 'What does polarised training avoid?', options: ['High intensity', 'Low intensity', 'Moderate-intensity no-man\'s-land', 'All structured training'], correctAnswer: 2, explanation: 'Polarised training distributes effort at extremes, avoiding moderate zones.' },
+    { type: 'multiple_choice', question: 'What is the biggest training mistake for runners?', options: ['Running too slow', 'Training in a no-man\'s-land — too fast for aerobic, too slow for speed', 'Too much rest', 'Running too few days'], correctAnswer: 1, explanation: 'Moderate-intensity training is neither easy enough for recovery nor hard enough for adaptation.' },
+  ]),
+  cq(1, 5, [
+    { type: 'multiple_choice', question: 'What percentage of recreational runners get injured annually?', options: ['10-15%', '20-25%', '40-50%', '70-80%'], correctAnswer: 2, explanation: '40-50% of recreational runners experience injury each year.' },
+    { type: 'multiple_choice', question: 'What is the strongest predictor of running injury?', options: ['Body weight', 'Age', 'Sudden spikes in training load', 'Running surface'], correctAnswer: 2, explanation: 'Load spikes are the strongest predictor of overuse running injury.' },
+    { type: 'multiple_choice', question: 'What ACWR range minimises running injury risk?', options: ['0.3-0.5', '0.8-1.3', '1.5-2.0', 'Any ratio is fine'], correctAnswer: 1, explanation: 'Keeping ACWR between 0.8-1.3 minimises injury risk.' },
+    { type: 'multiple_choice', question: 'How does increasing cadence reduce injury risk?', options: ['It makes you slower', 'It shortens stride and reduces impact forces', 'It is a myth', 'It only helps sprinters'], correctAnswer: 1, explanation: 'Higher cadence reduces ground contact time and impact forces.' },
+    { type: 'multiple_choice', question: 'What is the most effective injury prevention tool for runners?', options: ['Better shoes', 'More stretching', 'Strength training targeting hips, glutes, and calves', 'Ice baths'], correctAnswer: 2, explanation: 'Targeted strength training addresses the muscular weaknesses that cause running injuries.' },
+  ]),
+  cq(1, 6, [
+    { type: 'multiple_choice', question: 'How long do glycogen stores sustain moderate-intensity running?', options: ['30-45 minutes', '60-75 minutes', '90-120 minutes', '180+ minutes'], correctAnswer: 2, explanation: 'Glycogen stores last approximately 90-120 minutes of moderate running.' },
+    { type: 'multiple_choice', question: 'What carbohydrate intake is recommended during runs over 90 minutes?', options: ['None needed', '10-20g/hour', '30-60g/hour', '100g/hour'], correctAnswer: 2, explanation: '30-60g per hour prevents glycogen depletion during long runs.' },
+    { type: 'multiple_choice', question: 'What is the optimal ferritin level for runners?', options: ['Below 10 ng/mL', '10-20 ng/mL', 'Above 30-50 ng/mL', 'Any level is fine'], correctAnswer: 2, explanation: 'Optimal ferritin above 30-50 ng/mL supports oxygen transport.' },
+    { type: 'multiple_choice', question: 'What is the biggest rule for race-day nutrition?', options: ['Eat as much as possible', 'Never try anything new on race day', 'Skip breakfast', 'Only drink water'], correctAnswer: 1, explanation: 'Untested nutrition causes GI distress — practise everything in training.' },
+    { type: 'multiple_choice', question: 'What protein intake is recommended for runners?', options: ['0.5g/kg/day', '1.0g/kg/day', '1.4-1.8g/kg/day', '3.0g/kg/day'], correctAnswer: 2, explanation: '1.4-1.8g/kg/day supports recovery from training volume.' },
+  ]),
+  cq(1, 7, [
+    { type: 'multiple_choice', question: 'What attention strategy do elite runners use during racing?', options: ['Complete dissociation', 'Association — monitoring internal cues', 'Thinking about other things', 'No specific strategy'], correctAnswer: 1, explanation: 'Elite runners associate during races, monitoring body signals.' },
+    { type: 'multiple_choice', question: 'How should racing discomfort be reframed?', options: ['As danger requiring stopping', 'As a sign of maximal effort and limit-pushing', 'As injury', 'It should be ignored completely'], correctAnswer: 1, explanation: 'Reframing discomfort positively allows sustained effort.' },
+    { type: 'multiple_choice', question: 'What is the mantra technique?', options: ['Singing during runs', 'Repeating a short positive phrase to anchor focus', 'Meditating while running', 'Counting steps'], correctAnswer: 1, explanation: 'Mantras provide cognitive anchors against negative thought spirals.' },
+    { type: 'multiple_choice', question: 'What is three-tier goal setting?', options: ['Setting 3 goals for the week', 'A (dream), B (realistic), C (minimum acceptable) goals for each race', 'Training 3 times per week', 'Racing 3 events per season'], correctAnswer: 1, explanation: 'Three tiers prevent all-or-nothing thinking.' },
+    { type: 'multiple_choice', question: 'Why is post-run reflection valuable?', options: ['It burns calories', 'It builds self-awareness and tracks patterns in mental performance', 'Coaches require it', 'It has no benefit'], correctAnswer: 1, explanation: 'Reflection creates records of mental growth and performance patterns.' },
+  ]),
+  cq(1, 8, [
+    { type: 'multiple_choice', question: 'How much does proper tapering improve race performance?', options: ['0.5-1%', '2-6%', '10-15%', 'Tapering does not help'], correctAnswer: 1, explanation: 'Research shows 2-6% improvement from proper tapering.' },
+    { type: 'multiple_choice', question: 'What is the recommended taper volume reduction?', options: ['10-20%', '40-60%', '80-90%', 'No reduction needed'], correctAnswer: 1, explanation: 'Reduce volume by 40-60% while maintaining intensity.' },
+    { type: 'multiple_choice', question: 'What loading pattern works best in mesocycles?', options: ['Constant load every week', '3 weeks progressive, 1 week recovery (3:1)', 'All hard, all the time', '2 weeks easy, 2 weeks hard'], correctAnswer: 1, explanation: '3:1 loading allows progressive overload with recovery.' },
+    { type: 'multiple_choice', question: 'When does the body actually get fitter?', options: ['During hard training', 'During recovery from training', 'Only during races', 'It does not matter'], correctAnswer: 1, explanation: 'Adaptation occurs during recovery, not during the training stimulus itself.' },
+    { type: 'multiple_choice', question: 'How many priority races should be targeted per season?', options: ['Every race is a priority', '2-3 key races with others as training runs', 'Only 1 race per year', 'It does not matter'], correctAnswer: 1, explanation: '2-3 priority races allow proper peaking while maintaining race experience.' },
+  ]),
+];

@@ -1,0 +1,64 @@
+import type { ChapterQuiz } from '../types';
+
+function cq(unit: number, ch: number, questions: any[]): ChapterQuiz {
+  return { unitNumber: unit, chapterNumber: ch, questionBank: questions, pickCount: 5, passMarkPercent: 80 };
+}
+
+export const sportBasketballUnit1ChapterQuizzes: ChapterQuiz[] = [
+  cq(1, 1, [
+    { type: 'multiple_choice', question: 'How many jumps does a basketball player perform per game?', options: ['5-10', '15-25', '40-60', '100+'], correctAnswer: 2, explanation: 'Basketball involves 40-60 jumps per game.' },
+    { type: 'multiple_choice', question: 'What is the average sprint distance in basketball?', options: ['20-30m', '50-60m', '5-10 metres', '100m'], correctAnswer: 2, explanation: 'Most sprints cover only 5-10 metres.' },
+    { type: 'multiple_choice', question: 'What is the aerobic contribution to basketball?', options: ['20-30%', '40-50%', '60-70%', '90%+'], correctAnswer: 2, explanation: '60-70% aerobic with 30-40% anaerobic.' },
+    { type: 'multiple_choice', question: 'What physical quality matters most for guards?', options: ['Maximum strength', 'Agility and endurance', 'Height only', 'Body mass'], correctAnswer: 1, explanation: 'Guards need exceptional agility and sustained aerobic fitness.' },
+    { type: 'multiple_choice', question: 'Why does total distance understate basketball demands?', options: ['Distance is not tracked', 'The sport includes jumps, direction changes, and sprints that distance does not capture', 'Players walk a lot', 'It overstates demands'], correctAnswer: 1, explanation: 'Jumping, direction changes, and sprint frequency create greater demand than distance suggests.' },
+  ]),
+  cq(1, 2, [
+    { type: 'multiple_choice', question: 'What determines vertical jump height?', options: ['Height alone', 'Relative strength, rate of force development, and reactive strength', 'Leg length', 'Calf size'], correctAnswer: 1, explanation: 'Three physical qualities combine to determine jump height.' },
+    { type: 'multiple_choice', question: 'What landing forces occur during depth jumps?', options: ['1-2x bodyweight', '3-4x bodyweight', '5-7x bodyweight', '10x bodyweight'], correctAnswer: 2, explanation: 'Depth jump landings can reach 5-7x bodyweight.' },
+    { type: 'multiple_choice', question: 'What squat target should competitive basketball players aim for?', options: ['0.5-1.0x BW', '1.5-2.0x bodyweight', '3.0x BW', '4.0x BW'], correctAnswer: 1, explanation: '1.5-2.0x bodyweight provides sufficient force production.' },
+    { type: 'multiple_choice', question: 'When should in-season gym sessions be scheduled?', options: ['On rest days', 'On practice days to preserve recovery between games', 'Game days only', 'No gym in-season'], correctAnswer: 1, explanation: 'Practice days allow rest days to remain true recovery.' },
+    { type: 'multiple_choice', question: 'What is the correct strength development progression?', options: ['Power → strength → reactive', 'Maximal strength → power → reactive ability', 'Reactive → power → strength', 'All simultaneously'], correctAnswer: 1, explanation: 'Building maximal strength before developing power and reactive qualities.' },
+  ]),
+  cq(1, 3, [
+    { type: 'multiple_choice', question: 'What speed quality is most important for basketball defence?', options: ['Top-end sprint speed', 'Defensive agility — lateral slides, closeouts, recovery sprints', 'Long-distance endurance', 'Flexibility'], correctAnswer: 1, explanation: 'Staying in front of offensive players requires multidirectional agility.' },
+    { type: 'multiple_choice', question: 'Why is first-step quickness more valuable than top speed in basketball?', options: ['It is not', 'Court distances are short (5-10m) — top speed is rarely reached', 'Top speed is easy to develop', 'First step looks better'], correctAnswer: 1, explanation: 'Short distances mean games are decided by initial acceleration.' },
+    { type: 'multiple_choice', question: 'What makes change of direction training basketball-specific?', options: ['Using cones only', 'Combining movement with dribbling and ball control', 'Running in straight lines', 'Using a treadmill'], correctAnswer: 1, explanation: 'Ball control during direction changes mirrors game demands.' },
+    { type: 'multiple_choice', question: 'What is repeated jump ability?', options: ['Jumping once very high', 'Maintaining jump height across 40-60 jumps per game', 'Jumping only in warm-up', 'Jump training for height only'], correctAnswer: 1, explanation: 'Sustaining jump quality across an entire game.' },
+    { type: 'multiple_choice', question: 'Why should the last fast break equal the first?', options: ['Rules require it', 'Transition speed must be maintained through repeated sprint ability', 'Coaches demand it', 'It does not matter'], correctAnswer: 1, explanation: 'Repeated sprint quality ensures game-long transition effectiveness.' },
+  ]),
+  cq(1, 4, [
+    { type: 'multiple_choice', question: 'What VO2max should basketball players target?', options: ['35-40 mL/kg/min', '50-60 mL/kg/min', '70+ mL/kg/min', '30 mL/kg/min'], correctAnswer: 1, explanation: '50-60 mL/kg/min supports between-possession recovery.' },
+    { type: 'multiple_choice', question: 'What provides the most basketball-specific conditioning?', options: ['Long-distance running', 'Small-sided games (3v3, 4v4) on reduced court', 'Cycling', 'Swimming'], correctAnswer: 1, explanation: 'Small-sided games develop fitness alongside tactical and technical skills.' },
+    { type: 'multiple_choice', question: 'Why is RSA critical for basketball?', options: ['It sounds impressive', 'It determines whether sprint quality is maintained across 50-100 sprints per game', 'Only for track athletes', 'It is not important'], correctAnswer: 1, explanation: 'Game performance depends on maintaining sprint quality throughout.' },
+    { type: 'multiple_choice', question: 'What game-specific interval structure matches basketball?', options: ['30min continuous effort', '5-15s high intensity / 15-25s lower intensity in quarter-length sets', '5min work / 5min rest', 'All-out for 48 minutes'], correctAnswer: 1, explanation: 'Matches the possession-based intensity pattern of the game.' },
+    { type: 'multiple_choice', question: 'When is supplemental conditioning needed in-season?', options: ['Every day', 'Only when game schedule allows — maximum 1-2 additional sessions', 'Never', 'Only pre-game'], correctAnswer: 1, explanation: 'Practice and games maintain fitness; supplements are limited.' },
+  ]),
+  cq(1, 5, [
+    { type: 'multiple_choice', question: 'What is the most common basketball injury?', options: ['ACL tear', 'Concussion', 'Ankle sprain (25-30% of all injuries)', 'Hamstring strain'], correctAnswer: 2, explanation: 'Ankle sprains account for 25-30% of basketball injuries.' },
+    { type: 'multiple_choice', question: 'How much do ACL prevention programmes reduce injury risk?', options: ['10-20%', '30-40%', '50-70%', '100%'], correctAnswer: 2, explanation: 'Prevention programmes reduce ACL injuries by 50-70%.' },
+    { type: 'multiple_choice', question: 'What percentage of basketball players experience jumper\'s knee?', options: ['5-10%', '15-20%', '30-45%', '70%+'], correctAnswer: 2, explanation: 'Patellar tendinopathy affects 30-45% of basketball players.' },
+    { type: 'multiple_choice', question: 'What is the strongest predictor of future ankle sprain?', options: ['Body weight', 'Court surface', 'Previous ankle sprain with residual weakness', 'Shoe type'], correctAnswer: 2, explanation: 'Previous sprain creating residual weakness is the strongest predictor.' },
+    { type: 'multiple_choice', question: 'Why are female players at greater ACL risk?', options: ['They play harder', 'Biomechanical and hormonal factors create 2-4x higher risk', 'The sport is different', 'They do not warm up'], correctAnswer: 1, explanation: 'Multiple factors contribute to higher ACL risk in female athletes.' },
+  ]),
+  cq(1, 6, [
+    { type: 'multiple_choice', question: 'What protein intake should basketball players target?', options: ['0.8g/kg', '1.2g/kg', '1.6-2.2g/kg', '4.0g/kg'], correctAnswer: 2, explanation: '1.6-2.2g/kg supports muscle repair and recovery.' },
+    { type: 'multiple_choice', question: 'How much fluid can players lose per game?', options: ['Less than 500mL', '1-3 litres', '5 litres', 'None'], correctAnswer: 1, explanation: '1-3 litres of sweat loss in heated indoor arenas.' },
+    { type: 'multiple_choice', question: 'What should half-time nutrition include?', options: ['A full meal', 'A small snack — banana, gel, or energy bar bites', 'Nothing', 'Only water'], correctAnswer: 1, explanation: 'Small, easily digestible snacks maintain energy.' },
+    { type: 'multiple_choice', question: 'How much post-game fluid should be consumed?', options: ['Equal to sweat loss', '150% of fluid lost', 'As much as possible immediately', 'No rehydration needed'], correctAnswer: 1, explanation: '150% of lost fluid ensures complete rehydration.' },
+    { type: 'multiple_choice', question: 'When should body composition changes be pursued?', options: ['During the competitive season', 'Gradually during the off-season', 'Never', 'Only before games'], correctAnswer: 1, explanation: 'Off-season changes avoid impairing competitive performance.' },
+  ]),
+  cq(1, 7, [
+    { type: 'multiple_choice', question: 'What is short memory in basketball context?', options: ['Forgetting the play call', 'Immediately releasing missed shots and approaching the next with full confidence', 'Not remembering the score', 'Forgetting practice'], correctAnswer: 1, explanation: 'Short memory prevents missed shots from compounding into scoring slumps.' },
+    { type: 'multiple_choice', question: 'Why do free throws vary under pressure if the skill is closed?', options: ['Distance changes', 'Variation is almost entirely mental — pressure affects execution', 'The ball changes', 'Defenders distract'], correctAnswer: 1, explanation: 'Free throws are a closed skill — performance variation is psychological.' },
+    { type: 'multiple_choice', question: 'How is clutch performance developed?', options: ['It is innate', 'Through process focus and pressure simulation in practice', 'Only through game experience', 'It cannot be developed'], correctAnswer: 1, explanation: 'Simulated pressure and process focus build clutch ability.' },
+    { type: 'multiple_choice', question: 'What should shooters focus on during a game?', options: ['Tracking shooting percentage', 'Shot quality and shooting mechanics, not previous outcomes', 'What the crowd thinks', 'How many points they have'], correctAnswer: 1, explanation: 'Process focus prevents outcome-driven confidence fluctuation.' },
+    { type: 'multiple_choice', question: 'Why is visualization effective for basketball?', options: ['It is not effective', 'It creates neural pathways that mirror physical practice of game situations', 'It replaces practice', 'Only for beginners'], correctAnswer: 1, explanation: 'Mental rehearsal strengthens the neural patterns of physical execution.' },
+  ]),
+  cq(1, 8, [
+    { type: 'multiple_choice', question: 'Why is the off-season the most important training period?', options: ['It is not', 'It is the only time for significant physical development given the dense game schedule', 'Players need rest only', 'All improvement happens in-season'], correctAnswer: 1, explanation: 'Dense in-season schedules prevent meaningful physical development.' },
+    { type: 'multiple_choice', question: 'How many gym sessions per week during the season?', options: ['None', '2 sessions structured around game schedule', '5 sessions', 'Daily'], correctAnswer: 1, explanation: '2 sessions maintain physical qualities without adding excessive fatigue.' },
+    { type: 'multiple_choice', question: 'What should playoff preparation include?', options: ['Maximum training intensity', 'A mini-taper reducing volume 20-30% in final 1-2 weeks', 'Complete rest for 2 weeks', 'No changes'], correctAnswer: 1, explanation: 'Reduced volume with maintained intensity optimises playoff readiness.' },
+    { type: 'multiple_choice', question: 'What is the goal of load management across a season?', options: ['Maximum fitness at all times', 'Arriving at playoffs with the healthiest possible roster', 'Resting the best players', 'Reducing practice'], correctAnswer: 1, explanation: 'Health and freshness for the playoff push.' },
+    { type: 'multiple_choice', question: 'How should recovery days be structured?', options: ['Full training', 'Light activity — shooting, stretching, pool work', 'Complete bed rest', 'Heavy gym work only'], correctAnswer: 1, explanation: 'Light activity promotes recovery without adding training stress.' },
+  ]),
+];

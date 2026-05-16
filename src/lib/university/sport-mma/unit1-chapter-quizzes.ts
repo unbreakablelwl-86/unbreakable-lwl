@@ -1,0 +1,64 @@
+import type { ChapterQuiz } from '../types';
+
+function cq(unit: number, ch: number, questions: any[]): ChapterQuiz {
+  return { unitNumber: unit, chapterNumber: ch, questionBank: questions, pickCount: 5, passMarkPercent: 80 };
+}
+
+export const sportMMAUnit1ChapterQuizzes: ChapterQuiz[] = [
+  cq(1, 1, [
+    { type: 'multiple_choice', question: 'How long is a standard MMA round?', options: ['3 minutes', '5 minutes', '10 minutes', '2 minutes'], correctAnswer: 1, explanation: 'MMA rounds are 5 minutes with 1 minute rest.' },
+    { type: 'multiple_choice', question: 'What work-to-rest ratio occurs within MMA rounds?', options: ['30s work / 30s rest', '6-10s high intensity / 15-25s lower intensity', 'Continuous work', '1min on / 1min off'], correctAnswer: 1, explanation: 'Short bursts of high intensity with brief lower-intensity periods.' },
+    { type: 'multiple_choice', question: 'Which MMA discipline demands the most isometric strength?', options: ['Boxing', 'Kickboxing', 'Wrestling', 'Running'], correctAnswer: 2, explanation: 'Wrestling requires extreme isometric and concentric strength for body control.' },
+    { type: 'multiple_choice', question: 'What is the trend in modern MMA weight cutting?', options: ['Bigger cuts for advantage', 'Smaller cuts, fighting closer to natural weight', 'No weight classes', 'Unlimited weight gain'], correctAnswer: 1, explanation: 'Health risks have shifted the trend toward smaller weight cuts.' },
+    { type: 'multiple_choice', question: 'What heart rate do fighters typically exceed during bouts?', options: ['60% max', '75% max', '85% of maximum', '50% max'], correctAnswer: 2, explanation: 'HR typically exceeds 85% of maximum throughout fighting.' },
+  ]),
+  cq(1, 2, [
+    { type: 'multiple_choice', question: 'What deadlift target should competitive MMA fighters aim for?', options: ['1.0-1.5x BW', '2.0-2.5x bodyweight', '3.0x BW', '4.0x BW'], correctAnswer: 1, explanation: '2.0-2.5x bodyweight provides sufficient force production.' },
+    { type: 'multiple_choice', question: 'Why is grip strength so important in MMA?', options: ['Appearance', 'It controls clinch, submissions, and positional dominance', 'Rules require strong grip', 'It only helps in grappling'], correctAnswer: 1, explanation: 'Grip strength underlies clinch control, submissions, and position.' },
+    { type: 'multiple_choice', question: 'What develops rotational striking power?', options: ['Bicep curls', 'Medicine ball rotational throws', 'Leg extensions', 'Sit-ups'], correctAnswer: 1, explanation: 'Rotational med ball throws mimic hook and body shot mechanics.' },
+    { type: 'multiple_choice', question: 'How many gym sessions per week during fight camp?', options: ['None', '2 brief maintenance sessions', '5 sessions', 'Daily'], correctAnswer: 1, explanation: '2 brief sessions maintain strength without creating training-impairing soreness.' },
+    { type: 'multiple_choice', question: 'Why is the front squat preferred over back squat for MMA?', options: ['It is easier', 'The upright torso mimics clinch and grappling positions', 'Back squats are dangerous', 'No reason'], correctAnswer: 1, explanation: 'The upright position transfers to fighting stances.' },
+  ]),
+  cq(1, 3, [
+    { type: 'multiple_choice', question: 'What VO2max should MMA fighters target?', options: ['35-40 mL/kg/min', '45-50 mL/kg/min', '55-65 mL/kg/min', '70+ mL/kg/min'], correctAnswer: 2, explanation: '55-65 mL/kg/min supports the aerobic demands of MMA.' },
+    { type: 'multiple_choice', question: 'What makes fight-simulation intervals superior to running intervals?', options: ['They are easier', 'They include upper-body and grappling-specific demands alongside energy system training', 'They burn more calories', 'Running is never useful'], correctAnswer: 1, explanation: 'Fight simulation replicates the specific movement demands of MMA.' },
+    { type: 'multiple_choice', question: 'Why is wrestling uniquely fatiguing?', options: ['It involves isometric, concentric, and eccentric work against resistance with upper and lower body simultaneously', 'It is performed in the cold', 'Wrestlers are unfit', 'It is not fatiguing'], correctAnswer: 0, explanation: 'Wrestling involves extreme whole-body muscular demands against resistance.' },
+    { type: 'multiple_choice', question: 'What should replace most traditional roadwork?', options: ['More roadwork', 'Sport-specific conditioning methods', 'Complete rest', 'Only weightlifting'], correctAnswer: 1, explanation: 'Sport-specific conditioning is more transferable while maintaining some easy cardio.' },
+    { type: 'multiple_choice', question: 'How should conditioning change as a fight approaches?', options: ['Increase volume', 'Reduce volume and maintain intensity through sparring and short sessions', 'Stop all conditioning', 'No changes needed'], correctAnswer: 1, explanation: 'Near the fight, reduce volume to build freshness while maintaining sharpness.' },
+  ]),
+  cq(1, 4, [
+    { type: 'multiple_choice', question: 'What is the most important flexibility quality for MMA?', options: ['Hamstring flexibility', 'Hip mobility', 'Shoulder flexibility', 'Ankle mobility'], correctAnswer: 1, explanation: 'Hips must flex, extend, and rotate for kicks, guard, takedowns, and submissions.' },
+    { type: 'multiple_choice', question: 'What is the difference between flexibility and mobility?', options: ['They are the same thing', 'Flexibility is passive ROM; mobility is active, controlled ROM under resistance', 'Mobility is only for warm-ups', 'Flexibility is more important'], correctAnswer: 1, explanation: 'Mobility involves strength and control at end ranges.' },
+    { type: 'multiple_choice', question: 'When should static stretching be performed?', options: ['Before training for warm-up', 'Post-training or as separate sessions', 'Never', 'Only during fights'], correctAnswer: 1, explanation: 'Static stretching before training can temporarily reduce power output.' },
+    { type: 'multiple_choice', question: 'Why is thoracic spine mobility important for MMA?', options: ['It looks impressive', 'It drives rotational striking power and grappling transitions', 'It prevents back pain only', 'It is not important'], correctAnswer: 1, explanation: 'Thoracic rotation drives hooks, body shots, and ground transitions.' },
+    { type: 'multiple_choice', question: 'What are CARs?', options: ['A type of car exercise', 'Controlled Articular Rotations — slow, controlled movements through full joint range', 'Combat Aerobic Routines', 'Core Activation Reps'], correctAnswer: 1, explanation: 'CARs develop and maintain active range of motion in joints.' },
+  ]),
+  cq(1, 5, [
+    { type: 'multiple_choice', question: 'How many injuries per 100 fight exposures in professional MMA?', options: ['5-10', '15-20', '23-29', '40+'], correctAnswer: 2, explanation: '23-29 injuries per 100 fight exposures.' },
+    { type: 'multiple_choice', question: 'What is the most common MMA injury type?', options: ['Knee injuries', 'Hand and wrist injuries from striking', 'Shoulder dislocations', 'Concussions'], correctAnswer: 1, explanation: 'Hand and wrist injuries are the most frequent.' },
+    { type: 'multiple_choice', question: 'By how much does fatigue increase injury risk?', options: ['No increase', '2x', '3-4x', '10x'], correctAnswer: 2, explanation: 'Fatigue increases injury risk 3-4 times.' },
+    { type: 'multiple_choice', question: 'How often should full-contact sparring occur?', options: ['Daily', '1-2 sessions per week', 'Once per month', 'Never'], correctAnswer: 1, explanation: '1-2 full-contact sessions per week manage concussion risk.' },
+    { type: 'multiple_choice', question: 'Why should you tap early in training?', options: ['It is a sign of strength', 'There is no medal for resisting submissions and risking joint injury in practice', 'Rules require it', 'Coaches insist'], correctAnswer: 1, explanation: 'Training injuries from resisting submissions steal irreplaceable preparation time.' },
+  ]),
+  cq(1, 6, [
+    { type: 'multiple_choice', question: 'What protein intake should MMA fighters target during fight camp?', options: ['1.0g/kg', '1.5g/kg', '2.0-2.5g/kg', '4.0g/kg'], correctAnswer: 2, explanation: '2.0-2.5g/kg supports repair from multi-discipline training.' },
+    { type: 'multiple_choice', question: 'How much weight should fighters maintain above their class in off-camp?', options: ['1-2%', '5-8%', '15-20%', 'As much as possible'], correctAnswer: 1, explanation: '5-8% allows manageable weight cutting.' },
+    { type: 'multiple_choice', question: 'What must be consumed steadily after weigh-in?', options: ['Just water', 'Oral rehydration solutions, carbs, and moderate protein — not all at once', 'Large meals immediately', 'Nothing until fight day'], correctAnswer: 1, explanation: 'Steady rehydration avoids GI distress and restores glycogen.' },
+    { type: 'multiple_choice', question: 'What neuroprotective supplement may benefit MMA fighters?', options: ['BCAAs', 'Creatine monohydrate', 'Fat burners', 'Pre-workout'], correctAnswer: 1, explanation: 'Creatine may offer neuroprotective benefits alongside performance gains.' },
+    { type: 'multiple_choice', question: 'How much bodyweight is typically regained during rehydration?', options: ['1-2%', '5-8%', '15-20%', 'None'], correctAnswer: 1, explanation: '5-8% regain through structured rehydration is typical.' },
+  ]),
+  cq(1, 7, [
+    { type: 'multiple_choice', question: 'Is fear before a fight a weakness?', options: ['Yes, it should be eliminated', 'No — it is the appropriate response to a genuine threat and should be managed, not eliminated', 'Only weak fighters feel fear', 'Fear has no role in fighting'], correctAnswer: 1, explanation: 'Fear is appropriate; the goal is performing despite it.' },
+    { type: 'multiple_choice', question: 'What should MMA visualisation include besides success?', options: ['Only knockouts', 'Adversity scenarios and recovery — being hurt and regaining composure', 'Losing', 'Nothing else'], correctAnswer: 1, explanation: 'Rehearsing adversity response prevents panic when it occurs.' },
+    { type: 'multiple_choice', question: 'How is functional courage built for fighting?', options: ['Born with it', 'Progressive exposure from controlled sparring to competition', 'Reading about fighting', 'Watching fights'], correctAnswer: 1, explanation: 'Graduated exposure builds confidence at each threat level.' },
+    { type: 'multiple_choice', question: 'Why do fighters need activities outside fighting during camp?', options: ['To avoid boredom', 'For mental relief from the immense psychological demands of camp', 'Sponsors require it', 'It has no benefit'], correctAnswer: 1, explanation: 'Non-fighting activities prevent psychological burnout during intense camps.' },
+    { type: 'multiple_choice', question: 'Why debrief after a win, not just a loss?', options: ['Wins need no review', 'Acknowledging areas for improvement prevents complacency', 'Sponsors require it', 'It is not necessary'], correctAnswer: 1, explanation: 'Post-win debrief prevents complacency and drives continued improvement.' },
+  ]),
+  cq(1, 8, [
+    { type: 'multiple_choice', question: 'What is emphasised in early fight camp?', options: ['Tapering', 'Physical development — heavy gym work and high-volume conditioning', 'Weight cutting', 'Light technical work'], correctAnswer: 1, explanation: 'Early camp builds the physical base through high training load.' },
+    { type: 'multiple_choice', question: 'When should the last full sparring session occur?', options: ['1 day before the fight', '3 days before', '10-14 days before the fight', 'On fight day as warm-up'], correctAnswer: 2, explanation: '10-14 days allows recovery from sparring while maintaining sharpness.' },
+    { type: 'multiple_choice', question: 'What is the cardinal rule of fight camp?', options: ['Train harder each week', 'Never try anything new in the final 3 weeks', 'Maximum sparring in the final week', 'Cut weight early'], correctAnswer: 1, explanation: 'Nothing untested in the final 3 weeks prevents unexpected problems.' },
+    { type: 'multiple_choice', question: 'What happens during fight week?', options: ['Hard training continues', 'Minimal physical work — shadow boxing, light pads, visualisation', 'Complete rest with no movement', 'New techniques are introduced'], correctAnswer: 1, explanation: 'Fight week conserves energy for weight management and mental preparation.' },
+    { type: 'multiple_choice', question: 'When does sparring intensity peak in camp?', options: ['Week 1', 'Mid camp (weeks 5-3) for fight-specific preparation', 'Fight week', 'After the fight'], correctAnswer: 1, explanation: 'Mid camp sparring replicates fight conditions most closely.' },
+  ]),
+];

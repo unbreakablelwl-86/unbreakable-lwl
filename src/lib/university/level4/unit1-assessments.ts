@@ -1,0 +1,22 @@
+import type { UnitAssessment } from '../types';
+
+export const level4Unit1Assessment: UnitAssessment = {
+  unitNumber: 1,
+  title: 'Advanced Periodisation & Programming — Unit Assessment',
+  passMarkPercent: 80,
+  pickCount: 10,
+  questions: [
+    { type: 'multiple_choice', question: 'Which periodisation model trains multiple strength qualities simultaneously within each training week?', options: ['Linear', 'Block', 'Conjugate', 'None'], correctAnswer: 2, explanation: 'The conjugate method develops maximal strength and speed-strength concurrently.' },
+    { type: 'multiple_choice', question: 'What is the optimal deload strategy for maintaining strength-specific neural patterns?', options: ['Complete rest', 'Volume deload — reduce sets while maintaining intensity', 'Intensity deload only', 'Active recovery only'], correctAnswer: 1, explanation: 'Volume deloads preserve the neural patterns needed for heavy lifting.' },
+    { type: 'multiple_choice', question: 'In DUP, what does RPE 8 represent?', options: ['Maximum effort', 'Two reps left in reserve', '80% of 1RM', 'Eight sets completed'], correctAnswer: 1, explanation: 'RPE 8 indicates a hard set with approximately two repetitions remaining.' },
+    { type: 'multiple_choice', question: 'What determines the sequencing of blocks in block periodisation?', options: ['Coach preference', 'Residual training effects — train durable qualities first, perishable ones last', 'Alphabetical order', 'Random selection'], correctAnswer: 1, explanation: 'Predictable decay rates of physical qualities determine optimal block sequence.' },
+    { type: 'multiple_choice', question: 'During a competition taper, what is the most common mistake?', options: ['Training too hard', 'Reducing intensity — which de-trains the quality being tested', 'Eating too much', 'Sleeping too much'], correctAnswer: 1, explanation: 'Maintaining intensity during the taper preserves competition-specific neural patterns.' },
+    { type: 'multiple_choice', question: 'What does autoregulation account for that percentage-based training does not?', options: ['Exercise selection', 'Daily fluctuations in strength capacity based on sleep, stress, and fatigue', 'Equipment availability', 'Training partner preferences'], correctAnswer: 1, explanation: 'Strength varies 5-15% daily; autoregulation adjusts for this.' },
+    { type: 'multiple_choice', question: 'What is the fitness-fatigue model?', options: ['A type of periodisation', 'Observed performance equals accumulated fitness minus accumulated fatigue', 'A body composition model', 'A nutrition framework'], correctAnswer: 1, explanation: 'The model explains how deloads reveal fitness masked by accumulated fatigue.' },
+    { type: 'multiple_choice', question: 'For a beginner, which periodisation approach is most appropriate?', options: ['Conjugate method', 'Block periodisation', 'Linear periodisation with 4-6 week phases', 'Daily undulating periodisation'], correctAnswer: 2, explanation: 'LP\'s predictable progression matches beginners\' capacity to adapt.' },
+    { type: 'multiple_choice', question: 'What distinguishes training age from chronological age?', options: ['They are the same', 'Training age counts years of consistent, structured training regardless of calendar age', 'Training age is always higher', 'Chronological age is more important'], correctAnswer: 1, explanation: 'A person\'s programming should match their training experience, not their birthday.' },
+    { type: 'multiple_choice', question: 'What is the long-term goal of periodisation?', options: ['One peak performance', 'Decades of consistent, healthy, productive training', 'Maximum muscle mass', 'Winning a single competition'], correctAnswer: 1, explanation: 'The ultimate aim is sustainable lifelong training, not a single peak.' },
+    { type: 'multiple_choice', question: 'How often should dynamic effort exercises change in the conjugate method?', options: ['Every session', 'Every 3-week wave', 'Never', 'Every 6 months'], correctAnswer: 1, explanation: 'DE uses 3-week waves with incrementally increasing percentages before resetting.' },
+    { type: 'multiple_choice', question: 'What percentage of off-season training volume is typically sufficient to maintain strength in-season?', options: ['100%', 'About one-third', '10%', 'None — strength cannot be maintained'], correctAnswer: 1, explanation: 'Research shows approximately one-third of development volume maintains adaptations.' },
+  ],
+};

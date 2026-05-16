@@ -1,0 +1,64 @@
+import type { ChapterQuiz } from '../types';
+
+function cq(unit: number, ch: number, questions: any[]): ChapterQuiz {
+  return { unitNumber: unit, chapterNumber: ch, questionBank: questions, pickCount: 5, passMarkPercent: 80 };
+}
+
+export const sportRugbyUnit1ChapterQuizzes: ChapterQuiz[] = [
+  cq(1, 1, [
+    { type: 'multiple_choice', question: 'What total match distance do front-row forwards typically cover?', options: ['1-2km', '4-7km', '10-13km', '15km+'], correctAnswer: 1, explanation: 'Front-row forwards cover 4-7km per match.' },
+    { type: 'multiple_choice', question: 'How many tackles might a forward perform per match?', options: ['1-5', '5-10', '15-25', '40+'], correctAnswer: 2, explanation: 'Forwards may perform 15-25 tackles per match.' },
+    { type: 'multiple_choice', question: 'What force is sustained during scrummaging?', options: ['0.5x bodyweight', 'Exceeding 1.5x bodyweight for 5+ seconds', '5x bodyweight briefly', 'Force is not measured'], correctAnswer: 1, explanation: 'Scrum forces exceed 1.5x bodyweight sustained for 5+ seconds.' },
+    { type: 'multiple_choice', question: 'Which position typically has the highest work rate?', options: ['Prop', 'Fly-half', 'Back-row forwards', 'Winger'], correctAnswer: 2, explanation: 'Back-row players combine tackling, carrying, and breakdown work for the highest work rate.' },
+    { type: 'multiple_choice', question: 'What aerobic test is preferred for rugby?', options: ['Cooper run', 'Beep test', 'Yo-Yo IR1 or 30-15 IFT', '2km time trial'], correctAnswer: 2, explanation: 'The Yo-Yo IR1 or 30-15 IFT best reflect rugby\'s intermittent demands.' },
+  ]),
+  cq(1, 2, [
+    { type: 'multiple_choice', question: 'What squat strength target should elite rugby forwards aim for?', options: ['1.0-1.5x bodyweight', '1.5-1.8x bodyweight', '2.0-2.5x bodyweight', '3.0x bodyweight'], correctAnswer: 2, explanation: 'Elite forwards target 2.0-2.5x bodyweight squat.' },
+    { type: 'multiple_choice', question: 'How many gym sessions per week during the rugby season?', options: ['None', '1 session', '2 sessions', '5 sessions'], correctAnswer: 2, explanation: 'Two gym sessions manage strength maintenance around match recovery.' },
+    { type: 'multiple_choice', question: 'How long should post-match recovery be before heavy lifting?', options: ['12 hours', '24 hours', '48-72 hours', '1 week'], correctAnswer: 2, explanation: 'Collision sports require 48-72 hours before heavy lifting.' },
+    { type: 'multiple_choice', question: 'Why is neck strengthening mandatory for rugby?', options: ['Appearance', 'Reduces concussion risk and improves scrum stability', 'Helps with breathing', 'Coach preference'], correctAnswer: 1, explanation: 'Strong necks decelerate the head during impacts and stabilise the scrum.' },
+    { type: 'multiple_choice', question: 'Which lift develops total-body power for rugby?', options: ['Leg extension', 'Bicep curl', 'Hang clean', 'Leg press'], correctAnswer: 2, explanation: 'Olympic lift variations develop total-body power transferable to rugby.' },
+  ]),
+  cq(1, 3, [
+    { type: 'multiple_choice', question: 'What is the most important speed quality for rugby?', options: ['Maximum velocity', 'Speed endurance', 'Acceleration (0-10m)', 'Reaction time only'], correctAnswer: 2, explanation: 'Most decisive rugby actions happen over short distances.' },
+    { type: 'multiple_choice', question: 'What sled load develops rugby-specific acceleration?', options: ['5-10% bodyweight', '20-30% bodyweight', '50-80% bodyweight', '100%+ bodyweight'], correctAnswer: 2, explanation: 'Heavy sleds at 50-80% bodyweight build horizontal force for first-step quickness.' },
+    { type: 'multiple_choice', question: 'What makes the best rugby defenders fast?', options: ['Pure sprint speed', 'They read the play earliest and start moving first', 'They are always the biggest players', 'They stay stationary until contact'], correctAnswer: 1, explanation: 'Early pattern recognition creates effective defensive speed.' },
+    { type: 'multiple_choice', question: 'How should evasion skills be trained?', options: ['In isolation with cones', 'Against live defenders where perception and decision-making are required', 'Only during matches', 'Video analysis only'], correctAnswer: 1, explanation: 'Contextual training with live defenders develops both physical and perceptual evasion.' },
+    { type: 'multiple_choice', question: 'Why train acceleration from rugby-specific positions?', options: ['It looks more impressive', 'Match sprints start from rucks, tackles, and defensive lines, not standing starts', 'Standing starts are too easy', 'Coaches require it'], correctAnswer: 1, explanation: 'Rugby sprints begin from match-specific positions, not track starts.' },
+  ]),
+  cq(1, 4, [
+    { type: 'multiple_choice', question: 'What VO2max should rugby backs target?', options: ['35-40 mL/kg/min', '45-50 mL/kg/min', '55-60+ mL/kg/min', '70+ mL/kg/min'], correctAnswer: 2, explanation: 'Backs should target 55-60+ mL/kg/min.' },
+    { type: 'multiple_choice', question: 'What work-to-rest ratio suits forward conditioning?', options: ['4-8s maximal / 20-40s recovery', '30s work / 30s rest', '5min work / 5min rest', 'Continuous running'], correctAnswer: 0, explanation: 'Forwards need short maximal efforts reflecting ruck-to-ruck demands.' },
+    { type: 'multiple_choice', question: 'Why is running alone insufficient for rugby conditioning?', options: ['It is too tiring', 'It does not replicate the fatigue created by repeated collisions', 'Coaches do not allow it', 'Running has no benefits'], correctAnswer: 1, explanation: 'Collision creates unique metabolic disruption that running cannot replicate.' },
+    { type: 'multiple_choice', question: 'What test is increasingly preferred for rugby fitness?', options: ['Cooper test', 'Beep test', '30-15 Intermittent Fitness Test (30-15 IFT)', 'Wingate test'], correctAnswer: 2, explanation: 'The 30-15 IFT provides a velocity reference for precise interval programming.' },
+    { type: 'multiple_choice', question: 'How often should wrestle conditioning sessions occur?', options: ['Every day', '1-2 per week', 'Once per month', 'Only in pre-season'], correctAnswer: 1, explanation: 'Wrestle conditioning is demanding and should be limited to 1-2 weekly sessions.' },
+  ]),
+  cq(1, 5, [
+    { type: 'multiple_choice', question: 'How many injuries per 1,000 match hours occur in professional rugby?', options: ['20', '40', '80', '150'], correctAnswer: 2, explanation: 'Rugby averages approximately 80 injuries per 1,000 player match hours.' },
+    { type: 'multiple_choice', question: 'What percentage of rugby injuries occur in the tackle?', options: ['20-30%', '30-40%', '50-60%', '70-80%'], correctAnswer: 2, explanation: 'The tackle situation causes 50-60% of all rugby injuries.' },
+    { type: 'multiple_choice', question: 'What is the most important rule after suspected concussion?', options: ['Play through it', 'Never return to play on the same day', 'Rest for 24 hours then return', 'Take painkillers and continue'], correctAnswer: 1, explanation: 'Same-day return after concussion risks catastrophic second-impact syndrome.' },
+    { type: 'multiple_choice', question: 'How much do Nordic curls reduce hamstring injury rates?', options: ['10%', '25%', 'Up to 50%', 'They have no effect'], correctAnswer: 2, explanation: 'Nordic curls reduce hamstring injury rates by up to 50%.' },
+    { type: 'multiple_choice', question: 'How much can neuromuscular training reduce knee injury risk?', options: ['10-20%', '30-40%', '50-70%', '100%'], correctAnswer: 2, explanation: 'Neuromuscular training reduces knee injury risk by 50-70%.' },
+  ]),
+  cq(1, 6, [
+    { type: 'multiple_choice', question: 'What daily calorie range do professional rugby forwards require?', options: ['2,000-2,500', '3,000-3,500', '4,500-5,500', '6,000+'], correctAnswer: 2, explanation: 'Forwards require 4,500-5,500 kcal due to high body mass and collision demands.' },
+    { type: 'multiple_choice', question: 'What protein intake is recommended for rugby players?', options: ['1.0g/kg', '1.5g/kg', '2.0-2.5g/kg', '4.0g/kg'], correctAnswer: 2, explanation: '2.0-2.5g/kg supports repair from training AND collision damage.' },
+    { type: 'multiple_choice', question: 'Why is post-match protein higher for rugby than non-contact sports?', options: ['Marketing', 'Collision creates additional muscle damage requiring more repair substrate', 'Tradition', 'It is not higher'], correctAnswer: 1, explanation: 'Collision damage increases protein requirements above standard sports nutrition guidelines.' },
+    { type: 'multiple_choice', question: 'What supplement has the strongest evidence for rugby performance?', options: ['BCAAs', 'Pre-workout', 'Creatine monohydrate', 'Vitamin C'], correctAnswer: 2, explanation: 'Creatine increases power, lean mass, and repeated sprint ability.' },
+    { type: 'multiple_choice', question: 'How much fluid should be consumed to replace sweat losses?', options: ['50% of lost weight', '100% of lost weight', '150% of lost weight', '300% of lost weight'], correctAnswer: 2, explanation: 'Replace 150% of lost bodyweight in fluid over 4-6 hours.' },
+  ]),
+  cq(1, 7, [
+    { type: 'multiple_choice', question: 'What is physical courage in rugby?', options: ['Reckless aggression', 'Controlled aggression channelled into purposeful, legal actions', 'Never feeling fear', 'Playing through injury'], correctAnswer: 1, explanation: 'Physical courage is controlled, purposeful intensity — not recklessness.' },
+    { type: 'multiple_choice', question: 'What builds team cohesion most effectively in rugby?', options: ['Talent alone', 'Shared adversity, honest communication, and accountability', 'Socialising only', 'Individual brilliance'], correctAnswer: 1, explanation: 'Trust is built through shared challenges and honest accountability.' },
+    { type: 'multiple_choice', question: 'What is the next-job mentality?', options: ['Ignoring mistakes completely', 'Focusing on the immediate next action rather than dwelling on what happened', 'Planning for the next game', 'Job rotation within the team'], correctAnswer: 1, explanation: 'Directing energy to the next productive action prevents dwelling on setbacks.' },
+    { type: 'multiple_choice', question: 'Why are pre-performance routines important for kickers?', options: ['They waste time', 'Consistency of routine creates consistency of performance under pressure', 'They look professional', 'Rules require them'], correctAnswer: 1, explanation: 'Identical routines automate execution regardless of pressure level.' },
+    { type: 'multiple_choice', question: 'How is physical courage developed?', options: ['Born with it or not', 'Progressive exposure from controlled to full contact in training', 'Watching videos', 'Reading about courage'], correctAnswer: 1, explanation: 'Graduated exposure builds comfort with contact situations.' },
+  ]),
+  cq(1, 8, [
+    { type: 'multiple_choice', question: 'What unique factor must rugby season planning account for?', options: ['Travel schedule', 'Cumulative collision damage across 30+ matches', 'Weather conditions', 'Broadcasting schedules'], correctAnswer: 1, explanation: 'Repeated collisions create accumulated damage that must be managed.' },
+    { type: 'multiple_choice', question: 'How long should the off-season recovery phase last?', options: ['1 day', '2 weeks of complete recovery', '4 weeks of hard training', 'No recovery is needed'], correctAnswer: 1, explanation: '2 weeks of recovery allows injury treatment and mental refreshment.' },
+    { type: 'multiple_choice', question: 'When should contact be introduced in pre-season?', options: ['Day 1 at full intensity', 'Progressively — controlled drills before opposed sessions', 'Only in the final week', 'Contact should not be in pre-season'], correctAnswer: 1, explanation: 'Progressive contact introduction builds robustness without early injury.' },
+    { type: 'multiple_choice', question: 'What should be tracked in-season for load management?', options: ['Only body weight', 'Collision counts, high-speed running distance, and session RPE', 'Bench press max', 'Hours of sleep only'], correctAnswer: 1, explanation: 'Multiple load metrics help identify players at risk of accumulated fatigue.' },
+    { type: 'multiple_choice', question: 'What happens when February training is excessive?', options: ['Players are fitter in May', 'Performance is destroyed in May when it counts', 'Nothing changes', 'Players get stronger'], correctAnswer: 1, explanation: 'Excessive early-season training creates fatigue that undermines late-season performance.' },
+  ]),
+];
