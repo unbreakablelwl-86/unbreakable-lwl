@@ -313,5 +313,107 @@ export const mindsetL2Unit1: Unit = {
         ],
       },
     },
+    {
+      number: 7,
+      title: 'Self-Compassion & Inner Dialogue',
+      learningOutcome: 'Understand the science of self-compassion, recognise the impact of inner dialogue on performance, and develop strategies to replace destructive self-talk with constructive internal coaching.',
+      assessmentCriteria: [
+        'Define self-compassion and distinguish it from self-pity or complacency',
+        'Explain how negative self-talk activates the stress response and impairs performance',
+        'Identify practical techniques for restructuring inner dialogue',
+      ],
+      content: [
+        {
+          heading: 'Self-Compassion Is Not Weakness',
+          paragraphs: [
+            'Self-compassion is often misunderstood as letting yourself off the hook. In reality, research by Dr Kristin Neff and others consistently shows that self-compassionate people are more motivated, more resilient, and more likely to take responsibility for mistakes — not less. Self-compassion means treating yourself with the same fairness and perspective you would offer a friend going through the same situation.',
+            'The opposite of self-compassion is not discipline — it is self-destruction. Constant harsh self-criticism activates the threat system, flooding your body with cortisol and suppressing the very cognitive functions you need to learn and improve. You cannot bully yourself into lasting change.',
+          ],
+        },
+        {
+          heading: 'The Three Components of Self-Compassion',
+          bullets: [
+            'Self-kindness — Responding to failure or difficulty with understanding rather than brutal judgement. This does not mean ignoring mistakes; it means addressing them without character assassination',
+            'Common humanity — Recognising that struggle, failure, and imperfection are universal human experiences, not personal defects. Everyone has bad sessions, bad days, and setbacks',
+            'Mindful awareness — Acknowledging painful thoughts and feelings without suppressing them or being consumed by them. You observe: "I am frustrated" rather than spiralling into "I am useless"',
+          ],
+        },
+        {
+          heading: 'Restructuring Your Inner Dialogue',
+          paragraphs: [
+            'Your inner voice shapes your emotional state, your motivation, and your physiological stress response. If your default inner dialogue sounds like a hostile critic — "you always fail", "you are not good enough", "why bother" — you are triggering your own fight-or-flight system multiple times per day without any external threat.',
+          ],
+          bullets: [
+            'Notice without judgement — Start by simply noticing what your inner voice says during stress. Write it down verbatim. Most people are shocked by how harsh it is',
+            'Challenge the thought — Ask: "Would I say this to a friend?" If not, why is it acceptable to say it to yourself?',
+            'Reframe constructively — Replace "I am terrible at this" with "I am struggling with this right now, and that is where the growth happens"',
+            'Use your name — Research shows referring to yourself in the third person ("John, you have got this") reduces emotional reactivity and improves performance under pressure',
+          ],
+        },
+      ],
+      unbreakableInsight: 'The way you speak to yourself matters more than any motivational quote. Your inner dialogue is the voice you hear most often — make it one worth listening to.',
+      coachNote: 'Pay attention to how you talk to yourself after a bad session or a missed goal. If it sounds like abuse, it is holding you back — not pushing you forward. Discipline and kindness are not opposites.',
+      practicalTask: {
+        title: 'Inner Dialogue Audit',
+        instructions: 'For three days, carry a small notebook or use your phone to record every negative thing you say to yourself — however small. At the end of each day, rewrite each statement as something a supportive coach would say instead.',
+        reflectionQuestions: [
+          'How often do you engage in harsh self-criticism versus constructive self-coaching?',
+          'Do you notice any patterns in when negative self-talk is most intense?',
+          'How did it feel to rewrite your inner dialogue in a more compassionate tone?',
+        ],
+      },
+    },
+    {
+      number: 8,
+      title: 'Social Support & Connection',
+      learningOutcome: 'Understand the role of social connection in mental resilience, the health consequences of isolation, and practical strategies for building and maintaining a supportive network.',
+      assessmentCriteria: [
+        'Explain why social connection is a biological need, not a luxury',
+        'Describe the health impacts of loneliness and social isolation',
+        'Identify strategies for strengthening your social support network',
+      ],
+      content: [
+        {
+          heading: 'Connection Is a Biological Need',
+          paragraphs: [
+            'Humans evolved as social creatures. Your nervous system is wired for connection — from the vagus nerve that responds to social cues, to the oxytocin system that rewards bonding, to the mirror neurons that help you understand others. Social connection is not a nice-to-have; it is a fundamental requirement for mental and physical health.',
+            'Research consistently shows that strong social connections are among the most powerful predictors of longevity, happiness, and resilience. The Harvard Study of Adult Development, running since 1938, found that the quality of relationships is the single strongest predictor of health and wellbeing — more than wealth, fame, IQ, or genetics.',
+          ],
+        },
+        {
+          heading: 'The Cost of Isolation',
+          bullets: [
+            'Loneliness increases cortisol, systemic inflammation, and cardiovascular risk — comparable to smoking 15 cigarettes per day',
+            'Social isolation impairs immune function, sleep quality, and cognitive performance',
+            'Perceived loneliness (feeling disconnected even when around people) is as harmful as actual isolation',
+            'Modern life creates the illusion of connection through social media while often deepening real disconnection',
+          ],
+        },
+        {
+          heading: 'Building Your Support Network',
+          paragraphs: [
+            'You do not need dozens of friends. Research suggests that having even two or three genuine, reciprocal relationships provides most of the resilience benefits of social connection. Quality matters far more than quantity.',
+          ],
+          bullets: [
+            'Identify your existing connections — Who do you trust? Who would you call at 2am? Who challenges you to be better?',
+            'Invest in reciprocity — Relationships require maintenance. Reach out first. Ask how people are doing. Be genuinely curious',
+            'Find your tribe — Shared activities (gym, sport, hobbies) create natural bonding opportunities without the pressure of "making friends"',
+            'Set boundaries — Not all relationships support resilience. Some drain it. Protect your energy by limiting time with consistently negative or toxic people',
+            'Be vulnerable — Authentic connection requires showing up honestly. Pretending everything is fine prevents people from actually supporting you',
+          ],
+        },
+      ],
+      unbreakableInsight: 'You are not meant to do this alone. The strongest people in the world have support systems — they just do not always talk about them. Asking for help is not weakness; refusing to is stubbornness disguised as strength.',
+      coachNote: 'If you are training alone, eating alone, and processing stress alone — you are playing on hard mode unnecessarily. Find one person this week to train with, talk to, or just check in on. Connection compounds.',
+      practicalTask: {
+        title: 'Social Connection Audit',
+        instructions: 'Map your current social support network. List the people you interact with regularly and categorise them: emotional support (they listen), practical support (they help), challenge support (they push you). Identify gaps and one action you can take this week to strengthen a connection.',
+        reflectionQuestions: [
+          'Do you have at least one person you can be fully honest with about how you are doing?',
+          'Are your closest relationships reciprocal, or predominantly one-directional?',
+          'What barriers prevent you from deepening your social connections?',
+        ],
+      },
+    },
   ],
 };

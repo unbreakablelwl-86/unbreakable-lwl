@@ -334,5 +334,123 @@ export const mindsetL3Unit4: Unit = {
         ],
       },
     },
+    {
+      number: 7,
+      title: 'Seasonal Resilience & Long-Term Periodisation',
+      learningOutcome: 'Understand how to periodise mental resilience training across months and years, account for seasonal and life-phase variations, and build a sustainable long-term development framework.',
+      assessmentCriteria: [
+        'Explain why resilience capacity fluctuates across seasons and life phases',
+        'Design a periodised annual mental resilience plan',
+        'Identify strategies for maintaining baseline practices during high-stress periods',
+      ],
+      content: [
+        {
+          heading: 'Resilience Is Not a Constant',
+          paragraphs: [
+            'Your resilience capacity is not fixed at one level — it fluctuates across days, weeks, seasons, and life phases. Just as physical performance cycles through peaks and valleys, your mental resilience has natural rhythms influenced by daylight, workload, life events, hormonal cycles, and cumulative stress. Ignoring these fluctuations leads to burnout during low phases and underperformance during high ones.',
+            'Long-term resilience development requires periodisation — the same principle that underlies effective physical training. You cannot train at maximum intensity year-round without breaking. The same applies to mental resilience: periods of growth must be balanced with periods of consolidation and recovery.',
+          ],
+        },
+        {
+          heading: 'Seasonal Considerations',
+          bullets: [
+            'Winter — Reduced daylight affects serotonin production and circadian rhythm. Energy and motivation naturally dip. This is a consolidation phase: maintain baseline practices, prioritise sleep and social connection, reduce exposure training intensity',
+            'Spring — Increasing daylight boosts energy and motivation. Good time to introduce new challenges, increase training volume, and push comfort zone boundaries',
+            'Summer — Peak energy and social opportunity. Ideal for intensification phases: harder exposure training, bigger goals, social resilience building',
+            'Autumn — Transition period. Good for reflection, skill refinement, and preparing systems for winter maintenance',
+            'These are general patterns — your individual rhythm may differ. Track your energy and motivation monthly for a year to identify your personal peaks and valleys',
+          ],
+        },
+        {
+          heading: 'Life-Phase Periodisation',
+          paragraphs: [
+            'Beyond seasonal cycles, major life events require periodisation adjustments. Starting a new job, becoming a parent, grieving a loss, or managing illness all temporarily reduce your capacity for growth-focused resilience work. During these periods, the goal shifts from progression to maintenance — protecting your baseline practices while being compassionate about reduced capacity.',
+          ],
+          bullets: [
+            'High-stress life phases — Reduce to non-negotiable minimums: daily breathwork, adequate sleep, one social connection. Do not add new challenges',
+            'Stable phases — Build progressively: add exposure training, expand comfort zones, take on new learning',
+            'Growth phases — Push boundaries deliberately: advanced protocols, challenging goals, teaching others',
+            'Recovery phases — Consolidate gains: review learnings, refine systems, restore energy reserves',
+            'Annual review — Once per year, conduct a comprehensive review of your resilience development: what improved, what regressed, what needs attention next',
+          ],
+        },
+      ],
+      unbreakableInsight: 'The goal is not to be at your peak every single day — that is unsustainable and counterproductive. The goal is to build a system that sustains progress across years, not just weeks. The person who maintains 70% consistency for a decade will outperform the person who gives 100% for three months and quits.',
+      coachNote: 'Give yourself permission to have maintenance phases. Not every month needs to be a breakthrough. Sometimes holding the line is the most resilient thing you can do.',
+      practicalTask: {
+        title: 'Annual Resilience Periodisation Plan',
+        instructions: 'Create a 12-month resilience development plan. For each month, assign a phase (foundation, building, intensification, or deload) based on your known commitments, seasonal patterns, and energy levels. Identify your non-negotiable baseline practices that continue regardless of phase. Define what "progression" and "maintenance" look like for each major resilience domain.',
+        reflectionQuestions: [
+          'Can you identify your personal seasonal energy patterns from the past year?',
+          'What are your non-negotiable baseline practices that you would maintain even during the hardest life phase?',
+          'How does framing resilience as a long-term, periodised practice change your relationship with setbacks?',
+        ],
+      },
+    },
+    {
+      number: 8,
+      title: 'Reflective Practice & Portfolio Development',
+      learningOutcome: 'Consolidate all Level 3 learning through structured reflective practice, build a personal development portfolio, and create a framework for continued autonomous growth beyond this course.',
+      assessmentCriteria: [
+        'Explain why reflective practice is essential for sustained learning and development',
+        'Create a personal development portfolio documenting key learnings and growth areas',
+        'Design a self-directed development plan for the next 12 months',
+      ],
+      content: [
+        {
+          heading: 'From Student to Practitioner',
+          paragraphs: [
+            'Completing a course is not the same as embodying its lessons. The gap between knowledge and practice is where most people stall. Reflective practice bridges this gap by turning experience into learning, and learning into improved practice. It is the mechanism by which you continue to grow after the structured curriculum ends.',
+            'This chapter is not an ending — it is a transition point. You are moving from guided learning to autonomous development. The tools, frameworks, and practices from Levels 2 and 3 are now your toolkit. This chapter teaches you how to maintain, apply, and evolve that toolkit independently.',
+          ],
+        },
+        {
+          heading: 'The Reflective Practice Cycle',
+          bullets: [
+            'Experience — Something happens: a stressful event, a training session, a difficult conversation, a breakthrough',
+            'Reflection — You step back and examine: What happened? How did I respond? What worked? What did I not?',
+            'Learning — You extract a principle or insight: "I notice that my stress response is worse when I skip morning breathwork"',
+            'Application — You adjust your practice based on the learning: "I will make morning breathwork non-negotiable, even on busy days"',
+            'Repeat — The cycle continues. Each iteration deepens your self-knowledge and refines your practice',
+          ],
+        },
+        {
+          heading: 'Building Your Development Portfolio',
+          paragraphs: [
+            'A personal development portfolio is a living document that captures your growth journey. It serves two purposes: (1) it provides a concrete record of progress that sustains motivation during plateaus, and (2) it forces you to articulate what you have learned — and articulation deepens understanding.',
+          ],
+          bullets: [
+            'Key learnings — For each unit, write one paragraph summarising the most impactful thing you learned and how it has changed your behaviour',
+            'Self-assessment — Honestly rate your current competence in each major domain: stress management, breathwork, focus, emotional regulation, sleep, social resilience. Identify your top two strengths and two development areas',
+            'Evidence of growth — Collect tangible evidence: journal entries, tracking data, before/after comparisons, completed practical tasks',
+            'Next steps — For each development area, define one specific action you will take in the next 90 days',
+            'Teaching summary — Write a brief explanation of each core concept as if teaching it to a friend. If you cannot explain it simply, you do not fully understand it',
+          ],
+        },
+        {
+          heading: 'Your 12-Month Self-Directed Plan',
+          paragraphs: [
+            'Design a plan that maintains your baseline practices, progressively develops your weakest areas, and periodically revisits strong areas to prevent regression. The plan should be simple enough to follow without external accountability, but structured enough to prevent drift.',
+          ],
+          bullets: [
+            'Daily non-negotiables — Identify 2–3 practices you will do every day regardless of circumstances (e.g., morning breathwork, evening reflection, hydration target)',
+            'Monthly focus — Each month, choose one domain for deeper focus. Reread the relevant chapter, intensify that practice, and track progress',
+            'Quarterly review — Every three months, revisit your portfolio, update your self-assessment, and adjust your plan based on what you have learned',
+            'Annual reflection — At the year mark, complete a comprehensive review. Compare your current self-assessment to where you were at the start of this course',
+          ],
+        },
+      ],
+      unbreakableInsight: 'The course ends here. Your development does not. Everything you have learned is a starting point, not a destination. The person you become in the next year depends entirely on what you do with this knowledge — not on the fact that you acquired it.',
+      coachNote: 'This is the most important chapter in the entire course — because it determines whether everything else sticks. Take the portfolio seriously. The 30 minutes you invest in writing it will be worth more than 30 hours of passive reading.',
+      practicalTask: {
+        title: 'Personal Development Portfolio & 12-Month Plan',
+        instructions: 'Create your personal development portfolio. For each of the four units in Level 3, write: (1) the most impactful lesson, (2) how it has changed your behaviour, (3) your current competence rating (1–10). Then design your 12-month self-directed plan: identify daily non-negotiables, monthly focus areas, and quarterly review dates. Put the review dates in your calendar now.',
+        reflectionQuestions: [
+          'Looking back across the entire Level 3 course, what has changed most about how you think about resilience?',
+          'Which practices have already become habits, and which still require conscious effort?',
+          'What would you tell your past self — the person who started Level 2 — about what lies ahead?',
+        ],
+      },
+    },
   ],
 };

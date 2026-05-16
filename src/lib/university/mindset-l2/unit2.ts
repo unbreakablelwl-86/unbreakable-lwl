@@ -319,5 +319,112 @@ export const mindsetL2Unit2: Unit = {
         ],
       },
     },
+    {
+      number: 7,
+      title: 'Nasal Breathing & Respiratory Health',
+      learningOutcome: 'Understand the physiological advantages of nasal breathing over mouth breathing, the role of nitric oxide, and how to transition to habitual nasal breathing during rest and low-intensity exercise.',
+      assessmentCriteria: [
+        'Explain the key differences between nasal and mouth breathing',
+        'Describe the role of nitric oxide produced during nasal breathing',
+        'Identify strategies for transitioning to habitual nasal breathing',
+      ],
+      content: [
+        {
+          heading: 'Why Your Nose Matters More Than You Think',
+          paragraphs: [
+            'Your nose is not just a passive air hole — it is a sophisticated filtration, humidification, and conditioning system. Nasal breathing warms incoming air to body temperature, humidifies it to protect delicate lung tissue, and filters out pathogens and particles. None of this happens when you breathe through your mouth.',
+            'Perhaps most importantly, nasal breathing triggers the production of nitric oxide (NO) in the paranasal sinuses. Nitric oxide is a vasodilator — it widens blood vessels, improving blood flow and oxygen delivery to tissues. It also has antimicrobial properties, helping protect against respiratory infections.',
+          ],
+        },
+        {
+          heading: 'Mouth Breathing — The Hidden Problem',
+          bullets: [
+            'Chronic mouth breathing activates sympathetic tone — keeping you in a low-level stress state even at rest',
+            'It bypasses the nasal filtration system, increasing susceptibility to respiratory infections and allergies',
+            'Mouth breathing during sleep contributes to snoring, poor sleep quality, and reduced oxygen saturation',
+            'Over time, habitual mouth breathing can alter facial structure, posture (forward head position), and dental health',
+            'Many people mouth-breathe without awareness — especially during exercise, concentration, or sleep',
+          ],
+        },
+        {
+          heading: 'Transitioning to Nasal Breathing',
+          paragraphs: [
+            'If you have been a mouth breather for years, the transition takes patience. Your nasal passages may feel restricted initially, but they adapt — nasal breathing begets better nasal breathing as the tissues respond to consistent use.',
+          ],
+          bullets: [
+            'Start at rest — Consciously close your mouth and breathe through your nose during sedentary activities: working, reading, watching TV',
+            'Progress to walking — Nasal-only breathing during walks is an excellent training ground. If you cannot maintain it, slow down',
+            'Low-intensity exercise — Gradually introduce nasal breathing during warm-ups and easy cardio. Expect performance to dip temporarily',
+            'Sleep taping — Medical-grade mouth tape during sleep is a simple intervention. Start with a small strip and ensure you can still open your mouth if needed',
+            'Be patient — Full adaptation can take 2–6 weeks of consistent practice',
+          ],
+        },
+      ],
+      unbreakableInsight: 'How you breathe when you are not thinking about it reveals your baseline nervous system state. If your default is shallow mouth breathing, your body thinks it is always under mild threat.',
+      coachNote: 'Try this: right now, close your mouth and take five slow breaths through your nose. Notice how different it feels compared to your usual breathing pattern. That difference is information about your current state.',
+      practicalTask: {
+        title: 'Nasal Breathing Transition',
+        instructions: 'For one week, commit to nasal-only breathing during all non-exercise waking hours. Set three daily reminders on your phone to check: "Am I breathing through my nose?" Log your observations each evening — energy levels, stress, sleep quality.',
+        reflectionQuestions: [
+          'How often did you catch yourself mouth breathing when reminded?',
+          'Did you notice any changes in your resting heart rate, energy, or stress levels?',
+          'What situations triggered a return to mouth breathing?',
+        ],
+      },
+    },
+    {
+      number: 8,
+      title: 'Breathwork Programming & Integration',
+      learningOutcome: 'Learn how to structure a personal breathwork practice, integrate techniques into daily routines, and select the right protocol for different situations.',
+      assessmentCriteria: [
+        'Design a basic weekly breathwork programme targeting specific outcomes',
+        'Match breathwork techniques to appropriate contexts (calming, energising, focus, recovery)',
+        'Explain the principle of progressive breathwork training',
+      ],
+      content: [
+        {
+          heading: 'From Techniques to Practice',
+          paragraphs: [
+            'Knowing breathing techniques is not the same as having a breathing practice. The previous chapters taught you diaphragmatic breathing, box breathing, energising breathwork, and calming protocols. This chapter teaches you how to integrate them into a coherent, sustainable daily practice that serves your goals.',
+            'Like physical training, breathwork benefits from structure, progression, and consistency. A haphazard approach — doing random techniques when you remember — will produce haphazard results.',
+          ],
+        },
+        {
+          heading: 'Matching Techniques to Contexts',
+          bullets: [
+            'Morning activation — 2–3 minutes of energising breathwork (e.g., rhythmic breathing or gentle Wim Hof-style rounds) to shift from parasympathetic sleep state to alert wakefulness',
+            'Pre-training — 60 seconds of energising nasal breathing to prime the nervous system without over-stimulating',
+            'Post-training — 3–5 minutes of extended exhale breathing (e.g., 4-count inhale, 6–8-count exhale) to accelerate parasympathetic recovery',
+            'Stressful moments — Box breathing (4-4-4-4) as an immediate calming intervention during acute stress',
+            'Pre-sleep — 5 minutes of slow diaphragmatic breathing with extended exhale to downregulate the nervous system',
+            'Focus work — 2 minutes of controlled nasal breathing before deep work sessions to prime attention',
+          ],
+        },
+        {
+          heading: 'Building Your Weekly Programme',
+          paragraphs: [
+            'A sustainable breathwork programme does not require hours. Five to ten minutes per day, applied consistently and with intention, will produce measurable changes in your baseline stress levels, recovery quality, and emotional regulation within two to four weeks.',
+          ],
+          bullets: [
+            'Daily minimum — Morning activation (2 min) + evening wind-down (5 min). This is your non-negotiable baseline',
+            'Training days — Add pre-training priming (1 min) and post-training recovery breathing (3–5 min)',
+            'Stress days — Add box breathing intervals whenever you notice rising tension. Even 60 seconds makes a difference',
+            'Weekly longer session — One 15–20 minute guided breathwork session per week for deeper nervous system training',
+            'Track your practice — Note which techniques you used, when, and how you felt. Patterns emerge within two weeks',
+          ],
+        },
+      ],
+      unbreakableInsight: 'Breathwork is the only tool in this entire course that costs nothing, requires no equipment, takes under five minutes, and can be done anywhere. Yet it is consistently the most underused. The gap between knowing and doing is where most people live.',
+      coachNote: 'Do not try to add everything at once. Start with the morning and evening bookends — two minutes on waking, five minutes before sleep. Once that is automatic (give it two weeks), layer in pre- and post-training protocols.',
+      practicalTask: {
+        title: 'Personal Breathwork Programme',
+        instructions: 'Design your personal breathwork programme for the next two weeks. Choose a morning protocol, an evening protocol, and one context-specific technique (e.g., pre-training or stressful moments). Follow it daily and log adherence plus subjective effects.',
+        reflectionQuestions: [
+          'Which technique felt most impactful for you personally?',
+          'Did you find it easier to maintain morning or evening practice?',
+          'How did structured breathwork compare to doing techniques randomly?',
+        ],
+      },
+    },
   ],
 };

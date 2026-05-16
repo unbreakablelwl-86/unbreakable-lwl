@@ -377,5 +377,106 @@ export const mindsetL3Unit2: Unit = {
         ],
       },
     },
+    {
+      number: 7,
+      title: 'Breathwork for Recovery & Sleep',
+      learningOutcome: 'Master advanced breathwork protocols specifically designed to enhance post-training recovery, improve sleep onset and quality, and accelerate parasympathetic restoration.',
+      assessmentCriteria: [
+        'Explain the physiological mechanisms by which breathwork enhances recovery',
+        'Design a post-training breathwork cool-down protocol',
+        'Apply pre-sleep breathing techniques to improve sleep onset latency',
+      ],
+      content: [
+        {
+          heading: 'Breathing as a Recovery Accelerator',
+          paragraphs: [
+            'Recovery is not passive — it is an active physiological process driven by the parasympathetic nervous system. The faster and more completely you can shift from sympathetic dominance (training mode) to parasympathetic dominance (recovery mode), the more effectively your body repairs tissue, reduces inflammation, replenishes glycogen, and consolidates motor learning.',
+            'Breathwork is the most direct, voluntary pathway into the parasympathetic system. While passive rest eventually achieves the shift, targeted breathwork protocols can accelerate the transition from minutes to seconds — making them among the most time-efficient recovery tools available.',
+          ],
+        },
+        {
+          heading: 'Post-Training Recovery Protocols',
+          bullets: [
+            'Physiological sigh (double inhale + long exhale) — One of the fastest ways to reduce sympathetic arousal. Two quick nasal inhales followed by a long mouth exhale. Repeat 5–10 times immediately after training',
+            'Extended exhale breathing — 4-count inhale, 6–8-count exhale through the nose for 3–5 minutes. The extended exhale directly stimulates the vagus nerve and shifts cardiac rhythm toward parasympathetic dominance',
+            'Legs-up-the-wall breathing — Lie with legs elevated against a wall. Combine with slow nasal breathing for 5 minutes. Gravity assists venous return while breathwork accelerates nervous system downregulation',
+            'Crocodile breathing — Lie face down with forehead on stacked hands. Breathe into the belly, feeling the abdomen push into the floor. This position restricts chest breathing and forces diaphragmatic patterns. 3–5 minutes',
+          ],
+        },
+        {
+          heading: 'Pre-Sleep Breathing Protocols',
+          paragraphs: [
+            'Sleep onset requires a shift into parasympathetic dominance. Many people struggle to fall asleep because they carry residual sympathetic activation from the day — racing thoughts, elevated heart rate, muscle tension. Targeted pre-sleep breathing short-circuits this pattern.',
+          ],
+          bullets: [
+            '4-7-8 breathing — Inhale for 4 counts, hold for 7 counts, exhale for 8 counts. The long hold and extended exhale create a powerful parasympathetic signal. Complete 4 cycles',
+            'Body scan with breath — Progressively direct attention to each body part while breathing slowly. This combines mindfulness with breathwork, reducing both cognitive and somatic arousal',
+            'Left-nostril breathing — Block the right nostril and breathe only through the left for 2–3 minutes. In yogic tradition and some research, left-nostril breathing is associated with parasympathetic activation and cooling',
+            'Timing — Begin your pre-sleep protocol 10–15 minutes before your target sleep time. Consistency trains your body to associate the protocol with sleep onset',
+          ],
+        },
+      ],
+      unbreakableInsight: 'Most people treat the gap between training and sleep as dead time. Elite performers use it strategically — accelerating recovery with breathwork that takes less time than scrolling social media. The same five minutes, radically different outcomes.',
+      coachNote: 'Try adding a three-minute extended exhale protocol immediately after your next training session. Track how you feel two hours later compared to sessions without it. Most people notice a significant difference within the first week.',
+      practicalTask: {
+        title: 'Recovery Breathwork Protocol',
+        instructions: 'For two weeks, implement a structured post-training and pre-sleep breathwork routine. After each training session: 5 physiological sighs followed by 3 minutes of extended exhale breathing. Before bed: 4 rounds of 4-7-8 breathing. Rate your recovery quality and sleep onset time daily.',
+        reflectionQuestions: [
+          'Did post-training breathwork change your perceived recovery between sessions?',
+          'How did pre-sleep breathing affect your time to fall asleep?',
+          'Which specific protocol felt most effective for you?',
+        ],
+      },
+    },
+    {
+      number: 8,
+      title: 'Environmental Stress Tolerance Programming',
+      learningOutcome: 'Design a structured, periodised programme combining cold, heat, breathwork, and physical stress to systematically expand your stress tolerance and hormetic adaptation capacity.',
+      assessmentCriteria: [
+        'Explain the principle of hormesis and how it applies to stress tolerance training',
+        'Design a progressive multi-stressor exposure programme',
+        'Identify signs of overexposure and appropriate deload strategies',
+      ],
+      content: [
+        {
+          heading: 'Hormesis — Stress That Strengthens',
+          paragraphs: [
+            'Hormesis is the biological principle that controlled, moderate exposure to a stressor triggers adaptive responses that make you more resilient to that stressor — and often to other stressors as well. Cold exposure builds cold tolerance but also improves stress recovery. Heat exposure enhances cardiovascular resilience. Breathwork training expands CO2 tolerance. The key word is controlled — the dose determines whether stress strengthens or damages.',
+            'This chapter integrates everything from Unit 2 into a structured programme. Individual techniques are useful; a periodised programme combining them is transformative. Like physical training, stress tolerance training requires progressive overload, adequate recovery, and intelligent programming.',
+          ],
+        },
+        {
+          heading: 'Programming Principles',
+          bullets: [
+            'Start conservative — Begin with the lowest effective dose of each stressor. A 30-second cold shower is sufficient to trigger adaptation. More is not always better',
+            'Progress one variable at a time — Increase duration OR intensity OR frequency, never all three simultaneously. This prevents overexposure and allows you to identify what drives adaptation',
+            'Combine stressors strategically — Cold exposure after training enhances mental resilience but may blunt hypertrophy signals. Time your exposures based on your primary goal',
+            'Periodise exposure — Like training, cycle through phases: accumulation (building tolerance), intensification (pushing limits), and deload (recovery). A 3:1 pattern works well — three weeks of progressive exposure, one week of reduced volume',
+            'Listen to your body — Signs of overexposure include persistent fatigue, sleep disruption, elevated resting heart rate, mood disturbance, and increased illness. If these appear, reduce the dose',
+          ],
+        },
+        {
+          heading: 'Sample 8-Week Programme Structure',
+          bullets: [
+            'Weeks 1–2 (Foundation) — Cold: 30s cold finish on showers, 3×/week. Breathwork: 5 min daily diaphragmatic + box breathing. Heat: none yet',
+            'Weeks 3–4 (Building) — Cold: 60s cold showers, 4×/week. Breathwork: add CO2 tolerance tables 2×/week. Heat: introduce 10-min sauna/hot bath 2×/week',
+            'Weeks 5–6 (Intensification) — Cold: 90–120s cold showers or cold plunge. Breathwork: 15-min sessions including breath holds. Heat: 15–20 min sauna 2–3×/week. Add contrast therapy 1×/week',
+            'Week 7 (Peak) — Combine stressors in single sessions: breathwork → cold → heat → breathwork. Push comfort zone boundaries safely',
+            'Week 8 (Deload) — Reduce all exposures by 50%. Maintain daily breathwork only. Assess progress and plan next cycle',
+          ],
+        },
+      ],
+      unbreakableInsight: 'Comfort is not the enemy of resilience — but permanent comfort is. You need controlled discomfort to expand your capacity. The goal is not to suffer; it is to systematically expand the range of conditions under which you can function well.',
+      coachNote: 'Do not rush through this. The temptation is to jump to extreme cold plunges and long sauna sessions immediately. The person who progresses slowly and consistently for twelve months will be far more resilient than the person who goes hard for two weeks and burns out.',
+      practicalTask: {
+        title: 'Personal Stress Tolerance Programme',
+        instructions: 'Design your own 4-week stress tolerance programme using the principles above. Choose 2–3 stressors you want to work with (cold, heat, breathwork, physical). Define your starting dose, weekly progression, and recovery strategy. Execute the programme and track your adaptation.',
+        reflectionQuestions: [
+          'Which stressor did you find most challenging, and did your tolerance measurably improve?',
+          'Did you notice cross-adaptation — improvements in stress tolerance beyond the specific stressor you trained?',
+          'How did you determine when to progress versus when to hold or deload?',
+        ],
+      },
+    },
   ],
 };

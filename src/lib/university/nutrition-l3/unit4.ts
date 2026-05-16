@@ -325,5 +325,111 @@ export const nutritionL3Unit4: Unit = {
         ],
       },
     },
+    {
+      number: 7,
+      title: 'Client Consultation Skills',
+      learningOutcome: 'Develop the practical skills needed to conduct effective nutrition consultations, including intake assessment, goal setting, rapport building, and creating actionable nutrition plans for real clients.',
+      assessmentCriteria: [
+        'Describe the structure and key components of an initial nutrition consultation',
+        'Explain how to gather relevant dietary, medical, and lifestyle information safely',
+        'Design an actionable, individualised nutrition plan based on consultation findings',
+      ],
+      content: [
+        {
+          heading: 'The Consultation Is Where Knowledge Becomes Practice',
+          paragraphs: [
+            'Everything in this course — macronutrients, micronutrients, supplementation, sports nutrition, behaviour change — converges in the consultation. This is where you translate theoretical knowledge into practical advice for a real person with real preferences, constraints, and goals. The quality of your consultation determines whether your advice is followed or forgotten.',
+            'A good consultation is not a lecture. It is a structured conversation that gathers information, builds trust, identifies priorities, and co-creates an actionable plan. The client should leave feeling heard, understood, and equipped — not overwhelmed.',
+          ],
+        },
+        {
+          heading: 'Consultation Structure',
+          bullets: [
+            'Pre-consultation — Send an intake questionnaire covering: current eating patterns, medical history, allergies/intolerances, medications, training schedule, goals, and any previous nutrition interventions. This saves time and provides a baseline',
+            'Opening (5 min) — Build rapport. Ask open questions: "What made you book this session?" "What would you most like to change?" Listen first, advise later',
+            'Information gathering (15 min) — Review the intake questionnaire together. Clarify ambiguities. Ask about a typical day of eating (not an ideal day). Note food preferences, cooking ability, budget, and time constraints',
+            'Assessment (5 min) — Summarise what you have heard. Identify the 2–3 highest-impact changes (not 10). Check that the client agrees these are priorities',
+            'Action planning (10 min) — Co-create specific, achievable actions for the next 1–2 weeks. Each action should pass the "would you bet £50 you will do this?" test. Fewer, realistic actions beat ambitious wishlists',
+            'Close (5 min) — Summarise the agreed actions. Set a follow-up date. Ask: "Is there anything else that is important that we have not covered?"',
+          ],
+        },
+        {
+          heading: 'Common Consultation Mistakes',
+          bullets: [
+            'Talking more than listening — The ideal ratio is approximately 70% client, 30% practitioner in the first consultation. Your job is to understand their world before advising',
+            'Giving too much information — Overloading a client with science does not help them change behaviour. Keep explanations brief and practical',
+            'Ignoring the client\'s starting point — Recommending a "perfect" diet that bears no resemblance to their current habits guarantees non-adherence. Start where they are, not where you want them to be',
+            'Assuming readiness — Not every client is ready to change everything immediately. Use the stages of change model (pre-contemplation through maintenance) to calibrate your expectations',
+            'Neglecting follow-up — The consultation is not the intervention. The follow-up — checking in, adjusting the plan, celebrating progress — is where behaviour change actually happens',
+          ],
+        },
+      ],
+      unbreakableInsight: 'The best nutritional advice in the world is useless if the person cannot or will not follow it. Your job is not to create the perfect plan — it is to create the best plan that this specific person will actually do.',
+      coachNote: 'When in doubt, ask one more question before giving advice. Every extra minute spent understanding the client saves ten minutes of wasted advice that does not fit their life.',
+      practicalTask: {
+        title: 'Mock Consultation Practice',
+        instructions: 'Conduct a 30-minute mock nutrition consultation with a willing friend, family member, or training partner. Use the consultation structure above. Gather their information, identify priorities, and co-create 2–3 actionable steps. Record yourself (audio only) and review it afterwards, noting how much you listened versus talked.',
+        reflectionQuestions: [
+          'What percentage of the consultation did you spend talking versus listening?',
+          'Were the actions you agreed on realistic given the person\'s actual lifestyle?',
+          'What would you do differently in your next consultation based on this practice?',
+        ],
+      },
+    },
+    {
+      number: 8,
+      title: 'Professional Development & Continuing Education',
+      learningOutcome: 'Understand the importance of continuing professional development (CPD), learn to critically evaluate nutrition research, and create a framework for lifelong learning in the rapidly evolving field of nutrition science.',
+      assessmentCriteria: [
+        'Explain why continuing professional development is essential in nutrition practice',
+        'Apply critical evaluation criteria to assess the quality of nutrition research and media claims',
+        'Design a personal CPD plan for the next 12 months',
+      ],
+      content: [
+        {
+          heading: 'Nutrition Science Never Stops Evolving',
+          paragraphs: [
+            'What you know today is a snapshot. Nutrition science is a rapidly evolving field where consensus shifts, new evidence emerges, and yesterday\'s certainties become today\'s nuances. A practitioner who stops learning after qualification quickly becomes outdated — and outdated advice can cause real harm.',
+            'Continuing professional development (CPD) is not optional — it is an ethical obligation. If you advise others on nutrition, you owe them current, evidence-based guidance. This requires active, ongoing engagement with research, peer learning, and self-reflection.',
+          ],
+        },
+        {
+          heading: 'Evaluating Nutrition Research & Media Claims',
+          paragraphs: [
+            'The nutrition space is flooded with misinformation — from supplement companies, social media influencers, journalists seeking clicks, and even well-meaning but under-qualified practitioners. Developing a critical eye for evidence quality is one of the most valuable skills you can build.',
+          ],
+          bullets: [
+            'Hierarchy of evidence — Systematic reviews and meta-analyses carry more weight than single studies. Randomised controlled trials (RCTs) carry more weight than observational studies. Expert opinion is the lowest tier',
+            'Study design — Was the study done in humans (not cells or mice)? Was it randomised and controlled? How large was the sample? How long did it run?',
+            'Conflict of interest — Who funded the study? Studies funded by supplement or food companies are not automatically wrong, but funding bias is well-documented',
+            'Effect size vs statistical significance — A statistically significant finding can be practically meaningless if the effect size is tiny. Ask: "How much difference does this actually make?"',
+            'Media translation — Headlines distort research. Always read the abstract of the actual study before forming an opinion based on a news article or social media post',
+            'Reproducibility — Has the finding been replicated by independent researchers? Single studies — no matter how well-designed — should not change practice until confirmed',
+          ],
+        },
+        {
+          heading: 'Building Your CPD Framework',
+          bullets: [
+            'Read regularly — Follow 2–3 reputable journals or research review services (e.g., BJSM, Examine.com, Alan Aragon\'s Research Review). Even 30 minutes per week compounds rapidly',
+            'Attend workshops and courses — At least one formal CPD event per year. These provide structured learning, networking, and exposure to perspectives you would not seek independently',
+            'Join a community of practice — Find other nutrition professionals (online or in person) to discuss cases, share learnings, and challenge each other\'s thinking',
+            'Reflect on practice — After each client interaction, ask: "What went well? What would I do differently? What do I need to learn more about?"',
+            'Teach to learn — Explaining concepts to others (writing, presenting, mentoring) deepens your own understanding more than passive study',
+            'Maintain a learning log — Document what you read, learn, and apply. This creates a searchable personal knowledge base and evidence of CPD for professional bodies',
+          ],
+        },
+      ],
+      unbreakableInsight: 'The most dangerous nutrition practitioner is the one who thinks they know everything. Humility, curiosity, and a commitment to evidence are what separate professionals from influencers.',
+      coachNote: 'Set a weekly 30-minute "learning block" in your calendar — same day, same time. Use it to read one research summary, listen to one podcast episode, or review one case. Consistency beats intensity in CPD, just as it does in training.',
+      practicalTask: {
+        title: 'CPD Plan & Critical Evaluation Practice',
+        instructions: 'Create a 12-month CPD plan: identify 3 knowledge gaps you want to address, select learning resources for each (journals, courses, podcasts, books), and schedule monthly learning blocks. Then find a recent nutrition headline or social media claim and critically evaluate it using the criteria above. Write a 200-word analysis of whether the claim is supported by the evidence.',
+        reflectionQuestions: [
+          'What are your three biggest knowledge gaps in nutrition, and how will you address them?',
+          'How did the nutrition claim you evaluated hold up under critical scrutiny?',
+          'What habits can you build now to ensure you are still learning and improving in five years?',
+        ],
+      },
+    },
   ],
 };

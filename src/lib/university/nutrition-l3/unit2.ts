@@ -391,5 +391,109 @@ export const nutritionL3Unit2: Unit = {
         ],
       },
     },
+    {
+      number: 7,
+      title: 'Food Safety & Hygiene',
+      learningOutcome: 'Understand the principles of food safety, identify common foodborne hazards, and apply safe food handling practices relevant to meal preparation, sports nutrition, and working with clients.',
+      assessmentCriteria: [
+        'Identify the main types of foodborne hazards: biological, chemical, and physical',
+        'Explain the principles of safe food storage, preparation, and cooking temperatures',
+        'Apply food safety knowledge to meal prep scenarios relevant to fitness and sport',
+      ],
+      content: [
+        {
+          heading: 'Why Food Safety Matters for Nutrition Professionals',
+          paragraphs: [
+            'Food safety might seem disconnected from sports nutrition or performance coaching, but it is fundamental. A single bout of foodborne illness can cause days of training disruption, dehydration, muscle catabolism, and immune suppression. For athletes in competition preparation, food poisoning at the wrong time can derail months of work.',
+            'If you advise others on nutrition — whether formally or informally — understanding food safety is part of your duty of care. Recommending meal prep strategies, high-protein diets, or specific food combinations carries implicit responsibility for safe handling practices.',
+          ],
+        },
+        {
+          heading: 'Types of Food Hazards',
+          bullets: [
+            'Biological hazards — Bacteria (Salmonella, E. coli, Campylobacter, Listeria), viruses (norovirus), and parasites. The most common cause of foodborne illness. Most are destroyed by proper cooking temperatures',
+            'Chemical hazards — Pesticide residues, cleaning product contamination, heavy metals, and allergens. Minimised through proper washing, storage separation, and allergen awareness',
+            'Physical hazards — Foreign objects in food: glass, bone fragments, plastic, metal. More relevant in commercial food production but also applicable to home kitchens',
+            'Allergens — The 14 major allergens (including gluten, dairy, nuts, soy, eggs) must be considered when preparing food for others. Cross-contamination is as dangerous as direct inclusion',
+          ],
+        },
+        {
+          heading: 'Safe Food Handling Principles',
+          bullets: [
+            'Temperature danger zone — Bacteria multiply rapidly between 8°C and 63°C. Minimise the time food spends in this range. Refrigerate perishables within 2 hours of cooking',
+            'Cooking temperatures — Cook poultry to 75°C internal temperature, minced meat to 70°C, and reheat leftovers to at least 70°C throughout. Use a food thermometer — colour is not a reliable indicator',
+            'Cold storage — Refrigerator should be at or below 5°C. Freezer at or below -18°C. Store raw meat on the lowest shelf to prevent dripping onto ready-to-eat foods',
+            'Meal prep safety — Cooked meal-prepped food should be cooled within 90 minutes, portioned, and refrigerated. Consume within 3–4 days or freeze. Reheating should reach 70°C throughout',
+            'Cross-contamination — Use separate chopping boards for raw meat and ready-to-eat foods. Wash hands thoroughly after handling raw meat, eggs, or unwashed vegetables',
+            'Personal hygiene — Wash hands before food preparation and after handling raw foods, using the toilet, or touching your face. Tie back hair and cover any cuts with waterproof dressings',
+          ],
+        },
+      ],
+      unbreakableInsight: 'The best meal plan in the world is worthless if it gives someone food poisoning. Food safety is not glamorous, but it is non-negotiable — whether you are prepping your own meals or advising others.',
+      coachNote: 'If you batch-cook (and you should for consistency), master the basics: cool food quickly, store properly, label with dates, and reheat thoroughly. Most meal-prep-related illness comes from improper cooling or reheating.',
+      practicalTask: {
+        title: 'Kitchen Safety Audit',
+        instructions: 'Conduct a full audit of your own kitchen and meal prep practices. Check: refrigerator temperature (use a thermometer), storage organisation (raw meat location), chopping board hygiene, food dating practices, and reheating methods. Score yourself out of 10 and identify the three highest-risk practices to correct.',
+        reflectionQuestions: [
+          'Were there any food safety practices you were unaware of or had been ignoring?',
+          'How confident are you that your meal prep routine is safe from a food hygiene perspective?',
+          'If you were advising a client on meal prep, what food safety guidance would you include?',
+        ],
+      },
+    },
+    {
+      number: 8,
+      title: 'Gut Health & Digestive Optimisation',
+      learningOutcome: 'Understand common digestive issues, the relationship between gut health and overall wellbeing, and evidence-based nutritional strategies for optimising digestive function.',
+      assessmentCriteria: [
+        'Explain how digestive health influences nutrient absorption, immune function, and mental health',
+        'Identify common digestive complaints and their nutritional management strategies',
+        'Design a gut-supportive nutrition protocol using evidence-based approaches',
+      ],
+      content: [
+        {
+          heading: 'Digestion — Where Nutrition Becomes Real',
+          paragraphs: [
+            'You are not what you eat — you are what you absorb. The most meticulously planned nutrition strategy is only as effective as your digestive system\'s ability to break down, absorb, and utilise the nutrients you consume. Digestive complaints are among the most common issues reported by the general population and athletes alike, yet they are often dismissed or poorly managed.',
+            'The gastrointestinal (GI) tract is far more than a processing tube. It is an endocrine organ, an immune barrier, a neurotransmitter factory, and the primary interface between the external environment and your internal physiology. Gut health is whole-body health.',
+          ],
+        },
+        {
+          heading: 'Common Digestive Issues & Nutritional Management',
+          bullets: [
+            'Bloating — Often caused by rapid fibre increase, swallowing air, fermentable carbohydrates (FODMAPs), or food intolerances. Strategy: increase fibre gradually (5g per week), eat slowly, identify trigger foods through elimination',
+            'Irritable bowel syndrome (IBS) — Affects 10–15% of the population. Characterised by abdominal pain, bloating, and altered bowel habits. A low-FODMAP diet under professional guidance is the most evidence-based dietary intervention',
+            'Acid reflux — Triggered by large meals, high-fat meals, caffeine, alcohol, and eating close to bedtime. Strategy: smaller frequent meals, avoid eating within 3 hours of lying down, identify personal triggers',
+            'Exercise-related GI distress — Common in endurance athletes. Caused by reduced blood flow to the gut during exercise. Strategy: avoid high-fibre and high-fat foods 2–3 hours before training, practice race-day nutrition in training, prioritise hydration',
+            'Constipation — Usually caused by inadequate fibre, insufficient water intake, low physical activity, or stress. Strategy: 30g+ fibre daily, 2–3L water, regular movement, and stress management',
+          ],
+        },
+        {
+          heading: 'Building a Gut-Supportive Diet',
+          paragraphs: [
+            'A gut-supportive diet is not complicated — it is a diverse, whole-food-based diet that provides the substrates your gut bacteria and digestive system need to function optimally.',
+          ],
+          bullets: [
+            'Diversity — 30+ different plant foods per week feeds a diverse microbiome. Include vegetables, fruits, whole grains, legumes, nuts, seeds, herbs, and spices',
+            'Fermented foods — Yoghurt, kefir, sauerkraut, kimchi, and kombucha provide live bacteria that support microbiome diversity. Aim for a serving daily if tolerated',
+            'Prebiotic foods — Garlic, onions, leeks, asparagus, bananas, and oats feed beneficial bacteria. These are more important than probiotic supplements for most people',
+            'Adequate protein — Gut cells (enterocytes) have the fastest turnover rate of any cells in the body, replacing themselves every 3–5 days. They need amino acids to do this',
+            'Hydration — Water is essential for digestive function, from saliva production to stool formation. Dehydration directly impairs digestion',
+            'Mindful eating — Eating slowly, chewing thoroughly, and eating without distraction improves digestive efficiency and reduces bloating',
+          ],
+        },
+      ],
+      unbreakableInsight: 'Your gut is the gateway to every nutrient your body needs. If the gateway is compromised, nothing downstream — muscle building, fat loss, energy production, immune function — works at full capacity. Fix the foundation first.',
+      coachNote: 'If someone complains of persistent bloating, irregular bowel habits, or digestive pain, your first question should be about fibre, water, and eating speed — not about supplements. The basics are boring but they work.',
+      practicalTask: {
+        title: 'Gut Health Optimisation Plan',
+        instructions: 'For two weeks, implement three gut-supportive changes: (1) increase plant food variety toward 30+ per week, (2) add one serving of fermented food daily, (3) eat all meals without screens and chew each bite 15–20 times. Track digestive symptoms (bloating, regularity, energy) daily on a 1–10 scale.',
+        reflectionQuestions: [
+          'Did any of the three interventions produce a noticeable change in digestive comfort?',
+          'How did eating without screens and chewing more slowly affect your experience of meals?',
+          'What is your current daily fermented food intake, and how easy was it to add a serving?',
+        ],
+      },
+    },
   ],
 };

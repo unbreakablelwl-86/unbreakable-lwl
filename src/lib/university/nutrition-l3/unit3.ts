@@ -366,5 +366,112 @@ export const nutritionL3Unit3: Unit = {
         ],
       },
     },
+    {
+      number: 7,
+      title: 'Competition & Travel Nutrition',
+      learningOutcome: 'Plan and execute nutrition strategies for competition day, away fixtures, travel, and non-routine environments where access to familiar food is limited.',
+      assessmentCriteria: [
+        'Design a competition-day nutrition timeline for different sport types',
+        'Identify the nutritional challenges of travel and how to mitigate them',
+        'Create contingency plans for when preferred foods are unavailable',
+      ],
+      content: [
+        {
+          heading: 'Competition Day — No Experiments',
+          paragraphs: [
+            'The single most important rule of competition nutrition: do not try anything new on competition day. Every food, drink, supplement, and timing strategy should be tested multiple times in training before being used in competition. Gastrointestinal distress, energy crashes, and dehydration during competition are almost always caused by untested nutrition protocols.',
+            'Competition nutrition is not about optimising — it is about executing a plan you have already proven works for your body, your sport, and your schedule. The goal is to eliminate variables, not introduce them.',
+          ],
+        },
+        {
+          heading: 'Pre-Competition Fuelling',
+          bullets: [
+            'The night before — A familiar carbohydrate-rich meal 10–12 hours before competition. Nothing exotic, nothing heavy, nothing high in fibre. White rice, pasta, chicken, and low-residue vegetables are reliable choices',
+            '3–4 hours before — A moderate meal: 1–2g/kg carbohydrate, 0.3g/kg protein, low fat, low fibre. Examples: porridge with banana, toast with jam and scrambled eggs, rice cakes with honey',
+            '60 minutes before — A small carbohydrate top-up if needed: banana, sports drink, energy gel. Keep it simple and easily digestible',
+            '30 minutes before — Sip water or electrolyte drink. Avoid large volumes that may cause stomach discomfort',
+            'Caffeine — If you use it, 3–6mg/kg body weight 30–60 minutes before competition. Only if previously tested in training',
+          ],
+        },
+        {
+          heading: 'Travel Nutrition Challenges',
+          paragraphs: [
+            'Travel disrupts every aspect of nutrition: meal timing, food availability, hydration, sleep (which affects appetite hormones), and routine. Whether travelling for competition, work, or leisure, a proactive approach prevents the common pattern of poor food choices, dehydration, and energy crashes.',
+          ],
+          bullets: [
+            'Pack non-perishable staples — Protein bars, dried fruit, nuts, rice cakes, oat sachets, and single-serve nut butter packets provide reliable macro coverage regardless of destination',
+            'Hydrate proactively — Air travel is dehydrating. Aim for 250ml of water per hour of flight. Carry an empty bottle through security and fill it before boarding',
+            'Maintain meal timing — Shift eating patterns to match the destination time zone as quickly as possible to help reset your circadian rhythm',
+            'Scout food options — Research restaurants, supermarkets, and delivery options at your destination before arriving. Decisions made in advance are better than decisions made when hungry and jetlagged',
+            'Accept imperfection — Travel nutrition is about damage limitation, not perfection. Maintaining adequate protein, hydration, and total energy intake covers 80% of the equation',
+          ],
+        },
+      ],
+      unbreakableInsight: 'Competition day is not the time to get clever with nutrition. It is the time to be boring, predictable, and reliable. The athletes who perform best on the day are the ones who eliminated nutritional uncertainty weeks ago.',
+      coachNote: 'Create a written competition-day nutrition plan with exact foods, portions, and timings. Rehearse it at least three times in training. On the day, follow the plan. Adjust only if something genuinely goes wrong, not because you feel like experimenting.',
+      practicalTask: {
+        title: 'Competition Day Nutrition Plan',
+        instructions: 'Design a complete competition-day nutrition plan for your sport (or a sport you follow). Include: evening-before meal, morning meal, pre-competition snack, during-competition fuelling (if applicable), and post-competition recovery nutrition. Specify exact foods, portions, and timings. Then test the plan during a hard training session.',
+        reflectionQuestions: [
+          'Did the plan work as designed during the training test, or were adjustments needed?',
+          'What would you do if your planned foods were unavailable on competition day?',
+          'How far in advance would you need to start preparing to execute this plan perfectly?',
+        ],
+      },
+    },
+    {
+      number: 8,
+      title: 'Periodised Nutrition Programming',
+      learningOutcome: 'Design comprehensive, periodised nutrition programmes that align with training phases, body composition goals, and individual client needs across weeks, months, and competitive seasons.',
+      assessmentCriteria: [
+        'Explain the rationale for periodising nutrition alongside training',
+        'Design a multi-phase nutrition programme for a specific training cycle',
+        'Adjust macronutrient distribution and energy intake across different training phases',
+      ],
+      content: [
+        {
+          heading: 'Why Static Diets Fail',
+          paragraphs: [
+            'Most nutrition plans are static — the same macros, the same calories, the same meal structure regardless of what the body is doing. This is fundamentally mismatched with how training works. Training is periodised: volume, intensity, and goals change across weeks and months. Nutrition should follow the same logic.',
+            'Periodised nutrition means deliberately adjusting energy intake, macronutrient ratios, and nutrient timing to match the demands of each training phase. It is the difference between wearing the same clothes year-round and dressing appropriately for the season.',
+          ],
+        },
+        {
+          heading: 'Nutrition Across Training Phases',
+          bullets: [
+            'Off-season / Base phase — Moderate surplus (200–300 kcal above TDEE). Higher carbohydrate to support training volume. Focus on building muscle, addressing nutrient gaps, and establishing consistent eating patterns',
+            'Strength / Hypertrophy phase — Slight surplus. Protein at 1.8–2.2g/kg. Carbohydrate at 4–6g/kg to fuel training. Fat at minimum 0.8g/kg for hormonal health. Prioritise post-training nutrition',
+            'Fat loss / Cutting phase — Moderate deficit (300–500 kcal below TDEE). Protein increased to 2.0–2.4g/kg to preserve lean mass. Carbohydrate reduced first, distributed around training. Fat maintained at minimum thresholds. Diet breaks every 8–12 weeks',
+            'Competition preparation — Carbohydrate loading if appropriate (7–12g/kg for 24–48 hours). Fibre reduction to minimise GI distress. Familiar foods only. Hydration strategy rehearsed',
+            'Recovery / Deload phase — Return to maintenance calories. Emphasise micronutrient-dense foods, anti-inflammatory nutrition, sleep-supporting foods. Reduce stimulant use',
+          ],
+        },
+        {
+          heading: 'Building a Periodised Plan',
+          paragraphs: [
+            'A periodised nutrition plan starts with the training calendar and works backwards. Know what the body needs to do in each phase, then design the nutrition to support it.',
+          ],
+          bullets: [
+            'Step 1: Map the training cycle — Identify each phase, its duration, and its primary goal (build, cut, maintain, compete)',
+            'Step 2: Set energy targets — Calculate TDEE for each phase based on expected training volume and body composition goal',
+            'Step 3: Distribute macros — Allocate protein first (always adequate), then carbohydrate (matched to training demand), then fat (fills remaining calories above minimum threshold)',
+            'Step 4: Plan transitions — Do not jump abruptly between phases. Transition calories by 200–300 kcal per week to allow metabolic adjustment',
+            'Step 5: Build in flexibility — Life happens. Build planned flexibility (social events, holidays, travel) into the programme rather than treating them as failures',
+            'Step 6: Review and adjust — Reassess every 2–4 weeks using body composition data, training performance, energy levels, and adherence',
+          ],
+        },
+      ],
+      unbreakableInsight: 'A nutrition plan that ignores the training calendar is a meal plan, not a performance programme. The body\'s needs change — your nutrition should change with them.',
+      coachNote: 'Start simple: match carbohydrate to training demand (higher on hard days, lower on rest days) and keep protein consistent. That single adjustment is more impactful than any complicated macro-cycling protocol.',
+      practicalTask: {
+        title: 'Periodised Nutrition Programme Design',
+        instructions: 'Design a 12-week periodised nutrition programme for yourself (or a hypothetical client) aligned with a training cycle. Include: training phase breakdown, energy targets per phase, macronutrient distribution, transition strategies, and a review schedule. Provide one sample day of eating for each distinct phase.',
+        reflectionQuestions: [
+          'How does your current nutrition match (or mismatch) your current training phase?',
+          'What would change about your eating if you aligned nutrition with your training calendar?',
+          'Where do you anticipate the biggest compliance challenges across the 12 weeks?',
+        ],
+      },
+    },
   ],
 };
