@@ -33,6 +33,7 @@ export interface CoachingProfile {
   stress_level: string | null;
   injuries: string | null;
   mental_health: string | null;
+  city: string | null;
   onboarding_completed: boolean;
   created_at: string;
   updated_at: string;

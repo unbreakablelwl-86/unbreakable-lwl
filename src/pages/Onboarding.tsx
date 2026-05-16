@@ -23,6 +23,7 @@ const STEPS = [
 interface OnboardingData {
   // Personal
   gender: string;
+  city: string;
   age_years: number | null;
   height_cm: number | null;
   weight_kg: number | null;
@@ -57,6 +58,7 @@ interface OnboardingData {
 
 const initialData: OnboardingData = {
   gender: '',
+  city: '',
   age_years: null,
   height_cm: null,
   weight_kg: null,
@@ -210,6 +212,11 @@ export default function Onboarding() {
                     </Label>
                   ))}
                 </RadioGroup>
+              </div>
+
+              <div>
+                <Label htmlFor="city">City</Label>
+                <Input id="city" type="text" placeholder="e.g. Liverpool, Manchester, London" value={data.city} onChange={e => update('city', e.target.value)} className="mt-1" />
               </div>
 
               <div>
