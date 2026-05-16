@@ -88,6 +88,72 @@ import { mindsetL3Unit2ChapterQuizzes } from './mindset-l3/unit2-chapter-quizzes
 import { mindsetL3Unit3ChapterQuizzes } from './mindset-l3/unit3-chapter-quizzes';
 import { mindsetL3Unit4ChapterQuizzes } from './mindset-l3/unit4-chapter-quizzes';
 
+// Level 4 (Power) imports
+import { level4Unit1 } from './level4/unit1';
+import { level4Unit2 } from './level4/unit2';
+import { level4Unit3 } from './level4/unit3';
+import { level4Unit4 } from './level4/unit4';
+import { level4Unit1Assessment } from './level4/unit1-assessments';
+import { level4Unit2Assessment } from './level4/unit2-assessments';
+import { level4Unit3Assessment } from './level4/unit3-assessments';
+import { level4Unit4Assessment } from './level4/unit4-assessments';
+import { level4FinalAssessment } from './level4/final-assessment';
+import { level4Unit1ChapterQuizzes } from './level4/unit1-chapter-quizzes';
+import { level4Unit2ChapterQuizzes } from './level4/unit2-chapter-quizzes';
+import { level4Unit3ChapterQuizzes } from './level4/unit3-chapter-quizzes';
+import { level4Unit4ChapterQuizzes } from './level4/unit4-chapter-quizzes';
+
+// Individual Sport course imports
+import { sportFootballUnit1 } from './sport-football/unit1';
+import { sportFootballUnit1Assessment } from './sport-football/unit1-assessments';
+import { sportFootballFinalAssessment } from './sport-football/final-assessment';
+import { sportFootballUnit1ChapterQuizzes } from './sport-football/unit1-chapter-quizzes';
+
+import { sportBoxingUnit1 } from './sport-boxing/unit1';
+import { sportBoxingUnit1Assessment } from './sport-boxing/unit1-assessments';
+import { sportBoxingFinalAssessment } from './sport-boxing/final-assessment';
+import { sportBoxingUnit1ChapterQuizzes } from './sport-boxing/unit1-chapter-quizzes';
+
+import { sportRugbyUnit1 } from './sport-rugby/unit1';
+import { sportRugbyUnit1Assessment } from './sport-rugby/unit1-assessments';
+import { sportRugbyFinalAssessment } from './sport-rugby/final-assessment';
+import { sportRugbyUnit1ChapterQuizzes } from './sport-rugby/unit1-chapter-quizzes';
+
+import { sportRunningUnit1 } from './sport-running/unit1';
+import { sportRunningUnit1Assessment } from './sport-running/unit1-assessments';
+import { sportRunningFinalAssessment } from './sport-running/final-assessment';
+import { sportRunningUnit1ChapterQuizzes } from './sport-running/unit1-chapter-quizzes';
+
+import { sportSwimmingUnit1 } from './sport-swimming/unit1';
+import { sportSwimmingUnit1Assessment } from './sport-swimming/unit1-assessments';
+import { sportSwimmingFinalAssessment } from './sport-swimming/final-assessment';
+import { sportSwimmingUnit1ChapterQuizzes } from './sport-swimming/unit1-chapter-quizzes';
+
+import { sportMMAUnit1 } from './sport-mma/unit1';
+import { sportMMAUnit1Assessment } from './sport-mma/unit1-assessments';
+import { sportMMAFinalAssessment } from './sport-mma/final-assessment';
+import { sportMMAUnit1ChapterQuizzes } from './sport-mma/unit1-chapter-quizzes';
+
+import { sportCyclingUnit1 } from './sport-cycling/unit1';
+import { sportCyclingUnit1Assessment } from './sport-cycling/unit1-assessments';
+import { sportCyclingFinalAssessment } from './sport-cycling/final-assessment';
+import { sportCyclingUnit1ChapterQuizzes } from './sport-cycling/unit1-chapter-quizzes';
+
+import { sportTennisUnit1 } from './sport-tennis/unit1';
+import { sportTennisUnit1Assessment } from './sport-tennis/unit1-assessments';
+import { sportTennisFinalAssessment } from './sport-tennis/final-assessment';
+import { sportTennisUnit1ChapterQuizzes } from './sport-tennis/unit1-chapter-quizzes';
+
+import { sportBasketballUnit1 } from './sport-basketball/unit1';
+import { sportBasketballUnit1Assessment } from './sport-basketball/unit1-assessments';
+import { sportBasketballFinalAssessment } from './sport-basketball/final-assessment';
+import { sportBasketballUnit1ChapterQuizzes } from './sport-basketball/unit1-chapter-quizzes';
+
+import { sportCricketUnit1 } from './sport-cricket/unit1';
+import { sportCricketUnit1Assessment } from './sport-cricket/unit1-assessments';
+import { sportCricketFinalAssessment } from './sport-cricket/final-assessment';
+import { sportCricketUnit1ChapterQuizzes } from './sport-cricket/unit1-chapter-quizzes';
+
 export const PASS_MARK_PERCENT = 80;
 
 const level2ChapterQuizzes: ChapterQuiz[] = [
@@ -201,10 +267,70 @@ export const mindsetCourseData: Level[] = [
   },
 ];
 
+const level4ChapterQuizzes: ChapterQuiz[] = [
+  ...level4Unit1ChapterQuizzes,
+  ...level4Unit2ChapterQuizzes,
+  ...level4Unit3ChapterQuizzes,
+  ...level4Unit4ChapterQuizzes,
+];
+
+// Power Level 4 — appended to gym/power course data
+const powerLevel4: Level = {
+  level: 4,
+  title: 'Level 4 Certificate',
+  subtitle: 'Sport Science',
+  description: 'Expert-level sport science covering advanced periodisation, biomechanics, sport-specific conditioning, and professional coaching practice. The knowledge behind elite performance.',
+  units: [level4Unit1, level4Unit2, level4Unit3, level4Unit4],
+  assessments: [level4Unit1Assessment, level4Unit2Assessment, level4Unit3Assessment, level4Unit4Assessment],
+  finalAssessment: level4FinalAssessment,
+  chapterQuizzes: level4ChapterQuizzes,
+};
+
+// Helper to build a sport course from a single unit
+function makeSportCourse(unit: any, assessment: any, finalAssessment: any, quizzes: any[], title: string, description: string): Level[] {
+  return [{
+    level: 1,
+    title,
+    subtitle: 'Sport-Specific Training',
+    description,
+    units: [unit],
+    assessments: [assessment],
+    finalAssessment,
+    chapterQuizzes: quizzes,
+  }];
+}
+
+// Individual Sport course data
+const footballCourse = makeSportCourse(sportFootballUnit1, sportFootballUnit1Assessment, sportFootballFinalAssessment, sportFootballUnit1ChapterQuizzes, 'Football', 'Strength, conditioning, injury prevention, nutrition, and mental skills for football performance at every level.');
+const boxingCourse = makeSportCourse(sportBoxingUnit1, sportBoxingUnit1Assessment, sportBoxingFinalAssessment, sportBoxingUnit1ChapterQuizzes, 'Boxing', 'Power, conditioning, injury prevention, nutrition, and mental skills for boxing and combat preparation.');
+const rugbyCourse = makeSportCourse(sportRugbyUnit1, sportRugbyUnit1Assessment, sportRugbyFinalAssessment, sportRugbyUnit1ChapterQuizzes, 'Rugby', 'Strength, speed, collision preparation, nutrition, and mental toughness for rugby union and league.');
+const runningCourse = makeSportCourse(sportRunningUnit1, sportRunningUnit1Assessment, sportRunningFinalAssessment, sportRunningUnit1ChapterQuizzes, 'Running', 'Endurance development, strength training, injury prevention, nutrition, and race preparation for runners.');
+const swimmingCourse = makeSportCourse(sportSwimmingUnit1, sportSwimmingUnit1Assessment, sportSwimmingFinalAssessment, sportSwimmingUnit1ChapterQuizzes, 'Swimming', 'Stroke efficiency, dryland strength, pool conditioning, nutrition, and mental skills for competitive swimming.');
+const mmaCourse = makeSportCourse(sportMMAUnit1, sportMMAUnit1Assessment, sportMMAFinalAssessment, sportMMAUnit1ChapterQuizzes, 'MMA', 'Striking, grappling conditioning, strength, weight management, and fight psychology for mixed martial arts.');
+const cyclingCourse = makeSportCourse(sportCyclingUnit1, sportCyclingUnit1Assessment, sportCyclingFinalAssessment, sportCyclingUnit1ChapterQuizzes, 'Cycling', 'Power development, endurance training, injury prevention, nutrition, and season planning for cyclists.');
+const tennisCourse = makeSportCourse(sportTennisUnit1, sportTennisUnit1Assessment, sportTennisFinalAssessment, sportTennisUnit1ChapterQuizzes, 'Tennis', 'Rotational power, agility, match conditioning, nutrition, and mental skills for competitive tennis.');
+const basketballCourse = makeSportCourse(sportBasketballUnit1, sportBasketballUnit1Assessment, sportBasketballFinalAssessment, sportBasketballUnit1ChapterQuizzes, 'Basketball', 'Vertical power, speed, conditioning, injury prevention, nutrition, and mental skills for basketball.');
+const cricketCourse = makeSportCourse(sportCricketUnit1, sportCricketUnit1Assessment, sportCricketFinalAssessment, sportCricketUnit1ChapterQuizzes, 'Cricket', 'Bowling resilience, batting power, fielding speed, nutrition, and mental skills for all cricket formats.');
+
+export const sportCourses = {
+  'sport-football': footballCourse,
+  'sport-boxing': boxingCourse,
+  'sport-rugby': rugbyCourse,
+  'sport-running': runningCourse,
+  'sport-swimming': swimmingCourse,
+  'sport-mma': mmaCourse,
+  'sport-cycling': cyclingCourse,
+  'sport-tennis': tennisCourse,
+  'sport-basketball': basketballCourse,
+  'sport-cricket': cricketCourse,
+} as const;
+
 export const allCourses: Record<string, Level[]> = {
-  gym: courseData,
+  gym: [...courseData, powerLevel4],
   nutrition: nutritionCourseData,
   mindset: mindsetCourseData,
+  sport: [], // Sport tab shows grid of individual sports, not levels
+  ...sportCourses,
 };
 
 // Helper functions — default to gym course, accept optional courseType

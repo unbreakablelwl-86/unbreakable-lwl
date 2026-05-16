@@ -1,7 +1,8 @@
 import type { ChapterQuiz } from '../types';
 
 function cq(unit: number, ch: number, questions: any[]): ChapterQuiz {
-  return { unitNumber: unit, chapterNumber: ch, questionBank: questions, pickCount: 5, passMarkPercent: 80 }
+  return { unitNumber: unit, chapterNumber: ch, questionBank: questions, pickCount: 5, passMarkPercent: 80 };
+}
 
 export const mindsetL2Unit1ChapterQuizzes: ChapterQuiz[] = [
   cq(1, 1, [

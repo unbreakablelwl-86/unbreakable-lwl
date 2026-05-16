@@ -1,0 +1,22 @@
+import type { UnitAssessment } from '../types';
+
+export const level4Unit2Assessment: UnitAssessment = {
+  unitNumber: 2,
+  title: 'Biomechanics & Injury Prevention — Unit Assessment',
+  passMarkPercent: 80,
+  pickCount: 10,
+  questions: [
+    { type: 'multiple_choice', question: 'What is the most predictive factor for lifting injuries?', options: ['Imperfect technique', 'Load management — training load exceeding tissue tolerance', 'Age', 'Body composition'], correctAnswer: 1, explanation: 'Load management predicts injury risk better than technique quality.' },
+    { type: 'multiple_choice', question: 'Why is prehabilitation more effective than rehabilitation?', options: ['It is cheaper', 'Proactively strengthening vulnerable structures prevents injuries before they occur', 'It requires no equipment', 'It does not require knowledge'], correctAnswer: 1, explanation: 'Prevention is always more effective and less costly than treatment.' },
+    { type: 'multiple_choice', question: 'What determines whether conventional or sumo deadlift suits a lifter?', options: ['Personal preference only', 'Arm-to-leg ratio and hip structure', 'Which is more impressive', 'Whichever the coach recommends'], correctAnswer: 1, explanation: 'Limb proportions determine the most mechanically efficient pulling style.' },
+    { type: 'multiple_choice', question: 'How long do tendons need to recover between heavy loading sessions?', options: ['24 hours', '48-72 hours', 'One week', 'No specific time needed'], correctAnswer: 1, explanation: 'Tendon tissue turnover is slower than muscle, requiring extended recovery.' },
+    { type: 'multiple_choice', question: 'What is the role of eccentric strength in sport?', options: ['It is not important', 'Enables safe deceleration and direction change, reducing injury risk', 'Only matters for rehabilitation', 'It slows athletes down'], correctAnswer: 1, explanation: 'Eccentric strength is the foundation of deceleration and injury prevention.' },
+    { type: 'multiple_choice', question: 'What mobility work is most effective for long-term gains?', options: ['Extended static stretching before training', 'Loaded stretching — exercises at full range under moderate load', '30-minute flexibility routines', 'No mobility work is effective'], correctAnswer: 1, explanation: 'Loaded stretching simultaneously improves mobility and end-range strength.' },
+    { type: 'multiple_choice', question: 'What does a movement screen reliably identify?', options: ['Future injuries', 'Movement limitations that can be addressed through programming', 'Exact injury mechanisms', 'Optimal 1RM predictions'], correctAnswer: 1, explanation: 'Screens guide programme design by identifying limitations, not predicting injuries.' },
+    { type: 'multiple_choice', question: 'What happens if muscles adapt faster than tendons?', options: ['Nothing — the body self-regulates', 'Muscles become strong enough to overload tendons, increasing injury risk', 'Tendons always adapt first', 'Only affects beginners'], correctAnswer: 1, explanation: 'The adaptation mismatch makes gradual progression essential for joint safety.' },
+    { type: 'multiple_choice', question: 'What nutrition supports tendon health?', options: ['Creatine only', 'Collagen with vitamin C 30-60 minutes before training, adequate protein, omega-3s', 'Carbohydrates only', 'No nutrition affects tendons'], correctAnswer: 1, explanation: 'Specific nutrients support connective tissue repair and remodelling.' },
+    { type: 'multiple_choice', question: 'Pain during rehabilitation up to what level is generally acceptable?', options: ['0/10 — no pain allowed', '3/10 if it settles within 24 hours', '7/10', 'Any level is fine'], correctAnswer: 1, explanation: 'Mild pain that resolves quickly is normal during structured return to training.' },
+    { type: 'multiple_choice', question: 'What is the recommended pulling-to-pressing ratio for shoulder health?', options: ['1:1', '2:1 pulling to pressing', '1:2', '3:1'], correctAnswer: 1, explanation: 'Doubling pulling volume relative to pressing balances shoulder mechanics.' },
+    { type: 'multiple_choice', question: 'What is the primary benefit of movement variation for joint health?', options: ['It is more interesting', 'Different angles reduce repetitive loading patterns that accelerate wear', 'It builds more muscle', 'It improves flexibility only'], correctAnswer: 1, explanation: 'Varied loading patterns distribute stress across joint surfaces more evenly.' },
+  ],
+};

@@ -306,7 +306,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
                 {
                   icon: Brain,
                   title: 'MINDSET',
-                  text: 'Keep going when it's hard, boring, or inconvenient. Rebuild when life knocks you sideways.',
+                  text: "Keep going when it's hard, boring, or inconvenient. Rebuild when life knocks you sideways.",
                 },
                 {
                   icon: Heart,

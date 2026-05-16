@@ -6,8 +6,8 @@ import { UnifiedFooter } from '@/components/UnifiedFooter';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { CourseProgressBar } from '@/components/university/CourseProgressBar';
-import { GraduationCap, Lock, ChevronRight, Flame, Dumbbell, Apple, Brain, BookOpen, Award, Zap } from 'lucide-react';
-import { allCourses, getTotalChapters } from '@/lib/university/courseStructure';
+import { GraduationCap, Lock, ChevronRight, Flame, Dumbbell, Apple, Brain, BookOpen, Award, Zap, Trophy } from 'lucide-react';
+import { allCourses, sportCourses, getTotalChapters } from '@/lib/university/courseStructure';
 import { useUniversityProgress } from '@/hooks/useUniversityProgress';
 import { AdminControlPanel } from '@/components/university/AdminControlPanel';
 import type { CourseType } from '@/lib/university/types';
@@ -16,6 +16,7 @@ const courseTabs: { key: CourseType; label: string; icon: React.ReactNode; descr
   { key: 'gym', label: 'Power', icon: <Dumbbell className="w-5 h-5" />, description: 'Applied Fitness & Exercise Science', tagline: 'Understand how your body moves, adapts, and grows.', colour: 'from-orange-500/20 to-red-500/20' },
   { key: 'nutrition', label: 'Fuel', icon: <Apple className="w-5 h-5" />, description: 'Healthy Eating & Nutritional Science', tagline: 'Master the science of what you eat and why it matters.', colour: 'from-green-500/20 to-emerald-500/20' },
   { key: 'mindset', label: 'Mindset', icon: <Brain className="w-5 h-5" />, description: 'Mental Performance & Wellbeing', tagline: 'Build the mental resilience to keep showing up.', colour: 'from-blue-500/20 to-purple-500/20' },
+  { key: 'sport', label: 'Sport', icon: <Trophy className="w-5 h-5" />, description: 'Sport-Specific Training', tagline: 'Apply your knowledge to the sport you love.', colour: 'from-yellow-500/20 to-orange-500/20' },
 ];
 
 const fadeUp = {
@@ -72,7 +73,7 @@ export default function University() {
             {/* Value props */}
             <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 pt-2">
               {[
-                { icon: <BookOpen className="w-3.5 h-3.5" />, text: '6 Full Courses' },
+                { icon: <BookOpen className="w-3.5 h-3.5" />, text: '16 Courses' },
                 { icon: <Award className="w-3.5 h-3.5" />, text: 'Quiz Every Chapter' },
                 { icon: <Zap className="w-3.5 h-3.5" />, text: 'Learn at Your Pace' },
               ].map((v) => (
@@ -92,7 +93,7 @@ export default function University() {
           <p className="font-display text-xs tracking-wider text-muted-foreground text-center mb-4">
             CHOOSE YOUR DISCIPLINE
           </p>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {courseTabs.map((tab, i) => (
               <motion.button
                 key={tab.key}
@@ -141,10 +142,69 @@ export default function University() {
         </div>
       </div>
 
-      {/* Level Cards */}
+      {/* Level Cards / Sport Grid */}
       <main className="container mx-auto px-4 pb-12 md:pb-20">
         <div className="max-w-3xl mx-auto space-y-5">
-          {courseData.length === 0 && (
+
+          {/* Sport tab: flat grid of individual sport courses */}
+          {activeTab === 'sport' && (() => {
+            const sportList: { key: string; label: string; emoji: string }[] = [
+              { key: 'sport-football', label: 'Football', emoji: '⚽' },
+              { key: 'sport-boxing', label: 'Boxing', emoji: '🥊' },
+              { key: 'sport-rugby', label: 'Rugby', emoji: '🏉' },
+              { key: 'sport-running', label: 'Running', emoji: '🏃' },
+              { key: 'sport-swimming', label: 'Swimming', emoji: '🏊' },
+              { key: 'sport-mma', label: 'MMA', emoji: '🥋' },
+              { key: 'sport-cycling', label: 'Cycling', emoji: '🚴' },
+              { key: 'sport-tennis', label: 'Tennis', emoji: '🎾' },
+              { key: 'sport-basketball', label: 'Basketball', emoji: '🏀' },
+              { key: 'sport-cricket', label: 'Cricket', emoji: '🏏' },
+            ];
+            return (
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                {sportList.map((sport, i) => {
+                  const sData = allCourses[sport.key] || [];
+                  const total = sData.length > 0 ? getTotalChapters(sData[0].level, sport.key) : 0;
+                  const completed = sData.length > 0 ? getLevelCompletedChapters(sData[0].level, sport.key) : 0;
+                  const pct = total > 0 ? Math.round((completed / total) * 100) : 0;
+                  return (
+                    <motion.div
+                      key={sport.key}
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: i * 0.05 }}
+                    >
+                      <Card
+                        className="relative overflow-hidden border border-primary/20 hover:border-primary/40 cursor-pointer hover:shadow-lg hover:shadow-primary/5 transition-all group"
+                        onClick={() => navigate(`/university/${sport.key}/level-1`)}
+                      >
+                        {total > 0 && (
+                          <div className="absolute top-0 left-0 h-1 bg-primary/30 w-full">
+                            <div className="h-full bg-primary transition-all duration-500" style={{ width: `${pct}%` }} />
+                          </div>
+                        )}
+                        <div className="p-5 text-center space-y-2">
+                          <div className="text-3xl">{sport.emoji}</div>
+                          <h3 className="font-display text-base sm:text-lg tracking-wider text-foreground group-hover:text-primary transition-colors">
+                            {sport.label.toUpperCase()}
+                          </h3>
+                          <p className="text-[10px] sm:text-xs text-muted-foreground">
+                            {total} Chapters · 8 Topics
+                          </p>
+                          {total > 0 && completed > 0 && (
+                            <p className="text-[10px] text-primary font-display tracking-wider">{pct}% COMPLETE</p>
+                          )}
+                        </div>
+                      </Card>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            );
+          })()}
+
+          {/* Non-sport tabs: level cards */}
+          {activeTab !== 'sport' && courseData.length === 0 && (
             <Card className="p-8 border-primary/20 text-center">
               <Flame className="w-10 h-10 text-primary mx-auto mb-4" />
               <h2 className="font-display text-xl tracking-wider text-foreground mb-2">COMING SOON</h2>
@@ -154,7 +214,7 @@ export default function University() {
             </Card>
           )}
 
-          {courseData.map((level, i) => {
+          {activeTab !== 'sport' && courseData.map((level, i) => {
             const totalChapters = getTotalChapters(level.level, activeTab);
             const completedChapters = getLevelCompletedChapters(level.level, activeTab);
             const hasContent = level.units.some(u => u.chapters.length > 0);

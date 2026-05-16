@@ -14,7 +14,3 @@ export const nutritionL3FinalAssessment: UnitAssessment = {
     ...nutritionL3Unit4Assessment.questions,
   ],
 };
-
-// ── Chapter Quizzes ──
-function cq(unit: number, ch: number, questions: any[]): ChapterQuiz {
-  return { unitNumber: unit, chapterNumber: ch, questionBank: questions, pickCount: 5, passMarkPercent: 80 };
