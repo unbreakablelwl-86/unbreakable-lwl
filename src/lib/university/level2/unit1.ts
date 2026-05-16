@@ -21,6 +21,9 @@ import ch6BreathingComparison from '@/assets/university/l2-u1-ch6-breathing-comp
 import ch7MotorUnitRecruitment from '@/assets/university/l2-u1-ch7-motor-unit-recruitment.png';
 import ch8PostureDeviations from '@/assets/university/l2-u1-ch8-posture-deviations.png';
 import ch8MobilityAreas from '@/assets/university/l2-u1-ch8-mobility-areas.png';
+import ch6GasExchange from '@/assets/university/l2-u1-ch6-gas-exchange.png';
+import ch7NervousSystem from '@/assets/university/l2-u1-ch7-nervous-system.png';
+import ch7Proprioceptors from '@/assets/university/l2-u1-ch7-proprioceptors.png';
 
 export const level2Unit1: Unit = {
   number: 1,
@@ -397,7 +400,8 @@ export const level2Unit1: Unit = {
             'At the alveoli, oxygen diffuses across a thin membrane into capillaries, where it binds to haemoglobin in red blood cells. These cells transport oxygen through the bloodstream to working muscles. At the same time, carbon dioxide — a waste product of energy production — diffuses from the blood into the alveoli and is exhaled.',
             'During exercise, your breathing rate increases to match higher oxygen demand. At rest you might breathe 12-20 times per minute. During intense exercise that can rise to 40-60 breaths per minute. Your body automatically adjusts based on CO2 levels in the blood.',
           ],
-          imagePlaceholder: 'Diagram of gas exchange at the alveoli showing O2 moving into capillary blood and CO2 moving out, with red blood cells illustrated',
+          imageUrl: ch6GasExchange,
+          imageAlt: 'Diagram of gas exchange at the alveoli showing O2 diffusing into capillary blood and CO2 diffusing out',
         },
         {
           heading: 'Breathing During Resistance Training',
@@ -451,7 +455,8 @@ export const level2Unit1: Unit = {
             'Every time you pick up a dumbbell, stabilise during a squat, or catch yourself from tripping — your nervous system made it happen. Muscles don\'t move on their own. They respond to electrical signals from your brain and spinal cord.',
             'The nervous system is split into two main parts: the Central Nervous System (CNS) — your brain and spinal cord — and the Peripheral Nervous System (PNS) — the network of nerves that extends to every muscle, joint, and organ in your body.',
           ],
-          imagePlaceholder: 'Diagram showing the central nervous system (brain + spinal cord) connected to the peripheral nervous system branching out to muscles throughout the body',
+          imageUrl: ch7NervousSystem,
+          imageAlt: 'Diagram showing the central and peripheral nervous systems with somatic and autonomic branches',
         },
         {
           heading: 'Motor Units: The Link Between Brain & Muscle',
@@ -488,7 +493,8 @@ export const level2Unit1: Unit = {
             'Golgi tendon organs — detect changes in muscle tension. Provide a protective mechanism against excessive force',
             'Joint receptors — detect joint position, movement direction, and pressure. Essential for stability and coordination',
           ],
-          imagePlaceholder: 'Diagram showing proprioceptive receptors: muscle spindles within muscle fibres, Golgi tendon organs at the muscle-tendon junction, and joint receptors in the joint capsule',
+          imageUrl: ch7Proprioceptors,
+          imageAlt: 'Three types of proprioceptive receptors: muscle spindles, Golgi tendon organs, and joint receptors with their functions',
         },
         {
           heading: 'Training the Nervous System',

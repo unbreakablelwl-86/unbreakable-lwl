@@ -4,6 +4,7 @@ import ch2StressInoculation from '@/assets/university/mindl2-u4-ch2-stress-inocu
 import ch3Mindfulness from '@/assets/university/mindl2-u4-ch3-mindfulness.png';
 import ch4ResilienceProtocol from '@/assets/university/mindl2-u4-ch4-resilience-protocol.png';
 import ch5SleepStages from '@/assets/university/mindl2-u4-ch5-sleep-stages.png';
+import ch6JournalingBrain from '@/assets/university/mindl2-u4-ch6-journaling-brain.png';
 
 
 export const mindsetL2Unit4: Unit = {
@@ -308,7 +309,8 @@ export const mindsetL2Unit4: Unit = {
             'Writing engages different neural pathways than thinking or speaking. When you write by hand, you activate the reticular activating system (RAS), which filters information and signals your brain to pay closer attention to what you\'re writing. This is why written goals are significantly more likely to be achieved than goals that are only thought about.',
             'Journaling also bridges the left brain (language, logic, analysis) and the right brain (emotion, intuition, creativity). By putting emotions into words, you engage your prefrontal cortex — the rational, planning part of your brain — which helps regulate the emotional limbic system. This is the same mechanism used in cognitive behavioural therapy.',
           ],
-          imagePlaceholder: 'Brain diagram showing activation during journaling: prefrontal cortex (analysis), RAS (attention), and limbic system (emotion) connected by writing pathways',
+          imageUrl: ch6JournalingBrain,
+          imageAlt: 'Brain regions activated during journaling: prefrontal cortex, reticular activating system, and limbic system connected through writing',
         },
         {
           heading: 'Journaling Methods',
