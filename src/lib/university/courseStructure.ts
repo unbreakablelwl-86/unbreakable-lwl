@@ -33,52 +33,60 @@ import { nutritionL2Unit1 } from './nutrition-l2/unit1';
 import { nutritionL2Unit2 } from './nutrition-l2/unit2';
 import { nutritionL2Unit3 } from './nutrition-l2/unit3';
 import { nutritionL2Unit4 } from './nutrition-l2/unit4';
-import {
-  nutritionL2Unit1Assessment, nutritionL2Unit2Assessment,
-  nutritionL2Unit3Assessment, nutritionL2Unit4Assessment,
-  nutritionL2FinalAssessment,
-  nutritionL2Unit1ChapterQuizzes, nutritionL2Unit2ChapterQuizzes,
-  nutritionL2Unit3ChapterQuizzes, nutritionL2Unit4ChapterQuizzes,
-} from './nutrition-l2/assessments';
+import { nutritionL2Unit1Assessment } from './nutrition-l2/assessments';
+import { nutritionL2Unit2Assessment } from './nutrition-l2/unit2-assessments';
+import { nutritionL2Unit3Assessment } from './nutrition-l2/unit3-assessments';
+import { nutritionL2Unit4Assessment } from './nutrition-l2/unit4-assessments';
+import { nutritionL2FinalAssessment } from './nutrition-l2/final-assessment';
+import { nutritionL2Unit1ChapterQuizzes } from './nutrition-l2/unit1-chapter-quizzes';
+import { nutritionL2Unit2ChapterQuizzes } from './nutrition-l2/unit2-chapter-quizzes';
+import { nutritionL2Unit3ChapterQuizzes } from './nutrition-l2/unit3-chapter-quizzes';
+import { nutritionL2Unit4ChapterQuizzes } from './nutrition-l2/unit4-chapter-quizzes';
 
 // Nutrition Level 3 imports
 import { nutritionL3Unit1 } from './nutrition-l3/unit1';
 import { nutritionL3Unit2 } from './nutrition-l3/unit2';
 import { nutritionL3Unit3 } from './nutrition-l3/unit3';
 import { nutritionL3Unit4 } from './nutrition-l3/unit4';
-import {
-  nutritionL3Unit1Assessment, nutritionL3Unit2Assessment,
-  nutritionL3Unit3Assessment, nutritionL3Unit4Assessment,
-  nutritionL3FinalAssessment,
-  nutritionL3Unit1ChapterQuizzes, nutritionL3Unit2ChapterQuizzes,
-  nutritionL3Unit3ChapterQuizzes, nutritionL3Unit4ChapterQuizzes,
-} from './nutrition-l3/assessments';
+import { nutritionL3Unit1Assessment } from './nutrition-l3/assessments';
+import { nutritionL3Unit2Assessment } from './nutrition-l3/unit2-assessments';
+import { nutritionL3Unit3Assessment } from './nutrition-l3/unit3-assessments';
+import { nutritionL3Unit4Assessment } from './nutrition-l3/unit4-assessments';
+import { nutritionL3FinalAssessment } from './nutrition-l3/final-assessment';
+import { nutritionL3Unit1ChapterQuizzes } from './nutrition-l3/unit1-chapter-quizzes';
+import { nutritionL3Unit2ChapterQuizzes } from './nutrition-l3/unit2-chapter-quizzes';
+import { nutritionL3Unit3ChapterQuizzes } from './nutrition-l3/unit3-chapter-quizzes';
+import { nutritionL3Unit4ChapterQuizzes } from './nutrition-l3/unit4-chapter-quizzes';
 
 // Mindset Level 2 imports
 import { mindsetL2Unit1 } from './mindset-l2/unit1';
 import { mindsetL2Unit2 } from './mindset-l2/unit2';
 import { mindsetL2Unit3 } from './mindset-l2/unit3';
 import { mindsetL2Unit4 } from './mindset-l2/unit4';
-import {
-  mindsetL2Unit1Assessment, mindsetL2Unit2Assessment,
-  mindsetL2Unit3Assessment, mindsetL2Unit4Assessment,
-  mindsetL2FinalAssessment,
-  mindsetL2Unit1ChapterQuizzes, mindsetL2Unit2ChapterQuizzes,
-  mindsetL2Unit3ChapterQuizzes, mindsetL2Unit4ChapterQuizzes,
-} from './mindset-l2/assessments';
+import { mindsetL2Unit1Assessment } from './mindset-l2/assessments';
+import { mindsetL2Unit2Assessment } from './mindset-l2/unit2-assessments';
+import { mindsetL2Unit3Assessment } from './mindset-l2/unit3-assessments';
+import { mindsetL2Unit4Assessment } from './mindset-l2/unit4-assessments';
+import { mindsetL2FinalAssessment } from './mindset-l2/final-assessment';
+import { mindsetL2Unit1ChapterQuizzes } from './mindset-l2/unit1-chapter-quizzes';
+import { mindsetL2Unit2ChapterQuizzes } from './mindset-l2/unit2-chapter-quizzes';
+import { mindsetL2Unit3ChapterQuizzes } from './mindset-l2/unit3-chapter-quizzes';
+import { mindsetL2Unit4ChapterQuizzes } from './mindset-l2/unit4-chapter-quizzes';
 
 // Mindset Level 3 imports
 import { mindsetL3Unit1 } from './mindset-l3/unit1';
 import { mindsetL3Unit2 } from './mindset-l3/unit2';
 import { mindsetL3Unit3 } from './mindset-l3/unit3';
 import { mindsetL3Unit4 } from './mindset-l3/unit4';
-import {
-  mindsetL3Unit1Assessment, mindsetL3Unit2Assessment,
-  mindsetL3Unit3Assessment, mindsetL3Unit4Assessment,
-  mindsetL3FinalAssessment,
-  mindsetL3Unit1ChapterQuizzes, mindsetL3Unit2ChapterQuizzes,
-  mindsetL3Unit3ChapterQuizzes, mindsetL3Unit4ChapterQuizzes,
-} from './mindset-l3/assessments';
+import { mindsetL3Unit1Assessment } from './mindset-l3/assessments';
+import { mindsetL3Unit2Assessment } from './mindset-l3/unit2-assessments';
+import { mindsetL3Unit3Assessment } from './mindset-l3/unit3-assessments';
+import { mindsetL3Unit4Assessment } from './mindset-l3/unit4-assessments';
+import { mindsetL3FinalAssessment } from './mindset-l3/final-assessment';
+import { mindsetL3Unit1ChapterQuizzes } from './mindset-l3/unit1-chapter-quizzes';
+import { mindsetL3Unit2ChapterQuizzes } from './mindset-l3/unit2-chapter-quizzes';
+import { mindsetL3Unit3ChapterQuizzes } from './mindset-l3/unit3-chapter-quizzes';
+import { mindsetL3Unit4ChapterQuizzes } from './mindset-l3/unit4-chapter-quizzes';
 
 export const PASS_MARK_PERCENT = 80;
 
