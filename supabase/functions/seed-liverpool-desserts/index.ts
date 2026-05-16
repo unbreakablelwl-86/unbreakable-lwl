@@ -115,7 +115,7 @@ async function generateImage(
 ): Promise<string | null> {
   try {
     const resp = await fetch(
-      "https://ai.gateway.lovable.dev/v1/chat/completions",
+      "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions",
       {
         method: "POST",
         headers: {
@@ -123,7 +123,7 @@ async function generateImage(
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: "google/gemini-2.5-flash-image",
+          model: "gemini-2.5-flash-preview-05-20",
           messages: [
             {
               role: "user",
@@ -170,12 +170,12 @@ Deno.serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
 
   try {
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+    const GOOGLE_AI_API_KEY = Deno.env.get("GOOGLE_AI_API_KEY");
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
     const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    if (!LOVABLE_API_KEY)
+    if (!GOOGLE_AI_API_KEY)
       return new Response(
-        JSON.stringify({ error: "LOVABLE_API_KEY not configured" }),
+        JSON.stringify({ error: "GOOGLE_AI_API_KEY not configured" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
 
@@ -228,7 +228,7 @@ Deno.serve(async (req) => {
 
       // Generate image
       console.log(`🎨 Generating image for: ${recipeData.name}`);
-      const imageUrl = await generateImage(image_prompt, LOVABLE_API_KEY);
+      const imageUrl = await generateImage(image_prompt, GOOGLE_AI_API_KEY);
       if (imageUrl) {
         const publicUrl = await uploadImage(supabase, imageUrl, recipeId);
         if (publicUrl) {
@@ -260,7 +260,7 @@ Deno.serve(async (req) => {
       }
 
       console.log(`🎨 Regenerating image for: ${recipeName}`);
-      const imageUrl = await generateImage(prompt, LOVABLE_API_KEY);
+      const imageUrl = await generateImage(prompt, GOOGLE_AI_API_KEY);
       if (imageUrl) {
         const publicUrl = await uploadImage(supabase, imageUrl, recipe.id);
         if (publicUrl) {

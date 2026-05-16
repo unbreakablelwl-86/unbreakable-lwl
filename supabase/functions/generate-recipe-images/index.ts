@@ -12,12 +12,12 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+    const GOOGLE_AI_API_KEY = Deno.env.get("GOOGLE_AI_API_KEY");
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
     const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
-    if (!LOVABLE_API_KEY) {
-      return new Response(JSON.stringify({ error: "LOVABLE_API_KEY not configured" }), {
+    if (!GOOGLE_AI_API_KEY) {
+      return new Response(JSON.stringify({ error: "GOOGLE_AI_API_KEY not configured" }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
@@ -49,14 +49,14 @@ Deno.serve(async (req) => {
       try {
         const prompt = `Generate a photorealistic food photograph of "${recipe.name}". Show the actual finished dish as it would appear served on a plate or in its cooking vessel. British home-cooked style, warm natural lighting, overhead angle, shallow depth of field, appetizing, ${recipe.category || 'meal'} dish. IMPORTANT: absolutely NO text, NO labels, NO words, NO titles, NO watermarks, NO overlays of any kind on the image. Pure food photography only. Ultra high resolution.`;
 
-        const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        const aiResponse = await fetch("https://generativelanguage.googleapis.com/v1beta/openai/chat/completions", {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${LOVABLE_API_KEY}`,
+            Authorization: `Bearer ${GOOGLE_AI_API_KEY}`,
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            model: "google/gemini-2.5-flash-image",
+            model: "gemini-2.5-flash-preview-05-20",
             messages: [{ role: "user", content: prompt }],
             modalities: ["image", "text"],
           }),
