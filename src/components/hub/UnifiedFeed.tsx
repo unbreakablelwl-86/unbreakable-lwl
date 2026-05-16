@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import { useUnifiedFeed } from '@/hooks/useUnifiedFeed';
 import { useAuth } from '@/hooks/useAuth';
+import { useSubscription } from '@/hooks/useSubscription';
 import { useStories } from '@/hooks/useStories';
 import { ActivityCard } from '@/components/tracker/ActivityCard';
 import { StatusCard } from '@/components/tracker/StatusCard';
@@ -9,6 +10,7 @@ import { MilestoneCard } from './MilestoneCard';
 import { StoriesSection } from './StoriesSection';
 import { CreatePostBox } from '@/components/tracker/CreatePostBox';
 import { StoryEditor } from './StoryEditor';
+import { FeaturePreviewCard } from '@/components/upgrade/FeaturePreviewCard';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Activity, RefreshCw, Loader2 } from 'lucide-react';
@@ -29,6 +31,7 @@ interface UnifiedFeedProps {
 
 export function UnifiedFeed({ onSignIn, onOpenMessages }: UnifiedFeedProps) {
   const { user } = useAuth();
+  const { subscribed } = useSubscription();
   const { createStory } = useStories();
   const [storyPreFill, setStoryPreFill] = useState<StoryPreFill | null>(null);
   const {
@@ -197,6 +200,8 @@ export function UnifiedFeed({ onSignIn, onOpenMessages }: UnifiedFeedProps) {
       <div className="space-y-4">
         {feedItems.map((item, index) => {
           const isLast = index === feedItems.length - 1;
+          // Show feature preview cards every 4 items for free users
+          const showUpgradeCard = !subscribed && user && index > 0 && index % 4 === 0;
           
           return (
             <motion.div
@@ -206,6 +211,11 @@ export function UnifiedFeed({ onSignIn, onOpenMessages }: UnifiedFeedProps) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: Math.min(index * 0.03, 0.3) }}
             >
+              {showUpgradeCard && (
+                <div className="mb-4">
+                  <FeaturePreviewCard index={Math.floor(index / 4) - 1} />
+                </div>
+              )}
               {item.type === 'run' && (
                 <ActivityCard
                   run={{

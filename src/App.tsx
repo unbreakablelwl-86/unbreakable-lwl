@@ -90,12 +90,14 @@ const App = () => (
               {/* User Profile - Public profile viewing */}
               <Route path="/user/:userId" element={<UserProfile />} />
               
-              {/* ============ SUBSCRIBED ROUTES ============ */}
+              {/* ============ FREE TIER (logged in, no subscription) ============ */}
               
-              {/* Calculators */}
+              {/* Calculators - free to drive engagement */}
               <Route path="/calculators" element={
-                <SubscribedRoute><Calculators /></SubscribedRoute>
+                <ProtectedRoute><Calculators /></ProtectedRoute>
               } />
+              
+              {/* ============ SUBSCRIBED ROUTES (paid tier) ============ */}
               
               {/* Programming (Power) routes */}
               <Route path="/programming" element={
@@ -175,9 +177,9 @@ const App = () => (
                 <SubscribedRoute><UniversityAssessment /></SubscribedRoute>
               } />
               
-              {/* Habits */}
+              {/* Habits - free to build daily engagement */}
               <Route path="/habits" element={
-                <SubscribedRoute><Habits /></SubscribedRoute>
+                <ProtectedRoute><Habits /></ProtectedRoute>
               } />
               
               {/* Coach Dashboard - role-protected + subscribed */}
