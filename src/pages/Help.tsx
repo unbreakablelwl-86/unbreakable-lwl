@@ -18,6 +18,8 @@ import { ProfileButton } from '@/components/coaching/ProfileButton';
 import { PlanDisplayCard } from '@/components/coaching/PlanDisplayCard';
 
 import { useAIPreferences } from '@/hooks/useAIPreferences';
+import { useCoachName } from '@/hooks/useCoachName';
+import { CoachNameEditor } from '@/components/coaching/CoachNameEditor';
 import { AIPlanReviewModal } from '@/components/ai/AIPlanReviewModal';
 import { useAIProgramme } from '@/hooks/useAIProgramme';
 import { useAIMealPlan } from '@/hooks/useAIMealPlan';
@@ -317,6 +319,7 @@ export default function Help() {
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   const { preferences: aiPrefs } = useAIPreferences();
+  const { coachName, setCoachName } = useCoachName();
 
   const { user } = useAuth();
   const {
@@ -618,11 +621,13 @@ export default function Help() {
               )}
               <div className="flex items-center gap-2 flex-1 min-w-0">
                 <Flame className="w-5 h-5 text-primary flex-shrink-0" />
-                <h2 className="font-display text-sm tracking-wider text-foreground truncate">
-                  {currentConversationId
-                    ? (conversations.find(c => c.id === currentConversationId)?.title || 'CONVERSATION')
-                    : 'UNBREAKABLE COACH'}
-                </h2>
+                {currentConversationId ? (
+                  <h2 className="font-display text-sm tracking-wider text-foreground truncate">
+                    {conversations.find(c => c.id === currentConversationId)?.title || 'CONVERSATION'}
+                  </h2>
+                ) : (
+                  <CoachNameEditor coachName={coachName} onSave={setCoachName} variant="inline" />
+                )}
               </div>
               {currentConversationId && (
                 <Button
@@ -655,11 +660,8 @@ export default function Help() {
                       shadow-[0_0_30px_hsl(24_100%_50%/0.2)] neon-pulse">
                       <Flame className="w-8 h-8 text-primary" />
                     </div>
-                    <h1 className="font-display text-3xl md:text-5xl tracking-wider mb-3">
-                      <span className="text-primary neon-glow-subtle">UNBREAKABLE</span>{' '}
-                      <span className="text-foreground">COACH</span>
-                    </h1>
-                    <p className="text-muted-foreground max-w-md mx-auto text-sm md:text-base leading-relaxed">
+                    <CoachNameEditor coachName={coachName} onSave={setCoachName} variant="hero" />
+                    <p className="text-muted-foreground max-w-md mx-auto text-sm md:text-base leading-relaxed mt-3">
                       Your personal coach for training, nutrition, mindset, and beyond.
                       Ask anything — become{' '}
                       <span className="text-primary font-semibold">UNBREAKABLE</span>.
@@ -686,7 +688,7 @@ export default function Help() {
                       <div className="rounded-2xl rounded-bl-md px-5 py-4 bg-card/60 border border-primary/20 backdrop-blur-md">
                         <div className="flex items-center gap-2">
                           <Loader2 className="w-4 h-4 animate-spin text-primary" />
-                          <span className="text-sm text-muted-foreground">Coach is thinking...</span>
+                          <span className="text-sm text-muted-foreground">{coachName} is thinking...</span>
                         </div>
                       </div>
                     </div>
