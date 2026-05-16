@@ -20,6 +20,10 @@ import {
   GraduationCap,
   Activity,
   ChevronDown,
+  UserPlus,
+  Target,
+  Trophy,
+  Zap,
 } from 'lucide-react';
 import { TIERS } from '@/lib/subscriptionTiers';
 
@@ -68,6 +72,28 @@ const platformFeatures = [
     icon: MessageSquare,
     title: 'AI COACH',
     desc: 'Chat with your Unbreakable Coach anytime. Get bespoke programmes, meal plans, and advice on demand.',
+  },
+];
+
+/* ─── How it works steps ─── */
+const howItWorks = [
+  {
+    step: '01',
+    icon: UserPlus,
+    title: 'SIGN UP FREE',
+    desc: 'Create your account in seconds. Access the social hub, calculators and habit tools straight away — no card needed.',
+  },
+  {
+    step: '02',
+    icon: Target,
+    title: 'CHOOSE YOUR PATH',
+    desc: 'Start your 7-day free trial and unlock everything: Power, Movement, Fuel, Mindset, University and your AI Coach.',
+  },
+  {
+    step: '03',
+    icon: Trophy,
+    title: 'TRAIN & LEVEL UP',
+    desc: 'Log sessions, hit goals, earn trophies. Your coach adapts to you. The community keeps you accountable.',
   },
 ];
 
@@ -130,7 +156,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
       </header>
 
       {/* ━━━ Hero ━━━ */}
-      <section className="relative min-h-screen flex flex-col items-center justify-center text-center px-6 pt-24 pb-12 overflow-hidden">
+      <section className="relative min-h-[90vh] flex flex-col items-center justify-center text-center px-6 pt-24 pb-8 overflow-hidden">
         {/* Subtle radial glow */}
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[120px]" />
@@ -143,7 +169,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
           className="relative max-w-4xl mx-auto"
         >
           <motion.div variants={fadeUp} transition={{ duration: 0.6 }}>
-            <ThemedLogo className="h-24 md:h-36 lg:h-44 object-contain mx-auto mb-6" />
+            <ThemedLogo className="h-20 md:h-28 lg:h-36 object-contain mx-auto mb-6" />
           </motion.div>
 
           <motion.h1
@@ -158,7 +184,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
           <motion.p
             variants={fadeUp}
             transition={{ duration: 0.6 }}
-            className="text-primary font-display text-xl md:text-2xl tracking-wide neon-glow-subtle mb-6 mt-4"
+            className="text-primary font-display text-xl md:text-2xl tracking-wide neon-glow-subtle mb-5 mt-3"
           >
             LIVE WITHOUT LIMITS. KEEP SHOWING UP.
           </motion.p>
@@ -168,9 +194,8 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
             transition={{ duration: 0.6 }}
             className="text-muted-foreground text-lg md:text-xl leading-relaxed max-w-2xl mx-auto mb-8"
           >
-            The all-in-one fitness platform for training, nutrition, mindset and
-            education — built so you can stop guessing and start building a body
-            and mind that last.
+            Training, nutrition, mindset and education — all in one platform.
+            Stop guessing. Start building a body and mind that last.
           </motion.p>
 
           <motion.div
@@ -206,7 +231,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
             transition={{ duration: 0.6 }}
             className="text-muted-foreground text-sm"
           >
-            No card required · Cancel anytime · From £50/month after trial
+            No card required · Cancel anytime · From £{TIERS.tier1.monthlyPrice}/month after trial
           </motion.p>
         </motion.div>
 
@@ -215,26 +240,32 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.5, duration: 0.8 }}
-          className="absolute bottom-8"
+          className="absolute bottom-6"
         >
           <ChevronDown className="w-6 h-6 text-muted-foreground/50 animate-bounce" />
         </motion.div>
       </section>
 
       {/* ━━━ Social proof bar ━━━ */}
-      <section className="border-y border-border bg-card/30 py-6">
+      <section className="border-y border-border bg-card/30 py-5">
         <div className="container mx-auto px-6">
           <div className="flex flex-wrap justify-center gap-8 md:gap-16 text-center">
             <div>
-              <p className="font-display text-2xl md:text-3xl text-primary neon-glow-subtle">6</p>
+              <p className="font-display text-2xl md:text-3xl text-primary neon-glow-subtle">4</p>
               <p className="text-muted-foreground text-xs tracking-widest uppercase">
-                Training Pillars
+                Training Tracks
+              </p>
+            </div>
+            <div>
+              <p className="font-display text-2xl md:text-3xl text-primary neon-glow-subtle">10+</p>
+              <p className="text-muted-foreground text-xs tracking-widest uppercase">
+                Courses & Levels
               </p>
             </div>
             <div>
               <p className="font-display text-2xl md:text-3xl text-primary neon-glow-subtle">1,800+</p>
               <p className="text-muted-foreground text-xs tracking-widest uppercase">
-                University Questions
+                Quiz Questions
               </p>
             </div>
             <div>
@@ -254,7 +285,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
       </section>
 
       {/* ━━━ What is Unbreakable? ━━━ */}
-      <section className="py-20 md:py-28">
+      <section className="py-16 md:py-24">
         <div className="container mx-auto px-6">
           <motion.div
             initial="hidden"
@@ -284,7 +315,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
             <motion.p
               variants={fadeUp}
               transition={{ duration: 0.5 }}
-              className="text-muted-foreground text-lg leading-relaxed max-w-2xl mx-auto mb-12"
+              className="text-muted-foreground text-lg leading-relaxed max-w-2xl mx-auto mb-10"
             >
               Forget chasing someone else's ideal. Unbreakable is about building
               a body that <span className="text-primary">works</span>, a mind
@@ -295,7 +326,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
             <motion.div
               variants={fadeUp}
               transition={{ duration: 0.5 }}
-              className="grid md:grid-cols-3 gap-8"
+              className="grid md:grid-cols-3 gap-6"
             >
               {[
                 {
@@ -335,7 +366,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
       </section>
 
       {/* ━━━ Platform Features ━━━ */}
-      <section id="features" className="py-20 md:py-28 bg-card/30 scroll-mt-20">
+      <section id="features" className="py-16 md:py-24 bg-card/30 scroll-mt-20">
         <div className="container mx-auto px-6">
           <motion.div
             initial="hidden"
@@ -343,7 +374,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
             viewport={{ once: true, amount: 0.2 }}
             variants={stagger}
           >
-            <motion.div variants={fadeUp} transition={{ duration: 0.5 }} className="text-center mb-14">
+            <motion.div variants={fadeUp} transition={{ duration: 0.5 }} className="text-center mb-12">
               <Badge
                 variant="outline"
                 className="border-primary/40 text-primary mb-4 font-display tracking-wider"
@@ -389,17 +420,83 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
         </div>
       </section>
 
+      {/* ━━━ How it works ━━━ */}
+      <section className="py-16 md:py-24">
+        <div className="container mx-auto px-6">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.2 }}
+            variants={stagger}
+          >
+            <motion.div variants={fadeUp} transition={{ duration: 0.5 }} className="text-center mb-12">
+              <Badge
+                variant="outline"
+                className="border-primary/40 text-primary mb-4 font-display tracking-wider"
+              >
+                HOW IT WORKS
+              </Badge>
+              <h2 className="font-display text-3xl md:text-5xl text-foreground tracking-wide mb-4">
+                THREE STEPS.{' '}
+                <span className="text-primary neon-glow-subtle">NO NONSENSE.</span>
+              </h2>
+            </motion.div>
+
+            <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+              {howItWorks.map((item, i) => (
+                <motion.div
+                  key={item.step}
+                  variants={fadeUp}
+                  transition={{ duration: 0.4 }}
+                  className="text-center relative"
+                >
+                  {/* Connector line (desktop only) */}
+                  {i < howItWorks.length - 1 && (
+                    <div className="hidden md:block absolute top-12 left-[60%] w-[80%] border-t border-dashed border-primary/20" />
+                  )}
+                  <div className="relative">
+                    <span className="font-display text-6xl text-primary/10 absolute -top-2 left-1/2 -translate-x-1/2">
+                      {item.step}
+                    </span>
+                    <div className="w-16 h-16 rounded-full bg-primary/10 border border-primary/30 flex items-center justify-center mx-auto mb-4 relative z-10">
+                      <item.icon className="w-7 h-7 text-primary" />
+                    </div>
+                  </div>
+                  <h3 className="font-display text-xl text-foreground tracking-wide mb-2">
+                    {item.title}
+                  </h3>
+                  <p className="text-muted-foreground text-sm leading-relaxed">
+                    {item.desc}
+                  </p>
+                </motion.div>
+              ))}
+            </div>
+
+            <motion.div variants={fadeUp} transition={{ duration: 0.5 }} className="text-center mt-10">
+              <Button
+                size="lg"
+                className="font-display tracking-wide px-8 py-6"
+                onClick={onSignUp}
+              >
+                <Sparkles className="w-5 h-5 mr-2" />
+                GET STARTED FREE
+              </Button>
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
       {/* ━━━ University spotlight ━━━ */}
-      <section className="py-20 md:py-28">
+      <section className="py-16 md:py-24 bg-card/30">
         <div className="container mx-auto px-6">
           <motion.div
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, amount: 0.3 }}
             variants={stagger}
-            className="max-w-4xl mx-auto"
+            className="max-w-5xl mx-auto"
           >
-            <motion.div variants={fadeUp} transition={{ duration: 0.5 }} className="text-center mb-12">
+            <motion.div variants={fadeUp} transition={{ duration: 0.5 }} className="text-center mb-10">
               <Badge
                 variant="outline"
                 className="border-primary/40 text-primary mb-4 font-display tracking-wider"
@@ -420,36 +517,42 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
             <motion.div
               variants={fadeUp}
               transition={{ duration: 0.5 }}
-              className="grid md:grid-cols-3 gap-6"
+              className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5"
             >
               {[
                 {
                   icon: Dumbbell,
                   title: 'POWER',
-                  desc: 'Anatomy, exercise science, programming and progressive overload — the foundation of effective training.',
-                  levels: 'Level 2 + Level 3',
+                  desc: 'Anatomy, exercise science, programming and progressive overload.',
+                  levels: 'L2 + L3 + L4',
                 },
                 {
                   icon: Flame,
                   title: 'NUTRITION',
-                  desc: 'Macros, meal planning, sports nutrition and behaviour change — no fads, no nonsense.',
-                  levels: 'Level 2 + Level 3',
+                  desc: 'Macros, meal planning, sports nutrition and behaviour change.',
+                  levels: 'L2 + L3',
                 },
                 {
                   icon: Brain,
                   title: 'MINDSET',
-                  desc: 'Stress management, breathing science, focus training and resilience — the mental edge.',
-                  levels: 'Level 2 + Level 3',
+                  desc: 'Stress management, breathing science, focus and resilience.',
+                  levels: 'L2 + L3',
+                },
+                {
+                  icon: Zap,
+                  title: 'SPORT',
+                  desc: 'Sport-specific training, periodisation and performance science.',
+                  levels: '10 Courses',
                 },
               ].map((course) => (
                 <Card
                   key={course.title}
-                  className="bg-card border border-border p-6"
+                  className="bg-card border border-border hover:border-primary/30 transition-colors p-5"
                 >
-                  <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
-                    <course.icon className="w-6 h-6 text-primary" />
+                  <div className="w-11 h-11 rounded-lg bg-primary/10 flex items-center justify-center mb-3">
+                    <course.icon className="w-5 h-5 text-primary" />
                   </div>
-                  <h3 className="font-display text-xl text-foreground tracking-wide mb-2">
+                  <h3 className="font-display text-lg text-foreground tracking-wide mb-1.5">
                     {course.title}
                   </h3>
                   <p className="text-muted-foreground text-sm leading-relaxed mb-3">
@@ -465,7 +568,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
             <motion.div
               variants={fadeUp}
               transition={{ duration: 0.5 }}
-              className="mt-8 bg-primary/5 border border-primary/20 rounded-lg p-6 text-center"
+              className="mt-6 bg-primary/5 border border-primary/20 rounded-lg p-5 text-center"
             >
               <p className="text-muted-foreground">
                 <span className="text-foreground font-medium">4 units per level</span> ·{' '}
@@ -473,7 +576,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
                 <span className="text-foreground font-medium">Unit assessments</span> ·{' '}
                 <span className="text-foreground font-medium">Final exams</span>
               </p>
-              <p className="text-muted-foreground text-sm mt-2">
+              <p className="text-muted-foreground text-sm mt-1">
                 All included in every plan — learn at your own pace.
               </p>
             </motion.div>
@@ -482,7 +585,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
       </section>
 
       {/* ━━━ Keep showing up ━━━ */}
-      <section className="py-20 md:py-24 bg-card/30">
+      <section className="py-16 md:py-20">
         <div className="container mx-auto px-6">
           <motion.div
             initial="hidden"
@@ -494,7 +597,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
             <motion.h2
               variants={fadeUp}
               transition={{ duration: 0.5 }}
-              className="font-display text-4xl md:text-6xl text-primary mb-8 tracking-wide neon-glow-subtle"
+              className="font-display text-4xl md:text-6xl text-primary mb-6 tracking-wide neon-glow-subtle"
             >
               KEEP SHOWING UP
             </motion.h2>
@@ -502,11 +605,11 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
             <motion.div
               variants={fadeUp}
               transition={{ duration: 0.5 }}
-              className="space-y-3 text-muted-foreground text-lg leading-relaxed mb-10"
+              className="space-y-2 text-muted-foreground text-lg leading-relaxed mb-8"
             >
               <p>Some days you'll feel unstoppable.</p>
               <p>Some days you'll feel tired, busy, or unmotivated.</p>
-              <p className="text-foreground font-medium pt-3">
+              <p className="text-foreground font-medium pt-2">
                 Unbreakable isn't built on perfect weeks. It's built on the
                 decision to show up again.
               </p>
@@ -515,7 +618,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
             <motion.div
               variants={fadeUp}
               transition={{ duration: 0.5 }}
-              className="flex flex-wrap justify-center gap-3 text-primary font-display text-lg tracking-wide"
+              className="flex flex-wrap justify-center gap-3 text-primary font-display text-base md:text-lg tracking-wide"
             >
               {['ONE SESSION', 'ONE WALK', 'ONE MEAL', 'ONE CHOICE'].map(
                 (tag) => (
@@ -533,7 +636,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
       </section>
 
       {/* ━━━ Pricing ━━━ */}
-      <section id="pricing" className="py-20 md:py-28 scroll-mt-20">
+      <section id="pricing" className="py-16 md:py-24 bg-card/30 scroll-mt-20">
         <div className="container mx-auto px-6">
           <motion.div
             initial="hidden"
@@ -541,7 +644,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
             viewport={{ once: true, amount: 0.2 }}
             variants={stagger}
           >
-            <motion.div variants={fadeUp} transition={{ duration: 0.5 }} className="text-center mb-14">
+            <motion.div variants={fadeUp} transition={{ duration: 0.5 }} className="text-center mb-12">
               <Badge
                 variant="outline"
                 className="border-primary/40 text-primary mb-4 font-display tracking-wider"
@@ -560,7 +663,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
             <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
               {/* Coaching tier */}
               <motion.div variants={fadeUp} transition={{ duration: 0.5 }}>
-                <Card className="h-full bg-card border-2 border-border p-8 flex flex-col">
+                <Card className="h-full bg-card border-2 border-border hover:border-primary/30 transition-colors p-8 flex flex-col">
                   <div className="mb-6">
                     <div className="flex items-center gap-2 mb-2">
                       <Shield className="w-5 h-5 text-primary" />
@@ -653,7 +756,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
       </section>
 
       {/* ━━━ Final CTA ━━━ */}
-      <section className="py-24 md:py-32 bg-card/50 border-t border-border">
+      <section className="py-20 md:py-28 border-t border-border">
         <div className="container mx-auto px-6 text-center">
           <motion.div
             initial="hidden"
@@ -663,12 +766,12 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
             className="max-w-3xl mx-auto"
           >
             <motion.div variants={fadeUp} transition={{ duration: 0.5 }}>
-              <h2 className="font-display text-3xl md:text-5xl text-foreground mb-6 tracking-wide">
+              <h2 className="font-display text-3xl md:text-5xl text-foreground mb-5 tracking-wide">
                 READY TO BECOME{' '}
                 <span className="text-primary neon-glow-subtle">UNBREAKABLE</span>?
               </h2>
 
-              <div className="space-y-1 font-display text-xl md:text-2xl tracking-wide mb-10">
+              <div className="space-y-1 font-display text-xl md:text-2xl tracking-wide mb-8">
                 <p className="text-foreground">LIVE WITHOUT LIMITS.</p>
                 <p className="text-primary neon-glow-subtle">
                   KEEP SHOWING UP.
@@ -684,7 +787,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
                 <ArrowRight className="w-5 h-5 ml-2" />
               </Button>
 
-              <p className="text-muted-foreground text-sm mt-6">
+              <p className="text-muted-foreground text-sm mt-5">
                 7 days free · No card required · Cancel anytime
               </p>
             </motion.div>
@@ -692,23 +795,21 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
         </div>
       </section>
 
-      {/* ━━━ Meet the founder ━━━ */}
-      <section className="container mx-auto px-6 py-12 border-t border-border">
-        <div className="grid sm:grid-cols-2 gap-6 max-w-3xl mx-auto">
+      {/* ━━━ Bottom links ━━━ */}
+      <section className="container mx-auto px-6 py-10 border-t border-border">
+        <div className="grid sm:grid-cols-3 gap-5 max-w-4xl mx-auto">
           <Link to="/founder">
-            <Card className="border border-primary/30 bg-primary/5 p-6 hover:bg-primary/10 transition-all h-full">
+            <Card className="border border-primary/30 bg-primary/5 p-5 hover:bg-primary/10 transition-all h-full">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center neon-glow flex-shrink-0">
-                  <Sparkles className="w-6 h-6 text-primary" />
+                <div className="w-11 h-11 rounded-full bg-primary/20 flex items-center justify-center neon-glow flex-shrink-0">
+                  <Sparkles className="w-5 h-5 text-primary" />
                 </div>
                 <div>
-                  <p className="font-display text-xl tracking-wide text-foreground">
+                  <p className="font-display text-lg tracking-wide text-foreground">
                     MEET THE{' '}
-                    <span className="text-primary neon-glow-subtle">
-                      FOUNDER
-                    </span>
+                    <span className="text-primary neon-glow-subtle">FOUNDER</span>
                   </p>
-                  <p className="text-muted-foreground text-sm mt-1">
+                  <p className="text-muted-foreground text-xs mt-0.5">
                     The story behind Unbreakable.
                   </p>
                 </div>
@@ -717,20 +818,37 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
           </Link>
 
           <Link to="/help">
-            <Card className="border border-primary/30 bg-primary/5 p-6 hover:bg-primary/10 transition-all h-full">
+            <Card className="border border-primary/30 bg-primary/5 p-5 hover:bg-primary/10 transition-all h-full">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center neon-glow flex-shrink-0">
-                  <Flame className="w-6 h-6 text-primary" />
+                <div className="w-11 h-11 rounded-full bg-primary/20 flex items-center justify-center neon-glow flex-shrink-0">
+                  <Flame className="w-5 h-5 text-primary" />
                 </div>
                 <div>
-                  <p className="font-display text-xl tracking-wide text-foreground">
+                  <p className="font-display text-lg tracking-wide text-foreground">
                     UNBREAKABLE{' '}
-                    <span className="text-primary neon-glow-subtle">
-                      COACHING
-                    </span>
+                    <span className="text-primary neon-glow-subtle">COACH</span>
                   </p>
-                  <p className="text-muted-foreground text-sm mt-1">
-                    Your personal coach awaits.
+                  <p className="text-muted-foreground text-xs mt-0.5">
+                    Your personal AI coach awaits.
+                  </p>
+                </div>
+              </div>
+            </Card>
+          </Link>
+
+          <Link to="/university">
+            <Card className="border border-primary/30 bg-primary/5 p-5 hover:bg-primary/10 transition-all h-full">
+              <div className="flex items-center gap-4">
+                <div className="w-11 h-11 rounded-full bg-primary/20 flex items-center justify-center neon-glow flex-shrink-0">
+                  <GraduationCap className="w-5 h-5 text-primary" />
+                </div>
+                <div>
+                  <p className="font-display text-lg tracking-wide text-foreground">
+                    UNBREAKABLE{' '}
+                    <span className="text-primary neon-glow-subtle">UNI</span>
+                  </p>
+                  <p className="text-muted-foreground text-xs mt-0.5">
+                    Real fitness education for everyone.
                   </p>
                 </div>
               </div>

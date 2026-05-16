@@ -15,15 +15,15 @@ interface PlanSelectionPageProps {
 }
 
 const tier1Features = [
-  { icon: Dumbbell, label: 'Full Power programme builder (manual & coach-built)' },
+  { icon: Dumbbell, label: 'Full Power programme builder (manual & AI-built)' },
   { icon: Target, label: 'Session logging, tracking & progression tools' },
   { icon: Flame, label: 'Fuel tracker, meal planning & recipe library' },
   { icon: Brain, label: 'Mindset programmes, breathing & focus games' },
   { icon: BarChart3, label: 'Movement programmes (run, cycle, swim, row, walk)' },
-  { icon: MessageSquare, label: 'Unlimited Unbreakable Coach conversations' },
-  { icon: Sparkles, label: 'Coach-built bespoke programmes & meal plans' },
+  { icon: MessageSquare, label: 'Unlimited AI Coach conversations' },
+  { icon: Sparkles, label: 'AI-built bespoke programmes & meal plans' },
   { icon: BookOpen, label: 'University learning hub & calculators' },
-  { icon: Users, label: 'Community Hub — feed, stories, posts & messaging' },
+  { icon: Users, label: 'Community Hub — feed, stories & messaging' },
   { icon: Shield, label: 'Full profile, records, trophies & leaderboards' },
   { icon: Heart, label: 'Daily habit diary & lifestyle tracking' },
 ];
@@ -37,21 +37,6 @@ const tier2Extras = [
   { icon: Shield, label: 'Priority support & accountability' },
 ];
 
-function FeatureList({ features, icon: BadgeIcon }: { features: typeof tier1Features; icon?: typeof Crown }) {
-  return (
-    <div className="grid sm:grid-cols-2 gap-3">
-      {features.map((f, i) => (
-        <div key={i} className="flex items-start gap-3">
-          <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-            {BadgeIcon ? <BadgeIcon className="w-3.5 h-3.5 text-primary" /> : <Check className="w-3.5 h-3.5 text-primary" />}
-          </div>
-          <span className="text-muted-foreground text-sm leading-snug">{f.label}</span>
-        </div>
-      ))}
-    </div>
-  );
-}
-
 export function PlanSelectionPage({ onSelectPlan, loading }: PlanSelectionPageProps) {
   const t1 = TIERS.tier1;
   const t2 = TIERS.tier2;
@@ -60,7 +45,7 @@ export function PlanSelectionPage({ onSelectPlan, loading }: PlanSelectionPagePr
 
   return (
     <div className="min-h-screen bg-background py-12 px-4">
-      <div className="max-w-3xl mx-auto">
+      <div className="max-w-4xl mx-auto">
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-12">
           <h1 className="font-display text-4xl md:text-6xl text-foreground tracking-wide mb-1">CHOOSE YOUR</h1>
@@ -70,42 +55,101 @@ export function PlanSelectionPage({ onSelectPlan, loading }: PlanSelectionPagePr
           </p>
         </motion.div>
 
-        {/* Tier 1 */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="mb-10">
-          <Card className="relative bg-card border-2 border-primary/20 hover:border-primary/50 transition-all p-6 md:p-8">
-            <h2 className="font-display text-2xl md:text-3xl text-foreground tracking-wide mb-1 text-center">
-              UNBREAKABLE <span className="text-primary neon-glow-subtle">COACHING</span>
-            </h2>
-            <p className="text-muted-foreground text-center mb-6">Full platform access with your personal Unbreakable Coach</p>
+        <div className="grid md:grid-cols-2 gap-8">
+          {/* Tier 1 — Coaching */}
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
+            <Card className="h-full relative bg-card border-2 border-primary/20 hover:border-primary/40 transition-all p-6 md:p-8 flex flex-col">
+              <div className="mb-6">
+                <div className="flex items-center gap-2 mb-2">
+                  <Shield className="w-5 h-5 text-primary" />
+                  <h2 className="font-display text-2xl md:text-3xl text-foreground tracking-wide">
+                    COACHING
+                  </h2>
+                </div>
+                <p className="text-muted-foreground text-sm mb-4">Full platform access with your personal AI Coach</p>
 
-            <div className="text-center mb-6">
-              <p className="font-display text-5xl text-primary neon-glow-subtle">£{t1.totalPrice}</p>
-              <p className="text-muted-foreground text-sm mt-1">
-                every 3 months · just <span className="text-foreground font-semibold">£{t1PerDay}/day</span>
-              </p>
-              <p className="text-muted-foreground text-xs mt-1">Billed £{t1.monthlyPrice}/mo · 3-month minimum commitment</p>
-            </div>
+                <div className="text-center py-4 bg-primary/5 rounded-lg border border-primary/10">
+                  <p className="font-display text-5xl text-primary neon-glow-subtle">£{t1.totalPrice}</p>
+                  <p className="text-muted-foreground text-sm mt-1">
+                    every 3 months · just <span className="text-foreground font-semibold">£{t1PerDay}/day</span>
+                  </p>
+                  <p className="text-muted-foreground text-xs mt-1">Billed £{t1.monthlyPrice}/mo · {t1.commitmentMonths}-month minimum</p>
+                </div>
+              </div>
 
-            <Button
-              className="w-full font-display tracking-wide text-lg py-6 mb-6"
-              onClick={() => onSelectPlan('tier1')}
-              disabled={loading}
-            >
-              START FREE TRIAL <ArrowRight className="w-5 h-5 ml-2" />
-            </Button>
+              <Button
+                className="w-full font-display tracking-wide text-lg py-6 mb-6"
+                variant="outline"
+                onClick={() => onSelectPlan('tier1')}
+                disabled={loading}
+              >
+                START FREE TRIAL <ArrowRight className="w-5 h-5 ml-2" />
+              </Button>
 
-            <p className="font-display text-lg tracking-wide text-foreground mb-4">EVERYTHING INCLUDED:</p>
-            <FeatureList features={tier1Features} />
-          </Card>
-        </motion.div>
+              <p className="font-display text-sm tracking-wide text-foreground mb-3">EVERYTHING INCLUDED:</p>
+              <ul className="space-y-2.5 flex-1">
+                {tier1Features.map((f, i) => (
+                  <li key={i} className="flex items-start gap-3">
+                    <Check className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                    <span className="text-muted-foreground text-sm leading-snug">{f.label}</span>
+                  </li>
+                ))}
+              </ul>
+            </Card>
+          </motion.div>
 
-        {/* Tier 2 hidden for now */}
+          {/* Tier 2 — 1-to-1 */}
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+            <Card className="h-full relative bg-card border-2 border-primary/40 neon-border-subtle p-6 md:p-8 flex flex-col overflow-hidden">
+              <Badge className="absolute top-4 right-4 bg-primary text-primary-foreground font-display tracking-wider">
+                PREMIUM
+              </Badge>
+
+              <div className="mb-6">
+                <div className="flex items-center gap-2 mb-2">
+                  <Crown className="w-5 h-5 text-primary" />
+                  <h2 className="font-display text-2xl md:text-3xl text-foreground tracking-wide">
+                    1-TO-1
+                  </h2>
+                </div>
+                <p className="text-muted-foreground text-sm mb-4">Everything in Coaching + dedicated human coach</p>
+
+                <div className="text-center py-4 bg-primary/5 rounded-lg border border-primary/20">
+                  <p className="font-display text-5xl text-primary neon-glow-subtle">£{t2.totalPrice}</p>
+                  <p className="text-muted-foreground text-sm mt-1">
+                    every 3 months · just <span className="text-foreground font-semibold">£{t2PerDay}/day</span>
+                  </p>
+                  <p className="text-muted-foreground text-xs mt-1">Billed £{t2.monthlyPrice}/mo · {t2.commitmentMonths}-month minimum</p>
+                </div>
+              </div>
+
+              <Button
+                className="w-full font-display tracking-wide text-lg py-6 mb-6"
+                onClick={() => onSelectPlan('tier2')}
+                disabled={loading}
+              >
+                <Sparkles className="w-5 h-5 mr-2" />
+                START FREE TRIAL <ArrowRight className="w-5 h-5 ml-2" />
+              </Button>
+
+              <p className="font-display text-sm tracking-wide text-foreground mb-3">EVERYTHING IN COACHING, PLUS:</p>
+              <ul className="space-y-2.5 flex-1">
+                {tier2Extras.map((f, i) => (
+                  <li key={i} className="flex items-start gap-3">
+                    <Crown className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                    <span className="text-muted-foreground text-sm leading-snug">{f.label}</span>
+                  </li>
+                ))}
+              </ul>
+            </Card>
+          </motion.div>
+        </div>
 
         {/* Footer */}
         <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }} className="text-center text-muted-foreground text-sm mt-10">
           All plans include a 7-day free trial. Payment details collected upfront.
           <br />Cancel from your profile anytime before the trial ends — no charge.
-          <br />After your 3-month commitment, billing continues monthly until cancelled.
+          <br />After your {t1.commitmentMonths}-month commitment, billing continues monthly until cancelled.
         </motion.p>
       </div>
     </div>
