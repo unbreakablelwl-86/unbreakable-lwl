@@ -3,6 +3,8 @@ import ch1MorningRoutine from '@/assets/university/mindl2-u4-ch1-morning-routine
 import ch2StressInoculation from '@/assets/university/mindl2-u4-ch2-stress-inoculation.png';
 import ch3Mindfulness from '@/assets/university/mindl2-u4-ch3-mindfulness.png';
 import ch4ResilienceProtocol from '@/assets/university/mindl2-u4-ch4-resilience-protocol.png';
+import ch5SleepStages from '@/assets/university/mindl2-u4-ch5-sleep-stages.png';
+import ch6JournalingBrain from '@/assets/university/mindl2-u4-ch6-journaling-brain.png';
 
 
 export const mindsetL2Unit4: Unit = {
@@ -202,6 +204,162 @@ export const mindsetL2Unit4: Unit = {
           'Is your protocol realistic given your current schedule and commitments?',
           'Which practices are you most looking forward to and which feel most challenging?',
           'How will you hold yourself accountable for the next 30 days?',
+        ],
+      },
+    },
+    {
+      number: 5,
+      title: 'Evening Routines & Sleep Optimisation',
+      learningOutcome: 'Understand the science of sleep and its critical role in physical and mental recovery, and design an evidence-based evening routine that maximises sleep quality.',
+      assessmentCriteria: [
+        'Explain the stages of sleep and their specific functions for physical recovery and cognitive consolidation',
+        'Identify at least five evidence-based factors that improve or impair sleep quality',
+        'Design a personal evening wind-down protocol based on sleep hygiene principles',
+      ],
+      content: [
+        {
+          heading: 'Sleep: The Most Underrated Performance Tool',
+          paragraphs: [
+            'You can train perfectly, eat perfectly, and manage your stress — but if you\'re sleeping poorly, none of it matters as much as it should. Sleep is when your body repairs muscle tissue, consolidates learning, regulates hormones, and clears metabolic waste from the brain.',
+            'One night of poor sleep (under 6 hours) reduces testosterone by up to 15%, impairs glucose metabolism, increases cortisol, reduces reaction time, and weakens willpower. Chronic sleep deprivation is linked to obesity, depression, reduced immune function, and cognitive decline. It\'s not a luxury — it\'s a non-negotiable.',
+          ],
+        },
+        {
+          heading: 'The Architecture of Sleep',
+          paragraphs: [
+            'Sleep isn\'t one uniform state — it cycles through distinct stages roughly every 90 minutes:',
+          ],
+          bullets: [
+            'Stage 1 (N1) — light sleep, transition from wakefulness. Lasts 5-10 minutes. Easy to wake from.',
+            'Stage 2 (N2) — body temperature drops, heart rate slows. Memory consolidation begins. Makes up about 50% of total sleep.',
+            'Stage 3 (N3) — deep sleep / slow-wave sleep. This is where physical recovery happens: growth hormone release peaks, muscle repair occurs, immune function is restored. Hardest to wake from.',
+            'REM Sleep — rapid eye movement sleep. Brain activity increases to near-waking levels. This is where emotional processing, creativity, and procedural memory consolidation occur. Dreams happen here.',
+          ],
+          paragraphs: [
+            'Deep sleep (N3) dominates the first half of the night. REM sleep dominates the second half. This is why cutting sleep short costs you REM, and going to bed too late costs you deep sleep. Both matter — you need a full 7-9 hours to cycle through all stages adequately.',
+          ],
+          imageUrl: ch5SleepStages,
+          imageAlt: 'Hypnogram showing sleep architecture across an 8-hour night with deep sleep dominant early and REM dominant later',
+        },
+        {
+          heading: 'What Destroys Sleep Quality',
+          bullets: [
+            'Blue light from screens — suppresses melatonin production by up to 50%, delaying sleep onset and reducing sleep quality. Worst in the 2 hours before bed.',
+            'Caffeine after 2pm — caffeine has a half-life of 5-6 hours. A coffee at 4pm means half the caffeine is still in your system at 10pm.',
+            'Alcohol — while it may help you fall asleep faster, alcohol fragments sleep architecture, suppresses REM, and causes middle-of-the-night waking. Even 1-2 drinks significantly reduces sleep quality.',
+            'Irregular sleep schedule — your circadian rhythm thrives on consistency. Going to bed and waking up at wildly different times confuses your internal clock.',
+            'Room temperature too high — optimal sleep temperature is 16-19°C (60-67°F). Your body needs to drop its core temperature to initiate deep sleep.',
+            'Late heavy meals — eating large meals within 2 hours of bed can cause discomfort and elevate body temperature through digestion.',
+          ],
+        },
+        {
+          heading: 'Building an Evening Wind-Down',
+          paragraphs: [
+            'An effective evening routine isn\'t about rigid rules — it\'s about sending consistent signals to your brain that it\'s time to switch off. Start your wind-down 60-90 minutes before your target sleep time:',
+          ],
+          bullets: [
+            'Set a "screens off" alarm — 60 minutes before bed, put devices away. Switch to reading, journaling, or conversation.',
+            'Dim the lights — bright overhead lights suppress melatonin. Use lamps, candles, or red-spectrum bulbs in the evening.',
+            'Cool your environment — lower the thermostat or open a window. A cool room promotes deeper sleep.',
+            'Light stretching or breathing — 5-10 minutes of gentle mobility work or box breathing activates the parasympathetic nervous system.',
+            'Brain dump — write down anything on your mind: tomorrow\'s tasks, worries, random thoughts. Getting them on paper stops your brain from trying to remember them at 2am.',
+            'Consistent bedtime — aim for the same time ±30 minutes every night, including weekends.',
+          ],
+        },
+        {
+          heading: 'Morning Light & the Circadian Link',
+          paragraphs: [
+            'Your evening sleep quality actually starts in the morning. Exposing your eyes to bright natural light within 30 minutes of waking sets your circadian clock, which determines when melatonin production begins in the evening. No sunglasses — you need direct (not staring at the sun) bright light hitting your retinas.',
+            'People who get morning sunlight consistently fall asleep faster, sleep deeper, and report better mood. It\'s free, takes 10 minutes, and is one of the single most impactful things you can do for your sleep.',
+          ],
+        },
+      ],
+      unbreakableInsight: 'Sleep is not "doing nothing" — it\'s the most productive thing your body does. Every adaptation from training, every lesson learned, every emotion processed happens during sleep. Sacrificing sleep for an extra hour of work or Netflix is borrowing from tomorrow\'s performance to waste today\'s time.',
+      coachNote: 'Don\'t try to overhaul your entire sleep routine at once. Pick two things from this chapter that feel most relevant to your current habits and implement them for two weeks. Most people see noticeable changes in energy, mood, and training performance within days of improving their sleep hygiene.',
+      practicalTask: {
+        title: 'Sleep Quality Tracker',
+        instructions: 'For the next 7 nights, track these variables: (1) time screens off, (2) time into bed, (3) estimated time to fall asleep, (4) any wake-ups during the night, (5) time you woke up, (6) energy rating 1-10 the following day. Also implement at least one new sleep hygiene practice from this chapter during the tracking period.',
+        reflectionQuestions: [
+          'What patterns did you notice between your evening habits and your energy the next day?',
+          'Did the sleep hygiene change you implemented make a noticeable difference?',
+          'What is the biggest obstacle between you and consistent quality sleep?',
+        ],
+      },
+    },
+    {
+      number: 6,
+      title: 'Journaling for Mental Clarity',
+      learningOutcome: 'Understand how written reflection improves self-awareness, emotional processing, and decision-making, and develop a sustainable journaling practice.',
+      assessmentCriteria: [
+        'Explain the psychological mechanisms through which journaling improves mental clarity and emotional regulation',
+        'Describe at least three different journaling methods and identify which suits different purposes',
+        'Design a personal journaling practice that fits realistically into daily life',
+      ],
+      content: [
+        {
+          heading: 'Why Writing Changes Your Mind',
+          paragraphs: [
+            'Journaling isn\'t a diary for teenagers — it\'s a cognitive tool used by CEOs, athletes, therapists, and military leaders. The act of writing forces you to translate vague feelings and scattered thoughts into structured language. This process itself creates clarity.',
+            'Research by James Pennebaker at the University of Texas showed that expressive writing — writing about thoughts and feelings around stressful events — significantly reduces anxiety, improves immune function, and accelerates emotional processing. The mechanism is simple: when a thought stays in your head, it loops. When you write it down, your brain can process and release it.',
+          ],
+        },
+        {
+          heading: 'How Journaling Works in the Brain',
+          paragraphs: [
+            'Writing engages different neural pathways than thinking or speaking. When you write by hand, you activate the reticular activating system (RAS), which filters information and signals your brain to pay closer attention to what you\'re writing. This is why written goals are significantly more likely to be achieved than goals that are only thought about.',
+            'Journaling also bridges the left brain (language, logic, analysis) and the right brain (emotion, intuition, creativity). By putting emotions into words, you engage your prefrontal cortex — the rational, planning part of your brain — which helps regulate the emotional limbic system. This is the same mechanism used in cognitive behavioural therapy.',
+          ],
+          imageUrl: ch6JournalingBrain,
+          imageAlt: 'Brain regions activated during journaling: prefrontal cortex, reticular activating system, and limbic system connected through writing',
+        },
+        {
+          heading: 'Journaling Methods',
+          paragraphs: [
+            'There\'s no single "right" way to journal. Different methods serve different purposes:',
+          ],
+          bullets: [
+            'Free writing / stream of consciousness — write whatever comes to mind for a set time (5-15 minutes). No structure, no editing. Best for processing emotions and clearing mental clutter.',
+            'Gratitude journaling — write 3-5 things you\'re grateful for each day. Research shows this consistently improves mood, sleep quality, and overall life satisfaction. Simple but powerful.',
+            'Reflective journaling — answer specific prompts about your day, decisions, or experiences. "What went well today?" "What would I do differently?" "What did I learn?" Best for continuous improvement.',
+            'Goal/intention setting — write down your key intentions for the day ahead each morning. Clarifies priorities and creates accountability. Often used alongside evening reflection.',
+            'Stress/anxiety processing — write specifically about things that are worrying you. Describe the worst case, the likely case, and what you would do in each scenario. Reduces the power of anxiety by making the abstract concrete.',
+          ],
+        },
+        {
+          heading: 'Making It Sustainable',
+          paragraphs: [
+            'The most common reason people stop journaling is making it too complicated. Here are principles for building a lasting practice:',
+          ],
+          bullets: [
+            'Keep it short — 5 minutes is enough. You don\'t need to write essays. Three sentences is better than three pages you won\'t write.',
+            'Anchor it to an existing habit — journal right after your morning coffee, or right before you read at night. Habit stacking makes it automatic.',
+            'Use a physical notebook — handwriting is slower and more deliberate, which is the point. Keep it by your bed or in your bag.',
+            'Don\'t judge the writing — this isn\'t for anyone else to read. Spelling, grammar, and neatness don\'t matter. Raw, honest, messy writing is the most useful kind.',
+            'Start with a prompt — if you don\'t know what to write, start with: "Right now I feel..." or "The thing on my mind most is..." and let it flow from there.',
+          ],
+        },
+        {
+          heading: 'Journaling for Training & Performance',
+          paragraphs: [
+            'Beyond emotional health, journaling is a powerful tool for physical performance. A training journal helps you track what works, identify patterns in energy and recovery, and make better programming decisions over time.',
+          ],
+          bullets: [
+            'Pre-session: write your intention for the session — what you want to focus on, how you want to show up',
+            'Post-session: note what went well, what felt off, sleep quality the night before, stress levels that day',
+            'Weekly review: look for patterns — do you perform better on certain days? After certain meals? When stress is lower?',
+            'This data becomes incredibly valuable over months and years. You\'ll see patterns no app or coach could identify for you.',
+          ],
+        },
+      ],
+      unbreakableInsight: 'Most people live in reaction mode — bouncing from stimulus to stimulus without ever stopping to think clearly. Journaling is the antidote. Five minutes of honest writing gives you more self-awareness than a month of living on autopilot. The pen is a weapon against chaos.',
+      coachNote: 'I journal every morning — three intentions for the day, and three reflections from yesterday. It takes under 5 minutes and it changed my decision-making, my emotional regulation, and my training more than any other single practice. Don\'t overthink it. Just start writing.',
+      practicalTask: {
+        title: 'Seven-Day Journaling Challenge',
+        instructions: 'Commit to journaling for 7 consecutive days using this structure: Morning (2 minutes) — write your top 3 intentions for the day. Evening (3 minutes) — answer these three questions: What went well? What would I do differently? What am I grateful for? Use a physical notebook.',
+        reflectionQuestions: [
+          'By day 7, did the practice feel more natural than day 1?',
+          'Did writing your intentions in the morning change how you approached the day?',
+          'Which evening question gave you the most insight about yourself?',
         ],
       },
     },

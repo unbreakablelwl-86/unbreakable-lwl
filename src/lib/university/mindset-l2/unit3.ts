@@ -4,6 +4,7 @@ import ch2DisciplineVsMotivation from '@/assets/university/mindl2-u3-ch2-discipl
 import ch3HabitFormation from '@/assets/university/mindl2-u3-ch3-habit-formation.png';
 import ch4EmotionalRegulation from '@/assets/university/mindl2-u3-ch4-emotional-regulation.png';
 import ch5Visualisation from '@/assets/university/mindl2-u3-ch5-visualisation.png';
+import ch6DopamineLoop from '@/assets/university/mindl2-u3-ch6-dopamine-loop.png';
 
 
 export const mindsetL2Unit3: Unit = {
@@ -259,6 +260,79 @@ export const mindsetL2Unit3: Unit = {
           'How vivid were you able to make the visualisation?',
           'Did visualising challenges in advance help you respond to them during the actual event?',
           'How did your confidence and composure compare to events you did not prepare for mentally?',
+        ],
+      },
+    },
+    {
+      number: 6,
+      title: 'Digital Detox & Attention Management',
+      learningOutcome: 'Understand how digital technology affects attention, focus, and mental health, and develop practical strategies for managing screen time and digital consumption.',
+      assessmentCriteria: [
+        'Explain how social media and digital notifications fragment attention and impact cognitive performance',
+        'Describe the dopamine reward cycle created by smartphones and how it differs from natural reward systems',
+        'Create a personal digital boundaries plan that protects deep focus without eliminating technology entirely',
+      ],
+      content: [
+        {
+          heading: 'The Attention Crisis',
+          paragraphs: [
+            'The average person checks their phone 96 times a day — roughly once every 10 minutes of waking time. Each check breaks focus, and research shows it takes an average of 23 minutes to fully regain deep concentration after an interruption. Do the maths: most people never reach sustained deep focus at all.',
+            'This isn\'t a willpower problem — it\'s an environment problem. Your phone is designed by teams of engineers and psychologists whose entire job is to keep you engaged. Infinite scroll, notification badges, autoplay — these features exploit your brain\'s reward circuitry to capture and hold your attention.',
+          ],
+        },
+        {
+          heading: 'How Screens Hijack Your Dopamine System',
+          paragraphs: [
+            'Dopamine isn\'t a "pleasure chemical" — it\'s a motivation and anticipation chemical. Your brain releases dopamine when it expects a reward, not when it receives one. This is why scrolling through social media is so addictive: every swipe offers the possibility of something interesting.',
+            'The problem is that constant low-level dopamine stimulation from phones raises your baseline expectation. Activities that are genuinely rewarding but slower — reading, training, deep conversation, creative work — feel boring by comparison. Your brain has been recalibrated to need constant novelty.',
+          ],
+          bullets: [
+            'Social media likes and comments — intermittent reinforcement (the same pattern as slot machines)',
+            'Notifications — create urgency and anxiety when unread, relief when checked',
+            'Infinite scroll — removes natural stopping cues, leading to extended mindless consumption',
+            'Comparison culture — constant exposure to curated highlight reels lowers self-esteem and increases anxiety',
+          ],
+          imageUrl: ch6DopamineLoop,
+          imageAlt: 'Circular diagram showing the dopamine feedback loop: notification, anticipation, check phone, brief reward, dopamine drop, seek next stimulus',
+        },
+        {
+          heading: 'The Impact on Training and Performance',
+          paragraphs: [
+            'Digital distraction doesn\'t just affect work — it affects everything, including your training. People who scroll between sets have worse mind-muscle connection, longer rest periods, and lower session quality. Phone use before bed disrupts sleep quality through blue light exposure and cognitive arousal, directly impacting recovery and next-day performance.',
+            'Beyond the gym, constant connectivity leaves you in a state of partial attention. You\'re never fully present with the people around you, never fully recovered, never fully focused on what matters. This chronic low-grade stress accumulates.',
+          ],
+        },
+        {
+          heading: 'Practical Digital Boundaries',
+          paragraphs: [
+            'The goal isn\'t to eliminate technology — it\'s to use it intentionally. Here are evidence-based strategies:',
+          ],
+          bullets: [
+            'Phone-free first hour — don\'t check your phone for the first 60 minutes after waking. This protects your morning from being reactive',
+            'Notification audit — disable all notifications except calls and direct messages from real people. Batch-check everything else',
+            'Training mode — put your phone on aeroplane mode during workouts. Use a watch for rest timers instead',
+            'Single-tasking — when doing focused work, close all tabs except the one you need. Use website blockers if necessary',
+            'Evening wind-down — no screens for 60 minutes before bed. Read a physical book, journal, or have a face-to-face conversation instead',
+            'Scheduled social media — if you use social media, check it at set times (e.g., 12pm and 6pm for 15 minutes) rather than reflexively throughout the day',
+          ],
+        },
+        {
+          heading: 'Building an Attention-Rich Life',
+          paragraphs: [
+            'Managing your digital environment isn\'t about restriction — it\'s about creating space for what actually matters. When you reduce digital noise, you create room for deep work, genuine relationships, quality training, and creative thinking.',
+            'The people who achieve extraordinary things in any field share one trait: the ability to sustain focus on what matters while ignoring what doesn\'t. In a world engineered to distract you, protecting your attention is a competitive advantage.',
+          ],
+        },
+      ],
+      unbreakableInsight: 'Your phone is not a neutral tool — it\'s designed to consume your attention and sell it to advertisers. Every minute you spend mindlessly scrolling is a minute stolen from training, recovery, learning, and building real relationships. You wouldn\'t let a stranger steal your wallet. Why let one steal your time?',
+      coachNote: 'Start small. Pick one boundary from this chapter and implement it for a week. Most people find the phone-free first hour transformative. You\'ll be amazed how different your mornings feel when you start with intention instead of Instagram.',
+      practicalTask: {
+        title: 'Digital Audit & Detox Challenge',
+        instructions: 'Check your screen time report for the past week (Settings > Screen Time on iPhone, or Digital Wellbeing on Android). Note your total daily average and your top 3 most-used apps. Then implement a 48-hour partial digital detox: delete social media apps from your phone (not your accounts — just the apps), disable non-essential notifications, and put your phone in a different room during meals and training.',
+        reflectionQuestions: [
+          'What was your total daily screen time, and how did that number make you feel?',
+          'During the 48-hour detox, what did you notice about your urge to check your phone?',
+          'Did reducing screen time change your focus, sleep quality, or mood in any noticeable way?',
         ],
       },
     },

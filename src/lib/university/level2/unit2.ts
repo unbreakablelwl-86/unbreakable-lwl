@@ -6,6 +6,7 @@ import ch4EnergyBalance from '@/assets/university/u2-ch4-tdee-breakdown.png';
 import ch5FoodLabels from '@/assets/university/u2-ch5-marketing-claims.png';
 import ch6NutrientTiming from '@/assets/university/u2-ch6-meal-frequency.png';
 import ch7BalancedPlate from '@/assets/university/u2-ch7-plate-model.png';
+import ch8MythEvaluation from '@/assets/university/l2-u2-ch8-myth-evaluation.png';
 
 export const level2Unit2: Unit = {
   number: 2,
@@ -598,6 +599,86 @@ export const level2Unit2: Unit = {
           'Does your plan hit your estimated macronutrient targets?',
           'Have you included adequate fibre, micronutrient-rich foods, and hydration?',
           'Is this plan something you could realistically follow most days?',
+        ],
+      },
+    },
+    {
+      number: 8,
+      title: 'Common Nutrition Myths & Misconceptions',
+      learningOutcome: 'Identify and critically evaluate the most common nutrition myths encountered in popular media and gym culture, using evidence-based reasoning.',
+      assessmentCriteria: [
+        'Identify at least five common nutrition myths and explain why they are misleading or false',
+        'Explain the difference between correlation and causation in nutrition research',
+        'Apply critical thinking to evaluate new nutrition claims encountered in media or conversation',
+      ],
+      content: [
+        {
+          heading: 'Why Nutrition Myths Persist',
+          paragraphs: [
+            'Nutrition is one of the most misunderstood areas of health. Everyone eats, so everyone has an opinion. Social media amplifies extreme claims because moderate, evidence-based advice doesn\'t get clicks. Add in a supplement industry worth billions, and you have a recipe for widespread misinformation.',
+            'The goal of this chapter isn\'t to tell you what to believe — it\'s to give you the tools to evaluate claims for yourself. Let\'s break down the biggest myths you\'ll encounter.',
+          ],
+        },
+        {
+          heading: 'Myth 1: "Eating Fat Makes You Fat"',
+          paragraphs: [
+            'This myth dominated nutrition advice from the 1980s through the 2000s. The logic seemed simple: fat has 9 calories per gram (vs 4 for carbs and protein), so eating less fat = fewer calories = less body fat. But it doesn\'t work that way.',
+            'Body fat storage is primarily determined by total energy balance — calories in vs calories out. You can gain fat eating nothing but rice, and you can lose fat while eating 40% of your calories from fats. Dietary fat is essential for hormone production (including testosterone), vitamin absorption (A, D, E, K are fat-soluble), cell membrane integrity, and brain function.',
+          ],
+        },
+        {
+          heading: 'Myth 2: "You Need to Eat Every 2-3 Hours to Boost Metabolism"',
+          paragraphs: [
+            'The idea that frequent meals "stoke the metabolic fire" is one of the fitness industry\'s most persistent myths. Research has repeatedly shown that meal frequency has minimal impact on metabolic rate when total daily intake is the same.',
+            'The thermic effect of food (TEF) — the energy used to digest food — is proportional to total intake, not how many meals you split it into. Six small meals and three larger meals produce the same total TEF. Eat in a pattern that fits your lifestyle and helps you stay consistent.',
+          ],
+        },
+        {
+          heading: 'Myth 3: "Carbs After 6pm Turn to Fat"',
+          paragraphs: [
+            'Your body doesn\'t have a clock that switches to fat-storage mode at a specific time. Whether you eat carbohydrates at 8am or 10pm, the metabolic process is the same. What matters is your total daily intake relative to your energy expenditure.',
+            'In fact, there\'s evidence that eating carbohydrates in the evening can improve sleep quality — carbs help produce serotonin and melatonin. For people who train in the evening, post-workout carbs are essential for recovery regardless of the time.',
+          ],
+        },
+        {
+          heading: 'Myth 4: "You Can Only Absorb 30g of Protein Per Meal"',
+          paragraphs: [
+            'This myth has been debunked repeatedly. Your body can absorb far more than 30g of protein in a single sitting — absorption and utilisation are different things. A large steak containing 70g of protein doesn\'t result in 40g being wasted.',
+            'What is true is that distributing protein across 3-5 meals (rather than cramming it all into one) may optimise muscle protein synthesis throughout the day. But the idea of a hard 30g ceiling is simply wrong. Eat the protein your body needs, distributed in a way that works for your schedule.',
+          ],
+        },
+        {
+          heading: 'Myth 5: "Detox Diets and Cleanses Remove Toxins"',
+          paragraphs: [
+            'Your body already has a highly effective detoxification system — it\'s called your liver and kidneys. They filter waste products from your blood 24 hours a day. No juice cleanse, charcoal supplement, or week-long fast does this job better than your own organs.',
+            'Most "detox" products work by acting as laxatives or diuretics, causing water loss that looks like weight loss on the scale. The moment you eat normally again, the weight returns. Save your money — eat whole foods, drink water, and let your organs do what they\'re designed to do.',
+          ],
+        },
+        {
+          heading: 'How to Evaluate Nutrition Claims',
+          paragraphs: [
+            'When you see a bold nutrition claim, run it through these filters:',
+          ],
+          bullets: [
+            'Who benefits? — Is someone selling something? Supplement companies, diet book authors, and influencers all have financial incentives to make extreme claims.',
+            'What does the research say? — Is the claim based on a single study or a body of evidence? Single studies can show almost anything — look for systematic reviews and meta-analyses.',
+            'Correlation vs causation — "People who eat breakfast weigh less" doesn\'t mean breakfast causes weight loss. It might mean health-conscious people tend to eat breakfast.',
+            'Dose and context — Many substances are harmful at high doses but fine at normal levels. Sugar isn\'t poison. Saturated fat isn\'t deadly. Context and quantity matter.',
+            'The "too good to be true" test — If it sounds like a miracle, it probably isn\'t. Real nutrition science is boring: eat mostly whole foods, get enough protein, maintain a healthy weight. That\'s it.',
+          ],
+          imageUrl: ch8MythEvaluation,
+          imageAlt: 'Five-step flowchart for evaluating nutrition claims: who benefits, what research says, correlation vs causation, dose and context, and too-good-to-be-true test',
+        },
+      ],
+      unbreakableInsight: 'The loudest voices in nutrition usually have the weakest evidence. The supplement that promises to "melt fat" while you sleep, the diet that demonises an entire food group, the influencer who found the "one thing" nobody else knows — they\'re all selling something. Eat real food. Don\'t overcomplicate it.',
+      coachNote: 'You\'re going to encounter these myths constantly — from friends, family, social media, even personal trainers. You don\'t need to correct everyone, but knowing the truth gives you confidence in your own approach. When someone tells you carbs after 6pm are fattening, just smile — you know better.',
+      practicalTask: {
+        title: 'Myth-Busting Exercise',
+        instructions: 'Over the next week, collect three nutrition claims you encounter in conversation, social media, or news articles. For each one, write down the claim, identify who made it and whether they have a financial interest, and then evaluate it against the critical thinking framework from this chapter.',
+        reflectionQuestions: [
+          'Were any of the claims you found based on genuine scientific evidence?',
+          'Did you identify any claims that you previously believed to be true?',
+          'How will you approach nutrition advice differently going forward?',
         ],
       },
     },

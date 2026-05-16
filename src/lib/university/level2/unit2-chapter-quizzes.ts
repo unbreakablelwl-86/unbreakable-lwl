@@ -574,4 +574,63 @@ export const unit2ChapterQuizzes: ChapterQuiz[] = [
       },
     ],
   },
+  // ─── Chapter 8: Common Nutrition Myths & Misconceptions ───
+  {
+    unitNumber: 2,
+    chapterNumber: 8,
+    pickCount: 5,
+    passMarkPercent: 80,
+    questionBank: [
+      {
+        type: 'multiple_choice',
+        question: 'Why is the claim "eating fat makes you fat" considered a myth?',
+        options: ['Fat has no calories', 'Body fat storage is primarily determined by total energy balance, not dietary fat alone', 'Fat is immediately burned for energy', 'Only saturated fat causes weight gain'],
+        correctAnswer: 1,
+        explanation: 'Body fat storage depends on total calorie intake vs expenditure (energy balance), not specifically on how much dietary fat you eat. You can gain fat from any macronutrient in surplus.',
+      },
+      {
+        type: 'multiple_choice',
+        question: 'Does eating six small meals instead of three larger meals boost your metabolism?',
+        options: ['Yes, it keeps the metabolic fire burning', 'No — the thermic effect of food is proportional to total intake, not meal frequency', 'Yes, but only if you eat protein at every meal', 'No, but it reduces fat storage'],
+        correctAnswer: 1,
+        explanation: 'Research consistently shows that meal frequency has minimal impact on metabolic rate when total daily intake is the same. The thermic effect of food is proportional to total calories consumed.',
+      },
+      {
+        type: 'scenario',
+        question: 'What is the best evidence-based response?',
+        scenario: 'A friend tells you they avoid all carbohydrates after 6pm because they believe carbs eaten in the evening automatically turn to fat.',
+        options: ['They are correct — carbs after 6pm are stored as fat', 'The time you eat carbs does not determine fat storage — total daily intake relative to expenditure is what matters', 'They should avoid carbs entirely', 'Carbs should only be eaten at breakfast'],
+        correctAnswer: 1,
+        explanation: 'Your body does not have a clock that switches to fat-storage mode at a specific time. Fat gain depends on total energy balance across the day, not when specific macronutrients are consumed.',
+      },
+      {
+        type: 'multiple_choice',
+        question: 'What is the "30g protein per meal" myth?',
+        options: ['You should eat exactly 30g at every meal', 'Your body can only absorb 30g of protein per sitting — this is false', 'You need 30g of protein per kg of bodyweight', 'Protein above 30g is converted to fat'],
+        correctAnswer: 1,
+        explanation: 'The body can absorb far more than 30g of protein per meal. While distributing protein across meals may optimise muscle protein synthesis, there is no hard absorption ceiling at 30g.',
+      },
+      {
+        type: 'multiple_choice',
+        question: 'Which of these is the best way to evaluate a nutrition claim you see online?',
+        options: ['Trust it if the person has lots of followers', 'Check who benefits financially, look for multiple studies, and assess whether it sounds too good to be true', 'Only trust claims from supplement companies', 'Believe it if it has a scientific-sounding name'],
+        correctAnswer: 1,
+        explanation: 'Critical evaluation involves checking for financial incentives, looking at the body of evidence (not just one study), distinguishing correlation from causation, and applying the "too good to be true" test.',
+      },
+      {
+        type: 'multiple_choice',
+        question: 'Why are "detox diets" considered ineffective by evidence-based nutrition science?',
+        options: ['They are too expensive', 'Your liver and kidneys already detoxify your body effectively — detox products mostly cause water loss', 'They work but only for specific toxins', 'They are effective but only if combined with exercise'],
+        correctAnswer: 1,
+        explanation: 'Your liver and kidneys are highly effective detoxification systems that work 24/7. Most "detox" products act as laxatives or diuretics, causing temporary water weight loss that returns when normal eating resumes.',
+      },
+      {
+        type: 'multiple_choice',
+        question: 'What is the difference between correlation and causation in nutrition research?',
+        options: ['They mean the same thing', 'Correlation means two things happen together; causation means one directly causes the other', 'Causation is less reliable than correlation', 'Correlation is only found in animal studies'],
+        correctAnswer: 1,
+        explanation: 'Correlation means two variables are associated (happen together) but one does not necessarily cause the other. For example, breakfast eaters may weigh less not because breakfast causes weight loss, but because health-conscious people tend to eat breakfast.',
+      },
+    ],
+  },
 ];
