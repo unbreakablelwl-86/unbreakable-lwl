@@ -2,11 +2,10 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ThemedLogo } from '@/components/ThemedLogo';
 import { Button } from '@/components/ui/button';
-import { NavigationDrawer } from '@/components/NavigationDrawer';
-import { UnifiedFooter } from '@/components/UnifiedFooter';
-import { PageNavigation, SwipeNavigationWrapper } from '@/components/PageNavigation';
-import { ThemeToggle } from '@/components/hub/ThemeToggle';
 import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { ThemeToggle } from '@/components/hub/ThemeToggle';
+import { LandingFooter } from '@/components/landing/LandingFooter';
 import {
   Flame,
   Dumbbell,
@@ -14,334 +13,664 @@ import {
   Heart,
   ArrowRight,
   Sparkles,
+  MessageSquare,
+  Shield,
+  Check,
+  Crown,
+  GraduationCap,
+  Activity,
+  ChevronDown,
 } from 'lucide-react';
+import { TIERS } from '@/lib/subscriptionTiers';
 
 interface LandingPageProps {
   onSignIn: () => void;
   onSignUp: () => void;
 }
 
+const fadeUp = {
+  hidden: { opacity: 0, y: 24 },
+  visible: { opacity: 1, y: 0 },
+};
+
+const stagger = {
+  visible: { transition: { staggerChildren: 0.1 } },
+};
+
+/* ─── Platform Features ─── */
+const platformFeatures = [
+  {
+    icon: Dumbbell,
+    title: 'POWER',
+    desc: 'Build bespoke training programmes, log every session, and track progressive overload week by week.',
+  },
+  {
+    icon: Activity,
+    title: 'MOVEMENT',
+    desc: 'Run, cycle, swim, row or walk — structured cardio programmes with distance, pace and heart-rate tracking.',
+  },
+  {
+    icon: Flame,
+    title: 'FUEL',
+    desc: 'Track nutrition, plan meals, discover recipes and get AI-generated meal plans tailored to your goals.',
+  },
+  {
+    icon: Brain,
+    title: 'MINDSET',
+    desc: 'Guided breathing protocols, focus games, and science-backed mental resilience training.',
+  },
+  {
+    icon: GraduationCap,
+    title: 'UNIVERSITY',
+    desc: 'Structured fitness courses — real PT qualification content made affordable and relatable for everyone.',
+  },
+  {
+    icon: MessageSquare,
+    title: 'AI COACH',
+    desc: 'Chat with your Unbreakable Coach anytime. Get bespoke programmes, meal plans, and advice on demand.',
+  },
+];
+
+/* ─── Coaching tier features ─── */
+const coachingFeatures = [
+  'Full Power programme builder (manual & AI-built)',
+  'Session logging, tracking & progression tools',
+  'Fuel tracker, meal planning & recipe library',
+  'Mindset programmes, breathing & focus games',
+  'Movement programmes (run, cycle, swim, row, walk)',
+  'Unlimited AI Coach conversations',
+  'University learning hub & calculators',
+  'Community Hub — feed, stories & messaging',
+  'Daily habit diary & lifestyle tracking',
+];
+
+const oneToOneExtras = [
+  'Dedicated 1-to-1 human coach',
+  'Bi-weekly check-ins & progress reviews',
+  'Personalised feedback on sessions & form',
+  'Bespoke programming adjustments each block',
+  'Nutrition & lifestyle guidance from your coach',
+  'Priority support & accountability',
+];
+
 export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
   return (
-    <SwipeNavigationWrapper>
-      <div className="min-h-screen bg-background">
-        {/* Header */}
-        <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm border-b border-border">
-          <div className="container mx-auto px-6 py-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <ThemeToggle />
-                <Link to="/" className="flex items-center gap-3">
-                  <ThemedLogo />
-                  <span className="font-display text-lg tracking-wide text-foreground hidden sm:block">
-                    UNBREAKABLE
-                  </span>
-                </Link>
-              </div>
-              <div className="flex items-center gap-3">
-                <Button
-                  className="font-display tracking-wide"
-                  onClick={onSignIn}
-                >
-                  SIGN UP / LOGIN
-                </Button>
-                <NavigationDrawer />
-              </div>
+    <div className="min-h-screen bg-background">
+      {/* ━━━ Header ━━━ */}
+      <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
+        <div className="container mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <ThemeToggle />
+              <Link to="/" className="flex items-center gap-3">
+                <ThemedLogo />
+                <span className="font-display text-lg tracking-wide text-foreground hidden sm:block">
+                  UNBREAKABLE
+                </span>
+              </Link>
+            </div>
+            <div className="flex items-center gap-3">
+              <Button
+                variant="ghost"
+                className="font-display tracking-wide text-muted-foreground hover:text-primary"
+                onClick={onSignIn}
+              >
+                LOG IN
+              </Button>
+              <Button
+                className="font-display tracking-wide"
+                onClick={onSignUp}
+              >
+                <Sparkles className="w-4 h-4 mr-2" />
+                START FREE TRIAL
+              </Button>
             </div>
           </div>
-        </header>
+        </div>
+      </header>
 
-        {/* Page Navigation */}
-        <div className="pt-[72px]">
-          <PageNavigation />
+      {/* ━━━ Hero ━━━ */}
+      <section className="relative min-h-screen flex flex-col items-center justify-center text-center px-6 pt-24 pb-12 overflow-hidden">
+        {/* Subtle radial glow */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[120px]" />
         </div>
 
-        {/* Hero Section */}
-        <section className="min-h-[calc(100vh-120px)] flex flex-col items-center justify-center text-center px-6 py-16">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={stagger}
+          className="relative max-w-4xl mx-auto"
+        >
+          <motion.div variants={fadeUp} transition={{ duration: 0.6 }}>
+            <ThemedLogo className="h-24 md:h-36 lg:h-44 object-contain mx-auto mb-6" />
+          </motion.div>
+
+          <motion.h1
+            variants={fadeUp}
             transition={{ duration: 0.6 }}
-            className="max-w-4xl mx-auto"
+            className="font-display text-5xl md:text-7xl lg:text-8xl text-foreground tracking-wide leading-none mb-2"
           >
-            <ThemedLogo className="h-32 md:h-48 lg:h-56 object-contain mx-auto mb-8" />
+            BECOME{' '}
+            <span className="text-primary neon-glow-subtle">UNBREAKABLE</span>
+          </motion.h1>
 
-            <h1 className="font-display text-5xl md:text-7xl lg:text-8xl text-foreground tracking-wide leading-none mb-2">
-              BECOME
-            </h1>
-            <h1 className="font-display text-5xl md:text-7xl lg:text-8xl text-primary tracking-wide leading-none neon-glow-subtle mb-6">
-              UNBREAKABLE
-            </h1>
+          <motion.p
+            variants={fadeUp}
+            transition={{ duration: 0.6 }}
+            className="text-primary font-display text-xl md:text-2xl tracking-wide neon-glow-subtle mb-6 mt-4"
+          >
+            LIVE WITHOUT LIMITS. KEEP SHOWING UP.
+          </motion.p>
 
-            <p className="text-primary font-display text-xl md:text-2xl tracking-wide neon-glow-subtle mb-4">
-              LIVE WITHOUT LIMITS. KEEP SHOWING UP.
-            </p>
+          <motion.p
+            variants={fadeUp}
+            transition={{ duration: 0.6 }}
+            className="text-muted-foreground text-lg md:text-xl leading-relaxed max-w-2xl mx-auto mb-8"
+          >
+            The all-in-one fitness platform for training, nutrition, mindset and
+            education — built so you can stop guessing and start building a body
+            and mind that last.
+          </motion.p>
 
-            <div className="max-w-2xl mx-auto space-y-4 mb-10">
-              <p className="text-muted-foreground text-lg leading-relaxed">
-                We all care about how we look.{' '}
-                <span className="text-foreground font-medium">Let's stop pretending we don't.</span>
-              </p>
-              <p className="text-muted-foreground leading-relaxed">
-                But somewhere along the way, fitness became about chasing someone else's ideal — 
-                a body, a shape, a standard that was never built for you.
-              </p>
-              <p className="text-foreground font-semibold text-lg">
-                Unbreakable is about something deeper.
-              </p>
-              <p className="text-muted-foreground leading-relaxed">
-                It's about what your body <span className="text-primary">can do</span>. 
-                How long it can <span className="text-primary">keep going</span>. 
-                And who you become when you <span className="text-primary">show up anyway</span>.
-              </p>
-            </div>
-
+          <motion.div
+            variants={fadeUp}
+            transition={{ duration: 0.6 }}
+            className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-4"
+          >
             <Button
               size="lg"
-              className="font-display text-lg tracking-wide px-12 py-6"
+              className="font-display text-lg tracking-wide px-10 py-6"
               onClick={onSignUp}
             >
               <Sparkles className="w-5 h-5 mr-2" />
-              START YOUR JOURNEY
+              START YOUR 7-DAY FREE TRIAL
+            </Button>
+            <Button
+              size="lg"
+              variant="outline"
+              className="font-display text-lg tracking-wide px-10 py-6 border-primary/40 hover:bg-primary/10"
+              onClick={() =>
+                document
+                  .getElementById('features')
+                  ?.scrollIntoView({ behavior: 'smooth' })
+              }
+            >
+              SEE WHAT'S INSIDE
+              <ArrowRight className="w-5 h-5 ml-2" />
             </Button>
           </motion.div>
-        </section>
 
-        {/* Not About Perfection Section */}
-        <section className="py-20 md:py-28 bg-card/30">
-          <div className="container mx-auto px-6">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-              className="max-w-4xl mx-auto text-center"
-            >
-              <h2 className="font-display text-3xl md:text-5xl text-foreground mb-2 tracking-wide">
-                THIS ISN'T ABOUT
-              </h2>
-              <h2 className="font-display text-3xl md:text-5xl text-primary mb-6 tracking-wide neon-glow-subtle">
-                PERFECTION
-              </h2>
-              <p className="text-muted-foreground uppercase tracking-widest text-sm mb-10">
-                It's About Ability, Mindset, and Longevity
+          <motion.p
+            variants={fadeUp}
+            transition={{ duration: 0.6 }}
+            className="text-muted-foreground text-sm"
+          >
+            No card required · Cancel anytime · From £50/month after trial
+          </motion.p>
+        </motion.div>
+
+        {/* Scroll indicator */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.5, duration: 0.8 }}
+          className="absolute bottom-8"
+        >
+          <ChevronDown className="w-6 h-6 text-muted-foreground/50 animate-bounce" />
+        </motion.div>
+      </section>
+
+      {/* ━━━ Social proof bar ━━━ */}
+      <section className="border-y border-border bg-card/30 py-6">
+        <div className="container mx-auto px-6">
+          <div className="flex flex-wrap justify-center gap-8 md:gap-16 text-center">
+            <div>
+              <p className="font-display text-2xl md:text-3xl text-primary neon-glow-subtle">6</p>
+              <p className="text-muted-foreground text-xs tracking-widest uppercase">
+                Training Pillars
               </p>
+            </div>
+            <div>
+              <p className="font-display text-2xl md:text-3xl text-primary neon-glow-subtle">1,800+</p>
+              <p className="text-muted-foreground text-xs tracking-widest uppercase">
+                University Questions
+              </p>
+            </div>
+            <div>
+              <p className="font-display text-2xl md:text-3xl text-primary neon-glow-subtle">290+</p>
+              <p className="text-muted-foreground text-xs tracking-widest uppercase">
+                Exercise Library
+              </p>
+            </div>
+            <div>
+              <p className="font-display text-2xl md:text-3xl text-primary neon-glow-subtle">AI</p>
+              <p className="text-muted-foreground text-xs tracking-widest uppercase">
+                Powered Coach
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
 
-              <div className="bg-card border-2 border-primary/30 neon-border-subtle rounded-lg p-8 md:p-10 text-left space-y-6">
-                <p className="text-muted-foreground leading-relaxed text-lg">
-                  Being Unbreakable doesn't mean never struggling.{' '}
-                  <span className="text-foreground font-medium">
-                    It means building a body and mindset that can handle life.
+      {/* ━━━ What is Unbreakable? ━━━ */}
+      <section className="py-20 md:py-28">
+        <div className="container mx-auto px-6">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.3 }}
+            variants={stagger}
+            className="max-w-4xl mx-auto text-center"
+          >
+            <motion.div variants={fadeUp} transition={{ duration: 0.5 }}>
+              <Badge
+                variant="outline"
+                className="border-primary/40 text-primary mb-4 font-display tracking-wider"
+              >
+                THE PHILOSOPHY
+              </Badge>
+            </motion.div>
+
+            <motion.h2
+              variants={fadeUp}
+              transition={{ duration: 0.5 }}
+              className="font-display text-3xl md:text-5xl text-foreground mb-6 tracking-wide"
+            >
+              THIS ISN'T ABOUT{' '}
+              <span className="text-primary neon-glow-subtle">PERFECTION</span>
+            </motion.h2>
+
+            <motion.p
+              variants={fadeUp}
+              transition={{ duration: 0.5 }}
+              className="text-muted-foreground text-lg leading-relaxed max-w-2xl mx-auto mb-12"
+            >
+              Forget chasing someone else's ideal. Unbreakable is about building
+              a body that <span className="text-primary">works</span>, a mind
+              that <span className="text-primary">stays sharp</span>, and
+              habits that <span className="text-primary">actually stick</span>.
+            </motion.p>
+
+            <motion.div
+              variants={fadeUp}
+              transition={{ duration: 0.5 }}
+              className="grid md:grid-cols-3 gap-8"
+            >
+              {[
+                {
+                  icon: Dumbbell,
+                  title: 'ABILITY',
+                  text: 'Lift, move, run, push, pull — live without fear of your body failing you.',
+                },
+                {
+                  icon: Brain,
+                  title: 'MINDSET',
+                  text: 'Keep going when it's hard, boring, or inconvenient. Rebuild when life knocks you sideways.',
+                },
+                {
+                  icon: Heart,
+                  title: 'LONGEVITY',
+                  text: 'Train for the long game. Strong joints. Capable muscles. A body that lasts.',
+                },
+              ].map((item) => (
+                <Card
+                  key={item.title}
+                  className="bg-card border-2 border-primary/20 hover:border-primary/40 transition-colors p-8 text-center"
+                >
+                  <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-5">
+                    <item.icon className="w-7 h-7 text-primary" />
+                  </div>
+                  <h3 className="font-display text-xl text-primary mb-3 tracking-wide neon-glow-subtle">
+                    {item.title}
+                  </h3>
+                  <p className="text-muted-foreground leading-relaxed text-sm">
+                    {item.text}
+                  </p>
+                </Card>
+              ))}
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ━━━ Platform Features ━━━ */}
+      <section id="features" className="py-20 md:py-28 bg-card/30 scroll-mt-20">
+        <div className="container mx-auto px-6">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.2 }}
+            variants={stagger}
+          >
+            <motion.div variants={fadeUp} transition={{ duration: 0.5 }} className="text-center mb-14">
+              <Badge
+                variant="outline"
+                className="border-primary/40 text-primary mb-4 font-display tracking-wider"
+              >
+                THE PLATFORM
+              </Badge>
+              <h2 className="font-display text-3xl md:text-5xl text-foreground tracking-wide mb-4">
+                EVERYTHING YOU NEED.{' '}
+                <span className="text-primary neon-glow-subtle">ONE APP.</span>
+              </h2>
+              <p className="text-muted-foreground max-w-2xl mx-auto">
+                Six pillars of training — all connected, all in your pocket. No
+                more juggling five different apps.
+              </p>
+            </motion.div>
+
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+              {platformFeatures.map((f) => (
+                <motion.div
+                  key={f.title}
+                  variants={fadeUp}
+                  transition={{ duration: 0.4 }}
+                >
+                  <Card className="h-full bg-card border border-border hover:border-primary/30 transition-colors p-6 group">
+                    <div className="flex items-start gap-4">
+                      <div className="w-10 h-10 rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors flex items-center justify-center flex-shrink-0">
+                        <f.icon className="w-5 h-5 text-primary" />
+                      </div>
+                      <div>
+                        <h3 className="font-display text-lg text-foreground tracking-wide mb-1">
+                          {f.title}
+                        </h3>
+                        <p className="text-muted-foreground text-sm leading-relaxed">
+                          {f.desc}
+                        </p>
+                      </div>
+                    </div>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ━━━ University spotlight ━━━ */}
+      <section className="py-20 md:py-28">
+        <div className="container mx-auto px-6">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.3 }}
+            variants={stagger}
+            className="max-w-4xl mx-auto"
+          >
+            <motion.div variants={fadeUp} transition={{ duration: 0.5 }} className="text-center mb-12">
+              <Badge
+                variant="outline"
+                className="border-primary/40 text-primary mb-4 font-display tracking-wider"
+              >
+                UNBREAKABLE UNIVERSITY
+              </Badge>
+              <h2 className="font-display text-3xl md:text-5xl text-foreground tracking-wide mb-4">
+                REAL PT EDUCATION.{' '}
+                <span className="text-primary neon-glow-subtle">FOR EVERYONE.</span>
+              </h2>
+              <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
+                People spend £5,000+ getting fitness qualifications — learning things
+                we should all know. We took that education and made it affordable,
+                relatable, and genuinely useful.
+              </p>
+            </motion.div>
+
+            <motion.div
+              variants={fadeUp}
+              transition={{ duration: 0.5 }}
+              className="grid md:grid-cols-3 gap-6"
+            >
+              {[
+                {
+                  icon: Dumbbell,
+                  title: 'POWER',
+                  desc: 'Anatomy, exercise science, programming and progressive overload — the foundation of effective training.',
+                  levels: 'Level 2 + Level 3',
+                },
+                {
+                  icon: Flame,
+                  title: 'NUTRITION',
+                  desc: 'Macros, meal planning, sports nutrition and behaviour change — no fads, no nonsense.',
+                  levels: 'Level 2 + Level 3',
+                },
+                {
+                  icon: Brain,
+                  title: 'MINDSET',
+                  desc: 'Stress management, breathing science, focus training and resilience — the mental edge.',
+                  levels: 'Level 2 + Level 3',
+                },
+              ].map((course) => (
+                <Card
+                  key={course.title}
+                  className="bg-card border border-border p-6"
+                >
+                  <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
+                    <course.icon className="w-6 h-6 text-primary" />
+                  </div>
+                  <h3 className="font-display text-xl text-foreground tracking-wide mb-2">
+                    {course.title}
+                  </h3>
+                  <p className="text-muted-foreground text-sm leading-relaxed mb-3">
+                    {course.desc}
+                  </p>
+                  <Badge variant="secondary" className="text-xs">
+                    {course.levels}
+                  </Badge>
+                </Card>
+              ))}
+            </motion.div>
+
+            <motion.div
+              variants={fadeUp}
+              transition={{ duration: 0.5 }}
+              className="mt-8 bg-primary/5 border border-primary/20 rounded-lg p-6 text-center"
+            >
+              <p className="text-muted-foreground">
+                <span className="text-foreground font-medium">4 units per level</span> ·{' '}
+                <span className="text-foreground font-medium">Interactive chapter quizzes</span> ·{' '}
+                <span className="text-foreground font-medium">Unit assessments</span> ·{' '}
+                <span className="text-foreground font-medium">Final exams</span>
+              </p>
+              <p className="text-muted-foreground text-sm mt-2">
+                All included in every plan — learn at your own pace.
+              </p>
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ━━━ Keep showing up ━━━ */}
+      <section className="py-20 md:py-24 bg-card/30">
+        <div className="container mx-auto px-6">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.3 }}
+            variants={stagger}
+            className="max-w-3xl mx-auto text-center"
+          >
+            <motion.h2
+              variants={fadeUp}
+              transition={{ duration: 0.5 }}
+              className="font-display text-4xl md:text-6xl text-primary mb-8 tracking-wide neon-glow-subtle"
+            >
+              KEEP SHOWING UP
+            </motion.h2>
+
+            <motion.div
+              variants={fadeUp}
+              transition={{ duration: 0.5 }}
+              className="space-y-3 text-muted-foreground text-lg leading-relaxed mb-10"
+            >
+              <p>Some days you'll feel unstoppable.</p>
+              <p>Some days you'll feel tired, busy, or unmotivated.</p>
+              <p className="text-foreground font-medium pt-3">
+                Unbreakable isn't built on perfect weeks. It's built on the
+                decision to show up again.
+              </p>
+            </motion.div>
+
+            <motion.div
+              variants={fadeUp}
+              transition={{ duration: 0.5 }}
+              className="flex flex-wrap justify-center gap-3 text-primary font-display text-lg tracking-wide"
+            >
+              {['ONE SESSION', 'ONE WALK', 'ONE MEAL', 'ONE CHOICE'].map(
+                (tag) => (
+                  <span
+                    key={tag}
+                    className="px-4 py-2 bg-primary/10 rounded-lg border border-primary/20"
+                  >
+                    {tag}
                   </span>
-                </p>
-
-                <ul className="space-y-4">
-                  <li className="flex items-start gap-3">
-                    <Dumbbell className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
-                    <span className="text-muted-foreground">
-                      <span className="text-foreground font-medium">Strength that carries into real life</span> — 
-                      not just the gym
-                    </span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <Heart className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
-                    <span className="text-muted-foreground">
-                      <span className="text-foreground font-medium">Fitness that supports you for decades</span>, 
-                      not months
-                    </span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <Brain className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
-                    <span className="text-muted-foreground">
-                      <span className="text-foreground font-medium">A mindset that doesn't crumble</span> when 
-                      motivation fades
-                    </span>
-                  </li>
-                </ul>
-
-                <p className="text-muted-foreground leading-relaxed pt-4 border-t border-border">
-                  You don't train just to look good in photos.{' '}
-                  <span className="text-primary font-semibold">
-                    You train so your body works, your mind stays sharp, and your future stays open.
-                  </span>
-                </p>
-              </div>
+                ),
+              )}
             </motion.div>
-          </div>
-        </section>
+          </motion.div>
+        </div>
+      </section>
 
-        {/* Stop Chasing Section */}
-        <section className="py-20 md:py-28">
-          <div className="container mx-auto px-6">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-              className="max-w-4xl mx-auto text-center"
-            >
-              <h2 className="font-display text-3xl md:text-5xl text-foreground mb-2 tracking-wide">
-                STOP CHASING THE IDEAL
+      {/* ━━━ Pricing ━━━ */}
+      <section id="pricing" className="py-20 md:py-28 scroll-mt-20">
+        <div className="container mx-auto px-6">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.2 }}
+            variants={stagger}
+          >
+            <motion.div variants={fadeUp} transition={{ duration: 0.5 }} className="text-center mb-14">
+              <Badge
+                variant="outline"
+                className="border-primary/40 text-primary mb-4 font-display tracking-wider"
+              >
+                PRICING
+              </Badge>
+              <h2 className="font-display text-3xl md:text-5xl text-foreground tracking-wide mb-4">
+                SIMPLE.{' '}
+                <span className="text-primary neon-glow-subtle">HONEST.</span>
               </h2>
-              <h2 className="font-display text-3xl md:text-5xl text-primary mb-10 tracking-wide neon-glow-subtle">
-                START BECOMING UNBREAKABLE
-              </h2>
-
-              <div className="space-y-6 text-left max-w-2xl mx-auto">
-                <p className="text-muted-foreground leading-relaxed text-lg">
-                  When you focus only on aesthetics, progress is fragile.
-                </p>
-                <p className="text-foreground leading-relaxed text-lg font-medium">
-                  When you focus on performance, consistency, and resilience — everything changes.
-                </p>
-
-                <div className="bg-primary/10 border-l-4 border-primary p-6 my-8">
-                  <p className="text-muted-foreground italic text-lg">
-                    Here's the truth most people miss:
-                  </p>
-                  <p className="text-primary font-display text-2xl md:text-3xl tracking-wide mt-2 neon-glow-subtle">
-                    WHEN YOU BECOME UNBREAKABLE, YOUR PHYSIQUE FOLLOWS.
-                  </p>
-                </div>
-
-                <div className="text-center space-y-1 text-muted-foreground">
-                  <p>Not forced.</p>
-                  <p>Not starved.</p>
-                  <p>Not obsessed.</p>
-                  <p className="text-primary font-semibold text-lg pt-2">It flows.</p>
-                  <p className="text-foreground">It matches who you are becoming.</p>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        </section>
-
-        {/* What Unbreakable Means Section */}
-        <section className="py-20 md:py-28 bg-card/30">
-          <div className="container mx-auto px-6">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-              className="max-w-5xl mx-auto"
-            >
-              <h2 className="font-display text-3xl md:text-5xl text-center mb-4 tracking-wide">
-                WHAT <span className="text-primary neon-glow-subtle">"UNBREAKABLE"</span> REALLY MEANS
-              </h2>
-              <p className="text-muted-foreground text-center mb-12 max-w-2xl mx-auto">
-                This isn't about doing more. It's about doing what actually matters — consistently.
-              </p>
-
-              <div className="grid md:grid-cols-3 gap-8">
-                <Card className="bg-card border-2 border-primary/30 neon-border-subtle p-8 text-center">
-                  <div className="w-16 h-16 rounded-full bg-primary/10 neon-border-subtle flex items-center justify-center mx-auto mb-6">
-                    <Dumbbell className="w-8 h-8 text-primary" />
-                  </div>
-                  <h3 className="font-display text-2xl text-primary mb-4 tracking-wide neon-glow-subtle">
-                    ABILITY
-                  </h3>
-                  <p className="text-muted-foreground leading-relaxed">
-                    To lift, move, run, push, pull, and live without fear of your body failing you.
-                  </p>
-                </Card>
-
-                <Card className="bg-card border-2 border-primary/30 neon-border-subtle p-8 text-center">
-                  <div className="w-16 h-16 rounded-full bg-primary/10 neon-border-subtle flex items-center justify-center mx-auto mb-6">
-                    <Brain className="w-8 h-8 text-primary" />
-                  </div>
-                  <h3 className="font-display text-2xl text-primary mb-4 tracking-wide neon-glow-subtle">
-                    MINDSET
-                  </h3>
-                  <p className="text-muted-foreground leading-relaxed">
-                    To keep going when it's boring, hard, or inconvenient — and to rebuild when life knocks you sideways.
-                  </p>
-                </Card>
-
-                <Card className="bg-card border-2 border-primary/30 neon-border-subtle p-8 text-center">
-                  <div className="w-16 h-16 rounded-full bg-primary/10 neon-border-subtle flex items-center justify-center mx-auto mb-6">
-                    <Heart className="w-8 h-8 text-primary" />
-                  </div>
-                  <h3 className="font-display text-2xl text-primary mb-4 tracking-wide neon-glow-subtle">
-                    LONGEVITY
-                  </h3>
-                  <p className="text-muted-foreground leading-relaxed">
-                    To train for the long game. Strong joints. Capable muscles. A body that lasts.
-                  </p>
-                </Card>
-              </div>
-            </motion.div>
-          </div>
-        </section>
-
-        {/* Keep Showing Up Section */}
-        <section className="py-20 md:py-28">
-          <div className="container mx-auto px-6">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-              className="max-w-3xl mx-auto text-center"
-            >
-              <h2 className="font-display text-4xl md:text-6xl text-primary mb-8 tracking-wide neon-glow-subtle">
-                KEEP SHOWING UP
-              </h2>
-
-              <div className="space-y-4 text-muted-foreground text-lg leading-relaxed mb-10">
-                <p>Some days you'll feel unstoppable.</p>
-                <p>Some days you'll feel tired, busy, or unmotivated.</p>
-                <p className="text-foreground font-medium pt-4">
-                  Unbreakable isn't built on perfect weeks.
-                </p>
-                <p className="text-foreground font-medium">
-                  It's built on the decision to show up again.
-                </p>
-              </div>
-
-              <div className="flex flex-wrap justify-center gap-4 text-primary font-display text-xl tracking-wide mb-8">
-                <span className="px-4 py-2 bg-primary/10 rounded-lg neon-border-subtle">ONE SESSION</span>
-                <span className="px-4 py-2 bg-primary/10 rounded-lg neon-border-subtle">ONE WALK</span>
-                <span className="px-4 py-2 bg-primary/10 rounded-lg neon-border-subtle">ONE MEAL</span>
-                <span className="px-4 py-2 bg-primary/10 rounded-lg neon-border-subtle">ONE CHOICE</span>
-              </div>
-
-              <p className="text-foreground font-semibold text-xl">
-                That's how limits disappear.
+              <p className="text-muted-foreground max-w-xl mx-auto">
+                Start with a 7-day free trial. No card required. Cancel anytime.
               </p>
             </motion.div>
-          </div>
-        </section>
 
-        {/* Final CTA Section */}
-        <section className="py-24 md:py-32 bg-card/50">
-          <div className="container mx-auto px-6 text-center">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-              className="max-w-3xl mx-auto"
-            >
-              <h2 className="font-display text-3xl md:text-4xl text-foreground mb-6 tracking-wide">
-                THIS IS YOUR INVITATION
+            <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+              {/* Coaching tier */}
+              <motion.div variants={fadeUp} transition={{ duration: 0.5 }}>
+                <Card className="h-full bg-card border-2 border-border p-8 flex flex-col">
+                  <div className="mb-6">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Shield className="w-5 h-5 text-primary" />
+                      <h3 className="font-display text-2xl text-foreground tracking-wide">
+                        COACHING
+                      </h3>
+                    </div>
+                    <div className="flex items-baseline gap-1">
+                      <span className="font-display text-4xl text-primary neon-glow-subtle">
+                        £{TIERS.tier1.monthlyPrice}
+                      </span>
+                      <span className="text-muted-foreground text-sm">/month</span>
+                    </div>
+                    <p className="text-muted-foreground text-sm mt-1">
+                      {TIERS.tier1.commitmentMonths}-month commitment
+                    </p>
+                  </div>
+
+                  <ul className="space-y-3 flex-1 mb-8">
+                    {coachingFeatures.map((f) => (
+                      <li key={f} className="flex items-start gap-3">
+                        <Check className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                        <span className="text-muted-foreground text-sm">{f}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="w-full font-display tracking-wide border-primary/40 hover:bg-primary/10"
+                    onClick={onSignUp}
+                  >
+                    START FREE TRIAL
+                  </Button>
+                </Card>
+              </motion.div>
+
+              {/* 1-to-1 tier */}
+              <motion.div variants={fadeUp} transition={{ duration: 0.5 }}>
+                <Card className="h-full bg-card border-2 border-primary/40 neon-border-subtle p-8 flex flex-col relative overflow-hidden">
+                  <Badge className="absolute top-4 right-4 bg-primary text-primary-foreground font-display tracking-wider">
+                    PREMIUM
+                  </Badge>
+
+                  <div className="mb-6">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Crown className="w-5 h-5 text-primary" />
+                      <h3 className="font-display text-2xl text-foreground tracking-wide">
+                        1-TO-1
+                      </h3>
+                    </div>
+                    <div className="flex items-baseline gap-1">
+                      <span className="font-display text-4xl text-primary neon-glow-subtle">
+                        £{TIERS.tier2.monthlyPrice}
+                      </span>
+                      <span className="text-muted-foreground text-sm">/month</span>
+                    </div>
+                    <p className="text-muted-foreground text-sm mt-1">
+                      {TIERS.tier2.commitmentMonths}-month commitment
+                    </p>
+                  </div>
+
+                  <p className="text-muted-foreground text-sm mb-4">
+                    Everything in Coaching, plus:
+                  </p>
+
+                  <ul className="space-y-3 flex-1 mb-8">
+                    {oneToOneExtras.map((f) => (
+                      <li key={f} className="flex items-start gap-3">
+                        <Crown className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                        <span className="text-muted-foreground text-sm">{f}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <Button
+                    size="lg"
+                    className="w-full font-display tracking-wide"
+                    onClick={onSignUp}
+                  >
+                    <Sparkles className="w-4 h-4 mr-2" />
+                    START FREE TRIAL
+                  </Button>
+                </Card>
+              </motion.div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ━━━ Final CTA ━━━ */}
+      <section className="py-24 md:py-32 bg-card/50 border-t border-border">
+        <div className="container mx-auto px-6 text-center">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={stagger}
+            className="max-w-3xl mx-auto"
+          >
+            <motion.div variants={fadeUp} transition={{ duration: 0.5 }}>
+              <h2 className="font-display text-3xl md:text-5xl text-foreground mb-6 tracking-wide">
+                READY TO BECOME{' '}
+                <span className="text-primary neon-glow-subtle">UNBREAKABLE</span>?
               </h2>
 
-              <div className="space-y-2 text-muted-foreground text-lg mb-10">
-                <p>If you're done chasing shortcuts...</p>
-                <p>If you're tired of fitness that doesn't last...</p>
-                <p>If you want strength, confidence, and freedom for the long run...</p>
-                <p className="text-primary font-semibold pt-4">Then you're in the right place.</p>
-              </div>
-
-              <div className="space-y-2 mb-10">
-                <p className="font-display text-2xl md:text-3xl text-foreground tracking-wide">
-                  BECOME UNBREAKABLE.
-                </p>
-                <p className="font-display text-2xl md:text-3xl text-primary tracking-wide neon-glow-subtle">
-                  LIVE WITHOUT LIMITS.
-                </p>
-                <p className="font-display text-2xl md:text-3xl text-foreground tracking-wide">
+              <div className="space-y-1 font-display text-xl md:text-2xl tracking-wide mb-10">
+                <p className="text-foreground">LIVE WITHOUT LIMITS.</p>
+                <p className="text-primary neon-glow-subtle">
                   KEEP SHOWING UP.
                 </p>
               </div>
@@ -351,65 +680,66 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
                 className="font-display text-xl tracking-wide px-12 py-7"
                 onClick={onSignUp}
               >
-                SIGN UP TO GET STARTED
+                START YOUR FREE TRIAL
                 <ArrowRight className="w-5 h-5 ml-2" />
               </Button>
 
               <p className="text-muted-foreground text-sm mt-6">
-                Start building a body — and mindset — that lasts.
+                7 days free · No card required · Cancel anytime
               </p>
             </motion.div>
-          </div>
-        </section>
+          </motion.div>
+        </div>
+      </section>
 
-        {/* Meet the Founder Banner */}
-        <section className="container mx-auto px-6 py-12 border-t border-border">
-          <Link to="/founder" className="block max-w-3xl mx-auto mb-6">
-            <Card className="border-2 border-primary/40 bg-primary/5 p-6 hover:bg-primary/10 transition-all neon-border-subtle">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="w-14 h-14 rounded-full bg-primary/20 flex items-center justify-center neon-glow">
-                    <Sparkles className="w-7 h-7 text-primary" />
-                  </div>
-                  <div>
-                    <p className="font-display text-2xl tracking-wide text-foreground">
-                      MEET THE <span className="text-primary neon-glow-subtle">FOUNDER</span>
-                    </p>
-                    <p className="text-muted-foreground mt-1">
-                      The story behind Unbreakable — and why it exists.
-                    </p>
-                  </div>
+      {/* ━━━ Meet the founder ━━━ */}
+      <section className="container mx-auto px-6 py-12 border-t border-border">
+        <div className="grid sm:grid-cols-2 gap-6 max-w-3xl mx-auto">
+          <Link to="/founder">
+            <Card className="border border-primary/30 bg-primary/5 p-6 hover:bg-primary/10 transition-all h-full">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center neon-glow flex-shrink-0">
+                  <Sparkles className="w-6 h-6 text-primary" />
                 </div>
-                <ArrowRight className="w-6 h-6 text-primary hidden sm:block" />
+                <div>
+                  <p className="font-display text-xl tracking-wide text-foreground">
+                    MEET THE{' '}
+                    <span className="text-primary neon-glow-subtle">
+                      FOUNDER
+                    </span>
+                  </p>
+                  <p className="text-muted-foreground text-sm mt-1">
+                    The story behind Unbreakable.
+                  </p>
+                </div>
               </div>
             </Card>
           </Link>
 
-          {/* Coach Banner */}
-          <Link to="/help" className="block max-w-3xl mx-auto">
-            <Card className="border-2 border-primary/40 bg-primary/5 p-6 hover:bg-primary/10 transition-all neon-border-subtle">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="w-14 h-14 rounded-full bg-primary/20 flex items-center justify-center neon-glow">
-                    <Flame className="w-7 h-7 text-primary" />
-                  </div>
-                  <div>
-                    <p className="font-display text-2xl tracking-wide text-foreground">
-                      UNBREAKABLE <span className="text-primary neon-glow-subtle">COACHING</span>
-                    </p>
-                    <p className="text-muted-foreground mt-1">
-                      Your personal coach for training, nutrition, mindset, and beyond.
-                    </p>
-                  </div>
+          <Link to="/help">
+            <Card className="border border-primary/30 bg-primary/5 p-6 hover:bg-primary/10 transition-all h-full">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center neon-glow flex-shrink-0">
+                  <Flame className="w-6 h-6 text-primary" />
                 </div>
-                <ArrowRight className="w-6 h-6 text-primary hidden sm:block" />
+                <div>
+                  <p className="font-display text-xl tracking-wide text-foreground">
+                    UNBREAKABLE{' '}
+                    <span className="text-primary neon-glow-subtle">
+                      COACHING
+                    </span>
+                  </p>
+                  <p className="text-muted-foreground text-sm mt-1">
+                    Your personal coach awaits.
+                  </p>
+                </div>
               </div>
             </Card>
           </Link>
-        </section>
+        </div>
+      </section>
 
-        <UnifiedFooter />
-      </div>
-    </SwipeNavigationWrapper>
+      <LandingFooter />
+    </div>
   );
 }
