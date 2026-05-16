@@ -280,5 +280,100 @@ export const mindsetL3Unit2: Unit = {
         ],
       },
     },
+    {
+      number: 6,
+      title: 'Altitude Training & Oxygen Manipulation',
+      learningOutcome: 'Understand the physiological adaptations caused by reduced oxygen availability, and how altitude simulation and breath-hold training can be used to enhance endurance, resilience, and oxygen efficiency.',
+      assessmentCriteria: [
+        'Explain the body\'s acute and chronic responses to reduced oxygen (hypoxia) at altitude',
+        'Describe the difference between live-high/train-low and simulated altitude training methods',
+        'Design a safe introductory protocol using breath-hold walking or simulated hypoxic training',
+      ],
+      content: [
+        {
+          heading: 'Why Altitude Matters',
+          paragraphs: [
+            'At sea level, the air contains approximately 20.9% oxygen. At 2,500 metres, the air still contains 20.9% oxygen — but the reduced atmospheric pressure means each breath delivers fewer oxygen molecules to your lungs. Your body must adapt or suffer.',
+            'Elite endurance athletes have trained at altitude for decades because these adaptations — more red blood cells, improved oxygen efficiency, greater capillary density — transfer directly to better performance at sea level. But you don\'t need to move to the mountains. Modern science has given us accessible ways to trigger similar adaptations.',
+          ],
+        },
+        {
+          heading: 'Acute vs Chronic Responses to Hypoxia',
+          paragraphs: [
+            'When you first experience reduced oxygen, your body mounts an immediate response:',
+          ],
+          bullets: [
+            'Breathing rate increases — your body tries to get more air in',
+            'Heart rate rises — pumping blood faster to deliver available oxygen more quickly',
+            'Blood pressure increases — prioritising oxygen delivery to vital organs',
+            'Cognitive function may decrease — the brain is extremely sensitive to oxygen levels',
+          ],
+          paragraphs: [
+            'If the hypoxic exposure is repeated consistently over days and weeks, chronic adaptations begin:',
+          ],
+          bullets: [
+            'EPO production increases — erythropoietin, a hormone produced by the kidneys, stimulates the bone marrow to produce more red blood cells',
+            'Haemoglobin concentration rises — more oxygen-carrying capacity per unit of blood',
+            'Capillary density increases — more blood vessels in muscle tissue means better oxygen delivery at the cellular level',
+            'Mitochondrial efficiency improves — cells become better at using available oxygen',
+            'Ventilatory response adapts — breathing becomes more efficient, extracting more oxygen per breath',
+          ],
+          imagePlaceholder: 'Timeline diagram showing acute responses (hours) transitioning to chronic adaptations (weeks) during altitude exposure, with key physiological changes at each stage',
+        },
+        {
+          heading: 'Training Methods',
+          paragraphs: [
+            'There are several approaches to altitude and hypoxic training, ranging from natural to simulated:',
+          ],
+          bullets: [
+            'Live High / Train Low (LHTL) — the gold standard. Living at altitude (2,000-2,500m) triggers chronic adaptations while training at low altitude maintains high-intensity performance. Used by elite endurance athletes worldwide.',
+            'Intermittent Hypoxic Training (IHT) — breathing reduced-oxygen air through a mask or altitude simulator during training sessions. More accessible but provides less total hypoxic exposure.',
+            'Altitude tents / hypoxic chambers — sleeping in a reduced-oxygen environment to trigger EPO production. Requires specialised equipment but available for home use.',
+            'Breath-hold training (simulated altitude) — using breath-hold protocols during walking or exercise to create transient hypoxic conditions. The most accessible method — requires no equipment.',
+          ],
+        },
+        {
+          heading: 'Breath-Hold Walking Protocol',
+          paragraphs: [
+            'Developed from the Oxygen Advantage methodology, breath-hold walking is the simplest way to introduce hypoxic training without any equipment:',
+          ],
+          bullets: [
+            'Walk at a normal pace on flat ground',
+            'Take a normal breath in, a relaxed breath out, then hold your nose and continue walking',
+            'Count your steps during the breath hold. Walk until you feel a moderate to strong air hunger — not maximum',
+            'Release the hold, breathe normally through your nose for 30-60 seconds',
+            'Repeat 8-10 times',
+            'Your step count will typically increase over weeks as your CO2 tolerance and oxygen efficiency improve',
+          ],
+          paragraphs: [
+            'This protocol creates repeated transient drops in blood oxygen saturation, triggering a mild version of the same adaptations seen at altitude. It also trains your chemoreceptors to tolerate higher CO2 levels, which improves breathing efficiency during exercise.',
+          ],
+        },
+        {
+          heading: 'Safety Considerations',
+          paragraphs: [
+            'Hypoxic training — even mild breath-hold protocols — must be approached with respect:',
+          ],
+          bullets: [
+            'Never practise breath holds in water — shallow water blackout kills even experienced swimmers',
+            'Stop immediately if you feel dizzy, see spots, or experience tingling beyond mild discomfort',
+            'Start conservatively — use moderate (not maximum) breath holds and increase gradually over weeks',
+            'Avoid hypoxic training if you have cardiovascular conditions, are pregnant, or have epilepsy without medical clearance',
+            'Breath-hold training on land while walking is inherently safe because if you were to lose consciousness (extremely unlikely at moderate holds), you would simply start breathing again automatically',
+          ],
+        },
+      ],
+      unbreakableInsight: 'You don\'t need a mountain to train like you live on one. Every breath hold you perform during a walk teaches your body to do more with less oxygen. This is the same adaptation that separates recreational athletes from elite performers — oxygen efficiency. The air is free. Use it wisely.',
+      coachNote: 'Start with breath-hold walking before investing in altitude tents or hypoxic masks. It\'s free, it\'s safe when done on land, and it gives you a direct experience of what hypoxic training feels like. Track your step count during holds — watching it increase over weeks is one of the most satisfying metrics in training.',
+      practicalTask: {
+        title: 'Breath-Hold Walking Introduction',
+        instructions: 'Perform 3 sessions of breath-hold walking over one week (minimum 48 hours between sessions). Each session: 10 minutes of normal nasal breathing walking to warm up, then 8 breath-hold walks with 60-second recovery breathing between each. Record your step count for each hold. Do not push to maximum — aim for a strong but manageable air hunger.',
+        reflectionQuestions: [
+          'Did your step count increase across the three sessions?',
+          'How did you feel in the minutes after completing the breath-hold sets compared to normal walking?',
+          'Can you see how this method could complement your existing training programme?',
+        ],
+      },
+    },
   ],
 };
