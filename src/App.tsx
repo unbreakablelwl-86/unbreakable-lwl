@@ -44,6 +44,8 @@ import CoachDashboard from "./pages/CoachDashboard";
 import MyCoaching from "./pages/MyCoaching";
 import Plans from "./pages/Plans";
 import Founder from "./pages/Founder";
+import Privacy from "./pages/Privacy";
+import Terms from "./pages/Terms";
 
 const queryClient = new QueryClient();
 
@@ -62,6 +64,10 @@ const App = () => (
               
               {/* Founder page - pre-sign-in */}
               <Route path="/founder" element={<Founder />} />
+              
+              {/* Legal pages - public */}
+              <Route path="/privacy" element={<Privacy />} />
+              <Route path="/terms" element={<Terms />} />
               
               {/* Onboarding wizard - mandatory for new users */}
               <Route path="/onboarding" element={<Onboarding />} />
