@@ -327,5 +327,110 @@ export const mindsetL3Unit1: Unit = {
         ],
       },
     },
+    {
+      number: 7,
+      title: 'Psychoneuroimmunology & the Mind-Body Connection',
+      learningOutcome: 'Understand the bidirectional relationship between psychological states and immune function, and how chronic stress, emotional states, and mental practices directly influence physical health outcomes.',
+      assessmentCriteria: [
+        'Define psychoneuroimmunology and explain its relevance to resilience training',
+        'Describe how chronic stress suppresses immune function through the HPA axis',
+        'Identify evidence-based mental practices that positively influence immune markers',
+      ],
+      content: [
+        {
+          heading: 'Your Mind and Body Are Not Separate Systems',
+          paragraphs: [
+            'Psychoneuroimmunology (PNI) is the study of how psychological processes interact with the nervous and immune systems. It demolishes the outdated idea that mind and body operate independently. Your thoughts, emotions, and stress levels directly influence your immune cells, inflammatory markers, wound healing speed, and susceptibility to illness.',
+            'This is not metaphorical. Chronic psychological stress measurably reduces natural killer cell activity, slows wound healing by 25–40%, increases susceptibility to upper respiratory infections, and accelerates cellular ageing through telomere shortening. Your mental state is a physiological variable — as real and measurable as your heart rate.',
+          ],
+        },
+        {
+          heading: 'The Stress-Immunity Pathway',
+          bullets: [
+            'Acute stress (short-term) temporarily enhances immune function — preparing the body for potential injury. This is adaptive and beneficial',
+            'Chronic stress suppresses immune function through sustained cortisol elevation, which reduces lymphocyte production and natural killer cell activity',
+            'Loneliness and social isolation produce inflammatory profiles similar to chronic stress — elevating C-reactive protein and interleukin-6',
+            'Sleep deprivation compounds immune suppression — even one night of poor sleep reduces natural killer cell activity by up to 70%',
+            'The gut-brain axis connects emotional states to gut microbiome health, which in turn influences systemic inflammation and immune regulation',
+          ],
+        },
+        {
+          heading: 'Mental Practices That Support Immunity',
+          paragraphs: [
+            'If psychological stress harms immune function, it follows that psychological interventions can support it. Research confirms this across multiple modalities.',
+          ],
+          bullets: [
+            'Meditation — Regular meditation practice is associated with reduced inflammatory markers, increased telomerase activity, and enhanced antibody response to vaccination',
+            'Social connection — Strong social bonds are associated with lower inflammatory markers and better immune surveillance',
+            'Positive affect — Genuine positive emotions (not forced positivity) are associated with stronger immune responses. Gratitude practices and savouring positive experiences measurably influence immune markers',
+            'Cold exposure — Controlled cold stress (as covered in Level 2) increases circulating immune cells and reduces inflammatory cytokines',
+            'Exercise — Moderate regular exercise enhances immune surveillance. Overtraining suppresses it. The dose matters',
+          ],
+        },
+      ],
+      unbreakableInsight: 'Every time you manage your stress, regulate your emotions, sleep well, and connect with people you care about — you are not just protecting your mind. You are directly strengthening your immune system. Mental resilience is physical health.',
+      coachNote: 'This chapter connects everything in the course. When you practice breathwork, improve sleep, build social connections, and manage stress — you are not doing separate things. You are running one integrated system better.',
+      practicalTask: {
+        title: 'Mind-Body Connection Audit',
+        instructions: 'For two weeks, track three variables daily: stress level (1–10), sleep quality (1–10), and any illness symptoms (sore throat, fatigue, headaches, digestive issues). Also note any significant emotional events. Look for correlations between high-stress periods and physical symptoms.',
+        reflectionQuestions: [
+          'Do you notice physical symptoms appearing during or shortly after high-stress periods?',
+          'How does sleep quality correlate with your susceptibility to minor illness?',
+          'Does this data change how you prioritise stress management and recovery?',
+        ],
+      },
+    },
+    {
+      number: 8,
+      title: 'Emotional Intelligence & Social Awareness',
+      learningOutcome: 'Develop advanced emotional intelligence skills including self-awareness, empathy, social perception, and the ability to navigate complex interpersonal dynamics under pressure.',
+      assessmentCriteria: [
+        'Define the four domains of emotional intelligence and their relevance to resilience',
+        'Distinguish between cognitive empathy and affective empathy',
+        'Apply emotional intelligence principles to manage conflict and build stronger relationships',
+      ],
+      content: [
+        {
+          heading: 'Beyond Self-Regulation',
+          paragraphs: [
+            'Earlier chapters focused on managing your own emotions — the internal dimension of emotional intelligence. This chapter extends outward: understanding others, reading social dynamics, navigating conflict, and building the interpersonal skills that advanced resilience requires. Resilience is not a solo sport.',
+            'Daniel Goleman\'s emotional intelligence framework identifies four domains: self-awareness (recognising your own emotions), self-management (regulating your responses), social awareness (reading others and situations), and relationship management (influencing, coaching, and resolving conflict). Levels 2 and earlier Level 3 chapters developed the first two. This chapter develops the latter two.',
+          ],
+        },
+        {
+          heading: 'Empathy — The Foundation of Social Intelligence',
+          bullets: [
+            'Cognitive empathy — Understanding what another person is thinking or feeling without necessarily sharing that feeling. Essential for effective communication, negotiation, and leadership',
+            'Affective empathy — Actually feeling what another person feels. Powerful for connection but can lead to emotional overwhelm if unmanaged',
+            'Empathic accuracy — The ability to correctly identify another person\'s emotional state. This is a trainable skill, not an innate gift',
+            'Empathy fatigue — Constant exposure to others\' distress without recovery depletes your own emotional resources. Boundaries are essential',
+          ],
+        },
+        {
+          heading: 'Navigating Conflict & Difficult Conversations',
+          paragraphs: [
+            'Conflict is inevitable in any meaningful relationship. Emotional intelligence does not eliminate conflict — it gives you the tools to navigate it without destroying the relationship or yourself.',
+          ],
+          bullets: [
+            'Separate behaviour from identity — Address what someone did, not who they are. "That comment was hurtful" versus "you are a hurtful person"',
+            'Listen to understand, not to respond — Most people listen while preparing their rebuttal. Genuine listening means suspending your response until the other person feels heard',
+            'Name the emotion — "I notice I am feeling defensive right now" disarms the emotion and prevents reactive escalation',
+            'Seek the need behind the position — Every conflict position ("you never listen!") has an underlying need ("I need to feel valued"). Address the need, not just the position',
+            'Know when to pause — If you or the other person is in a heightened sympathetic state, nothing productive will happen. Take a break and return when regulated',
+          ],
+        },
+      ],
+      unbreakableInsight: 'The strongest people are not the ones who suppress their emotions or dominate every room. They are the ones who understand their own emotional landscape, read others accurately, and navigate conflict without losing themselves.',
+      coachNote: 'Emotional intelligence is not soft — it is the hardest skill to develop because it requires genuine self-honesty. Start by noticing your default conflict style: do you fight, flee, freeze, or fawn? That awareness is the starting point.',
+      practicalTask: {
+        title: 'Empathy & Conflict Navigation Practice',
+        instructions: 'This week, practice active listening in three conversations. Your only goal is to understand what the other person is feeling — not to fix, advise, or respond. After each conversation, write down: (1) what they said, (2) what you think they were actually feeling, and (3) what need was driving the conversation.',
+        reflectionQuestions: [
+          'How did it feel to listen without preparing a response?',
+          'Were you able to identify the emotion behind the words, or did you default to the surface content?',
+          'Did the quality of the conversation change when you focused on understanding rather than responding?',
+        ],
+      },
+    },
   ],
 };

@@ -397,5 +397,111 @@ export const nutritionL3Unit1: Unit = {
         ],
       },
     },
+    {
+      number: 7,
+      title: 'Fibre & the Gut Microbiome',
+      learningOutcome: 'Understand the role of dietary fibre in health, the function and importance of the gut microbiome, and how fibre intake influences gut health, immune function, and metabolic regulation.',
+      assessmentCriteria: [
+        'Classify the types of dietary fibre and their distinct physiological effects',
+        'Explain how the gut microbiome influences health beyond the digestive system',
+        'Recommend evidence-based strategies for optimising fibre intake and microbiome diversity',
+      ],
+      content: [
+        {
+          heading: 'Fibre — The Most Undervalued Nutrient',
+          paragraphs: [
+            'Dietary fibre consistently ranks among the most beneficial nutrients for long-term health outcomes, yet average intakes across the UK and Western world fall well below recommended levels. The recommended intake is 30g per day; the average British adult consumes approximately 18g. This gap has measurable consequences for gut health, metabolic regulation, cardiovascular risk, and even mental health.',
+            'Fibre is not a single substance — it is a broad category of plant-based carbohydrates that resist digestion in the small intestine. Different types of fibre have different physiological effects, and a diverse fibre intake supports a diverse microbiome.',
+          ],
+        },
+        {
+          heading: 'Types of Dietary Fibre',
+          bullets: [
+            'Soluble fibre — Dissolves in water to form a gel-like substance. Slows gastric emptying, stabilises blood glucose, and lowers LDL cholesterol by binding bile acids. Found in oats, beans, lentils, apples, and barley',
+            'Insoluble fibre — Does not dissolve in water. Adds bulk to stool, promotes regular bowel movements, and reduces transit time. Found in whole grains, vegetables, wheat bran, and nuts',
+            'Resistant starch — Reaches the large intestine intact where it is fermented by gut bacteria, producing short-chain fatty acids (SCFAs). Found in cooked and cooled potatoes, green bananas, and legumes',
+            'Prebiotic fibre — Specifically feeds beneficial gut bacteria. Includes inulin, fructo-oligosaccharides (FOS), and galacto-oligosaccharides (GOS). Found in garlic, onions, leeks, asparagus, and bananas',
+          ],
+        },
+        {
+          heading: 'The Gut Microbiome — Your Internal Ecosystem',
+          paragraphs: [
+            'Your gut houses approximately 100 trillion microorganisms — collectively known as the gut microbiome. This ecosystem weighs roughly 2kg and contains more cells than the rest of your body combined. It is not a passive colony; it actively influences your health in ways that extend far beyond digestion.',
+          ],
+          bullets: [
+            'Immune function — Approximately 70% of your immune system resides in or around the gut. A diverse microbiome supports robust immune surveillance',
+            'Mental health — The gut-brain axis connects gut microbiome composition to mood, anxiety, and cognitive function via the vagus nerve and neurotransmitter production. Approximately 95% of your serotonin is produced in the gut',
+            'Metabolic regulation — Gut bacteria influence nutrient absorption, fat storage, insulin sensitivity, and appetite signalling',
+            'Inflammation — An imbalanced microbiome (dysbiosis) is associated with systemic inflammation, which underlies many chronic diseases',
+            'Diversity is key — Research consistently shows that microbiome diversity is more important than the abundance of any single strain. Eating 30+ different plant foods per week is the single most effective strategy for increasing diversity',
+          ],
+        },
+      ],
+      unbreakableInsight: 'Your gut is not just processing food — it is influencing your immune system, your mood, your body composition, and your brain function. Feeding your microbiome is not a trendy wellness practice; it is fundamental nutrition science.',
+      coachNote: 'The simplest intervention for most people: add more variety. Instead of eating the same five vegetables every week, aim for 30 different plant foods (vegetables, fruits, grains, legumes, nuts, seeds, herbs, spices). Variety feeds diversity.',
+      practicalTask: {
+        title: 'Plant Diversity Challenge',
+        instructions: 'For one week, track every distinct plant food you consume (vegetables, fruits, grains, legumes, nuts, seeds, herbs, and spices each count). Aim for 30+ different plants across the week. At the end, calculate your daily fibre intake on three representative days using a food tracking app.',
+        reflectionQuestions: [
+          'How many different plant foods did you reach? Was it more or fewer than you expected?',
+          'What was your estimated daily fibre intake compared to the 30g recommendation?',
+          'Which categories of plant foods were underrepresented in your diet?',
+        ],
+      },
+    },
+    {
+      number: 8,
+      title: 'Nutrition for Immune Function & Recovery',
+      learningOutcome: 'Understand how specific nutrients and dietary patterns support immune function, reduce inflammation, and enhance recovery from training, illness, and injury.',
+      assessmentCriteria: [
+        'Identify the key nutrients that support immune cell function and inflammation management',
+        'Explain the relationship between training load, nutrition, and immune suppression',
+        'Design a nutrition strategy that supports immune function during periods of high training volume',
+      ],
+      content: [
+        {
+          heading: 'The Immune System Runs on Nutrition',
+          paragraphs: [
+            'Your immune system is one of the most metabolically active systems in your body. Immune cells replicate rapidly, produce vast quantities of signalling molecules, and require a constant supply of specific nutrients to function effectively. Nutritional deficiency — even subclinical deficiency — measurably impairs immune surveillance, slows recovery from infection, and increases susceptibility to illness.',
+            'This is particularly relevant for people who train regularly. Heavy training creates a temporary window of immune suppression lasting 3–72 hours post-exercise (the "open window" theory). Strategic nutrition during and around training can narrow this window and support faster recovery.',
+          ],
+        },
+        {
+          heading: 'Key Immune-Supporting Nutrients',
+          bullets: [
+            'Vitamin C — Supports neutrophil function and acts as an antioxidant. Does not prevent colds but may reduce duration and severity. Found in citrus fruits, peppers, strawberries, broccoli. Aim for 200mg+/day through food',
+            'Vitamin D — Modulates both innate and adaptive immune responses. Deficiency is extremely common in the UK, especially October–March. Supplement 1000–2000 IU daily during winter months',
+            'Zinc — Essential for immune cell development and function. Even mild deficiency significantly impairs immunity. Found in meat, shellfish, legumes, nuts, and seeds. Athletes may need 15–30mg/day',
+            'Iron — Required for immune cell proliferation. Deficiency impairs lymphocyte and neutrophil function. Monitor ferritin levels, especially in female athletes and those on restricted diets',
+            'Omega-3 fatty acids — EPA and DHA regulate inflammatory responses. They do not suppress inflammation entirely but help resolve it more efficiently. 2–3g combined EPA/DHA daily from oily fish or supplementation',
+            'Protein — Amino acids are the building blocks of immune cells and antibodies. Inadequate protein directly impairs immune function. Maintain 1.6–2.2g/kg during illness or heavy training',
+          ],
+        },
+        {
+          heading: 'Nutrition Strategies for Training Recovery',
+          paragraphs: [
+            'The post-training "open window" is a real phenomenon, but it is manageable through nutrition. The goal is not to suppress the immune response to training (which is necessary for adaptation) but to support rapid immune restoration.',
+          ],
+          bullets: [
+            'Do not train fasted during high-volume phases — Carbohydrate availability during training maintains immune cell function and reduces cortisol response',
+            'Post-training carbohydrate + protein — Consuming 0.8–1.2g/kg carbohydrate and 0.3–0.4g/kg protein within 2 hours of training reduces immune suppression duration',
+            'Avoid severe energy deficits — Prolonged calorie restriction significantly impairs immune function. If dieting, moderate the deficit (300–500 kcal below TDEE) and keep protein high',
+            'Polyphenol-rich foods — Berries, dark chocolate, green tea, and colourful vegetables provide antioxidants that support recovery without blunting adaptive signalling',
+            'Sleep and nutrition interact — Poor sleep amplifies immune suppression from training. Prioritise both together, not separately',
+          ],
+        },
+      ],
+      unbreakableInsight: 'The fittest person who gets ill every other month is not actually the fittest person. True performance requires a robust immune system — and that immune system requires consistent, quality nutrition as its fuel supply.',
+      coachNote: 'If you get ill frequently during heavy training phases, before adding supplements, audit the basics: are you eating enough total calories? Enough protein? Enough fruits and vegetables? Sleeping enough? Fix those first — they account for 90% of the immune equation.',
+      practicalTask: {
+        title: 'Immune Nutrition Audit',
+        instructions: 'Track your food intake for three training days and assess your intake of the key immune nutrients listed above. Use a food tracking app to estimate vitamin C, zinc, protein, and omega-3 intake. Compare to the targets. Identify the two largest gaps and create a plan to close them through food first, supplements second.',
+        reflectionQuestions: [
+          'Which immune-supporting nutrients were you consistently falling short on?',
+          'Do you notice a pattern between heavy training weeks and increased illness?',
+          'What two dietary changes would make the biggest impact on your immune resilience?',
+        ],
+      },
+    },
   ],
 };

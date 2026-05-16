@@ -336,5 +336,109 @@ export const mindsetL2Unit3: Unit = {
         ],
       },
     },
+    {
+      number: 7,
+      title: 'Procrastination & Resistance',
+      learningOutcome: 'Understand the psychology of procrastination, why willpower-based approaches fail, and evidence-based strategies for overcoming resistance to important tasks.',
+      assessmentCriteria: [
+        'Explain procrastination as an emotional regulation problem rather than a time management issue',
+        'Identify the key triggers that drive procrastination',
+        'Apply practical techniques to reduce resistance and initiate action',
+      ],
+      content: [
+        {
+          heading: 'Procrastination Is Not Laziness',
+          paragraphs: [
+            'Procrastination is not a character flaw or a lack of discipline — it is an emotional regulation problem. When a task triggers negative emotions (boredom, anxiety, self-doubt, overwhelm), your brain seeks immediate relief by switching to something more pleasant. Scrolling your phone, checking emails, or tidying your desk are not productive — they are emotional escape routes.',
+            'Understanding this distinction is critical. If you frame procrastination as laziness, the solution feels like "try harder." But research by Dr Tim Pychyl and others shows that the real solution is managing the emotions attached to the task, not simply exerting more willpower.',
+          ],
+        },
+        {
+          heading: 'Common Procrastination Triggers',
+          bullets: [
+            'Task ambiguity — If you do not know exactly what to do, your brain resists starting. Vague tasks feel overwhelming',
+            'Fear of failure — If the task is tied to your identity ("if I fail this, I am not good enough"), avoidance feels safer than attempting',
+            'Perfectionism — If your standard is impossibly high, starting feels pointless because the outcome will never match your expectations',
+            'Low immediate reward — Your brain heavily discounts future benefits. A task that pays off in three months feels less urgent than one that provides instant satisfaction',
+            'Decision fatigue — If you have already made dozens of decisions today, your capacity to initiate difficult tasks is depleted',
+          ],
+        },
+        {
+          heading: 'Practical Anti-Procrastination Strategies',
+          bullets: [
+            'The two-minute rule — Commit to starting for just two minutes. Starting is the hardest part; once you begin, momentum often carries you forward',
+            'Clarify the next action — Transform vague tasks ("work on the project") into specific actions ("write the introduction paragraph"). Specificity reduces resistance',
+            'Remove friction — Make the desired action as easy as possible. Lay out gym clothes the night before. Open the document before you "decide" to start',
+            'Pair with reward — Attach an immediate reward to the difficult task. Listen to a favourite podcast only during training. Have your best coffee only during study time',
+            'Time-boxing — Commit to a fixed time window (25 minutes), not a fixed output. You cannot control results, but you can control your time allocation',
+            'Forgive and restart — When you procrastinate (and you will), self-criticism makes it worse. Acknowledge it, understand the trigger, and restart without drama',
+          ],
+        },
+      ],
+      unbreakableInsight: 'You do not need to feel motivated to start. You need to start in order to feel motivated. Action generates motivation — not the other way around.',
+      coachNote: 'Next time you catch yourself procrastinating, do not ask "why am I so lazy?" Ask "what emotion am I avoiding?" That question changes everything about how you approach the problem.',
+      practicalTask: {
+        title: 'Procrastination Pattern Analysis',
+        instructions: 'For five days, track every instance of procrastination. Note: (1) the task you avoided, (2) the emotion you felt when thinking about it, (3) what you did instead, and (4) what eventually got you started. Look for patterns in your triggers and your successful start strategies.',
+        reflectionQuestions: [
+          'What emotions most commonly trigger your procrastination?',
+          'Is there a specific time of day when resistance is highest?',
+          'Which strategy was most effective at getting you to start?',
+        ],
+      },
+    },
+    {
+      number: 8,
+      title: 'Accountability & Progress Tracking',
+      learningOutcome: 'Understand the science of accountability, learn to design effective tracking systems, and build structures that sustain long-term behaviour change.',
+      assessmentCriteria: [
+        'Explain why accountability significantly increases follow-through on commitments',
+        'Design a practical progress tracking system for personal goals',
+        'Identify different types of accountability and their effectiveness',
+      ],
+      content: [
+        {
+          heading: 'Why Accountability Works',
+          paragraphs: [
+            'Research by the American Society of Training and Development found that having a specific accountability appointment with someone increases the probability of completing a goal from 65% to 95%. Accountability works because it leverages social commitment — your brain treats promises made to others as significantly more binding than promises made to yourself.',
+            'Accountability is not about punishment or shame. It is about creating a structure where your intentions are visible, your progress is tracked, and your commitment is reinforced by someone or something outside your own head.',
+          ],
+        },
+        {
+          heading: 'Types of Accountability',
+          bullets: [
+            'Self-accountability — Tracking systems, journals, habit apps. Lowest friction, but also lowest external pressure. Works best for people with strong self-regulation',
+            'Peer accountability — A training partner, study buddy, or friend with similar goals. Moderate pressure, mutual benefit. Most accessible and sustainable for most people',
+            'Coach/mentor accountability — A professional relationship where someone holds you to higher standards than you would set for yourself. Highest impact but requires investment',
+            'Public accountability — Sharing goals publicly (social media, community groups). Powerful motivator but carries risk of ego-driven goal pursuit',
+            'Environmental accountability — Designing your environment so the default action is the desired one. The most underrated form — it works without requiring willpower',
+          ],
+        },
+        {
+          heading: 'Designing Your Tracking System',
+          paragraphs: [
+            'A tracking system should be simple enough to maintain daily and detailed enough to reveal patterns. Overly complex systems get abandoned within two weeks. The best system is the one you will actually use.',
+          ],
+          bullets: [
+            'Track lead indicators, not just outcomes — Track sessions completed, not just weight lost. Track hours studied, not just exam results. Lead indicators are within your control',
+            'Use visual systems — Streak calendars, progress bars, and habit grids provide immediate visual feedback that reinforces commitment',
+            'Review weekly — Set a fixed weekly review time (10 minutes) to assess what worked, what did not, and what needs adjusting',
+            'Celebrate consistency, not perfection — Hitting 85% adherence is excellent. Demanding 100% creates all-or-nothing thinking that collapses at the first miss',
+            'Keep it visible — Put your tracker where you see it daily. Out of sight means out of mind means out of practice',
+          ],
+        },
+      ],
+      unbreakableInsight: 'The difference between someone who achieves their goals and someone who does not is rarely talent or knowledge — it is systems. Build systems that make consistency the default, and motivation becomes optional.',
+      coachNote: 'Find one person this week to share a goal with — and agree to check in weekly. It does not need to be formal. A simple text every Sunday night saying "I did 4 out of 5 sessions" is more powerful than any motivational video.',
+      practicalTask: {
+        title: 'Accountability System Design',
+        instructions: 'Choose one goal you are working toward. Design a tracking system using the principles above: select 2–3 lead indicators to track daily, choose a visual format (paper calendar, app, spreadsheet), set a weekly review time, and identify one accountability partner. Run this system for two weeks.',
+        reflectionQuestions: [
+          'Did tracking your lead indicators change your daily behaviour?',
+          'How did having an accountability partner affect your consistency?',
+          'What would you change about your tracking system based on the first two weeks?',
+        ],
+      },
+    },
   ],
 };

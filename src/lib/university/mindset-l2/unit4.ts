@@ -363,5 +363,118 @@ export const mindsetL2Unit4: Unit = {
         ],
       },
     },
+    {
+      number: 7,
+      title: 'Nutrition & Hydration for Mental Performance',
+      learningOutcome: 'Understand how nutrition and hydration directly affect cognitive function, mood, and mental resilience, and identify practical dietary strategies that support mental performance.',
+      assessmentCriteria: [
+        'Explain the relationship between blood glucose stability and cognitive function',
+        'Describe how dehydration impairs focus, mood, and decision-making',
+        'Identify key nutrients that support brain health and mental performance',
+      ],
+      content: [
+        {
+          heading: 'Your Brain Runs on Fuel',
+          paragraphs: [
+            'Your brain accounts for roughly 2% of your body weight but consumes approximately 20% of your daily energy. It is the most metabolically demanding organ in your body — and it is exquisitely sensitive to fuel quality, timing, and hydration status. Poor nutrition does not just affect your body; it directly impairs your ability to think, focus, regulate emotions, and make decisions.',
+            'This is not about optimising for marginal gains. The basics — stable blood glucose, adequate hydration, sufficient protein, and essential fatty acids — provide the foundation for everything else in this course. No amount of breathwork or habit design can compensate for a brain running on caffeine, sugar, and dehydration.',
+          ],
+        },
+        {
+          heading: 'Blood Glucose & Cognitive Function',
+          bullets: [
+            'Your brain relies primarily on glucose for energy. Sharp drops in blood glucose (from skipping meals or consuming high-sugar foods) cause fatigue, irritability, poor concentration, and impulsive decision-making',
+            'Stable blood glucose — achieved through regular meals containing protein, fibre, and complex carbohydrates — supports sustained focus and emotional stability',
+            'The "afternoon slump" many people experience is often a blood glucose crash, not a natural circadian dip. Adjusting lunch composition can eliminate it',
+            'Caffeine masks the symptoms of poor fuelling but does not fix the underlying problem. It borrows energy from later — with interest',
+          ],
+        },
+        {
+          heading: 'Hydration & Mental Performance',
+          paragraphs: [
+            'Even mild dehydration (1–2% body weight loss) measurably impairs attention, working memory, reaction time, and mood. Most people are mildly dehydrated most of the time without realising it, because thirst is a lagging indicator — by the time you feel thirsty, cognitive performance has already declined.',
+          ],
+          bullets: [
+            'Aim for 2–3 litres of water per day as a baseline, more during training or hot weather',
+            'Front-load hydration — drink 500ml within the first hour of waking to rehydrate after overnight fluid loss',
+            'Pair water with electrolytes during and after exercise to replace sodium, potassium, and magnesium lost in sweat',
+            'Monitor urine colour — pale straw is well-hydrated; dark yellow suggests dehydration',
+          ],
+        },
+        {
+          heading: 'Key Brain Nutrients',
+          bullets: [
+            'Omega-3 fatty acids (EPA/DHA) — Essential for brain cell membrane integrity, anti-inflammatory effects, and neurotransmitter function. Found in oily fish, walnuts, flaxseeds',
+            'B vitamins — Critical for energy metabolism and neurotransmitter synthesis. Found in whole grains, eggs, leafy greens, meat',
+            'Magnesium — Supports nervous system function and sleep quality. Found in dark chocolate, nuts, seeds, leafy greens',
+            'Iron — Carries oxygen to the brain. Deficiency causes fatigue, poor concentration, and low mood. Found in red meat, lentils, spinach',
+          ],
+        },
+      ],
+      unbreakableInsight: 'You would not put the wrong fuel in a high-performance car and expect it to run well. Your brain is the highest-performance machine you own — and most people fuel it with caffeine and hope.',
+      coachNote: 'Before reaching for another coffee when your focus drops, ask yourself three questions: Have I eaten in the last 3–4 hours? Have I had at least a litre of water today? Did I sleep well? Fix those first.',
+      practicalTask: {
+        title: 'Brain Fuel Audit',
+        instructions: 'For three days, log everything you eat and drink alongside your energy, focus, and mood levels (rated 1–10) at four time points: morning, midday, mid-afternoon, and evening. Look for correlations between meals, hydration, and mental performance.',
+        reflectionQuestions: [
+          'Do you notice patterns between what you eat and how well you focus afterwards?',
+          'How much water are you actually consuming versus how much you think you consume?',
+          'What one nutritional change could make the biggest difference to your daily mental performance?',
+        ],
+      },
+    },
+    {
+      number: 8,
+      title: 'Weekly Review & Continuous Improvement',
+      learningOutcome: 'Learn to implement a structured weekly review process that consolidates learning, tracks progress, identifies adjustments, and sustains long-term development across all areas of this course.',
+      assessmentCriteria: [
+        'Explain why periodic review is essential for long-term behaviour change',
+        'Design a weekly review process covering physical, mental, and lifestyle domains',
+        'Apply the principles of continuous improvement (kaizen) to personal development',
+      ],
+      content: [
+        {
+          heading: 'Why Weekly Reviews Matter',
+          paragraphs: [
+            'Daily habits are the engine of progress, but without periodic review, you risk running the engine in the wrong direction. A weekly review gives you the altitude to see patterns, catch drift, celebrate progress, and make informed adjustments. Without it, you operate on autopilot — repeating the same mistakes and missing opportunities for improvement.',
+            'The concept comes from both military after-action reviews and the Japanese principle of kaizen — continuous, incremental improvement. Elite performers across every domain share this practice: they reflect regularly, honestly, and with a bias toward action.',
+          ],
+        },
+        {
+          heading: 'The Weekly Review Framework',
+          bullets: [
+            'Schedule it — Pick a consistent day and time (Sunday evening works well for most people). Put it in your calendar. Protect it like a training session',
+            'Review your commitments — Look at what you planned to do this week versus what you actually did. No judgement — just honest data',
+            'Identify wins — What went well? What are you proud of? What habits held? Acknowledging progress sustains motivation',
+            'Identify lessons — What did not go as planned? What caused it? Was it within your control? Extract the learning',
+            'Adjust for next week — Based on your review, what one or two adjustments will you make? Do not overhaul everything — small, targeted changes compound',
+            'Set intentions — Write 3–5 specific intentions for the coming week. Make them process-based and within your control',
+          ],
+        },
+        {
+          heading: 'Continuous Improvement Principles',
+          paragraphs: [
+            'Kaizen is not about dramatic transformation — it is about getting 1% better consistently. Over a year, 1% daily improvement compounds to a 37× improvement. The trap most people fall into is seeking dramatic change (which fades quickly) instead of sustainable micro-improvements (which compound indefinitely).',
+          ],
+          bullets: [
+            'Focus on systems, not goals — Goals set direction; systems produce results. Your weekly review is a system for ensuring your systems work',
+            'One adjustment at a time — Resist the urge to change everything after a bad week. Identify the single highest-leverage change and focus there',
+            'Measure lead indicators — Track what you can control (sessions completed, hours slept, meals prepped) not just outcomes (weight, mood, performance)',
+            'Embrace plateaus — Progress is not linear. Plateaus are where consolidation happens. The review helps you stay committed during flat periods',
+          ],
+        },
+      ],
+      unbreakableInsight: 'Most people spend more time planning their meals for the week than reviewing how their life is going. Ten minutes of honest reflection every Sunday night will do more for your progress than ten hours of motivation on Monday morning.',
+      coachNote: 'Your weekly review does not need to be perfect or long. Set a timer for 10 minutes, open your notebook, and answer three questions: What worked? What did I learn? What am I adjusting? That is it. Consistency beats complexity.',
+      practicalTask: {
+        title: 'Weekly Review Implementation',
+        instructions: 'Implement the weekly review framework for four consecutive weeks. Choose a fixed day and time, create a simple template (paper or digital), and complete it every week without exception. After four weeks, evaluate whether the practice has changed your awareness, consistency, or progress.',
+        reflectionQuestions: [
+          'Did the weekly review help you catch problems earlier than you normally would?',
+          'How did the practice of acknowledging wins affect your motivation?',
+          'What patterns emerged over four weeks that you would not have noticed without structured reflection?',
+        ],
+      },
+    },
   ],
 };
