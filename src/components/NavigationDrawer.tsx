@@ -1,13 +1,15 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Home, Calculator, Activity, User, LogOut, Settings, Brain, Sparkles, Flame, Dumbbell, Footprints, Apple, Shield, GraduationCap, UserCheck, ChevronDown } from 'lucide-react';
+import { Menu, X, Home, Calculator, Activity, User, LogOut, Settings, Brain, Sparkles, Flame, Dumbbell, Footprints, Apple, Shield, GraduationCap, UserCheck, ChevronDown, Lock, Calendar } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { useAuth } from '@/hooks/useAuth';
 import { useProfile } from '@/hooks/useProfile';
 import { useUserRole } from '@/hooks/useUserRole';
+import { useSubscription } from '@/hooks/useSubscription';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { AuthModal } from '@/components/tracker/AuthModal';
 
@@ -15,13 +17,19 @@ interface NavigationDrawerProps {
   variant?: 'default' | 'minimal';
 }
 
-const hubLinks = [
-  { to: '/calculators', label: 'CALCULATORS', icon: Calculator },
-  { to: '/programming', label: 'POWER', icon: Dumbbell },
-  { to: '/tracker', label: 'MOVEMENT', icon: Footprints },
-  { to: '/fuel', label: 'FUEL', icon: Apple },
-  { to: '/mindset', label: 'MINDSET', icon: Brain },
+const freeHubLinks = [
+  { to: '/calculators', label: 'CALCULATORS', icon: Calculator, paid: false },
+  { to: '/habits', label: 'HABITS', icon: Calendar, paid: false },
 ];
+
+const paidHubLinks = [
+  { to: '/programming', label: 'POWER', icon: Dumbbell, paid: true },
+  { to: '/tracker', label: 'MOVEMENT', icon: Footprints, paid: true },
+  { to: '/fuel', label: 'FUEL', icon: Apple, paid: true },
+  { to: '/mindset', label: 'MINDSET', icon: Brain, paid: true },
+];
+
+const hubLinks = [...freeHubLinks, ...paidHubLinks];
 
 export function NavigationDrawer({ variant = 'default' }: NavigationDrawerProps) {
   const [open, setOpen] = useState(false);
@@ -30,6 +38,7 @@ export function NavigationDrawer({ variant = 'default' }: NavigationDrawerProps)
   const { user, signOut } = useAuth();
   const { profile } = useProfile();
   const { isAdminOrOwner, isOwner, role } = useUserRole();
+  const { subscribed } = useSubscription();
   const location = useLocation();
 
   const isCoach = role === 'coach';
@@ -145,46 +154,75 @@ export function NavigationDrawer({ variant = 'default' }: NavigationDrawerProps)
                   <ChevronDown className={`w-4 h-4 transition-transform ${(hubOpen || isHubActive) ? 'rotate-180' : ''}`} />
                 </CollapsibleTrigger>
                 <CollapsibleContent className="pl-4 space-y-1 mt-1">
-                  {hubLinks.map((link) => (
-                    <Link
-                      key={link.to}
-                      to={link.to}
-                      onClick={handleNavClick}
-                      className={`flex items-center gap-3 px-4 py-2.5 rounded-lg font-display tracking-wide text-sm transition-all ${
-                        isActive(link.to)
-                          ? 'bg-primary text-primary-foreground'
-                          : 'text-muted-foreground hover:text-primary hover:bg-primary/10'
-                      }`}
-                    >
-                      <link.icon className={`w-4 h-4 ${isActive(link.to) ? '' : 'text-primary'}`} />
-                      {link.label}
-                    </Link>
-                  ))}
+                  {hubLinks.map((link) => {
+                    const isLocked = link.paid && !subscribed && !isAdminOrOwner;
+                    return (
+                      <Link
+                        key={link.to}
+                        to={isLocked ? '/plans' : link.to}
+                        onClick={handleNavClick}
+                        className={`flex items-center gap-3 px-4 py-2.5 rounded-lg font-display tracking-wide text-sm transition-all ${
+                          isActive(link.to)
+                            ? 'bg-primary text-primary-foreground'
+                            : isLocked
+                              ? 'text-muted-foreground/60 hover:text-primary hover:bg-primary/10'
+                              : 'text-muted-foreground hover:text-primary hover:bg-primary/10'
+                        }`}
+                      >
+                        <link.icon className={`w-4 h-4 ${isActive(link.to) ? '' : 'text-primary'}`} />
+                        <span className="flex-1">{link.label}</span>
+                        {isLocked && (
+                          <Badge variant="outline" className="text-[9px] font-display border-primary/30 text-primary px-1.5 py-0">
+                            <Lock className="w-2.5 h-2.5 mr-0.5" />
+                            PRO
+                          </Badge>
+                        )}
+                      </Link>
+                    );
+                  })}
                 </CollapsibleContent>
               </Collapsible>
 
               {/* UNBREAKABLE COACHING */}
-              <Link to="/help" onClick={handleNavClick} className={linkClass('/help')}>
+              <Link to={(!subscribed && !isAdminOrOwner) ? '/plans' : '/help'} onClick={handleNavClick} className={linkClass('/help')}>
                 <Flame className={`w-5 h-5 ${isActive('/help') ? '' : 'text-primary'}`} />
-                UNBREAKABLE COACHING
+                <span className="flex-1">UNBREAKABLE COACHING</span>
+                {!subscribed && !isAdminOrOwner && (
+                  <Badge variant="outline" className="text-[9px] font-display border-primary/30 text-primary px-1.5 py-0">
+                    <Lock className="w-2.5 h-2.5 mr-0.5" />
+                    PRO
+                  </Badge>
+                )}
               </Link>
 
               {/* 121 COACHING */}
               {user && (
                 <Link
-                  to={(isCoach || isDev) ? '/coach' : '/my-coaching'}
+                  to={(isCoach || isDev) ? '/coach' : (!subscribed && !isAdminOrOwner) ? '/plans' : '/my-coaching'}
                   onClick={handleNavClick}
                   className={linkClass((isCoach || isDev) ? '/coach' : '/my-coaching', true)}
                 >
                   <UserCheck className={`w-5 h-5 ${(isActive('/coach') || isActive('/my-coaching')) ? '' : 'text-primary'}`} />
-                  121 COACHING
+                  <span className="flex-1">121 COACHING</span>
+                  {!subscribed && !isAdminOrOwner && !(isCoach || isDev) && (
+                    <Badge variant="outline" className="text-[9px] font-display border-primary/30 text-primary px-1.5 py-0">
+                      <Lock className="w-2.5 h-2.5 mr-0.5" />
+                      PRO
+                    </Badge>
+                  )}
                 </Link>
               )}
 
               {/* UNIVERSITY */}
-              <Link to="/university" onClick={handleNavClick} className={linkClass('/university')}>
+              <Link to={(!subscribed && !isAdminOrOwner) ? '/plans' : '/university'} onClick={handleNavClick} className={linkClass('/university')}>
                 <GraduationCap className={`w-5 h-5 ${isActive('/university') ? '' : 'text-primary'}`} />
-                UNBREAKABLE UNIVERSITY
+                <span className="flex-1">UNBREAKABLE UNIVERSITY</span>
+                {!subscribed && !isAdminOrOwner && (
+                  <Badge variant="outline" className="text-[9px] font-display border-primary/30 text-primary px-1.5 py-0">
+                    <Lock className="w-2.5 h-2.5 mr-0.5" />
+                    PRO
+                  </Badge>
+                )}
               </Link>
             </nav>
 
