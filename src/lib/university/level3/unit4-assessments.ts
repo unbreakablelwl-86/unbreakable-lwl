@@ -11,7 +11,7 @@ export const level3Unit4Assessment: UnitAssessment = {
       question: 'The most common reason people abandon a fitness programme is:',
       options: ['They have too much free time', 'They are too strong', 'It does not fit their lifestyle, preferences, or identity', 'The programme is too short'],
       correctAnswer: 2,
-      explanation: 'Adherence fails most often when a programme conflicts with someone\'s real life, preferences, or sense of self — not because of the programme\'s design alone.',
+      explanation: "Adherence fails most often when a programme conflicts with someone\'s real life, preferences, or sense of self — not because of the programme\'s design alone.",
     },
     {
       type: 'multiple_choice',
@@ -77,7 +77,7 @@ export const level3Unit4Assessment: UnitAssessment = {
       question: 'Blue light exposure before bed can impair sleep because:',
       options: ['It increases hunger', 'It suppresses melatonin production', 'It causes eye strain only', 'It makes you too warm'],
       correctAnswer: 1,
-      explanation: 'Blue light from screens suppresses melatonin — the hormone that signals your body it\'s time to sleep — delaying sleep onset and reducing quality.',
+      explanation: "Blue light from screens suppresses melatonin — the hormone that signals your body it\'s time to sleep — delaying sleep onset and reducing quality.",
     },
     // ─── CH5: Managing Training Around Life ───
     {

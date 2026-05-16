@@ -10,7 +10,7 @@ export const sportRugbyUnit1ChapterQuizzes: ChapterQuiz[] = [
     { type: 'multiple_choice', question: 'How many tackles might a forward perform per match?', options: ['1-5', '5-10', '15-25', '40+'], correctAnswer: 2, explanation: 'Forwards may perform 15-25 tackles per match.' },
     { type: 'multiple_choice', question: 'What force is sustained during scrummaging?', options: ['0.5x bodyweight', 'Exceeding 1.5x bodyweight for 5+ seconds', '5x bodyweight briefly', 'Force is not measured'], correctAnswer: 1, explanation: 'Scrum forces exceed 1.5x bodyweight sustained for 5+ seconds.' },
     { type: 'multiple_choice', question: 'Which position typically has the highest work rate?', options: ['Prop', 'Fly-half', 'Back-row forwards', 'Winger'], correctAnswer: 2, explanation: 'Back-row players combine tackling, carrying, and breakdown work for the highest work rate.' },
-    { type: 'multiple_choice', question: 'What aerobic test is preferred for rugby?', options: ['Cooper run', 'Beep test', 'Yo-Yo IR1 or 30-15 IFT', '2km time trial'], correctAnswer: 2, explanation: 'The Yo-Yo IR1 or 30-15 IFT best reflect rugby\'s intermittent demands.' },
+    { type: 'multiple_choice', question: 'What aerobic test is preferred for rugby?', options: ['Cooper run', 'Beep test', 'Yo-Yo IR1 or 30-15 IFT', '2km time trial'], correctAnswer: 2, explanation: "The Yo-Yo IR1 or 30-15 IFT best reflect rugby\'s intermittent demands." },
   ]),
   cq(1, 2, [
     { type: 'multiple_choice', question: 'What squat strength target should elite rugby forwards aim for?', options: ['1.0-1.5x bodyweight', '1.5-1.8x bodyweight', '2.0-2.5x bodyweight', '3.0x bodyweight'], correctAnswer: 2, explanation: 'Elite forwards target 2.0-2.5x bodyweight squat.' },

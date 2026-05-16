@@ -52,7 +52,7 @@ export const level2Unit2Assessment: UnitAssessment = {
         'You need to take a multivitamin supplement',
       ],
       correctAnswer: 0,
-      explanation: 'Carbohydrates are the body\'s preferred fuel source, especially during moderate-to-high intensity exercise. Very low carbohydrate intake depletes glycogen stores, leading to fatigue, poor performance, and impaired cognitive function.',
+      explanation: "Carbohydrates are the body\'s preferred fuel source, especially during moderate-to-high intensity exercise. Very low carbohydrate intake depletes glycogen stores, leading to fatigue, poor performance, and impaired cognitive function.",
     },
 
     // ─── CHAPTER 2: Micronutrients & Their Role (6 questions) ───
@@ -61,7 +61,7 @@ export const level2Unit2Assessment: UnitAssessment = {
       question: 'Which of the following is a fat-soluble vitamin?',
       options: ['Vitamin B6', 'Vitamin B12', 'Vitamin C', 'Vitamin D'],
       correctAnswer: 3,
-      explanation: 'Vitamins A, D, E, and K are fat-soluble — they are stored in the body\'s fat tissues and require dietary fat for absorption. Vitamins B and C are water-soluble.',
+      explanation: "Vitamins A, D, E, and K are fat-soluble — they are stored in the body\'s fat tissues and require dietary fat for absorption. Vitamins B and C are water-soluble.",
     },
     {
       type: 'multiple_choice',
@@ -215,7 +215,7 @@ export const level2Unit2Assessment: UnitAssessment = {
         'Person B burns significantly more calories through NEAT (daily non-exercise movement)',
       ],
       correctAnswer: 3,
-      explanation: 'NEAT is the most variable component of TDEE. Person B\'s active occupation and daily movement could account for 500-800+ additional calories burned per day compared to Person A\'s sedentary desk job, despite identical gym routines.',
+      explanation: "NEAT is the most variable component of TDEE. Person B\'s active occupation and daily movement could account for 500-800+ additional calories burned per day compared to Person A\'s sedentary desk job, despite identical gym routines.",
     },
     {
       type: 'scenario',

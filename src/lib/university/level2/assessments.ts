@@ -218,7 +218,7 @@ export const level2Unit1Assessment: UnitAssessment = {
         'Their heart has become weaker',
       ],
       correctAnswer: 2,
-      explanation: 'Cardiovascular training increases stroke volume — the heart ejects more blood per contraction, so it doesn\'t need to beat as frequently at rest to maintain adequate cardiac output.',
+      explanation: "Cardiovascular training increases stroke volume — the heart ejects more blood per contraction, so it doesn\'t need to beat as frequently at rest to maintain adequate cardiac output.",
     },
 
     // ─── CHAPTER 5: Energy Systems (6 questions) ───
@@ -261,7 +261,7 @@ export const level2Unit1Assessment: UnitAssessment = {
         'Reduce the weight by 20%',
       ],
       correctAnswer: 1,
-      explanation: 'Heavy sets of 3 reps primarily use the ATP-PC system, which requires 2-5 minutes to fully recover. With only 90 seconds rest, the system hasn\'t replenished, leading to performance decline.',
+      explanation: "Heavy sets of 3 reps primarily use the ATP-PC system, which requires 2-5 minutes to fully recover. With only 90 seconds rest, the system hasn\'t replenished, leading to performance decline.",
     },
     {
       type: 'scenario',

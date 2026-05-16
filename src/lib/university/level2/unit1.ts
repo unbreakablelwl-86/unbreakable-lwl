@@ -486,7 +486,7 @@ export const level2Unit1: Unit = {
           heading: 'Proprioception: Your Sixth Sense',
           paragraphs: [
             'Proprioception is your body\'s ability to sense its own position in space without looking. Specialised receptors in your muscles (muscle spindles), tendons (Golgi tendon organs), and joints send constant feedback to your brain about limb position, movement speed, and force.',
-            'Good proprioception means better balance, more precise movements, and fewer injuries. It\'s why you can walk without watching your feet, and why experienced lifters can feel when their squat depth is right without a mirror.',
+            "Good proprioception means better balance, more precise movements, and fewer injuries. It\'s why you can walk without watching your feet, and why experienced lifters can feel when their squat depth is right without a mirror.",
           ],
           bullets: [
             'Muscle spindles — detect changes in muscle length and speed of stretch. Trigger the stretch reflex (e.g., knee-jerk test)',

@@ -15,7 +15,7 @@ export const sportBasketballFinalAssessment: UnitAssessment = {
     { type: 'multiple_choice', question: 'Clutch ability?', options: ['Born with it', 'Trained through process focus', 'Luck', 'Cannot develop'], correctAnswer: 1, explanation: 'Trained, not innate.' },
     { type: 'multiple_choice', question: 'Off-season gym?', options: ['None', '1x', '3-4x/week', 'Daily'], correctAnswer: 2, explanation: '3-4 sessions for development.' },
     { type: 'multiple_choice', question: 'ACL prevention effect?', options: ['10%', '30%', '50-70% reduction', 'None'], correctAnswer: 2, explanation: '50-70% risk reduction.' },
-    { type: 'multiple_choice', question: 'Jumper\'s knee rate?', options: ['5%', '15%', '30-45%', '75%'], correctAnswer: 2, explanation: '30-45% of players.' },
+    { type: 'multiple_choice', question: "Jumper\'s knee rate?", options: ['5%', '15%', '30-45%', '75%'], correctAnswer: 2, explanation: '30-45% of players.' },
     { type: 'multiple_choice', question: 'Game-day carb loading?', options: ['None', '8-10g/kg for 24-36h', 'Skip carbs', 'Protein only'], correctAnswer: 1, explanation: 'Pre-game carb loading.' },
     { type: 'multiple_choice', question: 'Playoff taper?', options: ['Max volume', 'Volume -20-30%', 'Complete rest', 'No change'], correctAnswer: 1, explanation: 'Reduce volume 20-30%.' },
     { type: 'multiple_choice', question: 'Plyometric landing forces?', options: ['1-2x BW', '3-4x BW', '5-7x BW', '10x BW'], correctAnswer: 2, explanation: '5-7x bodyweight.' },
