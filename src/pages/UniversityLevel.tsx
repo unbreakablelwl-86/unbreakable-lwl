@@ -5,7 +5,7 @@ import { UnifiedFooter } from '@/components/UnifiedFooter';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { CourseProgressBar } from '@/components/university/CourseProgressBar';
-import { ChevronLeft, ChevronRight, BookOpen, Lock, CheckCircle, Trophy } from 'lucide-react';
+import { ChevronLeft, ChevronRight, BookOpen, Lock, CheckCircle, Trophy, GraduationCap } from 'lucide-react';
 import { getLevelData } from '@/lib/university/courseStructure';
 import { useUniversityProgress } from '@/hooks/useUniversityProgress';
 import { AdminControlPanel } from '@/components/university/AdminControlPanel';
@@ -39,13 +39,19 @@ export default function UniversityLevel() {
       <div className="min-h-screen bg-background">
         <MainNavigation />
         <div className="pt-24 pb-6 container mx-auto px-4 max-w-2xl text-center">
-          <Button variant="ghost" size="sm" onClick={() => navigate(`/university?course=${ct}`)} className="mb-3 -ml-2 text-muted-foreground">
+          <Button variant="ghost" size="sm" onClick={() => navigate(`/university?course=${ct}`)} className="mb-6 text-muted-foreground">
             <ChevronLeft className="w-4 h-4 mr-1" /> University
           </Button>
-          <Lock className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-          <h1 className="font-display text-2xl tracking-wider text-foreground mb-2">LEVEL 3 LOCKED</h1>
-          <p className="text-muted-foreground text-sm">Pass the Level 2 Final Assessment to unlock Level 3.</p>
-          <Button className="mt-6" onClick={() => navigate(`/university/${ct}/level-2`)}>Go to Level 2</Button>
+          <div className="w-16 h-16 rounded-2xl bg-muted/30 flex items-center justify-center mx-auto mb-6">
+            <Lock className="w-8 h-8 text-muted-foreground" />
+          </div>
+          <h1 className="font-display text-3xl tracking-wider text-foreground mb-3">LEVEL 3 LOCKED</h1>
+          <p className="text-muted-foreground text-sm max-w-md mx-auto mb-6">
+            You need to pass the Level 2 Final Assessment before you can progress to Level 3. Head back and finish what you started.
+          </p>
+          <Button onClick={() => navigate(`/university/${ct}/level-2`)}>
+            Go to Level 2
+          </Button>
         </div>
         <UnifiedFooter className="mt-auto" />
       </div>
@@ -79,21 +85,31 @@ export default function UniversityLevel() {
     <div className="min-h-screen bg-background">
       <MainNavigation />
 
-      <div className="pt-24 pb-6 border-b border-primary/20">
-        <div className="container mx-auto px-4 max-w-2xl">
-          <Button variant="ghost" size="sm" onClick={() => navigate(`/university?course=${ct}`)} className="mb-3 -ml-2 text-muted-foreground">
+      {/* Level Header */}
+      <div className="pt-24 pb-8 border-b border-primary/20 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent pointer-events-none" />
+        <div className="container mx-auto px-4 max-w-3xl relative z-10">
+          <Button variant="ghost" size="sm" onClick={() => navigate(`/university?course=${ct}`)} className="mb-4 -ml-2 text-muted-foreground hover:text-foreground">
             <ChevronLeft className="w-4 h-4 mr-1" /> University
           </Button>
-          <h1 className="font-display text-3xl tracking-wider leading-none">
-            <span className="text-primary neon-glow-subtle">{levelData.title.toUpperCase()}</span>
-          </h1>
-          <p className="text-sm text-muted-foreground mt-1">{levelData.subtitle} — {levelData.units.length} Units</p>
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-primary/15 flex items-center justify-center shrink-0">
+              <GraduationCap className="w-6 h-6 text-primary" />
+            </div>
+            <div>
+              <h1 className="font-display text-2xl sm:text-3xl tracking-wider leading-none">
+                <span className="text-primary neon-glow-subtle">{levelData.title.toUpperCase()}</span>
+              </h1>
+              <p className="text-sm text-muted-foreground mt-1">{levelData.subtitle} — {levelData.units.length} Units</p>
+            </div>
+          </div>
         </div>
       </div>
 
+      {/* Units */}
       <main className="container mx-auto px-4 py-8">
-        <div className="max-w-2xl mx-auto space-y-4">
-          {levelData.units.map((unit) => {
+        <div className="max-w-3xl mx-auto space-y-5">
+          {levelData.units.map((unit, idx) => {
             const hasChapters = unit.chapters.length > 0;
             const completedCount = getUnitCompletedChapters(levelNum, unit.number, ct);
             const quizzesPassed = hasChapters ? getUnitQuizzesPassed(unit.number, unit.chapters.length) : 0;
@@ -105,124 +121,195 @@ export default function UniversityLevel() {
             return (
               <motion.div
                 key={unit.number}
-                initial={{ opacity: 0, y: 10 }}
+                initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: unit.number * 0.05 }}
+                transition={{ delay: idx * 0.08 }}
               >
-                <Card className="p-5 border-primary/20">
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">
-                      <span className="font-display text-sm text-primary">{unit.number}</span>
+                <Card className="border-primary/20 overflow-hidden">
+                  {/* Unit header */}
+                  <div className="p-5 pb-4">
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
+                        allUnitQuizzesPassed ? 'bg-green-500/15' : 'bg-primary/15'
+                      }`}>
+                        {allUnitQuizzesPassed ? (
+                          <CheckCircle className="w-5 h-5 text-green-500" />
+                        ) : (
+                          <span className="font-display text-sm text-primary">{unit.number}</span>
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h2 className="font-display text-base sm:text-lg tracking-wider text-foreground">{unit.title}</h2>
+                        <p className="text-xs text-muted-foreground">{unit.chapters.length} Chapters</p>
+                      </div>
                     </div>
-                    <div className="flex-1">
-                      <h2 className="font-display text-base tracking-wider text-foreground">{unit.title}</h2>
-                      <p className="text-xs text-muted-foreground">{unit.chapters.length} Chapters</p>
-                    </div>
-                    {allUnitQuizzesPassed && <CheckCircle className="w-5 h-5 text-green-500" />}
-                  </div>
 
-                  <p className="text-sm text-muted-foreground leading-relaxed mb-4">{unit.description}</p>
+                    <p className="text-sm text-muted-foreground leading-relaxed mb-4">{unit.description}</p>
 
-                  {hasChapters && (
-                    <>
+                    {hasChapters && (
                       <CourseProgressBar
                         label="Quizzes Passed"
                         completed={quizzesPassed}
                         total={unit.chapters.length}
                       />
+                    )}
+                  </div>
 
-                      <div className="mt-4 space-y-2">
-                        {unit.chapters.map((ch) => {
-                          const done = isChapterComplete(levelNum, unit.number, ch.number, ct);
-                          const qPassed = hasPassedChapterQuiz(levelNum, unit.number, ch.number, ct);
-                          const accessible = isChapterAccessible(unit.number, ch.number);
-                          return (
-                            <button
-                              key={ch.number}
-                              onClick={() => accessible ? navigate(`/university/${ct}/level-${levelNum}/unit-${unit.number}/chapter-${ch.number}`) : undefined}
-                              disabled={!accessible}
-                              className={`w-full flex items-center gap-3 p-3 rounded-lg border transition-colors text-left ${
-                                accessible
-                                  ? 'border-primary/10 hover:border-primary/30 cursor-pointer'
-                                  : 'border-muted/20 opacity-50 cursor-not-allowed'
-                              }`}
-                            >
-                              <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs shrink-0 ${
-                                qPassed ? 'bg-green-500/20 text-green-500' : done ? 'bg-primary/20 text-primary' : !accessible ? 'bg-muted text-muted-foreground' : 'bg-muted text-muted-foreground'
-                              }`}>
-                                {!accessible ? <Lock className="w-3 h-3" /> : qPassed ? '✓' : ch.number}
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <p className="text-sm text-foreground truncate">{ch.title}</p>
-                                {qPassed && <p className="text-xs text-green-500">Quiz passed</p>}
-                                {done && !qPassed && accessible && <p className="text-xs text-primary">Quiz pending</p>}
-                              </div>
-                              {accessible && <ChevronRight className="w-4 h-4 text-muted-foreground shrink-0" />}
-                            </button>
-                          );
-                        })}
-                      </div>
+                  {/* Chapters list */}
+                  {hasChapters && (
+                    <div className="border-t border-border/50">
+                      {unit.chapters.map((ch, chIdx) => {
+                        const done = isChapterComplete(levelNum, unit.number, ch.number, ct);
+                        const qPassed = hasPassedChapterQuiz(levelNum, unit.number, ch.number, ct);
+                        const accessible = isChapterAccessible(unit.number, ch.number);
+                        const isLast = chIdx === unit.chapters.length - 1;
 
-                      {assessment && assessment.questions.length > 0 && (
-                        <div className="mt-4 pt-4 border-t border-primary/10">
+                        return (
                           <button
-                            onClick={() => navigate(`/university/${ct}/level-${levelNum}/unit-${unit.number}/assessment`)}
-                            className="w-full flex items-center gap-3 p-3 rounded-lg border border-primary/10 hover:border-primary/20 cursor-pointer transition-colors text-left"
+                            key={ch.number}
+                            onClick={() => accessible ? navigate(`/university/${ct}/level-${levelNum}/unit-${unit.number}/chapter-${ch.number}`) : undefined}
+                            disabled={!accessible}
+                            className={`w-full flex items-center gap-3 px-5 py-3.5 transition-colors text-left ${
+                              !isLast ? 'border-b border-border/30' : ''
+                            } ${
+                              accessible
+                                ? 'hover:bg-primary/5 cursor-pointer'
+                                : 'opacity-40 cursor-not-allowed'
+                            }`}
                           >
-                            {passed ? (
-                              <CheckCircle className="w-5 h-5 text-green-500 shrink-0" />
-                            ) : (
-                              <BookOpen className="w-5 h-5 text-muted-foreground shrink-0" />
-                            )}
-                            <div className="flex-1">
-                              <p className="text-sm font-medium text-foreground">Optional Revision — Unit Assessment</p>
-                              <p className="text-xs text-muted-foreground">
-                                {best
-                                  ? `Best: ${best.score}/${best.total} (${Math.round((best.score / best.total) * 100)}%)`
-                                  : `${assessment.questions.length} questions — practice only`}
-                              </p>
+                            <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs shrink-0 ${
+                              qPassed
+                                ? 'bg-green-500/15 text-green-500'
+                                : done
+                                ? 'bg-primary/15 text-primary'
+                                : !accessible
+                                ? 'bg-muted/50 text-muted-foreground'
+                                : 'bg-muted/50 text-muted-foreground'
+                            }`}>
+                              {!accessible ? (
+                                <Lock className="w-3 h-3" />
+                              ) : qPassed ? (
+                                <CheckCircle className="w-3.5 h-3.5" />
+                              ) : (
+                                ch.number
+                              )}
                             </div>
-                            <ChevronRight className="w-4 h-4 text-muted-foreground shrink-0" />
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm text-foreground truncate">{ch.title}</p>
+                              {qPassed && <p className="text-[11px] text-green-500 font-display tracking-wider">PASSED</p>}
+                              {done && !qPassed && accessible && <p className="text-[11px] text-primary font-display tracking-wider">QUIZ PENDING</p>}
+                            </div>
+                            {accessible && <ChevronRight className="w-4 h-4 text-muted-foreground shrink-0" />}
                           </button>
+                        );
+                      })}
+                    </div>
+                  )}
+
+                  {/* Unit Assessment */}
+                  {hasChapters && assessment && assessment.questions.length > 0 && (
+                    <div className="border-t border-primary/10 p-5 bg-card/50">
+                      <button
+                        onClick={() => navigate(`/university/${ct}/level-${levelNum}/unit-${unit.number}/assessment`)}
+                        className="w-full flex items-center gap-3 p-3 rounded-xl border border-primary/10 hover:border-primary/25 cursor-pointer transition-all hover:bg-primary/5 text-left"
+                      >
+                        {passed ? (
+                          <div className="w-8 h-8 rounded-lg bg-green-500/15 flex items-center justify-center shrink-0">
+                            <CheckCircle className="w-4 h-4 text-green-500" />
+                          </div>
+                        ) : (
+                          <div className="w-8 h-8 rounded-lg bg-muted/50 flex items-center justify-center shrink-0">
+                            <BookOpen className="w-4 h-4 text-muted-foreground" />
+                          </div>
+                        )}
+                        <div className="flex-1">
+                          <p className="text-sm font-medium text-foreground">Optional Revision — Unit Assessment</p>
+                          <p className="text-xs text-muted-foreground">
+                            {best
+                              ? `Best: ${best.score}/${best.total} (${Math.round((best.score / best.total) * 100)}%)`
+                              : `${assessment.questions.length} questions — practice only`}
+                          </p>
                         </div>
-                      )}
-                    </>
+                        <ChevronRight className="w-4 h-4 text-muted-foreground shrink-0" />
+                      </button>
+                    </div>
                   )}
 
                   {!hasChapters && (
-                    <p className="text-xs text-primary font-display tracking-wider">COMING SOON</p>
+                    <div className="px-5 pb-5">
+                      <p className="text-xs text-primary font-display tracking-wider">COMING SOON</p>
+                    </div>
                   )}
                 </Card>
               </motion.div>
             );
           })}
 
+          {/* Final Assessment */}
           {levelData.finalAssessment && levelData.finalAssessment.questions.length > 0 && (
-            <Card className={`p-5 border-2 ${allQuizzesPassed ? 'border-primary/40' : 'border-muted/20'}`}>
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">
-                  <Trophy className="w-4 h-4 text-primary" />
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: levelData.units.length * 0.08 }}
+            >
+              <Card className={`overflow-hidden border-2 transition-all ${
+                allQuizzesPassed
+                  ? 'border-primary/40 shadow-lg shadow-primary/5'
+                  : 'border-muted/20'
+              }`}>
+                <div className="p-6">
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${
+                      allQuizzesPassed
+                        ? hasPassedAssessment(levelNum, 0, ct)
+                          ? 'bg-green-500/15'
+                          : 'bg-primary/15'
+                        : 'bg-muted/30'
+                    }`}>
+                      {hasPassedAssessment(levelNum, 0, ct) ? (
+                        <CheckCircle className="w-6 h-6 text-green-500" />
+                      ) : (
+                        <Trophy className={`w-6 h-6 ${allQuizzesPassed ? 'text-primary' : 'text-muted-foreground'}`} />
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      <h2 className="font-display text-xl tracking-wider text-foreground">FINAL ASSESSMENT</h2>
+                      <p className="text-xs text-muted-foreground">
+                        {allQuizzesPassed
+                          ? `${levelData.finalAssessment.questions.length} questions — ${levelData.finalAssessment.passMarkPercent}% to pass`
+                          : 'Pass all chapter quizzes to unlock'}
+                      </p>
+                    </div>
+                    {!allQuizzesPassed && <Lock className="w-5 h-5 text-muted-foreground" />}
+                  </div>
+
+                  {allQuizzesPassed && !hasPassedAssessment(levelNum, 0, ct) && (
+                    <p className="text-sm text-muted-foreground leading-relaxed mb-5">
+                      You've completed all the chapter quizzes — well done. This final assessment covers everything you've learned. You need {levelData.finalAssessment.passMarkPercent}% to pass.
+                    </p>
+                  )}
+
+                  {hasPassedAssessment(levelNum, 0, ct) && (
+                    <p className="text-sm text-green-500/80 leading-relaxed mb-5">
+                      You've passed this assessment. You can retake it anytime for practice.
+                    </p>
+                  )}
+
+                  <Button
+                    onClick={() => navigate(`/university/${ct}/level-${levelNum}/unit-0/assessment`)}
+                    disabled={!allQuizzesPassed}
+                    className="w-full"
+                    variant={allQuizzesPassed ? 'default' : 'outline'}
+                  >
+                    {hasPassedAssessment(levelNum, 0, ct)
+                      ? 'Retake Final Assessment'
+                      : allQuizzesPassed
+                      ? 'Start Final Assessment'
+                      : 'Complete All Chapter Quizzes First'}
+                  </Button>
                 </div>
-                <div className="flex-1">
-                  <h2 className="font-display text-base tracking-wider text-foreground">Final Assessment</h2>
-                  <p className="text-xs text-muted-foreground">
-                    {allQuizzesPassed
-                      ? `${levelData.finalAssessment.questions.length} questions — ${levelData.finalAssessment.passMarkPercent}% to pass`
-                      : 'Pass all chapter quizzes to unlock'}
-                  </p>
-                </div>
-                {!allQuizzesPassed && <Lock className="w-5 h-5 text-muted-foreground" />}
-                {allQuizzesPassed && hasPassedAssessment(levelNum, 0, ct) && <CheckCircle className="w-5 h-5 text-green-500" />}
-              </div>
-              <Button
-                onClick={() => navigate(`/university/${ct}/level-${levelNum}/unit-0/assessment`)}
-                disabled={!allQuizzesPassed}
-                className="w-full mt-2"
-                variant={allQuizzesPassed ? 'default' : 'outline'}
-              >
-                {allQuizzesPassed ? 'Start Final Assessment' : 'Complete All Chapter Quizzes First'}
-              </Button>
-            </Card>
+              </Card>
+            </motion.div>
           )}
         </div>
       </main>

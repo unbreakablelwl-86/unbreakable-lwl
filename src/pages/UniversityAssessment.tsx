@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
-import { ChevronLeft, CheckCircle, XCircle, RotateCcw } from 'lucide-react';
+import { ChevronLeft, CheckCircle, XCircle, RotateCcw, Trophy, BookOpen } from 'lucide-react';
 import { getAssessment, getUnitData } from '@/lib/university/courseStructure';
 import { useUniversityProgress } from '@/hooks/useUniversityProgress';
 import { useUniversityAdmin } from '@/hooks/useUniversityAdmin';
@@ -94,50 +94,64 @@ export default function UniversityAssessment() {
 
   const headerLabel = isFinal ? `LEVEL ${levelNum} — FINAL ASSESSMENT` : `LEVEL ${levelNum} — UNIT ${unitNum} ASSESSMENT`;
   const backLabel = isFinal ? `Back to Level ${levelNum}` : `Unit ${unitNum}: ${unitData?.title}`;
+  const HeaderIcon = isFinal ? Trophy : BookOpen;
 
+  /* ── Results screen ── */
   if (submitted) {
     return (
       <div className="min-h-screen bg-background">
         <MainNavigation />
-        <div className="pt-24 pb-4 border-b border-primary/20">
-          <div className="container mx-auto px-4 max-w-2xl">
-            <Button variant="ghost" size="sm" onClick={() => navigate(`/university/${ct}/level-${levelNum}`)} className="mb-2 -ml-2 text-muted-foreground">
+        <div className="pt-24 pb-6 border-b border-primary/20 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent pointer-events-none" />
+          <div className="container mx-auto px-4 max-w-2xl relative z-10">
+            <Button variant="ghost" size="sm" onClick={() => navigate(`/university/${ct}/level-${levelNum}`)} className="mb-2 -ml-2 text-muted-foreground hover:text-foreground">
               <ChevronLeft className="w-4 h-4 mr-1" /> {backLabel}
             </Button>
             <p className="text-xs text-primary font-display tracking-wider">{headerLabel} — RESULTS</p>
-            <h1 className="font-display text-2xl tracking-wider text-foreground mt-1">{assessment.title}</h1>
+            <h1 className="font-display text-xl sm:text-2xl tracking-wider text-foreground mt-1">{assessment.title}</h1>
           </div>
         </div>
         <main className="container mx-auto px-4 py-8">
           <div className="max-w-2xl mx-auto space-y-6">
-            <Card className={`p-6 text-center border-2 ${passed ? 'border-green-500/50 bg-green-500/10' : 'border-destructive/50 bg-destructive/10'}`}>
-              {passed ? <CheckCircle className="w-12 h-12 text-green-500 mx-auto mb-3" /> : <XCircle className="w-12 h-12 text-destructive mx-auto mb-3" />}
-              <h3 className="font-display text-2xl tracking-wider text-foreground mb-1">{passed ? 'PASSED' : 'NOT YET'}</h3>
-              <p className="text-muted-foreground text-sm mb-2">You scored {score}/{total} ({percent}%) — Pass mark: {passMarkPercent}%</p>
-              {!passed && pickCount && <p className="text-muted-foreground text-xs">Review the content and try again. You'll get different questions next time.</p>}
-              {!passed && !pickCount && <p className="text-muted-foreground text-xs">Review the content and try again. You've got this.</p>}
+            <Card className={`p-8 text-center border-2 ${passed ? 'border-green-500/40 bg-green-500/5' : 'border-destructive/40 bg-destructive/5'}`}>
+              <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 ${
+                passed ? 'bg-green-500/15' : 'bg-destructive/15'
+              }`}>
+                {passed ? <CheckCircle className="w-8 h-8 text-green-500" /> : <XCircle className="w-8 h-8 text-destructive" />}
+              </div>
+              <h3 className="font-display text-2xl tracking-wider text-foreground mb-2">{passed ? 'PASSED' : 'NOT YET'}</h3>
+              <p className="text-muted-foreground text-sm mb-1">
+                You scored <span className="text-foreground font-medium">{score}/{total}</span> ({percent}%)
+              </p>
+              <p className="text-muted-foreground text-xs">Pass mark: {passMarkPercent}%</p>
+              {!passed && pickCount && <p className="text-muted-foreground text-xs mt-3">Review the content and try again. You'll get different questions next time.</p>}
+              {!passed && !pickCount && <p className="text-muted-foreground text-xs mt-3">Review the content and try again. You've got this.</p>}
             </Card>
-            <div className="space-y-4">
+
+            <div className="space-y-3">
               {questions.map((q, i) => {
                 const isCorrect = answers[i] === q.correctAnswer;
                 return (
-                  <Card key={i} className={`p-4 border ${isCorrect ? 'border-green-500/30' : 'border-destructive/30'}`}>
-                    <div className="flex items-start gap-2 mb-2">
+                  <Card key={i} className={`p-4 border ${isCorrect ? 'border-green-500/20' : 'border-destructive/20'}`}>
+                    <div className="flex items-start gap-2.5 mb-2">
                       {isCorrect ? <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> : <XCircle className="w-4 h-4 text-destructive mt-0.5 shrink-0" />}
                       <p className="text-sm text-foreground font-medium">{q.question}</p>
                     </div>
-                    {q.scenario && <p className="text-xs text-muted-foreground italic ml-6 mb-2">{q.scenario}</p>}
-                    <p className="text-xs text-muted-foreground ml-6">
+                    {q.scenario && <p className="text-xs text-muted-foreground italic ml-6.5 pl-[2px] mb-2">{q.scenario}</p>}
+                    <p className="text-xs text-muted-foreground ml-6.5 pl-[2px]">
                       {isCorrect ? 'Correct' : `Your answer: ${q.options[answers[i]!]}`}
                       {!isCorrect && ` → Correct: ${q.options[q.correctAnswer]}`}
                     </p>
-                    <p className="text-xs text-primary/80 ml-6 mt-1">{q.explanation}</p>
+                    <p className="text-xs text-primary/70 ml-6.5 pl-[2px] mt-1 leading-relaxed">{q.explanation}</p>
                   </Card>
                 );
               })}
             </div>
+
             {!passed && (
-              <Button onClick={handleRetry} className="w-full gap-2"><RotateCcw className="w-4 h-4" /> {pickCount ? 'Try Again with New Questions' : 'Try Again'}</Button>
+              <Button onClick={handleRetry} className="w-full gap-2 h-12">
+                <RotateCcw className="w-5 h-5" /> {pickCount ? 'Try Again with New Questions' : 'Try Again'}
+              </Button>
             )}
           </div>
         </main>
@@ -146,16 +160,21 @@ export default function UniversityAssessment() {
     );
   }
 
+  /* ── Assessment screen ── */
   return (
     <div className="min-h-screen bg-background">
       <MainNavigation />
-      <div className="pt-24 pb-4 border-b border-primary/20">
-        <div className="container mx-auto px-4 max-w-2xl">
-          <Button variant="ghost" size="sm" onClick={() => navigate(`/university/${ct}/level-${levelNum}`)} className="mb-2 -ml-2 text-muted-foreground">
+      <div className="pt-24 pb-6 border-b border-primary/20 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent pointer-events-none" />
+        <div className="container mx-auto px-4 max-w-2xl relative z-10">
+          <Button variant="ghost" size="sm" onClick={() => navigate(`/university/${ct}/level-${levelNum}`)} className="mb-2 -ml-2 text-muted-foreground hover:text-foreground">
             <ChevronLeft className="w-4 h-4 mr-1" /> {backLabel}
           </Button>
-          <p className="text-xs text-primary font-display tracking-wider">{headerLabel}</p>
-          <h1 className="font-display text-2xl tracking-wider text-foreground mt-1">{assessment.title}</h1>
+          <div className="flex items-center gap-3 mb-1">
+            <HeaderIcon className="w-5 h-5 text-primary" />
+            <p className="text-xs text-primary font-display tracking-wider">{headerLabel}</p>
+          </div>
+          <h1 className="font-display text-xl sm:text-2xl tracking-wider text-foreground">{assessment.title}</h1>
           <p className="text-sm text-muted-foreground mt-1">
             {total} questions — {passMarkPercent}% to pass
             {pickCount && <span className="text-xs ml-1">(drawn from a larger bank)</span>}
@@ -165,27 +184,43 @@ export default function UniversityAssessment() {
 
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-2xl mx-auto space-y-6">
-          <div className="flex items-center justify-between text-xs text-muted-foreground">
-            <span>Question {currentQ + 1} of {total}</span>
-            <span>{answers.filter(a => a !== null).length} answered</span>
+          {/* Progress bar */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between text-xs text-muted-foreground">
+              <span>Question {currentQ + 1} of {total}</span>
+              <span>{answers.filter(a => a !== null).length} answered</span>
+            </div>
+            <div className="h-1 bg-muted/30 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-primary/60 transition-all duration-300 rounded-full"
+                style={{ width: `${((currentQ + 1) / total) * 100}%` }}
+              />
+            </div>
           </div>
 
-          <motion.div key={`${seed}-${currentQ}`} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.2 }}>
-            <Card className="p-5">
+          <motion.div key={`${seed}-${currentQ}`} initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.2 }}>
+            <Card className="p-6 border-primary/10">
               {question.scenario && (
-                <div className="bg-muted/50 rounded-lg p-3 mb-4">
-                  <p className="text-xs font-display tracking-wider text-muted-foreground mb-1">SCENARIO</p>
+                <div className="bg-muted/30 rounded-xl p-4 mb-5 border border-border/50">
+                  <p className="text-[10px] font-display tracking-wider text-muted-foreground mb-1.5">SCENARIO</p>
                   <p className="text-sm text-foreground leading-relaxed">{question.scenario}</p>
                 </div>
               )}
-              <p className="text-foreground font-medium text-sm mb-4">{question.question}</p>
-              <RadioGroup value={answers[currentQ]?.toString() ?? ''} onValueChange={handleSelect} className="space-y-3">
+              <p className="text-foreground font-medium text-sm mb-5 leading-relaxed">{question.question}</p>
+              <RadioGroup value={answers[currentQ]?.toString() ?? ''} onValueChange={handleSelect} className="space-y-2.5">
                 {question.options.map((opt, i) => {
                   const isCorrectAnswer = effectiveShowAnswers && i === question.correctAnswer;
+                  const isSelected = answers[currentQ] === i;
                   return (
-                    <div key={i} className={`flex items-start gap-3 p-3 rounded-lg border transition-colors ${isCorrectAnswer ? 'border-green-500/50 bg-green-500/10' : 'border-primary/10 hover:border-primary/30'}`}>
+                    <div key={i} className={`flex items-start gap-3 p-3.5 rounded-xl border transition-all ${
+                      isCorrectAnswer
+                        ? 'border-green-500/50 bg-green-500/10'
+                        : isSelected
+                        ? 'border-primary/40 bg-primary/5'
+                        : 'border-border hover:border-primary/20'
+                    }`}>
                       <RadioGroupItem value={i.toString()} id={`q${currentQ}-o${i}`} className="mt-0.5" />
-                      <Label htmlFor={`q${currentQ}-o${i}`} className="text-sm text-foreground cursor-pointer leading-relaxed">
+                      <Label htmlFor={`q${currentQ}-o${i}`} className="text-sm text-foreground cursor-pointer leading-relaxed flex-1">
                         {opt}
                         {isCorrectAnswer && <span className="ml-2 text-green-500 text-xs">✓ correct</span>}
                       </Label>
@@ -197,18 +232,19 @@ export default function UniversityAssessment() {
           </motion.div>
 
           <div className="flex gap-3">
-            <Button variant="outline" onClick={() => setCurrentQ(Math.max(0, currentQ - 1))} disabled={currentQ === 0} className="flex-1">Previous</Button>
+            <Button variant="outline" onClick={() => setCurrentQ(Math.max(0, currentQ - 1))} disabled={currentQ === 0} className="flex-1 h-11">Previous</Button>
             {currentQ < total - 1 ? (
-              <Button onClick={() => setCurrentQ(currentQ + 1)} disabled={answers[currentQ] === null} className="flex-1">Next</Button>
+              <Button onClick={() => setCurrentQ(currentQ + 1)} disabled={answers[currentQ] === null} className="flex-1 h-11">Next</Button>
             ) : (
-              <Button onClick={handleSubmit} disabled={!allAnswered} className="flex-1">Submit Assessment</Button>
+              <Button onClick={handleSubmit} disabled={!allAnswered} className="flex-1 h-11">Submit Assessment</Button>
             )}
           </div>
 
+          {/* Question dots */}
           <div className="flex justify-center gap-1.5 flex-wrap">
             {questions.map((_, i) => (
-              <button key={i} onClick={() => setCurrentQ(i)} className={`w-7 h-7 rounded-full text-xs font-medium transition-colors ${
-                i === currentQ ? 'bg-primary text-primary-foreground' : answers[i] !== null ? 'bg-primary/20 text-primary' : 'bg-muted text-muted-foreground'
+              <button key={i} onClick={() => setCurrentQ(i)} className={`w-7 h-7 rounded-full text-xs font-medium transition-all ${
+                i === currentQ ? 'bg-primary text-primary-foreground scale-110' : answers[i] !== null ? 'bg-primary/20 text-primary' : 'bg-muted text-muted-foreground'
               }`}>{i + 1}</button>
             ))}
           </div>
