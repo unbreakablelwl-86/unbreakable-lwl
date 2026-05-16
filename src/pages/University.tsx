@@ -6,17 +6,22 @@ import { UnifiedFooter } from '@/components/UnifiedFooter';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { CourseProgressBar } from '@/components/university/CourseProgressBar';
-import { GraduationCap, Lock, ChevronRight, Flame, Dumbbell, Apple, Brain } from 'lucide-react';
+import { GraduationCap, Lock, ChevronRight, Flame, Dumbbell, Apple, Brain, BookOpen, Award, Zap } from 'lucide-react';
 import { allCourses, getTotalChapters } from '@/lib/university/courseStructure';
 import { useUniversityProgress } from '@/hooks/useUniversityProgress';
 import { AdminControlPanel } from '@/components/university/AdminControlPanel';
 import type { CourseType } from '@/lib/university/types';
 
-const courseTabs: { key: CourseType; label: string; icon: React.ReactNode; description: string }[] = [
-  { key: 'gym', label: 'Power', icon: <Dumbbell className="w-4 h-4" />, description: 'Applied Fitness & Exercise Science' },
-  { key: 'nutrition', label: 'Fuel', icon: <Apple className="w-4 h-4" />, description: 'Healthy Eating & Nutritional Science' },
-  { key: 'mindset', label: 'Mindset', icon: <Brain className="w-4 h-4" />, description: 'Mental Performance & Wellbeing' },
+const courseTabs: { key: CourseType; label: string; icon: React.ReactNode; description: string; tagline: string; colour: string }[] = [
+  { key: 'gym', label: 'Power', icon: <Dumbbell className="w-5 h-5" />, description: 'Applied Fitness & Exercise Science', tagline: 'Understand how your body moves, adapts, and grows.', colour: 'from-orange-500/20 to-red-500/20' },
+  { key: 'nutrition', label: 'Fuel', icon: <Apple className="w-5 h-5" />, description: 'Healthy Eating & Nutritional Science', tagline: 'Master the science of what you eat and why it matters.', colour: 'from-green-500/20 to-emerald-500/20' },
+  { key: 'mindset', label: 'Mindset', icon: <Brain className="w-5 h-5" />, description: 'Mental Performance & Wellbeing', tagline: 'Build the mental resilience to keep showing up.', colour: 'from-blue-500/20 to-purple-500/20' },
 ];
+
+const fadeUp = {
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0 },
+};
 
 export default function University() {
   const navigate = useNavigate();
@@ -30,150 +35,238 @@ export default function University() {
     setSearchParams({ course: tab });
   };
 
+  const activeTabData = courseTabs.find(t => t.key === activeTab)!;
+
   return (
     <div className="min-h-screen bg-background">
       <MainNavigation />
 
       {/* Hero */}
-      <section className="pt-24 pb-12 md:pt-28 md:pb-16 border-b border-primary/20">
-        <div className="container mx-auto px-4 text-center max-w-4xl">
+      <section className="pt-24 pb-14 md:pt-28 md:pb-20 border-b border-primary/20 relative overflow-hidden">
+        {/* Subtle gradient backdrop */}
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent pointer-events-none" />
+        
+        <div className="container mx-auto px-4 text-center max-w-4xl relative z-10">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="space-y-4"
+            className="space-y-5"
           >
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-2">
+              <GraduationCap className="w-4 h-4 text-primary" />
+              <span className="text-xs font-display tracking-wider text-primary">EDUCATION FOR EVERYONE</span>
+            </div>
+
             <h1 className="font-display text-4xl sm:text-5xl md:text-6xl tracking-wide leading-none">
               <span className="text-primary neon-glow-subtle">UNBREAKABLE </span>
               <span className="text-foreground">UNIVERSITY</span>
             </h1>
-            <p className="text-muted-foreground text-sm md:text-base max-w-xl mx-auto leading-relaxed">
-              Level 2 &amp; Level 3 Certificates in Applied Fitness, Nutrition &amp; Mindset.
-              Certified standard — not an officially accredited NVQ qualification.
-              Master the science. Apply the knowledge. Live without limits.
+
+            <p className="text-muted-foreground text-sm md:text-base max-w-2xl mx-auto leading-relaxed">
+              Real education that should be taught in schools — not locked behind a £5,000 qualification.
+              Level 2 &amp; Level 3 courses in fitness, nutrition, and mindset science.
+              Learn what your body and mind actually need. No fluff, no gatekeeping.
             </p>
-            <p className="text-primary font-display text-lg tracking-wider neon-glow-subtle">
-              #UNBREAKABLEUNIVERSITY
-            </p>
+
+            {/* Value props */}
+            <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 pt-2">
+              {[
+                { icon: <BookOpen className="w-3.5 h-3.5" />, text: '6 Full Courses' },
+                { icon: <Award className="w-3.5 h-3.5" />, text: 'Quiz Every Chapter' },
+                { icon: <Zap className="w-3.5 h-3.5" />, text: 'Learn at Your Pace' },
+              ].map((v) => (
+                <div key={v.text} className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                  <span className="text-primary">{v.icon}</span>
+                  {v.text}
+                </div>
+              ))}
+            </div>
           </motion.div>
         </div>
       </section>
 
-      {/* Course Tabs */}
-      <div className="container mx-auto px-4 py-6">
-        <div className="max-w-2xl mx-auto">
-          <div className="flex gap-2 p-1 bg-muted/30 rounded-xl">
-            {courseTabs.map((tab) => (
-              <button
+      {/* Course Selection */}
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-3xl mx-auto">
+          <p className="font-display text-xs tracking-wider text-muted-foreground text-center mb-4">
+            CHOOSE YOUR DISCIPLINE
+          </p>
+          <div className="grid grid-cols-3 gap-3">
+            {courseTabs.map((tab, i) => (
+              <motion.button
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
-                className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg text-sm font-display tracking-wider transition-all ${
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.1 }}
+                className={`relative flex flex-col items-center gap-2 p-4 sm:p-5 rounded-xl border transition-all ${
                   activeTab === tab.key
-                    ? 'bg-primary text-primary-foreground shadow-md'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
+                    ? 'bg-primary/10 border-primary/40 shadow-lg shadow-primary/5'
+                    : 'bg-card/50 border-border hover:border-primary/20 hover:bg-card'
                 }`}
               >
-                {tab.icon}
-                {tab.label}
-              </button>
+                <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center transition-colors ${
+                  activeTab === tab.key
+                    ? 'bg-primary text-primary-foreground'
+                    : 'bg-muted/50 text-muted-foreground'
+                }`}>
+                  {tab.icon}
+                </div>
+                <span className={`font-display text-sm sm:text-base tracking-wider ${
+                  activeTab === tab.key ? 'text-primary' : 'text-foreground'
+                }`}>
+                  {tab.label.toUpperCase()}
+                </span>
+                <span className="text-[10px] sm:text-xs text-muted-foreground text-center leading-tight hidden sm:block">
+                  {tab.description}
+                </span>
+              </motion.button>
             ))}
           </div>
-          <p className="text-xs text-muted-foreground text-center mt-2">
-            {courseTabs.find(t => t.key === activeTab)?.description}
-          </p>
+        </div>
+      </div>
+
+      {/* Active Course Header */}
+      <div className="container mx-auto px-4">
+        <div className="max-w-3xl mx-auto">
+          <motion.div
+            key={activeTab}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-center mb-6"
+          >
+            <p className="text-sm text-muted-foreground">{activeTabData.tagline}</p>
+          </motion.div>
         </div>
       </div>
 
       {/* Level Cards */}
-      <main className="container mx-auto px-4 pb-10 md:pb-16">
-        <div className="max-w-2xl mx-auto space-y-6">
+      <main className="container mx-auto px-4 pb-12 md:pb-20">
+        <div className="max-w-3xl mx-auto space-y-5">
           {courseData.length === 0 && (
-            <Card className="p-6 border-primary/20 text-center">
-              <Flame className="w-8 h-8 text-primary mx-auto mb-3" />
-              <h2 className="font-display text-lg tracking-wider text-foreground mb-2">COMING SOON</h2>
-              <p className="text-sm text-muted-foreground">
-                The {courseTabs.find(t => t.key === activeTab)?.label} course is being developed. Check back soon.
+            <Card className="p-8 border-primary/20 text-center">
+              <Flame className="w-10 h-10 text-primary mx-auto mb-4" />
+              <h2 className="font-display text-xl tracking-wider text-foreground mb-2">COMING SOON</h2>
+              <p className="text-sm text-muted-foreground max-w-md mx-auto">
+                The {activeTabData.label} course is being built. Check back soon — it'll be worth the wait.
               </p>
             </Card>
           )}
 
-          {courseData.map((level) => {
+          {courseData.map((level, i) => {
             const totalChapters = getTotalChapters(level.level, activeTab);
             const completedChapters = getLevelCompletedChapters(level.level, activeTab);
             const hasContent = level.units.some(u => u.chapters.length > 0);
             const isLocked = level.level === 3 && !hasPassedAssessment(2, 0, activeTab);
+            const progressPercent = totalChapters > 0 ? Math.round((completedChapters / totalChapters) * 100) : 0;
 
             return (
               <motion.div
                 key={level.level}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: level.level * 0.1 }}
+                {...fadeUp}
+                transition={{ delay: i * 0.15 }}
               >
                 <Card
-                  className={`p-6 border transition-all ${
+                  className={`relative overflow-hidden border transition-all group ${
                     isLocked
                       ? 'border-muted/30 opacity-60'
-                      : 'border-primary/20 hover:border-primary/40 cursor-pointer'
+                      : 'border-primary/20 hover:border-primary/40 cursor-pointer hover:shadow-lg hover:shadow-primary/5'
                   }`}
                   onClick={() => !isLocked && hasContent && navigate(`/university/${activeTab}/level-${level.level}`)}
                 >
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="flex items-center gap-3">
-                      <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                        isLocked ? 'bg-muted/30' : 'bg-primary/20'
-                      }`}>
-                        {isLocked ? (
-                          <Lock className="w-5 h-5 text-muted-foreground" />
-                        ) : (
-                          <GraduationCap className="w-5 h-5 text-primary" />
-                        )}
+                  {/* Progress accent bar */}
+                  {!isLocked && totalChapters > 0 && (
+                    <div className="absolute top-0 left-0 h-1 bg-primary/30 w-full">
+                      <div
+                        className="h-full bg-primary transition-all duration-500"
+                        style={{ width: `${progressPercent}%` }}
+                      />
+                    </div>
+                  )}
+
+                  <div className="p-6">
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex items-center gap-4">
+                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${
+                          isLocked ? 'bg-muted/30' : 'bg-primary/15'
+                        }`}>
+                          {isLocked ? (
+                            <Lock className="w-5 h-5 text-muted-foreground" />
+                          ) : (
+                            <GraduationCap className="w-6 h-6 text-primary" />
+                          )}
+                        </div>
+                        <div>
+                          <h2 className="font-display text-xl tracking-wider text-foreground">{level.title}</h2>
+                          <p className="text-xs text-primary font-display tracking-wider mt-0.5">{level.subtitle}</p>
+                        </div>
                       </div>
-                      <div>
-                        <h2 className="font-display text-lg tracking-wider text-foreground">{level.title}</h2>
-                        <p className="text-xs text-primary font-display tracking-wider">{level.subtitle}</p>
+                      {!isLocked && hasContent && (
+                        <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors shrink-0 mt-1" />
+                      )}
+                    </div>
+
+                    <p className="text-sm text-muted-foreground leading-relaxed mb-5">{level.description}</p>
+
+                    {/* Stats row */}
+                    <div className="flex items-center gap-6 text-xs text-muted-foreground mb-4">
+                      <div className="flex items-center gap-1.5">
+                        <BookOpen className="w-3.5 h-3.5 text-primary/60" />
+                        <span>{level.units.length} Units</span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <GraduationCap className="w-3.5 h-3.5 text-primary/60" />
+                        <span>{totalChapters} Chapters</span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <Award className="w-3.5 h-3.5 text-primary/60" />
+                        <span>80% Pass Mark</span>
                       </div>
                     </div>
-                    {!isLocked && hasContent && (
-                      <ChevronRight className="w-5 h-5 text-muted-foreground" />
+
+                    {hasContent && totalChapters > 0 && (
+                      <CourseProgressBar
+                        label="Course Progress"
+                        completed={completedChapters}
+                        total={totalChapters}
+                      />
+                    )}
+
+                    {!hasContent && !isLocked && (
+                      <div className="flex items-center gap-2 text-xs text-primary">
+                        <Flame className="w-3.5 h-3.5" />
+                        <span className="font-display tracking-wider">COMING SOON</span>
+                      </div>
+                    )}
+
+                    {isLocked && (
+                      <p className="text-xs text-muted-foreground italic flex items-center gap-1.5">
+                        <Lock className="w-3 h-3" />
+                        Pass the Level 2 Final Assessment to unlock
+                      </p>
                     )}
                   </div>
-
-                  <p className="text-sm text-muted-foreground leading-relaxed mb-4">{level.description}</p>
-
-                  <div className="flex items-center gap-4 text-xs text-muted-foreground mb-3">
-                    <span>{level.units.length} Units</span>
-                    <span>{totalChapters} Chapters</span>
-                    <span>80% Pass Mark</span>
-                  </div>
-
-                  {hasContent && totalChapters > 0 && (
-                    <CourseProgressBar
-                      label="Course Progress"
-                      completed={completedChapters}
-                      total={totalChapters}
-                    />
-                  )}
-
-                  {!hasContent && !isLocked && (
-                    <div className="flex items-center gap-2 text-xs text-primary">
-                      <Flame className="w-3 h-3" />
-                      <span className="font-display tracking-wider">COMING SOON</span>
-                    </div>
-                  )}
-
-                  {isLocked && (
-                    <p className="text-xs text-muted-foreground italic">Complete Level 2 to unlock</p>
-                  )}
                 </Card>
               </motion.div>
             );
           })}
         </div>
 
-        <p className="text-center text-primary font-display text-lg tracking-wider neon-glow-subtle mt-12">
-          LIVE WITHOUT LIMITS.
-        </p>
+        {/* Bottom motto */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.6 }}
+          className="text-center mt-14 space-y-2"
+        >
+          <p className="text-primary font-display text-lg tracking-wider neon-glow-subtle">
+            KNOWLEDGE IS POWER. EDUCATION IS FREEDOM.
+          </p>
+          <p className="text-xs text-muted-foreground">
+            Learn what matters. Apply what you learn. Live without limits.
+          </p>
+        </motion.div>
       </main>
 
       <AdminControlPanel />

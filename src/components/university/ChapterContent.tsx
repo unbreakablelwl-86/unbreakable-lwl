@@ -3,7 +3,7 @@ import { UnbreakableInsightBox } from './UnbreakableInsightBox';
 import { CoachNoteBox } from './CoachNoteBox';
 import { ImagePlaceholder } from './ImagePlaceholder';
 import { Card } from '@/components/ui/card';
-import { CheckSquare } from 'lucide-react';
+import { CheckSquare, Target, ListChecks } from 'lucide-react';
 
 interface Props {
   chapter: Chapter;
@@ -11,21 +11,27 @@ interface Props {
 
 export function ChapterContent({ chapter }: Props) {
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Learning Outcome */}
-      <Card className="p-4 border-primary/20 bg-primary/5">
-        <p className="font-display text-xs tracking-wider text-primary mb-1">LEARNING OUTCOME</p>
+      <Card className="p-5 border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
+        <div className="flex items-center gap-2 mb-2">
+          <Target className="w-4 h-4 text-primary" />
+          <p className="font-display text-xs tracking-wider text-primary">LEARNING OUTCOME</p>
+        </div>
         <p className="text-sm text-foreground leading-relaxed">{chapter.learningOutcome}</p>
       </Card>
 
       {/* Assessment Criteria */}
       <div>
-        <p className="font-display text-xs tracking-wider text-muted-foreground mb-2">ASSESSMENT CRITERIA</p>
-        <ul className="space-y-1.5">
+        <div className="flex items-center gap-2 mb-3">
+          <ListChecks className="w-4 h-4 text-muted-foreground" />
+          <p className="font-display text-xs tracking-wider text-muted-foreground">ASSESSMENT CRITERIA</p>
+        </div>
+        <ul className="space-y-2">
           {chapter.assessmentCriteria.map((c, i) => (
-            <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
-              <span className="text-primary font-semibold mt-0.5">{i + 1}.</span>
-              <span>{c}</span>
+            <li key={i} className="flex items-start gap-3 text-sm text-muted-foreground">
+              <span className="text-primary font-display text-xs mt-0.5 shrink-0">{i + 1}.</span>
+              <span className="leading-relaxed">{c}</span>
             </li>
           ))}
         </ul>
@@ -33,25 +39,25 @@ export function ChapterContent({ chapter }: Props) {
 
       {/* Content Sections */}
       {chapter.content.map((section, i) => (
-        <div key={i} className="space-y-3">
+        <div key={i} className="space-y-4">
           {section.heading && (
-            <h3 className="font-display text-lg tracking-wider text-foreground">{section.heading}</h3>
+            <h3 className="font-display text-lg tracking-wider text-foreground pt-2">{section.heading}</h3>
           )}
           {section.paragraphs?.map((p, j) => (
-            <p key={j} className="text-sm text-muted-foreground leading-relaxed">{p}</p>
+            <p key={j} className="text-sm text-muted-foreground leading-[1.8]">{p}</p>
           ))}
           {section.bullets && (
-            <ul className="space-y-2 ml-1">
+            <ul className="space-y-2.5 ml-1">
               {section.bullets.map((b, j) => (
-                <li key={j} className="flex items-start gap-2 text-sm text-muted-foreground">
-                  <span className="text-primary mt-1">•</span>
-                  <span>{b}</span>
+                <li key={j} className="flex items-start gap-3 text-sm text-muted-foreground">
+                  <span className="text-primary mt-1.5 shrink-0">•</span>
+                  <span className="leading-relaxed">{b}</span>
                 </li>
               ))}
             </ul>
           )}
           {section.imageUrl && (
-            <div className="my-4 rounded-lg overflow-hidden border border-primary/20">
+            <div className="my-5 rounded-xl overflow-hidden border border-primary/20">
               <img
                 src={section.imageUrl}
                 alt={section.imageAlt || ''}
@@ -73,20 +79,22 @@ export function ChapterContent({ chapter }: Props) {
       <CoachNoteBox text={chapter.coachNote} />
 
       {/* Practical Task */}
-      <Card className="p-5 border-primary/20">
-        <div className="flex items-center gap-2 mb-3">
-          <CheckSquare className="w-5 h-5 text-primary" />
+      <Card className="p-6 border-primary/20 bg-gradient-to-br from-card to-primary/5">
+        <div className="flex items-center gap-2.5 mb-4">
+          <div className="w-8 h-8 rounded-lg bg-primary/15 flex items-center justify-center">
+            <CheckSquare className="w-4 h-4 text-primary" />
+          </div>
           <span className="font-display text-sm tracking-wider text-primary">PRACTICAL TASK</span>
         </div>
-        <h4 className="text-foreground font-semibold text-sm mb-2">{chapter.practicalTask.title}</h4>
-        <p className="text-sm text-muted-foreground leading-relaxed mb-4">{chapter.practicalTask.instructions}</p>
-        <div>
-          <p className="text-xs font-display tracking-wider text-muted-foreground mb-2">REFLECTION QUESTIONS</p>
-          <ul className="space-y-1.5">
+        <h4 className="text-foreground font-semibold text-sm mb-3">{chapter.practicalTask.title}</h4>
+        <p className="text-sm text-muted-foreground leading-relaxed mb-5">{chapter.practicalTask.instructions}</p>
+        <div className="bg-muted/20 rounded-xl p-4 border border-border/50">
+          <p className="text-xs font-display tracking-wider text-muted-foreground mb-3">REFLECTION QUESTIONS</p>
+          <ul className="space-y-2">
             {chapter.practicalTask.reflectionQuestions.map((q, i) => (
-              <li key={i} className="text-sm text-muted-foreground flex items-start gap-2">
-                <span className="text-primary">{i + 1}.</span>
-                <span>{q}</span>
+              <li key={i} className="text-sm text-muted-foreground flex items-start gap-3">
+                <span className="text-primary font-display text-xs mt-0.5 shrink-0">{i + 1}.</span>
+                <span className="leading-relaxed">{q}</span>
               </li>
             ))}
           </ul>
