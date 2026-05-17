@@ -4,7 +4,7 @@ import { Download, Share2 } from 'lucide-react';
 import { toast } from 'sonner';
 import shieldLogo from '@/assets/unbreakable-shield.png';
 
-/* ── Course-type → human-readable names ────────────────────── */
+/* ── Course-type → human-readable labels ──────────────────── */
 const COURSE_LABELS: Record<string, string> = {
   gym: 'Applied Fitness & Exercise Science',
   nutrition: 'Healthy Eating & Nutritional Science',
@@ -22,33 +22,50 @@ const COURSE_LABELS: Record<string, string> = {
   'sport-cricket': 'Sport Science — Cricket',
 };
 
+/* ── Short course-type names for the title line ───────────── */
+const COURSE_SHORT: Record<string, string> = {
+  gym: 'POWER',
+  nutrition: 'FUEL',
+  mindset: 'MINDSET',
+  sport: 'SPORT',
+  'sport-football': 'SPORT — FOOTBALL',
+  'sport-boxing': 'SPORT — BOXING',
+  'sport-rugby': 'SPORT — RUGBY',
+  'sport-running': 'SPORT — RUNNING',
+  'sport-swimming': 'SPORT — SWIMMING',
+  'sport-mma': 'SPORT — MMA',
+  'sport-cycling': 'SPORT — CYCLING',
+  'sport-tennis': 'SPORT — TENNIS',
+  'sport-basketball': 'SPORT — BASKETBALL',
+  'sport-cricket': 'SPORT — CRICKET',
+};
+
 interface CertificateViewProps {
   userName: string;
   courseType: string;
   level: number;
-  completedDate: string; // ISO date string
+  completedDate: string;
 }
 
 export function CertificateView({ userName, courseType, level, completedDate }: CertificateViewProps) {
   const certRef = useRef<HTMLDivElement>(null);
 
   const courseLabel = COURSE_LABELS[courseType] || 'Applied Fitness & Exercise Science';
+  const courseShort = COURSE_SHORT[courseType] || 'POWER';
+
   const formattedDate = new Date(completedDate).toLocaleDateString('en-GB', {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
   });
 
-  const certTitle = `LEVEL ${level} CERTIFICATE`;
-  const certSubTitle = courseLabel;
-
-  /* ── Download as image via canvas ──────────────────────────── */
+  /* ── Download as image ─────────────────────────────────── */
   const handleDownload = useCallback(async () => {
     if (!certRef.current) return;
     try {
       const { default: html2canvas } = await import('html2canvas');
       const canvas = await html2canvas(certRef.current, {
-        backgroundColor: '#0a0a0a',
+        backgroundColor: null,
         scale: 2,
         useCORS: true,
       });
@@ -62,29 +79,28 @@ export function CertificateView({ userName, courseType, level, completedDate }: 
     }
   }, [courseType, level]);
 
-  /* ── Native share ──────────────────────────────────────────── */
+  /* ── Native share ──────────────────────────────────────── */
   const handleShare = useCallback(async () => {
     if (!certRef.current) return;
     try {
       const { default: html2canvas } = await import('html2canvas');
       const canvas = await html2canvas(certRef.current, {
-        backgroundColor: '#0a0a0a',
+        backgroundColor: null,
         scale: 2,
         useCORS: true,
       });
       canvas.toBlob(async (blob) => {
         if (!blob) return;
-        const file = new File([blob], `UNBREAKABLE-Certificate.png`, { type: 'image/png' });
+        const file = new File([blob], 'UNBREAKABLE-Certificate.png', { type: 'image/png' });
         if (navigator.share && navigator.canShare?.({ files: [file] })) {
           await navigator.share({
             title: 'UNBREAKABLE Certificate',
-            text: `I just earned my ${certTitle} in ${courseLabel}! 💪 #UNBREAKABLE #KeepShowingUp`,
+            text: `I just completed ${courseShort} Level ${level} at UNBREAKABLE University! 💪 #UNBREAKABLE #KeepShowingUp`,
             files: [file],
           });
         } else {
-          // fallback — download
           const link = document.createElement('a');
-          link.download = `UNBREAKABLE-Certificate.png`;
+          link.download = 'UNBREAKABLE-Certificate.png';
           link.href = canvas.toDataURL('image/png');
           link.click();
         }
@@ -92,96 +108,153 @@ export function CertificateView({ userName, courseType, level, completedDate }: 
     } catch {
       toast.error('Could not share');
     }
-  }, [courseType, level, certTitle, courseLabel]);
+  }, [courseType, level, courseShort]);
 
   return (
     <div className="space-y-6">
-      {/* ── Certificate card ──────────────────────────────── */}
+      {/* ── Certificate ──────────────────────────────────── */}
       <div
         ref={certRef}
-        className="relative w-full max-w-2xl mx-auto aspect-[1.414/1] rounded-lg overflow-hidden"
-        style={{
-          background: 'linear-gradient(135deg, #0a0a0a 0%, #1a1207 50%, #0a0a0a 100%)',
-        }}
+        className="relative w-full max-w-2xl mx-auto overflow-hidden rounded-lg"
+        style={{ aspectRatio: '3 / 2' }}
       >
-        {/* Outer border */}
-        <div className="absolute inset-3 rounded border-2 border-orange-500/40" />
-        {/* Inner border */}
-        <div className="absolute inset-5 rounded border border-orange-500/20" />
+        {/* Background image — brick wall + metal frame */}
+        <img
+          src="/cert-bg.webp"
+          alt=""
+          aria-hidden
+          className="absolute inset-0 w-full h-full object-cover"
+          crossOrigin="anonymous"
+        />
 
-        {/* Content */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-8 py-6">
+        {/* Text overlay */}
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-10 sm:px-16 py-8">
           {/* Shield logo */}
           <img
             src={shieldLogo}
-            alt="UNBREAKABLE Shield"
-            className="w-20 h-20 sm:w-24 sm:h-24 object-contain mb-3"
+            alt="LWL Shield"
+            className="w-16 h-16 sm:w-20 sm:h-20 object-contain mb-2 drop-shadow-lg"
             crossOrigin="anonymous"
           />
 
-          {/* Brand name */}
+          {/* UNBREAKABLE / UNIVERSITY */}
           <h2
-            className="font-display text-xl sm:text-2xl tracking-[0.3em] mb-0.5"
-            style={{ color: '#e97520' }}
+            className="font-display text-lg sm:text-2xl tracking-[0.25em] drop-shadow-md"
+            style={{ color: '#d4d4d4', textShadow: '0 2px 8px rgba(0,0,0,0.8)' }}
           >
             UNBREAKABLE
           </h2>
-          <p className="text-[10px] sm:text-xs tracking-[0.5em] text-orange-400/60 uppercase mb-4">
-            KEEP SHOWING UP
+          <p
+            className="text-[9px] sm:text-xs tracking-[0.5em] uppercase mb-3 sm:mb-4"
+            style={{ color: '#a0a0a0', textShadow: '0 1px 4px rgba(0,0,0,0.8)' }}
+          >
+            UNIVERSITY
           </p>
 
-          {/* Divider */}
-          <div className="w-32 h-px bg-gradient-to-r from-transparent via-orange-500/60 to-transparent mb-4" />
-
-          {/* Certificate title */}
-          <p className="text-xs sm:text-sm tracking-[0.2em] text-orange-400/80 uppercase mb-2">
-            CERTIFICATE OF COMPLETION
-          </p>
-          <h1 className="font-display text-2xl sm:text-3xl md:text-4xl tracking-wide text-foreground mb-1">
-            {certTitle}
-          </h1>
-          <p className="text-sm sm:text-base text-orange-400/90 font-medium mb-5">
-            {certSubTitle}
+          {/* "This certificate is presented to" */}
+          <p
+            className="text-[10px] sm:text-xs tracking-[0.15em] uppercase mb-1"
+            style={{
+              color: '#b0b0b0',
+              fontVariant: 'small-caps',
+              textShadow: '0 1px 4px rgba(0,0,0,0.8)',
+            }}
+          >
+            This Certificate Is Presented To
           </p>
 
-          {/* Awarded to */}
-          <p className="text-xs tracking-[0.15em] text-muted-foreground/80 uppercase mb-1">
-            AWARDED TO
-          </p>
-          <h3 className="font-display text-xl sm:text-2xl md:text-3xl tracking-wide text-foreground mb-4">
+          {/* User name — gold cursive */}
+          <h1
+            className="text-3xl sm:text-4xl md:text-5xl mb-2 drop-shadow-lg"
+            style={{
+              fontFamily: "'Georgia', 'Times New Roman', 'Palatino', cursive, serif",
+              fontStyle: 'italic',
+              fontWeight: 400,
+              color: '#d4a44a',
+              textShadow: '0 2px 12px rgba(212,164,74,0.4), 0 2px 6px rgba(0,0,0,0.6)',
+            }}
+          >
             {userName}
+          </h1>
+
+          {/* "For successfully completing" */}
+          <p
+            className="text-[9px] sm:text-[11px] tracking-[0.15em] uppercase mb-1.5"
+            style={{
+              color: '#a0a0a0',
+              fontVariant: 'small-caps',
+              textShadow: '0 1px 4px rgba(0,0,0,0.8)',
+            }}
+          >
+            For Successfully Completing
+          </p>
+
+          {/* Course title — orange bold */}
+          <h3
+            className="font-display text-base sm:text-xl md:text-2xl tracking-wide mb-3 sm:mb-4 drop-shadow-md"
+            style={{
+              color: '#e97520',
+              textShadow: '0 2px 8px rgba(233,117,32,0.3), 0 2px 6px rgba(0,0,0,0.6)',
+            }}
+          >
+            {courseShort} LEVEL {level} : {courseLabel.toUpperCase()}
           </h3>
 
-          {/* Divider */}
-          <div className="w-24 h-px bg-gradient-to-r from-transparent via-orange-500/40 to-transparent mb-4" />
-
-          {/* Date + Film strip reference */}
-          <p className="text-xs text-muted-foreground/70">{formattedDate}</p>
-
-          {/* LWL film strip footer */}
-          <div className="mt-4 flex items-center gap-2">
-            <div className="flex gap-0.5">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <div key={i} className="w-1.5 h-2 bg-orange-500/30 rounded-[1px]" />
-              ))}
+          {/* Bottom row: signature left, LWL cert right */}
+          <div className="flex items-end justify-between w-full max-w-sm sm:max-w-md mt-auto">
+            <div className="text-left">
+              <p
+                className="text-sm sm:text-lg mb-0"
+                style={{
+                  fontFamily: "'Georgia', 'Times New Roman', cursive, serif",
+                  fontStyle: 'italic',
+                  color: '#d4a44a',
+                  textShadow: '0 1px 4px rgba(0,0,0,0.6)',
+                }}
+              >
+                J. Threlfall
+              </p>
+              <p
+                className="text-[7px] sm:text-[9px] tracking-[0.2em] uppercase"
+                style={{ color: '#888', textShadow: '0 1px 4px rgba(0,0,0,0.8)' }}
+              >
+                LEAD INSTRUCTOR
+              </p>
             </div>
-            <span className="text-[9px] sm:text-[10px] tracking-[0.4em] text-orange-400/50 uppercase">
-              LIVE WITHOUT LIMITS
-            </span>
-            <div className="flex gap-0.5">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <div key={i} className="w-1.5 h-2 bg-orange-500/30 rounded-[1px]" />
-              ))}
+            <div className="text-right">
+              <p
+                className="text-[8px] sm:text-[10px] tracking-[0.15em] uppercase"
+                style={{ color: '#a0a0a0', textShadow: '0 1px 4px rgba(0,0,0,0.8)' }}
+              >
+                LWL CERTIFICATE
+              </p>
+              <p
+                className="text-[7px] sm:text-[9px] tracking-[0.12em] uppercase"
+                style={{ color: '#888', textShadow: '0 1px 4px rgba(0,0,0,0.8)' }}
+              >
+                OF ACHIEVEMENT
+              </p>
             </div>
           </div>
 
-          {/* Disclaimer */}
-          <p className="mt-3 text-[7px] sm:text-[8px] text-muted-foreground/40 max-w-sm leading-relaxed">
-            This certificate recognises completion of UNBREAKABLE education content written to NVQ standard.
-            It is not an official qualification or accredited certification.
+          {/* Keep Showing Up */}
+          <p
+            className="mt-2 sm:mt-3 text-[10px] sm:text-xs tracking-[0.3em] uppercase"
+            style={{
+              color: '#b0b0b0',
+              textShadow: '0 1px 4px rgba(0,0,0,0.8)',
+            }}
+          >
+            ★&nbsp; KEEP SHOWING UP &nbsp;★
           </p>
         </div>
       </div>
+
+      {/* ── Disclaimer below cert ────────────────────────── */}
+      <p className="text-[9px] text-muted-foreground/50 text-center max-w-md mx-auto leading-relaxed">
+        This certificate recognises completion of UNBREAKABLE education content written to NVQ standard.
+        It is not an official qualification or accredited certification.
+      </p>
 
       {/* ── Action buttons ────────────────────────────────── */}
       <div className="flex gap-3 justify-center max-w-2xl mx-auto">
