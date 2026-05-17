@@ -35,8 +35,9 @@ export default function UniversityLevel() {
     );
   }
 
-  const isLevelLocked = levelNum === 3 && !hasPassedAssessment(2, 0, ct);
+  const isLevelLocked = levelNum > 2 && !hasPassedAssessment(levelNum - 1, 0, ct);
   if (isLevelLocked) {
+    const prevLevel = levelNum - 1;
     return (
       <div className="min-h-screen bg-background">
         <MainNavigation />
@@ -47,12 +48,12 @@ export default function UniversityLevel() {
           <div className="w-16 h-16 rounded-2xl bg-muted/30 flex items-center justify-center mx-auto mb-6">
             <Lock className="w-8 h-8 text-muted-foreground" />
           </div>
-          <h1 className="font-display text-3xl tracking-wider text-foreground mb-3">LEVEL 3 LOCKED</h1>
+          <h1 className="font-display text-3xl tracking-wider text-foreground mb-3">LEVEL {levelNum} LOCKED</h1>
           <p className="text-muted-foreground text-sm max-w-md mx-auto mb-6">
-            You need to pass the Level 2 Final Assessment before you can progress to Level 3. Head back and finish what you started.
+            You need to pass the Level {prevLevel} Final Assessment before you can progress to Level {levelNum}. Head back and finish what you started.
           </p>
-          <Button onClick={() => navigate(`/university/${ct}/level-2`)}>
-            Go to Level 2
+          <Button onClick={() => navigate(`/university/${ct}/level-${prevLevel}`)}>
+            Go to Level {prevLevel}
           </Button>
         </div>
         <UnifiedFooter className="mt-auto" />

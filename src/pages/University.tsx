@@ -272,7 +272,7 @@ export default function University() {
               const totalChapters = getTotalChapters(level.level, activeTab);
               const completedChapters = getLevelCompletedChapters(level.level, activeTab);
               const hasContent = level.units.some(u => u.chapters.length > 0);
-              const isLocked = level.level === 3 && !hasPassedAssessment(2, 0, activeTab);
+              const isLocked = level.level > 2 && !hasPassedAssessment(level.level - 1, 0, activeTab);
               const progressPercent = totalChapters > 0 ? Math.round((completedChapters / totalChapters) * 100) : 0;
 
               // Estimate total chapters reading time (~5 min avg per chapter)
@@ -370,7 +370,7 @@ export default function University() {
                       {isLocked && (
                         <p className="text-xs text-muted-foreground italic flex items-center gap-1.5">
                           <Lock className="w-3 h-3" />
-                          Pass the Level 2 Final Assessment to unlock
+                          Pass the Level {level.level - 1} Final Assessment to unlock
                         </p>
                       )}
                     </div>
