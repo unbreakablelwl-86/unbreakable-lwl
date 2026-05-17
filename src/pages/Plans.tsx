@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 /**
  * Legacy Plans page — coaching subscription removed.
- * Redirects to AI Tokens page (the new credit-based system).
+ * Redirects to Unbreakable Tokens page (the new credit-based system).
  */
 export default function Plans() {
   const navigate = useNavigate();

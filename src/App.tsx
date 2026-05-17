@@ -77,7 +77,7 @@ const App = () => (
                 <ProtectedRoute><Profile /></ProtectedRoute>
               } />
               
-              {/* AI Tokens - token tier selection */}
+              {/* Unbreakable Tokens - token tier selection */}
               <Route path="/ai-tokens" element={
                 <ProtectedRoute><AITokens /></ProtectedRoute>
               } />
@@ -160,7 +160,7 @@ const App = () => (
                 <ProtectedRoute><MindsetGames /></ProtectedRoute>
               } />
               
-              {/* Coaching (Help) — uses AI token system, not subscription */}
+              {/* Coaching (Help) — uses Unbreakable token system, not subscription */}
               <Route path="/help" element={
                 <ProtectedRoute><Help /></ProtectedRoute>
               } />

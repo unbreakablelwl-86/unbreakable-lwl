@@ -184,7 +184,7 @@ export function NavigationDrawer({ variant = 'default' }: NavigationDrawerProps)
                 </CollapsibleContent>
               </Collapsible>
 
-              {/* UNBREAKABLE COACH — uses AI token system */}
+              {/* UNBREAKABLE COACH — uses Unbreakable token system */}
               <Link to="/help" onClick={handleNavClick} className={linkClass('/help')}>
                 <Flame className={`w-5 h-5 ${isActive('/help') ? '' : 'text-primary'}`} />
                 <span className="flex-1">UNBREAKABLE COACH</span>
@@ -222,7 +222,7 @@ export function NavigationDrawer({ variant = 'default' }: NavigationDrawerProps)
                 <div className="space-y-2">
                   <Link to="/ai-tokens" onClick={handleNavClick} className={linkClass('/ai-tokens')}>
                     <Zap className={`w-5 h-5 ${isActive('/ai-tokens') ? '' : 'text-primary'}`} />
-                    <span>AI TOKENS</span>
+                    <span>UNBREAKABLE TOKENS</span>
                     <TokenBalanceBadge className="ml-auto" />
                   </Link>
 

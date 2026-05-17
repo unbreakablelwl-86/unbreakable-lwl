@@ -26,7 +26,7 @@ const TIERS: TierCard[] = [
     tokens: 5,
     price: 0,
     icon: Zap,
-    features: ['5 AI tokens on signup', 'Try any AI feature', 'No commitment needed'],
+    features: ['5 tokens on signup', 'Try any feature', 'No commitment needed'],
   },
   {
     name: 'starter',
@@ -35,7 +35,7 @@ const TIERS: TierCard[] = [
     price: 25,
     icon: Star,
     stripePriceId: 'price_1TXuIrD5KOEmeWH21kBZYWAP',
-    features: ['50 tokens/month', 'AI programme builder', 'AI nutrition plans', 'Form feedback'],
+    features: ['50 tokens/month', 'Unbreakable Coach programme builder', 'Unbreakable Coach nutrition plans', 'Form feedback'],
   },
   {
     name: 'pro',
@@ -81,7 +81,7 @@ export default function AITokens() {
     }
 
     if (!tier.stripePriceId) {
-      toast.info('Coming soon — AI tier subscriptions are being set up.');
+      toast.info('Coming soon — token tier subscriptions are being set up.');
       return;
     }
 
@@ -112,10 +112,10 @@ export default function AITokens() {
               <span className="text-sm font-display tracking-wider text-primary">UNBREAKABLE COACH</span>
             </div>
             <h1 className="text-3xl md:text-4xl font-display tracking-wider mb-3">
-              AI TOKENS
+              UNBREAKABLE TOKENS
             </h1>
             <p className="text-muted-foreground max-w-md mx-auto">
-              Power your Unbreakable Coach with tokens. Chat costs just 0.2 tokens per message — full programme builds cost 1 token.
+              Power your Unbreakable Coach with Unbreakable Tokens. Chat costs just 0.2 tokens per message — full programme builds cost 1 token.
             </p>
           </div>
 
@@ -254,7 +254,7 @@ export default function AITokens() {
                 </div>
                 <ul className="space-y-3">
                   {[
-                    { icon: MessageSquare, label: 'AI Chat message', desc: 'Ask your coach anything' },
+                    { icon: MessageSquare, label: 'Coach chat message', desc: 'Ask your coach anything' },
                     { icon: Sparkles, label: 'Motivation quote', desc: 'Daily motivation & mindset' },
                     { icon: Activity, label: 'Progression suggestion', desc: 'Movement & power tips' },
                   ].map((item, i) => (
@@ -284,7 +284,7 @@ export default function AITokens() {
                     { icon: Dumbbell, label: 'Programme build', desc: 'Full workout or training plan' },
                     { icon: Apple, label: 'Meal plan', desc: 'Personalised nutrition plan' },
                     { icon: Eye, label: 'Form analysis', desc: 'Video movement feedback' },
-                    { icon: Brain, label: 'Workout feedback', desc: 'AI review of your session' },
+                    { icon: Brain, label: 'Workout feedback', desc: 'Coach review of your session' },
                     { icon: Activity, label: 'Nutrition analysis', desc: 'Photo-based food tracking' },
                   ].map((item, i) => (
                     <li key={i} className="flex items-start gap-3">
@@ -310,7 +310,7 @@ export default function AITokens() {
                 </div>
               </div>
               <p className="text-sm text-muted-foreground">
-                Notifications, missed session reminders, workout reminders, and all university content are <span className="text-foreground font-medium">completely free</span> — they don't use AI and never cost tokens.
+                Notifications, missed session reminders, workout reminders, and all university content are <span className="text-foreground font-medium">completely free</span> — they don't cost anything and never cost tokens.
               </p>
             </div>
 

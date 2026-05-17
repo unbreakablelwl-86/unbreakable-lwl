@@ -86,7 +86,7 @@ const howItWorks = [
     step: '02',
     icon: Target,
     title: 'CHOOSE YOUR PATH',
-    desc: 'Everything is free to use. Grab coins to unlock your Unbreakable Coach, AI programme builds, and University courses.',
+    desc: 'Everything is free to use. Grab tokens to unlock your Unbreakable Coach, AI programme builds, and University courses.',
   },
   {
     step: '03',
@@ -105,15 +105,15 @@ const freeFeatures = [
   'Community Hub — feed, stories & messaging',
   'Daily habit diary & lifestyle tracking',
   'Calculators & free tools',
-  '5 free coins on signup to try the AI coach',
+  '5 free tokens on signup to try the AI coach',
 ];
 
-/* ─── AI Token tiers for pricing ─── */
+/* ─── Unbreakable Token tiers for pricing ─── */
 const tokenTiers = [
-  { name: 'FREE', coins: 5, price: '£0', desc: 'Try the AI coach — 5 coins on signup', highlight: false },
-  { name: 'STARTER', coins: 50, price: '£25/mo', desc: 'AI programmes, meal plans & form feedback', highlight: false },
-  { name: 'PRO', coins: 150, price: '£49/mo', desc: 'Full coaching across all pillars', highlight: true },
-  { name: 'ELITE', coins: 500, price: '£79/mo', desc: 'Unlimited feel — perfect for PT students', highlight: false },
+  { name: 'FREE', tokens: 5, price: '£0', desc: 'Try the Unbreakable Coach — 5 tokens on signup', highlight: false },
+  { name: 'STARTER', tokens: 50, price: '£25/mo', desc: 'Unbreakable Coach programmes, meal plans & form feedback', highlight: false },
+  { name: 'PRO', tokens: 150, price: '£49/mo', desc: 'Full coaching across all pillars', highlight: true },
+  { name: 'ELITE', tokens: 500, price: '£79/mo', desc: 'Unlimited feel — perfect for PT students', highlight: false },
 ];
 
 export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
@@ -228,7 +228,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
             transition={{ duration: 0.6 }}
             className="text-muted-foreground text-sm"
           >
-            100% free to use · 5 coins on signup · No card required
+            100% free to use · 5 tokens on signup · No card required
           </motion.p>
         </motion.div>
 
@@ -574,7 +574,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
                 <span className="text-foreground font-medium">Final exams</span>
               </p>
               <p className="text-muted-foreground text-sm mt-1">
-                Unlock courses with coins — or save with course bundles. Learn at your own pace.
+                Unlock courses with tokens — or save with course bundles. Learn at your own pace.
               </p>
             </motion.div>
           </motion.div>
@@ -653,7 +653,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
                 <span className="text-primary neon-glow-subtle">HONEST.</span>
               </h2>
               <p className="text-muted-foreground max-w-xl mx-auto">
-                The whole platform is free. Buy coins to power your AI coach,
+                The whole platform is free. Buy tokens to power your AI coach,
                 unlock programmes, and access University courses.
               </p>
             </motion.div>
@@ -710,9 +710,9 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
                     <h4 className="font-display text-lg text-foreground tracking-wide mb-1">{tier.name}</h4>
                     <div className="flex items-center justify-center gap-1.5 mb-1">
                       <Coins className="w-4 h-4 text-primary" />
-                      <span className="font-display text-3xl text-primary neon-glow-subtle">{tier.coins}</span>
+                      <span className="font-display text-3xl text-primary neon-glow-subtle">{tier.tokens}</span>
                     </div>
-                    <p className="text-muted-foreground text-xs mb-1">coins{tier.price !== '£0' ? '/month' : ''}</p>
+                    <p className="text-muted-foreground text-xs mb-1">tokens{tier.price !== '£0' ? '/month' : ''}</p>
                     <p className="font-display text-lg text-foreground tracking-wide mb-3">{tier.price}</p>
                     <p className="text-muted-foreground text-xs leading-relaxed flex-1">{tier.desc}</p>
                   </Card>
@@ -767,7 +767,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
               </Button>
 
               <p className="text-muted-foreground text-sm mt-5">
-                Free forever · 5 coins on signup · No card required
+                Free forever · 5 tokens on signup · No card required
               </p>
             </motion.div>
           </motion.div>

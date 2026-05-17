@@ -41,7 +41,7 @@ export function CoursePurchaseGate({
     bundleKey?: string,
   ) => {
     if (balance !== null && balance < coinCost) {
-      toast.error(`You need ${coinCost} coins but only have ${balance}. Top up your coins first!`);
+      toast.error(`You need ${coinCost} tokens but only have ${balance}. Top up your Unbreakable Tokens first!`);
       navigate('/ai-tokens');
       return;
     }
@@ -56,7 +56,7 @@ export function CoursePurchaseGate({
 
       if (data?.error) {
         if (data.error === 'Not enough coins') {
-          toast.error(`Not enough coins — you have ${data.balance}, need ${data.required}`);
+          toast.error(`Not enough tokens — you have ${data.balance}, need ${data.required}`);
           navigate('/ai-tokens');
         } else {
           toast.error(data.error);
@@ -65,7 +65,7 @@ export function CoursePurchaseGate({
       }
 
       if (data?.success) {
-        toast.success(`Unlocked! ${data.coinsSpent} coins spent.`);
+        toast.success(`Unlocked! ${data.coinsSpent} tokens spent.`);
         refreshBalance();
         // Reload page to show unlocked content
         window.location.reload();
@@ -100,7 +100,7 @@ export function CoursePurchaseGate({
               </div>
               <div className="min-w-0">
                 <p className="text-sm font-medium text-foreground">
-                  Unlock this course with coins
+                  Unlock this course with tokens
                 </p>
                 <p className="text-xs text-muted-foreground mt-0.5">
                   All chapters, quizzes & assessments · You have <span className="text-primary font-semibold">{balance ?? '...'}</span> coins
@@ -126,7 +126,7 @@ export function CoursePurchaseGate({
                 ) : (
                   <Coins className="w-4 h-4 mr-2" />
                 )}
-                {coursePrice.coinCost} COINS
+                {coursePrice.coinCost} TOKENS
               </Button>
               {bestBundle && (
                 <Button
@@ -177,7 +177,7 @@ export function CoursePurchaseGate({
 
       <p className="text-muted-foreground text-sm leading-relaxed mb-4 max-w-sm mx-auto">
         Get full access to every chapter, interactive quizzes, unit assessments, and the final exam.
-        Spend coins to unlock — yours forever.
+        Spend tokens to unlock — yours forever.
       </p>
 
       {/* Balance indicator */}
@@ -225,7 +225,7 @@ export function CoursePurchaseGate({
         ) : (
           <Coins className="w-5 h-5 mr-2" />
         )}
-        UNLOCK FOR {coursePrice.coinCost} COINS
+        UNLOCK FOR {coursePrice.coinCost} TOKENS
       </Button>
 
       {!hasEnoughCoins && balance !== null && (
@@ -237,7 +237,7 @@ export function CoursePurchaseGate({
             className="text-primary font-display tracking-wide"
           >
             <Sparkles className="w-4 h-4 mr-1" />
-            GET MORE COINS
+            GET MORE TOKENS
           </Button>
         </div>
       )}
@@ -246,7 +246,7 @@ export function CoursePurchaseGate({
       {bestBundle && (
         <div className="mt-4">
           <p className="text-xs text-muted-foreground mb-2">
-            Save {bestBundle.coinSavings} coins with the {bestBundle.name}
+            Save {bestBundle.coinSavings} tokens with the {bestBundle.name}
           </p>
           <Button
             variant="outline"
@@ -268,13 +268,13 @@ export function CoursePurchaseGate({
             ) : (
               <Package className="w-4 h-4 mr-2" />
             )}
-            {bestBundle.name} — {bestBundle.coinCost} COINS
+            {bestBundle.name} — {bestBundle.coinCost} TOKENS
           </Button>
         </div>
       )}
 
       <p className="text-xs text-muted-foreground mt-6">
-        Coins deducted instantly · Permanent access · No card needed
+        Tokens deducted instantly · Permanent access · No card needed
       </p>
     </motion.div>
   );

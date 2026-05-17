@@ -37,7 +37,7 @@ export function MembershipTab() {
                 {tierDisplayName.toUpperCase()} TIER
               </h3>
               <Badge className="bg-primary/20 text-primary text-xs font-display">
-                {monthlyTokens} COINS/MO
+                {monthlyTokens} TOKENS/MO
               </Badge>
             </div>
             <p className="text-sm text-muted-foreground flex items-center gap-1.5">
@@ -48,7 +48,7 @@ export function MembershipTab() {
         </div>
 
         <p className="text-xs text-muted-foreground bg-muted/30 p-3 rounded-lg">
-          Coins power your <span className="text-primary font-semibold">Unbreakable Coach</span> —
+          Tokens power your <span className="text-primary font-semibold">Unbreakable Coach</span> —
           AI chat, programme builds, meal plans, and University courses. All platform features
           (Power, Fuel, Movement, Mindset, Community) are free.
         </p>
@@ -59,7 +59,7 @@ export function MembershipTab() {
             className="font-display tracking-wide flex-1"
           >
             <Sparkles className="w-4 h-4 mr-2" />
-            {currentTier === 'free' ? 'UPGRADE' : 'MANAGE COINS'}
+            {currentTier === 'free' ? 'UPGRADE' : 'MANAGE TOKENS'}
           </Button>
         </div>
       </Card>
@@ -69,10 +69,10 @@ export function MembershipTab() {
         <Card className="p-5 border border-border bg-card/50 space-y-3">
           <div className="flex items-center gap-2">
             <TrendingUp className="w-5 h-5 text-primary" />
-            <h4 className="font-display text-sm tracking-wide text-foreground">WANT MORE COINS?</h4>
+            <h4 className="font-display text-sm tracking-wide text-foreground">WANT MORE TOKENS?</h4>
           </div>
           <p className="text-xs text-muted-foreground leading-relaxed">
-            Upgrade to Starter (50 coins/mo), Pro (150 coins/mo), or Elite (500 coins/mo)
+            Upgrade to Starter (50 tokens/mo), Pro (150 tokens/mo), or Elite (500 tokens/mo)
             to unlock the full power of your Unbreakable Coach.
           </p>
           <Button
