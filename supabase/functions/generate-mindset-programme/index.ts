@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { requireToken } from "../_shared/token-guard.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -46,6 +47,21 @@ serve(async (req) => {
     if (authError || !claimsData?.claims) {
       return new Response(JSON.stringify({ error: 'Unauthorized' }), {
         status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+
+    // --- Token guard: deduct 1 AI token ---
+    const tokenUserId = (claimsData.claims as any).sub;
+    const svcClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    );
+    const tokenGuard = await requireToken(svcClient, tokenUserId, 'generate-mindset-programme');
+    if (tokenGuard.error) {
+      return new Response(JSON.stringify(tokenGuard.error), {
+        status: 402,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 

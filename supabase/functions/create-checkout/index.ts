@@ -11,8 +11,23 @@ const logStep = (step: string, details?: any) => {
   console.log(`[CREATE-CHECKOUT] ${step}${details ? ` - ${JSON.stringify(details)}` : ''}`);
 };
 
-// Known Tier 2 (121 coaching) price ID
-const TIER2_PRICE_ID = "price_1T6Gc7RgwCgvPuKnfH1WiggU";
+// Known subscription price IDs (AI tiers + coaching tiers)
+const SUBSCRIPTION_PRICES = new Set([
+  // AI token tiers
+  "price_1TXuIrD5KOEmeWH21kBZYWAP", // Starter £25/mo
+  "price_1TXuIrD5KOEmeWH2SxYc7G14", // Pro £49/mo
+  "price_1TXuIsD5KOEmeWH2JUHUujEy", // Elite £79/mo
+  // Legacy coaching tiers
+  "price_1TOZ0iD5KOEmeWH2hXvqwBOm", // Tier 1
+  "price_1TOZ0jD5KOEmeWH23osCaN4Y", // Tier 2 (121)
+  "price_1T6Gc7RgwCgvPuKnfH1WiggU", // Old Tier 2
+]);
+
+// Tier 2 (121 coaching) price IDs that trigger dev notifications
+const COACHING_121_PRICES = new Set([
+  "price_1TOZ0jD5KOEmeWH23osCaN4Y",
+  "price_1T6Gc7RgwCgvPuKnfH1WiggU",
+]);
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -48,7 +63,7 @@ serve(async (req) => {
 
     const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", { apiVersion: "2025-08-27.basil" });
 
-    // Find or skip existing customer
+    // Find or create customer
     const customers = await stripe.customers.list({ email: user.email, limit: 1 });
     let customerId: string | undefined;
     if (customers.data.length > 0) {
@@ -57,28 +72,42 @@ serve(async (req) => {
     }
 
     const origin = req.headers.get("origin") || "https://www.unbreakable-lwl.com";
+    const isSubscription = SUBSCRIPTION_PRICES.has(priceId);
+    const mode = isSubscription ? "subscription" : "payment";
 
-    const session = await stripe.checkout.sessions.create({
+    logStep("Checkout mode", { mode, isSubscription });
+
+    // Build session config
+    const sessionConfig: any = {
       customer: customerId,
       customer_email: customerId ? undefined : user.email,
       line_items: [{ price: priceId, quantity: 1 }],
-      mode: "subscription",
+      mode,
       allow_promotion_codes: true,
-      subscription_data: {
+      success_url: `${origin}/?checkout=success`,
+      cancel_url: isSubscription ? `${origin}/plans` : `${origin}/university`,
+      metadata: { user_id: user.id, price_id: priceId },
+    };
+
+    if (isSubscription) {
+      sessionConfig.subscription_data = {
         trial_period_days: 7,
         metadata: { user_id: user.id },
-      },
-      success_url: `${origin}/?checkout=success`,
-      cancel_url: `${origin}/plans`,
-    });
+      };
+    } else {
+      // One-time payment — attach user_id for webhook processing
+      sessionConfig.payment_intent_data = {
+        metadata: { user_id: user.id, price_id: priceId },
+      };
+    }
 
-    logStep("Checkout session created", { sessionId: session.id });
+    const session = await stripe.checkout.sessions.create(sessionConfig);
+    logStep("Checkout session created", { sessionId: session.id, mode });
 
     // If Tier 2 (121 coaching), notify all dev users
-    if (priceId === TIER2_PRICE_ID) {
-      logStep("Tier 2 (121) selected — notifying devs");
+    if (COACHING_121_PRICES.has(priceId)) {
+      logStep("121 coaching selected — notifying devs");
       try {
-        // Get user profile for display name
         const { data: profileData } = await serviceClient
           .from("profiles")
           .select("display_name, username")
@@ -87,7 +116,6 @@ serve(async (req) => {
 
         const displayName = profileData?.display_name || profileData?.username || user.email;
 
-        // Find all dev users
         const { data: devRoles } = await serviceClient
           .from("user_roles")
           .select("user_id")
@@ -106,7 +134,6 @@ serve(async (req) => {
           logStep("Dev notifications sent", { count: notifications.length });
         }
       } catch (notifyErr) {
-        // Don't fail checkout if notification fails
         logStep("Notification error (non-fatal)", { error: String(notifyErr) });
       }
     }

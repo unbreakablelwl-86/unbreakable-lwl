@@ -1,0 +1,268 @@
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { MainNavigation } from '@/components/MainNavigation';
+import { useTokenBalance } from '@/hooks/useTokenBalance';
+import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
+import { Zap, Check, Crown, Rocket, Star, Sparkles } from 'lucide-react';
+import { cn } from '@/lib/utils';
+
+interface TierCard {
+  name: string;
+  displayName: string;
+  tokens: number;
+  price: number; // monthly GBP
+  icon: React.ElementType;
+  features: string[];
+  popular?: boolean;
+  stripePriceId?: string;
+}
+
+const TIERS: TierCard[] = [
+  {
+    name: 'free',
+    displayName: 'Free',
+    tokens: 5,
+    price: 0,
+    icon: Zap,
+    features: ['5 AI tokens on signup', 'Try any AI feature', 'No commitment needed'],
+  },
+  {
+    name: 'starter',
+    displayName: 'Starter',
+    tokens: 50,
+    price: 25,
+    icon: Star,
+    stripePriceId: 'price_1TXuIrD5KOEmeWH21kBZYWAP',
+    features: ['50 tokens/month', 'AI programme builder', 'AI nutrition plans', 'Form feedback'],
+  },
+  {
+    name: 'pro',
+    displayName: 'Pro',
+    tokens: 150,
+    price: 49,
+    icon: Rocket,
+    popular: true,
+    stripePriceId: 'price_1TXuIrD5KOEmeWH2SxYc7G14',
+    features: ['150 tokens/month', 'Full AI coaching', 'All pillars covered', 'Priority responses'],
+  },
+  {
+    name: 'elite',
+    displayName: 'Elite',
+    tokens: 500,
+    price: 79,
+    icon: Crown,
+    stripePriceId: 'price_1TXuIsD5KOEmeWH2JUHUujEy',
+    features: ['500 tokens/month', 'Unlimited feel', 'All features included', 'Perfect for PT students'],
+  },
+];
+
+export default function AITokens() {
+  const { user } = useAuth();
+  const { balance, currentTier, tierDisplayName, lifetimeSpent, isUnlimited, loading } = useTokenBalance();
+  const navigate = useNavigate();
+  const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
+
+  const handleSelectTier = async (tier: TierCard) => {
+    if (!user) {
+      toast.error('Please sign in first');
+      return;
+    }
+
+    if (tier.name === 'free') {
+      toast.info("You're already on the Free tier!");
+      return;
+    }
+
+    if (tier.name === currentTier) {
+      toast.info(`You're already on the ${tier.displayName} plan!`);
+      return;
+    }
+
+    if (!tier.stripePriceId) {
+      toast.info('Coming soon — AI tier subscriptions are being set up.');
+      return;
+    }
+
+    setCheckoutLoading(tier.name);
+    try {
+      const { data, error } = await supabase.functions.invoke('create-checkout', {
+        body: { priceId: tier.stripePriceId },
+      });
+      if (error) throw error;
+      if (data?.url) window.open(data.url, '_blank');
+    } catch (err: any) {
+      console.error('Checkout error:', err);
+      toast.error('Failed to start checkout. Please try again.');
+    } finally {
+      setCheckoutLoading(null);
+    }
+  };
+
+  return (
+    <>
+      <MainNavigation />
+      <div className="min-h-screen bg-background pt-20 pb-16 px-4">
+        <div className="max-w-5xl mx-auto">
+          {/* Header */}
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 rounded-full px-4 py-1.5 mb-4">
+              <Sparkles className="w-4 h-4 text-primary" />
+              <span className="text-sm font-display tracking-wider text-primary">AI COACHING</span>
+            </div>
+            <h1 className="text-3xl md:text-4xl font-display tracking-wider mb-3">
+              AI TOKENS
+            </h1>
+            <p className="text-muted-foreground max-w-md mx-auto">
+              Power your AI coach with tokens. Every AI interaction — programmes, meal plans, form analysis — costs 1 token.
+            </p>
+          </div>
+
+          {/* Current balance card */}
+          {user && !loading && (
+            <div className="flex justify-center mb-10">
+              <div className="bg-card border border-border rounded-2xl p-6 flex items-center gap-6 shadow-lg">
+                <div className="flex items-center gap-3">
+                  <div className="bg-primary/10 rounded-full p-3">
+                    <Zap className="w-6 h-6 text-primary" />
+                  </div>
+                  <div>
+                    <div className="text-3xl font-display tracking-wider">
+                      {isUnlimited ? '∞' : balance.toLocaleString()}
+                    </div>
+                    <div className="text-xs text-muted-foreground font-display tracking-wider">
+                      TOKENS REMAINING
+                    </div>
+                  </div>
+                </div>
+                <div className="h-10 w-px bg-border" />
+                <div>
+                  <div className="text-sm font-display tracking-wider text-primary">
+                    {tierDisplayName.toUpperCase()} PLAN
+                  </div>
+                  <div className="text-xs text-muted-foreground">
+                    {lifetimeSpent} used lifetime
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Tier cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+            {TIERS.map((tier) => {
+              const Icon = tier.icon;
+              const isCurrent = currentTier === tier.name;
+              const isPopular = tier.popular;
+
+              return (
+                <div
+                  key={tier.name}
+                  className={cn(
+                    'relative flex flex-col rounded-2xl border p-6 transition-all',
+                    isPopular
+                      ? 'border-primary shadow-[0_0_20px_hsl(24_100%_50%/0.15)] scale-[1.02]'
+                      : 'border-border hover:border-primary/40',
+                    isCurrent && 'ring-2 ring-primary/50'
+                  )}
+                >
+                  {isPopular && (
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-[10px] font-display tracking-widest px-3 py-1 rounded-full">
+                      MOST POPULAR
+                    </div>
+                  )}
+                  {isCurrent && (
+                    <div className="absolute -top-3 right-4 bg-green-600 text-white text-[10px] font-display tracking-widest px-3 py-1 rounded-full">
+                      CURRENT
+                    </div>
+                  )}
+
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className={cn(
+                      'rounded-lg p-2',
+                      isPopular ? 'bg-primary/20' : 'bg-muted'
+                    )}>
+                      <Icon className={cn('w-5 h-5', isPopular ? 'text-primary' : 'text-foreground')} />
+                    </div>
+                    <h3 className="font-display tracking-wider text-lg">{tier.displayName.toUpperCase()}</h3>
+                  </div>
+
+                  <div className="mb-4">
+                    <span className="text-3xl font-display tracking-wider">
+                      {tier.price === 0 ? 'FREE' : `£${tier.price}`}
+                    </span>
+                    {tier.price > 0 && (
+                      <span className="text-sm text-muted-foreground ml-1">/month</span>
+                    )}
+                  </div>
+
+                  <div className="text-sm text-muted-foreground mb-4">
+                    <span className="text-foreground font-semibold">{tier.tokens}</span> tokens
+                    {tier.price > 0 ? '/month' : ' on signup'}
+                  </div>
+
+                  <ul className="flex-1 space-y-2 mb-6">
+                    {tier.features.map((feature, i) => (
+                      <li key={i} className="flex items-start gap-2 text-sm">
+                        <Check className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+                        <span className="text-muted-foreground">{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <button
+                    onClick={() => handleSelectTier(tier)}
+                    disabled={isCurrent || checkoutLoading === tier.name}
+                    className={cn(
+                      'w-full py-2.5 rounded-lg font-display tracking-wider text-sm transition-all',
+                      isCurrent
+                        ? 'bg-muted text-muted-foreground cursor-default'
+                        : isPopular
+                          ? 'bg-primary text-primary-foreground hover:shadow-[0_0_16px_hsl(24_100%_50%/0.4)]'
+                          : 'border border-primary/30 text-primary hover:bg-primary/10',
+                      checkoutLoading === tier.name && 'opacity-60'
+                    )}
+                  >
+                    {isCurrent
+                      ? 'CURRENT PLAN'
+                      : checkoutLoading === tier.name
+                        ? 'LOADING...'
+                        : tier.price === 0
+                          ? 'GET STARTED'
+                          : 'SUBSCRIBE'}
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* FAQ / Info */}
+          <div className="mt-16 max-w-2xl mx-auto">
+            <h2 className="text-xl font-display tracking-wider text-center mb-6">HOW TOKENS WORK</h2>
+            <div className="space-y-4 text-sm text-muted-foreground">
+              <div className="flex gap-3">
+                <Zap className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                <div>
+                  <span className="text-foreground font-medium">1 token = 1 AI interaction.</span> Whether it's generating a programme, analysing your form, building a meal plan, or chatting with the AI coach — each interaction uses 1 token.
+                </div>
+              </div>
+              <div className="flex gap-3">
+                <Sparkles className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                <div>
+                  <span className="text-foreground font-medium">Tokens roll over.</span> Unused tokens from this month carry over to the next. They don't expire while your subscription is active.
+                </div>
+              </div>
+              <div className="flex gap-3">
+                <Star className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                <div>
+                  <span className="text-foreground font-medium">Upgrade anytime.</span> Switch to a higher tier whenever you need more tokens. Your new allowance starts immediately.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}

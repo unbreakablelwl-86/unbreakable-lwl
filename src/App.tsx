@@ -46,6 +46,7 @@ import Plans from "./pages/Plans";
 import Founder from "./pages/Founder";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
+import AITokens from "./pages/AITokens";
 
 const queryClient = new QueryClient();
 
@@ -77,6 +78,11 @@ const App = () => (
                 <ProtectedRoute><Profile /></ProtectedRoute>
               } />
               
+              {/* AI Tokens - token tier selection */}
+              <Route path="/ai-tokens" element={
+                <ProtectedRoute><AITokens /></ProtectedRoute>
+              } />
+
               {/* Plans - subscription selection */}
               <Route path="/plans" element={
                 <ProtectedRoute><Plans /></ProtectedRoute>

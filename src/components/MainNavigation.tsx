@@ -15,6 +15,7 @@ import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/useAuth';
 import { useUserRole } from '@/hooks/useUserRole';
 import { AuthModal } from '@/components/tracker/AuthModal';
+import { TokenBalanceBadge } from '@/components/ai/TokenBalanceBadge';
 import { NavigationDrawer } from '@/components/NavigationDrawer';
 import {
   Calculator,
@@ -183,6 +184,11 @@ export function MainNavigation() {
             <div className="flex items-center gap-2 shrink-0">
               {/* Desktop-only secondary nav items */}
               <div className="hidden lg:flex items-center gap-1">
+                {user && (
+                  <Link to="/ai-tokens" className="mr-1">
+                    <TokenBalanceBadge showTier />
+                  </Link>
+                )}
                 <Link to="/profile" className={navLinkClass(isActive('/profile'))}>
                   MY PROFILE
                 </Link>
