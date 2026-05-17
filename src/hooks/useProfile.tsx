@@ -16,6 +16,12 @@ export interface Profile {
   total_runs: number;
   total_time_seconds: number;
   is_public: boolean;
+  social_instagram: string | null;
+  social_tiktok: string | null;
+  social_twitter: string | null;
+  social_facebook: string | null;
+  social_youtube: string | null;
+  social_snapchat: string | null;
   created_at: string;
   updated_at: string;
 }

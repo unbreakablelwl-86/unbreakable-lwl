@@ -294,6 +294,7 @@ export function StatusCard({ post, onKudos, onDelete, onToggleComments, onUpdate
           </Button>
           <ShareMenu 
             onShareToStory={handleShareToStory}
+            shareText={post.content ? `${post.content.slice(0, 200)} 💪 #UNBREAKABLE #KeepShowingUp` : '💪 #UNBREAKABLE #KeepShowingUp'}
           />
         </div>
 

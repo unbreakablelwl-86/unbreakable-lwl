@@ -27,6 +27,7 @@ import { CombinedStatsView } from '@/components/tracker/CombinedStatsView';
 import { CombinedRecordsView } from '@/components/tracker/CombinedRecordsView';
 import { SettingsPanel } from '@/components/settings/SettingsPanel';
 import { MembershipTab } from '@/components/profile/MembershipTab';
+import { SocialLinksDisplay } from '@/components/profile/SocialLinksDisplay';
 import { toast } from 'sonner';
 import { 
   Edit2, 
@@ -394,6 +395,17 @@ export function ProfileView() {
                   </div>
                 )}
                 {/* Trophy counts badge - hidden for now */}
+
+                {/* Social Links */}
+                <SocialLinksDisplay
+                  instagram={profile.social_instagram}
+                  tiktok={profile.social_tiktok}
+                  twitter={profile.social_twitter}
+                  facebook={profile.social_facebook}
+                  youtube={profile.social_youtube}
+                  snapchat={profile.social_snapchat}
+                  className="mt-3"
+                />
               </>
             )}
 

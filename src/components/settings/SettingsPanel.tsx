@@ -44,6 +44,7 @@ import { useProfile } from '@/hooks/useProfile';
 import { toast } from 'sonner';
 
 import { BlockedUsersSection } from './BlockedUsersSection';
+import { SocialLinksCard } from './SocialLinksCard';
 export function SettingsPanel() {
   const { settings, loading, updateSettings, toggleTheme } = useUserSettings();
   const { preferences: aiPreferences, isLoading: aiLoading, updatePreferences } = useAIPreferences();
@@ -573,6 +574,9 @@ export function SettingsPanel() {
       {/* Meta Credentials moved to Social Command Centre */}
 
       {/* Nutrition Goals removed - managed via Fuel section */}
+
+      {/* Social Links */}
+      <SocialLinksCard profile={profile} updateProfile={updateProfile} />
 
       {/* Sign Out */}
       <Card className="bg-card border-border border-destructive/30">

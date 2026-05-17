@@ -277,6 +277,7 @@ export function ActivityCard({ run, onKudos, onDelete, onToggleComments, onUpdat
           </Button>
           <ShareMenu 
             onShareToStory={handleShareToStory}
+            shareText={`🏃 ${run.title || 'Run'} — ${run.distance_km.toFixed(2)}km 💪 #UNBREAKABLE #KeepShowingUp`}
           />
         </div>
 

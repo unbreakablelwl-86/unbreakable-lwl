@@ -30,6 +30,7 @@ import {
   XCircle,
 } from 'lucide-react';
 import { formatDistanceToNow, format } from 'date-fns';
+import { SocialLinksDisplay } from '@/components/profile/SocialLinksDisplay';
 
 interface UserProfileData {
   user_id: string;
@@ -42,6 +43,12 @@ interface UserProfileData {
   total_runs: number | null;
   total_distance_km: number | null;
   total_time_seconds: number | null;
+  social_instagram: string | null;
+  social_tiktok: string | null;
+  social_twitter: string | null;
+  social_facebook: string | null;
+  social_youtube: string | null;
+  social_snapchat: string | null;
   created_at: string;
 }
 
@@ -252,6 +259,16 @@ export default function UserProfile() {
                   Joined {format(new Date(profile.created_at), 'MMM yyyy')}
                 </span>
               </div>
+
+              {/* Social Links */}
+              <SocialLinksDisplay
+                instagram={profile.social_instagram}
+                tiktok={profile.social_tiktok}
+                twitter={profile.social_twitter}
+                facebook={profile.social_facebook}
+                youtube={profile.social_youtube}
+                snapchat={profile.social_snapchat}
+              />
 
               {/* Action Buttons */}
               {user && !isOwnProfile && (
