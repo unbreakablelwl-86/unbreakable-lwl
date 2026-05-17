@@ -34,7 +34,7 @@ const TIERS: TierCard[] = [
     displayName: 'Starter',
     tokens: 50,
     price: 25,
-    fullPrice: 35,
+    fullPrice: undefined,
     icon: Star,
     stripePriceId: 'price_1TXuIrD5KOEmeWH21kBZYWAP',
     features: ['50 tokens/month', 'Unbreakable Coach programme builder', 'Unbreakable Coach nutrition plans', 'Form feedback'],
@@ -44,7 +44,7 @@ const TIERS: TierCard[] = [
     displayName: 'Pro',
     tokens: 150,
     price: 49,
-    fullPrice: 75,
+    fullPrice: undefined,
     icon: Rocket,
     popular: true,
     stripePriceId: 'price_1TXuIrD5KOEmeWH2SxYc7G14',
@@ -55,7 +55,7 @@ const TIERS: TierCard[] = [
     displayName: 'Elite',
     tokens: 500,
     price: 79,
-    fullPrice: 110,
+    fullPrice: undefined,
     icon: Crown,
     stripePriceId: 'price_1TXuIsD5KOEmeWH2JUHUujEy',
     features: ['500 tokens/month', 'Unlimited feel', 'All features included', 'Perfect for PT students'],
@@ -121,12 +121,7 @@ export default function AITokens() {
             <p className="text-muted-foreground max-w-md mx-auto mb-4">
               Power your Unbreakable Coach with tokens. Chat costs just 0.2 tokens per message — full programme builds cost 1 token.
             </p>
-            <div className="inline-flex items-center gap-2 bg-green-500/10 border border-green-500/30 rounded-full px-4 py-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-green-500" />
-              <span className="text-xs font-display tracking-wider text-green-500">
-                INTRO PRICING — 33% OFF · FIRST 100 MEMBERS
-              </span>
-            </div>
+            {/* Intro badge removed — current pricing is the offer */}
           </div>
 
           {/* Current balance card */}

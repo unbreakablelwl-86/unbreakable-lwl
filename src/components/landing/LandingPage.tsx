@@ -111,9 +111,9 @@ const freeFeatures = [
 /* ─── Unbreakable Token tiers for pricing ─── */
 const tokenTiers = [
   { name: 'FREE', tokens: 5, price: '£0', fullPrice: null, desc: 'Try the Unbreakable Coach — 5 tokens on signup', highlight: false },
-  { name: 'STARTER', tokens: 50, price: '£25/mo', fullPrice: '£35/mo', desc: 'Unbreakable Coach programmes, meal plans & form feedback', highlight: false },
-  { name: 'PRO', tokens: 150, price: '£49/mo', fullPrice: '£75/mo', desc: 'Full coaching across all pillars', highlight: true },
-  { name: 'ELITE', tokens: 500, price: '£79/mo', fullPrice: '£110/mo', desc: 'Unlimited feel — perfect for PT students', highlight: false },
+  { name: 'STARTER', tokens: 50, price: '£25/mo', fullPrice: null, desc: 'Unbreakable Coach programmes, meal plans & form feedback', highlight: false },
+  { name: 'PRO', tokens: 150, price: '£49/mo', fullPrice: null, desc: 'Full coaching across all pillars', highlight: true },
+  { name: 'ELITE', tokens: 500, price: '£79/mo', fullPrice: null, desc: 'Unlimited feel — perfect for PT students', highlight: false },
 ];
 
 export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
@@ -231,16 +231,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
             100% free to use · 5 tokens on signup · No card required
           </motion.p>
 
-          <motion.div
-            variants={fadeUp}
-            transition={{ duration: 0.6 }}
-            className="inline-flex items-center gap-2 bg-green-500/10 border border-green-500/30 rounded-full px-4 py-1.5 mt-2"
-          >
-            <Sparkles className="w-3.5 h-3.5 text-green-500" />
-            <span className="text-xs font-display tracking-wider text-green-500">
-              INTRO PRICING — 33% OFF · LIMITED TO FIRST 100 MEMBERS
-            </span>
-          </motion.div>
+          {/* Intro badge removed — current pricing is the offer */}
         </motion.div>
 
         {/* Scroll indicator */}
@@ -703,12 +694,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
               <p className="text-muted-foreground text-sm">
                 Tokens power your Unbreakable Coach — chat, programme builds, meal plans & University courses.
               </p>
-              <div className="inline-flex items-center gap-2 mt-3 bg-green-500/10 border border-green-500/30 rounded-full px-4 py-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-green-500" />
-                <span className="text-xs font-display tracking-wider text-green-500">
-                  INTRO PRICING — 33% OFF · FIRST 100 MEMBERS
-                </span>
-              </div>
+              {/* Intro badge removed — current pricing is the offer */}
             </motion.div>
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-5xl mx-auto">
