@@ -66,7 +66,7 @@ const defaultFormData: RecipeFormData = {
 const CATEGORY_TABS = [
   { value: 'breakfast', label: 'BREAKFAST', icon: '🌅' },
   { value: 'lunch', label: 'LUNCH', icon: '🥗' },
-  { value: 'main', label: 'MAIN', icon: '🍽️' },
+  { value: 'dinner', label: 'DINNER', icon: '🍽️' },
   { value: 'snack', label: 'SNACKS', icon: '🍿' },
   { value: 'desserts', label: 'DESSERTS', icon: '🍫' },
   { value: 'shakes', label: 'SHAKES', icon: '🥤' },
