@@ -10,10 +10,17 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { toast } from '@/hooks/use-toast';
-import { Dumbbell, Activity, Utensils, Brain, User, ChevronRight, ChevronLeft, Check } from 'lucide-react';
+import { Dumbbell, Activity, Utensils, Brain, User, Trophy, ChevronRight, ChevronLeft, Check } from 'lucide-react';
+
+const SPORT_OPTIONS = [
+  'Football', 'Boxing', 'Rugby', 'Running', 'Swimming',
+  'MMA', 'Cycling', 'Tennis', 'Basketball', 'Cricket',
+  'None / General Fitness',
+];
 
 const STEPS = [
   { label: 'Personal', icon: User },
+  { label: 'Sport', icon: Trophy },
   { label: 'Power', icon: Dumbbell },
   { label: 'Movement', icon: Activity },
   { label: 'Fuel', icon: Utensils },
@@ -29,6 +36,8 @@ interface OnboardingData {
   weight_kg: number | null;
   preferred_height_unit: string;
   preferred_weight_unit: string;
+  // Sport
+  sport_preference: string;
   // Power
   experience_level: string;
   training_goal: string;
@@ -64,6 +73,7 @@ const initialData: OnboardingData = {
   weight_kg: null,
   preferred_height_unit: 'cm',
   preferred_weight_unit: 'kg',
+  sport_preference: '',
   experience_level: '',
   training_goal: '',
   days_per_week: null,
@@ -116,11 +126,15 @@ export default function Onboarding() {
 
     try {
       // Upsert coaching profile with all onboarding data
+      const saveData = {
+        ...data,
+        sport_preference: data.sport_preference === 'None / General Fitness' || !data.sport_preference ? null : data.sport_preference,
+      };
       const { error } = await supabase
         .from('coaching_profiles')
         .upsert({
           user_id: user.id,
-          ...data,
+          ...saveData,
           onboarding_completed: true,
         }, { onConflict: 'user_id' });
 
@@ -279,6 +293,30 @@ export default function Onboarding() {
         return (
           <div className="space-y-6">
             <div>
+              <h2 className="font-display text-2xl text-foreground mb-1">SPORT PREFERENCE</h2>
+              <p className="text-sm text-muted-foreground">Optional — pick your sport and your AI coach will tailor programmes to it. You can change this in settings any time.</p>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <Label>What's your sport?</Label>
+                <RadioGroup value={data.sport_preference} onValueChange={v => update('sport_preference', v)} className="flex flex-wrap gap-3 mt-2">
+                  {SPORT_OPTIONS.map(s => (
+                    <Label key={s} className={`flex items-center gap-2 px-4 py-2.5 rounded-lg border cursor-pointer transition-colors ${data.sport_preference === s ? 'border-primary bg-primary/10 text-primary' : 'border-border bg-card hover:border-muted-foreground'}`}>
+                      <RadioGroupItem value={s} className="sr-only" />
+                      <span className="text-sm">{s}</span>
+                    </Label>
+                  ))}
+                </RadioGroup>
+              </div>
+            </div>
+          </div>
+        );
+
+      case 2:
+        return (
+          <div className="space-y-6">
+            <div>
               <h2 className="font-display text-2xl text-foreground mb-1">POWER</h2>
               <p className="text-sm text-muted-foreground">Optional — your Unbreakable Coach can gather this later</p>
             </div>
@@ -359,7 +397,7 @@ export default function Onboarding() {
           </div>
         );
 
-      case 2:
+      case 3:
         return (
           <div className="space-y-6">
             <div>
@@ -410,7 +448,7 @@ export default function Onboarding() {
           </div>
         );
 
-      case 3:
+      case 4:
         return (
           <div className="space-y-6">
             <div>
@@ -461,7 +499,7 @@ export default function Onboarding() {
           </div>
         );
 
-      case 4:
+      case 5:
         return (
           <div className="space-y-6">
             <div>

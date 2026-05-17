@@ -22,6 +22,7 @@ interface UserContext {
   equipment?: string[];
   daysPerWeek?: number;
   sessionLength?: number;
+  sportPreference?: string;
   previousPerformance?: {
     benchMax?: number;
     squatMax?: number;
@@ -108,6 +109,11 @@ export function useAIProgramme() {
         },
         ...additionalContext,
       };
+
+      // Sport preference from coaching profile
+      if ((coachingProfile as any)?.sport_preference) {
+        userContext.sportPreference = (coachingProfile as any).sport_preference;
+      }
 
       // Calculate age from coaching profile or DOB
       if (coachingProfile?.age_years) {

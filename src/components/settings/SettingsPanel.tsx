@@ -45,6 +45,7 @@ import { toast } from 'sonner';
 
 import { BlockedUsersSection } from './BlockedUsersSection';
 import { SocialLinksCard } from './SocialLinksCard';
+import { SportPreferenceCard } from './SportPreferenceCard';
 export function SettingsPanel() {
   const { settings, loading, updateSettings, toggleTheme } = useUserSettings();
   const { preferences: aiPreferences, isLoading: aiLoading, updatePreferences } = useAIPreferences();
@@ -574,6 +575,9 @@ export function SettingsPanel() {
       {/* Meta Credentials moved to Social Command Centre */}
 
       {/* Nutrition Goals removed - managed via Fuel section */}
+
+      {/* Sport Preference */}
+      <SportPreferenceCard />
 
       {/* Social Links */}
       <SocialLinksCard profile={profile} updateProfile={updateProfile} />

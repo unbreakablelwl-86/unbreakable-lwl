@@ -22,6 +22,7 @@ interface UserContext {
   equipment?: string[];
   daysPerWeek?: number;
   sessionLength?: number;
+  sportPreference?: string;
   previousPerformance?: {
     benchMax?: number;
     squatMax?: number;
@@ -500,6 +501,9 @@ serve(async (req) => {
     if (userContext.sessionLength) {
       contextString += `Session Length: ${userContext.sessionLength} minutes\n`;
     }
+    if (userContext.sportPreference) {
+      contextString += `Sport Preference: ${userContext.sportPreference}\n`;
+    }
     if (userContext.previousPerformance) {
       const perf = userContext.previousPerformance;
       const perfLines = [];
@@ -524,7 +528,7 @@ TONE FOR overview: Write like you're talking to your athlete face-to-face. E.g. 
 
 ${EXERCISE_NAMES_PROMPT}
 
-Rules: Match equipment+experience. Periodize for goals. Account for injuries. Include warmup/cooldown. Use EXACT exercise names from the list above.
+Rules: Match equipment+experience. Periodize for goals. Account for injuries. Include warmup/cooldown. Use EXACT exercise names from the list above. If the user has a Sport Preference, tailor the programme with sport-specific conditioning, movement patterns, and energy system work relevant to that sport — but ONLY use exercises from the list above.
 
 MANDATORY: Every programme MUST include 2 x 30-minute cardio sessions per week (steady-state walk, run, cycle, row, or swim). Schedule these on non-lifting days or after lighter sessions. Label them clearly in the weekly schedule as "Cardio – 30 min steady state" with the recommended activity type.
 

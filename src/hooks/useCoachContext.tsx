@@ -40,6 +40,7 @@ export interface CoachUserContext {
     stressLevel: string | null;
     injuries: string | null;
     city: string | null;
+    sportPreference: string | null;
   } | null;
   recentWorkouts: {
     date: string;
@@ -293,6 +294,7 @@ export function useCoachContext() {
         stressLevel: coachingProfile.stress_level,
         injuries: coachingProfile.injuries,
         city: coachingProfile.city,
+        sportPreference: (coachingProfile as any).sport_preference ?? null,
       } : null,
       recentWorkouts,
       recentNutrition,
@@ -368,6 +370,7 @@ export function useCoachContext() {
       if (cp.stressLevel) mindParts.push(`Stress: ${cp.stressLevel}`);
       if (mindParts.length) parts.push(`MINDSET PROFILE: ${mindParts.join(', ')}`);
 
+      if (cp.sportPreference) parts.push(`SPORT PREFERENCE: ${cp.sportPreference}`);
       if (cp.injuries) parts.push(`INJURIES/LIMITATIONS: ${cp.injuries}`);
     }
 
@@ -570,6 +573,7 @@ export function useCoachContext() {
         primaryMotivation: targetCoachingProfile.primary_motivation, biggestChallenge: targetCoachingProfile.biggest_challenge,
         sleepHours: targetCoachingProfile.sleep_hours, sleepQuality: targetCoachingProfile.sleep_quality, stressLevel: targetCoachingProfile.stress_level,
         injuries: targetCoachingProfile.injuries, city: targetCoachingProfile.city,
+        sportPreference: (targetCoachingProfile as any).sport_preference ?? null,
       } : null,
       recentWorkouts,
       recentNutrition,

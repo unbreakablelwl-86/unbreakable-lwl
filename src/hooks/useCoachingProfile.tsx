@@ -34,6 +34,7 @@ export interface CoachingProfile {
   injuries: string | null;
   mental_health: string | null;
   city: string | null;
+  sport_preference: string | null;
   onboarding_completed: boolean;
   created_at: string;
   updated_at: string;
