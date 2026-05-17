@@ -23,6 +23,7 @@ import UniversityLevel from "./pages/UniversityLevel";
 import UniversityChapter from "./pages/UniversityChapter";
 import UniversityAssessment from "./pages/UniversityAssessment";
 import UniversityChapterQuiz from "./pages/UniversityChapterQuiz";
+import UniversityCertificate from "./pages/UniversityCertificate";
 
 // New modular sub-pages
 import Profile from "./pages/Profile";
@@ -180,6 +181,9 @@ const App = () => (
               } />
               <Route path="/university/:courseType/:level/:unit/assessment" element={
                 <ProtectedRoute><UniversityAssessment /></ProtectedRoute>
+              } />
+              <Route path="/university/:courseType/level-:level/certificate" element={
+                <ProtectedRoute><UniversityCertificate /></ProtectedRoute>
               } />
               
               {/* Habits - free to build daily engagement */}

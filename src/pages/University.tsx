@@ -86,8 +86,12 @@ export default function University() {
             </h1>
 
             <p className="text-muted-foreground text-sm md:text-base max-w-2xl mx-auto leading-relaxed">
-              Real education that should be taught in schools — not locked behind a £5,000 qualification.
-              Level 2 &amp; Level 3 courses in fitness, nutrition, and mindset science.
+              Real education that should be taught in schools — not locked behind a qualification.
+              Level 2, 3 and 4 courses in fitness, nutrition, mindset and sports science.
+            </p>
+
+            <p className="text-xs text-muted-foreground/70 max-w-xl mx-auto">
+              UNBREAKABLE courses are written to NVQ standard. These are not official qualifications — they are UNBREAKABLE education, built to be accessible to everyone.
             </p>
 
             {/* Animated Stats */}
@@ -358,6 +362,17 @@ export default function University() {
                           total={totalChapters}
                           colorClass={colors.progressFill}
                         />
+                      )}
+
+                      {/* Certificate badge when final assessment passed */}
+                      {hasPassedAssessment(level.level, 0, activeTab) && (
+                        <button
+                          onClick={(e) => { e.stopPropagation(); navigate(`/university/${activeTab}/level-${level.level}/certificate`); }}
+                          className={`flex items-center gap-2 text-xs ${colors.text} hover:underline mt-3`}
+                        >
+                          <Award className="w-4 h-4" />
+                          <span className="font-display tracking-wider">VIEW CERTIFICATE</span>
+                        </button>
                       )}
 
                       {!hasContent && !isLocked && (

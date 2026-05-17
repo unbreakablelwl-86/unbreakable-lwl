@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
-import { ChevronLeft, CheckCircle, XCircle, RotateCcw, Trophy, BookOpen } from 'lucide-react';
+import { ChevronLeft, CheckCircle, XCircle, RotateCcw, Trophy, BookOpen, Award } from 'lucide-react';
 import { getAssessment, getUnitData } from '@/lib/university/courseStructure';
 import { useUniversityProgress } from '@/hooks/useUniversityProgress';
 import { useUniversityAdmin } from '@/hooks/useUniversityAdmin';
@@ -225,9 +225,19 @@ export default function UniversityAssessment() {
               </Button>
             )}
             {passed && (
-              <Button onClick={() => navigate(`/university/${ct}/level-${levelNum}`)} className="w-full gap-2 h-12">
-                <CheckCircle className="w-5 h-5" /> Back to Level {levelNum}
-              </Button>
+              <div className="space-y-3">
+                {isFinal && (
+                  <Button
+                    onClick={() => navigate(`/university/${ct}/level-${levelNum}/certificate`)}
+                    className="w-full gap-2 h-12 bg-orange-600 hover:bg-orange-700"
+                  >
+                    <Award className="w-5 h-5" /> View Your Certificate
+                  </Button>
+                )}
+                <Button onClick={() => navigate(`/university/${ct}/level-${levelNum}`)} className="w-full gap-2 h-12" variant={isFinal ? 'outline' : 'default'}>
+                  <CheckCircle className="w-5 h-5" /> Back to Level {levelNum}
+                </Button>
+              </div>
             )}
           </div>
         </main>
