@@ -16,13 +16,13 @@ const corsHeaders = {
  */
 
 // ── Known pricing (must match frontend coursePricing.ts) ──
-const COURSE_COIN_COST = 100;
+const COURSE_COIN_COST = 150;
 
 const BUNDLE_COSTS: Record<string, { courses: string[]; coinCost: number }> = {
-  power:   { courses: ["gym_l2", "gym_l3", "gym_l4"], coinCost: 250 },
-  fuel:    { courses: ["nutrition_l2", "nutrition_l3", "nutrition_l4"], coinCost: 250 },
-  mindset: { courses: ["mindset_l2", "mindset_l3"], coinCost: 160 },
-  all:     { courses: ["gym_l2", "gym_l3", "gym_l4", "nutrition_l2", "nutrition_l3", "nutrition_l4", "mindset_l2", "mindset_l3"], coinCost: 600 },
+  power:   { courses: ["gym_l2", "gym_l3", "gym_l4"], coinCost: 375 },
+  fuel:    { courses: ["nutrition_l2", "nutrition_l3", "nutrition_l4"], coinCost: 375 },
+  mindset: { courses: ["mindset_l2", "mindset_l3"], coinCost: 250 },
+  all:     { courses: ["gym_l2", "gym_l3", "gym_l4", "nutrition_l2", "nutrition_l3", "nutrition_l4", "mindset_l2", "mindset_l3"], coinCost: 900 },
 };
 
 const VALID_COURSE_KEYS = new Set([
