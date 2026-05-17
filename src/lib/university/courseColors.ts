@@ -84,11 +84,15 @@ export function getCourseColors(courseType: string): CourseColorScheme {
 }
 
 /** Get estimated reading time for a chapter (based on word count) */
-export function getReadingTime(chapter: { content: { paragraphs?: string[]; bullets?: string[] }[] }): number {
+export function getReadingTime(chapter: { content: { paragraphs?: string[]; bullets?: string[] }[] | string }): number {
   let words = 0;
-  for (const section of chapter.content) {
-    if (section.paragraphs) words += section.paragraphs.join(' ').split(/\s+/).length;
-    if (section.bullets) words += section.bullets.join(' ').split(/\s+/).length;
+  if (typeof chapter.content === 'string') {
+    words = chapter.content.split(/\s+/).length;
+  } else {
+    for (const section of chapter.content) {
+      if (section.paragraphs) words += section.paragraphs.join(' ').split(/\s+/).length;
+      if (section.bullets) words += section.bullets.join(' ').split(/\s+/).length;
+    }
   }
   return Math.max(2, Math.ceil(words / 200)); // ~200 wpm, minimum 2 min
 }

@@ -16,12 +16,17 @@ export interface PracticalTask {
 export interface Chapter {
   number: number;
   title: string;
-  learningOutcome: string;
-  assessmentCriteria: string[];
-  content: ContentSection[];
-  unbreakableInsight: string;
-  coachNote: string;
-  practicalTask: PracticalTask;
+  learningOutcome?: string;
+  assessmentCriteria?: string[];
+  content: ContentSection[] | string;
+  unbreakableInsight?: string;
+  coachNote?: string;
+  practicalTask?: PracticalTask;
+  // Sport-specific fields
+  description?: string;
+  keyTakeaways?: string;
+  practicalApplication?: string;
+  imagePlaceholder?: string;
 }
 
 export interface AssessmentQuestion {
