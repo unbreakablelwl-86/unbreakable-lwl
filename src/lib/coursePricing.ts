@@ -73,3 +73,33 @@ export function getBundles() {
     ...info,
   }));
 }
+
+/**
+ * Convert route params (courseType + levelNum) → course pricing key.
+ * Examples:
+ *   ('gym', 2)         → 'gym_l2'
+ *   ('nutrition', 3)   → 'nutrition_l3'
+ *   ('sport-football')  → 'sport_football'   (level ignored for sport)
+ */
+export function toCourseKey(courseType: string, levelNum?: number): string {
+  if (courseType.startsWith('sport-')) {
+    return courseType.replace('-', '_');
+  }
+  return `${courseType}_l${levelNum ?? 2}`;
+}
+
+/**
+ * Get the best bundle offer that includes a given course key.
+ * Returns the bundle with the most overlap with `ownedKeys` removed.
+ */
+export function getBestBundleFor(courseKey: string, ownedKeys: string[] = []) {
+  const matches = Object.entries(BUNDLE_PRICES)
+    .filter(([, b]) => b.courses.includes(courseKey))
+    .map(([key, b]) => {
+      const unowned = b.courses.filter((c) => !ownedKeys.includes(c));
+      return { key, ...b, unownedCount: unowned.length };
+    })
+    .filter((b) => b.unownedCount > 1) // only suggest if 2+ new courses
+    .sort((a, b) => b.savings - a.savings);
+  return matches[0] ?? null;
+}

@@ -8,6 +8,9 @@ import { CourseProgressBar } from '@/components/university/CourseProgressBar';
 import { ChevronLeft, ChevronRight, BookOpen, Lock, CheckCircle, Trophy, GraduationCap, Clock } from 'lucide-react';
 import { getLevelData } from '@/lib/university/courseStructure';
 import { useUniversityProgress } from '@/hooks/useUniversityProgress';
+import { useCourseAccess } from '@/hooks/useCourseAccess';
+import { toCourseKey } from '@/lib/coursePricing';
+import { CoursePurchaseGate } from '@/components/university/CoursePurchaseGate';
 import { AdminControlPanel } from '@/components/university/AdminControlPanel';
 import { getCourseColors, getReadingTime } from '@/lib/university/courseColors';
 
@@ -18,6 +21,8 @@ export default function UniversityLevel() {
   const levelNum = parseInt(level?.replace('level-', '') || '2');
   // Sport-specific courses should navigate back to the sport tab, not their raw key
   const backTab = ct.startsWith('sport-') ? 'sport' : ct;
+  const courseKey = toCourseKey(ct, levelNum);
+  const { hasAccess, ownedCourses, loading: accessLoading } = useCourseAccess(courseKey);
   const levelData = getLevelData(levelNum, ct);
   const colors = getCourseColors(ct);
   const {
@@ -110,6 +115,20 @@ export default function UniversityLevel() {
           </div>
         </div>
       </div>
+
+      {/* Purchase banner */}
+      {!accessLoading && !hasAccess && levelData && (
+        <div className="container mx-auto px-4 pt-6">
+          <div className="max-w-3xl mx-auto">
+            <CoursePurchaseGate
+              courseKey={courseKey}
+              courseName={levelData.title}
+              ownedCourses={ownedCourses}
+              variant="banner"
+            />
+          </div>
+        </div>
+      )}
 
       {/* Units */}
       <main className="container mx-auto px-4 py-8">
