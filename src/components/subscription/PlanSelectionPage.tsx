@@ -20,7 +20,7 @@ const tier1Features = [
   { icon: Flame, label: 'Fuel tracker, meal planning & recipe library' },
   { icon: Brain, label: 'Mindset programmes, breathing & focus games' },
   { icon: BarChart3, label: 'Movement programmes (run, cycle, swim, row, walk)' },
-  { icon: MessageSquare, label: 'Unlimited AI Coach conversations' },
+  { icon: MessageSquare, label: 'Unlimited Unbreakable Coach conversations' },
   { icon: Sparkles, label: 'AI-built bespoke programmes & meal plans' },
   { icon: BookOpen, label: 'University learning hub & calculators' },
   { icon: Users, label: 'Community Hub — feed, stories & messaging' },
@@ -66,7 +66,7 @@ export function PlanSelectionPage({ onSelectPlan, loading }: PlanSelectionPagePr
                     COACHING
                   </h2>
                 </div>
-                <p className="text-muted-foreground text-sm mb-4">Full platform access with your personal AI Coach</p>
+                <p className="text-muted-foreground text-sm mb-4">Full platform access with your personal Unbreakable Coach</p>
 
                 <div className="text-center py-4 bg-primary/5 rounded-lg border border-primary/10">
                   <p className="font-display text-5xl text-primary neon-glow-subtle">£{t1.totalPrice}</p>

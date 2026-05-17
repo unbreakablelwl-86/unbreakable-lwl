@@ -45,7 +45,7 @@ const TIERS: TierCard[] = [
     icon: Rocket,
     popular: true,
     stripePriceId: 'price_1TXuIrD5KOEmeWH2SxYc7G14',
-    features: ['150 tokens/month', 'Full AI coaching', 'All pillars covered', 'Priority responses'],
+    features: ['150 tokens/month', 'Full Unbreakable Coach access', 'All pillars covered', 'Priority responses'],
   },
   {
     name: 'elite',
@@ -109,13 +109,13 @@ export default function AITokens() {
           <div className="text-center mb-12">
             <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 rounded-full px-4 py-1.5 mb-4">
               <Sparkles className="w-4 h-4 text-primary" />
-              <span className="text-sm font-display tracking-wider text-primary">AI COACHING</span>
+              <span className="text-sm font-display tracking-wider text-primary">UNBREAKABLE COACH</span>
             </div>
             <h1 className="text-3xl md:text-4xl font-display tracking-wider mb-3">
               AI TOKENS
             </h1>
             <p className="text-muted-foreground max-w-md mx-auto">
-              Power your AI coach with tokens. Chat costs just 0.2 tokens per message — full programme builds cost 1 token.
+              Power your Unbreakable Coach with tokens. Chat costs just 0.2 tokens per message — full programme builds cost 1 token.
             </p>
           </div>
 

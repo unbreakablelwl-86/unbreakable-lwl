@@ -113,7 +113,7 @@ export function ProgramDisplay({ program, onReset, savedProgramId, forUserId }: 
         <CardContent className="p-4">
           <p className="text-sm text-muted-foreground text-center">
             <Sparkles className="w-4 h-4 inline mr-1 text-primary" />
-            Each 4-week block is built by your AI coach based on your results and goals.
+            Each 4-week block is built by your Unbreakable Coach based on your results and goals.
           </p>
         </CardContent>
       </Card>

@@ -371,7 +371,7 @@ export function SettingsPanel() {
         <CardHeader>
           <CardTitle className="font-display text-xl tracking-wide flex items-center gap-2">
             <Brain className="w-5 h-5 text-primary" />
-            UNBREAKABLE COACHING
+            UNBREAKABLE COACH
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
