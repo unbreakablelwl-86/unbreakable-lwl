@@ -56,7 +56,7 @@ export default function University() {
     setSearchParams({ course: tab });
   };
 
-  const activeTabData = courseTabs.find(t => t.key === activeTab)!;
+  const activeTabData = courseTabs.find(t => t.key === activeTab) || courseTabs[0];
 
   return (
     <div className="min-h-screen bg-background">

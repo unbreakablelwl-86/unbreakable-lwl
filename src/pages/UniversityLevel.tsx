@@ -16,6 +16,8 @@ export default function UniversityLevel() {
   const navigate = useNavigate();
   const ct = courseType || 'gym';
   const levelNum = parseInt(level?.replace('level-', '') || '2');
+  // Sport-specific courses should navigate back to the sport tab, not their raw key
+  const backTab = ct.startsWith('sport-') ? 'sport' : ct;
   const levelData = getLevelData(levelNum, ct);
   const colors = getCourseColors(ct);
   const {
@@ -42,7 +44,7 @@ export default function UniversityLevel() {
       <div className="min-h-screen bg-background">
         <MainNavigation />
         <div className="pt-24 pb-6 container mx-auto px-4 max-w-2xl text-center">
-          <Button variant="ghost" size="sm" onClick={() => navigate(`/university?course=${ct}`)} className="mb-6 text-muted-foreground">
+          <Button variant="ghost" size="sm" onClick={() => navigate(`/university?course=${backTab}`)} className="mb-6 text-muted-foreground">
             <ChevronLeft className="w-4 h-4 mr-1" /> University
           </Button>
           <div className="w-16 h-16 rounded-2xl bg-muted/30 flex items-center justify-center mx-auto mb-6">
@@ -92,7 +94,7 @@ export default function UniversityLevel() {
       <div className="pt-24 pb-8 border-b border-primary/20 relative overflow-hidden">
         <div className={`absolute inset-0 bg-gradient-to-b ${colors.bgGradient} opacity-30 pointer-events-none`} />
         <div className="container mx-auto px-4 max-w-3xl relative z-10">
-          <Button variant="ghost" size="sm" onClick={() => navigate(`/university?course=${ct}`)} className="mb-4 -ml-2 text-muted-foreground hover:text-foreground">
+          <Button variant="ghost" size="sm" onClick={() => navigate(`/university?course=${backTab}`)} className="mb-4 -ml-2 text-muted-foreground hover:text-foreground">
             <ChevronLeft className="w-4 h-4 mr-1" /> University
           </Button>
           <div className="flex items-center gap-4">
