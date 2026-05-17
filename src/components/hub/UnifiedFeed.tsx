@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import { useUnifiedFeed } from '@/hooks/useUnifiedFeed';
 import { useAuth } from '@/hooks/useAuth';
-import { useSubscription } from '@/hooks/useSubscription';
+
 import { useStories } from '@/hooks/useStories';
 import { ActivityCard } from '@/components/tracker/ActivityCard';
 import { StatusCard } from '@/components/tracker/StatusCard';
@@ -31,7 +31,7 @@ interface UnifiedFeedProps {
 
 export function UnifiedFeed({ onSignIn, onOpenMessages }: UnifiedFeedProps) {
   const { user } = useAuth();
-  const { subscribed } = useSubscription();
+  
   const { createStory } = useStories();
   const [storyPreFill, setStoryPreFill] = useState<StoryPreFill | null>(null);
   const {
@@ -201,7 +201,7 @@ export function UnifiedFeed({ onSignIn, onOpenMessages }: UnifiedFeedProps) {
         {feedItems.map((item, index) => {
           const isLast = index === feedItems.length - 1;
           // Show feature preview cards every 4 items for free users
-          const showUpgradeCard = !subscribed && user && index > 0 && index % 4 === 0;
+          const showUpgradeCard = false; // subscription paywall removed
           
           return (
             <motion.div

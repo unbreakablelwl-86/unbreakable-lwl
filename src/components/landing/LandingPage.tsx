@@ -16,7 +16,6 @@ import {
   MessageSquare,
   Shield,
   Check,
-  Crown,
   GraduationCap,
   Activity,
   ChevronDown,
@@ -24,8 +23,8 @@ import {
   Target,
   Trophy,
   Zap,
+  Coins,
 } from 'lucide-react';
-import { TIERS } from '@/lib/subscriptionTiers';
 
 interface LandingPageProps {
   onSignIn: () => void;
@@ -87,7 +86,7 @@ const howItWorks = [
     step: '02',
     icon: Target,
     title: 'CHOOSE YOUR PATH',
-    desc: 'Subscribe for full coaching access — Power, Movement, Fuel, Mindset and your Unbreakable Coach. Or grab individual University courses.',
+    desc: 'Everything is free to use. Grab coins to unlock your Unbreakable Coach, AI programme builds, and University courses.',
   },
   {
     step: '03',
@@ -97,26 +96,24 @@ const howItWorks = [
   },
 ];
 
-/* ─── Coaching tier features ─── */
-const coachingFeatures = [
-  'Full Power programme builder (manual & AI-built)',
-  'Session logging, tracking & progression tools',
+/* ─── Free platform features ─── */
+const freeFeatures = [
+  'Power programme builder & session logging',
+  'Movement tracker (run, cycle, swim, row, walk)',
   'Fuel tracker, meal planning & recipe library',
   'Mindset programmes, breathing & focus games',
-  'Movement programmes (run, cycle, swim, row, walk)',
-  'Unbreakable Coach chat included (token-based)',
   'Community Hub — feed, stories & messaging',
   'Daily habit diary & lifestyle tracking',
   'Calculators & free tools',
+  '5 free coins on signup to try the AI coach',
 ];
 
-const oneToOneExtras = [
-  'Dedicated 1-to-1 human coach',
-  'Bi-weekly check-ins & progress reviews',
-  'Personalised feedback on sessions & form',
-  'Bespoke programming adjustments each block',
-  'Nutrition & lifestyle guidance from your coach',
-  'Priority support & accountability',
+/* ─── AI Token tiers for pricing ─── */
+const tokenTiers = [
+  { name: 'FREE', coins: 5, price: '£0', desc: 'Try the AI coach — 5 coins on signup', highlight: false },
+  { name: 'STARTER', coins: 50, price: '£25/mo', desc: 'AI programmes, meal plans & form feedback', highlight: false },
+  { name: 'PRO', coins: 150, price: '£49/mo', desc: 'Full coaching across all pillars', highlight: true },
+  { name: 'ELITE', coins: 500, price: '£79/mo', desc: 'Unlimited feel — perfect for PT students', highlight: false },
 ];
 
 export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
@@ -231,7 +228,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
             transition={{ duration: 0.6 }}
             className="text-muted-foreground text-sm"
           >
-            No card required · Cancel anytime · From £{TIERS.tier1.monthlyPrice}/month after trial
+            100% free to use · 5 coins on signup · No card required
           </motion.p>
         </motion.div>
 
@@ -577,7 +574,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
                 <span className="text-foreground font-medium">Final exams</span>
               </p>
               <p className="text-muted-foreground text-sm mt-1">
-                Courses from just £49 each — or save with course bundles. Learn at your own pace.
+                Unlock courses with coins — or save with course bundles. Learn at your own pace.
               </p>
             </motion.div>
           </motion.div>
@@ -656,101 +653,83 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
                 <span className="text-primary neon-glow-subtle">HONEST.</span>
               </h2>
               <p className="text-muted-foreground max-w-xl mx-auto">
-                Start with a 7-day free trial. No card required. Cancel anytime.
+                The whole platform is free. Buy coins to power your AI coach,
+                unlock programmes, and access University courses.
               </p>
             </motion.div>
 
-            <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-              {/* Coaching tier */}
-              <motion.div variants={fadeUp} transition={{ duration: 0.5 }}>
-                <Card className="h-full bg-card border-2 border-border hover:border-primary/30 transition-colors p-8 flex flex-col">
-                  <div className="mb-6">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Shield className="w-5 h-5 text-primary" />
-                      <h3 className="font-display text-2xl text-foreground tracking-wide">
-                        COACHING
-                      </h3>
-                    </div>
-                    <div className="flex items-baseline gap-1">
-                      <span className="font-display text-4xl text-primary neon-glow-subtle">
-                        £{TIERS.tier1.monthlyPrice}
-                      </span>
-                      <span className="text-muted-foreground text-sm">/month</span>
-                    </div>
-                    <p className="text-muted-foreground text-sm mt-1">
-                      {TIERS.tier1.commitmentMonths}-month commitment
-                    </p>
+            {/* Free features */}
+            <motion.div variants={fadeUp} transition={{ duration: 0.5 }} className="max-w-3xl mx-auto mb-10">
+              <Card className="bg-card border-2 border-primary/20 p-6 md:p-8">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                    <Shield className="w-5 h-5 text-primary" />
                   </div>
-
-                  <ul className="space-y-3 flex-1 mb-8">
-                    {coachingFeatures.map((f) => (
-                      <li key={f} className="flex items-start gap-3">
-                        <Check className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-                        <span className="text-muted-foreground text-sm">{f}</span>
-                      </li>
-                    ))}
-                  </ul>
-
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    className="w-full font-display tracking-wide border-primary/40 hover:bg-primary/10"
-                    onClick={onSignUp}
-                  >
-                    START FREE TRIAL
-                  </Button>
-                </Card>
-              </motion.div>
-
-              {/* 1-to-1 tier */}
-              <motion.div variants={fadeUp} transition={{ duration: 0.5 }}>
-                <Card className="h-full bg-card border-2 border-primary/40 neon-border-subtle p-8 flex flex-col relative overflow-hidden">
-                  <Badge className="absolute top-4 right-4 bg-primary text-primary-foreground font-display tracking-wider">
-                    PREMIUM
-                  </Badge>
-
-                  <div className="mb-6">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Crown className="w-5 h-5 text-primary" />
-                      <h3 className="font-display text-2xl text-foreground tracking-wide">
-                        1-TO-1
-                      </h3>
-                    </div>
-                    <div className="flex items-baseline gap-1">
-                      <span className="font-display text-4xl text-primary neon-glow-subtle">
-                        £{TIERS.tier2.monthlyPrice}
-                      </span>
-                      <span className="text-muted-foreground text-sm">/month</span>
-                    </div>
-                    <p className="text-muted-foreground text-sm mt-1">
-                      {TIERS.tier2.commitmentMonths}-month commitment
-                    </p>
+                  <div>
+                    <h3 className="font-display text-xl text-foreground tracking-wide">FREE FOREVER</h3>
+                    <p className="text-muted-foreground text-sm">No card needed. No trial. Just sign up.</p>
                   </div>
+                </div>
+                <div className="grid sm:grid-cols-2 gap-2">
+                  {freeFeatures.map((f) => (
+                    <div key={f} className="flex items-start gap-2">
+                      <Check className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                      <span className="text-muted-foreground text-sm">{f}</span>
+                    </div>
+                  ))}
+                </div>
+              </Card>
+            </motion.div>
 
-                  <p className="text-muted-foreground text-sm mb-4">
-                    Everything in Coaching, plus:
-                  </p>
+            {/* Coin tiers */}
+            <motion.div variants={fadeUp} transition={{ duration: 0.5 }} className="text-center mb-6">
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <Coins className="w-5 h-5 text-primary" />
+                <h3 className="font-display text-2xl text-foreground tracking-wide">
+                  COIN PACKS
+                </h3>
+              </div>
+              <p className="text-muted-foreground text-sm">
+                Coins power your Unbreakable Coach — chat, programme builds, meal plans & University courses.
+              </p>
+            </motion.div>
 
-                  <ul className="space-y-3 flex-1 mb-8">
-                    {oneToOneExtras.map((f) => (
-                      <li key={f} className="flex items-start gap-3">
-                        <Crown className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-                        <span className="text-muted-foreground text-sm">{f}</span>
-                      </li>
-                    ))}
-                  </ul>
-
-                  <Button
-                    size="lg"
-                    className="w-full font-display tracking-wide"
-                    onClick={onSignUp}
-                  >
-                    <Sparkles className="w-4 h-4 mr-2" />
-                    START FREE TRIAL
-                  </Button>
-                </Card>
-              </motion.div>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-5xl mx-auto">
+              {tokenTiers.map((tier) => (
+                <motion.div key={tier.name} variants={fadeUp} transition={{ duration: 0.4 }}>
+                  <Card className={`h-full bg-card p-5 flex flex-col text-center transition-colors ${
+                    tier.highlight
+                      ? 'border-2 border-primary/40 neon-border-subtle'
+                      : 'border border-border hover:border-primary/30'
+                  }`}>
+                    {tier.highlight && (
+                      <Badge className="mx-auto mb-3 bg-primary text-primary-foreground font-display tracking-wider text-xs">
+                        MOST POPULAR
+                      </Badge>
+                    )}
+                    <h4 className="font-display text-lg text-foreground tracking-wide mb-1">{tier.name}</h4>
+                    <div className="flex items-center justify-center gap-1.5 mb-1">
+                      <Coins className="w-4 h-4 text-primary" />
+                      <span className="font-display text-3xl text-primary neon-glow-subtle">{tier.coins}</span>
+                    </div>
+                    <p className="text-muted-foreground text-xs mb-1">coins{tier.price !== '£0' ? '/month' : ''}</p>
+                    <p className="font-display text-lg text-foreground tracking-wide mb-3">{tier.price}</p>
+                    <p className="text-muted-foreground text-xs leading-relaxed flex-1">{tier.desc}</p>
+                  </Card>
+                </motion.div>
+              ))}
             </div>
+
+            <motion.div variants={fadeUp} transition={{ duration: 0.5 }} className="text-center mt-8">
+              <Button
+                size="lg"
+                className="font-display tracking-wide px-8 py-6"
+                onClick={onSignUp}
+              >
+                <Sparkles className="w-5 h-5 mr-2" />
+                GET STARTED FREE
+              </Button>
+            </motion.div>
           </motion.div>
         </div>
       </section>
@@ -783,12 +762,12 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
                 className="font-display text-xl tracking-wide px-12 py-7"
                 onClick={onSignUp}
               >
-                START YOUR FREE TRIAL
+                JOIN FREE
                 <ArrowRight className="w-5 h-5 ml-2" />
               </Button>
 
               <p className="text-muted-foreground text-sm mt-5">
-                7 days free · No card required · Cancel anytime
+                Free forever · 5 coins on signup · No card required
               </p>
             </motion.div>
           </motion.div>

@@ -9,7 +9,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { useAuth } from '@/hooks/useAuth';
 import { useProfile } from '@/hooks/useProfile';
 import { useUserRole } from '@/hooks/useUserRole';
-import { useSubscription } from '@/hooks/useSubscription';
+
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { AuthModal } from '@/components/tracker/AuthModal';
 import { TokenBalanceBadge } from '@/components/ai/TokenBalanceBadge';
@@ -39,7 +39,7 @@ export function NavigationDrawer({ variant = 'default' }: NavigationDrawerProps)
   const { user, signOut } = useAuth();
   const { profile } = useProfile();
   const { isAdminOrOwner, isOwner, role } = useUserRole();
-  const { subscribed } = useSubscription();
+  
   const location = useLocation();
 
   const isCoach = role === 'coach';
@@ -156,7 +156,7 @@ export function NavigationDrawer({ variant = 'default' }: NavigationDrawerProps)
                 </CollapsibleTrigger>
                 <CollapsibleContent className="pl-4 space-y-1 mt-1">
                   {hubLinks.map((link) => {
-                    const isLocked = link.paid && !subscribed && !isAdminOrOwner;
+                    const isLocked = false;
                     return (
                       <Link
                         key={link.to}
@@ -193,13 +193,13 @@ export function NavigationDrawer({ variant = 'default' }: NavigationDrawerProps)
               {/* 121 COACHING */}
               {user && (
                 <Link
-                  to={(isCoach || isDev) ? '/coach' : (!subscribed && !isAdminOrOwner) ? '/plans' : '/my-coaching'}
+                  to={(isCoach || isDev) ? '/coach' : '/my-coaching'}
                   onClick={handleNavClick}
                   className={linkClass((isCoach || isDev) ? '/coach' : '/my-coaching', true)}
                 >
                   <UserCheck className={`w-5 h-5 ${(isActive('/coach') || isActive('/my-coaching')) ? '' : 'text-primary'}`} />
                   <span className="flex-1">121 COACHING</span>
-                  {!subscribed && !isAdminOrOwner && !(isCoach || isDev) && (
+                  /* subscription lock removed */ {false && (
                     <Badge variant="outline" className="text-[9px] font-display border-primary/30 text-primary px-1.5 py-0">
                       <Lock className="w-2.5 h-2.5 mr-0.5" />
                       PRO

@@ -6,7 +6,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import { UniversityAdminProvider } from "@/hooks/useUniversityAdmin";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
-import { SubscribedRoute } from "@/components/SubscribedRoute";
 import Index from "./pages/Index";
 import Calculators from "./pages/Calculators";
 import Tracker from "./pages/Tracker";
@@ -107,58 +106,58 @@ const App = () => (
               
               {/* Programming (Power) routes */}
               <Route path="/programming" element={
-                <SubscribedRoute><Programming /></SubscribedRoute>
+                <ProtectedRoute><Programming /></ProtectedRoute>
               } />
               <Route path="/programming/create" element={
-                <SubscribedRoute><ProgrammingCreate /></SubscribedRoute>
+                <ProtectedRoute><ProgrammingCreate /></ProtectedRoute>
               } />
               <Route path="/programming/my-programmes" element={
-                <SubscribedRoute><ProgrammingMyProgrammes /></SubscribedRoute>
+                <ProtectedRoute><ProgrammingMyProgrammes /></ProtectedRoute>
               } />
               <Route path="/programming/logs" element={
-                <SubscribedRoute><ProgrammingLogs /></SubscribedRoute>
+                <ProtectedRoute><ProgrammingLogs /></ProtectedRoute>
               } />
               
               {/* Tracker (Movement) routes */}
               <Route path="/tracker" element={
-                <SubscribedRoute><Tracker /></SubscribedRoute>
+                <ProtectedRoute><Tracker /></ProtectedRoute>
               } />
               <Route path="/tracker/create" element={
-                <SubscribedRoute><TrackerCreate /></SubscribedRoute>
+                <ProtectedRoute><TrackerCreate /></ProtectedRoute>
               } />
               <Route path="/tracker/my-programmes" element={
-                <SubscribedRoute><TrackerMyProgrammes /></SubscribedRoute>
+                <ProtectedRoute><TrackerMyProgrammes /></ProtectedRoute>
               } />
               
               {/* Fuel routes */}
               <Route path="/fuel" element={
-                <SubscribedRoute><Fuel /></SubscribedRoute>
+                <ProtectedRoute><Fuel /></ProtectedRoute>
               } />
               <Route path="/fuel/history" element={
-                <SubscribedRoute><FuelHistory /></SubscribedRoute>
+                <ProtectedRoute><FuelHistory /></ProtectedRoute>
               } />
               <Route path="/fuel/recipes" element={
-                <SubscribedRoute><FuelRecipes /></SubscribedRoute>
+                <ProtectedRoute><FuelRecipes /></ProtectedRoute>
               } />
               <Route path="/fuel/planning" element={
-                <SubscribedRoute><FuelPlanning /></SubscribedRoute>
+                <ProtectedRoute><FuelPlanning /></ProtectedRoute>
               } />
               <Route path="/fuel/foods" element={
-                <SubscribedRoute><FuelFoods /></SubscribedRoute>
+                <ProtectedRoute><FuelFoods /></ProtectedRoute>
               } />
               <Route path="/fuel/my-fuel" element={
-                <SubscribedRoute><FuelMyFuel /></SubscribedRoute>
+                <ProtectedRoute><FuelMyFuel /></ProtectedRoute>
               } />
               
               {/* Mindset routes */}
               <Route path="/mindset" element={
-                <SubscribedRoute><Mindset /></SubscribedRoute>
+                <ProtectedRoute><Mindset /></ProtectedRoute>
               } />
               <Route path="/mindset/breathing" element={
-                <SubscribedRoute><MindsetBreathing /></SubscribedRoute>
+                <ProtectedRoute><MindsetBreathing /></ProtectedRoute>
               } />
               <Route path="/mindset/games" element={
-                <SubscribedRoute><MindsetGames /></SubscribedRoute>
+                <ProtectedRoute><MindsetGames /></ProtectedRoute>
               } />
               
               {/* Coaching (Help) — uses AI token system, not subscription */}
@@ -190,7 +189,7 @@ const App = () => (
               
               {/* Coach Dashboard - role-protected + subscribed */}
               <Route path="/coach" element={
-                <SubscribedRoute><CoachDashboard /></SubscribedRoute>
+                <ProtectedRoute><CoachDashboard /></ProtectedRoute>
               } />
               
               {/* Athlete coaching page */}

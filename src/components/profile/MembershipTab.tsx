@@ -1,28 +1,19 @@
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { useSubscription } from '@/hooks/useSubscription';
+import { useTokenBalance } from '@/hooks/useTokenBalance';
 import { useNavigate } from 'react-router-dom';
-import { Crown, CreditCard, Calendar, Loader2, ExternalLink } from 'lucide-react';
-import { format, parseISO } from 'date-fns';
-import { toast } from 'sonner';
-import { useState } from 'react';
+import { Coins, Sparkles, TrendingUp, ArrowRight } from 'lucide-react';
 
 export function MembershipTab() {
-  const { subscribed, tierName, subscriptionEnd, status, isTrialing, canCancel, loading, openCustomerPortal } = useSubscription();
+  const {
+    balance,
+    currentTier,
+    tierDisplayName,
+    monthlyTokens,
+    loading,
+  } = useTokenBalance();
   const navigate = useNavigate();
-  const [portalLoading, setPortalLoading] = useState(false);
-
-  const handleManage = async () => {
-    setPortalLoading(true);
-    try {
-      await openCustomerPortal();
-    } catch {
-      toast.error('Failed to open subscription management');
-    } finally {
-      setPortalLoading(false);
-    }
-  };
 
   if (loading) {
     return (
@@ -32,65 +23,68 @@ export function MembershipTab() {
     );
   }
 
-  if (!subscribed) {
-    return (
-      <Card className="p-6 border-2 border-border text-center space-y-4">
-        <Crown className="w-12 h-12 text-muted-foreground mx-auto" />
-        <h3 className="font-display text-xl tracking-wide">NO ACTIVE PLAN</h3>
-        <p className="text-muted-foreground">Subscribe to unlock all training tools.</p>
-        <Button onClick={() => navigate('/plans')} className="font-display tracking-wide">
-          <CreditCard className="w-4 h-4 mr-2" />
-          VIEW PLANS
-        </Button>
-      </Card>
-    );
-  }
-
   return (
-    <Card className="p-6 border-2 border-primary/30 space-y-4">
-      <div className="flex items-center gap-3">
-        <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
-          <Crown className="w-6 h-6 text-primary" />
-        </div>
-        <div className="flex-1">
-          <div className="flex items-center gap-2">
-            <h3 className="font-display text-lg tracking-wide text-foreground">{tierName || 'ACTIVE PLAN'}</h3>
-            <Badge className="bg-primary/20 text-primary text-xs font-display">
-              {isTrialing ? 'FREE TRIAL' : 'ACTIVE'}
-            </Badge>
+    <div className="space-y-4">
+      {/* Coin balance card */}
+      <Card className="p-6 border-2 border-primary/30 space-y-4">
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
+            <Coins className="w-6 h-6 text-primary" />
           </div>
-          {subscriptionEnd && (
-            <p className="text-sm text-muted-foreground flex items-center gap-1">
-              <Calendar className="w-3.5 h-3.5" />
-              {isTrialing ? 'Trial ends' : 'Renews'} {format(parseISO(subscriptionEnd), 'dd MMM yyyy')}
+          <div className="flex-1">
+            <div className="flex items-center gap-2">
+              <h3 className="font-display text-lg tracking-wide text-foreground">
+                {tierDisplayName.toUpperCase()} TIER
+              </h3>
+              <Badge className="bg-primary/20 text-primary text-xs font-display">
+                {monthlyTokens} COINS/MO
+              </Badge>
+            </div>
+            <p className="text-sm text-muted-foreground flex items-center gap-1.5">
+              <Coins className="w-3.5 h-3.5 text-primary" />
+              Current balance: <span className="text-primary font-semibold">{balance}</span> coins
             </p>
-          )}
+          </div>
         </div>
-      </div>
 
-      {/* Trial info */}
-      {isTrialing && (
         <p className="text-xs text-muted-foreground bg-muted/30 p-3 rounded-lg">
-          You're on a <span className="text-primary font-semibold">7-day free trial</span>. You can cancel anytime before the trial ends and you won't be charged. After your trial, your subscription begins with a 3-month commitment.
+          Coins power your <span className="text-primary font-semibold">Unbreakable Coach</span> —
+          AI chat, programme builds, meal plans, and University courses. All platform features
+          (Power, Fuel, Movement, Mindset, Community) are free.
         </p>
-      )}
 
-      {/* Post-trial commitment info */}
-      {!isTrialing && !canCancel && (
-        <p className="text-xs text-muted-foreground bg-muted/30 p-3 rounded-lg">
-          You're within your 3-month commitment period. After this period, your plan will continue as a monthly subscription that you can cancel anytime.
-        </p>
-      )}
+        <div className="flex gap-2">
+          <Button
+            onClick={() => navigate('/ai-tokens')}
+            className="font-display tracking-wide flex-1"
+          >
+            <Sparkles className="w-4 h-4 mr-2" />
+            {currentTier === 'free' ? 'UPGRADE' : 'MANAGE COINS'}
+          </Button>
+        </div>
+      </Card>
 
-      <Button
-        variant="outline"
-        onClick={handleManage}
-        disabled={portalLoading}
-        className="w-full font-display tracking-wide"
-      >
-        {portalLoading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <ExternalLink className="w-4 h-4 mr-2" />}
-        {isTrialing ? 'MANAGE TRIAL' : 'MANAGE SUBSCRIPTION'}
-      </Button>
-    </Card>
+      {/* Upgrade prompt for free users */}
+      {currentTier === 'free' && (
+        <Card className="p-5 border border-border bg-card/50 space-y-3">
+          <div className="flex items-center gap-2">
+            <TrendingUp className="w-5 h-5 text-primary" />
+            <h4 className="font-display text-sm tracking-wide text-foreground">WANT MORE COINS?</h4>
+          </div>
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            Upgrade to Starter (50 coins/mo), Pro (150 coins/mo), or Elite (500 coins/mo)
+            to unlock the full power of your Unbreakable Coach.
+          </p>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => navigate('/ai-tokens')}
+            className="font-display tracking-wide border-primary/30"
+          >
+            SEE PLANS <ArrowRight className="w-4 h-4 ml-1" />
+          </Button>
+        </Card>
+      )}
+    </div>
   );
 }
