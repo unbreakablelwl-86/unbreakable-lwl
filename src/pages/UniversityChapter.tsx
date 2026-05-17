@@ -1,13 +1,15 @@
+import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { MainNavigation } from '@/components/MainNavigation';
 import { UnifiedFooter } from '@/components/UnifiedFooter';
 import { Button } from '@/components/ui/button';
 import { ChapterContent } from '@/components/university/ChapterContent';
-import { ChevronLeft, ChevronRight, CheckCircle, ClipboardCheck, Lock, BookOpen } from 'lucide-react';
+import { ChevronLeft, ChevronRight, CheckCircle, ClipboardCheck, Lock, BookOpen, Clock } from 'lucide-react';
 import { getChapterData, getUnitData, getChapterQuiz } from '@/lib/university/courseStructure';
 import { useUniversityProgress } from '@/hooks/useUniversityProgress';
 import { AdminControlPanel } from '@/components/university/AdminControlPanel';
+import { getCourseColors, getReadingTime } from '@/lib/university/courseColors';
 import { toast } from 'sonner';
 
 export default function UniversityChapter() {
@@ -17,6 +19,7 @@ export default function UniversityChapter() {
   const levelNum = parseInt(level?.replace('level-', '') || '2');
   const unitNum = parseInt(unit?.replace('unit-', '') || '1');
   const chapterNum = parseInt(chapter?.replace('chapter-', '') || '1');
+  const colors = getCourseColors(ct);
 
   const chapterData = getChapterData(levelNum, unitNum, chapterNum, ct);
   const unitData = getUnitData(levelNum, unitNum, ct);
@@ -24,6 +27,11 @@ export default function UniversityChapter() {
   const isComplete = isChapterComplete(levelNum, unitNum, chapterNum, ct);
   const quizPassed = hasPassedChapterQuiz(levelNum, unitNum, chapterNum, ct);
   const quiz = getChapterQuiz(levelNum, unitNum, chapterNum, ct);
+
+  // Scroll to top on chapter change
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [chapterNum, unitNum, levelNum, ct]);
 
   if (!chapterData || !unitData) {
     return (
@@ -37,6 +45,7 @@ export default function UniversityChapter() {
   const hasNext = chapterNum < totalChapters;
   const hasPrev = chapterNum > 1;
   const canGoNext = hasNext && quizPassed;
+  const readingTime = getReadingTime(chapterData);
 
   const handleComplete = () => {
     completeChapter.mutate(
@@ -60,15 +69,15 @@ export default function UniversityChapter() {
 
       {/* Chapter Header */}
       <div className="pt-24 pb-6 border-b border-primary/20 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent pointer-events-none" />
+        <div className={`absolute inset-0 bg-gradient-to-b ${colors.bgGradient} opacity-20 pointer-events-none`} />
         <div className="container mx-auto px-4 max-w-2xl relative z-10">
           <Button variant="ghost" size="sm" onClick={() => navigate(`/university/${ct}/level-${levelNum}`)} className="mb-3 -ml-2 text-muted-foreground hover:text-foreground">
             <ChevronLeft className="w-4 h-4 mr-1" /> Unit {unitNum}: {unitData.title}
           </Button>
 
           {/* Breadcrumb + status */}
-          <div className="flex items-center gap-3 mb-2">
-            <p className="text-xs text-primary font-display tracking-wider">
+          <div className="flex items-center gap-3 mb-2 flex-wrap">
+            <p className={`text-xs ${colors.text} font-display tracking-wider`}>
               LEVEL {levelNum} — UNIT {unitNum} — CHAPTER {chapterNum}
             </p>
             {quizPassed && (
@@ -77,7 +86,7 @@ export default function UniversityChapter() {
               </span>
             )}
             {isComplete && !quizPassed && (
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/15 text-[10px] text-primary font-display tracking-wider">
+              <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full ${colors.bg} text-[10px] ${colors.text} font-display tracking-wider`}>
                 QUIZ PENDING
               </span>
             )}
@@ -87,17 +96,26 @@ export default function UniversityChapter() {
             {chapterData.title}
           </h1>
 
+          {/* Reading time */}
+          <div className="flex items-center gap-1.5 mt-2 text-xs text-muted-foreground">
+            <Clock className="w-3.5 h-3.5" />
+            <span>{readingTime} min read</span>
+          </div>
+
           {/* Chapter progress indicator */}
           <div className="flex items-center gap-1.5 mt-4">
             {Array.from({ length: totalChapters }, (_, i) => (
-              <div
+              <motion.div
                 key={i}
-                className={`h-1 flex-1 rounded-full transition-colors ${
+                initial={{ scaleX: 0 }}
+                animate={{ scaleX: 1 }}
+                transition={{ delay: i * 0.05 }}
+                className={`h-1.5 flex-1 rounded-full transition-colors origin-left ${
                   i + 1 < chapterNum
                     ? 'bg-green-500/50'
                     : i + 1 === chapterNum
-                    ? 'bg-primary'
-                    : 'bg-muted/50'
+                    ? colors.progressFill
+                    : 'bg-muted/30'
                 }`}
               />
             ))}
@@ -112,6 +130,7 @@ export default function UniversityChapter() {
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-2xl mx-auto">
           <motion.div
+            key={`${ct}-${levelNum}-${unitNum}-${chapterNum}`}
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
@@ -120,7 +139,7 @@ export default function UniversityChapter() {
           </motion.div>
 
           {/* Bottom Actions */}
-          <div className="mt-12 pt-6 border-t border-primary/10 space-y-4">
+          <div className="mt-12 pt-6 border-t border-border/30 space-y-4">
             {!isComplete && (
               <Button onClick={handleComplete} className="w-full gap-2 h-12 text-base" disabled={completeChapter.isPending}>
                 <CheckCircle className="w-5 h-5" />

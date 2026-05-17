@@ -5,10 +5,11 @@ import { UnifiedFooter } from '@/components/UnifiedFooter';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { CourseProgressBar } from '@/components/university/CourseProgressBar';
-import { ChevronLeft, ChevronRight, BookOpen, Lock, CheckCircle, Trophy, GraduationCap } from 'lucide-react';
+import { ChevronLeft, ChevronRight, BookOpen, Lock, CheckCircle, Trophy, GraduationCap, Clock } from 'lucide-react';
 import { getLevelData } from '@/lib/university/courseStructure';
 import { useUniversityProgress } from '@/hooks/useUniversityProgress';
 import { AdminControlPanel } from '@/components/university/AdminControlPanel';
+import { getCourseColors, getReadingTime } from '@/lib/university/courseColors';
 
 export default function UniversityLevel() {
   const { courseType, level } = useParams();
@@ -16,6 +17,7 @@ export default function UniversityLevel() {
   const ct = courseType || 'gym';
   const levelNum = parseInt(level?.replace('level-', '') || '2');
   const levelData = getLevelData(levelNum, ct);
+  const colors = getCourseColors(ct);
   const {
     getUnitCompletedChapters,
     isChapterComplete,
@@ -87,18 +89,18 @@ export default function UniversityLevel() {
 
       {/* Level Header */}
       <div className="pt-24 pb-8 border-b border-primary/20 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent pointer-events-none" />
+        <div className={`absolute inset-0 bg-gradient-to-b ${colors.bgGradient} opacity-30 pointer-events-none`} />
         <div className="container mx-auto px-4 max-w-3xl relative z-10">
           <Button variant="ghost" size="sm" onClick={() => navigate(`/university?course=${ct}`)} className="mb-4 -ml-2 text-muted-foreground hover:text-foreground">
             <ChevronLeft className="w-4 h-4 mr-1" /> University
           </Button>
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-primary/15 flex items-center justify-center shrink-0">
-              <GraduationCap className="w-6 h-6 text-primary" />
+            <div className={`w-12 h-12 rounded-xl ${colors.iconBg} flex items-center justify-center shrink-0`}>
+              <GraduationCap className={`w-6 h-6 ${colors.text}`} />
             </div>
             <div>
               <h1 className="font-display text-2xl sm:text-3xl tracking-wider leading-none">
-                <span className="text-primary neon-glow-subtle">{levelData.title.toUpperCase()}</span>
+                <span className={`${colors.text}`}>{levelData.title.toUpperCase()}</span>
               </h1>
               <p className="text-sm text-muted-foreground mt-1">{levelData.subtitle} — {levelData.units.length} Units</p>
             </div>
@@ -125,22 +127,30 @@ export default function UniversityLevel() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: idx * 0.08 }}
               >
-                <Card className="border-primary/20 overflow-hidden">
+                <Card className={`${colors.border} overflow-hidden`}>
                   {/* Unit header */}
                   <div className="p-5 pb-4">
                     <div className="flex items-center gap-3 mb-3">
                       <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
-                        allUnitQuizzesPassed ? 'bg-green-500/15' : 'bg-primary/15'
+                        allUnitQuizzesPassed ? 'bg-green-500/15' : colors.iconBg
                       }`}>
                         {allUnitQuizzesPassed ? (
                           <CheckCircle className="w-5 h-5 text-green-500" />
                         ) : (
-                          <span className="font-display text-sm text-primary">{unit.number}</span>
+                          <span className={`font-display text-sm ${colors.text}`}>{unit.number}</span>
                         )}
                       </div>
                       <div className="flex-1 min-w-0">
                         <h2 className="font-display text-base sm:text-lg tracking-wider text-foreground">{unit.title}</h2>
-                        <p className="text-xs text-muted-foreground">{unit.chapters.length} Chapters</p>
+                        <div className="flex items-center gap-3 mt-0.5">
+                          <p className="text-xs text-muted-foreground">{unit.chapters.length} Chapters</p>
+                          {hasChapters && (
+                            <p className="text-xs text-muted-foreground flex items-center gap-1">
+                              <Clock className="w-3 h-3" />
+                              ~{Math.round(unit.chapters.length * 5)} min
+                            </p>
+                          )}
+                        </div>
                       </div>
                     </div>
 
@@ -151,11 +161,12 @@ export default function UniversityLevel() {
                         label="Quizzes Passed"
                         completed={quizzesPassed}
                         total={unit.chapters.length}
+                        colorClass={colors.progressFill}
                       />
                     )}
                   </div>
 
-                  {/* Chapters list */}
+                  {/* Chapters list — timeline style */}
                   {hasChapters && (
                     <div className="border-t border-border/50">
                       {unit.chapters.map((ch, chIdx) => {
@@ -165,42 +176,48 @@ export default function UniversityLevel() {
                         const isLast = chIdx === unit.chapters.length - 1;
 
                         return (
-                          <button
+                          <motion.button
                             key={ch.number}
                             onClick={() => accessible ? navigate(`/university/${ct}/level-${levelNum}/unit-${unit.number}/chapter-${ch.number}`) : undefined}
                             disabled={!accessible}
-                            className={`w-full flex items-center gap-3 px-5 py-3.5 transition-colors text-left ${
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: idx * 0.08 + chIdx * 0.03 }}
+                            className={`w-full flex items-center gap-3 px-5 py-3.5 transition-all text-left ${
                               !isLast ? 'border-b border-border/30' : ''
                             } ${
                               accessible
-                                ? 'hover:bg-primary/5 cursor-pointer'
+                                ? `${colors.hoverBg} cursor-pointer`
                                 : 'opacity-40 cursor-not-allowed'
                             }`}
                           >
-                            <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs shrink-0 ${
-                              qPassed
-                                ? 'bg-green-500/15 text-green-500'
-                                : done
-                                ? 'bg-primary/15 text-primary'
-                                : !accessible
-                                ? 'bg-muted/50 text-muted-foreground'
-                                : 'bg-muted/50 text-muted-foreground'
-                            }`}>
-                              {!accessible ? (
-                                <Lock className="w-3 h-3" />
-                              ) : qPassed ? (
-                                <CheckCircle className="w-3.5 h-3.5" />
-                              ) : (
-                                ch.number
-                              )}
+                            {/* Timeline connector line */}
+                            <div className="relative flex flex-col items-center">
+                              <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs shrink-0 z-10 ${
+                                qPassed
+                                  ? 'bg-green-500/15 text-green-500'
+                                  : done
+                                  ? `${colors.iconBg} ${colors.text}`
+                                  : !accessible
+                                  ? 'bg-muted/50 text-muted-foreground'
+                                  : 'bg-muted/50 text-muted-foreground'
+                              }`}>
+                                {!accessible ? (
+                                  <Lock className="w-3 h-3" />
+                                ) : qPassed ? (
+                                  <CheckCircle className="w-3.5 h-3.5" />
+                                ) : (
+                                  ch.number
+                                )}
+                              </div>
                             </div>
                             <div className="flex-1 min-w-0">
                               <p className="text-sm text-foreground truncate">{ch.title}</p>
                               {qPassed && <p className="text-[11px] text-green-500 font-display tracking-wider">PASSED</p>}
-                              {done && !qPassed && accessible && <p className="text-[11px] text-primary font-display tracking-wider">QUIZ PENDING</p>}
+                              {done && !qPassed && accessible && <p className={`text-[11px] ${colors.text} font-display tracking-wider`}>QUIZ PENDING</p>}
                             </div>
-                            {accessible && <ChevronRight className="w-4 h-4 text-muted-foreground shrink-0" />}
-                          </button>
+                            {accessible && <ChevronRight className={`w-4 h-4 text-muted-foreground shrink-0`} />}
+                          </motion.button>
                         );
                       })}
                     </div>
@@ -208,17 +225,17 @@ export default function UniversityLevel() {
 
                   {/* Unit Assessment */}
                   {hasChapters && assessment && assessment.questions.length > 0 && (
-                    <div className="border-t border-primary/10 p-5 bg-card/50">
+                    <div className="border-t border-border/30 p-5 bg-card/50">
                       <button
                         onClick={() => navigate(`/university/${ct}/level-${levelNum}/unit-${unit.number}/assessment`)}
-                        className="w-full flex items-center gap-3 p-3 rounded-xl border border-primary/10 hover:border-primary/25 cursor-pointer transition-all hover:bg-primary/5 text-left"
+                        className={`w-full flex items-center gap-3 p-3 rounded-xl border border-border/30 hover:${colors.borderActive} cursor-pointer transition-all ${colors.hoverBg} text-left`}
                       >
                         {passed ? (
                           <div className="w-8 h-8 rounded-lg bg-green-500/15 flex items-center justify-center shrink-0">
                             <CheckCircle className="w-4 h-4 text-green-500" />
                           </div>
                         ) : (
-                          <div className="w-8 h-8 rounded-lg bg-muted/50 flex items-center justify-center shrink-0">
+                          <div className={`w-8 h-8 rounded-lg bg-muted/50 flex items-center justify-center shrink-0`}>
                             <BookOpen className="w-4 h-4 text-muted-foreground" />
                           </div>
                         )}
@@ -237,7 +254,7 @@ export default function UniversityLevel() {
 
                   {!hasChapters && (
                     <div className="px-5 pb-5">
-                      <p className="text-xs text-primary font-display tracking-wider">COMING SOON</p>
+                      <p className={`text-xs ${colors.text} font-display tracking-wider`}>COMING SOON</p>
                     </div>
                   )}
                 </Card>
@@ -254,7 +271,7 @@ export default function UniversityLevel() {
             >
               <Card className={`overflow-hidden border-2 transition-all ${
                 allQuizzesPassed
-                  ? 'border-primary/40 shadow-lg shadow-primary/5'
+                  ? `${colors.borderActive} shadow-lg ${colors.glow}`
                   : 'border-muted/20'
               }`}>
                 <div className="p-6">
@@ -263,13 +280,13 @@ export default function UniversityLevel() {
                       allQuizzesPassed
                         ? hasPassedAssessment(levelNum, 0, ct)
                           ? 'bg-green-500/15'
-                          : 'bg-primary/15'
+                          : colors.iconBg
                         : 'bg-muted/30'
                     }`}>
                       {hasPassedAssessment(levelNum, 0, ct) ? (
                         <CheckCircle className="w-6 h-6 text-green-500" />
                       ) : (
-                        <Trophy className={`w-6 h-6 ${allQuizzesPassed ? 'text-primary' : 'text-muted-foreground'}`} />
+                        <Trophy className={`w-6 h-6 ${allQuizzesPassed ? colors.text : 'text-muted-foreground'}`} />
                       )}
                     </div>
                     <div className="flex-1">
