@@ -326,7 +326,7 @@ export const sportCourses = {
 } as const;
 
 export const allCourses: Record<string, Level[]> = {
-  gym: [...courseData, powerLevel4],
+  gym: courseData, // powerLevel4 content exists but hidden until ready
   nutrition: nutritionCourseData,
   mindset: mindsetCourseData,
   sport: [], // Sport tab shows grid of individual sports, not levels
