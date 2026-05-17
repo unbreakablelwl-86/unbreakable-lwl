@@ -111,7 +111,7 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
   const [distance, setDistance] = useState(0);
   const [currentSpeed, setCurrentSpeed] = useState<number | null>(null);
   const [gpsAccuracy, setGpsAccuracy] = useState<number | null>(null);
-  const [gpsStatus, setGpsStatus] = useState<'acquiring' | 'active' | 'error' | 'paused'>('acquiring');
+  const [gpsStatus, setGpsStatus] = useState<'acquiring' | 'active' | 'weak' | 'error' | 'paused'>('acquiring');
   const [isPaused, setIsPaused] = useState(false);
   const [pausedDuration, setPausedDuration] = useState(0);
   const [voiceEnabled, setVoiceEnabled] = useState(() => 
@@ -130,6 +130,8 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
   const voiceEnabledRef = useRef(voiceEnabled);
   const lastSegmentCheckKmRef = useRef(0);
   const liveSegmentResultsRef = useRef<any[]>([]);
+  const gpsLastReceivedRef = useRef<number>(0);
+  const gpsFallbackIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   // ElevenLabs TTS voice - works in background / screen off
   const { speak: speakUpdate, cleanup: cleanupVoice } = useCardioVoice({ enabled: voiceEnabled });
@@ -194,6 +196,16 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
     const { latitude, longitude, accuracy, speed } = position.coords;
 
     setGpsAccuracy(accuracy);
+    gpsLastReceivedRef.current = Date.now();
+
+    // We ARE receiving GPS positions → signal is live.
+    // Classify signal quality by accuracy:
+    if (accuracy <= 100) {
+      setGpsStatus('active');       // Good signal
+    } else if (accuracy <= 250) {
+      setGpsStatus('weak');         // Receiving but poor accuracy
+    }
+    // >250m — leave status as-is (probably still 'acquiring')
 
     const nextPosition: Position = {
       lat: latitude,
@@ -209,20 +221,21 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
       nextPosition,
     });
 
+    if (distanceResult.displaySpeedKph !== null) {
+      setCurrentSpeed(distanceResult.displaySpeedKph);
+    }
+
     if (!distanceResult.accepted) {
-      if (distanceResult.displaySpeedKph !== null) {
-        setCurrentSpeed(distanceResult.displaySpeedKph);
+      // Position not used for distance, but GPS is still working — don't flip to 'acquiring'.
+      // The only case we accept a position as the "anchor" without adding distance
+      // is when there's no previous accepted position yet — lock in the first one.
+      if (!lastAcceptedPositionRef.current && accuracy <= 150) {
+        lastAcceptedPositionRef.current = nextPosition;
       }
-      setGpsStatus('acquiring');
       return;
     }
 
     lastAcceptedPositionRef.current = nextPosition;
-    setGpsStatus('active');
-
-    if (distanceResult.displaySpeedKph !== null) {
-      setCurrentSpeed(distanceResult.displaySpeedKph);
-    }
 
     setPositions((prev) => [...prev, nextPosition]);
 
@@ -290,34 +303,52 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
     if (watchIdRef.current !== null) {
       navigator.geolocation.clearWatch(watchIdRef.current);
     }
+    if (gpsFallbackIntervalRef.current) {
+      clearInterval(gpsFallbackIntervalRef.current);
+    }
 
     // Request location permission and start high-accuracy GPS tracking
     watchIdRef.current = navigator.geolocation.watchPosition(
       processGpsPosition,
       (error) => {
         console.error('GPS Error:', error.code, error.message);
-        setGpsStatus('error');
         
-        switch (error.code) {
-          case error.PERMISSION_DENIED:
-            toast.error('Location access denied. Please enable location permissions.');
-            break;
-          case error.POSITION_UNAVAILABLE:
+        if (error.code === error.PERMISSION_DENIED) {
+          setGpsStatus('error');
+          toast.error('Location access denied. Please enable location permissions.');
+        } else if (error.code === error.POSITION_UNAVAILABLE) {
+          // Don't set error immediately — could be temporary
+          // Only flag error if we haven't received anything for 30s
+          if (Date.now() - gpsLastReceivedRef.current > 30000) {
+            setGpsStatus('error');
             toast.error('Location unavailable. Please check GPS is enabled.');
-            break;
-          case error.TIMEOUT:
-            toast.error('Location request timed out. Retrying...');
-            break;
-          default:
-            toast.error('Could not get your location');
+          }
         }
+        // TIMEOUT errors are normal on mobile — watchPosition keeps retrying automatically
       },
       {
-        enableHighAccuracy: true,  // Use GPS for precise tracking
-        maximumAge: 5000,
-        timeout: 20000,
+        enableHighAccuracy: true,
+        maximumAge: 3000,
+        timeout: 15000,
       }
     );
+
+    // Fallback: if watchPosition goes silent for 8s, poll getCurrentPosition.
+    // This handles some mobile browsers where watchPosition stalls after backgrounding.
+    gpsFallbackIntervalRef.current = setInterval(() => {
+      const sinceLastFix = Date.now() - gpsLastReceivedRef.current;
+      if (sinceLastFix > 8000) {
+        navigator.geolocation.getCurrentPosition(
+          processGpsPosition,
+          () => {},
+          { enableHighAccuracy: true, maximumAge: 3000, timeout: 10000 }
+        );
+      }
+      // If we haven't had any position in 30s, show as acquiring
+      if (sinceLastFix > 30000) {
+        setGpsStatus('acquiring');
+      }
+    }, 8000);
   }, [processGpsPosition]);
 
   const startTracking = useCallback(() => {
@@ -351,6 +382,10 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
     if (watchIdRef.current !== null) {
       navigator.geolocation.clearWatch(watchIdRef.current);
       watchIdRef.current = null;
+    }
+    if (gpsFallbackIntervalRef.current) {
+      clearInterval(gpsFallbackIntervalRef.current);
+      gpsFallbackIntervalRef.current = null;
     }
     // Stop timer updates
     if (timerRef.current) {
@@ -391,6 +426,10 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
     if (watchIdRef.current !== null) {
       navigator.geolocation.clearWatch(watchIdRef.current);
       watchIdRef.current = null;
+    }
+    if (gpsFallbackIntervalRef.current) {
+      clearInterval(gpsFallbackIntervalRef.current);
+      gpsFallbackIntervalRef.current = null;
     }
     if (timerRef.current) {
       clearInterval(timerRef.current);
@@ -483,6 +522,9 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
     return () => {
       if (watchIdRef.current !== null) {
         navigator.geolocation.clearWatch(watchIdRef.current);
+      }
+      if (gpsFallbackIntervalRef.current) {
+        clearInterval(gpsFallbackIntervalRef.current);
       }
       if (timerRef.current) {
         clearInterval(timerRef.current);
@@ -798,6 +840,10 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
       navigator.geolocation.clearWatch(watchIdRef.current);
       watchIdRef.current = null;
     }
+    if (gpsFallbackIntervalRef.current) {
+      clearInterval(gpsFallbackIntervalRef.current);
+      gpsFallbackIntervalRef.current = null;
+    }
     if (preAcquireWatchRef.current !== null) {
       navigator.geolocation.clearWatch(preAcquireWatchRef.current);
       preAcquireWatchRef.current = null;
@@ -806,6 +852,7 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
       clearInterval(timerRef.current);
       timerRef.current = null;
     }
+    gpsLastReceivedRef.current = 0;
     onClose();
   };
 
@@ -1106,21 +1153,24 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
                         transition={{ repeat: gpsStatus === 'active' ? Infinity : 0, duration: 1.5 }}
                         className={`w-2 h-2 rounded-full ${
                           gpsStatus === 'active' ? 'bg-emerald-500' : 
+                          gpsStatus === 'weak' ? 'bg-amber-500' :
                           gpsStatus === 'acquiring' ? 'bg-amber-500' : 
                           gpsStatus === 'paused' ? 'bg-primary' : 'bg-destructive'
                         }`}
                       />
                       <span className={
                         gpsStatus === 'active' ? 'text-emerald-500' : 
+                        gpsStatus === 'weak' ? 'text-amber-500' :
                         gpsStatus === 'acquiring' ? 'text-amber-500' : 
                         gpsStatus === 'paused' ? 'text-primary' : 'text-destructive'
                       }>
-                        {gpsStatus === 'active' ? 'GPS Active' : 
-                         gpsStatus === 'acquiring' ? 'Acquiring GPS...' : 
+                        {gpsStatus === 'active' ? 'GPS Tracking' : 
+                         gpsStatus === 'weak' ? 'Weak Signal' :
+                         gpsStatus === 'acquiring' ? 'Finding GPS...' : 
                          gpsStatus === 'paused' ? 'Paused' : 'GPS Error'}
                       </span>
                     </div>
-                    {gpsAccuracy !== null && gpsStatus === 'active' && (
+                    {gpsAccuracy !== null && (gpsStatus === 'active' || gpsStatus === 'weak') && (
                       <span className="text-muted-foreground">
                         ±{Math.round(gpsAccuracy)}m
                       </span>

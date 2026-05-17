@@ -15,12 +15,15 @@ interface ActivityTrackingRules {
   maxAccuracyM: number;
 }
 
+// Relaxed accuracy thresholds so mobile GPS actually works in real-world conditions.
+// Mobile phones: 5-20m outdoors clear sky, 30-80m urban, 80-150m light indoor/urban canyon.
+// Old values were too strict (45-60m base) causing perpetual "acquiring" state.
 const ACTIVITY_TRACKING_RULES: Record<CardioTrackerActivity, ActivityTrackingRules> = {
-  walk: { minMovementKm: 0.002, maxSpeedKph: 12, baseAccuracyM: 55, maxAccuracyM: 90 },
-  run: { minMovementKm: 0.0025, maxSpeedKph: 28, baseAccuracyM: 45, maxAccuracyM: 85 },
-  cycle: { minMovementKm: 0.005, maxSpeedKph: 75, baseAccuracyM: 60, maxAccuracyM: 110 },
-  row: { minMovementKm: 0.004, maxSpeedKph: 35, baseAccuracyM: 55, maxAccuracyM: 95 },
-  swim: { minMovementKm: 0.002, maxSpeedKph: 12, baseAccuracyM: 35, maxAccuracyM: 65 },
+  walk:  { minMovementKm: 0.002,  maxSpeedKph: 12,  baseAccuracyM: 80,  maxAccuracyM: 150 },
+  run:   { minMovementKm: 0.002,  maxSpeedKph: 28,  baseAccuracyM: 70,  maxAccuracyM: 140 },
+  cycle: { minMovementKm: 0.005,  maxSpeedKph: 75,  baseAccuracyM: 90,  maxAccuracyM: 160 },
+  row:   { minMovementKm: 0.003,  maxSpeedKph: 35,  baseAccuracyM: 80,  maxAccuracyM: 150 },
+  swim:  { minMovementKm: 0.002,  maxSpeedKph: 12,  baseAccuracyM: 60,  maxAccuracyM: 120 },
 };
 
 export interface DistanceIncrementResult {
@@ -28,6 +31,8 @@ export interface DistanceIncrementResult {
   incrementKm: number;
   displaySpeedKph: number | null;
   allowedAccuracyM: number;
+  /** Why the position was rejected — helps the UI show a meaningful status */
+  rejectReason?: 'accuracy' | 'no_movement' | 'speed_spike';
 }
 
 export function haversineDistanceKm(
@@ -52,7 +57,8 @@ export function getAcceptedAccuracyMeters(
   timeDeltaSeconds: number
 ): number {
   const rules = ACTIVITY_TRACKING_RULES[activity];
-  const dynamicBuffer = Math.min(30, Math.floor(timeDeltaSeconds / 10) * 10);
+  // Ramp up tolerance over time — after 30s between reads, allow full maxAccuracy
+  const dynamicBuffer = Math.min(40, Math.floor(timeDeltaSeconds / 8) * 10);
   return Math.min(rules.maxAccuracyM, rules.baseAccuracyM + dynamicBuffer);
 }
 
@@ -69,12 +75,14 @@ export function calculateDistanceIncrement({
   const reportedSpeedKph =
     nextPosition.speed !== null && nextPosition.speed > 0 ? nextPosition.speed * 3.6 : null;
 
+  // First position — accept if accuracy is within generous limit
   if (!previousPosition) {
     return {
       accepted: nextPosition.accuracy <= rules.maxAccuracyM,
       incrementKm: 0,
       displaySpeedKph: reportedSpeedKph,
       allowedAccuracyM: rules.maxAccuracyM,
+      rejectReason: nextPosition.accuracy > rules.maxAccuracyM ? 'accuracy' : undefined,
     };
   }
 
@@ -87,6 +95,7 @@ export function calculateDistanceIncrement({
       incrementKm: 0,
       displaySpeedKph: reportedSpeedKph,
       allowedAccuracyM,
+      rejectReason: 'accuracy',
     };
   }
 
@@ -99,6 +108,7 @@ export function calculateDistanceIncrement({
       incrementKm: 0,
       displaySpeedKph: reportedSpeedKph,
       allowedAccuracyM,
+      rejectReason: 'no_movement',
     };
   }
 
@@ -108,6 +118,7 @@ export function calculateDistanceIncrement({
       incrementKm: 0,
       displaySpeedKph: reportedSpeedKph,
       allowedAccuracyM,
+      rejectReason: 'speed_spike',
     };
   }
 
