@@ -110,10 +110,10 @@ const freeFeatures = [
 
 /* ─── Unbreakable Token tiers for pricing ─── */
 const tokenTiers = [
-  { name: 'FREE', tokens: 5, price: '£0', desc: 'Try the Unbreakable Coach — 5 tokens on signup', highlight: false },
-  { name: 'STARTER', tokens: 50, price: '£25/mo', desc: 'Unbreakable Coach programmes, meal plans & form feedback', highlight: false },
-  { name: 'PRO', tokens: 150, price: '£49/mo', desc: 'Full coaching across all pillars', highlight: true },
-  { name: 'ELITE', tokens: 500, price: '£79/mo', desc: 'Unlimited feel — perfect for PT students', highlight: false },
+  { name: 'FREE', tokens: 5, price: '£0', fullPrice: null, desc: 'Try the Unbreakable Coach — 5 tokens on signup', highlight: false },
+  { name: 'STARTER', tokens: 50, price: '£25/mo', fullPrice: '£33/mo', desc: 'Unbreakable Coach programmes, meal plans & form feedback', highlight: false },
+  { name: 'PRO', tokens: 150, price: '£49/mo', fullPrice: '£65/mo', desc: 'Full coaching across all pillars', highlight: true },
+  { name: 'ELITE', tokens: 500, price: '£79/mo', fullPrice: '£105/mo', desc: 'Unlimited feel — perfect for PT students', highlight: false },
 ];
 
 export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
@@ -230,6 +230,17 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
           >
             100% free to use · 5 tokens on signup · No card required
           </motion.p>
+
+          <motion.div
+            variants={fadeUp}
+            transition={{ duration: 0.6 }}
+            className="inline-flex items-center gap-2 bg-green-500/10 border border-green-500/30 rounded-full px-4 py-1.5 mt-2"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-green-500" />
+            <span className="text-xs font-display tracking-wider text-green-500">
+              INTRO PRICING — 33% OFF · LIMITED TO FIRST 100 MEMBERS
+            </span>
+          </motion.div>
         </motion.div>
 
         {/* Scroll indicator */}
@@ -681,17 +692,23 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
               </Card>
             </motion.div>
 
-            {/* Coin tiers */}
+            {/* Token tiers */}
             <motion.div variants={fadeUp} transition={{ duration: 0.5 }} className="text-center mb-6">
               <div className="flex items-center justify-center gap-2 mb-2">
                 <Coins className="w-5 h-5 text-primary" />
                 <h3 className="font-display text-2xl text-foreground tracking-wide">
-                  COIN PACKS
+                  UNBREAKABLE TOKENS
                 </h3>
               </div>
               <p className="text-muted-foreground text-sm">
-                Coins power your Unbreakable Coach — chat, programme builds, meal plans & University courses.
+                Tokens power your Unbreakable Coach — chat, programme builds, meal plans & University courses.
               </p>
+              <div className="inline-flex items-center gap-2 mt-3 bg-green-500/10 border border-green-500/30 rounded-full px-4 py-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-green-500" />
+                <span className="text-xs font-display tracking-wider text-green-500">
+                  INTRO PRICING — 33% OFF · FIRST 100 MEMBERS
+                </span>
+              </div>
             </motion.div>
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-5xl mx-auto">
@@ -713,7 +730,12 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
                       <span className="font-display text-3xl text-primary neon-glow-subtle">{tier.tokens}</span>
                     </div>
                     <p className="text-muted-foreground text-xs mb-1">tokens{tier.price !== '£0' ? '/month' : ''}</p>
-                    <p className="font-display text-lg text-foreground tracking-wide mb-3">{tier.price}</p>
+                    <div className="mb-3">
+                      {tier.fullPrice && (
+                        <span className="text-sm text-muted-foreground/60 line-through mr-2">{tier.fullPrice}</span>
+                      )}
+                      <span className="font-display text-lg text-foreground tracking-wide">{tier.price}</span>
+                    </div>
                     <p className="text-muted-foreground text-xs leading-relaxed flex-1">{tier.desc}</p>
                   </Card>
                 </motion.div>

@@ -12,7 +12,8 @@ interface TierCard {
   name: string;
   displayName: string;
   tokens: number;
-  price: number; // monthly GBP
+  price: number; // monthly GBP (intro price)
+  fullPrice?: number; // full price after intro ends
   icon: React.ElementType;
   features: string[];
   popular?: boolean;
@@ -33,6 +34,7 @@ const TIERS: TierCard[] = [
     displayName: 'Starter',
     tokens: 50,
     price: 25,
+    fullPrice: 33,
     icon: Star,
     stripePriceId: 'price_1TXuIrD5KOEmeWH21kBZYWAP',
     features: ['50 tokens/month', 'Unbreakable Coach programme builder', 'Unbreakable Coach nutrition plans', 'Form feedback'],
@@ -42,6 +44,7 @@ const TIERS: TierCard[] = [
     displayName: 'Pro',
     tokens: 150,
     price: 49,
+    fullPrice: 65,
     icon: Rocket,
     popular: true,
     stripePriceId: 'price_1TXuIrD5KOEmeWH2SxYc7G14',
@@ -52,6 +55,7 @@ const TIERS: TierCard[] = [
     displayName: 'Elite',
     tokens: 500,
     price: 79,
+    fullPrice: 105,
     icon: Crown,
     stripePriceId: 'price_1TXuIsD5KOEmeWH2JUHUujEy',
     features: ['500 tokens/month', 'Unlimited feel', 'All features included', 'Perfect for PT students'],
@@ -114,9 +118,15 @@ export default function AITokens() {
             <h1 className="text-3xl md:text-4xl font-display tracking-wider mb-3">
               UNBREAKABLE TOKENS
             </h1>
-            <p className="text-muted-foreground max-w-md mx-auto">
-              Power your Unbreakable Coach with Unbreakable Tokens. Chat costs just 0.2 tokens per message — full programme builds cost 1 token.
+            <p className="text-muted-foreground max-w-md mx-auto mb-4">
+              Power your Unbreakable Coach with tokens. Chat costs just 0.2 tokens per message — full programme builds cost 1 token.
             </p>
+            <div className="inline-flex items-center gap-2 bg-green-500/10 border border-green-500/30 rounded-full px-4 py-1.5">
+              <Sparkles className="w-3.5 h-3.5 text-green-500" />
+              <span className="text-xs font-display tracking-wider text-green-500">
+                INTRO PRICING — 33% OFF · FIRST 100 MEMBERS
+              </span>
+            </div>
           </div>
 
           {/* Current balance card */}
@@ -189,6 +199,11 @@ export default function AITokens() {
                   </div>
 
                   <div className="mb-4">
+                    {tier.fullPrice && (
+                      <span className="text-lg text-muted-foreground/50 line-through mr-2 font-display tracking-wider">
+                        £{tier.fullPrice}
+                      </span>
+                    )}
                     <span className="text-3xl font-display tracking-wider">
                       {tier.price === 0 ? 'FREE' : `£${tier.price}`}
                     </span>
