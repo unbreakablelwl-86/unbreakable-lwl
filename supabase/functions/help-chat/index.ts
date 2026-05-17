@@ -253,26 +253,24 @@ serve(async (req) => {
     
     if (authError || !claimsData?.claims) {
       return new Response(
-        JSON.stringify({ error: 'Unauthorized - Invalid session' }
+        JSON.stringify({ error: 'Unauthorized - Invalid session' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
 
-    // Extract user ID from JWT claims
-    const userId = (claimsData.claims as any).sub;
 
-    // Token guard — deduct 1 AI token
-    const serviceClient = createClient(
+    // --- Token guard: deduct 1 AI token ---
+    const tokenUserId = (claimsData.claims as any).sub;
+    const svcClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
-    const guard = await requireToken(serviceClient, userId, 'help-chat');
-    if (guard.error) {
-      return new Response(JSON.stringify(guard.error), {
+    const tokenGuard = await requireToken(svcClient, tokenUserId, 'help-chat');
+    if (tokenGuard.error) {
+      return new Response(JSON.stringify(tokenGuard.error), {
         status: 402,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
-    }
-),
-        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
     }
 
     const body = await req.json();

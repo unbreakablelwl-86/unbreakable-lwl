@@ -1,5 +1,4 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { requireToken } from "../_shared/token-guard.ts";
 
 const corsHeaders = {
@@ -16,37 +15,34 @@ serve(async (req) => {
     const authHeader = req.headers.get('Authorization');
     if (!authHeader?.startsWith('Bearer ')) {
       return new Response(
-        JSON.stringify({ error: 'Unauthorized' }
+        JSON.stringify({ error: 'Unauthorized' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
 
-    // Extract user ID for token system
+
+    // --- Token guard: deduct 1 AI token ---
     const authClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
       { global: { headers: { Authorization: authHeader } } }
     );
-    const { data: { user } } = await authClient.auth.getUser();
-    const userId = user?.id;
-    if (!userId) {
+    const { data: { user: tokenUser } } = await authClient.auth.getUser();
+    if (!tokenUser?.id) {
       return new Response(JSON.stringify({ error: 'Invalid session' }), {
         status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
-
-    // Token guard — deduct 1 AI token
-    const serviceClient = createClient(
+    const svcClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
-    const guard = await requireToken(serviceClient, userId, 'suggest-power-progression');
-    if (guard.error) {
-      return new Response(JSON.stringify(guard.error), {
+    const tokenGuard = await requireToken(svcClient, tokenUser.id, 'suggest-power-progression');
+    if (tokenGuard.error) {
+      return new Response(JSON.stringify(tokenGuard.error), {
         status: 402,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
-    }
-),
-        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
     }
 
     const GOOGLE_AI_API_KEY = Deno.env.get("GOOGLE_AI_API_KEY");

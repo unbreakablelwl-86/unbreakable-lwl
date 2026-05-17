@@ -45,25 +45,23 @@ serve(async (req) => {
     const token = authHeader.replace('Bearer ', '');
     const { data: claimsData, error: authError } = await authClient.auth.getClaims(token);
     if (authError || !claimsData?.claims) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
 
-    // Extract user ID from JWT claims
-    const userId = (claimsData.claims as any).sub;
 
-    // Token guard — deduct 1 AI token
-    const serviceClient = createClient(
+    // --- Token guard: deduct 1 AI token ---
+    const tokenUserId = (claimsData.claims as any).sub;
+    const svcClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
-    const guard = await requireToken(serviceClient, userId, 'generate-mindset-programme');
-    if (guard.error) {
-      return new Response(JSON.stringify(guard.error), {
+    const tokenGuard = await requireToken(svcClient, tokenUserId, 'generate-mindset-programme');
+    if (tokenGuard.error) {
+      return new Response(JSON.stringify(tokenGuard.error), {
         status: 402,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
-), {
-        status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
