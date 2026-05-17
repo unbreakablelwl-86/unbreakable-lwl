@@ -16,12 +16,16 @@ import {
   Apple,
   BarChart3,
   History,
-  ArrowRight
+  ArrowRight,
+  Camera,
+  Zap,
 } from 'lucide-react';
+import { SnapTrack } from '@/components/fuel/SnapTrack';
 
 export default function Fuel() {
   const { user, loading } = useAuth();
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showSnapTrack, setShowSnapTrack] = useState(false);
 
   if (loading) {
     return (
@@ -98,6 +102,20 @@ export default function Fuel() {
             EXPLORE <span className="text-primary">FUEL</span>
           </h2>
           <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
+            {user && (
+              <div onClick={() => setShowSnapTrack(true)} className="cursor-pointer">
+                <Card className="p-5 hover:bg-primary/10 transition-colors border-2 border-primary/40 bg-primary/5 neon-border-subtle relative overflow-hidden">
+                  <div className="absolute top-2 right-2">
+                    <Badge variant="outline" className="text-[10px] border-primary/30 bg-primary/10 text-primary">
+                      <Zap className="w-2.5 h-2.5 mr-0.5" /> AI
+                    </Badge>
+                  </div>
+                  <Camera className="w-8 h-8 text-primary mb-3" />
+                  <h3 className="font-display text-lg tracking-wide mb-1">SNAP & TRACK</h3>
+                  <p className="text-sm text-muted-foreground">Photo scan meals for instant macros</p>
+                </Card>
+              </div>
+            )}
             <Link to="/fuel/history">
               <Card className="p-5 hover:bg-primary/5 transition-colors border-2 border-border hover:border-primary/30">
                 <History className="w-8 h-8 text-primary mb-3" />
@@ -163,6 +181,7 @@ export default function Fuel() {
 
       <UnifiedFooter className="mt-auto" />
       <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
+      <SnapTrack isOpen={showSnapTrack} onClose={() => setShowSnapTrack(false)} />
     </div>
   );
 }

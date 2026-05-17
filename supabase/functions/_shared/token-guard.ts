@@ -28,6 +28,7 @@ const FUNCTION_COSTS: Record<string, number> = {
   "generate-motivation": 0.2,
   "suggest-movement-progression": 0.2,
   "suggest-power-progression": 0.2,
+  "snap-track": 0.5,
   // Everything else defaults to 1.0
 };
 

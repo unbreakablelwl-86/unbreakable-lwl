@@ -1,0 +1,207 @@
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { requireToken } from "../_shared/token-guard.ts";
+
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
+};
+
+const systemPrompt = `You are the UNBREAKABLE NUTRITION SCANNER — an AI food identification engine for a fitness coaching app.
+
+Given a photo of food/meal/snack/drink, you MUST:
+1. Identify every distinct food item visible
+2. Estimate portion sizes based on visual cues (plate size, utensils, hands, packaging)
+3. Estimate macronutrient breakdown for each item
+
+RESPOND WITH VALID JSON ONLY — no markdown, no explanation, no wrapping. Return this exact structure:
+
+{
+  "items": [
+    {
+      "name": "Food item name",
+      "portion": "Estimated portion (e.g. '1 medium bowl', '150g', '2 slices')",
+      "calories": 350,
+      "protein": 25,
+      "carbs": 40,
+      "fat": 8,
+      "confidence": "high"
+    }
+  ],
+  "meal_summary": "Brief one-line description of the meal",
+  "total_calories": 650,
+  "total_protein": 45,
+  "total_carbs": 70,
+  "total_fat": 15,
+  "coach_note": "Short motivational/practical tip about this meal (1-2 sentences, UNBREAKABLE energy)"
+}
+
+RULES:
+- confidence: "high" (clear packaged food/common dish), "medium" (can identify but portion uncertain), "low" (hard to tell)
+- Macros in grams, calories in kcal
+- Be realistic with portions — don't overestimate
+- If the image is NOT food, return: {"items":[],"meal_summary":"No food detected","total_calories":0,"total_protein":0,"total_carbs":0,"total_fat":0,"coach_note":"Snap your meal to get instant macro tracking!"}
+- Round all numbers to integers
+- UK food names preferred (crisps not chips, aubergine not eggplant, etc.)`;
+
+serve(async (req) => {
+  if (req.method === "OPTIONS") {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  try {
+    // Auth
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
+      return new Response(
+        JSON.stringify({ error: "Unauthorized — sign in to use Snap & Track" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const supabaseClient = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_ANON_KEY") ?? "",
+      { global: { headers: { Authorization: authHeader } } }
+    );
+
+    const token = authHeader.replace("Bearer ", "");
+    const { data: claimsData, error: authError } = await supabaseClient.auth.getClaims(token);
+
+    if (authError || !claimsData?.claims) {
+      return new Response(
+        JSON.stringify({ error: "Unauthorized — invalid session" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Token guard
+    const userId = (claimsData.claims as any).sub;
+    const svcClient = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
+    );
+    const tokenGuard = await requireToken(svcClient, userId, "snap-track");
+    if (tokenGuard.error) {
+      return new Response(JSON.stringify(tokenGuard.error), {
+        status: 402,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Parse request
+    const body = await req.json();
+    const { image } = body;
+
+    if (!image || typeof image !== "string") {
+      return new Response(
+        JSON.stringify({ error: "No image provided" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Validate image size (max ~10MB base64)
+    if (image.length > 14_000_000) {
+      return new Response(
+        JSON.stringify({ error: "Image too large — try a smaller photo" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const GOOGLE_AI_API_KEY = Deno.env.get("GOOGLE_AI_API_KEY");
+    if (!GOOGLE_AI_API_KEY) {
+      throw new Error("Scanner service unavailable");
+    }
+
+    // Strip data URI prefix if present
+    const base64Data = image.replace(/^data:image\/[a-z]+;base64,/, "");
+
+    // Detect MIME type
+    let mimeType = "image/jpeg";
+    if (image.startsWith("data:image/png")) mimeType = "image/png";
+    else if (image.startsWith("data:image/webp")) mimeType = "image/webp";
+
+    // Call Gemini 2.5 Flash with vision
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GOOGLE_AI_API_KEY}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [
+            {
+              parts: [
+                { text: systemPrompt },
+                {
+                  inline_data: {
+                    mime_type: mimeType,
+                    data: base64Data,
+                  },
+                },
+                { text: "Identify the food in this image and estimate macros. Return JSON only." },
+              ],
+            },
+          ],
+          generationConfig: {
+            temperature: 0.2,
+            maxOutputTokens: 2048,
+            responseMimeType: "application/json",
+          },
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      const errText = await response.text();
+      console.error("Gemini API error:", response.status, errText);
+
+      if (response.status === 429) {
+        return new Response(
+          JSON.stringify({ error: "Scanner is busy — try again in a moment!" }),
+          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      throw new Error("Scanner unavailable");
+    }
+
+    const aiResult = await response.json();
+    const content =
+      aiResult.candidates?.[0]?.content?.parts?.[0]?.text;
+
+    if (!content) {
+      throw new Error("No analysis received from scanner");
+    }
+
+    // Parse the JSON response
+    let parsed;
+    try {
+      // Clean potential markdown wrappers
+      const cleaned = content.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
+      parsed = JSON.parse(cleaned);
+    } catch {
+      console.error("Failed to parse Gemini response:", content);
+      throw new Error("Scanner returned invalid data — try again");
+    }
+
+    return new Response(
+      JSON.stringify({
+        ...parsed,
+        tokens_remaining: tokenGuard.remaining,
+        timestamp: new Date().toISOString(),
+      }),
+      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
+  } catch (e) {
+    console.error("snap-track error:", e);
+    return new Response(
+      JSON.stringify({
+        error: e instanceof Error ? e.message : "Scan failed — try again",
+      }),
+      {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      }
+    );
+  }
+});

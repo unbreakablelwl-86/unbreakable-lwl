@@ -11,6 +11,7 @@ import { useNutritionFeedback } from '@/hooks/useNutritionFeedback';
 import { MealType, mealTypeLabels, FoodItem } from '@/lib/fuelTypes';
 import { NutritionCoachCTA } from './NutritionCoachCTA';
 import { BarcodeScanner } from './BarcodeScanner';
+import { SnapTrack } from './SnapTrack';
 import { 
   Plus, 
   Trash2, 
@@ -22,6 +23,7 @@ import {
   Star,
   Clock,
   Barcode,
+  Camera,
   ChevronDown,
   ChevronUp,
   MessageSquare,
@@ -359,6 +361,7 @@ export function FoodTracker() {
   });
   const [addingToMeal, setAddingToMeal] = useState<MealType | null>(null);
   const [showBarcodeScanner, setShowBarcodeScanner] = useState(false);
+  const [showSnapTrack, setShowSnapTrack] = useState(false);
 
   const toggleMeal = (meal: MealType) => {
     setExpandedMeals((prev) => ({ ...prev, [meal]: !prev[meal] }));
@@ -441,7 +444,15 @@ export function FoodTracker() {
           </div>
 
           {/* Quick Actions */}
-          <div className="flex gap-2 pt-2">
+          <div className="flex gap-2 pt-2 flex-wrap">
+            <Button
+              size="sm"
+              className="gap-1 bg-primary hover:bg-primary/90 font-display tracking-wide"
+              onClick={() => setShowSnapTrack(true)}
+            >
+              <Camera className="w-4 h-4" />
+              Snap & Track
+            </Button>
             <Button
               variant="outline"
               size="sm"
@@ -472,6 +483,12 @@ export function FoodTracker() {
       <BarcodeScanner 
         isOpen={showBarcodeScanner} 
         onClose={() => setShowBarcodeScanner(false)} 
+      />
+
+      {/* Snap & Track Modal */}
+      <SnapTrack
+        isOpen={showSnapTrack}
+        onClose={() => setShowSnapTrack(false)}
       />
 
       {/* Meal Sections */}
