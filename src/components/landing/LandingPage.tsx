@@ -87,7 +87,7 @@ const howItWorks = [
     step: '02',
     icon: Target,
     title: 'CHOOSE YOUR PATH',
-    desc: 'Start your 7-day free trial and unlock everything: Power, Movement, Fuel, Mindset, University and your AI Coach.',
+    desc: 'Subscribe for full coaching access — Power, Movement, Fuel, Mindset and AI Coach. Or grab individual University courses.',
   },
   {
     step: '03',
@@ -104,10 +104,10 @@ const coachingFeatures = [
   'Fuel tracker, meal planning & recipe library',
   'Mindset programmes, breathing & focus games',
   'Movement programmes (run, cycle, swim, row, walk)',
-  'Unlimited AI Coach conversations',
-  'University learning hub & calculators',
+  'AI Coach chat included (token-based)',
   'Community Hub — feed, stories & messaging',
   'Daily habit diary & lifestyle tracking',
+  'Calculators & free tools',
 ];
 
 const oneToOneExtras = [
@@ -577,7 +577,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
                 <span className="text-foreground font-medium">Final exams</span>
               </p>
               <p className="text-muted-foreground text-sm mt-1">
-                All included in every plan — learn at your own pace.
+                Courses from just £49 each — or save with course bundles. Learn at your own pace.
               </p>
             </motion.div>
           </motion.div>

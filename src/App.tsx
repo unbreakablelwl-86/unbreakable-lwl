@@ -161,26 +161,26 @@ const App = () => (
                 <SubscribedRoute><MindsetGames /></SubscribedRoute>
               } />
               
-              {/* Coaching (Help) */}
+              {/* Coaching (Help) — uses AI token system, not subscription */}
               <Route path="/help" element={
-                <SubscribedRoute><Help /></SubscribedRoute>
+                <ProtectedRoute><Help /></ProtectedRoute>
               } />
               
               {/* University */}
               <Route path="/university" element={
-                <SubscribedRoute><University /></SubscribedRoute>
+                <ProtectedRoute><University /></ProtectedRoute>
               } />
               <Route path="/university/:courseType/:level" element={
-                <SubscribedRoute><UniversityLevel /></SubscribedRoute>
+                <ProtectedRoute><UniversityLevel /></ProtectedRoute>
               } />
               <Route path="/university/:courseType/:level/:unit/:chapter" element={
-                <SubscribedRoute><UniversityChapter /></SubscribedRoute>
+                <ProtectedRoute><UniversityChapter /></ProtectedRoute>
               } />
               <Route path="/university/:courseType/:level/:unit/:chapter/quiz" element={
-                <SubscribedRoute><UniversityChapterQuiz /></SubscribedRoute>
+                <ProtectedRoute><UniversityChapterQuiz /></ProtectedRoute>
               } />
               <Route path="/university/:courseType/:level/:unit/assessment" element={
-                <SubscribedRoute><UniversityAssessment /></SubscribedRoute>
+                <ProtectedRoute><UniversityAssessment /></ProtectedRoute>
               } />
               
               {/* Habits - free to build daily engagement */}
