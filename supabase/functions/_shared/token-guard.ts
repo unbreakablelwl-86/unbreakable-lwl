@@ -18,6 +18,23 @@
 
 import { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2";
 
+/**
+ * Token costs per function:
+ * - 0.2 tokens: chat, motivation, progression suggestions
+ * - 1.0 tokens: programme builds, meal plans, analysis, feedback
+ */
+const FUNCTION_COSTS: Record<string, number> = {
+  "help-chat": 0.2,
+  "generate-motivation": 0.2,
+  "suggest-movement-progression": 0.2,
+  "suggest-power-progression": 0.2,
+  // Everything else defaults to 1.0
+};
+
+function getFunctionCost(functionName: string): number {
+  return FUNCTION_COSTS[functionName] ?? 1;
+}
+
 interface TokenGuardResult {
   error?: {
     code: "insufficient_tokens";
@@ -32,12 +49,14 @@ export async function requireToken(
   serviceClient: SupabaseClient,
   userId: string,
   functionName: string,
-  cost: number = 1,
+  cost?: number,
   description?: string
 ): Promise<TokenGuardResult> {
+  const actualCost = cost ?? getFunctionCost(functionName);
+
   const { data: remaining, error } = await serviceClient.rpc("deduct_token", {
     p_user_id: userId,
-    p_amount: cost,
+    p_amount: actualCost,
     p_function_name: functionName,
     p_description: description || `Used ${functionName}`,
   });
@@ -61,7 +80,7 @@ export async function requireToken(
         code: "insufficient_tokens",
         message: `You've used all your AI tokens. Upgrade your plan for more.`,
         balance: balance?.balance ?? 0,
-        required: cost,
+        required: actualCost,
       },
       remaining: 0,
     };

@@ -5,7 +5,7 @@ import { useTokenBalance } from '@/hooks/useTokenBalance';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { Zap, Check, Crown, Rocket, Star, Sparkles } from 'lucide-react';
+import { Zap, Check, Crown, Rocket, Star, Sparkles, MessageSquare, Dumbbell, Apple, Brain, Eye, Activity } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface TierCard {
@@ -115,7 +115,7 @@ export default function AITokens() {
               AI TOKENS
             </h1>
             <p className="text-muted-foreground max-w-md mx-auto">
-              Power your AI coach with tokens. Every AI interaction — programmes, meal plans, form analysis — costs 1 token.
+              Power your AI coach with tokens. Chat costs just 0.2 tokens per message — full programme builds cost 1 token.
             </p>
           </div>
 
@@ -237,14 +237,90 @@ export default function AITokens() {
             })}
           </div>
 
-          {/* FAQ / Info */}
-          <div className="mt-16 max-w-2xl mx-auto">
+          {/* Token Cost Breakdown */}
+          <div className="mt-16 max-w-3xl mx-auto">
+            <h2 className="text-xl font-display tracking-wider text-center mb-2">TOKEN COST BREAKDOWN</h2>
+            <p className="text-sm text-muted-foreground text-center mb-8">
+              Know exactly what each action costs before you use it.
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
+              {/* 0.2 Token Actions */}
+              <div className="rounded-2xl border border-green-500/20 bg-green-500/5 p-5">
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="bg-green-500/10 rounded-full px-3 py-1">
+                    <span className="text-sm font-display tracking-wider text-green-500">0.2 TOKENS</span>
+                  </div>
+                </div>
+                <ul className="space-y-3">
+                  {[
+                    { icon: MessageSquare, label: 'AI Chat message', desc: 'Ask your coach anything' },
+                    { icon: Sparkles, label: 'Motivation quote', desc: 'Daily motivation & mindset' },
+                    { icon: Activity, label: 'Progression suggestion', desc: 'Movement & power tips' },
+                  ].map((item, i) => (
+                    <li key={i} className="flex items-start gap-3">
+                      <item.icon className="w-4 h-4 text-green-500 shrink-0 mt-0.5" />
+                      <div>
+                        <span className="text-sm text-foreground font-medium">{item.label}</span>
+                        <p className="text-xs text-muted-foreground">{item.desc}</p>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+                <p className="text-xs text-green-500/80 mt-4 font-display tracking-wider">
+                  5 TOKENS = 25 CHAT MESSAGES
+                </p>
+              </div>
+
+              {/* 1.0 Token Actions */}
+              <div className="rounded-2xl border border-primary/20 bg-primary/5 p-5">
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="bg-primary/10 rounded-full px-3 py-1">
+                    <span className="text-sm font-display tracking-wider text-primary">1.0 TOKEN</span>
+                  </div>
+                </div>
+                <ul className="space-y-3">
+                  {[
+                    { icon: Dumbbell, label: 'Programme build', desc: 'Full workout or training plan' },
+                    { icon: Apple, label: 'Meal plan', desc: 'Personalised nutrition plan' },
+                    { icon: Eye, label: 'Form analysis', desc: 'Video movement feedback' },
+                    { icon: Brain, label: 'Workout feedback', desc: 'AI review of your session' },
+                    { icon: Activity, label: 'Nutrition analysis', desc: 'Photo-based food tracking' },
+                  ].map((item, i) => (
+                    <li key={i} className="flex items-start gap-3">
+                      <item.icon className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+                      <div>
+                        <span className="text-sm text-foreground font-medium">{item.label}</span>
+                        <p className="text-xs text-muted-foreground">{item.desc}</p>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+                <p className="text-xs text-primary/80 mt-4 font-display tracking-wider">
+                  5 TOKENS = 5 PROGRAMME BUILDS
+                </p>
+              </div>
+            </div>
+
+            {/* Free actions callout */}
+            <div className="rounded-2xl border border-border bg-card/50 p-5 mb-10">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="bg-muted rounded-full px-3 py-1">
+                  <span className="text-sm font-display tracking-wider text-muted-foreground">FREE — NO TOKENS</span>
+                </div>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Notifications, missed session reminders, workout reminders, and all university content are <span className="text-foreground font-medium">completely free</span> — they don't use AI and never cost tokens.
+              </p>
+            </div>
+
+            {/* How Tokens Work */}
             <h2 className="text-xl font-display tracking-wider text-center mb-6">HOW TOKENS WORK</h2>
             <div className="space-y-4 text-sm text-muted-foreground">
               <div className="flex gap-3">
                 <Zap className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                 <div>
-                  <span className="text-foreground font-medium">1 token = 1 AI interaction.</span> Whether it's generating a programme, analysing your form, building a meal plan, or chatting with the AI coach — each interaction uses 1 token.
+                  <span className="text-foreground font-medium">Chat is lightweight.</span> A chat message costs just 0.2 tokens — 5x cheaper than a full programme build. Ask your coach quick questions without worrying about cost.
                 </div>
               </div>
               <div className="flex gap-3">
