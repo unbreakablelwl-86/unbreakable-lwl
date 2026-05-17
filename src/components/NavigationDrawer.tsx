@@ -184,10 +184,10 @@ export function NavigationDrawer({ variant = 'default' }: NavigationDrawerProps)
                 </CollapsibleContent>
               </Collapsible>
 
-              {/* UNBREAKABLE COACHING — uses AI token system */}
+              {/* UNBREAKABLE COACH — uses AI token system */}
               <Link to="/help" onClick={handleNavClick} className={linkClass('/help')}>
                 <Flame className={`w-5 h-5 ${isActive('/help') ? '' : 'text-primary'}`} />
-                <span className="flex-1">UNBREAKABLE COACHING</span>
+                <span className="flex-1">UNBREAKABLE COACH</span>
               </Link>
 
               {/* 121 COACHING */}

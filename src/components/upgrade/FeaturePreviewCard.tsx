@@ -61,9 +61,9 @@ const FEATURE_PREVIEWS = [
   },
   {
     key: 'coach',
-    title: 'AI COACH',
+    title: 'UNBREAKABLE COACH',
     subtitle: 'Your Personal Coach',
-    description: 'An AI coach that knows your lifts, your nutrition, your goals. Builds programmes, answers questions, keeps you accountable. Name it whatever you want.',
+    description: 'Your Unbreakable Coach knows your lifts, your nutrition, your goals. Builds programmes, answers questions, keeps you accountable. Name it whatever you want.',
     icon: MessageSquare,
     colour: 'from-primary/20 to-orange-600/20',
     borderColour: 'border-primary/30',

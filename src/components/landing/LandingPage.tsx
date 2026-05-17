@@ -70,7 +70,7 @@ const platformFeatures = [
   },
   {
     icon: MessageSquare,
-    title: 'AI COACH',
+    title: 'UNBREAKABLE COACH',
     desc: 'Chat with your Unbreakable Coach anytime. Get bespoke programmes, meal plans, and advice on demand.',
   },
 ];
@@ -87,7 +87,7 @@ const howItWorks = [
     step: '02',
     icon: Target,
     title: 'CHOOSE YOUR PATH',
-    desc: 'Subscribe for full coaching access — Power, Movement, Fuel, Mindset and AI Coach. Or grab individual University courses.',
+    desc: 'Subscribe for full coaching access — Power, Movement, Fuel, Mindset and your Unbreakable Coach. Or grab individual University courses.',
   },
   {
     step: '03',
@@ -104,7 +104,7 @@ const coachingFeatures = [
   'Fuel tracker, meal planning & recipe library',
   'Mindset programmes, breathing & focus games',
   'Movement programmes (run, cycle, swim, row, walk)',
-  'AI Coach chat included (token-based)',
+  'Unbreakable Coach chat included (token-based)',
   'Community Hub — feed, stories & messaging',
   'Daily habit diary & lifestyle tracking',
   'Calculators & free tools',
@@ -829,7 +829,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
                     <span className="text-primary neon-glow-subtle">COACH</span>
                   </p>
                   <p className="text-muted-foreground text-xs mt-0.5">
-                    Your personal AI coach awaits.
+                    Your personal Unbreakable Coach awaits.
                   </p>
                 </div>
               </div>

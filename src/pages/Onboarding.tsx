@@ -198,7 +198,7 @@ export default function Onboarding() {
           <div className="space-y-6">
             <div>
               <h2 className="font-display text-2xl text-foreground mb-1">PERSONAL INFO</h2>
-              <p className="text-sm text-muted-foreground">Tell your coach about you — all fields optional. Your AI coach can gather this info later via chat.</p>
+              <p className="text-sm text-muted-foreground">Tell your coach about you — all fields optional. Your Unbreakable Coach can gather this info later via chat.</p>
             </div>
 
             <div className="space-y-4">
@@ -280,7 +280,7 @@ export default function Onboarding() {
           <div className="space-y-6">
             <div>
               <h2 className="font-display text-2xl text-foreground mb-1">POWER</h2>
-              <p className="text-sm text-muted-foreground">Optional — your AI coach can gather this later</p>
+              <p className="text-sm text-muted-foreground">Optional — your Unbreakable Coach can gather this later</p>
             </div>
 
             <div className="space-y-4">
@@ -364,7 +364,7 @@ export default function Onboarding() {
           <div className="space-y-6">
             <div>
               <h2 className="font-display text-2xl text-foreground mb-1">MOVEMENT</h2>
-              <p className="text-sm text-muted-foreground">Optional — your AI coach can gather this later</p>
+              <p className="text-sm text-muted-foreground">Optional — your Unbreakable Coach can gather this later</p>
             </div>
 
             <div className="space-y-4">
@@ -415,7 +415,7 @@ export default function Onboarding() {
           <div className="space-y-6">
             <div>
               <h2 className="font-display text-2xl text-foreground mb-1">FUEL</h2>
-              <p className="text-sm text-muted-foreground">Optional — your AI coach can gather this later</p>
+              <p className="text-sm text-muted-foreground">Optional — your Unbreakable Coach can gather this later</p>
             </div>
 
             <div className="space-y-4">
@@ -466,7 +466,7 @@ export default function Onboarding() {
           <div className="space-y-6">
             <div>
               <h2 className="font-display text-2xl text-foreground mb-1">MINDSET</h2>
-              <p className="text-sm text-muted-foreground">Optional — your AI coach can gather this later</p>
+              <p className="text-sm text-muted-foreground">Optional — your Unbreakable Coach can gather this later</p>
             </div>
 
             <div className="space-y-4">
@@ -545,7 +545,7 @@ export default function Onboarding() {
       {/* Header */}
       <div className="p-6 text-center">
         <h1 className="font-display text-3xl text-primary tracking-wider">UNBREAKABLE</h1>
-        <p className="text-sm text-muted-foreground mt-1">Build your coaching profile — skip what you like, your AI coach can fill gaps later</p>
+        <p className="text-sm text-muted-foreground mt-1">Build your coaching profile — skip what you like, your Unbreakable Coach can fill gaps later</p>
       </div>
 
       {/* Progress */}
