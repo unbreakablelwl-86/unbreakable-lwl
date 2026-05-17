@@ -154,12 +154,12 @@ export function MainNavigation() {
                   </NavigationMenuLink>
                 </NavigationMenuItem>
 
-                {/* 121 COACHING */}
-                {user && (
+                {/* 121 COACHING — hidden from users; coaches/devs only (may onboard later) */}
+                {user && (isCoach || isDev) && (
                   <NavigationMenuItem>
                     <NavigationMenuLink asChild>
                       <Link
-                        to={(isCoach || isDev) ? '/coach' : '/my-coaching'}
+                        to="/coach"
                         className={navLinkClass(isActive('/coach') || isActive('/my-coaching'), true)}
                       >
                         121 COACHING

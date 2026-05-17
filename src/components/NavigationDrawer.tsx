@@ -190,21 +190,15 @@ export function NavigationDrawer({ variant = 'default' }: NavigationDrawerProps)
                 <span className="flex-1">UNBREAKABLE COACH</span>
               </Link>
 
-              {/* 121 COACHING */}
-              {user && (
+              {/* 121 COACHING — hidden from users; coaches/devs only (may onboard later) */}
+              {user && (isCoach || isDev) && (
                 <Link
-                  to={(isCoach || isDev) ? '/coach' : '/my-coaching'}
+                  to="/coach"
                   onClick={handleNavClick}
-                  className={linkClass((isCoach || isDev) ? '/coach' : '/my-coaching', true)}
+                  className={linkClass('/coach', true)}
                 >
                   <UserCheck className={`w-5 h-5 ${(isActive('/coach') || isActive('/my-coaching')) ? '' : 'text-primary'}`} />
                   <span className="flex-1">121 COACHING</span>
-                  /* subscription lock removed */ {false && (
-                    <Badge variant="outline" className="text-[9px] font-display border-primary/30 text-primary px-1.5 py-0">
-                      <Lock className="w-2.5 h-2.5 mr-0.5" />
-                      PRO
-                    </Badge>
-                  )}
                 </Link>
               )}
 

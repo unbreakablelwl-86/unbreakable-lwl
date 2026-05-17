@@ -111,9 +111,9 @@ const freeFeatures = [
 /* ─── Unbreakable Token tiers for pricing ─── */
 const tokenTiers = [
   { name: 'FREE', tokens: 5, price: '£0', fullPrice: null, desc: 'Try the Unbreakable Coach — 5 tokens on signup', highlight: false },
-  { name: 'STARTER', tokens: 50, price: '£25/mo', fullPrice: '£33/mo', desc: 'Unbreakable Coach programmes, meal plans & form feedback', highlight: false },
-  { name: 'PRO', tokens: 150, price: '£49/mo', fullPrice: '£65/mo', desc: 'Full coaching across all pillars', highlight: true },
-  { name: 'ELITE', tokens: 500, price: '£79/mo', fullPrice: '£105/mo', desc: 'Unlimited feel — perfect for PT students', highlight: false },
+  { name: 'STARTER', tokens: 50, price: '£25/mo', fullPrice: '£35/mo', desc: 'Unbreakable Coach programmes, meal plans & form feedback', highlight: false },
+  { name: 'PRO', tokens: 150, price: '£49/mo', fullPrice: '£75/mo', desc: 'Full coaching across all pillars', highlight: true },
+  { name: 'ELITE', tokens: 500, price: '£79/mo', fullPrice: '£110/mo', desc: 'Unlimited feel — perfect for PT students', highlight: false },
 ];
 
 export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
