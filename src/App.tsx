@@ -46,6 +46,7 @@ import Plans from "./pages/Plans";
 import Founder from "./pages/Founder";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
+import FAQ from "./pages/FAQ";
 import AITokens from "./pages/AITokens";
 
 const queryClient = new QueryClient();
@@ -69,6 +70,7 @@ const App = () => (
               {/* Legal pages - public */}
               <Route path="/privacy" element={<Privacy />} />
               <Route path="/terms" element={<Terms />} />
+              <Route path="/faq" element={<FAQ />} />
               
               {/* Onboarding wizard - mandatory for new users */}
               <Route path="/onboarding" element={<Onboarding />} />

@@ -111,7 +111,7 @@ export function NavigationDrawer({ variant = 'default' }: NavigationDrawerProps)
                   </Avatar>
                   <div>
                     <p className="font-display text-foreground tracking-wide">
-                      {profile?.display_name || 'Runner'}
+                      {profile?.display_name || 'Member'}
                     </p>
                     <p className="text-xs text-muted-foreground">
                       {profile?.username ? `@${profile.username}` : user.email}

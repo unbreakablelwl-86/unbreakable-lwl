@@ -8,6 +8,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { motion, AnimatePresence } from 'framer-motion';
 import { DeleteConfirmModal } from './DeleteConfirmModal';
 import { MentionTextarea } from '@/components/ui/mention-textarea';
+import { RichContent } from '@/components/ui/RichContent';
 
 interface PostCommentSectionProps {
   postId: string;
@@ -112,7 +113,7 @@ export function PostCommentSection({
                           </Button>
                         )}
                       </div>
-                      <p className="text-sm text-foreground">{comment.content}</p>
+                      <RichContent text={comment.content} className="text-sm text-foreground" />
                     </div>
                     <p className="text-xs text-muted-foreground mt-1 px-1">
                       {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true })}

@@ -12,6 +12,8 @@ import { PostMenu } from './PostMenu';
 import { PostCommentSection } from './PostCommentSection';
 import { ShareMenu } from './ShareMenu';
 import { EditPostModal } from './EditPostModal';
+import { RichContent } from '@/components/ui/RichContent';
+import { FollowButton } from '@/components/social/FollowButton';
 import { MediaCarousel } from './MediaCarousel';
 import { FullscreenVideoViewer } from '@/components/video/FullscreenVideoViewer';
 import { VideoQualitySelector, useVideoQuality } from '@/components/video/VideoQualitySelector';
@@ -149,12 +151,15 @@ export function StatusCard({ post, onKudos, onDelete, onToggleComments, onUpdate
             fallbackClassName="bg-primary text-primary-foreground font-display"
           />
           <div className="flex-1 min-w-0">
-            <ClickableUsername
-              userId={post.user_id}
-              displayName={post.profiles?.display_name}
-              username={post.profiles?.username}
-              className="font-semibold truncate hover:underline"
-            />
+            <div className="flex items-center gap-2">
+              <ClickableUsername
+                userId={post.user_id}
+                displayName={post.profiles?.display_name}
+                username={post.profiles?.username}
+                className="font-semibold truncate hover:underline"
+              />
+              {!isOwner && <FollowButton targetUserId={post.user_id} />}
+            </div>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <span>{formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}</span>
               <span>·</span>
@@ -178,7 +183,7 @@ export function StatusCard({ post, onKudos, onDelete, onToggleComments, onUpdate
         {/* Content */}
         {post.content && (
           <div className="px-4 pb-3">
-            <p className="text-foreground whitespace-pre-wrap">{post.content}</p>
+            <RichContent text={post.content} className="text-foreground" />
           </div>
         )}
 

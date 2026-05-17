@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { Mail, Lock, User, Cake } from 'lucide-react';
@@ -23,6 +25,7 @@ export function AuthModal({ isOpen, onClose, defaultMode = 'signin' }: AuthModal
   const [dateOfBirth, setDateOfBirth] = useState('');
   const [loading, setLoading] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
 
   // Sync mode when defaultMode changes
   useEffect(() => {
@@ -210,7 +213,32 @@ export function AuthModal({ isOpen, onClose, defaultMode = 'signin' }: AuthModal
               </div>
             )}
 
-            <Button type="submit" className="w-full font-display tracking-wide" disabled={loading}>
+            {mode === 'signup' && (
+              <div className="flex items-start gap-2">
+                <Checkbox
+                  id="terms"
+                  checked={acceptedTerms}
+                  onCheckedChange={(checked) => setAcceptedTerms(checked === true)}
+                  className="mt-0.5"
+                />
+                <Label htmlFor="terms" className="text-xs text-muted-foreground leading-relaxed cursor-pointer">
+                  I agree to the{' '}
+                  <Link to="/terms" className="text-primary hover:underline" onClick={() => onClose()}>
+                    Terms of Service
+                  </Link>{' '}
+                  and{' '}
+                  <Link to="/privacy" className="text-primary hover:underline" onClick={() => onClose()}>
+                    Privacy Policy
+                  </Link>
+                </Label>
+              </div>
+            )}
+
+            <Button
+              type="submit"
+              className="w-full font-display tracking-wide"
+              disabled={loading || (mode === 'signup' && !acceptedTerms)}
+            >
               {loading ? 'Loading...' : mode === 'signin' ? 'Sign In' : 'Create Account'}
             </Button>
           </form>

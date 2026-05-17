@@ -8,6 +8,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { motion, AnimatePresence } from 'framer-motion';
 import { DeleteConfirmModal } from './DeleteConfirmModal';
 import { MentionTextarea } from '@/components/ui/mention-textarea';
+import { RichContent } from '@/components/ui/RichContent';
 
 interface CommentSectionProps {
   runId: string;
@@ -99,7 +100,7 @@ export function CommentSection({
                     <div className="bg-muted rounded-lg px-3 py-2">
                       <div className="flex items-center justify-between gap-2">
                         <p className="font-medium text-sm text-foreground truncate">
-                          {comment.profiles?.display_name || 'Runner'}
+                          {comment.profiles?.display_name || 'Member'}
                         </p>
                         {user?.id === comment.user_id && (
                           <Button
@@ -112,7 +113,7 @@ export function CommentSection({
                           </Button>
                         )}
                       </div>
-                      <p className="text-sm text-foreground">{comment.content}</p>
+                      <RichContent text={comment.content} className="text-sm text-foreground" />
                     </div>
                     <p className="text-xs text-muted-foreground mt-1 px-1">
                       {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true })}

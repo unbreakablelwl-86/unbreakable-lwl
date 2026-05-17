@@ -195,6 +195,15 @@ export default function Onboarding() {
         // Non-critical — don't block onboarding
       }
 
+      // Trigger founder welcome (auto-follow, welcome DM)
+      try {
+        await supabase.functions.invoke('founder-welcome', {
+          body: { new_user_id: user.id },
+        });
+      } catch (welcomeErr) {
+        console.error('Founder welcome error (non-critical):', welcomeErr);
+      }
+
       toast({ title: 'Welcome to UNBREAKABLE! 💪', description: 'Your coach profile is set up and ready.' });
       navigate('/plans', { replace: true });
     } catch (err) {

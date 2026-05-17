@@ -79,7 +79,7 @@ export function FriendsListModal({ isOpen, onClose }: FriendsListModalProps) {
           <div className="space-y-2 max-h-96 overflow-y-auto">
             {friends.length === 0 && (
               <div className="text-center py-8 text-muted-foreground">
-                No friends yet. Start by searching for runners!
+                No friends yet. Search for members to connect!
               </div>
             )}
 

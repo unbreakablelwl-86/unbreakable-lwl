@@ -31,6 +31,7 @@ import {
 } from 'lucide-react';
 import { formatDistanceToNow, format } from 'date-fns';
 import { SocialLinksDisplay } from '@/components/profile/SocialLinksDisplay';
+import { FollowButton } from '@/components/social/FollowButton';
 
 interface UserProfileData {
   user_id: string;
@@ -270,9 +271,16 @@ export default function UserProfile() {
                 snapchat={profile.social_snapchat}
               />
 
+              {/* Follow Button */}
+              {user && !isOwnProfile && userId && (
+                <div className="mt-4">
+                  <FollowButton targetUserId={userId} variant="default" />
+                </div>
+              )}
+
               {/* Action Buttons */}
               {user && !isOwnProfile && (
-                <div className="flex gap-3 mt-4">
+                <div className="flex gap-3 mt-3">
                   {isFriend ? (
                     <>
                       <Button onClick={handleMessage} disabled={actionLoading}>

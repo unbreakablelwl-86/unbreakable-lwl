@@ -77,7 +77,7 @@ export function ProfileView() {
     bio: '',
     location: '',
     date_of_birth: '',
-    is_public: true,
+    is_public: false,
   });
   const [saving, setSaving] = useState(false);
   const [activeProfileTab, setActiveProfileTab] = useState<'overview' | 'stats' | 'records' | 'membership' | 'settings'>('overview');
@@ -108,7 +108,7 @@ export function ProfileView() {
       bio: profile?.bio || '',
       location: profile?.location || '',
       date_of_birth: profile?.date_of_birth || '',
-      is_public: profile?.is_public ?? true,
+      is_public: profile?.is_public ?? false,
     });
     setIsEditing(true);
   };
@@ -284,7 +284,7 @@ export function ProfileView() {
                 ) : (
                   <>
                     <h2 className="font-display text-2xl text-foreground tracking-wide">
-                      {profile.display_name || 'Runner'}
+                      {profile.display_name || 'Member'}
                     </h2>
                     {profile.username && (
                       <p className="text-muted-foreground">@{profile.username}</p>

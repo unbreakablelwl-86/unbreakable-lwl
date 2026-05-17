@@ -62,6 +62,13 @@
    avatar_url: z.string().optional().nullable(),
    date_of_birth: z.string().optional().nullable(),
    is_public: z.boolean().optional(),
+   // Social links
+   social_instagram: z.string().max(100).optional().nullable(),
+   social_tiktok: z.string().max(100).optional().nullable(),
+   social_twitter: z.string().max(100).optional().nullable(),
+   social_facebook: z.string().max(200).optional().nullable(),
+   social_youtube: z.string().max(200).optional().nullable(),
+   social_snapchat: z.string().max(100).optional().nullable(),
  });
  
  // Comment validation schema

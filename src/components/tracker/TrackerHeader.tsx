@@ -118,7 +118,7 @@ export function TrackerHeader({ onRecordRun, activeTab, onTabChange }: TrackerHe
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className="w-56 bg-card border-border" align="end">
                       <div className="px-2 py-1.5">
-                        <p className="text-sm font-medium">{profile?.display_name || 'Runner'}</p>
+                        <p className="text-sm font-medium">{profile?.display_name || 'Member'}</p>
                         <p className="text-xs text-muted-foreground">
                           {profile?.username ? `@${profile.username}` : user.email}
                         </p>
