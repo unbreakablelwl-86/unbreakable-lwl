@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { CoachingBioForm } from '@/components/settings/CoachingBioForm';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -49,6 +50,10 @@ import {
   Medal,
   User,
   Settings,
+  Brain,
+  UtensilsCrossed,
+  Footprints,
+  Sparkles,
 } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { motion } from 'framer-motion';
@@ -500,31 +505,55 @@ export function ProfileView() {
                 {/* Movement */}
                 <div>
                   <div className="flex items-center gap-2 mb-3">
-                    <Activity className="w-4 h-4 text-primary" />
+                    <Footprints className="w-4 h-4 text-primary" />
                     <h4 className="font-display text-sm tracking-wide text-foreground">MOVEMENT</h4>
                     <Badge variant="outline" className="text-xs ml-auto">{cardioPrograms?.length ?? 0}/2</Badge>
                   </div>
                   {cardioPrograms && cardioPrograms.length > 0 ? (
                     <SavedCardioPrograms onViewProgram={() => {}} />
                   ) : (
-                    <p className="text-sm text-muted-foreground">No movement programmes saved.</p>
+                    <div className="space-y-3">
+                      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-4 bg-surface rounded-lg border border-border">
+                        <span className="text-sm text-muted-foreground">No movement programmes saved.</span>
+                        <Link to="/tracker/create">
+                          <Button variant="outline" size="sm" className="font-display tracking-wide gap-1 shrink-0">
+                            <Sparkles className="w-4 h-4" />
+                            Build with Coach
+                          </Button>
+                        </Link>
+                      </div>
+                    </div>
                   )}
                 </div>
 
                 {/* Mindset */}
                 <div>
                   <div className="flex items-center gap-2 mb-3">
-                    <User className="w-4 h-4 text-primary" />
+                    <Brain className="w-4 h-4 text-primary" />
                     <h4 className="font-display text-sm tracking-wide text-foreground">MINDSET</h4>
                     <Badge variant="outline" className="text-xs ml-auto">{mindsetProgrammes?.length ?? 0}/2</Badge>
                   </div>
-                  <MindsetProgrammes />
+                  {mindsetProgrammes && mindsetProgrammes.length > 0 ? (
+                    <MindsetProgrammes />
+                  ) : (
+                    <div className="space-y-3">
+                      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-4 bg-surface rounded-lg border border-border">
+                        <span className="text-sm text-muted-foreground">No mindset programmes saved.</span>
+                        <Link to="/help?context=Build%20me%20a%20mindset%20programme">
+                          <Button variant="outline" size="sm" className="font-display tracking-wide gap-1 shrink-0">
+                            <Sparkles className="w-4 h-4" />
+                            Build with Coach
+                          </Button>
+                        </Link>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Fuel */}
                 <div>
                   <div className="flex items-center gap-2 mb-3">
-                    <TrendingUp className="w-4 h-4 text-primary" />
+                    <UtensilsCrossed className="w-4 h-4 text-primary" />
                     <h4 className="font-display text-sm tracking-wide text-foreground">FUEL</h4>
                     <Badge variant="outline" className="text-xs ml-auto">{mealPlans?.length ?? 0}/2</Badge>
                   </div>
@@ -545,7 +574,17 @@ export function ProfileView() {
                       ))}
                     </div>
                   ) : (
-                    <p className="text-sm text-muted-foreground">No meal plans saved.</p>
+                    <div className="space-y-3">
+                      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-4 bg-surface rounded-lg border border-border">
+                        <span className="text-sm text-muted-foreground">No meal plans saved.</span>
+                        <Link to="/help?context=Build%20me%20a%20meal%20plan">
+                          <Button variant="outline" size="sm" className="font-display tracking-wide gap-1 shrink-0">
+                            <Sparkles className="w-4 h-4" />
+                            Build with Coach
+                          </Button>
+                        </Link>
+                      </div>
+                    </div>
                   )}
                 </div>
               </div>
