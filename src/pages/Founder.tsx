@@ -14,8 +14,8 @@ import {
   Heart,
   ArrowRight,
   Sparkles,
-  User,
 } from 'lucide-react';
+import founderPhoto from '@/assets/john-founder.png';
 
 const fadeUp = {
   initial: { opacity: 0, y: 24 },
@@ -152,13 +152,13 @@ const Founder = () => {
             <div className="absolute inset-[-4px] rounded-full animate-[spin_8s_linear_infinite] opacity-60"
               style={{ background: 'conic-gradient(hsl(var(--primary)) 0deg, transparent 180deg, hsl(var(--primary)) 360deg)' }}
             />
-            <div className="absolute inset-1 rounded-full bg-card overflow-hidden flex items-center justify-center">
-              <User className="w-12 h-12 text-muted-foreground/20" />
+            <div className="absolute inset-1 rounded-full bg-card overflow-hidden">
+              <img src={founderPhoto} alt="John James — Founder" className="w-full h-full object-cover" />
             </div>
           </div>
         </motion.div>
         <div className="text-center">
-          <h2 className="font-display text-[32px] tracking-[3px] text-foreground">THE FOUNDER</h2>
+          <h2 className="font-display text-[32px] tracking-[3px] text-foreground">JOHN JAMES</h2>
           <p className="font-mono text-[9px] tracking-[2px] text-primary uppercase">Founder & Creator · Unbreakable LWL</p>
         </div>
       </section>
