@@ -382,5 +382,59 @@ export const nutritionL4Unit1: Unit = {
         ],
       },
     },
+    {
+      number: 9,
+      title: 'Integrating Science into Practice',
+      learningOutcome: 'Synthesise advanced metabolic science into practical, client-centred nutrition strategies that bridge the gap between laboratory knowledge and real-world application.',
+      assessmentCriteria: [
+        'Translate complex metabolic concepts into simple client-facing explanations',
+        'Design individualised nutrition strategies based on metabolic principles',
+        'Recognise when metabolic science should and should not influence practical decisions',
+      ],
+      content: [
+        {
+          heading: 'From Science to Service',
+          paragraphs: [
+            'Everything you have learned in this unit — metabolic pathways, hormonal regulation, adaptation, reverse dieting, body composition strategies, gut health, periodisation, and research literacy — exists to serve one purpose: helping real people improve their health, performance, and relationship with food. The science is the foundation; the practice is the building.',
+            'The gap between understanding science and applying it effectively is where most nutrition professionals struggle. A client does not need to know about beta-oxidation or leptin signalling. They need to know what to eat, when to eat it, and why it matters for their specific goals. Your job is to translate complexity into clarity — to make the science invisible while making its benefits visible.',
+          ],
+        },
+        {
+          heading: 'Client-Centred Translation',
+          bullets: [
+            'Metabolic adaptation → "Your body has gotten efficient at using less energy — we need to give it a recovery period before continuing"',
+            'Hormonal hunger regulation → "Your hunger is higher because your body is sending stronger signals to eat — this is biology, not weakness"',
+            'Substrate utilisation → "Your body uses different fuels at different intensities — carbs are your high-performance fuel"',
+            'Gut microbiome diversity → "Eating a wide variety of plants feeds the good bacteria in your gut, which affects everything from immunity to mood"',
+            'Nutrition periodisation → "What you eat should match what you are doing — training days need more fuel, rest days need less"',
+          ],
+        },
+        {
+          heading: 'The Practical Hierarchy',
+          paragraphs: [
+            'Not all nutritional factors matter equally. The evidence consistently shows the same hierarchy: total energy intake matters most, followed by macronutrient distribution, then food quality and micronutrient density, then meal timing and frequency, and finally supplements. Spending time optimising the bottom of the pyramid while the top is broken is a common coaching error.',
+            'When assessing a new client, work from the top down. Are they eating enough (or too much) for their goals? Is protein adequate? Are they eating mostly whole, minimally processed foods? Only when these fundamentals are solid should you discuss meal timing, supplementation, or advanced periodisation strategies. The science in this unit gives you the knowledge to optimise every level — but wisdom is knowing which level to address first.',
+          ],
+        },
+        {
+          heading: 'When Science Meets Reality',
+          paragraphs: [
+            'The optimal approach on paper is not always the optimal approach in practice. A theoretically perfect diet that a client cannot sustain is inferior to a "good enough" diet they enjoy and follow consistently. Metabolic science tells you what works; coaching skill tells you how to implement it within the constraints of each individual\'s life.',
+            'Consider a shift worker who cannot eat at regular times, a single parent with no time to cook, or a teenager whose food choices are limited by family meals. The metabolic principles remain the same, but the application must adapt. This is where your value as a coach exceeds any textbook or app — you contextualise science for individual humans.',
+          ],
+        },
+      ],
+      unbreakableInsight: 'The best nutritionists are not those who know the most science — they are those who translate science into action so seamlessly that their clients never need to understand a metabolic pathway to benefit from one. Your knowledge is the engine; your coaching is the steering wheel.',
+      coachNote: 'Resist the urge to impress clients with your knowledge. If you explain leptin, gluconeogenesis, and adaptive thermogenesis to a client who just wants to lose weight, you have failed — not because the science is wrong, but because the communication is. Simplify ruthlessly. Save the science for your own decision-making; give the client the action.',
+      practicalTask: {
+        title: 'Science-to-Practice Translation',
+        instructions: 'Take three concepts from this unit (e.g., metabolic adaptation, reverse dieting, calorie cycling) and write a simple, one-paragraph explanation for each that a client with no science background would understand. Then design a 4-week nutrition strategy for a hypothetical client that integrates all three concepts.',
+        reflectionQuestions: [
+          'Could your client explanations be understood by a 16-year-old? If not, simplify further.',
+          'How did integrating multiple concepts change the practical plan compared to applying them individually?',
+          'What would you do if the client could not follow the plan you designed?',
+        ],
+      },
+    },
   ],
 };

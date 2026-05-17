@@ -58,6 +58,21 @@ import { nutritionL3Unit2ChapterQuizzes } from './nutrition-l3/unit2-chapter-qui
 import { nutritionL3Unit3ChapterQuizzes } from './nutrition-l3/unit3-chapter-quizzes';
 import { nutritionL3Unit4ChapterQuizzes } from './nutrition-l3/unit4-chapter-quizzes';
 
+// Nutrition Level 4 imports
+import { nutritionL4Unit1 } from './nutrition-l4/unit1';
+import { nutritionL4Unit2 } from './nutrition-l4/unit2';
+import { nutritionL4Unit3 } from './nutrition-l4/unit3';
+import { nutritionL4Unit4 } from './nutrition-l4/unit4';
+import { nutritionL4Unit1Assessment } from './nutrition-l4/unit1-assessments';
+import { nutritionL4Unit2Assessment } from './nutrition-l4/unit2-assessments';
+import { nutritionL4Unit3Assessment } from './nutrition-l4/unit3-assessments';
+import { nutritionL4Unit4Assessment } from './nutrition-l4/unit4-assessments';
+import { nutritionL4FinalAssessment } from './nutrition-l4/final-assessment';
+import { nutritionL4Unit1ChapterQuizzes } from './nutrition-l4/unit1-chapter-quizzes';
+import { nutritionL4Unit2ChapterQuizzes } from './nutrition-l4/unit2-chapter-quizzes';
+import { nutritionL4Unit3ChapterQuizzes } from './nutrition-l4/unit3-chapter-quizzes';
+import { nutritionL4Unit4ChapterQuizzes } from './nutrition-l4/unit4-chapter-quizzes';
+
 // Mindset Level 2 imports
 import { mindsetL2Unit1 } from './mindset-l2/unit1';
 import { mindsetL2Unit2 } from './mindset-l2/unit2';
@@ -184,6 +199,13 @@ const nutritionL3ChapterQuizzes: ChapterQuiz[] = [
   ...nutritionL3Unit4ChapterQuizzes,
 ];
 
+const nutritionL4ChapterQuizzes: ChapterQuiz[] = [
+  ...nutritionL4Unit1ChapterQuizzes,
+  ...nutritionL4Unit2ChapterQuizzes,
+  ...nutritionL4Unit3ChapterQuizzes,
+  ...nutritionL4Unit4ChapterQuizzes,
+];
+
 export const courseData: Level[] = [
   {
     level: 2,
@@ -227,6 +249,16 @@ export const nutritionCourseData: Level[] = [
     assessments: [nutritionL3Unit1Assessment, nutritionL3Unit2Assessment, nutritionL3Unit3Assessment, nutritionL3Unit4Assessment],
     finalAssessment: nutritionL3FinalAssessment,
     chapterQuizzes: nutritionL3ChapterQuizzes,
+  },
+  {
+    level: 4,
+    title: 'Level 4 Certificate',
+    subtitle: 'Clinical & Performance Nutrition',
+    description: 'Master advanced metabolic science, clinical nutrition for special populations, performance supplementation, and professional practice. The knowledge behind expert-level nutrition coaching.',
+    units: [nutritionL4Unit1, nutritionL4Unit2, nutritionL4Unit3, nutritionL4Unit4],
+    assessments: [nutritionL4Unit1Assessment, nutritionL4Unit2Assessment, nutritionL4Unit3Assessment, nutritionL4Unit4Assessment],
+    finalAssessment: nutritionL4FinalAssessment,
+    chapterQuizzes: nutritionL4ChapterQuizzes,
   },
 ];
 
