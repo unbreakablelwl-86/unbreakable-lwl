@@ -65,9 +65,9 @@ export const useSnakeScores = () => {
           .eq("user_id", user.id)
           .order("score", { ascending: false })
           .limit(1)
-          .single();
+          .maybeSingle();
 
-        setUserBest(best?.score || null);
+        setUserBest(best?.score ?? null);
       }
     } catch (err) {
       console.error("Failed to fetch scores:", err);
