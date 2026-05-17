@@ -14,7 +14,7 @@ import { useCoachingAssignments } from '@/hooks/useCoachingAssignments';
 import { useTrainingPrograms } from '@/hooks/useTrainingPrograms';
 import { useCardioPrograms } from '@/hooks/useCardioPrograms';
 import { useMealPlans } from '@/hooks/useMealPlans';
-import { useSubscription } from '@/hooks/useSubscription';
+
 import { AuthModal } from '@/components/tracker/AuthModal';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -30,12 +30,13 @@ export default function MyCoaching() {
   const { programs: trainingPrograms } = useTrainingPrograms();
   const { programs: cardioPrograms } = useCardioPrograms();
   const { mealPlans } = useMealPlans();
-  const { subscribed, isTrialing, loading: subLoading } = useSubscription();
+  // Subscription paywall removed — all features free
+  const subLoading = false;
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [requesting, setRequesting] = useState(false);
 
   const loading = authLoading || coachLoading || subLoading;
-  const hasActiveSubscription = subscribed || isTrialing;
+  const hasActiveSubscription = true; // all features free
 
   const handleRequestCoach = async () => {
     if (!user) return;

@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
 import { useOnboardingCheck } from '@/hooks/useOnboardingCheck';
-import { useSubscription } from '@/hooks/useSubscription';
+
 import { useUserSettings } from '@/hooks/useUserSettings';
 import { UnifiedFeed } from '@/components/hub/UnifiedFeed';
 import { CardioTrackerModal } from '@/components/tracker/CardioTrackerModal';
@@ -39,7 +39,7 @@ function setMotivationState(state: { lastShown: number; visitCount: number }) {
 const Index = () => {
   const { user, loading } = useAuth();
   const { needsOnboarding, loading: onboardingLoading } = useOnboardingCheck();
-  const { refresh: refreshSubscription } = useSubscription();
+
   const { settings } = useUserSettings();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -58,17 +58,13 @@ const Index = () => {
   // Initialize presence tracking
   usePresence();
 
-  // Handle checkout success redirect - refresh subscription with retries
+  // Handle checkout success redirect
   useEffect(() => {
     if (searchParams.get('checkout') === 'success') {
-      toast.success('Welcome to UNBREAKABLE! Your 7-day free trial has started. 💪');
+      toast.success('Welcome to UNBREAKABLE! 💪');
       setSearchParams({}, { replace: true });
-      const retryDelays = [1000, 3000, 6000];
-      retryDelays.forEach((delay) => {
-        setTimeout(() => refreshSubscription(), delay);
-      });
     }
-  }, [searchParams, setSearchParams, refreshSubscription]);
+  }, [searchParams, setSearchParams]);
 
   // Redirect to onboarding if needed
   useEffect(() => {

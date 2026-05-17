@@ -1,16 +1,16 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Lock, ShoppingCart, GraduationCap, CheckCircle, Sparkles, Package } from 'lucide-react';
+import { Lock, Coins, GraduationCap, CheckCircle, Sparkles, Package, AlertCircle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { useTokenBalance } from '@/hooks/useTokenBalance';
 import {
   getCoursePrice,
-  getBundles,
   getBestBundleFor,
-  type CoursePriceInfo,
 } from '@/lib/coursePricing';
 
 interface CoursePurchaseGateProps {
@@ -28,26 +28,61 @@ export function CoursePurchaseGate({
   variant = 'full',
 }: CoursePurchaseGateProps) {
   const [loading, setLoading] = useState<string | null>(null);
+  const navigate = useNavigate();
+  const { balance, refresh: refreshBalance } = useTokenBalance();
   const coursePrice = getCoursePrice(courseKey);
   const bestBundle = getBestBundleFor(courseKey, ownedCourses);
 
-  const handleCheckout = async (priceId: string, label: string) => {
-    setLoading(label);
+  const handleCoinPurchase = async (
+    courseKeys: string[],
+    coinCost: number,
+    label: string,
+    buttonId: string,
+    bundleKey?: string,
+  ) => {
+    if (balance !== null && balance < coinCost) {
+      toast.error(`You need ${coinCost} coins but only have ${balance}. Top up your coins first!`);
+      navigate('/ai-tokens');
+      return;
+    }
+
+    setLoading(buttonId);
     try {
-      const { data, error } = await supabase.functions.invoke('create-checkout', {
-        body: { priceId },
+      const { data, error } = await supabase.functions.invoke('purchase-course-with-coins', {
+        body: { courseKeys, coinCost, label, bundleKey },
       });
+
       if (error) throw error;
-      if (data?.url) window.open(data.url, '_blank');
+
+      if (data?.error) {
+        if (data.error === 'Not enough coins') {
+          toast.error(`Not enough coins — you have ${data.balance}, need ${data.required}`);
+          navigate('/ai-tokens');
+        } else {
+          toast.error(data.error);
+        }
+        return;
+      }
+
+      if (data?.success) {
+        toast.success(`Unlocked! ${data.coinsSpent} coins spent.`);
+        refreshBalance();
+        // Reload page to show unlocked content
+        window.location.reload();
+      }
     } catch (err: any) {
-      console.error('Checkout error:', err);
-      toast.error('Failed to start checkout. Please try again.');
+      console.error('Coin purchase error:', err);
+      toast.error('Failed to purchase. Please try again.');
     } finally {
       setLoading(null);
     }
   };
 
   if (!coursePrice) return null;
+
+  const hasEnoughCoins = balance !== null && balance >= coursePrice.coinCost;
+  const bundleCost = bestBundle?.coinCost ?? 0;
+  const hasEnoughForBundle = balance !== null && bestBundle && balance >= bundleCost;
 
   // ── Banner variant (compact, for level page header) ──
   if (variant === 'banner') {
@@ -65,32 +100,47 @@ export function CoursePurchaseGate({
               </div>
               <div className="min-w-0">
                 <p className="text-sm font-medium text-foreground">
-                  This course requires a one-time purchase
+                  Unlock this course with coins
                 </p>
                 <p className="text-xs text-muted-foreground mt-0.5">
-                  Unlock all chapters, quizzes, and assessments for {courseName}
+                  All chapters, quizzes & assessments · You have <span className="text-primary font-semibold">{balance ?? '...'}</span> coins
                 </p>
               </div>
             </div>
             <div className="flex items-center gap-2 shrink-0 w-full sm:w-auto">
               <Button
                 size="sm"
-                onClick={() => handleCheckout(coursePrice.price_id, 'course')}
+                onClick={() =>
+                  handleCoinPurchase(
+                    [courseKey],
+                    coursePrice.coinCost,
+                    courseName,
+                    'course',
+                  )
+                }
                 disabled={!!loading}
                 className="font-display tracking-wide flex-1 sm:flex-initial"
               >
                 {loading === 'course' ? (
                   <div className="w-4 h-4 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin mr-2" />
                 ) : (
-                  <ShoppingCart className="w-4 h-4 mr-2" />
+                  <Coins className="w-4 h-4 mr-2" />
                 )}
-                £{coursePrice.price}
+                {coursePrice.coinCost} COINS
               </Button>
               {bestBundle && (
                 <Button
                   size="sm"
                   variant="outline"
-                  onClick={() => handleCheckout(bestBundle.price_id, 'bundle')}
+                  onClick={() =>
+                    handleCoinPurchase(
+                      bestBundle.courses,
+                      bestBundle.coinCost,
+                      bestBundle.name,
+                      'bundle',
+                      bestBundle.key,
+                    )
+                  }
                   disabled={!!loading}
                   className="font-display tracking-wide border-primary/30 flex-1 sm:flex-initial"
                 >
@@ -99,7 +149,7 @@ export function CoursePurchaseGate({
                   ) : (
                     <Package className="w-4 h-4 mr-2" />
                   )}
-                  {bestBundle.name} £{bestBundle.price}
+                  {bestBundle.name} {bestBundle.coinCost}
                 </Button>
               )}
             </div>
@@ -125,10 +175,23 @@ export function CoursePurchaseGate({
         UNLOCK {courseName.toUpperCase()}
       </h2>
 
-      <p className="text-muted-foreground text-sm leading-relaxed mb-6 max-w-sm mx-auto">
-        Get full access to every chapter, interactive quizzes, unit assessments, and the final exam. 
-        One-time payment — yours forever.
+      <p className="text-muted-foreground text-sm leading-relaxed mb-4 max-w-sm mx-auto">
+        Get full access to every chapter, interactive quizzes, unit assessments, and the final exam.
+        Spend coins to unlock — yours forever.
       </p>
+
+      {/* Balance indicator */}
+      <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-card border border-border mb-6">
+        <Coins className="w-4 h-4 text-primary" />
+        <span className="text-sm text-foreground font-medium">
+          Your balance: <span className="text-primary">{balance ?? '...'}</span> coins
+        </span>
+        {!hasEnoughCoins && balance !== null && (
+          <Badge variant="outline" className="text-xs border-destructive/40 text-destructive ml-1">
+            Need {coursePrice.coinCost - balance} more
+          </Badge>
+        )}
+      </div>
 
       {/* What's included */}
       <div className="flex flex-wrap justify-center gap-3 mb-8">
@@ -146,28 +209,57 @@ export function CoursePurchaseGate({
       {/* Purchase button */}
       <Button
         size="lg"
-        onClick={() => handleCheckout(coursePrice.price_id, 'course')}
+        onClick={() =>
+          handleCoinPurchase(
+            [courseKey],
+            coursePrice.coinCost,
+            courseName,
+            'course',
+          )
+        }
         disabled={!!loading}
         className="font-display text-lg tracking-wide px-10 py-6 mb-3"
       >
         {loading === 'course' ? (
           <div className="w-5 h-5 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin mr-2" />
         ) : (
-          <Sparkles className="w-5 h-5 mr-2" />
+          <Coins className="w-5 h-5 mr-2" />
         )}
-        BUY FOR £{coursePrice.price}
+        UNLOCK FOR {coursePrice.coinCost} COINS
       </Button>
+
+      {!hasEnoughCoins && balance !== null && (
+        <div className="mb-4">
+          <Button
+            variant="link"
+            size="sm"
+            onClick={() => navigate('/ai-tokens')}
+            className="text-primary font-display tracking-wide"
+          >
+            <Sparkles className="w-4 h-4 mr-1" />
+            GET MORE COINS
+          </Button>
+        </div>
+      )}
 
       {/* Bundle upsell */}
       {bestBundle && (
         <div className="mt-4">
           <p className="text-xs text-muted-foreground mb-2">
-            Save £{bestBundle.savings} with the {bestBundle.name}
+            Save {bestBundle.coinSavings} coins with the {bestBundle.name}
           </p>
           <Button
             variant="outline"
             size="sm"
-            onClick={() => handleCheckout(bestBundle.price_id, 'bundle')}
+            onClick={() =>
+              handleCoinPurchase(
+                bestBundle.courses,
+                bestBundle.coinCost,
+                bestBundle.name,
+                'bundle',
+                bestBundle.key,
+              )
+            }
             disabled={!!loading}
             className="font-display tracking-wide border-primary/30"
           >
@@ -176,13 +268,13 @@ export function CoursePurchaseGate({
             ) : (
               <Package className="w-4 h-4 mr-2" />
             )}
-            {bestBundle.name} — £{bestBundle.price}
+            {bestBundle.name} — {bestBundle.coinCost} COINS
           </Button>
         </div>
       )}
 
       <p className="text-xs text-muted-foreground mt-6">
-        Secure checkout via Stripe · One-time payment · Instant access
+        Coins deducted instantly · Permanent access · No card needed
       </p>
     </motion.div>
   );
