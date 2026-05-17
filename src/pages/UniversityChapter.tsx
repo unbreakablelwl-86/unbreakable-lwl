@@ -8,6 +8,9 @@ import { ChapterContent } from '@/components/university/ChapterContent';
 import { ChevronLeft, ChevronRight, CheckCircle, ClipboardCheck, Lock, BookOpen, Clock } from 'lucide-react';
 import { getChapterData, getUnitData, getChapterQuiz } from '@/lib/university/courseStructure';
 import { useUniversityProgress } from '@/hooks/useUniversityProgress';
+import { useCourseAccess } from '@/hooks/useCourseAccess';
+import { toCourseKey } from '@/lib/coursePricing';
+import { CoursePurchaseGate } from '@/components/university/CoursePurchaseGate';
 import { AdminControlPanel } from '@/components/university/AdminControlPanel';
 import { getCourseColors, getReadingTime } from '@/lib/university/courseColors';
 import { toast } from 'sonner';
@@ -20,6 +23,9 @@ export default function UniversityChapter() {
   const unitNum = parseInt(unit?.replace('unit-', '') || '1');
   const chapterNum = parseInt(chapter?.replace('chapter-', '') || '1');
   const colors = getCourseColors(ct);
+
+  const courseKey = toCourseKey(ct, levelNum);
+  const { hasAccess, ownedCourses, loading: accessLoading } = useCourseAccess(courseKey);
 
   const chapterData = getChapterData(levelNum, unitNum, chapterNum, ct);
   const unitData = getUnitData(levelNum, unitNum, ct);
@@ -129,6 +135,19 @@ export default function UniversityChapter() {
       {/* Content */}
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-2xl mx-auto">
+          {accessLoading ? (
+            <div className="flex items-center justify-center py-16">
+              <div className="w-10 h-10 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+            </div>
+          ) : !hasAccess ? (
+            <CoursePurchaseGate
+              courseKey={courseKey}
+              courseName={chapterData ? `${unitData?.title ?? 'Course'}` : 'this course'}
+              ownedCourses={ownedCourses}
+              variant="full"
+            />
+          ) : (
+          <>
           <motion.div
             key={`${ct}-${levelNum}-${unitNum}-${chapterNum}`}
             initial={{ opacity: 0, y: 12 }}
@@ -189,6 +208,8 @@ export default function UniversityChapter() {
               )}
             </div>
           </div>
+          </>
+          )}
         </div>
       </main>
 

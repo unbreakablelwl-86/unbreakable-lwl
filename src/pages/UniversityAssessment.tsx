@@ -11,6 +11,9 @@ import { ChevronLeft, CheckCircle, XCircle, RotateCcw, Trophy, BookOpen } from '
 import { getAssessment, getUnitData } from '@/lib/university/courseStructure';
 import { useUniversityProgress } from '@/hooks/useUniversityProgress';
 import { useUniversityAdmin } from '@/hooks/useUniversityAdmin';
+import { useCourseAccess } from '@/hooks/useCourseAccess';
+import { toCourseKey } from '@/lib/coursePricing';
+import { CoursePurchaseGate } from '@/components/university/CoursePurchaseGate';
 import { AdminControlPanel } from '@/components/university/AdminControlPanel';
 import { getCourseColors } from '@/lib/university/courseColors';
 import { toast } from 'sonner';
@@ -53,6 +56,9 @@ export default function UniversityAssessment() {
   const unitNum = parseInt(unit?.replace('unit-', '') || '1');
   const colors = getCourseColors(ct);
 
+  const courseKey = toCourseKey(ct, levelNum);
+  const { hasAccess, ownedCourses, loading: accessLoading } = useCourseAccess(courseKey);
+
   const assessment = getAssessment(levelNum, unitNum, ct);
   const unitData = getUnitData(levelNum, unitNum, ct);
   const { submitAssessment, getBestAssessment } = useUniversityProgress();
@@ -80,6 +86,24 @@ export default function UniversityAssessment() {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <p className="text-muted-foreground">Assessment not found</p>
+      </div>
+    );
+  }
+
+  // Purchase gate — can't take assessments without buying the course
+  if (!accessLoading && !hasAccess) {
+    return (
+      <div className="min-h-screen bg-background">
+        <MainNavigation />
+        <div className="pt-24 container mx-auto px-4 max-w-2xl">
+          <CoursePurchaseGate
+            courseKey={courseKey}
+            courseName={unitData?.title ?? 'this course'}
+            ownedCourses={ownedCourses}
+            variant="full"
+          />
+        </div>
+        <UnifiedFooter className="mt-auto" />
       </div>
     );
   }
