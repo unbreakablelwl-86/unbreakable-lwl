@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { requireToken } from "../_shared/token-guard.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -423,6 +424,20 @@ serve(async (req) => {
         JSON.stringify({ error: 'Unauthorized - Invalid session' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
+    }
+
+    // Token guard — deduct 1 AI token
+    const userId = (claimsData.claims as any).sub;
+    const serviceClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    );
+    const guard = await requireToken(serviceClient, userId, 'generate-ai-programme');
+    if (guard.error) {
+      return new Response(JSON.stringify(guard.error), {
+        status: 402,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
 
     const requestData: ProgrammeRequest = await req.json();

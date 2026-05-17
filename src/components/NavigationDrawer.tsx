@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Home, Calculator, Activity, User, LogOut, Settings, Brain, Sparkles, Flame, Dumbbell, Footprints, Apple, Shield, GraduationCap, UserCheck, ChevronDown, Lock, Calendar } from 'lucide-react';
+import { Menu, X, Home, Calculator, Activity, User, LogOut, Settings, Brain, Sparkles, Flame, Dumbbell, Footprints, Apple, Shield, GraduationCap, UserCheck, ChevronDown, Lock, Calendar, Zap } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -12,6 +12,7 @@ import { useUserRole } from '@/hooks/useUserRole';
 import { useSubscription } from '@/hooks/useSubscription';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { AuthModal } from '@/components/tracker/AuthModal';
+import { TokenBalanceBadge } from '@/components/ai/TokenBalanceBadge';
 
 interface NavigationDrawerProps {
   variant?: 'default' | 'minimal';
@@ -231,6 +232,12 @@ export function NavigationDrawer({ variant = 'default' }: NavigationDrawerProps)
               <div className="mt-auto pt-4">
                 <Separator className="bg-primary/20 mb-4" />
                 <div className="space-y-2">
+                  <Link to="/ai-tokens" onClick={handleNavClick} className={linkClass('/ai-tokens')}>
+                    <Zap className={`w-5 h-5 ${isActive('/ai-tokens') ? '' : 'text-primary'}`} />
+                    <span>AI TOKENS</span>
+                    <TokenBalanceBadge className="ml-auto" />
+                  </Link>
+
                   <Link to="/profile" onClick={handleNavClick} className={linkClass('/profile')}>
                     <User className={`w-5 h-5 ${isActive('/profile') ? '' : 'text-primary'}`} />
                     MY PROFILE

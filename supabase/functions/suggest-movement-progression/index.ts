@@ -1,4 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { requireToken } from "../_shared/token-guard.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -14,7 +16,35 @@ serve(async (req) => {
     const authHeader = req.headers.get('Authorization');
     if (!authHeader?.startsWith('Bearer ')) {
       return new Response(
-        JSON.stringify({ error: 'Unauthorized' }),
+        JSON.stringify({ error: 'Unauthorized' }
+
+    // Extract user ID for token system
+    const authClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+      { global: { headers: { Authorization: authHeader } } }
+    );
+    const { data: { user } } = await authClient.auth.getUser();
+    const userId = user?.id;
+    if (!userId) {
+      return new Response(JSON.stringify({ error: 'Invalid session' }), {
+        status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    // Token guard — deduct 1 AI token
+    const serviceClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    );
+    const guard = await requireToken(serviceClient, userId, 'suggest-movement-progression');
+    if (guard.error) {
+      return new Response(JSON.stringify(guard.error), {
+        status: 402,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
