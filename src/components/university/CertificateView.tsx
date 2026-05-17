@@ -2,7 +2,7 @@ import { useRef, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Download, Share2 } from 'lucide-react';
 import { toast } from 'sonner';
-import shieldLogo from '@/assets/unbreakable-shield.png';
+/* Shield logo removed per John's request — cert bg alone is the look */
 
 /* ── Course-type → human-readable labels ──────────────────── */
 const COURSE_LABELS: Record<string, string> = {
@@ -129,14 +129,6 @@ export function CertificateView({ userName, courseType, level, completedDate }: 
 
         {/* Text overlay */}
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-10 sm:px-16 py-8">
-          {/* Shield logo */}
-          <img
-            src={shieldLogo}
-            alt="LWL Shield"
-            className="w-16 h-16 sm:w-20 sm:h-20 object-contain mb-2 drop-shadow-lg"
-            crossOrigin="anonymous"
-          />
-
           {/* UNBREAKABLE / UNIVERSITY */}
           <h2
             className="font-display text-lg sm:text-2xl tracking-[0.25em] drop-shadow-md"
@@ -199,43 +191,6 @@ export function CertificateView({ userName, courseType, level, completedDate }: 
           >
             {courseShort} LEVEL {level} : {courseLabel.toUpperCase()}
           </h3>
-
-          {/* Bottom row: signature left, LWL cert right */}
-          <div className="flex items-end justify-between w-full max-w-sm sm:max-w-md mt-auto">
-            <div className="text-left">
-              <p
-                className="text-sm sm:text-lg mb-0"
-                style={{
-                  fontFamily: "'Georgia', 'Times New Roman', cursive, serif",
-                  fontStyle: 'italic',
-                  color: '#d4a44a',
-                  textShadow: '0 1px 4px rgba(0,0,0,0.6)',
-                }}
-              >
-                J. Threlfall
-              </p>
-              <p
-                className="text-[7px] sm:text-[9px] tracking-[0.2em] uppercase"
-                style={{ color: '#888', textShadow: '0 1px 4px rgba(0,0,0,0.8)' }}
-              >
-                LEAD INSTRUCTOR
-              </p>
-            </div>
-            <div className="text-right">
-              <p
-                className="text-[8px] sm:text-[10px] tracking-[0.15em] uppercase"
-                style={{ color: '#a0a0a0', textShadow: '0 1px 4px rgba(0,0,0,0.8)' }}
-              >
-                LWL CERTIFICATE
-              </p>
-              <p
-                className="text-[7px] sm:text-[9px] tracking-[0.12em] uppercase"
-                style={{ color: '#888', textShadow: '0 1px 4px rgba(0,0,0,0.8)' }}
-              >
-                OF ACHIEVEMENT
-              </p>
-            </div>
-          </div>
 
           {/* Keep Showing Up */}
           <p
