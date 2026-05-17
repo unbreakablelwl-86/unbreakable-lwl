@@ -5,6 +5,7 @@ import { MainNavigation } from '@/components/MainNavigation';
 import { UnifiedFooter } from '@/components/UnifiedFooter';
 import { ProfileView } from '@/components/tracker/ProfileView';
 import { AthleteCoachSection } from '@/components/profile/AthleteCoachSection';
+import { PasswordChangeCard } from '@/components/profile/PasswordChangeCard';
 import { useAuth } from '@/hooks/useAuth';
 import { AuthModal } from '@/components/tracker/AuthModal';
 import { Card } from '@/components/ui/card';
@@ -60,6 +61,7 @@ export default function Profile() {
           <div className="max-w-4xl mx-auto space-y-6">
             <AthleteCoachSection />
             <ProfileView />
+            <PasswordChangeCard />
           </div>
         ) : (
           <div className="max-w-2xl mx-auto">
