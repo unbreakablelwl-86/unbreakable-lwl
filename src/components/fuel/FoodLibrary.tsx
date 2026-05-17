@@ -17,13 +17,15 @@ import {
   Loader2,
   Apple,
   ExternalLink,
-  CheckCircle
+  CheckCircle,
+  Barcode
 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
+import { BarcodeScanner } from './BarcodeScanner';
 
 // Debounce hook
 function useDebounce<T>(value: T, delay: number): T {
@@ -52,6 +54,7 @@ export function FoodLibrary() {
   const [activeTab, setActiveTab] = useState('all');
   const [selectedFood, setSelectedFood] = useState<FoodSearchResult | null>(null);
   const [showLogModal, setShowLogModal] = useState(false);
+  const [showBarcodeScanner, setShowBarcodeScanner] = useState(false);
   const [logMealType, setLogMealType] = useState<MealType>('snack');
   const [logServings, setLogServings] = useState(1);
   
@@ -204,7 +207,16 @@ export function FoodLibrary() {
           )}
         </div>
         
-        <Dialog open={showAddModal} onOpenChange={setShowAddModal}>
+        <div className="flex gap-2">
+          <Button 
+            variant="outline"
+            className="font-display tracking-wide"
+            onClick={() => setShowBarcodeScanner(true)}
+          >
+            <Barcode className="w-4 h-4 mr-2" />
+            SCAN
+          </Button>
+          <Dialog open={showAddModal} onOpenChange={setShowAddModal}>
           <DialogTrigger asChild>
             <Button className="font-display tracking-wide">
               <Plus className="w-4 h-4 mr-2" />
@@ -294,7 +306,14 @@ export function FoodLibrary() {
             </div>
           </DialogContent>
         </Dialog>
+        </div>
       </div>
+
+      {/* Barcode Scanner */}
+      <BarcodeScanner
+        isOpen={showBarcodeScanner}
+        onClose={() => setShowBarcodeScanner(false)}
+      />
 
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
