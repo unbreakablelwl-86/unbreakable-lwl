@@ -34,6 +34,7 @@ const TIERS: TierCard[] = [
     tokens: 50,
     price: 25,
     icon: Star,
+    stripePriceId: 'price_1TXuIrD5KOEmeWH21kBZYWAP',
     features: ['50 tokens/month', 'AI programme builder', 'AI nutrition plans', 'Form feedback'],
   },
   {
@@ -43,6 +44,7 @@ const TIERS: TierCard[] = [
     price: 49,
     icon: Rocket,
     popular: true,
+    stripePriceId: 'price_1TXuIrD5KOEmeWH2SxYc7G14',
     features: ['150 tokens/month', 'Full AI coaching', 'All pillars covered', 'Priority responses'],
   },
   {
@@ -51,6 +53,7 @@ const TIERS: TierCard[] = [
     tokens: 500,
     price: 79,
     icon: Crown,
+    stripePriceId: 'price_1TXuIsD5KOEmeWH2JUHUujEy',
     features: ['500 tokens/month', 'Unlimited feel', 'All features included', 'Perfect for PT students'],
   },
 ];
