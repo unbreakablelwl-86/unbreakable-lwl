@@ -15,20 +15,10 @@ export interface PlatformSetting {
 }
 
 export interface PlatformSettingsMap {
-  registration_enabled: boolean;
-  social_features_enabled: boolean;
-  messaging_enabled: boolean;
-  ai_coaching_enabled: boolean;
-  max_posts_per_day: number;
   maintenance_mode: { enabled: boolean; message: string };
 }
 
 const defaultSettings: PlatformSettingsMap = {
-  registration_enabled: true,
-  social_features_enabled: true,
-  messaging_enabled: true,
-  ai_coaching_enabled: true,
-  max_posts_per_day: 50,
   maintenance_mode: { enabled: false, message: '' },
 };
 
@@ -55,21 +45,6 @@ export function usePlatformSettings() {
       (data || []).forEach((s: PlatformSetting) => {
         const value = (s.setting_value || {}) as Record<string, unknown>;
         switch (s.setting_key) {
-          case 'registration_enabled':
-            map.registration_enabled = (value.enabled as boolean) ?? true;
-            break;
-          case 'social_features_enabled':
-            map.social_features_enabled = (value.enabled as boolean) ?? true;
-            break;
-          case 'messaging_enabled':
-            map.messaging_enabled = (value.enabled as boolean) ?? true;
-            break;
-          case 'ai_coaching_enabled':
-            map.ai_coaching_enabled = (value.enabled as boolean) ?? true;
-            break;
-          case 'max_posts_per_day':
-            map.max_posts_per_day = (value.limit as number) ?? 50;
-            break;
           case 'maintenance_mode':
             map.maintenance_mode = {
               enabled: (value.enabled as boolean) ?? false,
