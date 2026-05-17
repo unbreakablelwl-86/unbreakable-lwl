@@ -7,6 +7,7 @@ import { ArrowLeft } from 'lucide-react';
 import { useProfile } from '@/hooks/useProfile';
 import { useAuth } from '@/hooks/useAuth';
 import { useUniversityProgress } from '@/hooks/useUniversityProgress';
+import { useUserRole } from '@/hooks/useUserRole';
 import { getCourseColors } from '@/lib/university/courseColors';
 import type { CourseType } from '@/lib/university/types';
 
@@ -16,17 +17,22 @@ export default function UniversityCertificate() {
   const { user } = useAuth();
   const { profile } = useProfile();
   const { assessments } = useUniversityProgress();
+  const { isDev, isCoach } = useUserRole();
 
   const ct = (courseType || 'gym') as CourseType;
-  const levelNum = parseInt(level || '2', 10);
+  // level param may be "level-2" or just "2"
+  const levelNum = parseInt((level || '2').replace(/\D/g, ''), 10) || 2;
   const colors = getCourseColors(ct);
 
+  // Dev / coach can view all certificates without passing
+  const isPrivileged = isDev || isCoach;
+
   // Check the user actually passed the final assessment for this course/level
-  const finalPassed = assessments.some(
+  const finalPassed = isPrivileged || assessments.some(
     (a: any) => a.level === levelNum && a.is_final && a.passed && (a.course_type || 'gym') === ct
   );
 
-  // Get the date of passing
+  // Get the date of passing (or today for preview)
   const passedAssessment = assessments.find(
     (a: any) => a.level === levelNum && a.is_final && a.passed && (a.course_type || 'gym') === ct
   );

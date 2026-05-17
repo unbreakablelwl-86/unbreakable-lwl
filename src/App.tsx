@@ -182,7 +182,7 @@ const App = () => (
               <Route path="/university/:courseType/:level/:unit/assessment" element={
                 <ProtectedRoute><UniversityAssessment /></ProtectedRoute>
               } />
-              <Route path="/university/:courseType/level-:level/certificate" element={
+              <Route path="/university/:courseType/:level/certificate" element={
                 <ProtectedRoute><UniversityCertificate /></ProtectedRoute>
               } />
               
