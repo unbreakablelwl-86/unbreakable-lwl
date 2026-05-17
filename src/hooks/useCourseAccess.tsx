@@ -14,11 +14,11 @@ interface CourseAccessResult {
 
 /**
  * Check whether the current user has purchased a university course.
- * Dev users bypass all purchase gates.
+ * Dev and coach users bypass all purchase gates.
  */
 export function useCourseAccess(courseKey?: string): CourseAccessResult {
   const { user } = useAuth();
-  const { isDev, loading: roleLoading } = useUserRole();
+  const { isDev, isCoach, loading: roleLoading } = useUserRole();
 
   const { data: purchases = [], isLoading } = useQuery({
     queryKey: ['course-purchases', user?.id],
@@ -40,8 +40,8 @@ export function useCourseAccess(courseKey?: string): CourseAccessResult {
 
   const loading = isLoading || roleLoading;
 
-  // Dev users always have access
-  if (isDev) {
+  // Dev / coach users always have access
+  if (isDev || isCoach) {
     return { hasAccess: true, ownedCourses: purchases, loading: false };
   }
 
