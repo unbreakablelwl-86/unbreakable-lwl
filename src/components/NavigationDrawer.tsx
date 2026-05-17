@@ -184,16 +184,10 @@ export function NavigationDrawer({ variant = 'default' }: NavigationDrawerProps)
                 </CollapsibleContent>
               </Collapsible>
 
-              {/* UNBREAKABLE COACHING */}
-              <Link to={(!subscribed && !isAdminOrOwner) ? '/plans' : '/help'} onClick={handleNavClick} className={linkClass('/help')}>
+              {/* UNBREAKABLE COACHING — uses AI token system */}
+              <Link to="/help" onClick={handleNavClick} className={linkClass('/help')}>
                 <Flame className={`w-5 h-5 ${isActive('/help') ? '' : 'text-primary'}`} />
                 <span className="flex-1">UNBREAKABLE COACHING</span>
-                {!subscribed && !isAdminOrOwner && (
-                  <Badge variant="outline" className="text-[9px] font-display border-primary/30 text-primary px-1.5 py-0">
-                    <Lock className="w-2.5 h-2.5 mr-0.5" />
-                    PRO
-                  </Badge>
-                )}
               </Link>
 
               {/* 121 COACHING */}
@@ -214,16 +208,10 @@ export function NavigationDrawer({ variant = 'default' }: NavigationDrawerProps)
                 </Link>
               )}
 
-              {/* UNIVERSITY */}
-              <Link to={(!subscribed && !isAdminOrOwner) ? '/plans' : '/university'} onClick={handleNavClick} className={linkClass('/university')}>
+              {/* UNIVERSITY — individual course purchases */}
+              <Link to="/university" onClick={handleNavClick} className={linkClass('/university')}>
                 <GraduationCap className={`w-5 h-5 ${isActive('/university') ? '' : 'text-primary'}`} />
                 <span className="flex-1">UNBREAKABLE UNIVERSITY</span>
-                {!subscribed && !isAdminOrOwner && (
-                  <Badge variant="outline" className="text-[9px] font-display border-primary/30 text-primary px-1.5 py-0">
-                    <Lock className="w-2.5 h-2.5 mr-0.5" />
-                    PRO
-                  </Badge>
-                )}
               </Link>
             </nav>
 
