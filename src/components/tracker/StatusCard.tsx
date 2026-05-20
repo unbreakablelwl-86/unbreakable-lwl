@@ -4,7 +4,7 @@ import { ClickableAvatar } from '@/components/ClickableAvatar';
 import { ClickableUsername } from '@/components/ClickableUsername';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Dumbbell, MessageCircle, Globe, Users, Lock, Play, Pause, Volume2, VolumeX, Maximize } from 'lucide-react';
+import { Dumbbell, MessageCircle, Globe, Users, Lock, Play, Pause, Volume2, VolumeX, Maximize, Bookmark } from 'lucide-react';
 import { PostWithProfile } from '@/hooks/usePosts';
 import { useAuth } from '@/hooks/useAuth';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -37,24 +37,26 @@ export function StatusCard({ post, onKudos, onDelete, onToggleComments, onUpdate
   const [showFullscreen, setShowFullscreen] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
+  const [showDoubleTapHeart, setShowDoubleTapHeart] = useState(false);
+  const [saved, setSaved] = useState(false);
   const [floatingDumbbells, setFloatingDumbbells] = useState<{ id: number; x: number; y: number; rotate: number }[]>([]);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const lastTapRef = useRef(0);
   const { quality, setQuality, initializeQuality } = useVideoQuality();
 
   const spawnDumbbells = useCallback(() => {
-    const newDumbbells = Array.from({ length: 4 }, (_, i) => ({
+    const newDumbbells = Array.from({ length: 5 }, (_, i) => ({
       id: Date.now() + i,
-      x: (Math.random() - 0.5) * 60,
-      y: -(80 + Math.random() * 80),
+      x: (Math.random() - 0.5) * 80,
+      y: -(100 + Math.random() * 100),
       rotate: Math.random() * 360,
     }));
     setFloatingDumbbells(prev => [...prev, ...newDumbbells]);
     setTimeout(() => {
       setFloatingDumbbells(prev => prev.filter(d => !newDumbbells.find(n => n.id === d.id)));
-    }, 1000);
+    }, 1200);
   }, []);
 
-  // Initialize video quality detection
   useEffect(() => {
     if (post.video_url) {
       initializeQuality();
@@ -70,6 +72,22 @@ export function StatusCard({ post, onKudos, onDelete, onToggleComments, onUpdate
     await onKudos(post.id);
     setIsLiking(false);
   };
+
+  // Double-tap to like on media
+  const handleDoubleTap = useCallback(() => {
+    if (!user) return;
+    const now = Date.now();
+    if (now - lastTapRef.current < 350) {
+      // Double tap detected
+      if (!post.has_kudos) {
+        onKudos(post.id);
+      }
+      setShowDoubleTapHeart(true);
+      spawnDumbbells();
+      setTimeout(() => setShowDoubleTapHeart(false), 900);
+    }
+    lastTapRef.current = now;
+  }, [user, post.has_kudos, post.id, onKudos, spawnDumbbells]);
 
   const togglePlayPause = () => {
     if (videoRef.current) {
@@ -122,16 +140,7 @@ export function StatusCard({ post, onKudos, onDelete, onToggleComments, onUpdate
     }
   };
 
-  const getVisibilityLabel = () => {
-    switch (post.visibility) {
-      case 'friends':
-        return 'Friends';
-      case 'private':
-        return 'Private';
-      default:
-        return 'Public';
-    }
-  };
+  const hasMedia = (post.media_items && post.media_items.length > 0) || post.image_url || post.video_url;
 
   return (
     <motion.div
@@ -140,15 +149,15 @@ export function StatusCard({ post, onKudos, onDelete, onToggleComments, onUpdate
       transition={{ duration: 0.3 }}
     >
       <Card className="bg-card border-border overflow-hidden">
-        {/* Header */}
-        <div className="p-4 flex items-start gap-3">
+        {/* Header — compact Instagram-style */}
+        <div className="px-4 py-3 flex items-center gap-3">
           <ClickableAvatar
             userId={post.user_id}
             displayName={post.profiles?.display_name}
             username={post.profiles?.username}
             avatarUrl={post.profiles?.avatar_url}
-            className="h-12 w-12"
-            fallbackClassName="bg-primary text-primary-foreground font-display"
+            className="h-9 w-9 ring-2 ring-primary/20 ring-offset-1 ring-offset-card"
+            fallbackClassName="bg-primary text-primary-foreground font-display text-xs"
           />
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
@@ -156,16 +165,17 @@ export function StatusCard({ post, onKudos, onDelete, onToggleComments, onUpdate
                 userId={post.user_id}
                 displayName={post.profiles?.display_name}
                 username={post.profiles?.username}
-                className="font-semibold truncate hover:underline"
+                className="font-display text-sm tracking-wide truncate hover:opacity-70 transition-opacity"
               />
+              {!isOwner && (
+                <span className="text-muted-foreground text-xs">•</span>
+              )}
               {!isOwner && <FollowButton targetUserId={post.user_id} />}
             </div>
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-0.5">
               <span>{formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}</span>
-              <span>·</span>
-              <span className="flex items-center gap-1">
+              <span className="flex items-center gap-0.5">
                 {getVisibilityIcon()}
-                {getVisibilityLabel()}
               </span>
             </div>
           </div>
@@ -180,62 +190,82 @@ export function StatusCard({ post, onKudos, onDelete, onToggleComments, onUpdate
           />
         </div>
 
-        {/* Content */}
-        {post.content && (
-          <div className="px-4 pb-3">
-            <RichContent text={post.content} className="text-foreground" />
-          </div>
-        )}
-
-        {/* Media Carousel (multi-media) */}
+        {/* Media — edge-to-edge, no padding */}
         {post.media_items && post.media_items.length > 0 ? (
-          <div className="px-4 pb-3">
+          <div className="relative select-none" onClick={handleDoubleTap}>
             <MediaCarousel items={post.media_items} />
+            {/* Double-tap dumbbell overlay */}
+            <AnimatePresence>
+              {showDoubleTapHeart && (
+                <motion.div
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 1.4, opacity: 0 }}
+                  transition={{ duration: 0.4, ease: 'easeOut' }}
+                  className="absolute inset-0 flex items-center justify-center pointer-events-none"
+                >
+                  <Dumbbell className="w-24 h-24 text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.5)]" />
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         ) : (
           <>
-            {/* Legacy single image */}
+            {/* Legacy single image — edge-to-edge */}
             {post.image_url && (
-              <div className="px-4 pb-3">
+              <div className="relative select-none" onClick={handleDoubleTap}>
                 <img
                   src={post.image_url}
                   alt="Post"
-                  className="rounded-lg w-full max-h-[500px] object-cover"
+                  className="w-full max-h-[600px] object-cover"
                 />
+                <AnimatePresence>
+                  {showDoubleTapHeart && (
+                    <motion.div
+                      initial={{ scale: 0, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      exit={{ scale: 1.4, opacity: 0 }}
+                      transition={{ duration: 0.4, ease: 'easeOut' }}
+                      className="absolute inset-0 flex items-center justify-center pointer-events-none"
+                    >
+                      <Dumbbell className="w-24 h-24 text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.5)]" />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             )}
 
-            {/* Legacy single video */}
+            {/* Legacy single video — edge-to-edge */}
             {post.video_url && (
-              <div className="px-4 pb-3 relative group flex justify-center">
+              <div className="relative group" onClick={handleDoubleTap}>
                 <video
                   ref={videoRef}
                   src={post.video_url}
-                  className="rounded-lg max-w-full max-h-[600px] cursor-pointer"
+                  className="w-full max-h-[600px] object-cover cursor-pointer"
                   loop
                   muted={isMuted}
                   playsInline
                   preload="auto"
                   onPlay={() => setIsPlaying(true)}
                   onPause={() => setIsPlaying(false)}
-                  onClick={togglePlayPause}
+                  onClick={(e) => { e.stopPropagation(); togglePlayPause(); handleDoubleTap(); }}
                 />
                 <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
                   <Button
                     variant="secondary"
                     size="icon"
                     className="bg-black/50 hover:bg-black/70 text-white h-14 w-14 rounded-full pointer-events-auto"
-                    onClick={togglePlayPause}
+                    onClick={(e) => { e.stopPropagation(); togglePlayPause(); }}
                   >
                     {isPlaying ? <Pause className="w-7 h-7" /> : <Play className="w-7 h-7 ml-1" />}
                   </Button>
                 </div>
-                <div className="absolute bottom-4 right-4 flex items-center gap-2">
+                <div className="absolute bottom-3 right-3 flex items-center gap-2">
                   <Button
                     variant="secondary"
                     size="icon"
                     className="bg-black/50 hover:bg-black/70 text-white h-8 w-8"
-                    onClick={() => setShowFullscreen(true)}
+                    onClick={(e) => { e.stopPropagation(); setShowFullscreen(true); }}
                   >
                     <Maximize className="w-4 h-4" />
                   </Button>
@@ -247,61 +277,106 @@ export function StatusCard({ post, onKudos, onDelete, onToggleComments, onUpdate
                     variant="secondary"
                     size="icon"
                     className="bg-black/50 hover:bg-black/70 text-white h-8 w-8"
-                    onClick={toggleMute}
+                    onClick={(e) => { e.stopPropagation(); toggleMute(); }}
                   >
                     {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
                   </Button>
                 </div>
+                <AnimatePresence>
+                  {showDoubleTapHeart && (
+                    <motion.div
+                      initial={{ scale: 0, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      exit={{ scale: 1.4, opacity: 0 }}
+                      transition={{ duration: 0.4, ease: 'easeOut' }}
+                      className="absolute inset-0 flex items-center justify-center pointer-events-none"
+                    >
+                      <Dumbbell className="w-24 h-24 text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.5)]" />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             )}
           </>
         )}
 
-        {/* Actions */}
-        <div className="flex items-center gap-2 px-4 py-3 border-t border-border relative overflow-visible">
-          <AnimatePresence>
-            {floatingDumbbells.map((d) => (
-              <motion.div
-                key={d.id}
-                initial={{ opacity: 1, y: 0, x: 0, rotate: 0 }}
-                animate={{ opacity: 0, y: d.y, x: d.x, rotate: d.rotate }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.8, ease: 'easeOut' }}
-                className="absolute left-8 bottom-8 pointer-events-none z-50"
-              >
-                <Dumbbell className="w-4 h-4 text-primary" />
-              </motion.div>
-            ))}
-          </AnimatePresence>
-          <Button
-            variant="ghost"
-            size="sm"
-            className={`gap-2 ${post.has_kudos ? 'text-primary' : 'text-muted-foreground'}`}
-            onClick={handleKudos}
-            disabled={!user || isLiking}
-          >
-            <motion.div
-              animate={isLiking ? { scale: [1, 1.3, 1] } : {}}
-              transition={{ duration: 0.3 }}
+        {/* Actions — Instagram-style row */}
+        <div className="flex items-center justify-between px-4 py-2 relative overflow-visible">
+          <div className="flex items-center gap-3">
+            <AnimatePresence>
+              {floatingDumbbells.map((d) => (
+                <motion.div
+                  key={d.id}
+                  initial={{ opacity: 1, y: 0, x: 0, rotate: 0 }}
+                  animate={{ opacity: 0, y: d.y, x: d.x, rotate: d.rotate }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.8, ease: 'easeOut' }}
+                  className="absolute left-6 bottom-6 pointer-events-none z-50"
+                >
+                  <Dumbbell className="w-5 h-5 text-primary" />
+                </motion.div>
+              ))}
+            </AnimatePresence>
+            <button
+              className={`flex items-center gap-1.5 transition-colors ${post.has_kudos ? 'text-primary' : 'text-foreground hover:text-muted-foreground'}`}
+              onClick={handleKudos}
+              disabled={!user || isLiking}
             >
-              <Dumbbell className={`w-5 h-5 ${post.has_kudos ? 'fill-primary' : ''}`} />
-            </motion.div>
-            <span>{post.kudos_count || 0}</span>
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            className={`gap-2 ${showComments ? 'text-primary' : 'text-muted-foreground'}`}
-            onClick={() => setShowComments(!showComments)}
+              <motion.div
+                animate={isLiking ? { scale: [1, 1.4, 1] } : {}}
+                transition={{ duration: 0.3 }}
+              >
+                <Dumbbell className={`w-6 h-6 ${post.has_kudos ? 'fill-primary' : ''}`} />
+              </motion.div>
+            </button>
+            <button
+              className={`flex items-center gap-1.5 transition-colors ${showComments ? 'text-primary' : 'text-foreground hover:text-muted-foreground'}`}
+              onClick={() => setShowComments(!showComments)}
+            >
+              <MessageCircle className={`w-6 h-6 ${showComments ? 'fill-primary/20' : ''}`} />
+            </button>
+            <ShareMenu 
+              onShareToStory={handleShareToStory}
+              shareText={post.content ? `${post.content.slice(0, 200)} 💪 #UNBREAKABLE #KeepShowingUp` : '💪 #UNBREAKABLE #KeepShowingUp'}
+            />
+          </div>
+          <button
+            className={`transition-colors ${saved ? 'text-primary' : 'text-foreground hover:text-muted-foreground'}`}
+            onClick={() => setSaved(!saved)}
           >
-            <MessageCircle className={`w-5 h-5 ${showComments ? 'fill-primary/20' : ''}`} />
-            <span>{post.comments_count || 0}</span>
-          </Button>
-          <ShareMenu 
-            onShareToStory={handleShareToStory}
-            shareText={post.content ? `${post.content.slice(0, 200)} 💪 #UNBREAKABLE #KeepShowingUp` : '💪 #UNBREAKABLE #KeepShowingUp'}
-          />
+            <Bookmark className={`w-6 h-6 ${saved ? 'fill-primary' : ''}`} />
+          </button>
         </div>
+
+        {/* Likes count */}
+        {(post.kudos_count ?? 0) > 0 && (
+          <div className="px-4 pb-1">
+            <p className="text-sm font-display tracking-wide">
+              {post.kudos_count} {post.kudos_count === 1 ? 'like' : 'likes'}
+            </p>
+          </div>
+        )}
+
+        {/* Content — below media like Instagram */}
+        {post.content && (
+          <div className="px-4 pb-2">
+            <RichContent
+              text={post.content}
+              className="text-sm text-foreground"
+              usernamePrefix={post.profiles?.display_name || post.profiles?.username}
+            />
+          </div>
+        )}
+
+        {/* Comment count teaser */}
+        {!showComments && (post.comments_count ?? 0) > 0 && (
+          <button
+            className="px-4 pb-2 text-sm text-muted-foreground hover:text-foreground transition-colors text-left"
+            onClick={() => setShowComments(true)}
+          >
+            View {post.comments_count === 1 ? '1 comment' : `all ${post.comments_count} comments`}
+          </button>
+        )}
 
         {/* Comments Section */}
         <PostCommentSection

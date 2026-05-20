@@ -31,6 +31,8 @@ async function resolveUsername(username: string): Promise<string | null> {
 interface RichContentProps {
   text: string;
   className?: string;
+  /** If provided, renders a bold name prefix before the content (Instagram-style) */
+  usernamePrefix?: string | null;
 }
 
 // Split text into segments: plain text, @mentions, and #hashtags
@@ -114,11 +116,14 @@ function HashtagLink({ tag }: { tag: string }) {
   );
 }
 
-export function RichContent({ text, className = '' }: RichContentProps) {
+export function RichContent({ text, className = '', usernamePrefix }: RichContentProps) {
   const segments = parseContent(text);
 
   return (
     <p className={`whitespace-pre-wrap ${className}`}>
+      {usernamePrefix && (
+        <span className="font-display font-semibold tracking-wide mr-1.5">{usernamePrefix}</span>
+      )}
       {segments.map((seg, i) => {
         switch (seg.type) {
           case 'text':
