@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { formatDistanceToNow } from 'date-fns';
+import { useNavigate } from 'react-router-dom';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Trash2, Send, ChevronDown, Loader2 } from 'lucide-react';
+import { Trash2, Loader2, ChevronDown } from 'lucide-react';
 import { PostComment, usePostComments } from '@/hooks/usePostComments';
 import { useAuth } from '@/hooks/useAuth';
+import { useProfile } from '@/hooks/useProfile';
 import { motion, AnimatePresence } from 'framer-motion';
 import { DeleteConfirmModal } from './DeleteConfirmModal';
 import { MentionTextarea } from '@/components/ui/mention-textarea';
@@ -24,6 +26,8 @@ export function PostCommentSection({
   onToggle,
 }: PostCommentSectionProps) {
   const { user } = useAuth();
+  const { profile } = useProfile();
+  const navigate = useNavigate();
   const { comments, loading, total, addComment, deleteComment, loadAllComments } = usePostComments(postId);
   const [newComment, setNewComment] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -52,16 +56,9 @@ export function PostCommentSection({
     loadAllComments();
   };
 
-  const getInitials = (comment: PostComment) => {
-    if (comment.profiles?.display_name) {
-      return comment.profiles.display_name
-        .split(' ')
-        .map((n) => n[0])
-        .join('')
-        .toUpperCase()
-        .slice(0, 2);
-    }
-    return 'U';
+  const getInitials = (name?: string | null) => {
+    if (!name) return 'U';
+    return name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2);
   };
 
   if (!isExpanded) return null;
@@ -73,113 +70,116 @@ export function PostCommentSection({
         animate={{ height: 'auto', opacity: 1 }}
         exit={{ height: 0, opacity: 0 }}
         transition={{ duration: 0.2 }}
-        className="border-t border-border"
       >
-        <div className="p-4 space-y-4">
-          {/* Comments List */}
+        <div className="px-4 pb-4 space-y-3">
+          {/* Comments List — Instagram-style inline */}
           {loading ? (
-            <div className="flex items-center justify-center py-4">
-              <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
+            <div className="flex items-center justify-center py-3">
+              <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
             </div>
           ) : comments.length > 0 ? (
-            <div className="space-y-3">
+            <div className="space-y-2">
               {comments.map((comment) => (
                 <motion.div
                   key={comment.id}
-                  initial={{ opacity: 0, y: 10 }}
+                  initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="flex gap-3"
+                  className="group"
                 >
-                  <Avatar className="h-8 w-8 flex-shrink-0">
-                    <AvatarImage src={comment.profiles?.avatar_url || undefined} />
-                    <AvatarFallback className="bg-muted text-muted-foreground text-xs">
-                      {getInitials(comment)}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1 min-w-0">
-                    <div className="bg-muted rounded-lg px-3 py-2">
-                      <div className="flex items-center justify-between gap-2">
-                        <p className="font-medium text-sm text-foreground truncate">
-                          {comment.profiles?.display_name || 'User'}
-                        </p>
+                  <div className="flex items-start gap-2.5">
+                    <Avatar
+                      className="h-7 w-7 flex-shrink-0 mt-0.5 cursor-pointer"
+                      onClick={() => navigate(`/user/${comment.user_id}`)}
+                    >
+                      <AvatarImage src={comment.profiles?.avatar_url || undefined} />
+                      <AvatarFallback className="bg-muted text-muted-foreground text-[10px] font-display">
+                        {getInitials(comment.profiles?.display_name)}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 min-w-0">
+                      <RichContent
+                        text={comment.content}
+                        className="text-sm text-foreground leading-snug"
+                        usernamePrefix={comment.profiles?.display_name || comment.profiles?.username}
+                      />
+                      <div className="flex items-center gap-3 mt-1">
+                        <span className="text-[11px] text-muted-foreground">
+                          {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true })}
+                        </span>
                         {user?.id === comment.user_id && (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive"
+                          <button
+                            className="text-[11px] text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity font-display tracking-wide"
                             onClick={() => setDeleteTarget(comment)}
                           >
-                            <Trash2 className="w-3 h-3" />
-                          </Button>
+                            Delete
+                          </button>
                         )}
                       </div>
-                      <RichContent text={comment.content} className="text-sm text-foreground" />
                     </div>
-                    <p className="text-xs text-muted-foreground mt-1 px-1">
-                      {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true })}
-                    </p>
                   </div>
                 </motion.div>
               ))}
 
               {/* View All Comments */}
               {!showAllComments && total > comments.length && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="w-full text-muted-foreground"
+                <button
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                   onClick={handleViewAll}
                 >
-                  <ChevronDown className="w-4 h-4 mr-2" />
                   View all {total} comments
-                </Button>
+                </button>
               )}
             </div>
           ) : (
-            <p className="text-sm text-muted-foreground text-center py-2">
-              No comments yet. Be the first to comment!
+            <p className="text-sm text-muted-foreground py-1">
+              No comments yet
             </p>
           )}
 
-          {/* Comment Input */}
+          {/* Comment Input — Instagram-style: avatar + inline input */}
           {commentsEnabled && user ? (
-            <div className="flex gap-2">
-              <MentionTextarea
-                value={newComment}
-                onChange={setNewComment}
-                placeholder="Write a comment..."
-                className="min-h-[40px] max-h-[120px]"
-                enableHashtags={true}
-                enableMentions={true}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    handleSubmit();
-                  }
-                }}
-              />
-              <Button
-                size="sm"
-                className="self-end"
-                onClick={handleSubmit}
-                disabled={!newComment.trim() || isSubmitting}
-              >
-                {isSubmitting ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : (
-                  <Send className="w-4 h-4" />
-                )}
-              </Button>
+            <div className="flex items-center gap-2.5 pt-1 border-t border-border">
+              <Avatar className="h-7 w-7 flex-shrink-0">
+                <AvatarImage src={profile?.avatar_url || undefined} />
+                <AvatarFallback className="bg-primary/10 text-primary text-[10px] font-display">
+                  {getInitials(profile?.display_name)}
+                </AvatarFallback>
+              </Avatar>
+              <div className="flex-1 relative">
+                <MentionTextarea
+                  value={newComment}
+                  onChange={setNewComment}
+                  placeholder="Add a comment..."
+                  className="min-h-[36px] max-h-[100px] !border-0 !ring-0 !shadow-none bg-transparent text-sm placeholder:text-muted-foreground/60 px-0"
+                  enableHashtags={true}
+                  enableMentions={true}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault();
+                      handleSubmit();
+                    }
+                  }}
+                />
+              </div>
+              {newComment.trim() && (
+                <button
+                  onClick={handleSubmit}
+                  disabled={isSubmitting}
+                  className="text-primary font-display text-sm tracking-wide hover:opacity-70 transition-opacity disabled:opacity-40"
+                >
+                  {isSubmitting ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    'Post'
+                  )}
+                </button>
+              )}
             </div>
           ) : !commentsEnabled ? (
-            <p className="text-sm text-muted-foreground text-center py-2">
-              Comments are disabled for this post.
+            <p className="text-xs text-muted-foreground text-center py-1 border-t border-border pt-3">
+              Comments are disabled
             </p>
-          ) : (
-            <p className="text-sm text-muted-foreground text-center py-2">
-              Sign in to leave a comment.
-            </p>
-          )}
+          ) : null}
         </div>
 
         {/* Delete Confirmation Modal */}
