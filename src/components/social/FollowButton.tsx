@@ -14,39 +14,29 @@ export function FollowButton({ targetUserId, variant = 'compact', className = ''
   // Don't show for your own posts
   if (isSelf) return null;
 
+  // Compact variant — inline text like Instagram feed ("Follow" / "Following")
   if (variant === 'compact') {
+    if (isFollowing) return null; // Instagram hides "Following" in the feed
+
     return (
-      <Button
-        variant={isFollowing ? 'ghost' : 'outline'}
-        size="sm"
+      <button
         onClick={(e) => {
           e.stopPropagation();
           toggleFollow();
         }}
         disabled={loading}
-        className={`h-7 px-2 text-xs font-display tracking-wide ${
-          isFollowing
-            ? 'text-primary border-primary/30'
-            : 'text-primary border-primary/40 hover:bg-primary/10'
-        } ${className}`}
+        className={`text-primary text-sm font-display tracking-wide hover:opacity-70 transition-opacity disabled:opacity-40 ${className}`}
       >
         {loading ? (
           <Loader2 className="w-3 h-3 animate-spin" />
-        ) : isFollowing ? (
-          <>
-            <UserCheck className="w-3 h-3 mr-1" />
-            FOLLOWING
-          </>
         ) : (
-          <>
-            <UserPlus className="w-3 h-3 mr-1" />
-            FOLLOW
-          </>
+          'Follow'
         )}
-      </Button>
+      </button>
     );
   }
 
+  // Default variant — full button for profile pages
   return (
     <Button
       variant={isFollowing ? 'outline' : 'default'}
@@ -56,16 +46,19 @@ export function FollowButton({ targetUserId, variant = 'compact', className = ''
         toggleFollow();
       }}
       disabled={loading}
-      className={`font-display tracking-wide ${className}`}
+      className={`font-display tracking-wide ${
+        isFollowing
+          ? 'border-border text-foreground hover:bg-muted'
+          : ''
+      } ${className}`}
     >
       {loading ? (
         <Loader2 className="w-4 h-4 animate-spin mr-2" />
       ) : isFollowing ? (
-        <UserCheck className="w-4 h-4 mr-2" />
+        'Following'
       ) : (
-        <UserPlus className="w-4 h-4 mr-2" />
+        'Follow'
       )}
-      {isFollowing ? 'FOLLOWING' : 'FOLLOW'}
     </Button>
   );
 }
