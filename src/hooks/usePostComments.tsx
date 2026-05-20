@@ -86,7 +86,7 @@ export function usePostComments(postId: string) {
       .select()
       .single();
 
-    if (!error) {
+    if (!error && data) {
       const { data: profile } = await supabase
         .from('profiles')
         .select('display_name, avatar_url, username')
@@ -100,6 +100,28 @@ export function usePostComments(postId: string) {
 
       setComments((prev) => [...prev, commentWithProfile]);
       setTotal((prev) => prev + 1);
+
+      // Send comment notification to post owner (skip if own post)
+      const { data: post } = await supabase
+        .from('posts')
+        .select('user_id')
+        .eq('id', postId)
+        .maybeSingle();
+
+      if (post && post.user_id !== user.id) {
+        const myName = profile?.display_name || profile?.username || 'Someone';
+        await supabase.from('notifications').insert({
+          user_id: post.user_id,
+          type: 'post_comment',
+          title: 'New Comment',
+          body: `${myName} commented on your post`,
+          data: { commenter_id: user.id, post_id: postId, post_user_id: post.user_id, comment_id: data.id },
+        });
+      }
+
+      // Also notify mentioned users in the comment
+      const { notifyMentionedUsers } = await import('@/lib/mentionNotifications');
+      notifyMentionedUsers(validation.data.content.trim(), user.id, 'comment', data.id);
     }
 
     return { error, data };

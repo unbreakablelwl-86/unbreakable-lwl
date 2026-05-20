@@ -43,9 +43,18 @@ function getNotificationLink(notification: Notification): string | null {
   // Plan updates from coach
   if (t === 'plan_update') return '/my-coaching';
 
-  // Social
-  if (t === 'friend_request' || t === 'friend_accepted') return '/';
+  // Social — follow
+  if (t === 'follow' && d.follower_id) return `/user/${d.follower_id}`;
+
+  // Social — friend
+  if (t === 'friend_request' || t === 'friend_accepted') return d.user_id ? `/user/${d.user_id}` : '/';
+
+  // Social — post interactions
+  if ((t === 'post_like' || t === 'post_comment') && d.post_user_id) return `/user/${d.post_user_id}`;
   if (t === 'post_like' || t === 'post_comment') return '/';
+
+  // Social — mentions
+  if (t === 'mention' && d.content_type === 'post' && d.author_id) return `/user/${d.author_id}`;
   if (t === 'mention') return '/';
 
   // Tracker / running
@@ -66,6 +75,7 @@ function getNotificationLink(notification: Notification): string | null {
 
 function getNotificationIcon(type: string) {
   switch (type) {
+    case 'follow':
     case 'friend_request':
     case 'friend_accepted':
       return <UserPlus className="w-4 h-4" />;

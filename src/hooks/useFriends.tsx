@@ -149,6 +149,23 @@ export function useFriends() {
         });
 
       if (error) throw error;
+
+      // Send friend request notification
+      const { data: myProfile } = await supabase
+        .from('profiles')
+        .select('display_name, username')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      const myName = myProfile?.display_name || myProfile?.username || 'Someone';
+      await supabase.from('notifications').insert({
+        user_id: addresseeId,
+        type: 'friend_request',
+        title: 'Friend Request',
+        body: `${myName} sent you a friend request`,
+        data: { user_id: user.id },
+      });
+
       await fetchFriends();
       return { error: null };
     } catch (error) {
@@ -160,12 +177,38 @@ export function useFriends() {
     if (!user) return { error: new Error('Not authenticated') };
 
     try {
+      // Get the friendship first to know who to notify
+      const { data: friendship } = await supabase
+        .from('friendships')
+        .select('requester_id')
+        .eq('id', friendshipId)
+        .maybeSingle();
+
       const { error } = await supabase
         .from('friendships')
         .update({ status: 'accepted' })
         .eq('id', friendshipId);
 
       if (error) throw error;
+
+      // Notify the original requester
+      if (friendship && friendship.requester_id !== user.id) {
+        const { data: myProfile } = await supabase
+          .from('profiles')
+          .select('display_name, username')
+          .eq('user_id', user.id)
+          .maybeSingle();
+
+        const myName = myProfile?.display_name || myProfile?.username || 'Someone';
+        await supabase.from('notifications').insert({
+          user_id: friendship.requester_id,
+          type: 'friend_accepted',
+          title: 'Friend Request Accepted',
+          body: `${myName} accepted your friend request`,
+          data: { user_id: user.id },
+        });
+      }
+
       await fetchFriends();
       return { error: null };
     } catch (error) {

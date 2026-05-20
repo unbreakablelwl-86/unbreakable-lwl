@@ -169,6 +169,25 @@ export function usePosts() {
       await supabase.from('post_kudos').delete().eq('post_id', postId).eq('user_id', user.id);
     } else {
       await supabase.from('post_kudos').insert({ post_id: postId, user_id: user.id });
+
+      // Send like notification (skip if own post)
+      if (post.user_id !== user.id) {
+        const { data: myProfile } = await supabase
+          .from('profiles')
+          .select('display_name, username')
+          .eq('user_id', user.id)
+          .maybeSingle();
+
+        const myName = myProfile?.display_name || myProfile?.username || 'Someone';
+
+        await supabase.from('notifications').insert({
+          user_id: post.user_id,
+          type: 'post_like',
+          title: 'Post Liked',
+          body: `${myName} liked your post`,
+          data: { liker_id: user.id, post_id: postId, post_user_id: post.user_id },
+        });
+      }
     }
 
     await fetchPosts();
