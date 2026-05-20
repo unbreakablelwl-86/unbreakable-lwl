@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { Send, MessageSquarePlus, Trash2, Loader2, Flame, Sparkles, Video, UtensilsCrossed, PanelLeftClose, PanelLeftOpen, Dumbbell, TrendingUp, BarChart3, Brain, Zap, Heart, MessageCircle } from 'lucide-react';
+import { Send, MessageSquarePlus, Trash2, Loader2, Flame, Sparkles, UtensilsCrossed, PanelLeftClose, PanelLeftOpen, Dumbbell, TrendingUp, BarChart3, Brain, Zap, Heart, MessageCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -13,7 +13,7 @@ import { AuthModal } from '@/components/tracker/AuthModal';
 import { useAuth } from '@/hooks/useAuth';
 import { useHelpChat, Message } from '@/hooks/useHelpChat';
 import { ThemedLogo } from '@/components/ThemedLogo';
-import { ChatMediaUpload, ChatMedia } from '@/components/coaching/ChatMediaUpload';
+
 import { ProfileButton } from '@/components/coaching/ProfileButton';
 import { PlanDisplayCard } from '@/components/coaching/PlanDisplayCard';
 
@@ -33,9 +33,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { supabase } from '@/integrations/supabase/client';
 import { useQueryClient } from '@tanstack/react-query';
 
-interface MessageWithMedia extends Message {
-  media?: ChatMedia;
-}
+type MessageWithMedia = Message;
 
 interface GeneratedPlanInfo {
   type: 'programme' | 'meal_plan' | 'mindset';
@@ -79,15 +77,6 @@ function MessageBubble({ message }: { message: MessageWithMedia }) {
             ? 'bg-primary/15 border border-primary/30 rounded-br-md'
             : 'bg-card/60 border border-primary/20 rounded-bl-md shadow-[0_0_15px_hsl(24_100%_50%/0.08)]'
         }`}>
-          {message.media && (
-            <div className="mb-3">
-              {message.media.type === 'image' ? (
-                <img src={message.media.url} alt="Attached" className="rounded-xl max-h-52 object-cover" />
-              ) : (
-                <video src={message.media.url} controls className="rounded-xl max-h-52 w-full" />
-              )}
-            </div>
-          )}
           <div className={`text-sm leading-relaxed ${isUser ? 'text-foreground' : 'text-foreground/90'}`}>
             {isUser ? message.content : formatContent(message.content)}
           </div>
@@ -305,8 +294,7 @@ export default function Help() {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [input, setInput] = useState('');
   const [sidebarOpen, setSidebarOpen] = useState(!isMobile);
-  const [selectedMedia, setSelectedMedia] = useState<ChatMedia | null>(null);
-  const [messagesWithMedia, setMessagesWithMedia] = useState<Map<string, ChatMedia>>(new Map());
+
   const [programmeGenerating, setProgrammeGenerating] = useState(false);
   const [mealPlanGenerating, setMealPlanGenerating] = useState(false);
   const [mindsetGenerating, setMindsetGenerating] = useState(false);
@@ -426,27 +414,13 @@ export default function Help() {
   // ─── Handlers (unchanged business logic) ─────────────────────────────────
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if ((!input.trim() && !selectedMedia) || isLoading || isGenerating || isMealPlanGenerating) return;
+    if (!input.trim() || isLoading || isGenerating || isMealPlanGenerating) return;
     if (!user) { setShowAuthModal(true); return; }
 
-    let messageContent = input;
-
-    if (selectedMedia) {
-      const mediaContext = selectedMedia.type === 'video'
-        ? `[Attached video: ${selectedMedia.name}]`
-        : `[Attached image: ${selectedMedia.name}]`;
-      messageContent = messageContent ? `${messageContent}\n\n${mediaContext}` : `Please review this ${selectedMedia.type}: ${selectedMedia.name}`;
-    }
-    const mediaAttachments = selectedMedia ? [{ type: selectedMedia.type, url: selectedMedia.url, name: selectedMedia.name }] : undefined;
-
-    if (selectedMedia) {
-      setMessagesWithMedia(prev => new Map(prev).set(`content:${messageContent}`, selectedMedia));
-    }
-    sendMessage(messageContent, {
-      mediaAttachments,
+    sendMessage(input, {
       callerRole,
     });
-    setInput(''); setSelectedMedia(null);
+    setInput('');
   };
 
   const handleQuickAction = (prompt: string) => {
@@ -558,8 +532,7 @@ export default function Help() {
         .trim();
       return { ...msg, content: cleanContent };
     }
-    const mediaEntry = messagesWithMedia.get(`content:${msg.content}`);
-    return { ...msg, media: mediaEntry };
+    return msg;
   });
 
   const hasMessages = enrichedMessages.length > 0;
@@ -751,33 +724,7 @@ export default function Help() {
             {/* ─── Input Area (pinned bottom) ─── */}
             <div className="flex-shrink-0 border-t border-border/50 bg-card/40 backdrop-blur-md p-4">
               <form onSubmit={handleSubmit} className="max-w-3xl mx-auto">
-                {/* Media preview */}
-                {selectedMedia && (
-                  <div className="mb-3 p-3 bg-muted/20 rounded-xl border border-border/50">
-                    <div className="flex items-center gap-3">
-                      {selectedMedia.type === 'image' ? (
-                        <img src={selectedMedia.url} alt="Preview" className="w-14 h-14 object-cover rounded-lg" />
-                      ) : (
-                        <div className="w-14 h-14 bg-muted rounded-lg flex items-center justify-center">
-                          <Video className="w-5 h-5 text-primary" />
-                        </div>
-                      )}
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium truncate">{selectedMedia.name}</p>
-                        <p className="text-xs text-muted-foreground">{selectedMedia.type === 'video' ? 'Video attached' : 'Image attached'}</p>
-                      </div>
-                      <Button type="button" variant="ghost" size="sm" onClick={() => setSelectedMedia(null)}>Remove</Button>
-                    </div>
-                  </div>
-                )}
-
                 <div className="flex items-end gap-2">
-                  <ChatMediaUpload
-                    onMediaSelect={setSelectedMedia}
-                    selectedMedia={selectedMedia}
-                    onClearMedia={() => setSelectedMedia(null)}
-                    disabled={isLoading || isAnyGenerating}
-                  />
                   <div className="flex-1 relative">
                     <textarea
                       ref={inputRef}
@@ -801,7 +748,7 @@ export default function Help() {
                   </div>
                   <Button
                     type="submit"
-                    disabled={isLoading || isAnyGenerating || (!input.trim() && !selectedMedia)}
+                    disabled={isLoading || isAnyGenerating || !input.trim()}
                     className="h-11 px-5 rounded-xl"
                   >
                     {isLoading || isAnyGenerating ? (
