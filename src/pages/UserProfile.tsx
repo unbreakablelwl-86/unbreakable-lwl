@@ -1,18 +1,20 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { MainNavigation } from '@/components/MainNavigation';
 import { UnifiedFooter } from '@/components/UnifiedFooter';
 import { useAuth } from '@/hooks/useAuth';
 import { useFriends } from '@/hooks/useFriends';
 import { useConversations } from '@/hooks/useConversations';
+import { useFollow, FollowUser } from '@/hooks/useFollow';
 import { supabase } from '@/integrations/supabase/client';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Separator } from '@/components/ui/separator';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { RichContent } from '@/components/ui/RichContent';
+import { SocialLinksDisplay } from '@/components/profile/SocialLinksDisplay';
 import { toast } from 'sonner';
 import {
   User,
@@ -21,18 +23,21 @@ import {
   MessageCircle,
   MapPin,
   Calendar,
-  Trophy,
-  Activity,
-  Clock,
-  Loader2,
+  Grid3X3,
+  Heart,
+  MessageSquare,
   ArrowLeft,
   CheckCircle,
   XCircle,
+  Clock,
+  Lock,
+  Image as ImageIcon,
+  Play,
+  X,
 } from 'lucide-react';
-import { formatDistanceToNow, format } from 'date-fns';
-import { SocialLinksDisplay } from '@/components/profile/SocialLinksDisplay';
-import { FollowButton } from '@/components/social/FollowButton';
+import { format, formatDistanceToNow } from 'date-fns';
 
+// ─── Types ───────────────────────────────────────────────────────────────────
 interface UserProfileData {
   user_id: string;
   display_name: string | null;
@@ -53,63 +58,320 @@ interface UserProfileData {
   created_at: string;
 }
 
+interface UserPost {
+  id: string;
+  content: string | null;
+  image_url: string | null;
+  video_url: string | null;
+  visibility: string;
+  created_at: string;
+  kudos_count: number;
+  comments_count: number;
+  has_kudos: boolean;
+  media_items: { media_type: string; media_url: string; thumbnail_url: string | null }[];
+}
+
+// ─── Follow List Modal ───────────────────────────────────────────────────────
+function FollowListModal({
+  isOpen,
+  onClose,
+  title,
+  users,
+  loading,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  title: string;
+  users: FollowUser[];
+  loading: boolean;
+}) {
+  const navigate = useNavigate();
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={onClose}>
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.95 }}
+        className="w-full max-w-sm mx-4 bg-card border border-border rounded-2xl shadow-2xl overflow-hidden"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between p-4 border-b border-border">
+          <h3 className="font-display text-sm tracking-wider">{title}</h3>
+          <button onClick={onClose} className="p-1 hover:bg-muted rounded-full transition-colors">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+        <div className="max-h-96 overflow-y-auto">
+          {loading ? (
+            <div className="flex justify-center py-12">
+              <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+            </div>
+          ) : users.length === 0 ? (
+            <div className="py-12 text-center text-muted-foreground text-sm">
+              No users yet
+            </div>
+          ) : (
+            users.map((u) => (
+              <button
+                key={u.user_id}
+                className="w-full flex items-center gap-3 px-4 py-3 hover:bg-muted/50 transition-colors text-left"
+                onClick={() => {
+                  navigate(`/user/${u.user_id}`);
+                  onClose();
+                }}
+              >
+                <Avatar className="w-10 h-10">
+                  <AvatarImage src={u.avatar_url || undefined} />
+                  <AvatarFallback className="bg-primary/20 text-primary font-display text-sm">
+                    {(u.display_name || u.username || '?')[0].toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="min-w-0">
+                  <p className="font-display text-sm tracking-wide truncate">
+                    {u.display_name || u.username || 'Athlete'}
+                  </p>
+                  {u.username && (
+                    <p className="text-xs text-muted-foreground truncate">@{u.username}</p>
+                  )}
+                </div>
+              </button>
+            ))
+          )}
+        </div>
+      </motion.div>
+    </div>
+  );
+}
+
+// ─── Post Grid Item ──────────────────────────────────────────────────────────
+function PostGridItem({ post, onClick }: { post: UserPost; onClick: () => void }) {
+  const thumbnail =
+    post.media_items?.[0]?.thumbnail_url ||
+    post.media_items?.[0]?.media_url ||
+    post.image_url ||
+    null;
+  const isVideo = post.video_url || post.media_items?.[0]?.media_type === 'video';
+  const hasMultiple = (post.media_items?.length || 0) > 1;
+
+  return (
+    <button
+      onClick={onClick}
+      className="relative aspect-square bg-muted/30 rounded-lg overflow-hidden group border border-border/50 hover:border-primary/30 transition-all"
+    >
+      {thumbnail ? (
+        <img src={thumbnail} alt="" className="w-full h-full object-cover" />
+      ) : (
+        <div className="w-full h-full flex items-center justify-center p-3">
+          <p className="text-xs text-muted-foreground line-clamp-4 text-center">
+            {post.content?.slice(0, 100)}
+          </p>
+        </div>
+      )}
+
+      {/* Overlay icons */}
+      {isVideo && (
+        <div className="absolute top-2 right-2">
+          <Play className="w-4 h-4 text-white drop-shadow-lg" fill="white" />
+        </div>
+      )}
+      {hasMultiple && (
+        <div className="absolute top-2 right-2">
+          <Grid3X3 className="w-4 h-4 text-white drop-shadow-lg" />
+        </div>
+      )}
+
+      {/* Hover overlay with counts */}
+      <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4">
+        <span className="flex items-center gap-1 text-white text-sm font-semibold">
+          <Heart className="w-4 h-4" fill="white" /> {post.kudos_count}
+        </span>
+        <span className="flex items-center gap-1 text-white text-sm font-semibold">
+          <MessageSquare className="w-4 h-4" fill="white" /> {post.comments_count}
+        </span>
+      </div>
+    </button>
+  );
+}
+
+// ─── Post Detail Modal ───────────────────────────────────────────────────────
+function PostDetailModal({
+  post,
+  profile,
+  onClose,
+  onToggleKudos,
+}: {
+  post: UserPost | null;
+  profile: UserProfileData;
+  onClose: () => void;
+  onToggleKudos: (postId: string) => void;
+}) {
+  if (!post) return null;
+
+  const mediaUrl = post.media_items?.[0]?.media_url || post.image_url || post.video_url;
+  const isVideo = post.video_url || post.media_items?.[0]?.media_type === 'video';
+  const displayName = profile.display_name || profile.username || 'Athlete';
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm" onClick={onClose}>
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="w-full max-w-2xl mx-4 bg-card border border-border rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between p-4 border-b border-border shrink-0">
+          <div className="flex items-center gap-3">
+            <Avatar className="w-8 h-8">
+              <AvatarImage src={profile.avatar_url || undefined} />
+              <AvatarFallback className="bg-primary/20 text-primary font-display text-xs">
+                {displayName[0].toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+            <div>
+              <p className="font-display text-sm tracking-wide">{displayName}</p>
+              <p className="text-xs text-muted-foreground">
+                {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
+              </p>
+            </div>
+          </div>
+          <button onClick={onClose} className="p-1 hover:bg-muted rounded-full">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Media */}
+        {mediaUrl && (
+          <div className="border-b border-border shrink-0">
+            {isVideo ? (
+              <video src={mediaUrl} controls className="w-full max-h-[50vh] object-contain bg-black" />
+            ) : (
+              <img src={mediaUrl} alt="" className="w-full max-h-[50vh] object-contain bg-black" />
+            )}
+          </div>
+        )}
+
+        {/* Content + Actions */}
+        <div className="p-4 overflow-y-auto">
+          <div className="flex items-center gap-4 mb-3">
+            <button
+              onClick={() => onToggleKudos(post.id)}
+              className="flex items-center gap-1.5 text-sm transition-colors hover:text-primary"
+            >
+              <Heart
+                className={`w-5 h-5 ${post.has_kudos ? 'text-primary fill-primary' : ''}`}
+              />
+              <span className="font-medium">{post.kudos_count}</span>
+            </button>
+            <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
+              <MessageSquare className="w-5 h-5" />
+              <span>{post.comments_count}</span>
+            </span>
+          </div>
+          {post.content && (
+            <RichContent text={post.content} className="text-sm" />
+          )}
+        </div>
+      </motion.div>
+    </div>
+  );
+}
+
+// ─── Main Page ───────────────────────────────────────────────────────────────
 export default function UserProfile() {
   const { userId } = useParams<{ userId: string }>();
   const { user } = useAuth();
   const navigate = useNavigate();
   const { friends, pendingRequests, sendFriendRequest, acceptFriendRequest, declineFriendRequest, removeFriend } = useFriends();
   const { startConversation } = useConversations();
+  const { isFollowing, followerCount, followingCount, postCount, loading: followLoading, toggleFollow, fetchFollowers, fetchFollowing, isSelf } = useFollow(userId);
 
   const [profile, setProfile] = useState<UserProfileData | null>(null);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
+  const [posts, setPosts] = useState<UserPost[]>([]);
+  const [postsLoading, setPostsLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState('posts');
+  const [selectedPost, setSelectedPost] = useState<UserPost | null>(null);
+  const [followModal, setFollowModal] = useState<'followers' | 'following' | null>(null);
+  const [followUsers, setFollowUsers] = useState<FollowUser[]>([]);
+  const [followListLoading, setFollowListLoading] = useState(false);
 
-  // Check if viewing own profile
   const isOwnProfile = user?.id === userId;
-
-  // Friend status - check if user is in accepted friends list
   const isFriend = friends.some((f) => f.user_id === userId);
-  
-  // Check pending requests
-  const pendingFromThem = pendingRequests.find(
-    (p) => p.user_id === userId && p.type === 'received'
-  );
-  const pendingToThem = pendingRequests.find(
-    (p) => p.user_id === userId && p.type === 'sent'
-  );
+  const pendingFromThem = pendingRequests.find((p) => p.user_id === userId && p.type === 'received');
+  const pendingToThem = pendingRequests.find((p) => p.user_id === userId && p.type === 'sent');
 
+  // Fetch profile
   useEffect(() => {
     if (!userId) return;
-
-    const fetchProfile = async () => {
-      setLoading(true);
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('user_id', userId)
-        .single();
-
-      if (error || !data) {
-        console.error('Error fetching profile:', error);
-        setProfile(null);
-      } else {
-        setProfile(data);
-      }
-      setLoading(false);
-    };
-
-    fetchProfile();
+    setLoading(true);
+    supabase
+      .from('profiles')
+      .select('*')
+      .eq('user_id', userId)
+      .single()
+      .then(({ data, error }) => {
+        setProfile(error || !data ? null : data);
+        setLoading(false);
+      });
   }, [userId]);
 
+  // Fetch user posts
+  const fetchPosts = useCallback(async () => {
+    if (!userId) return;
+    setPostsLoading(true);
+
+    const { data } = await supabase
+      .from('posts')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
+      .limit(50);
+
+    if (data) {
+      const enriched = await Promise.all(
+        data.map(async (post) => {
+          const [kudos, comments, userKudos, media] = await Promise.all([
+            supabase.from('post_kudos').select('id', { count: 'exact', head: true }).eq('post_id', post.id),
+            supabase.from('post_comments').select('id', { count: 'exact', head: true }).eq('post_id', post.id),
+            user
+              ? supabase.from('post_kudos').select('id').eq('post_id', post.id).eq('user_id', user.id).maybeSingle()
+              : Promise.resolve({ data: null }),
+            supabase.from('post_media').select('media_type, media_url, thumbnail_url').eq('post_id', post.id).order('sort_order'),
+          ]);
+          return {
+            ...post,
+            kudos_count: kudos.count || 0,
+            comments_count: comments.count || 0,
+            has_kudos: !!userKudos.data,
+            media_items: media.data || [],
+          };
+        })
+      );
+      setPosts(enriched);
+    }
+    setPostsLoading(false);
+  }, [userId, user]);
+
+  useEffect(() => {
+    if (profile) fetchPosts();
+  }, [profile, fetchPosts]);
+
+  // Redirect own profile
+  useEffect(() => {
+    if (isOwnProfile) navigate('/profile');
+  }, [isOwnProfile, navigate]);
+
+  // Handlers
   const handleSendRequest = async () => {
     if (!userId) return;
     setActionLoading(true);
     const { error } = await sendFriendRequest(userId);
-    if (error) {
-      toast.error('Failed to send friend request');
-    } else {
-      toast.success('Friend request sent!');
-    }
+    toast[error ? 'error' : 'success'](error ? 'Failed to send request' : 'Friend request sent!');
     setActionLoading(false);
   };
 
@@ -117,11 +379,7 @@ export default function UserProfile() {
     if (!pendingFromThem) return;
     setActionLoading(true);
     const { error } = await acceptFriendRequest(pendingFromThem.friendship_id);
-    if (error) {
-      toast.error('Failed to accept request');
-    } else {
-      toast.success('Friend request accepted!');
-    }
+    toast[error ? 'error' : 'success'](error ? 'Failed to accept' : 'Friend request accepted!');
     setActionLoading(false);
   };
 
@@ -129,11 +387,7 @@ export default function UserProfile() {
     if (!pendingFromThem) return;
     setActionLoading(true);
     const { error } = await declineFriendRequest(pendingFromThem.friendship_id);
-    if (error) {
-      toast.error('Failed to decline request');
-    } else {
-      toast.success('Request declined');
-    }
+    toast[error ? 'error' : 'success'](error ? 'Failed to decline' : 'Request declined');
     setActionLoading(false);
   };
 
@@ -143,11 +397,7 @@ export default function UserProfile() {
     const friendship = friends.find((f) => f.user_id === userId);
     if (friendship) {
       const { error } = await removeFriend(friendship.friendship_id);
-      if (error) {
-        toast.error('Failed to remove friend');
-      } else {
-        toast.success('Friend removed');
-      }
+      toast[error ? 'error' : 'success'](error ? 'Failed to remove friend' : 'Friend removed');
     }
     setActionLoading(false);
   };
@@ -156,23 +406,39 @@ export default function UserProfile() {
     if (!userId) return;
     setActionLoading(true);
     const { error, conversation } = await startConversation(userId);
-    if (error) {
-      toast.error(error.message || 'Failed to start conversation');
-    } else if (conversation) {
-      navigate(`/inbox?cid=${conversation.id}`);
-    } else {
-      navigate('/inbox');
-    }
+    if (error) toast.error(error.message || 'Failed to start conversation');
+    else if (conversation) navigate(`/inbox?cid=${conversation.id}`);
+    else navigate('/inbox');
     setActionLoading(false);
   };
 
-  // Redirect to own profile page if viewing self
-  useEffect(() => {
-    if (isOwnProfile) {
-      navigate('/profile');
-    }
-  }, [isOwnProfile, navigate]);
+  const handleToggleKudos = async (postId: string) => {
+    if (!user) return;
+    const post = posts.find((p) => p.id === postId);
+    if (!post) return;
 
+    if (post.has_kudos) {
+      await supabase.from('post_kudos').delete().eq('post_id', postId).eq('user_id', user.id);
+    } else {
+      await supabase.from('post_kudos').insert({ post_id: postId, user_id: user.id });
+    }
+    fetchPosts();
+    setSelectedPost((prev) =>
+      prev?.id === postId
+        ? { ...prev, has_kudos: !prev.has_kudos, kudos_count: prev.kudos_count + (prev.has_kudos ? -1 : 1) }
+        : prev
+    );
+  };
+
+  const openFollowList = async (type: 'followers' | 'following') => {
+    setFollowModal(type);
+    setFollowListLoading(true);
+    const users = type === 'followers' ? await fetchFollowers() : await fetchFollowing();
+    setFollowUsers(users);
+    setFollowListLoading(false);
+  };
+
+  // ─── Loading / Not Found states ────────────────────────────────────────────
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -202,61 +468,68 @@ export default function UserProfile() {
   const displayName = profile.display_name || profile.username || 'Athlete';
   const initials = displayName.slice(0, 2).toUpperCase();
 
-  // Calculate stats
-  const totalKm = profile.total_distance_km || 0;
-  const totalRuns = profile.total_runs || 0;
-  const totalSeconds = profile.total_time_seconds || 0;
-  const totalHours = Math.floor(totalSeconds / 3600);
-  const totalMins = Math.floor((totalSeconds % 3600) / 60);
-
   return (
     <div className="min-h-screen bg-background">
       <MainNavigation />
 
-      <main className="pt-24 pb-12 container mx-auto px-4">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="max-w-2xl mx-auto space-y-6"
-        >
+      <main className="pt-20 pb-12">
+        <div className="max-w-2xl mx-auto px-4">
           {/* Back button */}
-          <Button variant="ghost" onClick={() => navigate(-1)} className="mb-4">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back
+          <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="mb-4 -ml-2">
+            <ArrowLeft className="w-4 h-4 mr-1" />
+            <span className="text-xs font-display tracking-wide">BACK</span>
           </Button>
 
-          {/* Profile Header Card */}
-          <Card className="p-6 border-2 border-border">
-            <div className="flex flex-col items-center text-center gap-4">
-              <Avatar className="w-24 h-24 border-4 border-primary/20">
+          {/* ─── Profile Header (Instagram-style) ─── */}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="space-y-5"
+          >
+            {/* Row: Avatar + Stats */}
+            <div className="flex items-center gap-6 sm:gap-10">
+              <Avatar className="w-20 h-20 sm:w-24 sm:h-24 border-[3px] border-primary/30 shrink-0 ring-2 ring-primary/10 ring-offset-2 ring-offset-background">
                 <AvatarImage src={profile.avatar_url || undefined} />
-                <AvatarFallback className="bg-primary/20 text-primary font-display text-2xl">
+                <AvatarFallback className="bg-primary/20 text-primary font-display text-xl sm:text-2xl">
                   {initials}
                 </AvatarFallback>
               </Avatar>
 
-              <div>
-                <h1 className="font-display text-2xl tracking-wide text-foreground">
-                  {displayName}
-                </h1>
-                {profile.username && (
-                  <p className="text-muted-foreground">@{profile.username}</p>
-                )}
+              {/* Stats row */}
+              <div className="flex-1 grid grid-cols-3 gap-2 text-center">
+                <div>
+                  <p className="font-display text-lg sm:text-xl text-foreground">{postCount}</p>
+                  <p className="text-[10px] sm:text-xs font-display tracking-wider text-muted-foreground">POSTS</p>
+                </div>
+                <button onClick={() => openFollowList('followers')} className="hover:opacity-70 transition-opacity">
+                  <p className="font-display text-lg sm:text-xl text-foreground">{followerCount}</p>
+                  <p className="text-[10px] sm:text-xs font-display tracking-wider text-muted-foreground">FOLLOWERS</p>
+                </button>
+                <button onClick={() => openFollowList('following')} className="hover:opacity-70 transition-opacity">
+                  <p className="font-display text-lg sm:text-xl text-foreground">{followingCount}</p>
+                  <p className="text-[10px] sm:text-xs font-display tracking-wider text-muted-foreground">FOLLOWING</p>
+                </button>
               </div>
+            </div>
 
-              {profile.bio && (
-                <p className="text-muted-foreground max-w-md">{profile.bio}</p>
+            {/* Name + Bio */}
+            <div className="space-y-1.5">
+              <h1 className="font-display text-lg tracking-wide text-foreground">{displayName}</h1>
+              {profile.username && (
+                <p className="text-sm text-muted-foreground">@{profile.username}</p>
               )}
-
-              <div className="flex items-center gap-4 text-sm text-muted-foreground">
+              {profile.bio && (
+                <p className="text-sm text-foreground/80 leading-relaxed whitespace-pre-wrap">{profile.bio}</p>
+              )}
+              <div className="flex items-center gap-4 text-xs text-muted-foreground pt-1">
                 {profile.location && (
                   <span className="flex items-center gap-1">
-                    <MapPin className="w-4 h-4" />
+                    <MapPin className="w-3.5 h-3.5" />
                     {profile.location}
                   </span>
                 )}
                 <span className="flex items-center gap-1">
-                  <Calendar className="w-4 h-4" />
+                  <Calendar className="w-3.5 h-3.5" />
                   Joined {format(new Date(profile.created_at), 'MMM yyyy')}
                 </span>
               </div>
@@ -270,78 +543,153 @@ export default function UserProfile() {
                 youtube={profile.social_youtube}
                 snapchat={profile.social_snapchat}
               />
-
-              {/* Follow Button */}
-              {user && !isOwnProfile && userId && (
-                <div className="mt-4">
-                  <FollowButton targetUserId={userId} variant="default" />
-                </div>
-              )}
-
-              {/* Action Buttons */}
-              {user && !isOwnProfile && (
-                <div className="flex gap-3 mt-3">
-                  {isFriend ? (
-                    <>
-                      <Button onClick={handleMessage} disabled={actionLoading}>
-                        <MessageCircle className="w-4 h-4 mr-2" />
-                        Message
-                      </Button>
-                      <Button
-                        variant="outline"
-                        onClick={handleRemoveFriend}
-                        disabled={actionLoading}
-                      >
-                        <UserMinus className="w-4 h-4 mr-2" />
-                        Unfriend
-                      </Button>
-                    </>
-                  ) : pendingFromThem ? (
-                    <div className="flex gap-2">
-                      <Button onClick={handleAcceptRequest} disabled={actionLoading}>
-                        <CheckCircle className="w-4 h-4 mr-2" />
-                        Accept
-                      </Button>
-                      <Button
-                        variant="outline"
-                        onClick={handleRejectRequest}
-                        disabled={actionLoading}
-                      >
-                        <XCircle className="w-4 h-4 mr-2" />
-                        Decline
-                      </Button>
-                    </div>
-                  ) : pendingToThem ? (
-                    <Button variant="outline" disabled>
-                      <Clock className="w-4 h-4 mr-2" />
-                      Request Pending
-                    </Button>
-                  ) : (
-                    <Button onClick={handleSendRequest} disabled={actionLoading}>
-                      <UserPlus className="w-4 h-4 mr-2" />
-                      Add Friend
-                    </Button>
-                  )}
-                </div>
-              )}
             </div>
-          </Card>
 
+            {/* Action Buttons */}
+            {user && !isOwnProfile && (
+              <div className="flex gap-2">
+                {/* Follow / Unfollow */}
+                <Button
+                  onClick={toggleFollow}
+                  disabled={followLoading}
+                  variant={isFollowing ? 'outline' : 'default'}
+                  className="flex-1 font-display text-xs tracking-wider h-9"
+                >
+                  {isFollowing ? 'FOLLOWING' : 'FOLLOW'}
+                </Button>
 
-          {/* Private Profile Notice */}
-          {!profile.is_public && !isFriend && (
-            <Card className="p-6 border-2 border-border text-center">
-              <User className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-              <h2 className="font-display text-lg tracking-wide mb-2">PRIVATE PROFILE</h2>
-              <p className="text-muted-foreground">
-                This user's profile is private. Send a friend request to see their full profile.
-              </p>
-            </Card>
-          )}
-        </motion.div>
+                {/* Message */}
+                <Button
+                  variant="outline"
+                  onClick={handleMessage}
+                  disabled={actionLoading}
+                  className="flex-1 font-display text-xs tracking-wider h-9"
+                >
+                  <MessageCircle className="w-4 h-4 mr-1.5" />
+                  MESSAGE
+                </Button>
+
+                {/* Friend actions */}
+                {isFriend ? (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={handleRemoveFriend}
+                    disabled={actionLoading}
+                    className="h-9 w-9 shrink-0"
+                    title="Unfriend"
+                  >
+                    <UserMinus className="w-4 h-4" />
+                  </Button>
+                ) : pendingFromThem ? (
+                  <div className="flex gap-1 shrink-0">
+                    <Button size="icon" onClick={handleAcceptRequest} disabled={actionLoading} className="h-9 w-9" title="Accept">
+                      <CheckCircle className="w-4 h-4" />
+                    </Button>
+                    <Button variant="ghost" size="icon" onClick={handleRejectRequest} disabled={actionLoading} className="h-9 w-9" title="Decline">
+                      <XCircle className="w-4 h-4" />
+                    </Button>
+                  </div>
+                ) : pendingToThem ? (
+                  <Button variant="ghost" size="icon" disabled className="h-9 w-9 shrink-0" title="Request pending">
+                    <Clock className="w-4 h-4" />
+                  </Button>
+                ) : (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={handleSendRequest}
+                    disabled={actionLoading}
+                    className="h-9 w-9 shrink-0"
+                    title="Add friend"
+                  >
+                    <UserPlus className="w-4 h-4" />
+                  </Button>
+                )}
+              </div>
+            )}
+
+            {/* ─── Private Profile Notice ─── */}
+            {!profile.is_public && !isFriend && !isOwnProfile && (
+              <Card className="p-6 border border-border text-center">
+                <Lock className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
+                <h2 className="font-display text-sm tracking-wider mb-1">PRIVATE PROFILE</h2>
+                <p className="text-xs text-muted-foreground">
+                  Follow or add as friend to see their posts.
+                </p>
+              </Card>
+            )}
+
+            {/* ─── Post Grid (Instagram-style) ─── */}
+            {(profile.is_public || isFriend || isOwnProfile) && (
+              <>
+                {/* Tab divider */}
+                <div className="border-t border-border pt-3">
+                  <Tabs value={activeTab} onValueChange={setActiveTab}>
+                    <TabsList className="w-full grid grid-cols-1 h-10 bg-transparent border-b border-border rounded-none">
+                      <TabsTrigger
+                        value="posts"
+                        className="font-display text-xs tracking-wider data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none bg-transparent"
+                      >
+                        <Grid3X3 className="w-4 h-4 mr-1.5" />
+                        POSTS
+                      </TabsTrigger>
+                    </TabsList>
+
+                    <TabsContent value="posts" className="mt-4">
+                      {postsLoading ? (
+                        <div className="flex justify-center py-12">
+                          <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                        </div>
+                      ) : posts.length === 0 ? (
+                        <div className="text-center py-16">
+                          <ImageIcon className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
+                          <p className="font-display text-sm tracking-wide text-muted-foreground">NO POSTS YET</p>
+                        </div>
+                      ) : (
+                        <div className="grid grid-cols-3 gap-1.5">
+                          {posts.map((post) => (
+                            <PostGridItem
+                              key={post.id}
+                              post={post}
+                              onClick={() => setSelectedPost(post)}
+                            />
+                          ))}
+                        </div>
+                      )}
+                    </TabsContent>
+                  </Tabs>
+                </div>
+              </>
+            )}
+          </motion.div>
+        </div>
       </main>
 
       <UnifiedFooter />
+
+      {/* Post Detail Modal */}
+      <AnimatePresence>
+        {selectedPost && profile && (
+          <PostDetailModal
+            post={selectedPost}
+            profile={profile}
+            onClose={() => setSelectedPost(null)}
+            onToggleKudos={handleToggleKudos}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Follow List Modal */}
+      <AnimatePresence>
+        <FollowListModal
+          isOpen={!!followModal}
+          onClose={() => setFollowModal(null)}
+          title={followModal === 'followers' ? 'FOLLOWERS' : 'FOLLOWING'}
+          users={followUsers}
+          loading={followListLoading}
+        />
+      </AnimatePresence>
     </div>
   );
 }
