@@ -294,15 +294,14 @@ export default function Inbox() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      {/* Header */}
-      <header className="border-b border-border bg-card sticky top-0 z-10">
-        <div className="container mx-auto px-4 py-3 flex items-center gap-4">
-          <Link to="/" className="flex items-center gap-2">
+      {/* Header — Instagram DM-style */}
+      <header className="border-b border-border bg-background/95 backdrop-blur-md sticky top-0 z-10">
+        <div className="container mx-auto px-4 py-3 flex items-center gap-3">
+          <Link to="/" className="p-1 -ml-1">
             <ArrowLeft className="w-5 h-5" />
-            <ThemedLogo className="h-8" />
           </Link>
-          <h1 className="font-display text-lg tracking-wide flex-1">
-            <span className="text-primary neon-glow-subtle">UNBREAKABLE</span> INBOX
+          <h1 className="font-display text-lg tracking-widest flex-1">
+            Messages
           </h1>
         </div>
       </header>
