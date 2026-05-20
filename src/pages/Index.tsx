@@ -17,7 +17,9 @@ import { FriendsListModal } from '@/components/tracker/FriendsListModal';
 import { SocialHeader } from '@/components/hub/SocialHeader';
 import { usePresence } from '@/hooks/usePresence';
 import { LandingPage } from '@/components/landing/LandingPage';
-import { Home, User, Plus } from 'lucide-react';
+import { Home, User, Plus, Search, MessageCircle } from 'lucide-react';
+import { useConversations } from '@/hooks/useConversations';
+import { Badge } from '@/components/ui/badge';
 
 type Tab = 'feed' | 'messages' | 'notifications';
 
@@ -57,6 +59,7 @@ const Index = () => {
   const hasCheckedMotivation = useRef(false);
   // Initialize presence tracking
   usePresence();
+  const { unreadCount: messageCount } = useConversations();
 
   // Handle checkout success redirect
   useEffect(() => {
@@ -150,32 +153,47 @@ const Index = () => {
           </div>
         </main>
 
-        {/* Mobile Bottom Navigation */}
-        <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-card border-t border-border z-50">
-          <div className="flex items-center justify-around py-2">
+        {/* Mobile Bottom Navigation — Instagram-style 5-tab */}
+        <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-card/95 backdrop-blur-md border-t border-border z-50 safe-area-pb">
+          <div className="flex items-center justify-around py-1.5 px-2">
             <button
               onClick={() => setActiveTab('feed')}
-              className={`flex flex-col items-center gap-1 px-4 py-2 ${
-                activeTab === 'feed' ? 'text-primary' : 'text-muted-foreground'
+              className={`flex flex-col items-center gap-0.5 p-2 ${
+                activeTab === 'feed' ? 'text-foreground' : 'text-muted-foreground'
               }`}
             >
-              <Home className={`w-6 h-6 ${activeTab === 'feed' ? '' : 'text-primary'}`} />
-              <span className="text-xs font-display tracking-wide">FEED</span>
+              <Home className="w-6 h-6" />
+            </button>
+            <button
+              onClick={() => setShowUserSearch(true)}
+              className="flex flex-col items-center gap-0.5 p-2 text-muted-foreground"
+            >
+              <Search className="w-6 h-6" />
             </button>
             <button
               onClick={() => setShowActionMenu(true)}
-              className="flex flex-col items-center gap-1 px-4 py-2"
+              className="flex flex-col items-center gap-0.5 p-2"
             >
-              <div className="w-14 h-14 rounded-full bg-primary flex items-center justify-center -mt-6 shadow-lg">
-                <Plus className="w-7 h-7 text-primary-foreground" />
+              <div className="w-10 h-10 rounded-lg bg-primary/10 border border-primary/30 flex items-center justify-center">
+                <Plus className="w-6 h-6 text-primary" />
               </div>
             </button>
             <button
-              onClick={() => navigate('/profile')}
-              className="flex flex-col items-center gap-1 px-4 py-2 text-muted-foreground"
+              onClick={() => navigate('/inbox')}
+              className="relative flex flex-col items-center gap-0.5 p-2 text-muted-foreground"
             >
-              <User className="w-6 h-6 text-primary" />
-              <span className="text-xs font-display tracking-wide">PROFILE</span>
+              <MessageCircle className="w-6 h-6" />
+              {messageCount > 0 && (
+                <Badge className="absolute -top-0.5 right-0 h-4 min-w-4 p-0 flex items-center justify-center text-[9px] bg-destructive border-card border-2">
+                  {messageCount > 9 ? '9+' : messageCount}
+                </Badge>
+              )}
+            </button>
+            <button
+              onClick={() => navigate('/profile')}
+              className="flex flex-col items-center gap-0.5 p-2 text-muted-foreground"
+            >
+              <User className="w-6 h-6" />
             </button>
           </div>
         </nav>
