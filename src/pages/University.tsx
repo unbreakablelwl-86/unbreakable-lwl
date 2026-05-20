@@ -102,8 +102,8 @@ export default function University() {
               className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 pt-3"
             >
               {[
-                { value: '16', suffix: '', label: 'Courses', icon: <BookOpen className="w-3.5 h-3.5" /> },
-                { value: '1800', suffix: '+', label: 'Quiz Questions', icon: <Award className="w-3.5 h-3.5" /> },
+                { value: '19', suffix: '', label: 'Courses', icon: <BookOpen className="w-3.5 h-3.5" /> },
+                { value: '4400', suffix: '+', label: 'Quiz Questions', icon: <Award className="w-3.5 h-3.5" /> },
                 { value: '4', suffix: '', label: 'Disciplines', icon: <Zap className="w-3.5 h-3.5" /> },
               ].map((stat) => (
                 <div key={stat.label} className="flex flex-col items-center gap-1">

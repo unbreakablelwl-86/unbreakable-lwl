@@ -4,8 +4,8 @@ export const level2Unit1Assessment: UnitAssessment = {
   unitNumber: 1,
   title: 'Understanding the Body — Unit Assessment',
   passMarkPercent: 80,
+  pickCount: 10,
   questions: [
-    // ─── CHAPTER 1: Basic Anatomy (6 questions) ───
     {
       type: 'multiple_choice',
       question: 'Which plane of movement does a squat primarily occur in?',
@@ -22,13 +22,6 @@ export const level2Unit1Assessment: UnitAssessment = {
     },
     {
       type: 'multiple_choice',
-      question: 'A lateral raise moves the arm away from the midline. Which plane of movement does this occur in?',
-      options: ['Transverse plane', 'Sagittal plane', 'Oblique plane', 'Frontal plane'],
-      correctAnswer: 3,
-      explanation: 'The frontal (coronal) plane divides the body into front and back. Movements that take limbs away from or towards the midline — abduction and adduction — occur in this plane.',
-    },
-    {
-      type: 'multiple_choice',
       question: 'What does the anatomical term "proximal" mean?',
       options: ['Towards the back', 'Further from the trunk', 'Closer to the trunk', 'Towards the surface'],
       correctAnswer: 2,
@@ -41,16 +34,6 @@ export const level2Unit1Assessment: UnitAssessment = {
       correctAnswer: 1,
       explanation: 'Superficial means closer to the surface. For example, the skin is superficial to the muscles beneath it.',
     },
-    {
-      type: 'scenario',
-      question: 'Which plane of movement is the primary concern for this exercise?',
-      scenario: 'You are performing a standing Russian twist holding a medicine ball. You rotate your torso left and right while keeping your hips facing forward.',
-      options: ['Transverse plane', 'Sagittal plane', 'Frontal plane', 'All three planes equally'],
-      correctAnswer: 0,
-      explanation: 'Rotation of the torso occurs in the transverse plane, which divides the body into upper and lower halves. Twisting and rotational movements are transverse plane movements.',
-    },
-
-    // ─── CHAPTER 2: Skeletal System (6 questions) ───
     {
       type: 'multiple_choice',
       question: 'Which type of joint allows movement in all directions?',
@@ -67,13 +50,6 @@ export const level2Unit1Assessment: UnitAssessment = {
     },
     {
       type: 'multiple_choice',
-      question: 'The knee joint is classified as which type of synovial joint?',
-      options: ['Saddle', 'Hinge', 'Pivot', 'Ball-and-socket'],
-      correctAnswer: 1,
-      explanation: 'The knee is a hinge joint, primarily allowing flexion and extension in one plane of movement.',
-    },
-    {
-      type: 'multiple_choice',
       question: 'Which type of bone is primarily found in the wrist and ankle?',
       options: ['Short bones', 'Long bones', 'Irregular bones', 'Flat bones'],
       correctAnswer: 0,
@@ -86,21 +62,6 @@ export const level2Unit1Assessment: UnitAssessment = {
       correctAnswer: 3,
       explanation: 'Articular (hyaline) cartilage covers the ends of bones in a synovial joint, providing a smooth surface that reduces friction during movement.',
     },
-    {
-      type: 'scenario',
-      question: 'What is the most likely explanation for this limitation?',
-      scenario: 'You notice you cannot fully extend your arm overhead during a shoulder press. There is no muscular weakness, but you have a history of a dislocated shoulder. You notice limited range of motion in all directions.',
-      options: [
-        'Tight hamstrings affecting upper body movement',
-        'A hinge joint restriction at the elbow',
-        'Damage to the ball-and-socket joint capsule or surrounding ligaments',
-        'Weak deltoid muscles',
-      ],
-      correctAnswer: 2,
-      explanation: 'A history of dislocation can damage the joint capsule and ligaments of the ball-and-socket shoulder joint, restricting its full multi-directional range of motion.',
-    },
-
-    // ─── CHAPTER 3: Muscular System (6 questions) ───
     {
       type: 'multiple_choice',
       question: 'What is an eccentric muscle contraction?',
@@ -122,13 +83,6 @@ export const level2Unit1Assessment: UnitAssessment = {
     },
     {
       type: 'multiple_choice',
-      question: 'During a bicep curl, what type of contraction occurs in the biceps as you lift the weight upward?',
-      options: ['Eccentric', 'Passive', 'Isometric', 'Concentric'],
-      correctAnswer: 3,
-      explanation: 'Concentric contraction is when the muscle shortens under tension. The biceps shorten as the weight is curled upward.',
-    },
-    {
-      type: 'multiple_choice',
       question: 'Which muscle fibre type is best suited for endurance activities such as marathon running?',
       options: ['Type IIx (fast-twitch)', 'Type IIa (intermediate)', 'Type I (slow-twitch)', 'Type III (super-fast)'],
       correctAnswer: 2,
@@ -142,21 +96,6 @@ export const level2Unit1Assessment: UnitAssessment = {
       correctAnswer: 1,
       explanation: 'During the lowering (eccentric) phase of a Romanian deadlift, the hamstrings are the primary agonist — they lengthen under tension to control the descent.',
     },
-    {
-      type: 'scenario',
-      question: 'What is the most likely cause of this issue?',
-      scenario: 'You only perform bench press, bicep curls, and shoulder press in every session. After 6 months, you develop rounded shoulders and upper back pain.',
-      options: [
-        'They have a muscular imbalance — too much anterior work, not enough posterior',
-        'They are not training heavy enough',
-        'They need to stretch more before training',
-        'Their nutrition is inadequate',
-      ],
-      correctAnswer: 0,
-      explanation: 'All three exercises target anterior (front) muscles. Without balanced posterior work (rows, rear delt work, back exercises), the front muscles become dominant, pulling the shoulders forward and causing postural issues.',
-    },
-
-    // ─── CHAPTER 4: Cardiovascular System (6 questions) ───
     {
       type: 'multiple_choice',
       question: 'What is stroke volume?',
@@ -183,13 +122,6 @@ export const level2Unit1Assessment: UnitAssessment = {
     },
     {
       type: 'multiple_choice',
-      question: 'Which chamber of the heart pumps oxygenated blood to the body?',
-      options: ['Right ventricle', 'Left ventricle', 'Right atrium', 'Left atrium'],
-      correctAnswer: 1,
-      explanation: 'The left ventricle is the most muscular chamber and is responsible for pumping oxygenated blood through the aorta to the rest of the body.',
-    },
-    {
-      type: 'multiple_choice',
       question: 'What is the correct formula for cardiac output?',
       options: [
         'Stroke volume × heart rate',
@@ -208,21 +140,6 @@ export const level2Unit1Assessment: UnitAssessment = {
       explanation: 'Veins carry deoxygenated blood back to the heart (with the exception of the pulmonary veins, which carry oxygenated blood from the lungs).',
     },
     {
-      type: 'scenario',
-      question: 'What is the most likely physiological explanation for this change?',
-      scenario: 'You begin a 12-week cardiovascular training programme after being sedentary. At the start, your resting heart rate was 78 bpm. After 12 weeks, it has dropped to 62 bpm, despite no change in medication or body weight.',
-      options: [
-        'Their blood volume has decreased',
-        'They have developed a heart condition',
-        'Their stroke volume has increased, so the heart pumps more blood per beat',
-        'Their heart has become weaker',
-      ],
-      correctAnswer: 2,
-      explanation: "Cardiovascular training increases stroke volume — the heart ejects more blood per contraction, so it doesn\'t need to beat as frequently at rest to maintain adequate cardiac output.",
-    },
-
-    // ─── CHAPTER 5: Energy Systems (6 questions) ───
-    {
       type: 'multiple_choice',
       question: 'Which energy system is primarily used during a heavy single repetition on the deadlift?',
       options: ['Aerobic system', 'ATP-PC system', 'Anaerobic glycolysis', 'Lactic acid system'],
@@ -235,13 +152,6 @@ export const level2Unit1Assessment: UnitAssessment = {
       options: ['8-12 seconds', '2-5 minutes', '30-60 seconds', '15-30 minutes'],
       correctAnswer: 0,
       explanation: 'The ATP-PC system provides immediate, high-intensity energy for approximately 8-12 seconds before it needs to be replenished.',
-    },
-    {
-      type: 'multiple_choice',
-      question: 'Which by-product of anaerobic glycolysis contributes to the "burning" sensation during high-rep sets?',
-      options: ['Creatine phosphate', 'Adenosine', 'Carbon dioxide', 'Lactic acid (lactate)'],
-      correctAnswer: 3,
-      explanation: 'During anaerobic glycolysis, the rapid breakdown of glucose produces lactate and hydrogen ions. The accumulation of hydrogen ions lowers pH in the muscle, contributing to the burning sensation and fatigue.',
     },
     {
       type: 'multiple_choice',
@@ -262,19 +172,6 @@ export const level2Unit1Assessment: UnitAssessment = {
       ],
       correctAnswer: 1,
       explanation: "Heavy sets of 3 reps primarily use the ATP-PC system, which requires 2-5 minutes to fully recover. With only 90 seconds rest, the system hasn\'t replenished, leading to performance decline.",
-    },
-    {
-      type: 'scenario',
-      question: 'Which energy system contribution best explains this athlete\'s performance profile?',
-      scenario: 'A 400m sprinter completes the first 200m in 22 seconds but slows dramatically in the final 100m, finishing in 52 seconds. After the race, they experience significant leg heaviness and nausea.',
-      options: [
-        'The anaerobic glycolytic system dominated the middle portion, causing lactate accumulation and fatigue',
-        'The ATP-PC system provided energy for the full race but ran out at the end',
-        'The aerobic system fatigued due to lack of oxygen',
-        'The athlete did not warm up properly',
-      ],
-      correctAnswer: 0,
-      explanation: 'A 400m sprint (~50 seconds) primarily uses the ATP-PC system for the initial burst, then shifts heavily to anaerobic glycolysis. The accumulation of lactate and hydrogen ions from glycolysis causes the dramatic slowdown, leg heaviness, and nausea in the final phase.',
-    },
+    }
   ],
 };

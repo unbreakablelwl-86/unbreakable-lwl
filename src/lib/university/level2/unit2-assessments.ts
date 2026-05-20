@@ -4,21 +4,14 @@ export const level2Unit2Assessment: UnitAssessment = {
   unitNumber: 2,
   title: 'Principles of Nutrition — Unit Assessment',
   passMarkPercent: 80,
+  pickCount: 10,
   questions: [
-    // ─── CHAPTER 1: Understanding Macronutrients (6 questions) ───
     {
       type: 'multiple_choice',
       question: 'How many calories does one gram of protein provide?',
       options: ['2 calories', '4 calories', '9 calories', '7 calories'],
       correctAnswer: 1,
       explanation: 'Protein provides 4 calories per gram, the same as carbohydrates. Fats provide 9 calories per gram.',
-    },
-    {
-      type: 'multiple_choice',
-      question: 'Which macronutrient has the highest thermic effect of food (TEF)?',
-      options: ['Protein', 'Carbohydrates', 'Fats', 'Alcohol'],
-      correctAnswer: 0,
-      explanation: 'Protein has the highest TEF at approximately 20-30%, meaning the body uses more energy digesting protein than any other macronutrient.',
     },
     {
       type: 'multiple_choice',
@@ -29,46 +22,17 @@ export const level2Unit2Assessment: UnitAssessment = {
     },
     {
       type: 'multiple_choice',
-      question: 'Which type of dietary fat should be avoided entirely?',
-      options: ['Saturated fats', 'Monounsaturated fats', 'Trans fats', 'Polyunsaturated fats'],
-      correctAnswer: 2,
-      explanation: 'Trans fats (artificially created through hydrogenation) increase LDL cholesterol and cardiovascular risk and should be avoided entirely. They are found in some processed foods and fried fast food.',
-    },
-    {
-      type: 'multiple_choice',
       question: 'How many essential amino acids must be obtained from the diet?',
       options: ['12', '9', '6', '20'],
       correctAnswer: 1,
       explanation: 'There are 9 essential amino acids that the body cannot produce and must be obtained from dietary protein. There are 20 amino acids in total.',
     },
     {
-      type: 'scenario',
-      question: 'What is the most likely cause of their symptoms?',
-      scenario: 'You have been following a very low-carbohydrate diet and notice you feel lethargic during training sessions, experience brain fog during the day, and have poor recovery between sessions. Your protein and fat intake are adequate.',
-      options: [
-        'You have depleted your glycogen stores due to insufficient carbohydrate intake',
-        'You are consuming too much protein',
-        'You are not consuming enough dietary fat',
-        'You need to take a multivitamin supplement',
-      ],
-      correctAnswer: 0,
-      explanation: "Carbohydrates are the body\'s preferred fuel source, especially during moderate-to-high intensity exercise. Very low carbohydrate intake depletes glycogen stores, leading to fatigue, poor performance, and impaired cognitive function.",
-    },
-
-    // ─── CHAPTER 2: Micronutrients & Their Role (6 questions) ───
-    {
       type: 'multiple_choice',
       question: 'Which of the following is a fat-soluble vitamin?',
       options: ['Vitamin B6', 'Vitamin B12', 'Vitamin C', 'Vitamin D'],
       correctAnswer: 3,
       explanation: "Vitamins A, D, E, and K are fat-soluble — they are stored in the body\'s fat tissues and require dietary fat for absorption. Vitamins B and C are water-soluble.",
-    },
-    {
-      type: 'multiple_choice',
-      question: 'Which mineral is primarily responsible for carrying oxygen in the blood?',
-      options: ['Calcium', 'Magnesium', 'Iron', 'Zinc'],
-      correctAnswer: 2,
-      explanation: 'Iron is a component of haemoglobin, which carries oxygen in red blood cells. Low iron levels cause fatigue, breathlessness, and reduced exercise performance.',
     },
     {
       type: 'multiple_choice',
@@ -84,51 +48,17 @@ export const level2Unit2Assessment: UnitAssessment = {
     },
     {
       type: 'multiple_choice',
-      question: 'What is the primary advantage of obtaining micronutrients from food rather than supplements?',
-      options: [
-        'Food contains micronutrients in more bioavailable forms alongside other beneficial compounds',
-        'Supplements are always dangerous',
-        'Supplements provide too many vitamins',
-        'Food is always cheaper than supplements',
-      ],
-      correctAnswer: 0,
-      explanation: 'Whole foods provide micronutrients in forms the body absorbs most efficiently, alongside fibre, phytonutrients, and other compounds that work synergistically. Supplements have a role in specific cases but should complement — not replace — a good diet.',
-    },
-    {
-      type: 'multiple_choice',
       question: 'Which mineral is involved in over 300 enzymatic reactions and supports sleep quality and muscle relaxation?',
       options: ['Sodium', 'Iron', 'Calcium', 'Magnesium'],
       correctAnswer: 3,
       explanation: 'Magnesium is involved in over 300 enzymatic reactions including energy production, muscle relaxation, and nervous system regulation. Good sources include nuts, seeds, dark chocolate, and leafy greens.',
     },
     {
-      type: 'scenario',
-      question: 'Which micronutrient deficiency is most likely contributing to these symptoms?',
-      scenario: 'You are a female endurance runner experiencing increasing fatigue, breathlessness during runs you previously handled easily, and pale skin. Your training load has not changed, and you eat mostly chicken, pasta, and salads with little red meat or leafy greens.',
-      options: [
-        'Vitamin E deficiency',
-        'Vitamin C deficiency',
-        'Iron deficiency',
-        'Calcium deficiency',
-      ],
-      correctAnswer: 2,
-      explanation: 'Fatigue, breathlessness, and pale skin are classic signs of iron deficiency anaemia. Female endurance athletes are at higher risk due to menstruation and increased iron demands from training. Her diet is low in iron-rich foods (red meat, leafy greens).',
-    },
-
-    // ─── CHAPTER 3: Hydration & Fluid Balance (6 questions) ───
-    {
       type: 'multiple_choice',
       question: 'At what level of dehydration does exercise performance typically decrease significantly?',
       options: ['10% body weight loss', '3-5% body weight loss', '0.5% body weight loss', '1-2% body weight loss'],
       correctAnswer: 1,
       explanation: 'At 3-5% body weight loss through dehydration, exercise performance can decrease by up to 25%. Even mild dehydration (1-2%) can impair concentration and increase perceived effort.',
-    },
-    {
-      type: 'multiple_choice',
-      question: 'Which electrolyte is the primary one lost through sweat?',
-      options: ['Sodium', 'Potassium', 'Magnesium', 'Calcium'],
-      correctAnswer: 0,
-      explanation: 'Sodium is the primary electrolyte lost through sweat. It regulates fluid balance and blood pressure. Replacing sodium during prolonged exercise (>60 minutes) helps maintain hydration and performance.',
     },
     {
       type: 'multiple_choice',
@@ -144,33 +74,11 @@ export const level2Unit2Assessment: UnitAssessment = {
     },
     {
       type: 'multiple_choice',
-      question: 'What does pale straw-coloured urine typically indicate?',
-      options: ['Over-hydration', 'Kidney problems', 'Adequate hydration', 'Dehydration'],
-      correctAnswer: 2,
-      explanation: 'Pale straw-coloured urine is the best indicator of adequate hydration. Dark yellow or amber urine suggests dehydration, while consistently clear urine may indicate over-hydration.',
-    },
-    {
-      type: 'multiple_choice',
       question: 'What is the general daily water intake recommendation per kilogram of bodyweight?',
       options: ['15ml per kg', '35ml per kg', '25ml per kg', '50ml per kg'],
       correctAnswer: 1,
       explanation: 'A baseline recommendation is approximately 35ml per kg of bodyweight per day (e.g., an 80kg person should aim for about 2.8 litres). This should be increased with exercise and heat.',
     },
-    {
-      type: 'scenario',
-      question: 'What is the most likely cause of these symptoms?',
-      scenario: 'You complete a 90-minute training session on a hot day, drinking only 200ml of water throughout. Afterwards, you experience dizziness, a headache, muscle cramps, and dark yellow urine.',
-      options: [
-        'You are experiencing symptoms of moderate dehydration and electrolyte loss',
-        'Your training programme is too intense',
-        'You consumed too much water',
-        'You have a food intolerance',
-      ],
-      correctAnswer: 0,
-      explanation: 'The combination of heat, prolonged exercise, minimal fluid intake, and the symptoms described (dizziness, headache, cramps, dark urine) are classic signs of moderate dehydration with electrolyte depletion. Adequate fluid and electrolyte replacement during and after exercise is essential.',
-    },
-
-    // ─── CHAPTER 4: Energy Balance & Body Composition (6 questions) ───
     {
       type: 'multiple_choice',
       question: 'Which component of TDEE accounts for the largest proportion of daily energy expenditure?',
@@ -180,42 +88,10 @@ export const level2Unit2Assessment: UnitAssessment = {
     },
     {
       type: 'multiple_choice',
-      question: 'What does NEAT stand for?',
-      options: [
-        'Nutritional Energy Assessment Tool',
-        'Net Energy Absorption Total',
-        'Non-Exercise Activity Thermogenesis',
-        'Normal Exercise Activity Time',
-      ],
-      correctAnswer: 2,
-      explanation: 'NEAT (Non-Exercise Activity Thermogenesis) refers to all energy expended through movement that is not structured exercise — walking, fidgeting, standing, household tasks. It is highly variable between individuals.',
-    },
-    {
-      type: 'multiple_choice',
-      question: 'What is a moderate caloric deficit for sustainable fat loss?',
-      options: ['100-200 calories per day', '300-500 calories per day', '750-1000 calories per day', '1500+ calories per day'],
-      correctAnswer: 1,
-      explanation: 'A moderate deficit of 300-500 calories below maintenance supports fat loss while preserving muscle mass, energy levels, and dietary adherence. Aggressive deficits increase the risk of muscle loss and metabolic adaptation.',
-    },
-    {
-      type: 'multiple_choice',
       question: 'By how much do studies suggest people typically underreport their calorie intake?',
       options: ['30-50%', '5-10%', '60-80%', '10-20%'],
       correctAnswer: 0,
       explanation: 'Research consistently shows that people underreport their calorie consumption by 30-50%. This is the single most common reason individuals believe they "can\'t lose weight" despite being in a supposed deficit.',
-    },
-    {
-      type: 'scenario',
-      question: 'What is the most logical explanation for this?',
-      scenario: 'Two people of the same age, gender, and weight both go to the gym for 1 hour, 4 times per week, and perform identical workouts. Person A is a desk worker who drives everywhere. Person B is a tradesperson who walks 15,000+ steps per day at work. Person B maintains their weight on 2,800 calories while Person A gains weight on 2,200 calories.',
-      options: [
-        'Person B is lying about their calorie intake',
-        'Person B has a faster metabolism due to genetics',
-        'Person A is not training hard enough in the gym',
-        'Person B burns significantly more calories through NEAT (daily non-exercise movement)',
-      ],
-      correctAnswer: 3,
-      explanation: "NEAT is the most variable component of TDEE. Person B\'s active occupation and daily movement could account for 500-800+ additional calories burned per day compared to Person A\'s sedentary desk job, despite identical gym routines.",
     },
     {
       type: 'scenario',
@@ -229,15 +105,6 @@ export const level2Unit2Assessment: UnitAssessment = {
       ],
       correctAnswer: 2,
       explanation: 'An aggressive 800-calorie deficit over 8 weeks has likely caused metabolic adaptation, hormonal disruption, and psychological fatigue. The appropriate response is to increase calories to a more sustainable moderate deficit, prioritise sleep and recovery, and accept a slower rate of fat loss for better long-term outcomes.',
-    },
-
-    // ─── CHAPTER 5: Reading Food Labels (6 questions) ───
-    {
-      type: 'multiple_choice',
-      question: 'On a UK food label, which column should you use to fairly compare two different products?',
-      options: ['Per pack', 'Per 100g', 'Reference Intake percentage', 'Per serving'],
-      correctAnswer: 1,
-      explanation: 'The "per 100g" column is the only standardised comparison between products. "Per serving" values can be misleading because manufacturers define their own serving sizes.',
     },
     {
       type: 'multiple_choice',
@@ -253,29 +120,10 @@ export const level2Unit2Assessment: UnitAssessment = {
     },
     {
       type: 'multiple_choice',
-      question: 'On a food label ingredient list, ingredients are listed in what order?',
-      options: [
-        'Alphabetical order',
-        'Ascending order by weight (least first)',
-        'By nutritional importance',
-        'Descending order by weight (most first)',
-      ],
-      correctAnswer: 3,
-      explanation: 'Ingredients are listed in descending order by weight. The first ingredient makes up the largest proportion of the product. If sugar (or a sugar variant) appears in the first three ingredients, the product is high in sugar.',
-    },
-    {
-      type: 'multiple_choice',
       question: 'What is considered "high sugar" on a UK food label per 100g?',
       options: ['More than 30g', 'More than 10g', 'More than 22.5g', 'More than 5g'],
       correctAnswer: 2,
       explanation: 'Under UK food labelling guidelines, a product is considered high in sugar if it contains more than 22.5g of sugars per 100g. Low sugar is less than 5g per 100g.',
-    },
-    {
-      type: 'multiple_choice',
-      question: 'Which of the following is NOT a hidden name for sugar on an ingredient list?',
-      options: ['High-fructose corn syrup', 'Cellulose', 'Maltodextrin', 'Dextrose'],
-      correctAnswer: 1,
-      explanation: 'Cellulose is a type of dietary fibre, not a sugar. Maltodextrin, dextrose, and high-fructose corn syrup are all forms of added sugar commonly used in processed foods.',
     },
     {
       type: 'scenario',
@@ -290,33 +138,12 @@ export const level2Unit2Assessment: UnitAssessment = {
       correctAnswer: 0,
       explanation: 'This is a classic example of how "low fat" marketing can be misleading. The reduced fat has been compensated with more than double the sugar. The additional sugar contributes to calorie intake without improving satiety, potentially making the "healthier" option worse for your fat loss goal.',
     },
-
-    // ─── CHAPTER 6: Nutrient Timing & Meal Structure (6 questions) ───
-    {
-      type: 'multiple_choice',
-      question: 'What is the recommended timeframe for a pre-workout meal before training?',
-      options: ['Immediately before entering the gym', '5-10 minutes before', 'The evening before', '30-60 minutes before (snack) or 2-3 hours before (full meal)'],
-      correctAnswer: 3,
-      explanation: 'A full balanced meal should be consumed 2-3 hours before training to allow digestion. A smaller, easily digestible snack can be consumed 30-60 minutes before. Eating immediately before can cause nausea and digestive discomfort.',
-    },
     {
       type: 'multiple_choice',
       question: 'According to current evidence, how wide is the post-workout "anabolic window"?',
       options: ['It does not exist at all', 'Exactly 30 minutes', 'Several hours (unless training fasted)', '30-60 minutes only'],
       correctAnswer: 2,
       explanation: 'Current research suggests the post-workout anabolic window is much wider than previously claimed — several hours rather than 30 minutes. The exception is fasted training, where consuming protein sooner is beneficial.',
-    },
-    {
-      type: 'multiple_choice',
-      question: 'Does eating 6 small meals per day boost metabolism compared to eating 3 larger meals with the same total calories?',
-      options: [
-        'Yes, but only during a caloric deficit',
-        'No — the thermic effect of food is proportional to total intake, not meal frequency',
-        'Yes, significantly',
-        'Yes, but only if meals include protein',
-      ],
-      correctAnswer: 1,
-      explanation: 'The thermic effect of food (TEF) is proportional to total calorie intake, not the number of meals. Whether you eat 2,000 calories in 3 meals or 6 meals, the total TEF is the same. Meal frequency should be based on preference and adherence.',
     },
     {
       type: 'multiple_choice',
@@ -332,19 +159,6 @@ export const level2Unit2Assessment: UnitAssessment = {
     },
     {
       type: 'scenario',
-      question: 'What is the most appropriate solution?',
-      scenario: 'You train at 6am before work. You cannot eat a full meal before training because it makes you feel nauseous. You currently train on an empty stomach and feel weak during sessions.',
-      options: [
-        'Stop training in the morning',
-        'Use a pre-workout supplement to replace food',
-        'Force yourself to eat a full meal 30 minutes before training',
-        'Try a small, easily digestible snack (e.g., banana or rice cakes) 30 minutes before, and ensure a balanced meal the evening before',
-      ],
-      correctAnswer: 3,
-      explanation: 'Not everyone can tolerate a full meal before early morning training. A small, easily digestible snack 30 minutes before provides some fuel without causing nausea. Additionally, ensuring a good evening meal the night before helps top up glycogen stores.',
-    },
-    {
-      type: 'scenario',
       question: 'Which aspect of nutrition would have the biggest impact on results?',
       scenario: 'You are obsessed with nutrient timing. You eat within exactly 30 minutes of training, time your carbohydrates precisely, and set alarms for meal times. However, your total daily protein intake is only 60g (you weigh 80kg), and you rarely eat vegetables.',
       options: [
@@ -356,38 +170,12 @@ export const level2Unit2Assessment: UnitAssessment = {
       correctAnswer: 2,
       explanation: 'You have prioritised timing (an advanced optimisation) while neglecting the fundamentals — inadequate protein (should be 128-176g at 80kg) and poor food quality. Fixing total protein intake and adding vegetables would have a far greater impact than perfecting meal timing.',
     },
-
-    // ─── CHAPTER 7: Putting It All Together (6 questions) ───
-    {
-      type: 'multiple_choice',
-      question: 'What does the 80/20 principle in nutrition recommend?',
-      options: [
-        '80% of meals should be eaten before noon',
-        '80% of diet from whole, nutrient-dense foods and 20% flexibility',
-        '80% supplements and 20% food',
-        '80% protein and 20% carbohydrates',
-      ],
-      correctAnswer: 1,
-      explanation: 'The 80/20 principle suggests that 80% of your diet should come from whole, minimally processed, nutrient-dense foods, while 20% allows flexibility for foods you enjoy. This supports long-term adherence and mental health.',
-    },
     {
       type: 'multiple_choice',
       question: 'What is the recommended daily fibre intake for adults?',
       options: ['30g', '20g', '10g', '50g'],
       correctAnswer: 0,
       explanation: 'The NHS recommends adults consume 30g of fibre per day. Most people in the UK fall short of this target. Good sources include vegetables, fruits, whole grains, legumes, nuts, and seeds.',
-    },
-    {
-      type: 'multiple_choice',
-      question: 'Which of the following is a common nutritional mistake?',
-      options: [
-        'Eating protein at every meal',
-        'Drinking water throughout the day',
-        'Including vegetables at most meals',
-        'Drinking calories from juices, coffees, and alcohol without accounting for them',
-      ],
-      correctAnswer: 3,
-      explanation: 'Liquid calories from fruit juice, sugary coffees, alcohol, and smoothies can add hundreds of calories without satisfying hunger. Many people fail to account for these when tracking intake, leading to unintentional caloric surplus.',
     },
     {
       type: 'multiple_choice',
@@ -400,32 +188,6 @@ export const level2Unit2Assessment: UnitAssessment = {
       ],
       correctAnswer: 2,
       explanation: 'Meal preparation reduces decision fatigue — when healthy meals are already prepared, you are far less likely to reach for convenience or processed food. It is one of the most effective practical strategies for consistent nutrition.',
-    },
-    {
-      type: 'scenario',
-      question: 'What is the most appropriate response?',
-      scenario: 'You decide to "eat clean" and eliminate all carbohydrates, dairy, sugar, and processed food from your diet. You follow this strictly for 3 weeks, then binge on junk food for an entire weekend, feel guilty, and restart the cycle on Monday.',
-      options: [
-        'Eliminate even more food groups to avoid temptation',
-        'Adopt a less restrictive approach following the 80/20 principle to support long-term consistency',
-        'Try harder and be more disciplined next time',
-        'Accept that willpower will improve over time',
-      ],
-      correctAnswer: 1,
-      explanation: 'This is a classic restrict-binge cycle caused by overly rigid dieting. The 80/20 approach — eating well 80% of the time while allowing flexibility — reduces psychological deprivation, prevents binge episodes, and supports sustainable long-term nutrition. The best diet is the one you can maintain.',
-    },
-    {
-      type: 'scenario',
-      question: 'Based on everything covered in this unit, what single change would have the greatest impact on this person\'s health and performance?',
-      scenario: 'You eat mostly takeaway food, drink 2-3 energy drinks per day, consume very little protein (about 40g daily despite weighing 85kg), rarely eat vegetables, and drink less than 1 litre of water per day. You want to build muscle and improve your energy levels.',
-      options: [
-        'Focus on increasing protein intake to 1.6-2.2g/kg, replacing energy drinks with water, and adding vegetables to two meals per day',
-        'Switch to a ketogenic diet to burn fat',
-        'Buy a pre-workout supplement for more energy',
-        'Start tracking calories immediately with a detailed food diary',
-      ],
-      correctAnswer: 0,
-      explanation: 'You have several fundamental gaps. The highest-impact changes are: increasing protein (from 40g to 136-187g) to support muscle growth, replacing energy drinks with water to improve hydration and reduce sugar intake, and adding vegetables for micronutrient density and fibre. These basic changes would transform your nutrition before any advanced strategies are needed.',
-    },
+    }
   ],
 };

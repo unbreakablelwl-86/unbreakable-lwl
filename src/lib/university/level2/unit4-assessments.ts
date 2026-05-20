@@ -4,26 +4,14 @@ export const level2Unit4Assessment: UnitAssessment = {
   unitNumber: 4,
   title: 'Unit 4 Assessment — Building Your Foundation',
   passMarkPercent: 80,
+  pickCount: 10,
   questions: [
-    // ──────────── CHAPTER 1: Setting SMART Goals (Q1–Q6) ────────────
     {
       type: 'multiple_choice',
       question: 'What does the "M" in SMART stand for?',
       options: ['Meaningful', 'Motivational', 'Manageable', 'Measurable'],
       correctAnswer: 3,
       explanation: 'The "M" stands for Measurable. A SMART goal must have quantifiable criteria so progress can be objectively tracked.',
-    },
-    {
-      type: 'multiple_choice',
-      question: 'Which of the following is an example of a process goal?',
-      options: [
-        'Lose 5 kg in 12 weeks',
-        'Achieve a 100 kg squat',
-        'Complete three structured training sessions per week',
-        'Run a 5K in under 25 minutes',
-      ],
-      correctAnswer: 2,
-      explanation: 'Process goals describe the actions required to achieve an outcome. Completing three sessions per week is an action, not an end result.',
     },
     {
       type: 'scenario',
@@ -37,13 +25,6 @@ export const level2Unit4Assessment: UnitAssessment = {
       ],
       correctAnswer: 1,
       explanation: '"Get stronger" is vague (not Specific), has no quantifiable metric (not Measurable), and has no deadline (not Time-bound). It needs all three to become a SMART goal.',
-    },
-    {
-      type: 'multiple_choice',
-      question: 'How often should fitness goals be reviewed and potentially adjusted?',
-      options: ['Every 2–4 weeks', 'Once per year', 'Every training session', 'Only when progress stalls'],
-      correctAnswer: 0,
-      explanation: 'Goals should be reviewed every 2–4 weeks to assess whether the current approach is working and to make evidence-based adjustments.',
     },
     {
       type: 'scenario',
@@ -60,44 +41,10 @@ export const level2Unit4Assessment: UnitAssessment = {
     },
     {
       type: 'multiple_choice',
-      question: 'Which of the following best describes a medium-term goal?',
-      options: [
-        'Add 2.5 kg to my bench press this week',
-        'Win a national competition in 3 years',
-        'Complete an 8-week strength programme',
-        'Attend the gym tomorrow',
-      ],
-      correctAnswer: 2,
-      explanation: 'Medium-term goals typically span 1–3 months and serve as milestones between short-term actions and long-term outcomes.',
-    },
-
-    // ──────────── CHAPTER 2: Understanding Training Frequency (Q7–Q12) ────────────
-    {
-      type: 'multiple_choice',
-      question: 'What is the minimum recommended recovery time between sessions targeting the same muscle group?',
-      options: ['24 hours', '48 hours', '72 hours', '12 hours'],
-      correctAnswer: 1,
-      explanation: 'A minimum of 48 hours between sessions targeting the same muscle group allows for adequate muscle repair, neural recovery, and connective tissue restoration.',
-    },
-    {
-      type: 'multiple_choice',
       question: 'Which training split is most appropriate for a beginner training 3 days per week?',
       options: ['Full-body', 'Push/Pull/Legs', 'Body-part split (one muscle per day)', 'Upper-only'],
       correctAnswer: 0,
       explanation: 'Full-body training is ideal for beginners as it provides high-frequency muscle stimulation, promotes motor learning, and is efficient for 3 training days per week.',
-    },
-    {
-      type: 'scenario',
-      question: 'What training split would be most appropriate?',
-      scenario: 'You are an intermediate trainee who can commit to exactly 4 training days per week. You want to train each muscle group at least twice per week with moderate volume.',
-      options: [
-        'Body-part split (chest, back, shoulders, legs)',
-        'Push/Pull/Legs (3-day rotation)',
-        'Full-body 4 days per week',
-        'Upper/Lower split (2 upper, 2 lower)',
-      ],
-      correctAnswer: 3,
-      explanation: 'An upper/lower split across 4 days allows each muscle group to be trained twice per week with adequate volume and recovery — ideal for an intermediate with 4 available days.',
     },
     {
       type: 'multiple_choice',
@@ -106,33 +53,6 @@ export const level2Unit4Assessment: UnitAssessment = {
       correctAnswer: 2,
       explanation: 'Research suggests 10–20 challenging sets per muscle group per week is appropriate for most intermediate trainees, with the exact number depending on individual recovery capacity.',
     },
-    {
-      type: 'multiple_choice',
-      question: 'What is the primary benefit of higher training frequency for beginners?',
-      options: [
-        'It reduces the need for warm-ups',
-        'It improves motor learning through repeated practice',
-        'It builds more muscle per session',
-        'It eliminates the need for recovery days',
-      ],
-      correctAnswer: 1,
-      explanation: 'Beginners benefit most from motor learning — practising movement patterns frequently improves technique and neuromuscular coordination more effectively than infrequent, high-volume sessions.',
-    },
-    {
-      type: 'scenario',
-      question: 'What adjustment should be considered?',
-      scenario: 'You are following a Push/Pull/Legs split 6 days per week but notice constant fatigue, declining performance, and frequent illness.',
-      options: [
-        'Reduce frequency to 4 days per week (e.g., upper/lower) and prioritise recovery',
-        'Add a seventh training day for active recovery',
-        'Maintain the same split but add more isolation exercises',
-        'Increase training volume to push through the plateau',
-      ],
-      correctAnswer: 0,
-      explanation: 'The symptoms describe overtraining. Reducing frequency to 4 days allows for better recovery while maintaining training stimulus. Recovery must match the training demand.',
-    },
-
-    // ──────────── CHAPTER 3: Programme Structure & Periodisation (Q13–Q18) ────────────
     {
       type: 'multiple_choice',
       question: 'What is a mesocycle?',
@@ -147,18 +67,6 @@ export const level2Unit4Assessment: UnitAssessment = {
     },
     {
       type: 'multiple_choice',
-      question: 'In linear periodisation, what typically happens to training intensity as the programme progresses?',
-      options: [
-        'Intensity decreases while volume increases',
-        'Both intensity and volume remain constant',
-        'Intensity increases while volume decreases',
-        'Both intensity and volume increase',
-      ],
-      correctAnswer: 2,
-      explanation: 'Linear periodisation follows a pattern where intensity progressively increases while volume decreases — moving from higher-rep, lower-weight phases to lower-rep, higher-weight phases.',
-    },
-    {
-      type: 'multiple_choice',
       question: 'What is the primary purpose of a deload week?',
       options: [
         'To increase training volume beyond normal levels',
@@ -170,46 +78,11 @@ export const level2Unit4Assessment: UnitAssessment = {
       explanation: 'A deload week reduces training stress by 40–60%, allowing the body to recover from accumulated fatigue and consolidate the adaptations from the previous training block.',
     },
     {
-      type: 'scenario',
-      question: 'Which periodisation model best suits this approach?',
-      scenario: 'You want to develop strength and hypertrophy simultaneously. You prefer varying rep ranges within each training week rather than dedicating entire blocks to one quality.',
-      options: [
-        'Undulating periodisation',
-        'No periodisation — just train instinctively',
-        'Reverse periodisation',
-        'Linear periodisation',
-      ],
-      correctAnswer: 0,
-      explanation: 'Undulating periodisation varies rep ranges within each week (e.g., strength on Monday, hypertrophy on Wednesday, power on Friday), maintaining multiple fitness qualities simultaneously.',
-    },
-    {
       type: 'multiple_choice',
       question: 'How often should deload weeks typically be programmed?',
       options: ['Every week', 'Every 2 weeks', 'Only at the end of a macrocycle', 'Every 4–6 weeks'],
       correctAnswer: 3,
       explanation: 'Deloads are typically programmed every 4–6 weeks, or when accumulated fatigue begins to impair performance. They are a proactive recovery strategy, not a reactive one.',
-    },
-    {
-      type: 'scenario',
-      question: 'What is the most likely cause and the best solution?',
-      scenario: 'You have been following the same programme for 16 weeks without any planned variation. Your progress stalled at week 10 and you feel demotivated.',
-      options: [
-        'You need to train harder within the same programme',
-        'You should take a month off training completely',
-        'You have hit a training plateau due to lack of periodisation — introduce mesocycles and planned variation',
-        'You should switch to a completely different sport',
-      ],
-      correctAnswer: 2,
-      explanation: 'Without periodisation, the body adapts to a fixed stimulus and progress stalls. Introducing structured mesocycles with planned variation in volume and intensity would restart progress.',
-    },
-
-    // ──────────── CHAPTER 4: Exercise Order & Session Design (Q19–Q24) ────────────
-    {
-      type: 'multiple_choice',
-      question: 'Which exercise should be performed first in an upper-body session?',
-      options: ['Tricep pushdowns', 'Bench press', 'Lateral raises', 'Bicep curls'],
-      correctAnswer: 1,
-      explanation: 'The compound-first principle dictates that multi-joint exercises (like bench press) should be performed before isolation exercises when the trainee is freshest and can handle the heaviest loads.',
     },
     {
       type: 'multiple_choice',
@@ -224,19 +97,6 @@ export const level2Unit4Assessment: UnitAssessment = {
       explanation: 'Warm-up sets prepare the body by increasing blood flow, rehearsing the movement pattern at progressive loads, and priming the nervous system — without causing fatigue.',
     },
     {
-      type: 'scenario',
-      question: 'What is wrong with this exercise order?',
-      scenario: 'You perform your lower-body session in this order: leg extensions, leg curls, back squats, lunges, calf raises.',
-      options: [
-        'Nothing — the order is fine',
-        'Calf raises should be performed first',
-        'Lunges should be removed from the session',
-        'Back squats (compound) should be performed before leg extensions and leg curls (isolation)',
-      ],
-      correctAnswer: 3,
-      explanation: 'Back squats are the heaviest compound movement and should be performed first when you are freshest. Pre-fatiguing with isolation exercises reduces squat performance and increases injury risk.',
-    },
-    {
       type: 'multiple_choice',
       question: 'What is the recommended duration for an effective training session (excluding warm-up and cool-down)?',
       options: ['120+ minutes', '15–30 minutes', '45–75 minutes', '90–120 minutes'],
@@ -245,49 +105,10 @@ export const level2Unit4Assessment: UnitAssessment = {
     },
     {
       type: 'multiple_choice',
-      question: 'Where should core exercises typically be placed within a training session?',
-      options: [
-        'Core should only be trained on separate days',
-        'Near the end, after the main lifting work',
-        'At the very beginning, before any other exercises',
-        'Between compound and isolation exercises',
-      ],
-      correctAnswer: 1,
-      explanation: 'Core exercises are best placed near the end of a session. Training core early can fatigue stabiliser muscles needed for compound lifts, potentially impairing performance and increasing injury risk.',
-    },
-    {
-      type: 'scenario',
-      question: 'What is the most appropriate warm-up set protocol?',
-      scenario: 'Your working sets for bench press are at 80 kg. You need to perform warm-up sets before your working weight.',
-      options: [
-        'Bar × 10, 40 kg × 8, 60 kg × 5, 70 kg × 3, then working sets at 80 kg',
-        'Jump straight to 80 kg — warm-up sets waste time',
-        'Jog on the treadmill for 20 minutes instead of warm-up sets',
-        'Do 3 sets at 80 kg as "warm-up sets"',
-      ],
-      correctAnswer: 0,
-      explanation: 'A progressive warm-up protocol gradually increases load (bar → 50% → 75% → 87.5% → working weight), rehearsing the movement and preparing the nervous system without causing fatigue.',
-    },
-
-    // ──────────── CHAPTER 5: Tracking & Measuring Progress (Q25–Q30) ────────────
-    {
-      type: 'multiple_choice',
       question: 'What is the single most important tracking tool for evaluating training progress?',
       options: ['Social media comparisons', 'Body weight scale', 'Progress photographs', 'Training log'],
       correctAnswer: 3,
       explanation: 'A training log recording exercises, sets, reps, and weights for every session provides the most direct evidence of progressive overload and long-term training trends.',
-    },
-    {
-      type: 'multiple_choice',
-      question: 'Daily body weight fluctuations of 1–2 kg are primarily caused by:',
-      options: [
-        'Inaccurate scales',
-        'Gaining or losing muscle',
-        'Changes in hydration, food intake, and hormonal shifts',
-        'Gaining or losing fat',
-      ],
-      correctAnswer: 2,
-      explanation: 'Daily weight fluctuations are normal and largely driven by hydration status, food volume in the digestive system, and hormonal changes — not actual changes in muscle or fat tissue.',
     },
     {
       type: 'scenario',
@@ -304,44 +125,10 @@ export const level2Unit4Assessment: UnitAssessment = {
     },
     {
       type: 'multiple_choice',
-      question: 'For body measurements to be reliable, they should be taken:',
-      options: [
-        'Under consistent conditions — same time of day, same hydration state',
-        'At random times throughout the day',
-        'Only when you feel you have made progress',
-        'Only after training sessions',
-      ],
-      correctAnswer: 0,
-      explanation: 'Consistency of measurement conditions ensures reliability. Taking measurements at the same time, under the same conditions, minimises the impact of daily fluctuations.',
-    },
-    {
-      type: 'multiple_choice',
       question: 'How long should a genuine performance plateau persist before a programme change is considered?',
       options: ['6 months', '1 week', '1 session', '2–3 consecutive weeks'],
       correctAnswer: 3,
       explanation: 'A plateau should persist for 2–3 consecutive weeks before concluding that a programme change is needed. Single-session or single-week dips are normal and do not indicate a genuine plateau.',
-    },
-    {
-      type: 'scenario',
-      question: 'What is the most appropriate response?',
-      scenario: 'You have been training for 4 weeks and are frustrated because the scale weight has not changed, despite your training log showing consistent strength improvements and your clothes fitting better.',
-      options: [
-        'Scale weight is the only reliable measure — you should eat less',
-        'You are not making progress and need a new programme',
-        'You are likely gaining muscle and losing fat simultaneously (body recomposition). The strength improvements and clothing fit are positive indicators.',
-        'You should stop tracking body weight entirely and only use the mirror',
-      ],
-      correctAnswer: 2,
-      explanation: 'Body recomposition (simultaneous muscle gain and fat loss) is common in beginners. Multiple tracking methods reveal that progress is occurring even when scale weight is unchanged.',
-    },
-
-    // ──────────── CHAPTER 6: Sleep & Stress Management (Q31–Q36) ────────────
-    {
-      type: 'multiple_choice',
-      question: 'During which stage of sleep is growth hormone primarily released?',
-      options: ['Stage 1 (light sleep)', 'Stage 3 (deep/slow-wave sleep)', 'REM sleep', 'Stage 2 (light sleep)'],
-      correctAnswer: 1,
-      explanation: 'Growth hormone is released in large pulses during Stage 3 (deep/slow-wave sleep). This stage is critical for muscle repair, tissue recovery, and immune function.',
     },
     {
       type: 'multiple_choice',
@@ -349,18 +136,6 @@ export const level2Unit4Assessment: UnitAssessment = {
       options: ['7–9 hours', '4–5 hours', '10–12 hours', '5–6 hours'],
       correctAnswer: 0,
       explanation: 'Research consistently recommends 7–9 hours of sleep for physically active individuals. Fewer than 7 hours impairs strength, endurance, cognitive function, and recovery.',
-    },
-    {
-      type: 'multiple_choice',
-      question: 'Which of the following is NOT an evidence-based sleep hygiene practice?',
-      options: [
-        'Avoiding screens 30–60 minutes before bed',
-        'Keeping the bedroom cool and dark',
-        'Maintaining a consistent sleep schedule',
-        'Using alcohol to fall asleep faster',
-      ],
-      correctAnswer: 3,
-      explanation: 'While alcohol may help initiate sleep, it significantly disrupts deep sleep and REM sleep, reducing overall sleep quality and impairing recovery.',
     },
     {
       type: 'scenario',
@@ -377,28 +152,6 @@ export const level2Unit4Assessment: UnitAssessment = {
     },
     {
       type: 'multiple_choice',
-      question: 'What is the ideal bedroom temperature range for optimal sleep?',
-      options: ['10–13°C', '16–19°C', '22–25°C', '26–30°C'],
-      correctAnswer: 1,
-      explanation: 'A bedroom temperature of 16–19°C is optimal for sleep. The body needs to cool slightly to initiate and maintain deep sleep. Temperatures above 20°C can disrupt sleep quality.',
-    },
-    {
-      type: 'scenario',
-      question: 'What should be addressed first?',
-      scenario: 'You want to redesign your training programme because progress has stalled. You are sleeping 5 hours per night, working 60-hour weeks, and consuming 4+ coffees after midday.',
-      options: [
-        'Address sleep and stress first — no programme change will overcome chronic sleep deprivation and excessive caffeine',
-        'Switch to morning-only training sessions',
-        'Redesign the programme with more volume and intensity',
-        'Add a pre-workout supplement to boost energy',
-      ],
-      correctAnswer: 0,
-      explanation: 'Sleep deprivation and chronic stress are the primary limiters. No programme redesign will overcome these lifestyle factors. Fixing sleep hygiene and reducing afternoon caffeine should be the first priority.',
-    },
-
-    // ──────────── CHAPTER 7: Lifestyle Factors & Adherence (Q37–Q42) ────────────
-    {
-      type: 'multiple_choice',
       question: 'What is the correct order of the habit loop?',
       options: [
         'Reward → Response → Cue → Craving',
@@ -408,18 +161,6 @@ export const level2Unit4Assessment: UnitAssessment = {
       ],
       correctAnswer: 3,
       explanation: 'The habit loop follows: Cue (trigger) → Craving (desire) → Response (behaviour) → Reward (reinforcement). Understanding this sequence allows you to intentionally design positive habits.',
-    },
-    {
-      type: 'multiple_choice',
-      question: 'What is habit stacking?',
-      options: [
-        'Tracking habits in a mobile application',
-        'Training the same muscle group every day',
-        'Linking a new habit to an existing established routine',
-        'Performing multiple exercises back-to-back without rest',
-      ],
-      correctAnswer: 2,
-      explanation: 'Habit stacking uses the formula: "After I [CURRENT HABIT], I will [NEW HABIT]." By attaching new behaviours to established routines, you reduce the friction required to start.',
     },
     {
       type: 'scenario',
@@ -433,18 +174,6 @@ export const level2Unit4Assessment: UnitAssessment = {
       ],
       correctAnswer: 1,
       explanation: 'Motivation fluctuates and cannot be relied upon for consistency. Building systems — reducing barriers, habit stacking, scheduling — creates consistency regardless of how you feel on any given day.',
-    },
-    {
-      type: 'multiple_choice',
-      question: 'Which statement best describes the relationship between consistency and intensity?',
-      options: [
-        'Training at 80% effort consistently for 52 weeks outperforms 100% effort for 8 weeks followed by inactivity',
-        'Maximum intensity every session is the key to results',
-        'Consistency does not matter if intensity is high enough',
-        'You should never train at less than 100% effort',
-      ],
-      correctAnswer: 0,
-      explanation: 'Long-term results come from consistency, not occasional maximum effort. Sustainable, moderate-intensity training maintained over months and years produces far superior outcomes.',
     },
     {
       type: 'scenario',
@@ -461,27 +190,6 @@ export const level2Unit4Assessment: UnitAssessment = {
     },
     {
       type: 'multiple_choice',
-      question: 'What is the key difference between motivation and discipline?',
-      options: [
-        'They are the same thing',
-        'Discipline only applies to professional athletes',
-        'Discipline is the ability to act consistently regardless of how you feel; motivation is an emotional state that fluctuates',
-        'Motivation is stronger than discipline',
-      ],
-      correctAnswer: 2,
-      explanation: 'Motivation is an emotional state that rises and falls. Discipline is the practiced ability to act consistently regardless of emotional state. Sustainable training requires discipline, not perpetual motivation.',
-    },
-
-    // ──────────── CHAPTER 8: Building Your First Programme (Q43–Q48) ────────────
-    {
-      type: 'multiple_choice',
-      question: 'For a hypertrophy-focused programme, the recommended rep range is:',
-      options: ['1–3 reps', '8–12 reps', '3–5 reps', '20–30 reps'],
-      correctAnswer: 1,
-      explanation: 'The 8–12 rep range at moderate intensity (65–75% 1RM) with 60–90 seconds rest is widely supported by research as the most effective range for stimulating muscle hypertrophy.',
-    },
-    {
-      type: 'multiple_choice',
       question: 'What is the "double progression" method?',
       options: [
         'Building reps within a target range, then increasing weight when the top of the range is reached',
@@ -493,50 +201,11 @@ export const level2Unit4Assessment: UnitAssessment = {
       explanation: 'Double progression involves working within a rep range (e.g., 8–10). Once all sets are completed at the top of the range with good form, the weight increases and reps drop back to the bottom of the range.',
     },
     {
-      type: 'scenario',
-      question: 'What exercises should be included to ensure balanced development?',
-      scenario: 'A beginner is designing a full-body programme and has selected bench press (horizontal push), barbell row (horizontal pull), and back squat (squat pattern). What movement patterns are missing?',
-      options: [
-        'Only isolation exercises are needed',
-        'More horizontal push exercises',
-        'No patterns are missing — three exercises is sufficient',
-        'Vertical push, vertical pull, hip hinge, and core work',
-      ],
-      correctAnswer: 3,
-      explanation: 'A balanced programme should cover all fundamental movement patterns. The missing patterns are: vertical push (e.g., overhead press), vertical pull (e.g., lat pulldown), hip hinge (e.g., Romanian deadlift), and core work.',
-    },
-    {
       type: 'multiple_choice',
       question: 'For a beginner, the smallest typical weight increment for progressive overload is:',
       options: ['20 kg', '5 kg', '1.25–2.5 kg', '10 kg'],
       correctAnswer: 2,
       explanation: 'Small increments of 1.25–2.5 kg allow for gradual, sustainable progression. Larger jumps increase injury risk and are unsustainable, particularly for upper-body exercises.',
-    },
-    {
-      type: 'scenario',
-      question: 'What is the best advice?',
-      scenario: 'You have designed your first 4-week programme. It contains 10 exercises per session, with 5 sets of each, training 6 days per week. You have never trained before.',
-      options: [
-        'The programme looks thorough — follow it',
-        'It is far too much volume and frequency for a beginner. Reduce to 4–6 exercises, 3 sets each, 3–4 days per week, and prioritise movement quality over volume.',
-        'The volume is fine but you should train 7 days per week',
-        'Add more exercises to ensure complete coverage',
-      ],
-      correctAnswer: 1,
-      explanation: 'A beginner doing 50 working sets per session, 6 days per week, will quickly experience excessive fatigue, soreness, and injury risk. A simpler programme (4–6 exercises, 3 sets, 3–4 days) is more effective and sustainable.',
-    },
-    {
-      type: 'scenario',
-      question: 'What should be included in the programme that is currently missing?',
-      scenario: 'Your 4-week programme includes exercises, sets, reps, and rest periods. However, you have not included any warm-up protocol, cool-down, or progression strategy.',
-      options: [
-        'A warm-up protocol (general + specific), cool-down routine, and a clear progression strategy (e.g., double progression) are all essential components',
-        'Nothing is missing — exercises and sets are all that matter',
-        'Only a cool-down is needed',
-        'Only a progression strategy is needed',
-      ],
-      correctAnswer: 0,
-      explanation: 'A complete programme must include warm-up (injury prevention and performance preparation), cool-down (recovery), and a progression strategy (ensuring ongoing adaptation). Without these, the programme is incomplete.',
-    },
+    }
   ],
 };

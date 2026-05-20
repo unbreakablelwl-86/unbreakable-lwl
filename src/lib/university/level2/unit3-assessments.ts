@@ -4,8 +4,8 @@ export const level2Unit3Assessment: UnitAssessment = {
   unitNumber: 3,
   title: 'Unit 3 Assessment: Introduction to Exercise',
   passMarkPercent: 80,
+  pickCount: 10,
   questions: [
-    // ─── CHAPTER 1: Types of Training (6 questions) ──────────────
     {
       type: 'multiple_choice',
       question: 'Which type of training primarily develops muscular strength, hypertrophy, and muscular endurance through working against an external force?',
@@ -20,18 +20,6 @@ export const level2Unit3Assessment: UnitAssessment = {
     },
     {
       type: 'multiple_choice',
-      question: 'What is EPOC, and which training type produces the greatest EPOC response?',
-      options: [
-        'Enhanced Peripheral Oxygen Capacity — flexibility training',
-        'Elevated Protein Oxidation Cycle — resistance training',
-        'Excess Post-exercise Oxygen Consumption — HIIT',
-        'Excess Post-exercise Oxygen Consumption — steady-state cardio',
-      ],
-      correctAnswer: 2,
-      explanation: 'EPOC (Excess Post-exercise Oxygen Consumption) refers to increased calorie burn after exercise. HIIT produces the greatest EPOC response due to its high metabolic demand.',
-    },
-    {
-      type: 'multiple_choice',
       question: 'Which of the following is NOT a physiological benefit of cardiovascular training?',
       options: [
         'Improved cardiac output and stroke volume',
@@ -41,19 +29,6 @@ export const level2Unit3Assessment: UnitAssessment = {
       ],
       correctAnswer: 1,
       explanation: 'Increased maximal force production is a benefit of resistance training, not cardiovascular training. Cardio training improves heart function, blood flow, and aerobic capacity.',
-    },
-    {
-      type: 'scenario',
-      question: 'Which training approach would be most appropriate and why?',
-      scenario: 'You want to improve general health, lose body fat, and build some muscle. You have 4 days per week available to train.',
-      options: [
-        '2-3 resistance training sessions plus 1-2 cardiovascular sessions',
-        'Four HIIT sessions per week for maximum calorie burn',
-        'Four steady-state cardio sessions of 60 minutes each',
-        'Four flexibility sessions to improve movement quality first',
-      ],
-      correctAnswer: 0,
-      explanation: 'A balanced approach of 2-3 resistance sessions (for muscle building and metabolic rate) plus 1-2 cardio sessions (for cardiovascular health and fat loss) addresses all three goals. HIIT 4x/week would be excessive; cardio-only would not build muscle.',
     },
     {
       type: 'multiple_choice',
@@ -69,32 +44,6 @@ export const level2Unit3Assessment: UnitAssessment = {
     },
     {
       type: 'multiple_choice',
-      question: 'Which statement about flexibility training is correct?',
-      options: [
-        'Flexibility training is only needed for gymnasts and dancers',
-        'Flexibility training replaces the need for warm-ups before resistance training',
-        'Flexibility training reduces muscle stiffness and can decrease the risk of strains',
-        'Flexibility training builds muscle mass when performed at high volumes',
-      ],
-      correctAnswer: 2,
-      explanation: 'Flexibility training reduces muscle stiffness, improves movement quality, and decreases the risk of strains and overuse injuries. It is beneficial for all populations, not just athletes.',
-    },
-
-    // ─── CHAPTER 2: Warm-Up & Cool-Down (6 questions) ────────────
-    {
-      type: 'multiple_choice',
-      question: 'What does the "R" in the RAMP warm-up protocol stand for?',
-      options: [
-        'Resistance',
-        'Raise',
-        'Recovery',
-        'Range',
-      ],
-      correctAnswer: 1,
-      explanation: 'R stands for Raise — the phase that elevates heart rate, blood flow, core temperature, and respiration rate through low-to-moderate intensity cardiovascular activity.',
-    },
-    {
-      type: 'multiple_choice',
       question: 'Why is dynamic stretching preferred over static stretching during a warm-up?',
       options: [
         'Static stretching can temporarily reduce force production before training',
@@ -104,18 +53,6 @@ export const level2Unit3Assessment: UnitAssessment = {
       ],
       correctAnswer: 0,
       explanation: 'Research shows static stretching before training can temporarily reduce strength and power output by 5-10%. Dynamic stretching increases blood flow, ROM, and neuromuscular readiness without this force-reduction effect.',
-    },
-    {
-      type: 'multiple_choice',
-      question: 'Which phase of RAMP involves exercises like glute bridges and band pull-aparts?',
-      options: [
-        'Mobilise',
-        'Raise',
-        'Potentiate',
-        'Activate',
-      ],
-      correctAnswer: 3,
-      explanation: 'The Activate phase targets key muscle groups that will be used in the main session, "waking up" muscles that may be underactive. Glute bridges and band pull-aparts are common activation exercises.',
     },
     {
       type: 'scenario',
@@ -132,32 +69,6 @@ export const level2Unit3Assessment: UnitAssessment = {
     },
     {
       type: 'multiple_choice',
-      question: 'What is the primary purpose of a cool-down?',
-      options: [
-        'To build additional muscle through stretching',
-        'To gradually reduce heart rate and begin recovery processes',
-        'To test maximal flexibility while muscles are warm',
-        'To increase heart rate for extra calorie burn',
-      ],
-      correctAnswer: 1,
-      explanation: 'The cool-down facilitates the transition from exercise back to rest, gradually reducing heart rate, aiding removal of metabolic by-products, and initiating recovery through low-intensity activity and static stretching.',
-    },
-    {
-      type: 'multiple_choice',
-      question: 'Which physiological effect does NOT occur during an effective warm-up?',
-      options: [
-        'Increased maximal muscle hypertrophy',
-        'Enhanced nervous system activation',
-        'Increased synovial fluid production in joints',
-        'Elevated core and muscle temperature',
-      ],
-      correctAnswer: 0,
-      explanation: 'Muscle hypertrophy is a long-term adaptation to resistance training, not an acute effect of warming up. Warm-ups increase temperature, synovial fluid, blood flow, and nervous system readiness.',
-    },
-
-    // ─── CHAPTER 3: Resistance Training Fundamentals (6 questions) ─
-    {
-      type: 'multiple_choice',
       question: 'According to the rep range continuum, which rep range is most commonly associated with hypertrophy training?',
       options: [
         '30–50 reps',
@@ -170,18 +81,6 @@ export const level2Unit3Assessment: UnitAssessment = {
     },
     {
       type: 'multiple_choice',
-      question: 'In tempo notation 3-1-2-0, what does the "3" represent?',
-      options: [
-        'A 3-second pause at the top',
-        'A 3-second concentric (lifting) phase',
-        'A 3-second eccentric (lowering) phase',
-        'Three sets of the exercise',
-      ],
-      correctAnswer: 2,
-      explanation: 'In tempo notation, the first digit represents the eccentric (lowering) phase. So 3-1-2-0 means: 3 seconds lowering, 1 second pause at the bottom, 2 seconds lifting, 0 seconds pause at the top.',
-    },
-    {
-      type: 'multiple_choice',
       question: 'Why are rest periods of 3–5 minutes recommended for strength training (1–5 reps)?',
       options: [
         'To allow the muscles to cool down completely',
@@ -191,19 +90,6 @@ export const level2Unit3Assessment: UnitAssessment = {
       ],
       correctAnswer: 1,
       explanation: 'Strength training relies heavily on the ATP-PC energy system, which takes 3-5 minutes to fully replenish. Shorter rest would compromise force production on subsequent sets.',
-    },
-    {
-      type: 'scenario',
-      question: 'What is the most likely issue and solution?',
-      scenario: 'You are performing bench press with a target of 8-10 reps. You consistently complete 15 reps before feeling fatigued.',
-      options: [
-        'The load is too light — increase weight so that 10 reps is genuinely challenging',
-        'You are overtraining — reduce to 2 sessions per week',
-        'You are naturally suited to endurance training and should switch to cardio',
-        'You should slow your tempo to 10-0-10-0',
-      ],
-      correctAnswer: 0,
-      explanation: 'If you can easily complete 15 reps when targeting 8-10, the load is too light. The weight should be increased so that completing 10 reps is difficult but achievable with good form.',
     },
     {
       type: 'multiple_choice',
@@ -219,32 +105,6 @@ export const level2Unit3Assessment: UnitAssessment = {
     },
     {
       type: 'multiple_choice',
-      question: 'For a beginner starting resistance training, which set range per exercise is most appropriate?',
-      options: [
-        '5–6 sets per exercise',
-        '1 set per exercise',
-        '2–3 sets per exercise',
-        '8–10 sets per exercise',
-      ],
-      correctAnswer: 2,
-      explanation: 'Beginners respond well to lower training volumes. 2-3 sets per exercise provides sufficient stimulus for adaptation while allowing adequate recovery and technique practice.',
-    },
-
-    // ─── CHAPTER 4: Cardiovascular Training Principles (6 questions)
-    {
-      type: 'multiple_choice',
-      question: 'What does the FITT principle stand for in cardiovascular training prescription?',
-      options: [
-        'Fatigue, Interval, Threshold, Tempo',
-        'Frequency, Intensity, Time, Type',
-        'Flexibility, Interval, Training, Technique',
-        'Force, Intensity, Tension, Time',
-      ],
-      correctAnswer: 1,
-      explanation: 'FITT stands for Frequency (how often), Intensity (how hard), Time (how long), and Type (what modality). It provides a simple framework for prescribing cardiovascular training.',
-    },
-    {
-      type: 'multiple_choice',
       question: 'Heart rate Zone 2 (60–70% MHR) is primarily associated with which adaptation?',
       options: [
         'Aerobic base building and fat oxidation',
@@ -254,19 +114,6 @@ export const level2Unit3Assessment: UnitAssessment = {
       ],
       correctAnswer: 0,
       explanation: 'Zone 2 training develops the aerobic base, improves fat oxidation as a fuel source, and builds cardiac efficiency. It is characterised by a conversational pace and is the foundation of cardiovascular fitness.',
-    },
-    {
-      type: 'scenario',
-      question: 'How would you estimate your maximum heart rate and calculate your Zone 2 range?',
-      scenario: 'You are 40 years old and want to train in heart rate Zone 2 for aerobic base building. You do not have a lab-tested MHR.',
-      options: [
-        'MHR = 180 bpm (fixed); Zone 2 = 90-108 bpm (50-60% of 180)',
-        'MHR = 200 - 40 = 160 bpm; Zone 2 = 80-100 bpm (50-60% of 160)',
-        'MHR = 220 + 40 = 260 bpm; Zone 2 = 156-182 bpm (60-70% of 260)',
-        'MHR = 220 - 40 = 180 bpm; Zone 2 = 108-126 bpm (60-70% of 180)',
-      ],
-      correctAnswer: 3,
-      explanation: 'The standard formula for estimating MHR is 220 minus age: 220 - 40 = 180 bpm. Zone 2 is 60-70% of MHR: 108-126 bpm. While this formula has limitations, it provides a practical starting point.',
     },
     {
       type: 'multiple_choice',
@@ -282,32 +129,6 @@ export const level2Unit3Assessment: UnitAssessment = {
     },
     {
       type: 'multiple_choice',
-      question: 'According to UK physical activity guidelines, what is the minimum recommended weekly moderate-intensity cardiovascular activity for adults?',
-      options: [
-        '100 minutes',
-        '150 minutes',
-        '300 minutes',
-        '75 minutes',
-      ],
-      correctAnswer: 1,
-      explanation: 'UK guidelines recommend at least 150 minutes of moderate-intensity cardiovascular activity per week (or 75 minutes of vigorous-intensity activity) alongside resistance training on at least two days.',
-    },
-    {
-      type: 'multiple_choice',
-      question: 'Using the Talk Test, which description indicates you are working at moderate intensity?',
-      options: [
-        'You can speak in short sentences but not hold a full conversation',
-        'You can hold a comfortable, flowing conversation',
-        'You cannot say more than a word or two',
-        'You can sing a song without difficulty',
-      ],
-      correctAnswer: 0,
-      explanation: 'At moderate intensity, you can speak in short sentences but would struggle to hold a full, flowing conversation. Comfortable conversation indicates low intensity; inability to speak indicates high/maximal intensity.',
-    },
-
-    // ─── CHAPTER 5: Flexibility & Mobility (6 questions) ─────────
-    {
-      type: 'multiple_choice',
       question: 'What is the key difference between flexibility and mobility?',
       options: [
         'Flexibility applies to muscles; mobility applies only to cardiovascular fitness',
@@ -320,18 +141,6 @@ export const level2Unit3Assessment: UnitAssessment = {
     },
     {
       type: 'multiple_choice',
-      question: 'How long should a static stretch typically be held for optimal flexibility gains?',
-      options: [
-        '3–5 minutes',
-        '2–5 seconds',
-        '15–30 seconds',
-        '60–90 seconds',
-      ],
-      correctAnswer: 2,
-      explanation: 'Research supports holding static stretches for 15-30 seconds, with 2-4 repetitions per muscle group. This duration is sufficient to improve muscle length without excessive discomfort.',
-    },
-    {
-      type: 'multiple_choice',
       question: 'What does PNF stretching involve?',
       options: [
         'Bouncing in and out of a stretched position rapidly',
@@ -341,19 +150,6 @@ export const level2Unit3Assessment: UnitAssessment = {
       ],
       correctAnswer: 1,
       explanation: 'PNF (Proprioceptive Neuromuscular Facilitation) uses the contract-relax method: the muscle is stretched, then isometrically contracted for 5-10 seconds, relaxed, and then stretched further. This produces the greatest acute ROM improvements.',
-    },
-    {
-      type: 'scenario',
-      question: 'What is the most likely limitation and appropriate intervention?',
-      scenario: 'You cannot achieve a full-depth squat. Your heels rise off the floor and you lean excessively forward. You have adequate hip flexibility when tested passively.',
-      options: [
-        'Limited ankle dorsiflexion — perform ankle mobility drills and consider heel-elevated squats',
-        'Tight chest muscles — perform chest stretches',
-        'Tight hamstrings — perform static hamstring stretches before squatting',
-        'Weak biceps — perform more arm curls',
-      ],
-      correctAnswer: 0,
-      explanation: 'Heels rising and excessive forward lean in a squat commonly indicate limited ankle dorsiflexion. Ankle mobility drills (e.g., knee-to-wall test, banded ankle mobilisations) and heel-elevated squats can address this restriction.',
     },
     {
       type: 'multiple_choice',
@@ -369,32 +165,6 @@ export const level2Unit3Assessment: UnitAssessment = {
     },
     {
       type: 'multiple_choice',
-      question: 'Which statement about mobility drills is correct?',
-      options: [
-        'Mobility drills should only be performed once per week',
-        'Mobility drills replace the need for any warm-up',
-        'Mobility drills develop the strength and coordination to use available range of motion',
-        'Mobility drills are the same as static stretching',
-      ],
-      correctAnswer: 2,
-      explanation: 'Mobility drills are active exercises that develop joint range of motion with control — requiring not just muscle length but strength, stability, and motor control. They differ from stretching which focuses primarily on passive muscle length.',
-    },
-
-    // ─── CHAPTER 6: Exercise Selection & Technique (6 questions) ──
-    {
-      type: 'multiple_choice',
-      question: 'Which of the following is a compound exercise?',
-      options: [
-        'Tricep pushdown',
-        'Barbell back squat',
-        'Bicep curl',
-        'Lateral raise',
-      ],
-      correctAnswer: 1,
-      explanation: 'The barbell back squat is a compound (multi-joint) exercise involving the hip, knee, and ankle joints and multiple muscle groups. Bicep curls, tricep pushdowns, and lateral raises are all isolation (single-joint) exercises.',
-    },
-    {
-      type: 'multiple_choice',
       question: 'Which of the following is NOT one of the six fundamental movement patterns?',
       options: [
         'Rotation',
@@ -404,19 +174,6 @@ export const level2Unit3Assessment: UnitAssessment = {
       ],
       correctAnswer: 0,
       explanation: 'The six fundamental movement patterns are: Push, Pull, Squat, Hinge, Lunge, and Carry. Rotation is sometimes considered an additional pattern but is not one of the core six in most frameworks.',
-    },
-    {
-      type: 'scenario',
-      question: 'What is the most appropriate exercise selection approach?',
-      scenario: 'You have never performed any free weight exercises. You want to develop leg strength for everyday activities.',
-      options: [
-        'Only use leg press machines — free weights are too dangerous for beginners',
-        'Start with single-leg pistol squats to build balance',
-        'Start with heavy barbell back squats at 80% of estimated 1RM',
-        'Begin with bodyweight squats, progressing to goblet squats, then barbell squats as competence develops',
-      ],
-      correctAnswer: 3,
-      explanation: 'Beginners should progress through a logical sequence: bodyweight → dumbbell/kettlebell → barbell. This builds competence, confidence, and movement quality before adding complexity and load.',
     },
     {
       type: 'multiple_choice',
@@ -432,32 +189,6 @@ export const level2Unit3Assessment: UnitAssessment = {
     },
     {
       type: 'multiple_choice',
-      question: 'Knees caving inward (valgus) during a squat is commonly caused by which of the following?',
-      options: [
-        'Overactive hamstrings',
-        'Weak gluteus medius and poor hip stability',
-        'Excessive chest flexibility',
-        'Excessive ankle mobility',
-      ],
-      correctAnswer: 1,
-      explanation: 'Knee valgus (inward collapse) during squatting is commonly associated with weak gluteus medius (hip abductor), poor hip stability, and sometimes limited ankle dorsiflexion. Glute activation and strengthening exercises are a key corrective strategy.',
-    },
-    {
-      type: 'multiple_choice',
-      question: 'Why should compound exercises generally be placed before isolation exercises in a session?',
-      options: [
-        'Compound exercises require more neuromuscular coordination and energy, so they should be performed when you are freshest',
-        'Isolation exercises serve as a warm-up for compound movements',
-        'Isolation exercises are more important and should be saved for last',
-        'It does not matter — exercise order has no effect on performance',
-      ],
-      correctAnswer: 0,
-      explanation: 'Compound exercises involve multiple joints and muscle groups, requiring greater neuromuscular coordination, energy, and focus. Performing them first (when you are freshest) maximises performance and reduces injury risk.',
-    },
-
-    // ─── CHAPTER 7: Recovery & Adaptation (6 questions) ──────────
-    {
-      type: 'multiple_choice',
       question: 'What does the SAID principle state?',
       options: [
         'Systematic Approach to Individual Design',
@@ -467,18 +198,6 @@ export const level2Unit3Assessment: UnitAssessment = {
       ],
       correctAnswer: 3,
       explanation: 'SAID (Specific Adaptation to Imposed Demands) states that the body adapts specifically to the type of stress placed upon it. Train for strength → get stronger. Train for endurance → improve endurance.',
-    },
-    {
-      type: 'multiple_choice',
-      question: 'In the supercompensation model, when is the optimal time to perform the next training session?',
-      options: [
-        'After the detraining phase, when fitness has declined',
-        'During the fatigue phase, while the body is still recovering',
-        'During the supercompensation window, when the body has adapted beyond baseline',
-        'Exactly at baseline, before supercompensation occurs',
-      ],
-      correctAnswer: 2,
-      explanation: 'The optimal timing for the next session is during the supercompensation window — when the body has recovered and adapted beyond its previous baseline. Training too soon (fatigue) or too late (detraining) reduces the effectiveness of progressive training.',
     },
     {
       type: 'scenario',
@@ -495,18 +214,6 @@ export const level2Unit3Assessment: UnitAssessment = {
     },
     {
       type: 'multiple_choice',
-      question: 'How many hours of sleep per night should adults aim for to optimise recovery?',
-      options: [
-        '7–9 hours',
-        '4–5 hours',
-        '10–12 hours',
-        '5–6 hours',
-      ],
-      correctAnswer: 0,
-      explanation: 'Adults should aim for 7-9 hours of quality sleep per night. During deep sleep, the body releases growth hormone, repairs tissue, consolidates motor learning, and restores the nervous system.',
-    },
-    {
-      type: 'multiple_choice',
       question: 'What is a deload and how is it typically implemented?',
       options: [
         'A complete week off from all training',
@@ -516,32 +223,6 @@ export const level2Unit3Assessment: UnitAssessment = {
       ],
       correctAnswer: 3,
       explanation: 'A deload is a planned reduction in training volume and/or intensity (typically 40-60% reduction) lasting one week. Training continues but at reduced stress, allowing accumulated fatigue to dissipate while maintaining the training habit.',
-    },
-    {
-      type: 'multiple_choice',
-      question: 'Which of the following is NOT a method of progressive overload?',
-      options: [
-        'Increasing the weight lifted',
-        'Decreasing rest periods to increase training density',
-        'Performing the same workout with the same load indefinitely',
-        'Adding more sets or reps over time',
-      ],
-      correctAnswer: 2,
-      explanation: 'Progressive overload requires systematically increasing training demands over time. Performing the same workout indefinitely provides no progressive stimulus and will result in stagnation once the body has adapted.',
-    },
-
-    // ─── CHAPTER 8: Training for Special Populations (6 questions) ─
-    {
-      type: 'multiple_choice',
-      question: 'For a complete beginner, which type of programme structure is most appropriate?',
-      options: [
-        'Only machine-based exercises for the first 12 months',
-        'Full-body sessions 2-3 times per week with lower volumes',
-        'A 6-day body-part split with high volume',
-        'Daily HIIT sessions for maximum fat loss',
-      ],
-      correctAnswer: 1,
-      explanation: 'Beginners respond best to full-body sessions 2-3 times per week with moderate volumes (2-3 sets per exercise). This frequency provides adequate stimulus and practice while allowing sufficient recovery.',
     },
     {
       type: 'multiple_choice',
@@ -556,19 +237,6 @@ export const level2Unit3Assessment: UnitAssessment = {
       explanation: 'Sarcopenia is the age-related loss of skeletal muscle mass and function. Resistance training is the primary evidence-based countermeasure, helping maintain muscle mass, strength, and functional capacity in older adults.',
     },
     {
-      type: 'scenario',
-      question: 'Which exercise should be avoided and why?',
-      scenario: 'A pregnant woman in her second trimester wants to continue her resistance training programme. She currently performs barbell hip thrusts, standing overhead press, and supine (lying on back) bench press.',
-      options: [
-        'Standing overhead press — standing exercises are dangerous during pregnancy',
-        'Hip thrusts — hip extension exercises are contraindicated in pregnancy',
-        'All exercises should be stopped — exercise is unsafe during pregnancy',
-        'Supine bench press — lying on the back after the first trimester can compress the vena cava, reducing blood flow',
-      ],
-      correctAnswer: 3,
-      explanation: 'After the first trimester, supine (lying flat on the back) exercises should be avoided as the weight of the uterus can compress the inferior vena cava, potentially reducing blood flow. Incline bench press is a safe alternative.',
-    },
-    {
       type: 'multiple_choice',
       question: 'What is the PAR-Q used for?',
       options: [
@@ -579,31 +247,6 @@ export const level2Unit3Assessment: UnitAssessment = {
       ],
       correctAnswer: 2,
       explanation: 'The Physical Activity Readiness Questionnaire (PAR-Q) is a standardised health screening tool that identifies individuals who may need medical clearance before beginning an exercise programme. It should be completed before starting a new training programme.',
-    },
-    {
-      type: 'scenario',
-      question: 'What is the most important action?',
-      scenario: 'During a training session, a 55-year-old gym user suddenly experiences chest pain and shortness of breath during a set of squats.',
-      options: [
-        'Lie down and perform static stretches until it passes',
-        'Stop the exercise immediately and seek medical assessment',
-        'Switch to a lighter exercise and monitor',
-        'Push through — it is probably just muscle soreness',
-      ],
-      correctAnswer: 1,
-      explanation: 'Chest pain and sudden shortness of breath during exercise are potential signs of a cardiac event and require immediate cessation of exercise and medical attention. This is beyond anything that can be self-managed.',
-    },
-    {
-      type: 'multiple_choice',
-      question: 'What is the primary priority for postnatal exercise programming before returning to high-impact or heavy resistance training?',
-      options: [
-        'Pelvic floor rehabilitation and diastasis recti screening',
-        'Performing sit-ups and crunches to rebuild core strength',
-        'Achieving a calorie deficit for weight loss',
-        'Returning to pre-pregnancy training loads as quickly as possible',
-      ],
-      correctAnswer: 0,
-      explanation: 'Pelvic floor rehabilitation is the first priority postnatal. Diastasis recti (abdominal separation) should be screened before core-intensive exercises. Sit-ups and crunches should be avoided until diastasis has been assessed and addressed.',
-    },
+    }
   ],
 };

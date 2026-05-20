@@ -2,7 +2,7 @@
  * University course pricing — Stripe product & price IDs
  *
  * Individual courses: £49 each
- * Bundles: Power £125, Fuel £125, Mindset £79, All £300
+ * Bundles: Power £125, Fuel £125, Mindset £125, All £300
  */
 
 export interface CoursePriceInfo {
@@ -24,6 +24,7 @@ export const COURSE_PRICES: Record<string, CoursePriceInfo> = {
   nutrition_l4: { product_id: 'prod_UWyFs7DlZ6lE6c', price_id: 'price_1TXuIuD5KOEmeWH2KLkbYQ6i', name: 'Fuel Level 4', price: 49, coinCost: 150, type: 'course' },
   mindset_l2: { product_id: 'prod_UWyFbpyh6esCjq', price_id: 'price_1TXuIvD5KOEmeWH2Zq6L2bh5', name: 'Mindset Level 2', price: 49, coinCost: 150, type: 'course' },
   mindset_l3: { product_id: 'prod_UWyFvBgJAgugFt', price_id: 'price_1TXuIvD5KOEmeWH2oDkkinkt', name: 'Mindset Level 3', price: 49, coinCost: 150, type: 'course' },
+  mindset_l4: { product_id: 'prod_UYJ7FYcNVrdibv', price_id: 'price_1TZCVPD5KOEmeWH26odCv5iC', name: 'Mindset Level 4', price: 49, coinCost: 150, type: 'course' },
   // Sport courses
   sport_football: { product_id: 'prod_UWyFRH7UuQIlhm', price_id: 'price_1TXuIwD5KOEmeWH2CeLpOTQn', name: 'Sport: Football', price: 49, coinCost: 150, type: 'course' },
   sport_rugby: { product_id: 'prod_UWyFbnA7OSkbS0', price_id: 'price_1TXuIwD5KOEmeWH2KcCtfuyl', name: 'Sport: Rugby', price: 49, coinCost: 150, type: 'course' },
@@ -51,14 +52,14 @@ export const BUNDLE_PRICES: Record<string, CoursePriceInfo & { courses: string[]
   },
   mindset: {
     product_id: 'prod_UWyFmzTFHKYsZV', price_id: 'price_1TXuJ1D5KOEmeWH2hMG8fGsv',
-    name: 'Mindset Bundle', price: 79, coinCost: 250, type: 'bundle',
-    courses: ['mindset_l2', 'mindset_l3'], savings: 19, coinSavings: 50,
+    name: 'Mindset Bundle', price: 125, coinCost: 375, type: 'bundle',
+    courses: ['mindset_l2', 'mindset_l3', 'mindset_l4'], savings: 22, coinSavings: 75,
   },
   all: {
     product_id: 'prod_UWyFRMjKeuUf3s', price_id: 'price_1TXuJ2D5KOEmeWH2u32ngbbo',
     name: 'All Courses', price: 300, coinCost: 900, type: 'bundle',
-    courses: ['gym_l2', 'gym_l3', 'gym_l4', 'nutrition_l2', 'nutrition_l3', 'nutrition_l4', 'mindset_l2', 'mindset_l3'],
-    savings: 92, coinSavings: 300,
+    courses: ['gym_l2', 'gym_l3', 'gym_l4', 'nutrition_l2', 'nutrition_l3', 'nutrition_l4', 'mindset_l2', 'mindset_l3', 'mindset_l4'],
+    savings: 141, coinSavings: 450,
   },
 };
 

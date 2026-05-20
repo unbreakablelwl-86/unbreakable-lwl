@@ -103,6 +103,21 @@ import { mindsetL3Unit2ChapterQuizzes } from './mindset-l3/unit2-chapter-quizzes
 import { mindsetL3Unit3ChapterQuizzes } from './mindset-l3/unit3-chapter-quizzes';
 import { mindsetL3Unit4ChapterQuizzes } from './mindset-l3/unit4-chapter-quizzes';
 
+// Mindset Level 4 imports
+import { mindsetL4Unit1 } from './mindset-l4/unit1';
+import { mindsetL4Unit2 } from './mindset-l4/unit2';
+import { mindsetL4Unit3 } from './mindset-l4/unit3';
+import { mindsetL4Unit4 } from './mindset-l4/unit4';
+import { mindsetL4Unit1Assessment } from './mindset-l4/unit1-assessments';
+import { mindsetL4Unit2Assessment } from './mindset-l4/unit2-assessments';
+import { mindsetL4Unit3Assessment } from './mindset-l4/unit3-assessments';
+import { mindsetL4Unit4Assessment } from './mindset-l4/unit4-assessments';
+import { mindsetL4FinalAssessment } from './mindset-l4/final-assessment';
+import { mindsetL4Unit1ChapterQuizzes } from './mindset-l4/unit1-chapter-quizzes';
+import { mindsetL4Unit2ChapterQuizzes } from './mindset-l4/unit2-chapter-quizzes';
+import { mindsetL4Unit3ChapterQuizzes } from './mindset-l4/unit3-chapter-quizzes';
+import { mindsetL4Unit4ChapterQuizzes } from './mindset-l4/unit4-chapter-quizzes';
+
 // Level 4 (Power) imports
 import { level4Unit1 } from './level4/unit1';
 import { level4Unit2 } from './level4/unit2';
@@ -299,6 +314,25 @@ export const mindsetCourseData: Level[] = [
   },
 ];
 
+const mindsetL4ChapterQuizzes: ChapterQuiz[] = [
+  ...mindsetL4Unit1ChapterQuizzes,
+  ...mindsetL4Unit2ChapterQuizzes,
+  ...mindsetL4Unit3ChapterQuizzes,
+  ...mindsetL4Unit4ChapterQuizzes,
+];
+
+// Mindset Level 4 — appended to mindset course data
+const mindsetLevel4: Level = {
+  level: 4,
+  title: 'Level 4 Certificate',
+  subtitle: 'Advanced Psychology',
+  description: 'Expert-level psychology covering clinical applications, neuroscience, leadership dynamics, behaviour change science, resilience, and professional practice. The knowledge behind transformational coaching.',
+  units: [mindsetL4Unit1, mindsetL4Unit2, mindsetL4Unit3, mindsetL4Unit4],
+  assessments: [mindsetL4Unit1Assessment, mindsetL4Unit2Assessment, mindsetL4Unit3Assessment, mindsetL4Unit4Assessment],
+  finalAssessment: mindsetL4FinalAssessment,
+  chapterQuizzes: mindsetL4ChapterQuizzes,
+};
+
 const level4ChapterQuizzes: ChapterQuiz[] = [
   ...level4Unit1ChapterQuizzes,
   ...level4Unit2ChapterQuizzes,
@@ -360,7 +394,7 @@ export const sportCourses = {
 export const allCourses: Record<string, Level[]> = {
   gym: [...courseData, powerLevel4],
   nutrition: nutritionCourseData,
-  mindset: mindsetCourseData,
+  mindset: [...mindsetCourseData, mindsetLevel4],
   sport: [], // Sport tab shows grid of individual sports, not levels
   ...sportCourses,
 };
