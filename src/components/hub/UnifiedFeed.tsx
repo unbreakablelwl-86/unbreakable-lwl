@@ -13,7 +13,7 @@ import { StoryEditor } from './StoryEditor';
 import { FeaturePreviewCard } from '@/components/upgrade/FeaturePreviewCard';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Activity, RefreshCw, Loader2 } from 'lucide-react';
+import { Activity, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 
@@ -160,21 +160,12 @@ export function UnifiedFeed({ onSignIn, onOpenMessages }: UnifiedFeedProps) {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Stories Section */}
       {user && <StoriesSection />}
 
       {/* Create Post Box */}
       {user && <CreatePostBox onPostCreated={refetch} />}
-
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <h2 className="font-display text-2xl text-foreground tracking-wide">ACTIVITY FEED</h2>
-        <Button variant="ghost" size="sm" onClick={refetch} className="text-muted-foreground">
-          <RefreshCw className="w-4 h-4 mr-2" />
-          Refresh
-        </Button>
-      </div>
 
       {/* Empty State */}
       {feedItems.length === 0 && (
@@ -197,7 +188,7 @@ export function UnifiedFeed({ onSignIn, onOpenMessages }: UnifiedFeedProps) {
       )}
 
       {/* Feed with Infinite Scroll */}
-      <div className="space-y-4">
+      <div className="space-y-3">
         {feedItems.map((item, index) => {
           const isLast = index === feedItems.length - 1;
           // Show feature preview cards every 4 items for free users
