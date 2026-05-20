@@ -145,7 +145,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
                 onClick={onSignUp}
               >
                 <Sparkles className="w-4 h-4 mr-2" />
-                START FREE TRIAL
+                JOIN FREE
               </Button>
             </div>
           </div>
@@ -206,7 +206,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
               onClick={onSignUp}
             >
               <Sparkles className="w-5 h-5 mr-2" />
-              START YOUR 7-DAY FREE TRIAL
+              JOIN FREE
             </Button>
             <Button
               size="lg"
@@ -668,8 +668,8 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
                     <Shield className="w-5 h-5 text-primary" />
                   </div>
                   <div>
-                    <h3 className="font-display text-xl text-foreground tracking-wide">FREE FOREVER</h3>
-                    <p className="text-muted-foreground text-sm">No card needed. No trial. Just sign up.</p>
+                    <h3 className="font-display text-xl text-foreground tracking-wide">FREE PLATFORM</h3>
+                    <p className="text-muted-foreground text-sm">No card needed. Sign up and start using these straight away.</p>
                   </div>
                 </div>
                 <div className="grid sm:grid-cols-2 gap-2">

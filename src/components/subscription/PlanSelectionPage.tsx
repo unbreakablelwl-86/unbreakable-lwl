@@ -51,7 +51,7 @@ export function PlanSelectionPage({ onSelectPlan, loading }: PlanSelectionPagePr
           <h1 className="font-display text-4xl md:text-6xl text-foreground tracking-wide mb-1">CHOOSE YOUR</h1>
           <h1 className="font-display text-4xl md:text-6xl text-primary tracking-wide neon-glow-subtle mb-4">UNBREAKABLE PLAN</h1>
           <p className="text-muted-foreground text-lg max-w-xl mx-auto">
-            7-day free trial on every plan. Cancel anytime before your first payment.
+            Pick the plan that fits your goals. Cancel anytime from your profile.
           </p>
         </motion.div>
 
@@ -83,7 +83,7 @@ export function PlanSelectionPage({ onSelectPlan, loading }: PlanSelectionPagePr
                 onClick={() => onSelectPlan('tier1')}
                 disabled={loading}
               >
-                START FREE TRIAL <ArrowRight className="w-5 h-5 ml-2" />
+                GET STARTED <ArrowRight className="w-5 h-5 ml-2" />
               </Button>
 
               <p className="font-display text-sm tracking-wide text-foreground mb-3">EVERYTHING INCLUDED:</p>
@@ -129,7 +129,7 @@ export function PlanSelectionPage({ onSelectPlan, loading }: PlanSelectionPagePr
                 disabled={loading}
               >
                 <Sparkles className="w-5 h-5 mr-2" />
-                START FREE TRIAL <ArrowRight className="w-5 h-5 ml-2" />
+                GET STARTED <ArrowRight className="w-5 h-5 ml-2" />
               </Button>
 
               <p className="font-display text-sm tracking-wide text-foreground mb-3">EVERYTHING IN COACHING, PLUS:</p>
@@ -147,8 +147,7 @@ export function PlanSelectionPage({ onSelectPlan, loading }: PlanSelectionPagePr
 
         {/* Footer */}
         <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }} className="text-center text-muted-foreground text-sm mt-10">
-          All plans include a 7-day free trial. Payment details collected upfront.
-          <br />Cancel from your profile anytime before the trial ends — no charge.
+          Payment details collected at signup. Cancel from your profile anytime.
           <br />After your {t1.commitmentMonths}-month commitment, billing continues monthly until cancelled.
         </motion.p>
       </div>

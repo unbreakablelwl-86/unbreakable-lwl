@@ -105,7 +105,7 @@ export function UpgradeCTA({ feature, description, icon: Icon, variant = 'card',
           <Link to="/plans" className="block">
             <Button className="font-display tracking-wide gap-2 w-full shadow-[0_0_20px_hsl(24_100%_50%/0.3)]">
               <Sparkles className="w-4 h-4" />
-              START 7-DAY FREE TRIAL
+              GET STARTED
               <ArrowRight className="w-4 h-4" />
             </Button>
           </Link>

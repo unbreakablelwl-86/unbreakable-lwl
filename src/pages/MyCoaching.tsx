@@ -48,7 +48,7 @@ export default function MyCoaching() {
 
     // Gate: must have active subscription (trial or paid)
     if (!hasActiveSubscription) {
-      toast.error('You need an active subscription to request a coach. Start your free trial first.');
+      toast.error('You need an active subscription to request a coach. Choose a plan first.');
       return;
     }
 
@@ -216,7 +216,7 @@ export default function MyCoaching() {
                 <Lock className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
                 <h2 className="font-display text-lg tracking-wide text-foreground mb-2">SUBSCRIPTION REQUIRED</h2>
                 <p className="text-muted-foreground text-sm max-w-md mx-auto mb-4">
-                  Start your free trial and provide payment details to request a 121 coach.
+                  Choose a plan and provide payment details to request a 121 coach.
                 </p>
                 <Link to="/plans">
                   <Button className="font-display tracking-wide">

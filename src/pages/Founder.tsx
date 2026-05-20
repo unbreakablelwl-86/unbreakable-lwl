@@ -16,6 +16,9 @@ import {
   Sparkles,
 } from 'lucide-react';
 import founderPhoto from '@/assets/john-founder.png';
+import journey2018 from '@/assets/jj-journey-2018.png';
+import journey2019 from '@/assets/jj-journey-2019.png';
+import journey2020 from '@/assets/jj-journey-2020.png';
 
 const fadeUp = {
   initial: { opacity: 0, y: 24 },
@@ -27,7 +30,7 @@ const fadeUp = {
 const beliefs = [
   {
     title: 'Everyone deserves to understand their own body.',
-    desc: 'This should be taught in schools. It shouldn\'t cost £200 a month. Your body belongs to you and so does the knowledge of how it works. Full stop.',
+    desc: 'This should be taught in schools. Your body belongs to you and so does the knowledge of how it works. Full stop.',
   },
   {
     title: 'Community beats coaching every single time.',
@@ -36,10 +39,6 @@ const beliefs = [
   {
     title: 'Showing up is the whole thing.',
     desc: 'Not perfectly. Not every day. Just again. One more time. That single decision, repeated across the hard days and the blank ones, is what unbreakable actually means.',
-  },
-  {
-    title: 'Mental health needs more than a hashtag.',
-    desc: 'The real conversation happens when someone is brave enough to say the dark thing out loud, and someone else stays in the room. That\'s what this community is built to be.',
   },
   {
     title: 'Your life is yours.',
@@ -59,28 +58,28 @@ const chips = [
 
 const timeline = [
   {
-    label: 'Growing Up',
-    desc: 'Learning to mask. Learning to survive. Undiagnosed, navigating a world that didn\'t quite fit. Manufacturing a version of myself that could get through the day. The gym becomes the only constant that asks nothing back.',
+    label: '2018',
+    desc: 'Qualified as a Level 3 Personal Trainer. Wanted to learn how my own body actually works, not to chase an image or become a guru. The more I learned, the more I realised this information should be available to everyone.',
   },
   {
-    label: '2018',
-    desc: 'Left a decade of guaranteed career in two weeks. Walked away from security, status, everything that looked right from the outside. Qualified as a PT because helping people felt like the first honest thing I\'d done in years.',
+    label: '2018 – 2020',
+    desc: 'Spent two years applying everything I learned to my own life. Training properly, eating with purpose, understanding the science behind it all. The transformation wasn\'t about aesthetics — it was proof that education and consistency work.',
   },
   {
     label: '2020',
-    desc: 'Saw the industry for what it was. Left. Realised the model was broken, dependency over empowerment, gatekeeping over education. Couldn\'t be part of it. Stopped forcing 1-2-1 and started thinking bigger.',
+    desc: 'Saw the industry for what it was. Overcomplicated programmes that kept people paying, not progressing. Information locked behind expensive packages. A model built on dependency, not empowerment. Walked away and started thinking bigger.',
   },
   {
-    label: 'The Dark Years',
-    desc: 'Three years. Lowest point. Completely alone. Reached out. Got nothing back. Years going blank. The gym the only thing I kept showing up to, with no idea it was building the message that would eventually become all of this.',
+    label: 'The Build',
+    desc: 'Started building Unbreakable from scratch. Not a coaching business, not a cookie-cutter app — a genuine community built on truth, education, and the kind of honest connection the fitness industry never offered.',
   },
   {
-    label: 'The Shift',
-    desc: 'Diagnosis. Clarity. Decades explained. Autism and ADHD. Everything I\'d carried, the masking, the exhaustion, the relationships that never held, suddenly had context. Not broken. Different. And different became the foundation.',
+    label: '2024',
+    desc: 'Levelled up to Level 4 Strength & Conditioning. Added sport-specific science, periodisation and performance programming to the Unbreakable University. Always learning, always building.',
   },
   {
     label: 'Now',
-    desc: 'Unbreakable. Built for the people I was. Unmasking. Finding purpose. Building the community I needed and couldn\'t find. This is what Keep Showing Up was always pointing toward.',
+    desc: 'Unbreakable is live. An ad-free safe space to track your progress, educate yourself, and be part of a community that actually gets it. No forced likes, no adverts, no noise. Just keep showing up.',
   },
 ];
 
@@ -123,19 +122,17 @@ const Founder = () => {
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-[radial-gradient(circle,hsl(var(--primary)/0.08)_0%,transparent_60%)] pointer-events-none" />
         <motion.div {...fadeUp} className="max-w-lg mx-auto relative z-10">
           <span className="inline-block font-mono text-[9px] tracking-[3px] text-primary uppercase border border-border px-4 py-1.5 rounded-full mb-6">
-            The Founder
+            Meet The Founder
           </span>
-          <h1 className="font-display text-[clamp(58px,14vw,96px)] leading-[0.88] tracking-wide text-foreground mb-6">
-            NOT A<br />
-            <span className="text-primary neon-glow-subtle">GURU.</span><br />
-            JUST SOMEONE<br />
-            WHO GETS IT.
+          <h1 className="font-display text-[clamp(48px,12vw,80px)] leading-[0.88] tracking-wide text-foreground mb-6">
+            JOHN<br />
+            <span className="text-primary neon-glow-subtle">JAMES.</span><br />
+            <span className="text-[clamp(28px,7vw,48px)]">THE PERSON BEHIND<br />UNBREAKABLE.</span>
           </h1>
-          <p className="text-muted-foreground text-[15px] leading-relaxed max-w-[340px] mx-auto mb-8">
-            I built Unbreakable because I needed it and it didn't exist. Not a programme, not a coaching package, not another influencer selling a transformation.{' '}
-            <strong className="text-foreground">
-              A community built on truth, education, and the kind of honest connection that the fitness industry never bothered to offer.
-            </strong>
+          <p className="text-muted-foreground text-[15px] leading-relaxed max-w-[380px] mx-auto mb-8">
+            Level 4 Strength & Conditioning certified. Level 3 Personal Trainer since 2018.
+            I didn't get qualified to become a coach — I got educated to understand my own body.
+            Then I realised <strong className="text-foreground">everyone deserves that same knowledge without the price tag.</strong>
           </p>
           <p className="font-mono text-[10px] tracking-[3px] text-primary uppercase">
             Live Without Limits · Keep Showing Up
@@ -160,67 +157,79 @@ const Founder = () => {
         <div className="text-center">
           <h2 className="font-display text-[32px] tracking-[3px] text-foreground">JOHN JAMES</h2>
           <p className="font-mono text-[9px] tracking-[2px] text-primary uppercase">Founder & Creator · Unbreakable LWL</p>
+          <p className="font-mono text-[8px] tracking-[2px] text-muted-foreground uppercase mt-1">L4 S&C · L3 PT · Liverpool, UK</p>
         </div>
       </section>
 
-      {/* ═══ OPENER ═══ */}
+      {/* ═══ OPENER — MY STORY ═══ */}
       <section className="py-11 px-6 border-b border-border">
         <motion.div {...fadeUp} className="max-w-lg mx-auto">
           <div className="bg-card border-l-4 border-primary rounded-r-lg p-5 mb-7 relative overflow-hidden">
             <span className="absolute top-[-10px] right-4 font-display text-[80px] text-primary/[0.08] leading-none">"</span>
             <p className="font-display text-[clamp(20px,5vw,28px)] tracking-wide leading-[1.2] text-primary relative z-10">
-              "EVERYONE CARES UNTIL YOU ACTUALLY REACH OUT."
+              "I GOT EDUCATED TO UNDERSTAND MY BODY AS THE VEHICLE IT IS."
             </p>
           </div>
 
           <p className="text-muted-foreground text-[15px] leading-[1.85] mb-4">
-            I found that out the hard way. For years I heard the same conversation about mental health, the campaigns, the awareness weeks, the open doors. It all sounds right until you actually need it. Until you find the courage to say the real thing out loud, the dark thing that costs something to admit, and then you watch the people around you quietly disappear. Not because they're bad people, but because nobody actually teaches us how to sit with someone else's pain.
+            My name's JJ. I'm the sole founder and creator of Unbreakable — Live Without Limits. I'm based in Liverpool, and I built this whole platform from scratch because the fitness industry let me down, and I know it's let you down too.
           </p>
           <p className="text-muted-foreground text-[15px] leading-[1.85] mb-4">
-            <strong className="text-foreground">That specific kind of loneliness, reaching out and ending up more isolated than before, is something I know deeply.</strong> And it's exactly what this community is being built to change.
+            I originally certified as a <strong className="text-foreground">Level 3 Personal Trainer back in 2018.</strong> Not because I wanted to become a PT and sell sessions. I did it because I'd started my own fitness journey and quickly realised I was training blind — no real understanding of how my body actually worked, just copying what I'd seen online and hoping for the best. That bothered me. So I went and got qualified.
+          </p>
+          <p className="text-muted-foreground text-[15px] leading-[1.85] mb-4">
+            What struck me most during those qualifications wasn't how complicated the science was — <strong className="text-foreground">it was how straightforward it should have been.</strong> Anatomy, nutrition, how muscles grow, how to train properly. None of it was rocket science. It was basic human knowledge about the vehicle you live in every single day. The kind of thing that should be taught in schools, not hidden behind a certificate and a price tag that most people can't afford.
           </p>
           <p className="text-muted-foreground text-[15px] leading-[1.85]">
-            Not through a programme. Not through a 12-week plan. Through genuine connection with people who understand because they've actually been there. Because understanding doesn't come from a qualification. <em className="text-primary not-italic">It comes from experience, and some of us have had more of it than we ever asked for.</em>
+            In September 2024 I levelled up to <strong className="text-foreground">Level 4 Strength & Conditioning</strong> — adding sport-specific training, periodisation, and performance science to what I could offer through Unbreakable. Not because I needed more letters after my name, but because I believe if you're going to educate people, <em className="text-primary not-italic">you should never stop learning yourself.</em>
           </p>
         </motion.div>
       </section>
 
-      {/* ═══ WHERE IT STARTS ═══ */}
-      <section className="py-11 px-6 border-b border-border">
-        <motion.div {...fadeUp} className="max-w-lg mx-auto">
-          <p className="font-mono text-[9px] tracking-[3px] text-primary uppercase mb-2.5">Where It Starts</p>
-          <h2 className="font-display text-[clamp(28px,7vw,42px)] leading-[1.05] tracking-wide text-foreground mb-5">
-            I KEPT SHOWING UP <span className="text-primary neon-glow-subtle">BEFORE I KNEW WHY</span>
-          </h2>
-
-          <p className="text-muted-foreground text-[15px] leading-[1.85] mb-4">
-            The gym was never really about aesthetics for me. It was the one place I could show up without having to explain myself, without performing a version of myself that would be accepted. No expectations, no judgement, just the honest result of whatever effort I had that day. Some days that was a lot. Some days it was almost nothing. But I kept going back regardless.
-          </p>
-          <p className="text-muted-foreground text-[15px] leading-[1.85] mb-4">
-            Through the worst of it, the depression, the years of isolation, the months where everything felt blank and I couldn't see a reason to push forward, <strong className="text-foreground">the gym was the one constant.</strong> I kept showing up even when I had no idea why. Looking back now I can see what I couldn't see then. That decision to show up again, repeated across years of difficult days, was quietly building something. I thought I was just surviving. It turns out I was building the foundation of everything that came next.
-          </p>
-
-          <div className="bg-card border-l-4 border-primary rounded-r-lg p-5 my-7 relative overflow-hidden">
-            <span className="absolute top-[-10px] right-4 font-display text-[80px] text-primary/[0.08] leading-none">"</span>
-            <p className="font-display text-[clamp(18px,5vw,26px)] tracking-wide leading-[1.2] text-primary relative z-10">
-              THE GYM KEPT ME HERE LONG ENOUGH TO FIND MY ANSWERS. THAT'S NOT SOMETHING I SAY FOR DRAMATIC EFFECT. IT'S JUST THE TRUTH OF IT.
-            </p>
-          </div>
-
-          <p className="text-muted-foreground text-[15px] leading-[1.85] mb-4">
-            <strong className="text-foreground">Unbreakable isn't built on perfect weeks. It's built on the decision to show up again.</strong>
-          </p>
-          <p className="text-muted-foreground text-[15px] leading-[1.85]">
-            One session. One walk. One meal. One choice. That decision, repeated, across the hard days and the blank days and the days you have nothing left, <em className="text-primary not-italic">that's how limits disappear.</em>
-          </p>
-        </motion.div>
-      </section>
-
-      {/* ═══ THE HARD TRUTH ═══ */}
+      {/* ═══ MY JOURNEY — PHOTOS ═══ */}
       <section className="py-11 px-6 border-b border-border bg-card/30">
         <motion.div {...fadeUp} className="max-w-lg mx-auto">
-          <p className="font-mono text-[9px] tracking-[3px] text-primary uppercase mb-2.5">The Hard Truth</p>
-          <h2 className="font-display text-[clamp(30px,7vw,44px)] leading-none tracking-wide text-foreground mb-5">
+          <p className="font-mono text-[9px] tracking-[3px] text-primary uppercase mb-2.5">The Journey</p>
+          <h2 className="font-display text-[clamp(28px,7vw,42px)] leading-[1.05] tracking-wide text-foreground mb-5">
+            2018 – 2020.{' '}
+            <span className="text-primary neon-glow-subtle">EDUCATION IN ACTION.</span>
+          </h2>
+          <p className="text-muted-foreground text-[15px] leading-[1.85] mb-6">
+            This isn't a transformation for likes. It's what happens when you stop guessing, start understanding your body, and stay consistent. No shortcuts. No magic supplements. Just education, applied daily, over two years.
+          </p>
+
+          <div className="grid grid-cols-3 gap-3">
+            {[
+              { src: journey2018, label: '2018', sub: 'Day one. No knowledge.' },
+              { src: journey2019, label: '2019', sub: 'Learning & applying.' },
+              { src: journey2020, label: '2020', sub: 'Education works.' },
+            ].map(img => (
+              <div key={img.label} className="relative">
+                <div className="aspect-[3/4] rounded-lg overflow-hidden border border-border">
+                  <img src={img.src} alt={`JJ journey ${img.label}`} className="w-full h-full object-cover" />
+                </div>
+                <div className="mt-2 text-center">
+                  <p className="font-display text-sm tracking-wide text-primary">{img.label}</p>
+                  <p className="text-[10px] text-muted-foreground">{img.sub}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="bg-card border-l-4 border-primary rounded-r-lg p-5 mt-7 relative overflow-hidden">
+            <span className="absolute top-[-10px] right-4 font-display text-[80px] text-primary/[0.08] leading-none">"</span>
+            <p className="font-display text-[clamp(16px,4vw,22px)] tracking-wide leading-[1.2] text-primary relative z-10">
+              SAME PERSON. SAME GYM. THE ONLY DIFFERENCE IS UNDERSTANDING WHAT I WAS DOING AND WHY.
+            </p>
+          </div>
+        </motion.div>
+      </section>
+
+      {/* ═══ WHY I BUILT UNBREAKABLE ═══ */}
+      <section className="py-11 px-6 border-b border-border">
+        <motion.div {...fadeUp} className="max-w-lg mx-auto">
+          <p className="font-mono text-[9px] tracking-[3px] text-primary uppercase mb-2.5">Why I Built This</p>
+          <h2 className="font-display text-[clamp(28px,7vw,42px)] leading-[1.05] tracking-wide text-foreground mb-5">
             THE INDUSTRY <span className="text-primary neon-glow-subtle">FAILED YOU.</span>
           </h2>
 
@@ -228,10 +237,10 @@ const Founder = () => {
             Somewhere along the way, fitness stopped being about what your body can do and became entirely about what it looks like. Chasing someone else's ideal, a shape, a size, a standard that was never designed with you in mind. <strong className="text-foreground">The industry built itself around that confusion deliberately, because a confused person keeps paying, and an empowered person doesn't need you anymore.</strong>
           </p>
           <p className="text-muted-foreground text-[15px] leading-[1.85] mb-4">
-            I qualified as a PT in 2018 because I genuinely believed I could help people differently. And for a while I tried. But the more time I spent inside the industry, the more clearly I could see what it was actually built on. Overcomplicated programmes that created dependency rather than capability. Information that should be freely available, locked behind expensive monthly packages. A business model that measured success by how long a client stayed reliant on you, not by how well they learned to stand on their own. I couldn't keep being part of that. So I walked away and started thinking about what something honest might actually look like.
+            I saw it from the inside. Overcomplicated programmes that created dependency rather than capability. Information that should be freely available, locked behind expensive monthly packages. A business model that measured success by how long a client stayed reliant on you, not by how well they learned to stand on their own. I couldn't keep being part of that. So I walked away.
           </p>
           <p className="text-muted-foreground text-[15px] leading-[1.85] mb-4">
-            Here's the truth most people miss: <strong className="text-foreground">When you understand how your body actually works, you don't need a guru.</strong> You don't need a £200 a month coaching package. You need the basics, delivered honestly, in a community that holds you to them. That information should be free. It should be taught in schools. It belongs to you, not to an industry that profits from your confusion.
+            Here's the truth: <strong className="text-foreground">when you understand how your body actually works, you don't need a guru.</strong> You need the basics, delivered honestly, in a community that holds you to them. That information should be taught in schools. It belongs to you, not to an industry that profits from your confusion.
           </p>
           <p className="text-muted-foreground text-[15px] leading-[1.85]">
             <em className="text-primary not-italic">So I stopped coaching. And I started building the thing that should have existed all along.</em>
@@ -239,42 +248,28 @@ const Founder = () => {
         </motion.div>
       </section>
 
-      {/* ═══ THE TURNING POINT ═══ */}
-      <section className="py-11 px-6 border-b border-border">
+      {/* ═══ WHY NOT SOCIAL MEDIA ═══ */}
+      <section className="py-11 px-6 border-b border-border bg-card/30">
         <motion.div {...fadeUp} className="max-w-lg mx-auto">
-          <p className="font-mono text-[9px] tracking-[3px] text-primary uppercase mb-2.5">The Turning Point</p>
+          <p className="font-mono text-[9px] tracking-[3px] text-primary uppercase mb-2.5">The Real Reason</p>
           <h2 className="font-display text-[clamp(28px,7vw,42px)] leading-[1.05] tracking-wide text-foreground mb-5">
-            DECADES EXPLAINED IN <span className="text-primary neon-glow-subtle">A DIAGNOSIS.</span>
+            I BUILT AN <span className="text-primary neon-glow-subtle">AD-FREE SAFE SPACE</span>
           </h2>
 
           <p className="text-muted-foreground text-[15px] leading-[1.85] mb-4">
-            For most of my life I felt like I was operating on a completely different frequency to the people around me. I spent years manufacturing a version of myself that could pass, could function, could get through the day without standing out too much. That kind of constant performance is exhausting in ways that are genuinely difficult to describe unless you've lived it. You don't realise how much energy it costs until you stop doing it.
+            I personally hate social media. Honestly. The only platform I ever used was Instagram, and even that was just my own personal diary — tracking my own progress for myself. Not performing for an audience. Not chasing likes. Not comparing myself to someone else's highlight reel.
           </p>
           <p className="text-muted-foreground text-[15px] leading-[1.85] mb-4">
-            Years went past in a blur. Relationships that had once felt like everything faded into silence. I reached out over the years in different directions and mostly got nothing back. Not cruelty, just absence. That quiet kind of being left to deal with it alone that nobody really prepares you for. I felt like the odd one out in every room I'd ever been in, and for a long time I had no real understanding of why, just the persistent sense that something about the way I moved through the world was different to everyone else.
-          </p>
-          <p className="text-muted-foreground text-[15px] leading-[1.85] mb-4">
-            At my lowest point I finally pushed through and went looking for proper help. What came back changed the entire shape of my life. <strong className="text-foreground">Autism and ADHD, a diagnosis that answered questions I'd been carrying for decades.</strong> The way my brain worked, the exhaustion behind the masking, the relationships that never quite held the way I needed them to, it all had context suddenly. I wasn't broken. I'd just spent my whole life trying to fit a mould that was never made for me. And once you understand that, different stops being a flaw and starts being a foundation.
-          </p>
-
-          <div className="bg-card border-l-4 border-primary rounded-r-lg p-5 my-7 relative overflow-hidden">
-            <span className="absolute top-[-10px] right-4 font-display text-[80px] text-primary/[0.08] leading-none">"</span>
-            <p className="font-display text-[clamp(18px,5vw,26px)] tracking-wide leading-[1.2] text-primary relative z-10">
-              I STOPPED LIVING BY SOMEONE ELSE'S SCRIPT. EVEN WHEN IT COST ME EVERYTHING AT THE TIME, THAT WAS THE MOMENT THINGS STARTED MAKING SENSE.
-            </p>
-          </div>
-
-          <p className="text-muted-foreground text-[15px] leading-[1.85] mb-4">
-            Years before the diagnosis, I'd walked away from a decade of guaranteed career in the space of two weeks. Left behind everything that looked like security and success from the outside. I understand now that was an autistic meltdown reaching a point where the mask simply couldn't hold anymore. At the time I just knew I was done. Done with performing a version of myself that didn't fit. Done with a life I'd been living for reasons that had nothing to do with who I actually was.
+            <strong className="text-foreground">That's exactly why I built Unbreakable.</strong> An ad-free, algorithm-free, pressure-free space where you can track your progress, share your journey, and be part of a real community — without anyone trying to sell you something or make you feel like you're not enough. No forced adverts. No engagement tricks. No noise.
           </p>
           <p className="text-muted-foreground text-[15px] leading-[1.85]">
-            Through all of it, the career, the isolation, the years of searching for answers, <strong className="text-foreground">the gym was the one constant that never asked me to be anything other than what I was that day.</strong> The message <em className="text-primary not-italic">Keep Showing Up</em> wasn't something I came up with for a brand. It was the thing I was already living, the quiet decision I made over and over again during years when I had very little else to hold on to. It kept me here long enough to eventually find my purpose. Now I'm building something with it.
+            Just a place built for people who want to understand their body, stay consistent, and connect with others who are doing the same thing. <em className="text-primary not-italic">Your progress is yours. It shouldn't be content for someone else's algorithm.</em>
           </p>
         </motion.div>
       </section>
 
       {/* ═══ COMMUNITY & EDUCATION ═══ */}
-      <section className="py-11 px-6 border-b border-border bg-card/30">
+      <section className="py-11 px-6 border-b border-border">
         <motion.div {...fadeUp} className="max-w-lg mx-auto">
           <p className="font-mono text-[9px] tracking-[3px] text-primary uppercase mb-2.5">The Foundation</p>
           <h2 className="font-display text-[clamp(26px,7vw,42px)] leading-[1.05] tracking-wide text-foreground mb-5">
@@ -282,13 +277,13 @@ const Founder = () => {
           </h2>
 
           <p className="text-muted-foreground text-[15px] leading-[1.85] mb-4">
-            Unbreakable is not a coaching business with a community bolted on as an afterthought. <strong className="text-foreground">The community is the whole point, and education is the foundation it's built on.</strong> Everything else, any programmes, any resources, anything that comes after, grows from that base. Not the other way around.
+            Unbreakable is not a coaching business with a community bolted on as an afterthought. <strong className="text-foreground">The community is the whole point, and education is the foundation it's built on.</strong> Everything else grows from that base. Not the other way around.
           </p>
           <p className="text-muted-foreground text-[15px] leading-[1.85] mb-4">
-            Something is shifting in the way people relate to health and fitness. More and more people are exhausted by the performance of it all, the perfect transformations, the influencers who have all the answers, the constant pressure to buy the next thing that will finally fix what's broken. What people are actually looking for, underneath all of that noise, is something real. Genuine connection with other people who understand from the inside. Information that respects their intelligence. A space where showing up as you actually are is enough.
+            More and more people are exhausted by the performance of it all — the perfect transformations, the influencers who have all the answers, the constant pressure to buy the next thing. What people are actually looking for is something real. Genuine connection with other people who understand. Information that respects their intelligence. A space where showing up as you actually are is enough.
           </p>
           <p className="text-muted-foreground text-[15px] leading-[1.85] mb-6">
-            That is what Unbreakable is being built to be. A place where understanding your own body is treated as a basic right, not a premium service. Where the conversation about mental health goes deeper than a caption. Where the people around you have been through something real and stayed anyway, <em className="text-primary not-italic">because that is what community actually means.</em>
+            That is what Unbreakable is. A place where understanding your own body is treated as a basic right, not a premium service. Where the people around you have been through something real and stayed anyway, <em className="text-primary not-italic">because that is what community actually means.</em>
           </p>
 
           {/* Three Pillars */}
@@ -313,7 +308,7 @@ const Founder = () => {
       </section>
 
       {/* ═══ WHAT I BELIEVE ═══ */}
-      <section className="py-11 px-6 border-b border-border">
+      <section className="py-11 px-6 border-b border-border bg-card/30">
         <motion.div {...fadeUp} className="max-w-lg mx-auto">
           <p className="font-mono text-[9px] tracking-[3px] text-primary uppercase mb-2.5">What I Believe</p>
           <h2 className="font-display text-[clamp(30px,7vw,44px)] leading-none tracking-wide text-foreground mb-5">
@@ -337,7 +332,7 @@ const Founder = () => {
       </section>
 
       {/* ═══ WHAT SHOWING UP LOOKS LIKE ═══ */}
-      <section className="py-11 px-6 border-b border-border bg-card/30">
+      <section className="py-11 px-6 border-b border-border">
         <motion.div {...fadeUp} className="max-w-lg mx-auto">
           <p className="font-mono text-[9px] tracking-[3px] text-primary uppercase mb-2.5">Daily Practice</p>
           <h2 className="font-display text-[clamp(30px,7vw,44px)] leading-none tracking-wide text-foreground mb-5">
@@ -357,7 +352,7 @@ const Founder = () => {
       </section>
 
       {/* ═══ THE JOURNEY SO FAR ═══ */}
-      <section className="py-11 px-6 border-b border-border">
+      <section className="py-11 px-6 border-b border-border bg-card/30">
         <motion.div {...fadeUp} className="max-w-lg mx-auto">
           <p className="font-mono text-[9px] tracking-[3px] text-primary uppercase mb-2.5">The Journey So Far</p>
           <h2 className="font-display text-[clamp(30px,7vw,44px)] leading-none tracking-wide text-foreground mb-6">
@@ -384,8 +379,8 @@ const Founder = () => {
           <div className="bg-primary rounded-xl p-7">
             <p className="font-mono text-[8px] tracking-[3px] text-primary-foreground/50 uppercase mb-2.5">From The Founder</p>
             <p className="text-primary-foreground text-[15px] leading-[1.8] font-medium">
-              <strong>Unbreakable isn't perfect. It's not supposed to be.</strong> It's built by real people, for real people —
-              and it will keep evolving as long as people keep showing up. That's the deal. You show up, we show up.
+              <strong>Unbreakable isn't perfect. It's not supposed to be.</strong> It's built by one person, for real people —
+              and it will keep evolving as long as people keep showing up. That's the deal. You show up, I show up.
               Every tool, every update, every feature exists because <strong>someone in this community needed it.</strong>{' '}
               That's how we build. That's how we grow. That's how we stay Unbreakable.
             </p>
@@ -408,7 +403,7 @@ const Founder = () => {
               <span className="text-[clamp(22px,6vw,36px)]">LIVE WITHOUT LIMITS.</span>
             </h2>
             <p className="text-muted-foreground text-[13px] leading-relaxed max-w-[340px] mx-auto mb-7 relative z-10">
-              If any part of this story felt familiar, if you've felt let down by the industry, by the conversation around mental health, or simply by the gap between what you've been told is possible and what you've actually experienced, then you're exactly the person this community is being built for. This is about something deeper than aesthetics. It always was.
+              If any part of this story resonated — if you've felt let down by the industry, overwhelmed by misinformation, or just want to understand your body without the gatekeeping — you're exactly who this is built for. Sign up, explore everything, and keep showing up.
             </p>
             <p className="text-foreground text-[13px] font-semibold mb-5 relative z-10">
               Education first. Community built on truth. No shortcuts.
@@ -419,7 +414,7 @@ const Founder = () => {
               onClick={handleSignUp}
             >
               <Sparkles className="w-4 h-4 mr-2" />
-              START YOUR JOURNEY
+              JOIN THE COMMUNITY
               <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
           </Card>

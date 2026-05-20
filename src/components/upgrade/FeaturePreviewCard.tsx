@@ -134,7 +134,7 @@ export function FeaturePreviewCard({ featureKey, index }: FeaturePreviewCardProp
           <Link to="/plans">
             <Button size="sm" className="w-full font-display tracking-wide gap-2 shadow-[0_0_15px_hsl(24_100%_50%/0.25)]">
               <Sparkles className="w-4 h-4" />
-              UNLOCK WITH FREE TRIAL
+              UNLOCK FEATURE
               <ArrowRight className="w-4 h-4" />
             </Button>
           </Link>
