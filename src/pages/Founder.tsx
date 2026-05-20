@@ -84,7 +84,7 @@ const timeline = [
   },
   {
     label: '2025',
-    desc: 'Diagnosed autistic and ADHD at 36. Suddenly a lot of things made sense — the way I process, the intensity, the need for structure. Stepped away from the gym. Started rebuilding from scratch.',
+    desc: 'Diagnosed autistic and ADHD at 39. Suddenly a lot of things made sense — the way I process, the intensity, the need for structure. Stepped away from the gym. Started rebuilding from scratch.',
   },
   {
     label: 'Now',
@@ -242,7 +242,7 @@ const Founder = () => {
             <span className="text-primary neon-glow-subtle">BY WEEK.</span>
           </h2>
           <p className="text-muted-foreground text-[15px] leading-[1.85] mb-6">
-            In 2025, at 36, I was diagnosed autistic and ADHD. Suddenly a lifetime of feeling like I was wired differently had a name. It knocked me sideways — I stepped away from the gym, away from most things, and had to figure out how to plug back into the world on my own terms. Six months later, I walked back in. Not because I was fixed, but because <strong className="text-foreground">showing up is what I teach and it had to start with me.</strong>
+            In 2025, at 39, I was diagnosed autistic and ADHD. Suddenly a lifetime of feeling like I was wired differently had a name. It knocked me sideways — I stepped away from the gym, away from most things, and had to figure out how to plug back into the world on my own terms. Six months later, I walked back in. Not because I was fixed, but because <strong className="text-foreground">showing up is what I teach and it had to start with me.</strong>
           </p>
 
           <div className="rounded-lg overflow-hidden border border-border">
