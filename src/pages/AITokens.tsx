@@ -320,7 +320,7 @@ export default function AITokens() {
                 </div>
               </div>
               <p className="text-sm text-muted-foreground">
-                Notifications, missed session reminders, workout reminders, and all university content are <span className="text-foreground font-medium">completely free</span> — they don't cost anything and never cost tokens.
+                Notifications, missed session reminders, and workout reminders are <span className="text-foreground font-medium">completely free</span> — they don't cost anything and never cost tokens. University courses are unlocked with tokens.
               </p>
             </div>
 
