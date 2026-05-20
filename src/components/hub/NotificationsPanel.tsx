@@ -234,20 +234,12 @@ export function NotificationsPanel({ isOpen, onClose }: NotificationsPanelProps)
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
             className="fixed right-0 top-0 bottom-0 w-full max-w-md bg-card border-l border-border z-50 flex flex-col"
           >
-            {/* Header */}
+            {/* Header — Instagram Activity style */}
             <div className="flex items-center justify-between p-4 border-b border-border">
-              <div className="flex items-center gap-3">
-                <Bell className="w-5 h-5 text-primary" />
-                <h2 className="font-display text-lg tracking-wide">NOTIFICATIONS</h2>
+              <h2 className="font-display text-lg tracking-widest">Activity</h2>
+              <div className="flex items-center gap-1">
                 {unreadCount > 0 && (
-                  <span className="bg-primary text-primary-foreground text-xs px-2 py-0.5 rounded-full">
-                    {unreadCount}
-                  </span>
-                )}
-              </div>
-              <div className="flex items-center gap-2">
-                {unreadCount > 0 && (
-                  <Button variant="ghost" size="sm" onClick={markAllAsRead} className="font-display text-xs tracking-wide">
+                  <Button variant="ghost" size="sm" onClick={markAllAsRead} className="text-primary text-xs font-display tracking-wide">
                     Mark all read
                   </Button>
                 )}
@@ -256,26 +248,16 @@ export function NotificationsPanel({ isOpen, onClose }: NotificationsPanelProps)
                     variant="ghost"
                     size="sm"
                     onClick={deleteAllNotifications}
-                    className="font-display text-xs tracking-wide text-destructive hover:text-destructive"
+                    className="text-xs text-muted-foreground hover:text-destructive"
                   >
-                    <Trash2 className="w-3 h-3 mr-1" />
-                    Clear all
+                    Clear
                   </Button>
                 )}
-                <Button variant="ghost" size="sm" onClick={onClose}>
+                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={onClose}>
                   <X className="w-5 h-5" />
                 </Button>
               </div>
             </div>
-
-            {/* Swipe hint */}
-            {notifications.length > 0 && (
-              <div className="px-4 py-2 bg-muted/30 border-b border-border">
-                <p className="text-[10px] text-muted-foreground text-center font-display tracking-wide">
-                  SWIPE LEFT TO DELETE • TAP TO VIEW
-                </p>
-              </div>
-            )}
 
             {/* Content */}
             <ScrollArea className="flex-1">
@@ -284,10 +266,10 @@ export function NotificationsPanel({ isOpen, onClose }: NotificationsPanelProps)
                   <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto" />
                 </div>
               ) : notifications.length === 0 ? (
-                <div className="p-8 text-center">
-                  <Bell className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                  <p className="text-muted-foreground font-display tracking-wide">NO NOTIFICATIONS</p>
-                  <p className="text-xs text-muted-foreground mt-2">You're all caught up</p>
+                <div className="p-12 text-center">
+                  <Heart className="w-16 h-16 text-muted-foreground/30 mx-auto mb-4" />
+                  <p className="text-foreground font-display tracking-wide text-lg">Activity</p>
+                  <p className="text-sm text-muted-foreground mt-1">When people interact with you, you'll see it here</p>
                 </div>
               ) : (
                 notifications.map((notification) => (
