@@ -47,6 +47,7 @@ import Founder from "./pages/Founder";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import FAQ from "./pages/FAQ";
+import Explore from "./pages/Explore";
 import AITokens from "./pages/AITokens";
 
 const queryClient = new QueryClient();
@@ -71,6 +72,7 @@ const App = () => (
               <Route path="/privacy" element={<Privacy />} />
               <Route path="/terms" element={<Terms />} />
               <Route path="/faq" element={<FAQ />} />
+              <Route path="/explore" element={<Explore />} />
               
               {/* Onboarding wizard - mandatory for new users */}
               <Route path="/onboarding" element={<Onboarding />} />

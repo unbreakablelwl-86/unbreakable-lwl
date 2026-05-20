@@ -165,7 +165,7 @@ const Index = () => {
               <Home className="w-6 h-6" />
             </button>
             <button
-              onClick={() => setShowUserSearch(true)}
+              onClick={() => navigate('/explore')}
               className="flex flex-col items-center gap-0.5 p-2 text-muted-foreground"
             >
               <Search className="w-6 h-6" />
