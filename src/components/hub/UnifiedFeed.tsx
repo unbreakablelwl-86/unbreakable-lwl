@@ -10,6 +10,7 @@ import { MilestoneCard } from './MilestoneCard';
 import { StoriesSection } from './StoriesSection';
 import { CreatePostBox } from '@/components/tracker/CreatePostBox';
 import { StoryEditor } from './StoryEditor';
+import { SuggestedUsers } from './SuggestedUsers';
 import { FeaturePreviewCard } from '@/components/upgrade/FeaturePreviewCard';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -202,6 +203,8 @@ export function UnifiedFeed({ onSignIn, onOpenMessages }: UnifiedFeedProps) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: Math.min(index * 0.03, 0.3) }}
             >
+              {/* Suggested Users — show after 2nd post */}
+              {index === 2 && <SuggestedUsers />}
               {showUpgradeCard && (
                 <div className="mb-4">
                   <FeaturePreviewCard index={Math.floor(index / 4) - 1} />
