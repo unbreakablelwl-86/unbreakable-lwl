@@ -19,6 +19,7 @@ import founderPhoto from '@/assets/john-founder.png';
 import journey2018 from '@/assets/jj-journey-2018.png';
 import journey2019 from '@/assets/jj-journey-2019.png';
 import journey2020 from '@/assets/jj-journey-2020.png';
+import returnPhoto from '@/assets/jj-return-2025-2026.png';
 
 const fadeUp = {
   initial: { opacity: 0, y: 24 },
@@ -43,6 +44,10 @@ const beliefs = [
   {
     title: 'Your life is yours.',
     desc: 'Not your employer\'s version of it. Not what society mapped out for you. The moment I stopped performing someone else\'s script, even when it cost me everything, was the moment things started making sense.',
+  },
+  {
+    title: 'It\'s okay to not be okay.',
+    desc: 'Mental health isn\'t a weakness and it isn\'t a brand. It\'s just real life. The more we talk about it honestly, without performing it for an audience, the less power it has over us.',
   },
   {
     title: 'Purpose keeps you here.',
@@ -78,8 +83,12 @@ const timeline = [
     desc: 'Levelled up to Level 4 Strength & Conditioning. Added sport-specific science, periodisation and performance programming to the Unbreakable University. Always learning, always building.',
   },
   {
+    label: '2025',
+    desc: 'Diagnosed autistic and ADHD at 36. Suddenly a lot of things made sense — the way I process, the intensity, the need for structure. Stepped away from the gym. Started rebuilding from scratch.',
+  },
+  {
     label: 'Now',
-    desc: 'Unbreakable is live. An ad-free safe space to track your progress, educate yourself, and be part of a community that actually gets it. No forced likes, no adverts, no noise. Just keep showing up.',
+    desc: 'Back in the gym. Back building Unbreakable. An ad-free safe space to track your progress, educate yourself, and be part of a community that actually gets it. Stronger for every setback. Still showing up.',
   },
 ];
 
@@ -122,17 +131,16 @@ const Founder = () => {
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-[radial-gradient(circle,hsl(var(--primary)/0.08)_0%,transparent_60%)] pointer-events-none" />
         <motion.div {...fadeUp} className="max-w-lg mx-auto relative z-10">
           <span className="inline-block font-mono text-[9px] tracking-[3px] text-primary uppercase border border-border px-4 py-1.5 rounded-full mb-6">
-            Meet The Founder
+            The Founder
           </span>
           <h1 className="font-display text-[clamp(48px,12vw,80px)] leading-[0.88] tracking-wide text-foreground mb-6">
-            JOHN<br />
-            <span className="text-primary neon-glow-subtle">JAMES.</span><br />
-            <span className="text-[clamp(28px,7vw,48px)]">THE PERSON BEHIND<br />UNBREAKABLE.</span>
+            NOT A<br />
+            <span className="text-primary neon-glow-subtle">GURU.</span><br />
+            <span className="text-[clamp(28px,7vw,48px)]">JUST SOMEONE<br />WHO GETS IT.</span>
           </h1>
           <p className="text-muted-foreground text-[15px] leading-relaxed max-w-[380px] mx-auto mb-8">
-            Level 4 Strength & Conditioning certified. Level 3 Personal Trainer since 2018.
-            I didn't get qualified to become a coach — I got educated to understand my own body.
-            Then I realised <strong className="text-foreground">everyone deserves that same knowledge without the price tag.</strong>
+            I built Unbreakable because I needed it and it didn't exist. Not a programme, not a coaching package, not another influencer selling a transformation.{' '}
+            <strong className="text-foreground">A community built on truth, education, and the kind of honest connection the fitness industry never bothered to offer.</strong>
           </p>
           <p className="font-mono text-[10px] tracking-[3px] text-primary uppercase">
             Live Without Limits · Keep Showing Up
@@ -222,6 +230,59 @@ const Founder = () => {
               SAME PERSON. SAME GYM. THE ONLY DIFFERENCE IS UNDERSTANDING WHAT I WAS DOING AND WHY.
             </p>
           </div>
+        </motion.div>
+      </section>
+
+      {/* ═══ THE RETURN — 2025–2026 ═══ */}
+      <section className="py-11 px-6 border-b border-border">
+        <motion.div {...fadeUp} className="max-w-lg mx-auto">
+          <p className="font-mono text-[9px] tracking-[3px] text-primary uppercase mb-2.5">The Return</p>
+          <h2 className="font-display text-[clamp(28px,7vw,42px)] leading-[1.05] tracking-wide text-foreground mb-5">
+            REBUILD. WEEK{' '}
+            <span className="text-primary neon-glow-subtle">BY WEEK.</span>
+          </h2>
+          <p className="text-muted-foreground text-[15px] leading-[1.85] mb-6">
+            In 2025, at 36, I was diagnosed autistic and ADHD. Suddenly a lifetime of feeling like I was wired differently had a name. It knocked me sideways — I stepped away from the gym, away from most things, and had to figure out how to plug back into the world on my own terms. Six months later, I walked back in. Not because I was fixed, but because <strong className="text-foreground">showing up is what I teach and it had to start with me.</strong>
+          </p>
+
+          <div className="rounded-lg overflow-hidden border border-border">
+            <img src={returnPhoto} alt="JJ transformation — Nov 2025 to Apr 2026" className="w-full h-auto" />
+          </div>
+
+          <div className="flex items-center justify-between mt-3">
+            <p className="font-mono text-[9px] tracking-[2px] text-muted-foreground uppercase">Nov 2025 → Apr 2026</p>
+            <p className="font-display text-xs tracking-[2px] text-primary">THE REBUILD</p>
+          </div>
+
+          <div className="bg-card border-l-4 border-primary rounded-r-lg p-5 mt-7 relative overflow-hidden">
+            <span className="absolute top-[-10px] right-4 font-display text-[80px] text-primary/[0.08] leading-none">"</span>
+            <p className="font-display text-[clamp(16px,4vw,22px)] tracking-wide leading-[1.2] text-primary relative z-10">
+              THE GYM DIDN'T FIX ANYTHING. BUT IT GAVE ME SOMEWHERE TO START.
+            </p>
+          </div>
+        </motion.div>
+      </section>
+
+      {/* ═══ THE REAL STORY ═══ */}
+      <section className="py-11 px-6 border-b border-border bg-card/30">
+        <motion.div {...fadeUp} className="max-w-lg mx-auto">
+          <p className="font-mono text-[9px] tracking-[3px] text-primary uppercase mb-2.5">Being Honest</p>
+          <h2 className="font-display text-[clamp(28px,7vw,42px)] leading-[1.05] tracking-wide text-foreground mb-5">
+            NOT JUST <span className="text-primary neon-glow-subtle">FITNESS.</span>
+          </h2>
+
+          <p className="text-muted-foreground text-[15px] leading-[1.85] mb-4">
+            I'm not going to stand here and pretend this is just about sets and reps. Mental health has been part of my story from the start — long before I had the language for it. <strong className="text-foreground">The gym was never just exercise for me. It was the one place where the noise in my head got quieter.</strong>
+          </p>
+          <p className="text-muted-foreground text-[15px] leading-[1.85] mb-4">
+            Getting diagnosed autistic and ADHD in my mid-thirties was like someone finally handing me the manual to my own brain. It didn't make everything easier, but it made everything make sense. The obsessive focus, the burnout cycles, the sensory overload, the way I process the world differently to most people around me — none of that was broken. It was just undiagnosed.
+          </p>
+          <p className="text-muted-foreground text-[15px] leading-[1.85] mb-4">
+            I'm open about it because I think we need more people to be. Not in a performative way. Not for content. <strong className="text-foreground">Just honestly.</strong> If one person reads this and recognises something in themselves — the constant masking, the feeling of being slightly out of sync with the rest of the world — then it was worth writing.
+          </p>
+          <p className="text-muted-foreground text-[15px] leading-[1.85]">
+            Unbreakable was always built for people who've been through something and are still standing. <em className="text-primary not-italic">That includes me.</em>
+          </p>
         </motion.div>
       </section>
 
