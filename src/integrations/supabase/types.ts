@@ -271,6 +271,183 @@ export type Database = {
         }
         Relationships: []
       }
+      coaching_check_ins: {
+        Row: {
+          id: string
+          assignment_id: string
+          coach_id: string
+          athlete_id: string
+          check_in_number: number
+          due_date: string | null
+          submitted_at: string | null
+          reviewed_at: string | null
+          status: string
+          weight_kg: number | null
+          body_fat_pct: number | null
+          waist_cm: number | null
+          chest_cm: number | null
+          hips_cm: number | null
+          arm_cm: number | null
+          thigh_cm: number | null
+          energy_level: number | null
+          sleep_quality: number | null
+          stress_level: number | null
+          mood: number | null
+          soreness: number | null
+          training_compliance: number | null
+          nutrition_compliance: number | null
+          steps_avg: number | null
+          water_litres: number | null
+          wins: string | null
+          challenges: string | null
+          athlete_notes: string | null
+          coach_response: string | null
+          photo_front: string | null
+          photo_side: string | null
+          photo_back: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          assignment_id: string
+          coach_id: string
+          athlete_id: string
+          check_in_number?: number
+          due_date?: string | null
+          submitted_at?: string | null
+          reviewed_at?: string | null
+          status?: string
+          weight_kg?: number | null
+          body_fat_pct?: number | null
+          waist_cm?: number | null
+          chest_cm?: number | null
+          hips_cm?: number | null
+          arm_cm?: number | null
+          thigh_cm?: number | null
+          energy_level?: number | null
+          sleep_quality?: number | null
+          stress_level?: number | null
+          mood?: number | null
+          soreness?: number | null
+          training_compliance?: number | null
+          nutrition_compliance?: number | null
+          steps_avg?: number | null
+          water_litres?: number | null
+          wins?: string | null
+          challenges?: string | null
+          athlete_notes?: string | null
+          coach_response?: string | null
+          photo_front?: string | null
+          photo_side?: string | null
+          photo_back?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          assignment_id?: string
+          coach_id?: string
+          athlete_id?: string
+          check_in_number?: number
+          due_date?: string | null
+          submitted_at?: string | null
+          reviewed_at?: string | null
+          status?: string
+          weight_kg?: number | null
+          body_fat_pct?: number | null
+          waist_cm?: number | null
+          chest_cm?: number | null
+          hips_cm?: number | null
+          arm_cm?: number | null
+          thigh_cm?: number | null
+          energy_level?: number | null
+          sleep_quality?: number | null
+          stress_level?: number | null
+          mood?: number | null
+          soreness?: number | null
+          training_compliance?: number | null
+          nutrition_compliance?: number | null
+          steps_avg?: number | null
+          water_litres?: number | null
+          wins?: string | null
+          challenges?: string | null
+          athlete_notes?: string | null
+          coach_response?: string | null
+          photo_front?: string | null
+          photo_side?: string | null
+          photo_back?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      coach_public_profiles: {
+        Row: {
+          id: string
+          user_id: string
+          headline: string | null
+          bio: string | null
+          specializations: string[]
+          certifications: string[]
+          years_experience: number | null
+          coaching_style: string | null
+          ideal_client: string | null
+          check_in_frequency: string
+          max_clients: number
+          accepting_clients: boolean
+          monthly_price_gbp: number | null
+          currency: string
+          instagram_handle: string | null
+          website_url: string | null
+          is_published: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          headline?: string | null
+          bio?: string | null
+          specializations?: string[]
+          certifications?: string[]
+          years_experience?: number | null
+          coaching_style?: string | null
+          ideal_client?: string | null
+          check_in_frequency?: string
+          max_clients?: number
+          accepting_clients?: boolean
+          monthly_price_gbp?: number | null
+          currency?: string
+          instagram_handle?: string | null
+          website_url?: string | null
+          is_published?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          headline?: string | null
+          bio?: string | null
+          specializations?: string[]
+          certifications?: string[]
+          years_experience?: number | null
+          coaching_style?: string | null
+          ideal_client?: string | null
+          check_in_frequency?: string
+          max_clients?: number
+          accepting_clients?: boolean
+          monthly_price_gbp?: number | null
+          currency?: string
+          instagram_handle?: string | null
+          website_url?: string | null
+          is_published?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       coaching_feedback: {
         Row: {
           athlete_id: string

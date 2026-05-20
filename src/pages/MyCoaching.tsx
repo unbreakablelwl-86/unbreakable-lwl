@@ -9,8 +9,11 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { CoachUpdatesView } from '@/components/coaching/CoachUpdatesView';
+import { CheckInForm } from '@/components/coaching/CheckInForm';
+import { CheckInReview } from '@/components/coaching/CheckInReview';
 import { useAuth } from '@/hooks/useAuth';
 import { useCoachingAssignments } from '@/hooks/useCoachingAssignments';
+import { useCheckIns, CheckIn as CheckInType } from '@/hooks/useCheckIns';
 import { useTrainingPrograms } from '@/hooks/useTrainingPrograms';
 import { useCardioPrograms } from '@/hooks/useCardioPrograms';
 import { useMealPlans } from '@/hooks/useMealPlans';
@@ -21,12 +24,14 @@ import { toast } from 'sonner';
 import {
   UserCheck, MessageSquare, ClipboardList, Dumbbell, Footprints,
   Utensils, Loader2, User, Video, Image, CalendarCheck, Send,
-  CheckCircle2, Lock
+  CheckCircle2, Lock, ClipboardCheck
 } from 'lucide-react';
 
 export default function MyCoaching() {
   const { user, loading: authLoading } = useAuth();
   const { myCoach, myPendingRequest, loading: coachLoading, refetch } = useCoachingAssignments();
+  const { checkIns, myPendingCheckIns, submitCheckIn } = useCheckIns();
+  const [activeCheckIn, setActiveCheckIn] = useState<CheckInType | null>(null);
   const { programs: trainingPrograms } = useTrainingPrograms();
   const { programs: cardioPrograms } = useCardioPrograms();
   const { mealPlans } = useMealPlans();
@@ -272,17 +277,86 @@ export default function MyCoaching() {
             </Card>
 
             {/* Tabs */}
-            <Tabs defaultValue="updates" className="w-full">
-              <TabsList className="w-full grid grid-cols-2">
+            <Tabs defaultValue="checkins" className="w-full">
+              <TabsList className="w-full grid grid-cols-3">
+                <TabsTrigger value="checkins" className="font-display text-xs tracking-wide">
+                  <ClipboardCheck className="w-3.5 h-3.5 mr-1" />
+                  CHECK-INS
+                  {myPendingCheckIns.length > 0 && (
+                    <Badge variant="destructive" className="ml-1 h-4 min-w-4 px-1 flex items-center justify-center text-[9px]">
+                      {myPendingCheckIns.length}
+                    </Badge>
+                  )}
+                </TabsTrigger>
                 <TabsTrigger value="updates" className="font-display text-xs tracking-wide">
                   <ClipboardList className="w-3.5 h-3.5 mr-1" />
                   UPDATES
                 </TabsTrigger>
                 <TabsTrigger value="plans" className="font-display text-xs tracking-wide">
                   <Dumbbell className="w-3.5 h-3.5 mr-1" />
-                  MY PLANS
+                  PLANS
                 </TabsTrigger>
               </TabsList>
+
+              <TabsContent value="checkins" className="mt-4 space-y-3">
+                {activeCheckIn ? (
+                  activeCheckIn.status === 'pending' ? (
+                    <CheckInForm
+                      checkIn={activeCheckIn}
+                      onSubmit={async (id, data) => {
+                        await submitCheckIn(id, data);
+                        setActiveCheckIn(null);
+                      }}
+                      onBack={() => setActiveCheckIn(null)}
+                    />
+                  ) : (
+                    <CheckInReview
+                      checkIn={activeCheckIn}
+                      onReview={() => {}}
+                      onBack={() => setActiveCheckIn(null)}
+                    />
+                  )
+                ) : checkIns.length === 0 ? (
+                  <Card className="border-border">
+                    <CardContent className="py-10 text-center">
+                      <ClipboardCheck className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
+                      <p className="text-muted-foreground text-sm">No check-ins yet</p>
+                      <p className="text-xs text-muted-foreground mt-1">Your coach will send check-ins for you to complete</p>
+                    </CardContent>
+                  </Card>
+                ) : (
+                  checkIns.map(ci => (
+                    <Card
+                      key={ci.id}
+                      className={`border-border hover:border-primary/20 transition-colors cursor-pointer ${
+                        ci.status === 'pending' ? 'border-l-2 border-l-primary' : ''
+                      }`}
+                      onClick={() => setActiveCheckIn(ci)}
+                    >
+                      <CardContent className="p-3">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="font-display text-sm tracking-wide">CHECK-IN #{ci.check_in_number}</p>
+                            <p className="text-[11px] text-muted-foreground">
+                              {ci.status === 'pending' ? 'Ready to fill out' :
+                               ci.status === 'submitted' ? 'Awaiting coach review' :
+                               ci.status === 'reviewed' ? 'Coach has responded' : ci.status}
+                            </p>
+                          </div>
+                          <Badge className={`font-display text-[9px] tracking-wider border ${
+                            ci.status === 'pending' ? 'text-yellow-500 bg-yellow-500/10 border-yellow-500/20' :
+                            ci.status === 'submitted' ? 'text-blue-500 bg-blue-500/10 border-blue-500/20' :
+                            ci.status === 'reviewed' ? 'text-green-500 bg-green-500/10 border-green-500/20' :
+                            'text-muted-foreground bg-muted border-border'
+                          }`}>
+                            {ci.status.toUpperCase()}
+                          </Badge>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))
+                )}
+              </TabsContent>
 
               <TabsContent value="updates" className="mt-4">
                 <CoachUpdatesView />

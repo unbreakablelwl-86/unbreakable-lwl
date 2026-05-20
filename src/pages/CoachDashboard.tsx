@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Users, UserCheck, Clock, Eye, MessageSquare,
-  Check, X, Loader2, UserPlus,
+  Check, X, Loader2, UserPlus, UserCog,
   Dumbbell, Footprints, Utensils, Brain, MoreHorizontal,
   UserMinus, RotateCcw, Trash2
 } from 'lucide-react';
@@ -25,9 +25,11 @@ import { Switch } from '@/components/ui/switch';
 import { useCoachingAssignments } from '@/hooks/useCoachingAssignments';
 import { useAuth } from '@/hooks/useAuth';
 import { useUserRole } from '@/hooks/useUserRole';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { AthleteDataViewer } from '@/components/coaching/AthleteDataViewer';
 import { ClientSearchPanel } from '@/components/coaching/ClientSearchPanel';
+import { CheckInsTab } from '@/components/coaching/CheckInsTab';
+import { CoachProfileEditor } from '@/components/coaching/CoachProfileEditor';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -103,7 +105,7 @@ const CoachDashboard = ({ embedded = false }: { embedded?: boolean }) => {
       </div>
 
       {/* Stats Summary */}
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-3 gap-3">
         <div className="bg-primary/5 border border-primary/10 rounded-lg px-4 py-3 text-center">
           <p className="font-display text-2xl text-primary">{myAthletes.length}</p>
           <p className="text-[10px] font-display tracking-wide text-muted-foreground mt-0.5">ATHLETES</p>
@@ -112,13 +114,21 @@ const CoachDashboard = ({ embedded = false }: { embedded?: boolean }) => {
           <p className="font-display text-2xl text-primary">{pendingRequests.length}</p>
           <p className="text-[10px] font-display tracking-wide text-muted-foreground mt-0.5">PENDING</p>
         </div>
+        <Link to="/coach-profile-edit" className="bg-primary/5 border border-primary/10 rounded-lg px-4 py-3 text-center hover:border-primary/30 transition-colors">
+          <UserCog className="w-6 h-6 text-primary mx-auto" />
+          <p className="text-[10px] font-display tracking-wide text-muted-foreground mt-0.5">MY PROFILE</p>
+        </Link>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="w-full grid grid-cols-3">
+        <TabsList className="w-full grid grid-cols-4">
           <TabsTrigger value="athletes" className="font-display text-xs tracking-wide">
             <UserCheck className="w-4 h-4 mr-1" />
             ATHLETES
+          </TabsTrigger>
+          <TabsTrigger value="checkins" className="font-display text-xs tracking-wide">
+            <Check className="w-4 h-4 mr-1" />
+            CHECK-INS
           </TabsTrigger>
           <TabsTrigger value="clients" className="font-display text-xs tracking-wide">
             <UserPlus className="w-4 h-4 mr-1" />
@@ -252,6 +262,10 @@ const CoachDashboard = ({ embedded = false }: { embedded?: boolean }) => {
               ))}
             </>
           )}
+        </TabsContent>
+
+        <TabsContent value="checkins" className="mt-4">
+          <CheckInsTab />
         </TabsContent>
 
         <TabsContent value="clients" className="mt-4">

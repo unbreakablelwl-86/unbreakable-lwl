@@ -42,6 +42,9 @@ import Onboarding from "./pages/Onboarding";
 import Habits from "./pages/Habits";
 import CoachDashboard from "./pages/CoachDashboard";
 import MyCoaching from "./pages/MyCoaching";
+import CoachProfileEdit from "./pages/CoachProfileEdit";
+import CoachProfile from "./pages/CoachProfile";
+import Coaches from "./pages/Coaches";
 import Plans from "./pages/Plans";
 import Founder from "./pages/Founder";
 import Privacy from "./pages/Privacy";
@@ -203,6 +206,15 @@ const App = () => (
               {/* Athlete coaching page */}
               <Route path="/my-coaching" element={
                 <MyCoaching />
+              } />
+              <Route path="/coach-profile-edit" element={
+                <ProtectedRoute><CoachProfileEdit /></ProtectedRoute>
+              } />
+              <Route path="/coach/:userId" element={
+                <CoachProfile />
+              } />
+              <Route path="/coaches" element={
+                <Coaches />
               } />
               
               {/* Admin Dashboard - Hidden, role-protected */}
