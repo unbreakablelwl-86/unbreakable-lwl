@@ -33,7 +33,33 @@
   </head>
 
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Splash screen while React loads -->
+      <div id="ub-splash" style="position:fixed;inset:0;z-index:9999;background:#080808;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;">
+        <img src="/unbreakable-shield.png" alt="" width="80" height="80" style="animation:ub-pulse 1.5s ease-in-out infinite;filter:drop-shadow(0 0 20px rgba(255,85,0,0.4));" onerror="this.style.display='none'" />
+        <p style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:14px;letter-spacing:0.2em;color:#FF5500;text-shadow:0 0 15px rgba(255,85,0,0.4);">KEEP SHOWING UP</p>
+        <div style="width:48px;height:48px;border:2px solid #FF5500;border-top-color:transparent;border-radius:50%;animation:ub-spin 0.8s linear infinite;"></div>
+        <style>
+          @keyframes ub-spin { to { transform:rotate(360deg); } }
+          @keyframes ub-pulse { 0%,100% { opacity:1;transform:scale(1); } 50% { opacity:0.7;transform:scale(0.95); } }
+        </style>
+      </div>
+    </div>
+    <script>
+      // Remove splash once React renders
+      const obs = new MutationObserver(() => {
+        const splash = document.getElementById('ub-splash');
+        if (splash && document.getElementById('root').children.length > 1) {
+          splash.style.transition = 'opacity 0.3s';
+          splash.style.opacity = '0';
+          setTimeout(() => splash.remove(), 300);
+          obs.disconnect();
+        }
+      });
+      obs.observe(document.getElementById('root'), { childList: true });
+      // Fallback: remove after 5s regardless
+      setTimeout(() => { const s = document.getElementById('ub-splash'); if (s) { s.style.opacity='0'; setTimeout(()=>s.remove(),300); } }, 5000);
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
