@@ -7,7 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { useRecipes } from '@/hooks/useRecipes';
 import { useMealPlans } from '@/hooks/useMealPlans';
-import { Recipe, RecipeIngredient, dietaryTagOptions } from '@/lib/fuelTypes';
+import { Recipe, RecipeIngredient, dietaryTagOptions, cookingMethodOptions, cookingMethodLabels } from '@/lib/fuelTypes';
 import { 
   Plus, 
   Search, 
@@ -45,6 +45,7 @@ interface RecipeFormData {
   carbs_g: number;
   fat_g: number;
   dietary_tags: string[];
+  cooking_method: string;
   is_public: boolean;
 }
 
@@ -60,6 +61,7 @@ const defaultFormData: RecipeFormData = {
   carbs_g: 0,
   fat_g: 0,
   dietary_tags: [],
+  cooking_method: '',
   is_public: false,
 };
 
@@ -84,6 +86,8 @@ const DIETARY_TAG_MAP: Record<string, string> = {
   'N': 'Contains Nuts',
 };
 
+
+
 export function RecipeLibrary() {
   const { user } = useAuth();
   const { recipes, myRecipes, favouriteRecipes, isLoading, createRecipe, deleteRecipe, toggleFavourite } = useRecipes();
@@ -92,6 +96,7 @@ export function RecipeLibrary() {
   const { savedFoods, depleteFoods: depleteFoodsMutation } = useSavedFoods();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [selectedCookingMethod, setSelectedCookingMethod] = useState<string>('');
   const [showFilters, setShowFilters] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [formData, setFormData] = useState<RecipeFormData>(defaultFormData);
@@ -131,6 +136,10 @@ export function RecipeLibrary() {
       filtered = filtered.filter((r) =>
         selectedTags.some((tag) => r.dietary_tags?.includes(tag))
       );
+    }
+
+    if (selectedCookingMethod) {
+      filtered = filtered.filter((r) => r.cooking_method === selectedCookingMethod);
     }
 
     return filtered;
@@ -419,6 +428,22 @@ export function RecipeLibrary() {
                 </div>
                 
                 <div>
+                  <Label>Cooking Method</Label>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {cookingMethodOptions.map((method) => (
+                      <Badge
+                        key={method}
+                        variant={formData.cooking_method === method ? 'default' : 'outline'}
+                        className="cursor-pointer"
+                        onClick={() => setFormData({ ...formData, cooking_method: formData.cooking_method === method ? '' : method })}
+                      >
+                        {cookingMethodLabels[method]}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
                   <Label>Dietary Tags</Label>
                   <div className="flex flex-wrap gap-2 mt-2">
                     {dietaryTagOptions.map((tag) => (
@@ -447,22 +472,40 @@ export function RecipeLibrary() {
         </div>
       </div>
 
-      {/* Dietary Filters */}
+      {/* Filters */}
       {showFilters && (
-        <Card className="p-4 border-primary/30 shadow-[0_0_15px_hsl(var(--primary)/0.15)] border-gray-800 bg-[#111]">
-          <p className="text-sm font-display tracking-wider text-primary mb-3">DIETARY FILTERS</p>
-          <div className="flex flex-wrap gap-2">
-            {Object.entries(DIETARY_TAG_MAP).map(([code, label]) => (
-              <Badge
-                key={code}
-                variant={selectedTags.includes(code) ? 'default' : 'outline'}
-                className={`cursor-pointer text-xs ${selectedTags.includes(code) ? '' : 'border-primary/20 hover:border-primary/50'}`}
-                onClick={() => toggleTag(code)}
-              >
-                {code} — {label}
-                {selectedTags.includes(code) && <X className="w-3 h-3 ml-1" />}
-              </Badge>
-            ))}
+        <Card className="p-4 border-primary/30 shadow-[0_0_15px_hsl(var(--primary)/0.15)] border-gray-800 bg-[#111] space-y-4">
+          <div>
+            <p className="text-sm font-display tracking-wider text-primary mb-3">COOKING METHOD</p>
+            <div className="flex flex-wrap gap-2">
+              {cookingMethodOptions.map((method) => (
+                <Badge
+                  key={method}
+                  variant={selectedCookingMethod === method ? 'default' : 'outline'}
+                  className={`cursor-pointer text-xs ${selectedCookingMethod === method ? '' : 'border-primary/20 hover:border-primary/50'}`}
+                  onClick={() => setSelectedCookingMethod(selectedCookingMethod === method ? '' : method)}
+                >
+                  {cookingMethodLabels[method]}
+                  {selectedCookingMethod === method && <X className="w-3 h-3 ml-1" />}
+                </Badge>
+              ))}
+            </div>
+          </div>
+          <div>
+            <p className="text-sm font-display tracking-wider text-primary mb-3">DIETARY FILTERS</p>
+            <div className="flex flex-wrap gap-2">
+              {Object.entries(DIETARY_TAG_MAP).map(([code, label]) => (
+                <Badge
+                  key={code}
+                  variant={selectedTags.includes(code) ? 'default' : 'outline'}
+                  className={`cursor-pointer text-xs ${selectedTags.includes(code) ? '' : 'border-primary/20 hover:border-primary/50'}`}
+                  onClick={() => toggleTag(code)}
+                >
+                  {code} — {label}
+                  {selectedTags.includes(code) && <X className="w-3 h-3 ml-1" />}
+                </Badge>
+              ))}
+            </div>
           </div>
         </Card>
       )}
@@ -591,21 +634,24 @@ export function RecipeLibrary() {
                     </div>
                   </div>
                   
-                  {/* Dietary Tags */}
-                  {recipe.dietary_tags && recipe.dietary_tags.length > 0 && (
-                    <div className="flex flex-wrap gap-1 mt-3">
-                      {recipe.dietary_tags.slice(0, 5).map((tag) => (
-                        <Badge key={tag} variant="outline" className="text-[9px] px-1.5 py-0 h-4 border-primary/25 text-primary/80">
-                          {tag}
-                        </Badge>
-                      ))}
-                      {recipe.dietary_tags.length > 5 && (
-                        <Badge variant="outline" className="text-[9px] px-1.5 py-0 h-4 border-primary/25 text-primary/80">
-                          +{recipe.dietary_tags.length - 5}
-                        </Badge>
-                      )}
-                    </div>
-                  )}
+                  {/* Cooking Method + Dietary Tags */}
+                  <div className="flex flex-wrap gap-1 mt-3">
+                    {recipe.cooking_method && (
+                      <Badge variant="outline" className="text-[9px] px-1.5 py-0 h-4 border-orange-500/40 text-orange-400/90 bg-orange-500/5">
+                        {cookingMethodLabels[recipe.cooking_method] || recipe.cooking_method}
+                      </Badge>
+                    )}
+                    {recipe.dietary_tags?.slice(0, 4).map((tag) => (
+                      <Badge key={tag} variant="outline" className="text-[9px] px-1.5 py-0 h-4 border-primary/25 text-primary/80">
+                        {tag}
+                      </Badge>
+                    ))}
+                    {(recipe.dietary_tags?.length || 0) > 4 && (
+                      <Badge variant="outline" className="text-[9px] px-1.5 py-0 h-4 border-primary/25 text-primary/80">
+                        +{(recipe.dietary_tags?.length || 0) - 4}
+                      </Badge>
+                    )}
+                  </div>
                 </CardContent>
               </Card>
             </motion.div>

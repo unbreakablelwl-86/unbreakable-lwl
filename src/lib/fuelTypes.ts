@@ -57,6 +57,7 @@ export interface Recipe {
   carbs_g?: number;
   fat_g?: number;
   dietary_tags?: string[];
+  cooking_method?: string;
   image_url?: string;
   pack?: string;
   category?: string;
@@ -144,3 +145,21 @@ export const dietaryTagOptions = [
   'paleo',
   'whole30',
 ] as const;
+
+export const cookingMethodOptions = [
+  'air-fryer',
+  'oven',
+  'hob',
+  'slow-cooker',
+  'grill',
+  'no-cook',
+] as const;
+
+export const cookingMethodLabels: Record<string, string> = {
+  'air-fryer': 'Air Fryer',
+  'oven': 'Oven',
+  'hob': 'Hob / Stovetop',
+  'slow-cooker': 'Slow Cooker',
+  'grill': 'Grill',
+  'no-cook': 'No Cook / Raw',
+};
