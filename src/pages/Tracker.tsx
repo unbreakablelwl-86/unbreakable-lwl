@@ -7,8 +7,8 @@ import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/hooks/useAuth';
 import { useRuns, Run, CardioActivityType } from '@/hooks/useRuns';
 import { useMedals } from '@/hooks/useMedals';
-import { usePersonalRecords } from '@/hooks/usePersonalRecords';
-import { useSegments } from '@/hooks/useSegments';
+import { usePersonalRecords, PersonalRecord } from '@/hooks/usePersonalRecords';
+import { useSegments, Segment } from '@/hooks/useSegments';
 import { CardioTrackerModal } from '@/components/tracker/CardioTrackerModal';
 import { AuthModal } from '@/components/tracker/AuthModal';
 import { format, startOfWeek, endOfWeek, isWithinInterval, subWeeks, differenceInSeconds } from 'date-fns';
@@ -299,21 +299,22 @@ export default function Tracker() {
                   <div className="flex justify-center py-8">
                     <div className="w-8 h-8 border-2 border-[#FF5500] border-t-transparent rounded-full animate-spin" />
                   </div>
-                ) : !records || (Array.isArray(records) && records.length === 0) ? (
+                ) : records.length === 0 ? (
                   <Card className="p-6 text-center border-gray-800 bg-[#111]">
                     <Star className="w-8 h-8 text-[#FF5500] mx-auto mb-3" style={{ filter: 'drop-shadow(0 0 8px rgba(255,85,0,0.4))' }} />
                     <p className="text-sm text-gray-400">Complete runs to set personal records</p>
                   </Card>
                 ) : (
                   <div className="space-y-2">
-                    {(Array.isArray(records) ? records : []).map((pr: any, i: number) => (
-                      <Card key={pr.id || i} className="p-3 border-gray-800 bg-[#111] flex items-center justify-between">
+                    {records.map((pr: PersonalRecord) => (
+                      <Card key={pr.id} className="p-3 border-gray-800 bg-[#111] flex items-center justify-between">
                         <div className="flex items-center gap-3">
                           <Award className="w-5 h-5 text-[#FF5500]" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.5))' }} />
                           <div>
-                            <p className="text-sm font-medium text-white">{pr.category || pr.distance_label || 'Record'}</p>
+                            <p className="text-sm font-medium text-white">{pr.distance_type}</p>
                             <p className="text-[10px] text-gray-500">
-                              {pr.value ? formatDuration(pr.value) : pr.time ? formatDuration(pr.time) : '--'}
+                              {pr.time_seconds ? formatDuration(pr.time_seconds) : '--'}
+                              {pr.pace_per_km_seconds ? ` · ${formatPace(pr.pace_per_km_seconds)}/km` : ''}
                             </p>
                           </div>
                         </div>
@@ -342,25 +343,20 @@ export default function Tracker() {
                 </Card>
               ) : (
                 <div className="space-y-3">
-                  {segments.map((seg: any) => (
+                  {segments.map((seg: Segment) => (
                     <Card key={seg.id} className="p-4 border-gray-800 bg-[#111] hover:border-[#FF5500]/30 transition-all">
                       <div className="flex items-start justify-between mb-2">
                         <div className="flex-1 min-w-0">
                           <h4 className="text-sm font-medium text-white truncate">{seg.name || 'Unnamed Segment'}</h4>
                           <p className="text-[11px] text-gray-500">{(seg.distance_m / 1000).toFixed(2)} km</p>
                         </div>
-                        {seg.userBestEffort?.is_kom && (
-                          <Badge className="bg-yellow-500/20 text-yellow-400 border-yellow-500/30 text-[10px]">
-                            <Crown className="w-3 h-3 mr-1" /> KOM
-                          </Badge>
-                        )}
+                        <Badge className="bg-[#FF5500]/10 text-[#FF5500] border-[#FF5500]/20 text-[10px]">
+                          {seg.total_efforts} effort{seg.total_efforts !== 1 ? 's' : ''}
+                        </Badge>
                       </div>
                       <div className="flex items-center gap-4 text-xs text-gray-400">
-                        <span>{seg.total_efforts || 0} efforts</span>
-                        {seg.userBestEffort && (
-                          <span className="text-[#FF5500]">PR: {formatDuration(seg.userBestEffort.elapsed_time_seconds)}</span>
-                        )}
-                        {seg.elevation_gain_m ? <span>↑ {seg.elevation_gain_m}m</span> : null}
+                        {seg.elevation_gain_m ? <span className="flex items-center gap-1"><TrendingUp className="w-3 h-3" /> {seg.elevation_gain_m}m</span> : null}
+                        <span className="text-gray-500">{format(new Date(seg.created_at), 'MMM d, yyyy')}</span>
                       </div>
                     </Card>
                   ))}
