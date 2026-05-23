@@ -110,6 +110,20 @@ const CoachDashboard = ({ embedded = false }: { embedded?: boolean }) => {
         </Link>
       </div>
 
+      {/* Command Centre CTA */}
+      <Link to="/command-centre" className="block mb-4">
+        <div className="rounded-xl border border-[#FF5500]/20 bg-[#FF5500]/5 p-3 flex items-center justify-between hover:border-[#FF5500]/40 transition-colors">
+          <div className="flex items-center gap-3">
+            <MessageSquare className="w-5 h-5 text-[#FF5500]" />
+            <div>
+              <p className="font-display text-xs tracking-wider text-white">COMMAND CENTRE</p>
+              <p className="text-[10px] text-gray-500">Discord-style client messaging hub</p>
+            </div>
+          </div>
+          <ChevronRight className="w-4 h-4 text-[#FF5500]" />
+        </div>
+      </Link>
+
       {/* Build Plan Dropdown */}
       <div className="flex justify-center mb-4">
         <DropdownMenu>

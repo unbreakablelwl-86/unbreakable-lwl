@@ -51,6 +51,7 @@ import MyCoaching from "./pages/MyCoaching";
 import CoachProfileEdit from "./pages/CoachProfileEdit";
 import CoachProfile from "./pages/CoachProfile";
 import Coaches from "./pages/Coaches";
+import CoachCommandCentre from "./pages/CoachCommandCentre";
 import Plans from "./pages/Plans";
 import Founder from "./pages/Founder";
 import Privacy from "./pages/Privacy";
@@ -243,6 +244,9 @@ const App = () => {
                 } />
                 <Route path="/coaches" element={
                   <Coaches />
+                } />
+                <Route path="/command-centre" element={
+                  <ProtectedRoute><CoachCommandCentre /></ProtectedRoute>
                 } />
                 
                 {/* Admin Dashboard - Hidden, role-protected */}
