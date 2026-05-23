@@ -1,11 +1,12 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { TIERS } from '@/lib/subscriptionTiers';
+import { TIERS, LEGACY_TIERS, type TierKey } from '@/lib/subscriptionTiers';
 
 interface SubscriptionState {
   subscribed: boolean;
   productId: string | null;
+  tierKey: TierKey;
   tierName: string | null;
   subscriptionEnd: string | null;
   status: string | null;
@@ -19,6 +20,7 @@ export function useSubscription() {
   const [state, setState] = useState<SubscriptionState>({
     subscribed: false,
     productId: null,
+    tierKey: 'free',
     tierName: null,
     subscriptionEnd: null,
     status: null,
@@ -42,19 +44,38 @@ export function useSubscription() {
         return;
       }
 
-      // Determine tier name from product_id
+      // Determine tier from product_id or tier field
+      let tierKey: TierKey = 'free';
       let tierName: string | null = null;
-      if (data?.product_id) {
-        if (data.product_id === TIERS.tier2.product_id) {
-          tierName = 'Unbreakable 1-to-1';
-        } else if (data.product_id === TIERS.tier1.product_id) {
-          tierName = 'Unbreakable Coaching';
+
+      // Check new tier system first
+      if (data?.tier_key && data.tier_key in TIERS) {
+        tierKey = data.tier_key as TierKey;
+        tierName = TIERS[tierKey].displayName;
+      }
+      // Fall back to product_id matching (new tiers)
+      else if (data?.product_id) {
+        const matchedTier = Object.values(TIERS).find(
+          t => t.stripeProductId === data.product_id
+        );
+        if (matchedTier) {
+          tierKey = matchedTier.key;
+          tierName = matchedTier.displayName;
+        }
+        // Legacy tier matching
+        else if (data.product_id === LEGACY_TIERS.tier2.product_id) {
+          tierKey = 'elite'; // Map legacy tier2 → elite
+          tierName = 'Unbreakable 1-to-1 (Legacy)';
+        } else if (data.product_id === LEGACY_TIERS.tier1.product_id) {
+          tierKey = 'pro'; // Map legacy tier1 → pro
+          tierName = 'Unbreakable Coaching (Legacy)';
         }
       }
 
       setState({
         subscribed: data?.subscribed ?? false,
         productId: data?.product_id ?? null,
+        tierKey,
         tierName,
         subscriptionEnd: data?.subscription_end ?? null,
         status: data?.status ?? null,
@@ -68,7 +89,6 @@ export function useSubscription() {
     }
   }, [session?.access_token]);
 
-  // Check on mount and when session changes
   useEffect(() => {
     checkSubscription();
   }, [checkSubscription]);

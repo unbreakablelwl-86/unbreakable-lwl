@@ -7,7 +7,7 @@ import {
   BarChart3, BookOpen, Target, Shield, ArrowRight, Check,
   Crown, Sparkles,
 } from 'lucide-react';
-import { TIERS } from '@/lib/subscriptionTiers';
+import { LEGACY_TIERS } from '@/lib/subscriptionTiers';
 
 interface PlanSelectionPageProps {
   onSelectPlan: (tier: string) => void;
@@ -38,8 +38,8 @@ const tier2Extras = [
 ];
 
 export function PlanSelectionPage({ onSelectPlan, loading }: PlanSelectionPageProps) {
-  const t1 = TIERS.tier1;
-  const t2 = TIERS.tier2;
+  const t1 = LEGACY_TIERS.tier1;
+  const t2 = LEGACY_TIERS.tier2;
   const t1PerDay = (t1.totalPrice / 91).toFixed(2);
   const t2PerDay = (t2.totalPrice / 91).toFixed(2);
 

@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/hooks/useAuth';
 import { useProfile } from '@/hooks/useProfile';
 import { useTokenBalance } from '@/hooks/useTokenBalance';
+import { UpgradeNudge } from '@/components/paywall/UpgradeNudge';
 import { 
   Zap, Flame, Activity, Brain, GraduationCap,
   Camera, Footprints, Dumbbell, BookOpen,
@@ -168,6 +169,9 @@ export function HomeDashboard() {
         {/* Neon bottom border glow */}
         <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#FF5500] to-transparent opacity-60" />
       </div>
+
+      {/* ─── Upgrade Nudge (shows when 90%+ tokens used) ─── */}
+      <UpgradeNudge variant="banner" />
 
       {/* ─── UNBREAKABLE 86 Featured Card ─── */}
       <section className="px-4 mt-6">
