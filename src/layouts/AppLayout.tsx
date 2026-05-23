@@ -1,5 +1,6 @@
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { ThemeToggle } from '@/components/hub/ThemeToggle';
 // pillar theme removed — all neon orange
 import {
   Dumbbell,
@@ -286,6 +287,13 @@ export default function AppLayout() {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* ━━━ Global Theme Toggle ━━━ */}
+      {!hideNav && (
+        <div className="fixed top-3 right-3 z-[60]">
+          <ThemeToggle />
+        </div>
+      )}
+
       <main className={hideNav ? '' : 'pb-20'}>
         <Outlet />
       </main>

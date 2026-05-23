@@ -1,5 +1,4 @@
 import { Moon, Sun } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { useUserSettings } from '@/hooks/useUserSettings';
 import { useAuth } from '@/hooks/useAuth';
 import { useState, useEffect, useCallback } from 'react';
@@ -45,27 +44,20 @@ export function ThemeToggle() {
   if (user && loading) return null;
 
   return (
-    <Button
-      variant="ghost"
-      size="sm"
+    <button
       onClick={handleToggle}
-      className="relative overflow-hidden"
       title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+      className="w-9 h-9 flex items-center justify-center rounded-full 
+        border border-[#FF5500]/20 bg-[#111]/80 backdrop-blur-md
+        hover:border-[#FF5500]/40 hover:bg-[#FF5500]/10
+        transition-all duration-200"
+      style={{ boxShadow: '0 0 10px rgba(0,0,0,0.5)' }}
     >
-      <Sun
-        className={`w-5 h-5 transition-all duration-300 ${
-          isDark 
-            ? 'rotate-90 scale-0 opacity-0' 
-            : 'rotate-0 scale-100 opacity-100'
-        }`}
-      />
-      <Moon
-        className={`absolute w-5 h-5 transition-all duration-300 ${
-          isDark 
-            ? 'rotate-0 scale-100 opacity-100' 
-            : '-rotate-90 scale-0 opacity-0'
-        }`}
-      />
-    </Button>
+      {isDark ? (
+        <Moon className="w-4 h-4 text-[#FF5500]" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.4))' }} />
+      ) : (
+        <Sun className="w-4 h-4 text-[#FF5500]" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.4))' }} />
+      )}
+    </button>
   );
 }
