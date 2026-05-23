@@ -1,21 +1,16 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { ThemedLogo } from '@/components/ThemedLogo';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { ThemeToggle } from '@/components/hub/ThemeToggle';
+import { useNavigate } from 'react-router-dom';
 import { NotificationsPanel } from '@/components/hub/NotificationsPanel';
-
 import { useConversations } from '@/hooks/useConversations';
 import { useFriends } from '@/hooks/useFriends';
 import { useNotifications } from '@/hooks/useNotifications';
 import {
   Heart,
-  MessageCircle,
-  UserPlus,
+  Send,
   Plus,
-  Bell,
+  Search,
 } from 'lucide-react';
+import shieldLogo from '@/assets/unbreakable-shield.png';
 
 interface SocialHeaderProps {
   activeTab: 'feed' | 'messages' | 'notifications';
@@ -44,77 +39,65 @@ export function SocialHeader({
 
   return (
     <>
-      {/* Instagram-style header: Logo left, action icons right */}
-      <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-md border-b border-border">
-        <div className="container mx-auto px-4 py-2.5">
+      {/* Instagram-style header */}
+      <header className="sticky top-0 z-50 border-b border-white/[0.06]"
+        style={{ background: 'rgba(8,8,8,0.95)', backdropFilter: 'blur(20px)' }}>
+        <div className="px-4 py-2.5">
           <div className="flex items-center justify-between">
-            {/* Logo — Instagram uses their wordmark on the left */}
-            <Link to="/" className="flex items-center gap-2 shrink-0">
-              <ThemedLogo className="h-7 w-7" />
-              <span className="font-display text-lg tracking-widest text-foreground">
-                UNBREAKABLE
+            {/* Logo — shield + wordmark */}
+            <div className="flex items-center gap-2.5">
+              <img src={shieldLogo} alt="UNBREAKABLE" className="h-7 w-7 object-contain" />
+              <span className="font-heading font-black text-lg tracking-[0.12em] text-white uppercase">
+                Unbreakable
               </span>
-            </Link>
+            </div>
 
-            {/* Right Actions — clean icon row like Instagram */}
-            <div className="flex items-center gap-0.5">
+            {/* Right icons — Instagram style */}
+            <div className="flex items-center gap-1">
               {/* Create Post */}
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-10 w-10"
+              <button
                 onClick={onShowActionMenu}
+                className="p-2.5 rounded-full hover:bg-white/[0.05] transition-colors"
               >
-                <Plus className="w-6 h-6" />
-              </Button>
+                <Plus size={22} className="text-[#ddd]" />
+              </button>
 
-              {/* Notifications / Activity */}
-              <Button
-                variant="ghost"
-                size="icon"
-                className="relative h-10 w-10"
+              {/* Search */}
+              <button
+                onClick={onShowUserSearch}
+                className="p-2.5 rounded-full hover:bg-white/[0.05] transition-colors"
+              >
+                <Search size={22} className="text-[#ddd]" />
+              </button>
+
+              {/* Activity / Notifications */}
+              <button
                 onClick={() => setShowNotifications(true)}
+                className="p-2.5 rounded-full hover:bg-white/[0.05] transition-colors relative"
               >
-                <Heart className={`w-6 h-6 ${notifCount > 0 ? 'text-primary fill-primary' : ''}`} />
-                {notifCount > 0 && (
-                  <Badge className="absolute top-0.5 right-0.5 h-4 min-w-4 p-0 flex items-center justify-center text-[9px] bg-destructive border-background border-2">
-                    {notifCount > 9 ? '9+' : notifCount}
-                  </Badge>
+                <Heart size={22} className={notifCount > 0 ? 'text-[#FF5500] fill-[#FF5500]' : 'text-[#ddd]'} />
+                {(notifCount + incomingRequestCount) > 0 && (
+                  <span className="absolute top-1 right-1 w-4 h-4 bg-[#FF5500] rounded-full text-[9px] text-white font-bold flex items-center justify-center"
+                    style={{ boxShadow: '0 0 6px rgba(255,85,0,0.5)' }}>
+                    {(notifCount + incomingRequestCount) > 9 ? '9+' : notifCount + incomingRequestCount}
+                  </span>
                 )}
-              </Button>
+              </button>
 
-              {/* Friend Requests */}
-              <Button
-                variant="ghost"
-                size="icon"
-                className="relative h-10 w-10"
-                onClick={onShowFriendRequests}
-              >
-                <UserPlus className="w-5 h-5" />
-                {incomingRequestCount > 0 && (
-                  <Badge className="absolute top-0.5 right-0.5 h-4 min-w-4 p-0 flex items-center justify-center text-[9px] bg-destructive border-background border-2">
-                    {incomingRequestCount > 9 ? '9+' : incomingRequestCount}
-                  </Badge>
-                )}
-              </Button>
-
-              {/* Messages — desktop only (mobile has bottom tab) */}
-              <Button
-                variant="ghost"
-                size="icon"
-                className="relative h-10 w-10 hidden md:flex"
+              {/* DMs */}
+              <button
                 onClick={() => navigate('/inbox')}
+                className="p-2.5 rounded-full hover:bg-white/[0.05] transition-colors relative"
               >
-                <MessageCircle className="w-6 h-6" />
+                <Send size={20} className="text-[#ddd]" />
                 {messageCount > 0 && (
-                  <Badge className="absolute top-0.5 right-0.5 h-4 min-w-4 p-0 flex items-center justify-center text-[9px] bg-destructive border-background border-2">
+                  <span className="absolute top-1 right-1 w-4 h-4 bg-[#FF5500] rounded-full text-[9px] text-white font-bold flex items-center justify-center"
+                    style={{ boxShadow: '0 0 6px rgba(255,85,0,0.5)' }}>
                     {messageCount > 9 ? '9+' : messageCount}
-                  </Badge>
+                  </span>
                 )}
-              </Button>
-
-              <ThemeToggle />
-</div>
+              </button>
+            </div>
           </div>
         </div>
       </header>

@@ -11,14 +11,9 @@ import { AuthModal } from '@/components/tracker/AuthModal';
 import { SocialLinksDisplay } from '@/components/profile/SocialLinksDisplay';
 import { RichContent } from '@/components/ui/RichContent';
 import { supabase } from '@/integrations/supabase/client';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   User,
-  Flame,
-  ArrowRight,
   Grid3X3,
   Settings,
   Heart,
@@ -28,8 +23,14 @@ import {
   Image as ImageIcon,
   Play,
   X,
+  ArrowLeft,
+  Bookmark,
+  Tag,
+  BadgeCheck,
+  MoreHorizontal,
 } from 'lucide-react';
 import { format, formatDistanceToNow } from 'date-fns';
+import shieldLogo from '@/assets/unbreakable-shield.png';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 interface OwnPost {
@@ -59,56 +60,49 @@ function FollowListModal({
   loading: boolean;
 }) {
   const navigate = useNavigate();
-
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm" onClick={onClose}>
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
-        className="w-full max-w-sm mx-4 bg-card border border-border rounded-2xl shadow-2xl overflow-hidden"
+        className="w-full max-w-sm mx-4 overflow-hidden rounded-2xl"
+        style={{ background: '#111', border: '1px solid rgba(255,255,255,0.08)' }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between p-4 border-b border-border">
-          <h3 className="font-display text-sm tracking-wider">{title}</h3>
-          <button onClick={onClose} className="p-1 hover:bg-muted rounded-full transition-colors">
-            <X className="w-5 h-5" />
+        <div className="flex items-center justify-between p-4 border-b border-white/[0.06]">
+          <h3 className="font-heading font-bold text-sm tracking-wider text-white uppercase">{title}</h3>
+          <button onClick={onClose} className="p-1 hover:bg-white/[0.05] rounded-full transition-colors">
+            <X className="w-5 h-5 text-[#888]" />
           </button>
         </div>
         <div className="max-h-96 overflow-y-auto">
           {loading ? (
             <div className="flex justify-center py-12">
-              <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+              <div className="w-6 h-6 border-2 border-[#FF5500] border-t-transparent rounded-full animate-spin" />
             </div>
           ) : users.length === 0 ? (
-            <div className="py-12 text-center text-muted-foreground text-sm">
-              No users yet
-            </div>
+            <div className="py-12 text-center text-[#555] text-sm">No users yet</div>
           ) : (
             users.map((u) => (
               <button
                 key={u.user_id}
-                className="w-full flex items-center gap-3 px-4 py-3 hover:bg-muted/50 transition-colors text-left"
-                onClick={() => {
-                  navigate(`/user/${u.user_id}`);
-                  onClose();
-                }}
+                className="w-full flex items-center gap-3 px-4 py-3 hover:bg-white/[0.03] transition-colors text-left"
+                onClick={() => { navigate(`/user/${u.user_id}`); onClose(); }}
               >
                 <Avatar className="w-10 h-10">
                   <AvatarImage src={u.avatar_url || undefined} />
-                  <AvatarFallback className="bg-primary/20 text-primary font-display text-sm">
+                  <AvatarFallback className="bg-[#1a1a1a] text-[#888] font-heading text-sm font-bold">
                     {(u.display_name || u.username || '?')[0].toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
                 <div className="min-w-0">
-                  <p className="font-display text-sm tracking-wide truncate">
+                  <p className="font-semibold text-sm text-white truncate">
                     {u.display_name || u.username || 'Athlete'}
                   </p>
-                  {u.username && (
-                    <p className="text-xs text-muted-foreground truncate">@{u.username}</p>
-                  )}
+                  {u.username && <p className="text-xs text-[#666] truncate">@{u.username}</p>}
                 </div>
               </button>
             ))
@@ -132,15 +126,14 @@ function PostGridItem({ post, onClick }: { post: OwnPost; onClick: () => void })
   return (
     <button
       onClick={onClick}
-      className="relative aspect-square bg-muted/30 rounded-lg overflow-hidden group border border-border/50 hover:border-primary/30 transition-all"
+      className="relative aspect-square overflow-hidden group"
+      style={{ background: '#111' }}
     >
       {thumbnail ? (
         <img src={thumbnail} alt="" className="w-full h-full object-cover" />
       ) : (
-        <div className="w-full h-full flex items-center justify-center p-3">
-          <p className="text-xs text-muted-foreground line-clamp-4 text-center">
-            {post.content?.slice(0, 100)}
-          </p>
+        <div className="w-full h-full flex items-center justify-center p-3" style={{ background: 'linear-gradient(135deg, #1a1a1a, #111)' }}>
+          <p className="text-xs text-[#666] line-clamp-4 text-center">{post.content?.slice(0, 100)}</p>
         </div>
       )}
 
@@ -156,10 +149,10 @@ function PostGridItem({ post, onClick }: { post: OwnPost; onClick: () => void })
       )}
 
       <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4">
-        <span className="flex items-center gap-1 text-white text-sm font-semibold">
+        <span className="flex items-center gap-1 text-white text-sm font-bold">
           <Heart className="w-4 h-4" fill="white" /> {post.kudos_count}
         </span>
-        <span className="flex items-center gap-1 text-white text-sm font-semibold">
+        <span className="flex items-center gap-1 text-white text-sm font-bold">
           <MessageSquare className="w-4 h-4" fill="white" /> {post.comments_count}
         </span>
       </div>
@@ -178,41 +171,41 @@ function PostDetailModal({
   onClose: () => void;
 }) {
   if (!post) return null;
-
   const mediaUrl = post.media_items?.[0]?.media_url || post.image_url || post.video_url;
   const isVideo = post.video_url || post.media_items?.[0]?.media_type === 'video';
   const displayName = profile.display_name || profile.username || 'You';
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm" onClick={onClose}>
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="w-full max-w-2xl mx-4 bg-card border border-border rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col"
+        className="w-full max-w-2xl mx-4 overflow-hidden max-h-[90vh] flex flex-col rounded-2xl"
+        style={{ background: '#111', border: '1px solid rgba(255,255,255,0.06)' }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between p-4 border-b border-border shrink-0">
+        <div className="flex items-center justify-between p-4 border-b border-white/[0.06] shrink-0">
           <div className="flex items-center gap-3">
             <Avatar className="w-8 h-8">
               <AvatarImage src={profile.avatar_url || undefined} />
-              <AvatarFallback className="bg-primary/20 text-primary font-display text-xs">
+              <AvatarFallback className="bg-[#1a1a1a] text-[#888] font-heading text-xs font-bold">
                 {displayName[0].toUpperCase()}
               </AvatarFallback>
             </Avatar>
             <div>
-              <p className="font-display text-sm tracking-wide">{displayName}</p>
-              <p className="text-xs text-muted-foreground">
+              <p className="font-semibold text-sm text-white">{displayName}</p>
+              <p className="text-xs text-[#666]">
                 {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
               </p>
             </div>
           </div>
-          <button onClick={onClose} className="p-1 hover:bg-muted rounded-full">
-            <X className="w-5 h-5" />
+          <button onClick={onClose} className="p-1.5 hover:bg-white/[0.05] rounded-full">
+            <X className="w-5 h-5 text-[#888]" />
           </button>
         </div>
 
         {mediaUrl && (
-          <div className="border-b border-border shrink-0">
+          <div className="border-b border-white/[0.04] shrink-0">
             {isVideo ? (
               <video src={mediaUrl} controls className="w-full max-h-[50vh] object-contain bg-black" />
             ) : (
@@ -223,16 +216,14 @@ function PostDetailModal({
 
         <div className="p-4 overflow-y-auto">
           <div className="flex items-center gap-4 mb-3">
-            <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
+            <span className="flex items-center gap-1.5 text-sm text-[#888]">
               <Heart className="w-5 h-5" /> {post.kudos_count}
             </span>
-            <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
+            <span className="flex items-center gap-1.5 text-sm text-[#888]">
               <MessageSquare className="w-5 h-5" /> {post.comments_count}
             </span>
           </div>
-          {post.content && (
-            <RichContent text={post.content} className="text-sm" />
-          )}
+          {post.content && <RichContent text={post.content} className="text-sm text-[#ddd]" />}
         </div>
       </motion.div>
     </div>
@@ -247,7 +238,7 @@ export default function Profile() {
   const { followerCount, followingCount, postCount, fetchFollowers, fetchFollowing } = useFollow(user?.id);
 
   const [showAuthModal, setShowAuthModal] = useState(false);
-  const [activeTab, setActiveTab] = useState('posts');
+  const [activeTab, setActiveTab] = useState<'posts' | 'saved' | 'tagged' | 'settings'>('posts');
   const [posts, setPosts] = useState<OwnPost[]>([]);
   const [postsLoading, setPostsLoading] = useState(false);
   const [selectedPost, setSelectedPost] = useState<OwnPost | null>(null);
@@ -255,11 +246,9 @@ export default function Profile() {
   const [followUsers, setFollowUsers] = useState<FollowUser[]>([]);
   const [followListLoading, setFollowListLoading] = useState(false);
 
-  // Fetch own posts
   const fetchPosts = useCallback(async () => {
     if (!user) return;
     setPostsLoading(true);
-
     const { data } = await supabase
       .from('posts')
       .select('*')
@@ -275,12 +264,7 @@ export default function Profile() {
             supabase.from('post_comments').select('id', { count: 'exact', head: true }).eq('post_id', post.id),
             supabase.from('post_media').select('media_type, media_url, thumbnail_url').eq('post_id', post.id).order('sort_order'),
           ]);
-          return {
-            ...post,
-            kudos_count: kudos.count || 0,
-            comments_count: comments.count || 0,
-            media_items: media.data || [],
-          };
+          return { ...post, kudos_count: kudos.count || 0, comments_count: comments.count || 0, media_items: media.data || [] };
         })
       );
       setPosts(enriched);
@@ -302,243 +286,232 @@ export default function Profile() {
 
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="w-12 h-12 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen flex items-center justify-center" style={{ background: '#080808' }}>
+        <div className="w-10 h-10 border-2 border-[#FF5500] border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
-  const displayName = profile?.display_name || profile?.username || 'Athlete';
-  const initials = displayName.slice(0, 2).toUpperCase();
+  if (!user || !profile) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center px-6" style={{ background: '#080808' }}>
+        <img src={shieldLogo} alt="UNBREAKABLE" className="h-20 w-20 shield-pulse mb-6" />
+        <h1 className="font-heading font-black text-2xl text-white uppercase tracking-wider mb-2">Your Profile</h1>
+        <p className="text-[#666] text-center mb-6">Sign in to view your profile, track progress, and connect with others.</p>
+        <button
+          onClick={() => setShowAuthModal(true)}
+          className="px-8 py-3 rounded-xl font-heading font-bold text-sm uppercase tracking-wider text-white"
+          style={{ background: 'linear-gradient(135deg, #FF5500, #CC4400)', boxShadow: '0 0 20px rgba(255,85,0,0.3)' }}
+        >
+          SIGN IN
+        </button>
+        <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
+      </div>
+    );
+  }
+
+  const displayName = profile.display_name || profile.username || 'Athlete';
+  const initials = displayName.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
 
   return (
-    <div className="min-h-screen bg-background">
-{user && profile ? (
-        <main className="pt-20 pb-12">
-          <div className="max-w-2xl mx-auto px-4">
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="space-y-5"
-            >
-              {/* ─── Instagram Header: Avatar + Stats ─── */}
-              <div className="flex items-center gap-6 sm:gap-10">
-                <Avatar className="w-20 h-20 sm:w-24 sm:h-24 border-[3px] border-primary/30 shrink-0 ring-2 ring-primary/10 ring-offset-2 ring-offset-background">
-                  <AvatarImage src={profile.avatar_url || undefined} />
-                  <AvatarFallback className="bg-primary/20 text-primary font-display text-xl sm:text-2xl">
-                    {initials}
-                  </AvatarFallback>
-                </Avatar>
-
-                <div className="flex-1 grid grid-cols-3 gap-2 text-center">
-                  <div>
-                    <p className="font-display text-lg sm:text-xl text-foreground">{postCount}</p>
-                    <p className="text-[10px] sm:text-xs font-display tracking-wider text-muted-foreground">POSTS</p>
-                  </div>
-                  <button onClick={() => openFollowList('followers')} className="hover:opacity-70 transition-opacity">
-                    <p className="font-display text-lg sm:text-xl text-foreground">{followerCount}</p>
-                    <p className="text-[10px] sm:text-xs font-display tracking-wider text-muted-foreground">FOLLOWERS</p>
-                  </button>
-                  <button onClick={() => openFollowList('following')} className="hover:opacity-70 transition-opacity">
-                    <p className="font-display text-lg sm:text-xl text-foreground">{followingCount}</p>
-                    <p className="text-[10px] sm:text-xs font-display tracking-wider text-muted-foreground">FOLLOWING</p>
-                  </button>
-                </div>
-              </div>
-
-              {/* Name + Bio */}
-              <div className="space-y-1.5">
-                <h1 className="font-display text-lg tracking-wide text-foreground">{displayName}</h1>
-                {profile.username && (
-                  <p className="text-sm text-muted-foreground">@{profile.username}</p>
-                )}
-                {profile.bio && (
-                  <p className="text-sm text-foreground/80 leading-relaxed whitespace-pre-wrap">{profile.bio}</p>
-                )}
-                <div className="flex items-center gap-4 text-xs text-muted-foreground pt-1">
-                  {profile.location && (
-                    <span className="flex items-center gap-1">
-                      <MapPin className="w-3.5 h-3.5" />
-                      {profile.location}
-                    </span>
-                  )}
-                  {profile.created_at && (
-                    <span className="flex items-center gap-1">
-                      <Calendar className="w-3.5 h-3.5" />
-                      Joined {format(new Date(profile.created_at), 'MMM yyyy')}
-                    </span>
-                  )}
-                </div>
-
-                <SocialLinksDisplay
-                  instagram={profile.social_instagram}
-                  tiktok={profile.social_tiktok}
-                  twitter={profile.social_twitter}
-                  facebook={profile.social_facebook}
-                  youtube={profile.social_youtube}
-                  snapchat={profile.social_snapchat}
-                />
-              </div>
-
-              {/* Edit Profile Button */}
-              <Button
-                variant="outline"
-                className="w-full font-display text-xs tracking-wider h-9"
-                onClick={() => setActiveTab('settings')}
-              >
-                <Settings className="w-4 h-4 mr-1.5" />
-                EDIT PROFILE
-              </Button>
-
-              {/* ─── Tabs: Posts / Settings ─── */}
-              <div className="border-t border-border pt-3">
-                <Tabs value={activeTab} onValueChange={setActiveTab}>
-                  <TabsList className="w-full grid grid-cols-2 h-10 bg-transparent border-b border-border rounded-none">
-                    <TabsTrigger
-                      value="posts"
-                      className="font-display text-xs tracking-wider data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none bg-transparent"
-                    >
-                      <Grid3X3 className="w-4 h-4 mr-1.5" />
-                      POSTS
-                    </TabsTrigger>
-                    <TabsTrigger
-                      value="settings"
-                      className="font-display text-xs tracking-wider data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none bg-transparent"
-                    >
-                      <Settings className="w-4 h-4 mr-1.5" />
-                      MANAGE
-                    </TabsTrigger>
-                  </TabsList>
-
-                  <TabsContent value="posts" className="mt-4">
-                    {postsLoading ? (
-                      <div className="flex justify-center py-12">
-                        <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                      </div>
-                    ) : posts.length === 0 ? (
-                      <div className="text-center py-16">
-                        <ImageIcon className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
-                        <p className="font-display text-sm tracking-wide text-muted-foreground">NO POSTS YET</p>
-                        <p className="text-xs text-muted-foreground mt-1">Share your first post from the feed!</p>
-                      </div>
-                    ) : (
-                      <div className="grid grid-cols-3 gap-1.5">
-                        {posts.map((post) => (
-                          <PostGridItem
-                            key={post.id}
-                            post={post}
-                            onClick={() => setSelectedPost(post)}
-                          />
-                        ))}
-                      </div>
-                    )}
-                  </TabsContent>
-
-                  <TabsContent value="settings" className="mt-4 space-y-6">
-                    <AthleteCoachSection />
-                    <ProfileView />
-                    <PasswordChangeCard />
-                  </TabsContent>
-                </Tabs>
-              </div>
-            </motion.div>
+    <div className="min-h-screen" style={{ background: '#080808' }}>
+      {/* ━━━ Instagram-style Profile Header ━━━ */}
+      <header className="sticky top-0 z-40 border-b border-white/[0.06]"
+        style={{ background: 'rgba(8,8,8,0.95)', backdropFilter: 'blur(20px)' }}>
+        <div className="px-4 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <h1 className="text-lg font-semibold text-white">{displayName}</h1>
+            <BadgeCheck size={16} className="text-[#FF5500]" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.4))' }} />
           </div>
-        </main>
-      ) : (
-        <>
-          {/* Hero Section — unauthenticated */}
-          <section className="pt-24 pb-12 md:pt-28 md:pb-16 border-b border-border">
-            <div className="container mx-auto px-4 text-center max-w-4xl">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-                className="space-y-6"
-              >
-                <div className="w-20 h-20 rounded-full bg-primary/20 flex items-center justify-center mx-auto neon-glow">
-                  <User className="w-10 h-10 text-primary" />
-                </div>
-                <h1 className="font-display text-4xl sm:text-5xl md:text-6xl tracking-wide leading-none">
-                  <span className="text-primary neon-glow-subtle">UNBREAKABLE </span>
-                  <span className="text-foreground">PROFILE</span>
-                </h1>
-                <p className="text-primary font-display text-xl tracking-wide neon-glow-subtle">
-                  YOUR JOURNEY
-                </p>
-                <p className="text-muted-foreground text-base md:text-lg max-w-2xl mx-auto leading-relaxed">
-                  View your profile, track your progress, and manage your account.
-                  Every step forward makes you{' '}
-                  <span className="text-primary font-semibold">UNBREAKABLE</span>. Keep showing up.
-                </p>
-              </motion.div>
-            </div>
-          </section>
+          <div className="flex items-center gap-2">
+            <button onClick={() => setActiveTab('settings')} className="p-2 rounded-full hover:bg-white/[0.05] transition-colors">
+              <Settings size={22} className="text-white" />
+            </button>
+            <button className="p-2 rounded-full hover:bg-white/[0.05] transition-colors">
+              <MoreHorizontal size={22} className="text-white" />
+            </button>
+          </div>
+        </div>
+      </header>
 
-          <main className="container mx-auto px-4 py-8 md:py-12">
-            <div className="max-w-2xl mx-auto">
-              <Card className="p-8 text-center border-2 border-primary/30 neon-border-subtle">
-                <User className="w-16 h-16 text-primary mx-auto mb-6" />
-                <h2 className="font-display text-2xl tracking-wide mb-4">
-                  SIGN IN TO VIEW PROFILE
-                </h2>
-                <p className="text-muted-foreground mb-6">
-                  Access your profile, view your progress, and manage your account.
-                </p>
-                <Button
-                  size="lg"
-                  className="font-display tracking-wide"
-                  onClick={() => setShowAuthModal(true)}
-                >
-                  GET STARTED
-                </Button>
-              </Card>
+      {/* ━━━ Profile Info Section ━━━ */}
+      <section className="px-4 py-4">
+        <div className="flex items-center gap-5">
+          {/* Avatar with gradient ring */}
+          <div className="w-20 h-20 rounded-full p-[3px] flex-shrink-0"
+            style={{ background: 'linear-gradient(135deg, #FF5500, #FF8C00, #FFB300)' }}>
+            <div className="w-full h-full rounded-full border-2 border-[#080808] overflow-hidden" style={{ background: '#1a1a1a' }}>
+              <Avatar className="w-full h-full">
+                <AvatarImage src={profile.avatar_url || undefined} />
+                <AvatarFallback className="bg-[#1a1a1a] text-[#888] font-heading text-xl font-bold w-full h-full flex items-center justify-center">
+                  {initials}
+                </AvatarFallback>
+              </Avatar>
             </div>
-          </main>
-        </>
+          </div>
+
+          {/* Stats */}
+          <div className="flex-1 flex items-center justify-around">
+            <div className="text-center">
+              <p className="text-lg font-bold text-white">{postCount}</p>
+              <p className="text-[11px] text-[#888]">Posts</p>
+            </div>
+            <button onClick={() => openFollowList('followers')} className="text-center hover:opacity-70 transition-opacity">
+              <p className="text-lg font-bold text-white">{followerCount}</p>
+              <p className="text-[11px] text-[#888]">Followers</p>
+            </button>
+            <button onClick={() => openFollowList('following')} className="text-center hover:opacity-70 transition-opacity">
+              <p className="text-lg font-bold text-white">{followingCount}</p>
+              <p className="text-[11px] text-[#888]">Following</p>
+            </button>
+          </div>
+        </div>
+
+        {/* Bio */}
+        <div className="mt-4 space-y-1">
+          <p className="text-sm font-semibold text-white">{displayName}</p>
+          {profile.username && <p className="text-sm text-[#888]">@{profile.username}</p>}
+          {profile.bio && (
+            <p className="text-sm text-[#ddd] whitespace-pre-line leading-relaxed">{profile.bio}</p>
+          )}
+          <div className="flex items-center gap-4 text-[11px] text-[#666] pt-1">
+            {profile.location && (
+              <span className="flex items-center gap-1"><MapPin size={12} />{profile.location}</span>
+            )}
+            {profile.created_at && (
+              <span className="flex items-center gap-1">
+                <Calendar size={12} />Joined {format(new Date(profile.created_at), 'MMM yyyy')}
+              </span>
+            )}
+          </div>
+          <SocialLinksDisplay
+            instagram={profile.social_instagram}
+            tiktok={profile.social_tiktok}
+            twitter={profile.social_twitter}
+            facebook={profile.social_facebook}
+            youtube={profile.social_youtube}
+            snapchat={profile.social_snapchat}
+          />
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex gap-2 mt-4">
+          <button
+            onClick={() => setActiveTab('settings')}
+            className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-white transition-colors"
+            style={{ background: '#222' }}
+          >
+            Edit Profile
+          </button>
+          <button
+            onClick={() => navigate('/inbox')}
+            className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-white transition-colors"
+            style={{ background: '#222' }}
+          >
+            Share Profile
+          </button>
+        </div>
+      </section>
+
+      {/* ━━━ Story Highlights ━━━ */}
+      <section className="px-4 pb-3 overflow-x-auto">
+        <div className="flex gap-4 min-w-max">
+          {['Gains', 'Mindset', 'Fuel', 'Journey', 'PRs'].map(label => (
+            <button key={label} className="flex flex-col items-center gap-1.5">
+              <div className="w-16 h-16 rounded-full flex items-center justify-center"
+                style={{ background: '#1a1a1a', border: '1px solid #333' }}>
+                <span className="text-xs text-[#666]">📌</span>
+              </div>
+              <span className="text-[11px] text-[#888]">{label}</span>
+            </button>
+          ))}
+        </div>
+      </section>
+
+      {/* ━━━ Tab Bar ━━━ */}
+      <div className="flex border-b border-white/[0.06] sticky top-[57px] z-30" style={{ background: '#080808' }}>
+        {[
+          { key: 'posts' as const, icon: Grid3X3 },
+          { key: 'saved' as const, icon: Bookmark },
+          { key: 'tagged' as const, icon: Tag },
+        ].map(({ key, icon: Icon }) => (
+          <button
+            key={key}
+            onClick={() => setActiveTab(key)}
+            className={`flex-1 py-3 flex justify-center transition-colors relative ${
+              activeTab === key ? 'text-white' : 'text-[#555]'
+            }`}
+          >
+            <Icon size={20} />
+            {activeTab === key && (
+              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-white" />
+            )}
+          </button>
+        ))}
+      </div>
+
+      {/* ━━━ Tab Content ━━━ */}
+      {activeTab === 'posts' && (
+        <section className="px-0.5">
+          {postsLoading ? (
+            <div className="flex justify-center py-16">
+              <div className="w-6 h-6 border-2 border-[#FF5500] border-t-transparent rounded-full animate-spin" />
+            </div>
+          ) : posts.length === 0 ? (
+            <div className="text-center py-20">
+              <ImageIcon className="w-12 h-12 text-[#444] mx-auto mb-3" />
+              <p className="font-heading font-bold text-sm text-[#888] uppercase tracking-wider">No Posts Yet</p>
+              <p className="text-xs text-[#555] mt-1">Share your first post from the feed!</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-3 gap-0.5">
+              {posts.map((post) => (
+                <PostGridItem key={post.id} post={post} onClick={() => setSelectedPost(post)} />
+              ))}
+            </div>
+          )}
+        </section>
       )}
 
-      {/* Coach Banner */}
-      <section className="container mx-auto px-4 py-12 border-t border-border">
-        <Link to="/help" className="block max-w-3xl mx-auto">
-          <Card className="border-2 border-primary/40 bg-primary/5 p-6 hover:bg-primary/10 transition-all neon-border-subtle">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className="w-14 h-14 rounded-full bg-primary/20 flex items-center justify-center neon-glow">
-                  <Flame className="w-7 h-7 text-primary" />
-                </div>
-                <div>
-                  <p className="font-display text-xl tracking-wide text-foreground">
-                    NEED HELP? <span className="text-primary neon-glow-subtle">ASK YOUR COACH</span>
-                  </p>
-                  <p className="text-muted-foreground mt-1">
-                    Get personalised guidance for your training and nutrition journey
-                  </p>
-                </div>
-              </div>
-              <ArrowRight className="w-6 h-6 text-primary hidden sm:block" />
-            </div>
-          </Card>
-        </Link>
-      </section>
-<AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
+      {activeTab === 'saved' && (
+        <div className="text-center py-20">
+          <Bookmark className="w-12 h-12 text-[#444] mx-auto mb-3" />
+          <p className="font-heading font-bold text-sm text-[#888] uppercase tracking-wider">Saved Posts</p>
+          <p className="text-xs text-[#555] mt-1">Save posts to view them later</p>
+        </div>
+      )}
 
-      {/* Post Detail Modal */}
+      {activeTab === 'tagged' && (
+        <div className="text-center py-20">
+          <Tag className="w-12 h-12 text-[#444] mx-auto mb-3" />
+          <p className="font-heading font-bold text-sm text-[#888] uppercase tracking-wider">Tagged Posts</p>
+          <p className="text-xs text-[#555] mt-1">Posts where you've been tagged</p>
+        </div>
+      )}
+
+      {activeTab === 'settings' && (
+        <section className="px-4 py-6 space-y-6 max-w-2xl mx-auto">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="font-heading font-bold text-lg text-white uppercase tracking-wider">Edit Profile</h2>
+            <button onClick={() => setActiveTab('posts')} className="text-sm text-[#FF5500] font-semibold">Done</button>
+          </div>
+          <AthleteCoachSection />
+          <ProfileView />
+          <PasswordChangeCard />
+        </section>
+      )}
+
+      {/* Modals */}
       <AnimatePresence>
         {selectedPost && profile && (
-          <PostDetailModal
-            post={selectedPost}
-            profile={profile}
-            onClose={() => setSelectedPost(null)}
-          />
+          <PostDetailModal post={selectedPost} profile={profile} onClose={() => setSelectedPost(null)} />
         )}
       </AnimatePresence>
-
-      {/* Follow List Modal */}
       <AnimatePresence>
         <FollowListModal
           isOpen={!!followModal}
           onClose={() => setFollowModal(null)}
-          title={followModal === 'followers' ? 'FOLLOWERS' : 'FOLLOWING'}
+          title={followModal === 'followers' ? 'Followers' : 'Following'}
           users={followUsers}
           loading={followListLoading}
         />

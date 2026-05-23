@@ -442,28 +442,30 @@ export function StoriesSection() {
 
   return (
     <>
-      {/* Stories Row - Circular avatars */}
-      <div className="flex gap-3 overflow-x-auto pb-4 scrollbar-hide">
+      {/* Stories Row — Instagram-style circles */}
+      <div className="flex gap-4 overflow-x-auto py-3 px-1 scrollbar-hide">
         {user && (
           <button
             onClick={(e) => { e.stopPropagation(); setShowCreate(true); }}
             className="flex flex-col items-center gap-1.5 flex-shrink-0 group"
           >
             <div className="relative">
-              <div className="w-16 h-16 rounded-full border-2 border-dashed border-primary/40 group-hover:border-primary transition-colors overflow-hidden">
+              <div className="w-16 h-16 rounded-full border-2 border-dashed border-[#444] group-hover:border-[#FF5500] transition-colors overflow-hidden"
+                style={{ background: 'rgba(20,20,20,0.8)' }}>
                 <Avatar className="w-full h-full">
                   <AvatarImage src={profile?.avatar_url || undefined} />
-                  <AvatarFallback className="bg-primary/10 text-primary font-display text-sm">
+                  <AvatarFallback className="bg-[#1a1a1a] text-[#888] font-heading text-sm font-bold">
                     {getInitials(profile?.display_name)}
                   </AvatarFallback>
                 </Avatar>
               </div>
-              <div className="absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full bg-primary flex items-center justify-center shadow-lg">
-                <Plus className="w-3 h-3 text-primary-foreground" />
+              <div className="absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full flex items-center justify-center border-2 border-[#080808]"
+                style={{ background: '#FF5500', boxShadow: '0 0 8px rgba(255,85,0,0.4)' }}>
+                <Plus className="w-3 h-3 text-white" />
               </div>
             </div>
-            <span className="text-[10px] text-muted-foreground font-display tracking-wide">
-              YOUR STORY
+            <span className="text-[11px] text-[#888] font-heading font-semibold tracking-wide">
+              Your Story
             </span>
           </button>
         )}
@@ -476,21 +478,21 @@ export function StoriesSection() {
               onClick={() => openViewer(index)}
               className="flex flex-col items-center gap-1.5 flex-shrink-0 group"
             >
-              <div className={`p-[2px] rounded-full ${
+              <div className={`p-[2.5px] rounded-full ${
                 isViewed 
-                  ? 'bg-muted-foreground/30' 
-                  : 'bg-gradient-to-br from-primary via-orange-400 to-pink-500'
+                  ? 'bg-[#333]' 
+                  : 'bg-gradient-to-tr from-[#FF5500] via-orange-400 to-yellow-400'
               }`}>
-                <div className="w-[60px] h-[60px] rounded-full border-2 border-background overflow-hidden">
+                <div className="w-[60px] h-[60px] rounded-full border-2 border-[#080808] overflow-hidden">
                   <Avatar className="w-full h-full">
                     <AvatarImage src={group.profile?.avatar_url || undefined} />
-                    <AvatarFallback className="bg-card text-foreground font-display text-sm">
+                    <AvatarFallback className="bg-[#1a1a1a] text-[#888] font-heading text-sm font-bold">
                       {getInitials(group.profile?.display_name)}
                     </AvatarFallback>
                   </Avatar>
                 </div>
               </div>
-              <span className={`text-[10px] truncate max-w-16 ${isViewed ? 'text-muted-foreground/50' : 'text-muted-foreground'}`}>
+              <span className={`text-[11px] truncate max-w-16 ${isViewed ? 'text-[#555]' : 'text-[#aaa]'}`}>
                 {group.userId === user?.id ? 'My Story' : (group.profile?.display_name?.split(' ')[0] || 'User')}
               </span>
             </button>

@@ -93,29 +93,29 @@ function FollowListModal({
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
-        className="w-full max-w-sm mx-4 bg-card border border-border rounded-2xl shadow-2xl overflow-hidden"
+        className="w-full max-w-sm mx-4 bg-[#111] border border-white/[0.06] rounded-2xl shadow-2xl overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between p-4 border-b border-border">
-          <h3 className="font-display text-sm tracking-wider">{title}</h3>
-          <button onClick={onClose} className="p-1 hover:bg-muted rounded-full transition-colors">
+        <div className="flex items-center justify-between p-4 border-b border-white/[0.06]">
+          <h3 className="font-heading text-sm tracking-wider">{title}</h3>
+          <button onClick={onClose} className="p-1 hover:bg-[#1a1a1a] rounded-full transition-colors">
             <X className="w-5 h-5" />
           </button>
         </div>
         <div className="max-h-96 overflow-y-auto">
           {loading ? (
             <div className="flex justify-center py-12">
-              <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+              <div className="w-6 h-6 border-2 border-[#FF5500] border-t-transparent rounded-full animate-spin" />
             </div>
           ) : users.length === 0 ? (
-            <div className="py-12 text-center text-muted-foreground text-sm">
+            <div className="py-12 text-center text-[#888] text-sm">
               No users yet
             </div>
           ) : (
             users.map((u) => (
               <button
                 key={u.user_id}
-                className="w-full flex items-center gap-3 px-4 py-3 hover:bg-muted/50 transition-colors text-left"
+                className="w-full flex items-center gap-3 px-4 py-3 hover:bg-[#1a1a1a]/50 transition-colors text-left"
                 onClick={() => {
                   navigate(`/user/${u.user_id}`);
                   onClose();
@@ -123,16 +123,16 @@ function FollowListModal({
               >
                 <Avatar className="w-10 h-10">
                   <AvatarImage src={u.avatar_url || undefined} />
-                  <AvatarFallback className="bg-primary/20 text-primary font-display text-sm">
+                  <AvatarFallback className="bg-[#FF5500]/20 text-[#FF5500] font-heading text-sm">
                     {(u.display_name || u.username || '?')[0].toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
                 <div className="min-w-0">
-                  <p className="font-display text-sm tracking-wide truncate">
+                  <p className="font-heading text-sm tracking-wide truncate">
                     {u.display_name || u.username || 'Athlete'}
                   </p>
                   {u.username && (
-                    <p className="text-xs text-muted-foreground truncate">@{u.username}</p>
+                    <p className="text-xs text-[#888] truncate">@{u.username}</p>
                   )}
                 </div>
               </button>
@@ -157,13 +157,13 @@ function PostGridItem({ post, onClick }: { post: UserPost; onClick: () => void }
   return (
     <button
       onClick={onClick}
-      className="relative aspect-square bg-muted/30 rounded-lg overflow-hidden group border border-border/50 hover:border-primary/30 transition-all"
+      className="relative aspect-square bg-[#1a1a1a]/30 rounded-lg overflow-hidden group border border-white/[0.06]/50 hover:border-[#FF5500]/30 transition-all"
     >
       {thumbnail ? (
         <img src={thumbnail} alt="" className="w-full h-full object-cover" />
       ) : (
         <div className="w-full h-full flex items-center justify-center p-3">
-          <p className="text-xs text-muted-foreground line-clamp-4 text-center">
+          <p className="text-xs text-[#888] line-clamp-4 text-center">
             {post.content?.slice(0, 100)}
           </p>
         </div>
@@ -217,33 +217,33 @@ function PostDetailModal({
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="w-full max-w-2xl mx-4 bg-card border border-border rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col"
+        className="w-full max-w-2xl mx-4 bg-[#111] border border-white/[0.06] rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-border shrink-0">
+        <div className="flex items-center justify-between p-4 border-b border-white/[0.06] shrink-0">
           <div className="flex items-center gap-3">
             <Avatar className="w-8 h-8">
               <AvatarImage src={profile.avatar_url || undefined} />
-              <AvatarFallback className="bg-primary/20 text-primary font-display text-xs">
+              <AvatarFallback className="bg-[#FF5500]/20 text-[#FF5500] font-heading text-xs">
                 {displayName[0].toUpperCase()}
               </AvatarFallback>
             </Avatar>
             <div>
-              <p className="font-display text-sm tracking-wide">{displayName}</p>
-              <p className="text-xs text-muted-foreground">
+              <p className="font-heading text-sm tracking-wide">{displayName}</p>
+              <p className="text-xs text-[#888]">
                 {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
               </p>
             </div>
           </div>
-          <button onClick={onClose} className="p-1 hover:bg-muted rounded-full">
+          <button onClick={onClose} className="p-1 hover:bg-[#1a1a1a] rounded-full">
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Media */}
         {mediaUrl && (
-          <div className="border-b border-border shrink-0">
+          <div className="border-b border-white/[0.06] shrink-0">
             {isVideo ? (
               <video src={mediaUrl} controls className="w-full max-h-[50vh] object-contain bg-black" />
             ) : (
@@ -257,14 +257,14 @@ function PostDetailModal({
           <div className="flex items-center gap-4 mb-3">
             <button
               onClick={() => onToggleKudos(post.id)}
-              className="flex items-center gap-1.5 text-sm transition-colors hover:text-primary"
+              className="flex items-center gap-1.5 text-sm transition-colors hover:text-[#FF5500]"
             >
               <Heart
-                className={`w-5 h-5 ${post.has_kudos ? 'text-primary fill-primary' : ''}`}
+                className={`w-5 h-5 ${post.has_kudos ? 'text-[#FF5500] fill-primary' : ''}`}
               />
               <span className="font-medium">{post.kudos_count}</span>
             </button>
-            <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
+            <span className="flex items-center gap-1.5 text-sm text-[#888]">
               <MessageSquare className="w-5 h-5" />
               <span>{post.comments_count}</span>
             </span>
@@ -439,19 +439,19 @@ export default function UserProfile() {
   // ─── Loading / Not Found states ────────────────────────────────────────────
   if (loading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="w-12 h-12 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen bg-[#080808] flex items-center justify-center">
+        <div className="w-12 h-12 border-2 border-[#FF5500] border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
   if (!profile) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-[#080808]">
 <div className="pt-24 pb-12 container mx-auto px-4 text-center">
-          <User className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-          <h1 className="font-display text-2xl tracking-wide mb-2">USER NOT FOUND</h1>
-          <p className="text-muted-foreground mb-6">This profile doesn't exist or has been removed.</p>
+          <User className="w-16 h-16 text-[#888] mx-auto mb-4" />
+          <h1 className="font-heading text-2xl tracking-wide mb-2">USER NOT FOUND</h1>
+          <p className="text-[#888] mb-6">This profile doesn't exist or has been removed.</p>
           <Button onClick={() => navigate(-1)}>
             <ArrowLeft className="w-4 h-4 mr-2" />
             Go Back
@@ -465,13 +465,13 @@ export default function UserProfile() {
   const initials = displayName.slice(0, 2).toUpperCase();
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-[#080808]">
 <main className="pt-20 pb-12">
         <div className="max-w-2xl mx-auto px-4">
           {/* Back button */}
           <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="mb-4 -ml-2">
             <ArrowLeft className="w-4 h-4 mr-1" />
-            <span className="text-xs font-display tracking-wide">BACK</span>
+            <span className="text-xs font-heading tracking-wide">BACK</span>
           </Button>
 
           {/* ─── Profile Header (Instagram-style) ─── */}
@@ -482,9 +482,9 @@ export default function UserProfile() {
           >
             {/* Row: Avatar + Stats */}
             <div className="flex items-center gap-6 sm:gap-10">
-              <Avatar className="w-20 h-20 sm:w-24 sm:h-24 border-[3px] border-primary/30 shrink-0 ring-2 ring-primary/10 ring-offset-2 ring-offset-background">
+              <Avatar className="w-20 h-20 sm:w-24 sm:h-24 border-[3px] border-[#FF5500]/30 shrink-0 ring-2 ring-primary/10 ring-offset-2 ring-offset-background">
                 <AvatarImage src={profile.avatar_url || undefined} />
-                <AvatarFallback className="bg-primary/20 text-primary font-display text-xl sm:text-2xl">
+                <AvatarFallback className="bg-[#FF5500]/20 text-[#FF5500] font-heading text-xl sm:text-2xl">
                   {initials}
                 </AvatarFallback>
               </Avatar>
@@ -492,30 +492,30 @@ export default function UserProfile() {
               {/* Stats row */}
               <div className="flex-1 grid grid-cols-3 gap-2 text-center">
                 <div>
-                  <p className="font-display text-lg sm:text-xl text-foreground">{postCount}</p>
-                  <p className="text-[10px] sm:text-xs font-display tracking-wider text-muted-foreground">POSTS</p>
+                  <p className="font-heading text-lg sm:text-xl text-white">{postCount}</p>
+                  <p className="text-[10px] sm:text-xs font-heading tracking-wider text-[#888]">POSTS</p>
                 </div>
                 <button onClick={() => openFollowList('followers')} className="hover:opacity-70 transition-opacity">
-                  <p className="font-display text-lg sm:text-xl text-foreground">{followerCount}</p>
-                  <p className="text-[10px] sm:text-xs font-display tracking-wider text-muted-foreground">FOLLOWERS</p>
+                  <p className="font-heading text-lg sm:text-xl text-white">{followerCount}</p>
+                  <p className="text-[10px] sm:text-xs font-heading tracking-wider text-[#888]">FOLLOWERS</p>
                 </button>
                 <button onClick={() => openFollowList('following')} className="hover:opacity-70 transition-opacity">
-                  <p className="font-display text-lg sm:text-xl text-foreground">{followingCount}</p>
-                  <p className="text-[10px] sm:text-xs font-display tracking-wider text-muted-foreground">FOLLOWING</p>
+                  <p className="font-heading text-lg sm:text-xl text-white">{followingCount}</p>
+                  <p className="text-[10px] sm:text-xs font-heading tracking-wider text-[#888]">FOLLOWING</p>
                 </button>
               </div>
             </div>
 
             {/* Name + Bio */}
             <div className="space-y-1.5">
-              <h1 className="font-display text-lg tracking-wide text-foreground">{displayName}</h1>
+              <h1 className="font-heading text-lg tracking-wide text-white">{displayName}</h1>
               {profile.username && (
-                <p className="text-sm text-muted-foreground">@{profile.username}</p>
+                <p className="text-sm text-[#888]">@{profile.username}</p>
               )}
               {profile.bio && (
-                <p className="text-sm text-foreground/80 leading-relaxed whitespace-pre-wrap">{profile.bio}</p>
+                <p className="text-sm text-white/80 leading-relaxed whitespace-pre-wrap">{profile.bio}</p>
               )}
-              <div className="flex items-center gap-4 text-xs text-muted-foreground pt-1">
+              <div className="flex items-center gap-4 text-xs text-[#888] pt-1">
                 {profile.location && (
                   <span className="flex items-center gap-1">
                     <MapPin className="w-3.5 h-3.5" />
@@ -547,7 +547,7 @@ export default function UserProfile() {
                   onClick={toggleFollow}
                   disabled={followLoading}
                   variant={isFollowing ? 'outline' : 'default'}
-                  className="flex-1 font-display text-xs tracking-wider h-9"
+                  className="flex-1 font-heading text-xs tracking-wider h-9"
                 >
                   {isFollowing ? 'FOLLOWING' : 'FOLLOW'}
                 </Button>
@@ -557,7 +557,7 @@ export default function UserProfile() {
                   variant="outline"
                   onClick={handleMessage}
                   disabled={actionLoading}
-                  className="flex-1 font-display text-xs tracking-wider h-9"
+                  className="flex-1 font-heading text-xs tracking-wider h-9"
                 >
                   <MessageCircle className="w-4 h-4 mr-1.5" />
                   MESSAGE
@@ -605,10 +605,10 @@ export default function UserProfile() {
 
             {/* ─── Private Profile Notice ─── */}
             {!profile.is_public && !isFriend && !isOwnProfile && (
-              <Card className="p-6 border border-border text-center">
-                <Lock className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
-                <h2 className="font-display text-sm tracking-wider mb-1">PRIVATE PROFILE</h2>
-                <p className="text-xs text-muted-foreground">
+              <Card className="p-6 border border-white/[0.06] text-center">
+                <Lock className="w-10 h-10 text-[#888] mx-auto mb-3" />
+                <h2 className="font-heading text-sm tracking-wider mb-1">PRIVATE PROFILE</h2>
+                <p className="text-xs text-[#888]">
                   Follow or add as friend to see their posts.
                 </p>
               </Card>
@@ -618,12 +618,12 @@ export default function UserProfile() {
             {(profile.is_public || isFriend || isOwnProfile) && (
               <>
                 {/* Tab divider */}
-                <div className="border-t border-border pt-3">
+                <div className="border-t border-white/[0.06] pt-3">
                   <Tabs value={activeTab} onValueChange={setActiveTab}>
-                    <TabsList className="w-full grid grid-cols-1 h-10 bg-transparent border-b border-border rounded-none">
+                    <TabsList className="w-full grid grid-cols-1 h-10 bg-transparent border-b border-white/[0.06] rounded-none">
                       <TabsTrigger
                         value="posts"
-                        className="font-display text-xs tracking-wider data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none bg-transparent"
+                        className="font-heading text-xs tracking-wider data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none bg-transparent"
                       >
                         <Grid3X3 className="w-4 h-4 mr-1.5" />
                         POSTS
@@ -633,12 +633,12 @@ export default function UserProfile() {
                     <TabsContent value="posts" className="mt-4">
                       {postsLoading ? (
                         <div className="flex justify-center py-12">
-                          <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                          <div className="w-6 h-6 border-2 border-[#FF5500] border-t-transparent rounded-full animate-spin" />
                         </div>
                       ) : posts.length === 0 ? (
                         <div className="text-center py-16">
-                          <ImageIcon className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
-                          <p className="font-display text-sm tracking-wide text-muted-foreground">NO POSTS YET</p>
+                          <ImageIcon className="w-12 h-12 text-[#888] mx-auto mb-3" />
+                          <p className="font-heading text-sm tracking-wide text-[#888]">NO POSTS YET</p>
                         </div>
                       ) : (
                         <div className="grid grid-cols-3 gap-1.5">
