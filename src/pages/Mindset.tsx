@@ -4,13 +4,15 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Brain, Wind, Gamepad2, Flame, ArrowRight, BookOpen, Snowflake, ThermometerSun,
   Timer, Play, Pause, RotateCcw, ChevronDown, ChevronRight as ChevronRightIcon,
+  ChevronLeft, ChevronRight,
   Check, Plus, Sparkles, Target, Heart, Activity, Droplets, Settings2, Volume2,
   Zap, Trophy, Calendar, BarChart3, Clock, TrendingUp
 } from "lucide-react";
 import { useDailyHabits } from "@/hooks/useDailyHabits";
 import { useMindsetProgrammes } from "@/hooks/useMindsetProgrammes";
 import { useAuth } from "@/hooks/useAuth";
-import { format } from "date-fns";
+import { format, subDays } from "date-fns";
+import { supabase } from "@/integrations/supabase/client";
 
 /* ─── Types ─── */
 type MindsetTab = 'overview' | 'breathwork' | 'exposure' | 'games' | 'habits' | 'programmes';
@@ -379,7 +381,7 @@ const Mindset = () => {
                   { tab: 'breathwork' as MindsetTab, icon: Wind, title: 'BREATHWORK', desc: 'Voice-guided sessions — Box Breathing, 4-7-8, Tactical Calm', colour: '#FF5500' },
                   { tab: 'exposure' as MindsetTab, icon: Snowflake, title: 'COLD & HEAT', desc: 'Cold showers, ice baths, sauna protocols — guided timers', colour: '#FF5500' },
                   { tab: 'games' as MindsetTab, icon: Gamepad2, title: 'FOCUS GAMES', desc: 'Reaction training, hand-eye coordination, global leaderboards', colour: '#FF5500' },
-                  { tab: 'habits' as MindsetTab, icon: Target, title: 'DAILY HABITS', desc: 'Track your Daily 5 — train, learn, hydrate, hit your numbers, journal', colour: '#FF5500' },
+                  { tab: 'habits' as MindsetTab, icon: Target, title: 'DAILY HABITS', desc: 'Track your Daily 7 — train, learn, hydrate, numbers, breathwork, sauna, cold', colour: '#FF5500' },
                   { tab: 'programmes' as MindsetTab, icon: Sparkles, title: 'PROGRAMMES', desc: 'Unbreakable Coach or manual mindset programmes — breathwork, cold exposure, focus plans', colour: '#FF5500' },
                 ].map(card => (
                   <button
@@ -722,12 +724,21 @@ function HabitsTab({ habits, saveHabits, isToday, user, completedToday, navigate
   const HABIT_ITEMS = [
     { key: 'train' as const, label: 'TRAIN', LucideIcon: Activity },
     { key: 'learnDaily' as const, label: 'LEARN', LucideIcon: BookOpen },
-    { key: 'water' as const, label: 'HYDRATE', LucideIcon: Droplets },
     { key: 'hitYourNumbers' as const, label: 'HIT YOUR NUMBERS', LucideIcon: Target },
     { key: 'breathworkDone' as const, label: 'BREATHWORK', LucideIcon: Wind },
     { key: 'sauna' as const, label: 'SAUNA', LucideIcon: ThermometerSun },
     { key: 'coldShower' as const, label: 'COLD SHOWER', LucideIcon: Snowflake },
   ];
+
+  const waterGlasses = habits.waterGlasses ?? 0;
+  const waterComplete = waterGlasses >= 8;
+  const handleGlassTap = (glassIdx: number) => {
+    if (!isToday || !user) return;
+    // Tap filled glass to unfill from that point; tap empty glass to fill up to it
+    const newCount = waterGlasses === glassIdx + 1 ? glassIdx : glassIdx + 1;
+    const updated = { ...habits, waterGlasses: newCount, water: newCount >= 8 };
+    saveHabits(updated);
+  };
 
   const totalHabits = HABIT_ITEMS.length;
   const journalMinChars = 30;
@@ -797,6 +808,62 @@ function HabitsTab({ habits, saveHabits, isToday, user, completedToday, navigate
         </div>
       </div>
 
+      {/* Water Tracker — 8 Glasses */}
+      <div className="p-4 rounded-xl border border-gray-800 bg-[#111]">
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <Droplets className="w-4 h-4 text-[#FF5500]" style={{ filter: waterComplete ? 'drop-shadow(0 0 6px rgba(255,85,0,0.6))' : 'none' }} />
+            <span className={`text-xs font-display tracking-wider ${waterComplete ? 'text-[#FF5500]' : 'text-gray-400'}`}>HYDRATE</span>
+          </div>
+          <span className={`text-xs font-display ${waterComplete ? 'text-[#FF5500]' : 'text-gray-600'}`}>
+            {waterGlasses}/8 glasses {waterComplete && '✓'}
+          </span>
+        </div>
+        <div className="grid grid-cols-8 gap-1.5">
+          {Array.from({ length: 8 }).map((_, i) => {
+            const filled = i < waterGlasses;
+            return (
+              <button
+                key={i}
+                onClick={() => handleGlassTap(i)}
+                disabled={!isToday || !user}
+                className="flex flex-col items-center gap-1 group"
+              >
+                <div
+                  className={`w-full aspect-[3/4] rounded-lg border-2 transition-all relative overflow-hidden ${
+                    filled
+                      ? 'border-[#FF5500]/40'
+                      : 'border-gray-700 hover:border-gray-600'
+                  }`}
+                  style={filled ? { boxShadow: '0 0 8px rgba(255,85,0,0.3)' } : {}}
+                >
+                  {/* Water fill animation */}
+                  <div
+                    className="absolute bottom-0 left-0 right-0 transition-all duration-500"
+                    style={{
+                      height: filled ? '100%' : '0%',
+                      background: 'linear-gradient(180deg, rgba(255,85,0,0.3) 0%, rgba(255,85,0,0.6) 100%)',
+                    }}
+                  />
+                  {/* Glass icon */}
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <Droplets
+                      className={`w-4 h-4 transition-all ${filled ? 'text-[#FF5500]' : 'text-gray-600'}`}
+                      style={filled ? { filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.5))' } : {}}
+                    />
+                  </div>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+        {waterComplete && (
+          <p className="text-center text-xs text-[#FF5500] mt-2 font-display tracking-wider" style={{ textShadow: '0 0 10px rgba(255,85,0,0.3)' }}>
+            💧 FULLY HYDRATED — KEEP IT UP
+          </p>
+        )}
+      </div>
+
       {/* Daily Journal */}
       <div className="p-4 rounded-xl border border-gray-800 bg-[#111]">
         <div className="flex items-center justify-between mb-3">
@@ -833,22 +900,8 @@ function HabitsTab({ habits, saveHabits, isToday, user, completedToday, navigate
         </div>
       </div>
 
-      {/* Full tracker link */}
-      <button
-        onClick={() => navigate('/habits')}
-        className="w-full flex items-center justify-between p-3.5 rounded-xl border border-gray-800 bg-[#111] hover:border-gray-700 transition-all"
-      >
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-[#FF5500]/10 flex items-center justify-center">
-            <BookOpen className="w-4 h-4 text-[#FF5500]" style={{ filter: 'drop-shadow(0 0 6px rgba(255,85,0,0.5))' }} />
-          </div>
-          <div className="text-left">
-            <h4 className="font-display text-sm text-white tracking-wider">FULL HABIT TRACKER & JOURNAL</h4>
-            <p className="text-gray-500 text-xs mt-0.5">History, date navigation & analytics</p>
-          </div>
-        </div>
-        <ArrowRight className="w-4 h-4 text-gray-600" />
-      </button>
+      {/* Journal history viewer */}
+      <JournalHistory userId={user?.id} />
 
       {/* Confirmation popup */}
       <AnimatePresence>
@@ -868,6 +921,93 @@ function HabitsTab({ habits, saveHabits, isToday, user, completedToday, navigate
         )}
       </AnimatePresence>
     </motion.div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════
+   JOURNAL HISTORY — inline sub-component
+   Shows past journal entries with date navigation
+   ═══════════════════════════════════════════════════ */
+function JournalHistory({ userId }: { userId?: string }) {
+  const [entries, setEntries] = useState<{ habit_date: string; journal: string }[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+
+  useEffect(() => {
+    if (!userId || !expanded) return;
+    setLoading(true);
+    (async () => {
+      const { data } = await supabase
+        .from('daily_habits')
+        .select('habit_date, journal')
+        .eq('user_id', userId)
+        .not('journal', 'eq', '')
+        .not('journal', 'is', null)
+        .order('habit_date', { ascending: false })
+        .limit(14);
+      setEntries((data || []).filter((d: any) => d.journal && d.journal.trim().length > 0) as any);
+      setLoading(false);
+    })();
+  }, [userId, expanded]);
+
+  if (!userId) return null;
+
+  return (
+    <div className="rounded-xl border border-gray-800 bg-[#111] overflow-hidden">
+      <button
+        onClick={() => setExpanded(!expanded)}
+        className="w-full flex items-center justify-between p-3.5 hover:bg-[#151515] transition-all"
+      >
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-[#FF5500]/10 flex items-center justify-center">
+            <Clock className="w-4 h-4 text-[#FF5500]" style={{ filter: 'drop-shadow(0 0 6px rgba(255,85,0,0.5))' }} />
+          </div>
+          <div className="text-left">
+            <h4 className="font-display text-sm text-white tracking-wider">JOURNAL HISTORY</h4>
+            <p className="text-gray-500 text-xs mt-0.5">View your past journal entries</p>
+          </div>
+        </div>
+        <ChevronDown className={`w-4 h-4 text-gray-600 transition-transform ${expanded ? 'rotate-180' : ''}`} />
+      </button>
+
+      <AnimatePresence>
+        {expanded && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="overflow-hidden"
+          >
+            <div className="px-3.5 pb-3.5 space-y-2">
+              {loading && (
+                <div className="flex items-center justify-center py-6">
+                  <div className="w-5 h-5 border-2 border-[#FF5500] border-t-transparent rounded-full animate-spin" />
+                </div>
+              )}
+              {!loading && entries.length === 0 && (
+                <p className="text-gray-600 text-sm text-center py-4">No journal entries yet — start writing today!</p>
+              )}
+              {!loading && entries.map((entry) => (
+                <div key={entry.habit_date} className="p-3 rounded-lg border border-gray-800/50 bg-[#0a0a0a]">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Calendar className="w-3.5 h-3.5 text-[#FF5500]" />
+                    <span className="text-xs font-display text-[#FF5500] tracking-wider">
+                      {format(new Date(entry.habit_date + 'T12:00:00'), 'EEE d MMM yyyy').toUpperCase()}
+                    </span>
+                  </div>
+                  <p className="text-gray-400 text-sm leading-relaxed whitespace-pre-wrap">
+                    {entry.journal.length > 200
+                      ? entry.journal.slice(0, 200) + '…'
+                      : entry.journal}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 }
 

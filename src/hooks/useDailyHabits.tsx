@@ -12,6 +12,7 @@ const DEFAULT_HABITS: HabitState = {
   sauna: false,
   coldShower: false,
   breathworkDone: false,
+  waterGlasses: 0,
   journal: '',
 };
 
@@ -36,14 +37,16 @@ export function useDailyHabits() {
       .maybeSingle();
 
     if (data) {
+      const glasses = (data as any).water_glasses ?? 0;
       setHabits({
         train: data.train,
         learnDaily: data.learn_daily,
-        water: data.water,
+        water: glasses >= 8 ? true : data.water,
         hitYourNumbers: data.hit_your_numbers,
         sauna: (data as any).sauna ?? false,
         coldShower: (data as any).cold_shower ?? false,
         breathworkDone: (data as any).breathwork_done ?? false,
+        waterGlasses: glasses,
         journal: data.journal || '',
       });
     } else {
@@ -68,12 +71,13 @@ export function useDailyHabits() {
         habit_date: dateStr,
         train: newHabits.train,
         learn_daily: newHabits.learnDaily,
-        water: newHabits.water,
+        water: newHabits.waterGlasses >= 8 ? true : newHabits.water,
         do_the_hard_thing: false,
         hit_your_numbers: newHabits.hitYourNumbers,
         sauna: newHabits.sauna,
         cold_shower: newHabits.coldShower,
         breathwork_done: newHabits.breathworkDone,
+        water_glasses: newHabits.waterGlasses,
         journal: newHabits.journal,
       } as any, { onConflict: 'user_id,habit_date' });
 

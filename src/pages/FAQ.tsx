@@ -14,8 +14,16 @@ import {
   Mail,
   ExternalLink,
   Instagram,
+  ArrowRight,
+  Activity,
+  GraduationCap,
+  Smartphone,
+  Lock,
+  Heart,
+  Target,
+  Zap,
+  MessageCircle,
 } from 'lucide-react';
-import shieldLogo from '@/assets/unbreakable-shield.png';
 
 /* ─── FAQ Data ─── */
 interface FAQItem {
@@ -30,19 +38,27 @@ const FAQ_SECTIONS: { title: string; icon: typeof Shield; items: FAQItem[] }[] =
     items: [
       {
         q: 'What is UNBREAKABLE?',
-        a: 'UNBREAKABLE is an all-in-one fitness platform built by Live Without Limits LTD. It combines training programmes, nutrition tracking, movement logging, mindset tools, and Unbreakable Coaching — all in one place. Our mission: help you build a body and mind that cannot be broken.',
+        a: 'UNBREAKABLE is an all-in-one fitness platform built by Live Without Limits LTD. It combines training programmes, nutrition tracking, movement logging, mindset tools, and the Unbreakable Coach — all in one place. Our mission: help you build a body and mind that cannot be broken.',
       },
       {
         q: 'Is UNBREAKABLE free to use?',
-        a: 'Yes! The free tier gives you access to basic training tools, the community feed, habit tracking, and limited Unbreakable Coaching. Upgrade to Pro for full AI tokens, bespoke programme generation, 1-2-1 coaching options, and premium content.',
+        a: 'Yes! The free tier gives you access to training tools, the community feed, habit tracking, and limited Unbreakable Coach interactions. Upgrade to Pro for full coaching tokens, bespoke programme generation, 1-2-1 coaching, and premium content.',
       },
       {
         q: 'How do I set up my profile?',
-        a: 'When you first sign up, the onboarding flow collects your goals, experience level, and body stats. You can update these any time from your Profile page. The more info you give us, the better your Unbreakable-generated programmes will be.',
+        a: 'When you first sign up, the onboarding flow collects your goals, experience level, and body stats. You can update these any time from your Profile page. The more info you give, the better your Unbreakable Coach-generated programmes will be.',
       },
       {
         q: 'What devices does UNBREAKABLE work on?',
-        a: 'UNBREAKABLE is a progressive web app (PWA). It works on any device with a browser — iPhone, Android, tablet, desktop. Add it to your home screen for the full app experience.',
+        a: 'UNBREAKABLE is a progressive web app (PWA). It works on any device with a browser — iPhone, Android, tablet, desktop. Add it to your home screen for the full native-like app experience with offline support.',
+      },
+      {
+        q: 'How do I add UNBREAKABLE to my home screen?',
+        a: 'On Android: open the app in Chrome, tap the three-dot menu → "Add to Home Screen". On iPhone: open in Safari, tap the share icon → "Add to Home Screen". You\'ll get an app icon that launches full-screen.',
+      },
+      {
+        q: 'Do I need to create an account?',
+        a: 'You can browse as a guest, but to unlock tracking, programmes, the community feed, and Unbreakable Coach you\'ll need a free account. Sign up takes 30 seconds.',
       },
     ],
   },
@@ -60,7 +76,33 @@ const FAQ_SECTIONS: { title: string; icon: typeof Shield; items: FAQItem[] }[] =
       },
       {
         q: 'What exercises are in the library?',
-        a: 'We have 800+ exercises covering every muscle group, with proper form descriptions, target muscles, difficulty ratings, and real exercise images. Every description is written to UNBREAKABLE standards.',
+        a: 'We have 800+ exercises covering every muscle group, movement pattern, and equipment type. Each exercise includes proper form descriptions, target muscles, difficulty ratings, and images. Every description is written to UNBREAKABLE standards.',
+      },
+      {
+        q: 'Can I track my workouts and progress?',
+        a: 'Yes — the Tracker section lets you log every set, rep, and weight. View your workout history, personal bests, and progression over time. The Unbreakable Coach can also analyse your training data to suggest adjustments.',
+      },
+      {
+        q: 'What\'s the difference between Power and Movement?',
+        a: 'Power covers strength training — programmes, exercises, the workout tracker. Movement covers cardio — running, walking, cycling, HIIT. The cardio tracker includes GPS tracking, voice coaching, and Strava-style stats.',
+      },
+    ],
+  },
+  {
+    title: 'Movement & Cardio',
+    icon: Activity,
+    items: [
+      {
+        q: 'How does the cardio tracker work?',
+        a: 'Start a cardio session from the Movement tab. The tracker uses your phone\'s GPS for distance, pace, and route mapping. You get real-time voice updates at each kilometre and a full summary when you finish.',
+      },
+      {
+        q: 'Does it work with Strava?',
+        a: 'The Movement section is built as a standalone Strava-style tracker within UNBREAKABLE. Your runs, walks, and sessions are tracked and stored directly in the app.',
+      },
+      {
+        q: 'Can I use voice coaching during cardio?',
+        a: 'Yes! Toggle voice on during any cardio session. You\'ll get spoken updates on distance, pace, and time. The voice works even when your screen is off.',
       },
     ],
   },
@@ -70,43 +112,107 @@ const FAQ_SECTIONS: { title: string; icon: typeof Shield; items: FAQItem[] }[] =
     items: [
       {
         q: 'How does meal tracking work?',
-        a: 'Log your meals in the Fuel section. You can search foods, scan barcodes, or use the Unbreakable to generate a personalised meal plan. Track macros, calories, and water intake daily.',
+        a: 'Log your meals in the Fuel section. Search foods from our database, log portions, and track your daily macros and calories. The Unbreakable Coach can also generate a personalised meal plan based on your goals.',
       },
       {
-        q: 'Can the Unbreakable create a meal plan for me?',
-        a: 'Yes — the Unbreakable Coach can build a bespoke meal plan based on your goals, dietary preferences, and calorie targets. Just ask!',
+        q: 'Can the Unbreakable Coach create a meal plan for me?',
+        a: 'Yes — the Unbreakable Coach can build a bespoke meal plan based on your goals, dietary preferences, allergies, and calorie targets. Just ask in the Coach chat.',
+      },
+      {
+        q: 'What about recipes?',
+        a: 'The Fuel section includes recipe suggestions that match your nutritional goals. The Unbreakable Coach can generate custom recipes on demand, complete with ingredients and macros.',
+      },
+      {
+        q: 'How does the water tracker work?',
+        a: 'Track your daily hydration by tapping glasses in the Mindset habits tab. Your goal is 8 glasses per day. Each glass fills up as you tap it — hit all 8 to complete your hydration habit.',
       },
     ],
   },
   {
-    title: 'Mindset',
+    title: 'Mindset & Habits',
     icon: Brain,
     items: [
       {
         q: 'What mindset tools are available?',
-        a: 'The Mindset section includes breathing exercises, cold exposure protocols, meditation guides, journaling prompts, and mental resilience programmes — all branded to UNBREAKABLE standards.',
+        a: 'The Mindset section includes voice-guided breathing exercises (Box Breathing, 4-7-8, Tactical Calm, Wim Hof), cold and heat exposure protocols with guided timers, focus games with global leaderboards, daily habit tracking, and journaling.',
+      },
+      {
+        q: 'How does the Daily 7 habit tracker work?',
+        a: 'Track 7 daily habits: Train, Learn, Hydrate (8 glasses), Hit Your Numbers, Breathwork, Sauna, and Cold Shower. Toggle each one as you complete it. Your progress shows as a percentage bar — aim for 7/7 every day.',
+      },
+      {
+        q: 'What are the breathing exercises?',
+        a: 'We offer multiple guided breathing protocols: Box Breathing (Navy SEAL technique), 4-7-8 (sleep and calm), Tactical Calm (stress response), and deep breathing variations. Each comes with voice guidance and visual timers.',
+      },
+      {
+        q: 'How do the cold/heat exposure protocols work?',
+        a: 'Choose from cold showers, ice baths, or sauna protocols. Each has a guided timer with progressive phases. Start easy and build your tolerance over time. Track your sessions as part of your Daily 7.',
+      },
+      {
+        q: 'What are the focus games?',
+        a: 'Reaction time tests, hand-eye coordination challenges, and memory games — all with global leaderboards so you can compete with the UNBREAKABLE community.',
       },
       {
         q: 'Is this based on Wim Hof?',
-        a: 'Our breathing and cold exposure protocols are built on widely practiced techniques. Everything is developed and branded under UNBREAKABLE and Live Without Limits — delivering our own approach to mental toughness.',
+        a: 'Our breathing and cold exposure protocols are built on widely practiced techniques from multiple disciplines. Everything is developed and branded under UNBREAKABLE — delivering our own approach to building mental toughness.',
       },
     ],
   },
   {
-    title: 'Coaching & Pro',
+    title: 'Unbreakable Coach',
+    icon: MessageCircle,
+    items: [
+      {
+        q: 'What is the Unbreakable Coach?',
+        a: 'The Unbreakable Coach is your AI-powered personal trainer, nutritionist, and mindset coach built into the app. It knows your profile, goals, and history — and gives personalised guidance across training, nutrition, and mindset.',
+      },
+      {
+        q: 'What can I ask the Unbreakable Coach?',
+        a: 'Anything fitness-related: build me a programme, create a meal plan, explain an exercise, review my progress, suggest a breathing routine, help me with motivation. It adapts to your level and goals.',
+      },
+      {
+        q: 'How many messages do I get?',
+        a: 'Free users get a limited number of Unbreakable Coach interactions per month. Pro users get a generous monthly token allocation that resets each billing cycle.',
+      },
+    ],
+  },
+  {
+    title: 'Unbreakable University',
+    icon: GraduationCap,
+    items: [
+      {
+        q: 'What is Unbreakable University?',
+        a: 'Unbreakable University is our education platform delivering fitness knowledge structured like an NVQ-level qualification. Courses cover anatomy, training principles, nutrition science, and coaching methodology.',
+      },
+      {
+        q: 'Is this an official qualification?',
+        a: 'No — Unbreakable University is branded under UNBREAKABLE and is NOT a legal NVQ, PT certification, or accredited qualification. It\'s designed to educate the general public with real, practical fitness knowledge.',
+      },
+      {
+        q: 'How does it work?',
+        a: 'Each course has levels, units, and chapters with quizzes and assessments. Complete a level to earn an UNBREAKABLE certificate. Work through at your own pace.',
+      },
+    ],
+  },
+  {
+    title: 'Coaching & PT Hub',
     icon: Users,
     items: [
       {
         q: 'What does Pro unlock?',
-        a: 'Pro gives you full Unbreakable Coaching tokens, bespoke programme generation, advanced analytics, and the option for hybrid 1-2-1 human coaching with real UNBREAKABLE coaches.',
+        a: 'Pro gives you full Unbreakable Coach tokens, bespoke programme generation, advanced analytics, and the option for hybrid 1-2-1 human coaching with real UNBREAKABLE-verified coaches.',
       },
       {
         q: 'How does 1-2-1 coaching work?',
-        a: 'Choose your coach from the Coaches page. Coaches offer weekly, bi-weekly, or monthly check-ins via video. They build custom programme blocks, review your form, and track your progress through the platform.',
+        a: 'Browse coaches on the Coaches page. Each coach sets their own prices and check-in frequency (weekly, bi-weekly, monthly). They build custom programme blocks, review your form via video, and track your progress through the platform.',
       },
       {
-        q: 'What is Unbreakable University?',
-        a: 'Unbreakable University is our own unofficial qualification system — branded under UNBREAKABLE, delivering NVQ-level fitness knowledge to the general public. It is NOT a legal NVQ or PT certification.',
+        q: 'Are coaches employed by UNBREAKABLE?',
+        a: 'No — coaches on our platform are self-employed professionals. They set their own prices and manage their own client relationships. UNBREAKABLE provides the platform and tools.',
+      },
+      {
+        q: 'Can I become a coach on UNBREAKABLE?',
+        a: 'Yes — if you\'re a qualified fitness professional, you can apply to join as a coach. You\'ll get your own profile, programme builder, client management tools, and the Coach Command Centre.',
       },
     ],
   },
@@ -116,27 +222,39 @@ const FAQ_SECTIONS: { title: string; icon: typeof Shield; items: FAQItem[] }[] =
     items: [
       {
         q: 'How do I upgrade to Pro?',
-        a: 'Go to your Profile → Settings → Subscription. You can upgrade to Pro at any time. Payment is handled securely through Stripe.',
+        a: 'Go to your Profile → Settings → Subscription, or tap the upgrade prompt anywhere in the app. Payment is handled securely through Stripe.',
       },
       {
         q: 'Can I cancel my subscription?',
-        a: 'Yes, you can cancel any time from your subscription settings. You\'ll keep Pro access until the end of your billing period.',
+        a: 'Yes, you can cancel any time from your subscription settings. You\'ll keep Pro access until the end of your current billing period.',
       },
       {
         q: 'How do AI tokens work?',
-        a: 'Free users get a limited number of Unbreakable Coaching interactions. Pro users get a generous monthly allocation. Tokens reset each billing cycle.',
+        a: 'Tokens are used each time you interact with the Unbreakable Coach. Free users get a starter allocation. Pro users get a generous monthly allocation that resets with each billing cycle.',
+      },
+      {
+        q: 'Is my payment information secure?',
+        a: 'All payments are processed through Stripe, a PCI-compliant payment processor. We never store your card details on our servers.',
       },
     ],
   },
-];
-
-/* ─── Team ─── */
-const TEAM = [
   {
-    name: 'John James',
-    role: 'Founder & CEO',
-    bio: 'Liverpool-born fitness entrepreneur. Founded Live Without Limits LTD to prove that anyone can build an unbreakable body and mind. Keep showing up.',
-    avatar: '🦁',
+    title: 'Privacy & Security',
+    icon: Lock,
+    items: [
+      {
+        q: 'How is my data protected?',
+        a: 'Your data is stored securely using Supabase (built on PostgreSQL) with row-level security. We follow GDPR principles and never sell your personal data to third parties.',
+      },
+      {
+        q: 'Can I delete my account?',
+        a: 'Yes — you can request full account deletion from your Profile settings. All your data, including workout history, will be permanently removed.',
+      },
+      {
+        q: 'Who can see my posts on the social feed?',
+        a: 'Your posts on the community feed are visible to all UNBREAKABLE members. Your training data, habits, and journal entries are private to your account only.',
+      },
+    ],
   },
 ];
 
@@ -144,26 +262,33 @@ const TEAM = [
 function AccordionItem({ item }: { item: FAQItem }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="border-b border-white/[0.06]">
+    <div className="border-b border-gray-800/50 last:border-0">
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between py-4 px-1 text-left transition-colors hover:text-[#FF5500]"
+        className="w-full flex items-center justify-between py-4 px-4 text-left group"
       >
-        <span className="text-[14px] font-semibold text-white pr-4">{item.q}</span>
-        <motion.div animate={{ rotate: open ? 180 : 0 }} transition={{ duration: 0.2 }}>
-          <ChevronDown size={16} className="text-[#555] flex-shrink-0" />
+        <span className={`text-sm font-display tracking-wide pr-4 transition-colors ${open ? 'text-[#FF5500]' : 'text-white group-hover:text-gray-300'}`}>
+          {item.q}
+        </span>
+        <motion.div
+          animate={{ rotate: open ? 180 : 0 }}
+          transition={{ duration: 0.2 }}
+          className="flex-shrink-0"
+        >
+          <ChevronDown className={`w-4 h-4 transition-colors ${open ? 'text-[#FF5500]' : 'text-gray-600'}`} />
         </motion.div>
       </button>
-      <AnimatePresence>
+      <AnimatePresence initial={false}>
         {open && (
           <motion.div
+            key="content"
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.25 }}
+            transition={{ duration: 0.3, ease: 'easeInOut' }}
             className="overflow-hidden"
           >
-            <p className="text-[13px] text-[#999] leading-relaxed pb-4 px-1">{item.a}</p>
+            <p className="text-sm text-gray-400 leading-relaxed px-4 pb-4">{item.a}</p>
           </motion.div>
         )}
       </AnimatePresence>
@@ -176,155 +301,138 @@ export default function FAQ() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen" style={{ background: '#080808' }}>
-      {/* Header */}
-      <div className="sticky top-0 z-40 border-b border-white/[0.06]" style={{ background: 'rgba(8,8,8,0.95)', backdropFilter: 'blur(20px)' }}>
-        <div className="flex items-center justify-center gap-3 px-4 py-3 max-w-2xl mx-auto">
-          <img src={shieldLogo} alt="UNBREAKABLE" className="h-7 w-7" />
-          <h1 className="text-[15px] font-black uppercase tracking-[0.15em] text-white" style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
-            Help & Support
+    <div className="min-h-screen pb-24" style={{ background: '#080808' }}>
+      {/* Hero */}
+      <div className="relative px-4 pt-6 pb-5 overflow-hidden">
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(255,85,0,0.08), transparent 70%)' }}
+        />
+        <div className="relative z-10">
+          <h1 className="font-display text-2xl tracking-wider text-center">
+            <span className="text-[#FF5500]" style={{ textShadow: '0 0 20px rgba(255,85,0,0.4)' }}>UNBREAKABLE</span>
+            <span className="text-white"> FAQ</span>
           </h1>
+          <p className="text-center text-gray-500 text-sm font-display tracking-wide mt-2">
+            Everything you need to know
+          </p>
         </div>
       </div>
 
-      <div className="max-w-2xl mx-auto px-4 pb-28">
-        {/* Unbreakable Coach CTA — top banner */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mt-4 mb-6 rounded-2xl overflow-hidden cursor-pointer"
+      <div className="px-4 max-w-2xl mx-auto space-y-5">
+        {/* Unbreakable Coach CTA */}
+        <button
           onClick={() => navigate('/help')}
-          style={{
-            background: 'linear-gradient(135deg, rgba(255,85,0,0.15) 0%, rgba(255,85,0,0.05) 100%)',
-            border: '1px solid rgba(255,85,0,0.2)',
-          }}
+          className="w-full flex items-center gap-3 p-3.5 rounded-xl border border-[#FF5500]/20 bg-[#FF5500]/5 hover:bg-[#FF5500]/10 transition-all text-left"
         >
-          <div className="flex items-center gap-4 px-5 py-4">
-            <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(255,85,0,0.15)' }}>
-              <Sparkles className="w-6 h-6 text-[#FF5500]" />
-            </div>
-            <div className="flex-1">
-              <p className="text-[14px] font-bold text-white">Still need help?</p>
-              <p className="text-[12px] text-[#888] mt-0.5">Chat with your Unbreakable Coach for instant answers</p>
-            </div>
-            <ExternalLink size={16} className="text-[#FF5500]" />
+          <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 border border-[#FF5500]/30" style={{ background: 'rgba(255,85,0,0.1)' }}>
+            <Sparkles className="w-5 h-5 text-[#FF5500]" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.6))' }} />
           </div>
-        </motion.div>
+          <div className="flex-1 min-w-0">
+            <h4 className="font-display text-sm text-white tracking-wide">NEED HELP?</h4>
+            <p className="text-gray-500 text-xs mt-0.5">Chat with your Unbreakable Coach for instant answers</p>
+          </div>
+          <ArrowRight className="w-4 h-4 text-[#FF5500]" />
+        </button>
 
         {/* FAQ Sections */}
         {FAQ_SECTIONS.map((section) => {
           const Icon = section.icon;
           return (
-            <div key={section.title} className="mb-8">
-              <div className="flex items-center gap-2.5 mb-3">
-                <Icon size={16} className="text-[#FF5500]" />
-                <h2 className="text-[13px] font-bold uppercase tracking-wider text-[#FF5500]" style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
-                  {section.title}
-                </h2>
+            <div key={section.title}>
+              <div className="flex items-center gap-2 mb-2 px-1">
+                <Icon className="w-4 h-4 text-[#FF5500]" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.5))' }} />
+                <span className="text-xs font-display tracking-wider text-gray-400">{section.title.toUpperCase()}</span>
               </div>
-              <div className="rounded-xl overflow-hidden" style={{ background: '#111', border: '1px solid rgba(255,255,255,0.04)' }}>
-                <div className="px-4">
-                  {section.items.map((item, i) => (
-                    <AccordionItem key={i} item={item} />
-                  ))}
-                </div>
+              <div className="rounded-xl border border-gray-800 bg-[#111] overflow-hidden">
+                {section.items.map((item, i) => (
+                  <AccordionItem key={i} item={item} />
+                ))}
               </div>
             </div>
           );
         })}
 
-        {/* Meet the Team */}
-        <div className="mb-8">
-          <div className="flex items-center gap-2.5 mb-3">
-            <Users size={16} className="text-[#FF5500]" />
-            <h2 className="text-[13px] font-bold uppercase tracking-wider text-[#FF5500]" style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
-              Meet the Founder
-            </h2>
+        {/* Meet the Founder */}
+        <div>
+          <div className="flex items-center gap-2 mb-2 px-1">
+            <Heart className="w-4 h-4 text-[#FF5500]" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.5))' }} />
+            <span className="text-xs font-display tracking-wider text-gray-400">THE FOUNDER</span>
           </div>
-          {TEAM.map((member) => (
-            <div
-              key={member.name}
-              className="rounded-xl p-5"
-              style={{ background: '#111', border: '1px solid rgba(255,255,255,0.04)' }}
-            >
-              <div className="flex items-center gap-4 mb-3">
-                <div className="w-14 h-14 rounded-full flex items-center justify-center text-2xl" style={{ background: 'rgba(255,85,0,0.1)' }}>
-                  {member.avatar}
-                </div>
-                <div>
-                  <p className="text-[15px] font-bold text-white">{member.name}</p>
-                  <p className="text-[12px] text-[#FF5500] font-semibold uppercase tracking-wider">{member.role}</p>
-                </div>
+          <button
+            onClick={() => navigate('/founder')}
+            className="w-full rounded-xl border border-gray-800 bg-[#111] p-5 text-left hover:border-gray-700 transition-all"
+          >
+            <div className="flex items-center gap-4 mb-3">
+              <div className="w-14 h-14 rounded-full flex items-center justify-center text-2xl border border-[#FF5500]/20" style={{ background: 'rgba(255,85,0,0.1)' }}>
+                🦁
               </div>
-              <p className="text-[13px] text-[#999] leading-relaxed">{member.bio}</p>
+              <div className="flex-1">
+                <p className="font-display text-base text-white tracking-wide">JOHN JAMES</p>
+                <p className="text-[#FF5500] text-xs font-display tracking-wider mt-0.5">FOUNDER & CEO</p>
+              </div>
+              <ArrowRight className="w-4 h-4 text-gray-600" />
             </div>
-          ))}
+            <p className="text-sm text-gray-400 leading-relaxed">
+              Liverpool-born fitness entrepreneur. Founded Live Without Limits LTD to prove that anyone can build an unbreakable body and mind. Keep showing up.
+            </p>
+            <p className="text-xs text-[#FF5500] font-display tracking-wider mt-3">TAP TO READ THE FULL STORY →</p>
+          </button>
         </div>
 
-        {/* Terms & Legal */}
-        <div className="mb-8">
-          <div className="flex items-center gap-2.5 mb-3">
-            <FileText size={16} className="text-[#FF5500]" />
-            <h2 className="text-[13px] font-bold uppercase tracking-wider text-[#FF5500]" style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
-              Legal
-            </h2>
+        {/* Legal Links */}
+        <div>
+          <div className="flex items-center gap-2 mb-2 px-1">
+            <FileText className="w-4 h-4 text-[#FF5500]" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.5))' }} />
+            <span className="text-xs font-display tracking-wider text-gray-400">LEGAL</span>
           </div>
-          <div className="rounded-xl overflow-hidden" style={{ background: '#111', border: '1px solid rgba(255,255,255,0.04)' }}>
-            <div className="px-4">
-              {[
-                { label: 'Terms of Service', desc: 'Our terms for using the UNBREAKABLE platform' },
-                { label: 'Privacy Policy', desc: 'How we handle and protect your data' },
-                { label: 'Cookie Policy', desc: 'Information about cookies we use' },
-                { label: 'Disclaimer', desc: 'UNBREAKABLE is not a substitute for professional medical advice' },
-              ].map((item, i) => (
-                <div key={i} className="py-4 border-b border-white/[0.06] last:border-0">
-                  <p className="text-[14px] font-semibold text-white">{item.label}</p>
-                  <p className="text-[12px] text-[#666] mt-0.5">{item.desc}</p>
+          <div className="rounded-xl border border-gray-800 bg-[#111] overflow-hidden">
+            {[
+              { label: 'Terms of Service', desc: 'Our terms for using the UNBREAKABLE platform', path: '/terms' },
+              { label: 'Privacy Policy', desc: 'How we handle and protect your data', path: '/privacy' },
+            ].map((item) => (
+              <button
+                key={item.label}
+                onClick={() => navigate(item.path)}
+                className="w-full flex items-center justify-between p-4 border-b border-gray-800/50 last:border-0 text-left hover:bg-[#151515] transition-all"
+              >
+                <div>
+                  <p className="text-sm font-display text-white tracking-wide">{item.label}</p>
+                  <p className="text-xs text-gray-600 mt-0.5">{item.desc}</p>
                 </div>
-              ))}
-            </div>
+                <ArrowRight className="w-4 h-4 text-gray-600 shrink-0" />
+              </button>
+            ))}
           </div>
         </div>
 
         {/* Contact */}
-        <div className="mb-8">
-          <div className="flex items-center gap-2.5 mb-3">
-            <Mail size={16} className="text-[#FF5500]" />
-            <h2 className="text-[13px] font-bold uppercase tracking-wider text-[#FF5500]" style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
-              Contact Us
-            </h2>
+        <div>
+          <div className="flex items-center gap-2 mb-2 px-1">
+            <Mail className="w-4 h-4 text-[#FF5500]" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.5))' }} />
+            <span className="text-xs font-display tracking-wider text-gray-400">CONTACT US</span>
           </div>
-          <div className="rounded-xl p-5" style={{ background: '#111', border: '1px solid rgba(255,255,255,0.04)' }}>
-            <p className="text-[13px] text-[#999] leading-relaxed mb-3">
-              Live Without Limits LTD — Liverpool, UK
-            </p>
+          <div className="rounded-xl border border-gray-800 bg-[#111] p-4 space-y-3">
+            <p className="text-sm text-gray-500">Live Without Limits LTD — Liverpool, UK</p>
             <div className="space-y-2">
-              <a href="mailto:unbreakable.lwl@gmail.com" className="flex items-center gap-2 text-[13px] text-[#FF5500] hover:underline">
-                <Mail size={14} /> unbreakable.lwl@gmail.com
+              <a href="mailto:unbreakable.lwl@gmail.com" className="flex items-center gap-2 text-sm text-[#FF5500] hover:underline">
+                <Mail className="w-4 h-4" /> unbreakable.lwl@gmail.com
               </a>
-              <a href="https://instagram.com/unbreakable.lwl" target="_blank" rel="noreferrer" className="flex items-center gap-2 text-[13px] text-[#FF5500] hover:underline">
-                <Instagram size={14} /> @unbreakable.lwl
+              <a href="https://instagram.com/unbreakable.lwl" target="_blank" rel="noreferrer" className="flex items-center gap-2 text-sm text-[#FF5500] hover:underline">
+                <Instagram className="w-4 h-4" /> @unbreakable.lwl
               </a>
             </div>
           </div>
         </div>
 
-        {/* Bottom Unbreakable Coach CTA */}
-        <motion.div
-          className="rounded-2xl overflow-hidden cursor-pointer mb-4"
+        {/* Bottom CTA */}
+        <button
           onClick={() => navigate('/help')}
-          whileTap={{ scale: 0.98 }}
-          style={{
-            background: 'linear-gradient(135deg, #FF5500 0%, #CC4400 100%)',
-          }}
+          className="w-full py-3.5 rounded-xl bg-[#FF5500] text-black font-display tracking-wider text-sm hover:bg-[#FF5500]/90 transition-all"
+          style={{ boxShadow: '0 0 20px rgba(255,85,0,0.3)' }}
         >
-          <div className="flex items-center justify-center gap-3 px-5 py-4">
-            <Sparkles className="w-5 h-5 text-white" />
-            <span className="text-[14px] font-bold text-white uppercase tracking-wider" style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
-              Chat with Unbreakable Coach
-            </span>
-          </div>
-        </motion.div>
+          CHAT WITH UNBREAKABLE COACH
+        </button>
       </div>
     </div>
   );

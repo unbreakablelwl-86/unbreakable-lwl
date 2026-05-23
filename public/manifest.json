@@ -2,7 +2,7 @@
   "name": "UNBREAKABLE — Live Without Limits",
   "short_name": "UNBREAKABLE",
   "description": "Training, nutrition, mindset & education. The all-in-one fitness platform built on truth, community and education.",
-  "start_url": "/hub",
+  "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",

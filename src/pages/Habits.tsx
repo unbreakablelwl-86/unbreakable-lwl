@@ -41,7 +41,9 @@ const Habits = () => {
     habits.learnDaily,
     habits.water,
     habits.hitYourNumbers,
-    wordCount >= 150,
+    habits.breathworkDone,
+    habits.sauna,
+    habits.coldShower,
   ].filter(Boolean).length;
 
   const handleChange = (newHabits: typeof habits) => {
@@ -74,14 +76,14 @@ const Habits = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <PageHeader sectionLabel="DAILY 5" />
+      <PageHeader sectionLabel="DAILY 7" />
       <main className="container mx-auto px-4 py-6 max-w-2xl space-y-6">
         <div className="text-center space-y-2">
           <h1 className="font-display text-2xl tracking-wide text-foreground">DAILY HABIT TRACKER</h1>
-          <p className="text-muted-foreground text-sm">Complete your Daily 5 to stay on track</p>
+          <p className="text-muted-foreground text-sm">Complete your Daily 7 to stay on track</p>
           <Badge variant="outline" className="text-sm">
             <CheckCircle2 className="w-4 h-4 mr-1" />
-            {completedCount}/5 Complete
+            {completedCount}/7 Complete
           </Badge>
         </div>
 

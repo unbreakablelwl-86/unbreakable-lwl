@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import { UniversityAdminProvider } from "@/hooks/useUniversityAdmin";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
@@ -87,6 +87,9 @@ const App = () => {
             <Routes>
               {/* Sign-in — standalone full-page (no bottom nav) */}
               <Route path="/signin" element={<SignIn />} />
+
+              {/* Legacy /hub redirect (old PWA installs) */}
+              <Route path="/hub" element={<Navigate to="/" replace />} />
 
               {/* All pages wrapped in AppLayout (provides bottom nav) */}
               <Route element={<AppLayout />}>

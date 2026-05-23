@@ -12,6 +12,9 @@ import {
   PenLine,
   ChevronDown,
   Check,
+  Wind,
+  ThermometerSun,
+  Snowflake,
 } from 'lucide-react';
 
 export interface HabitState {
@@ -22,6 +25,7 @@ export interface HabitState {
   sauna: boolean;
   coldShower: boolean;
   breathworkDone: boolean;
+  waterGlasses: number;
   journal: string;
 }
 
@@ -37,8 +41,11 @@ interface DailyHabitDiaryProps {
 const HABITS = [
   { key: 'train' as const, label: 'TRAIN', description: 'Complete your session', icon: Dumbbell },
   { key: 'learnDaily' as const, label: 'LEARN DAILY', description: 'Read, watch, or study something new', icon: BookOpen },
-  { key: 'water' as const, label: 'WATER (3L)', description: 'Drink at least 3 litres of water', icon: Droplets },
+  { key: 'water' as const, label: 'HYDRATE', description: 'Drink your 8 glasses of water', icon: Droplets },
   { key: 'hitYourNumbers' as const, label: 'HIT YOUR NUMBERS', description: 'Meet your nutrition targets', icon: Target },
+  { key: 'breathworkDone' as const, label: 'BREATHWORK', description: 'Complete a breathing session', icon: Wind },
+  { key: 'sauna' as const, label: 'SAUNA', description: 'Heat exposure session', icon: ThermometerSun },
+  { key: 'coldShower' as const, label: 'COLD SHOWER', description: 'Cold exposure session', icon: Snowflake },
 ];
 
 const MIN_WORDS = 150;
@@ -52,8 +59,8 @@ export function DailyHabitDiary({ habits, onChange, compact = false, readOnly = 
 
   const wordCount = countWords(habits.journal);
   const journalComplete = wordCount >= MIN_WORDS;
-  const completedCount = HABITS.filter(h => habits[h.key]).length + (journalComplete ? 1 : 0);
-  const totalCount = 5;
+  const completedCount = HABITS.filter(h => habits[h.key]).length;
+  const totalCount = 7;
   const allComplete = completedCount === totalCount;
 
   const toggleHabit = (key: keyof Omit<HabitState, 'journal'>) => {
@@ -74,7 +81,7 @@ export function DailyHabitDiary({ habits, onChange, compact = false, readOnly = 
               )}
             </div>
             <div className="text-left">
-              <span className="font-display text-foreground tracking-wide text-base">DAILY 5 HABITS</span>
+              <span className="font-display text-foreground tracking-wide text-base">DAILY 7 HABITS</span>
               <div className="flex items-center gap-2 mt-1">
                 <Badge variant="outline" className="text-xs">
                   {completedCount}/{totalCount}
