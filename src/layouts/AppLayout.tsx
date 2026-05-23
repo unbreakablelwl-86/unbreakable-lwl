@@ -222,7 +222,9 @@ export default function AppLayout() {
   const { unreadCount } = useConversations();
   // pillar theme removed — all neon orange
 
-  const hideNav = !user || HIDE_NAV_PATHS.some(p => location.pathname.startsWith(p));
+  const isHiddenPath = HIDE_NAV_PATHS.some(p => location.pathname.startsWith(p));
+  const hideNav = isHiddenPath;
+  const hideBottomNav = isHiddenPath;
 
   // Close overlays on route change
   useEffect(() => {
@@ -294,12 +296,12 @@ export default function AppLayout() {
         </div>
       )}
 
-      <main className={hideNav ? '' : 'pb-20'}>
+      <main className={hideBottomNav ? '' : 'pb-20'}>
         <Outlet />
       </main>
 
       {/* ━━━ Bottom Navigation ━━━ */}
-      {!hideNav && (
+      {!hideBottomNav && (
         <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-white/[0.06]"
           style={{ background: 'rgba(8,8,8,0.96)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)' }}
         >

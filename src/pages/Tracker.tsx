@@ -131,14 +131,21 @@ export default function Tracker() {
   ];
 
   return (
-    <div className="min-h-screen pb-28" style={{ background: '#080808' }}>
+    <div className="min-h-screen pb-24" style={{ background: '#080808' }}>
       {/* ─── Hero ─── */}
-      <div className="px-4 pt-6 pb-4">
-        <h1 className="font-display text-3xl tracking-wide">
-          <span className="text-[#FF5500]" style={{ textShadow: '0 0 20px rgba(255,85,0,0.4)' }}>UNBREAKABLE </span>
-          <span className="text-white">MOVEMENT</span>
-        </h1>
-        <p className="text-gray-500 text-sm mt-1">Every finish line is a new starting point</p>
+      {/* ─── Hero Banner ─── */}
+      <div className="relative px-4 pt-6 pb-5 overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none"
+          style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(255,85,0,0.08), transparent 70%)' }} />
+        <div className="relative z-10">
+          <h1 className="font-display text-2xl tracking-wider text-center">
+            <span className="text-[#FF5500]" style={{ textShadow: '0 0 20px rgba(255,85,0,0.4)' }}>UNBREAKABLE</span>
+            <span className="text-white"> MOVEMENT</span>
+          </h1>
+          <p className="text-center text-gray-500 text-sm mt-1 font-display tracking-wide">
+            EVERY FINISH LINE IS A NEW STARTING POINT
+          </p>
+        </div>
       </div>
 
       {/* ─── Action Buttons ─── */}
@@ -192,22 +199,25 @@ export default function Tracker() {
       </div>
 
       {/* ─── Tab Bar ─── */}
-      <div className="px-4 mb-4">
-        <div className="flex gap-1 p-1 rounded-xl bg-[#111] border border-gray-800">
-          {TABS.map(tab => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-lg text-xs font-medium transition-all ${
-                activeTab === tab.id 
-                  ? 'bg-[#FF5500]/20 text-[#FF5500] shadow-[0_0_15px_rgba(255,85,0,0.15)]' 
-                  : 'text-gray-500 hover:text-gray-300'
-              }`}
-            >
-              <tab.icon className="w-3.5 h-3.5" />
-              {tab.label}
-            </button>
-          ))}
+      <div className="px-2 mb-4">
+        <div className="flex gap-1 overflow-x-auto pb-1 scrollbar-hide">
+          {TABS.map(tab => {
+            const active = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-display tracking-wider shrink-0 transition-all border ${
+                  active
+                    ? 'bg-[#FF5500]/15 text-[#FF5500] border-[#FF5500]/30 shadow-[0_0_12px_rgba(255,85,0,0.1)]'
+                    : 'text-gray-500 border-transparent hover:text-gray-300'
+                }`}
+              >
+                <tab.icon className="w-3.5 h-3.5" />
+                {tab.label}
+              </button>
+            );
+          })}
         </div>
       </div>
 

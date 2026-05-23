@@ -1,265 +1,222 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { motion, AnimatePresence } from 'framer-motion';
 import { FoodTracker } from '@/components/fuel/FoodTracker';
 import { useAuth } from '@/hooks/useAuth';
 import { AuthModal } from '@/components/tracker/AuthModal';
 import {
-  Flame, UtensilsCrossed, BookOpen, Calendar, Apple,
-  BarChart3, History, ArrowRight, Camera, Zap, Wrench,
+  Flame, BookOpen, Calendar, Apple, BarChart3, History,
+  ArrowRight, Camera, ChevronRight, UtensilsCrossed,
 } from 'lucide-react';
 import { SnapTrack } from '@/components/fuel/SnapTrack';
+
+type FuelTab = 'overview' | 'tracker' | 'recipes';
 
 export default function Fuel() {
   const { user, loading } = useAuth();
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showSnapTrack, setShowSnapTrack] = useState(false);
+  const [activeTab, setActiveTab] = useState<FuelTab>('overview');
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="w-12 h-12 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen flex items-center justify-center" style={{ background: '#080808' }}>
+        <div className="w-12 h-12 border-2 border-[#FF5500] border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
+  const TABS: { id: FuelTab; label: string; icon: React.ComponentType<any> }[] = [
+    { id: 'overview', label: 'Overview', icon: UtensilsCrossed },
+    { id: 'tracker', label: 'Tracker', icon: BarChart3 },
+    { id: 'recipes', label: 'Recipes', icon: BookOpen },
+  ];
+
   return (
-    <div className="min-h-screen bg-background">
-      {/* Hero */}
-      <section className="pt-24 pb-16 md:pt-28 md:pb-20 border-b border-primary/20">
-        <div className="container mx-auto px-4 text-center max-w-4xl">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="space-y-6"
-          >
-            <h1 className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-8xl tracking-wide leading-none">
-              <span className="text-primary neon-glow-subtle">UNBREAKABLE </span>
-              <span className="text-foreground">FUEL</span>
-            </h1>
-            <p className="text-muted-foreground text-base md:text-lg max-w-2xl mx-auto leading-relaxed">
-              Food is not the enemy — it's the weapon. Track your nutrition, build meal plans, and fuel
-              a body built to last. Eat with purpose, become{' '}
-              <span className="text-primary font-semibold">UNBREAKABLE</span>. Keep showing up.
-            </p>
-            <p className="text-primary font-display text-2xl tracking-wider neon-glow-subtle">
-              #UNBREAKABLEFUEL
-            </p>
-          </motion.div>
+    <div className="min-h-screen pb-24" style={{ background: '#080808' }}>
+      {/* ─── Hero Banner ─── */}
+      <div className="relative px-4 pt-6 pb-5 overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none"
+          style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(255,85,0,0.08), transparent 70%)' }} />
+        <div className="relative z-10">
+          <h1 className="font-display text-2xl tracking-wider text-center">
+            <span className="text-[#FF5500]" style={{ textShadow: '0 0 20px rgba(255,85,0,0.4)' }}>UNBREAKABLE</span>
+            <span className="text-white"> FUEL</span>
+          </h1>
+          <p className="text-center text-gray-500 text-sm mt-1 font-display tracking-wide">
+            EAT WITH PURPOSE. BECOME UNBREAKABLE.
+          </p>
         </div>
-      </section>
+      </div>
 
-      {/* Main Content - Food Tracker */}
-      <main className="container mx-auto px-4 py-8 md:py-12">
-        {user ? (
-          <div className="max-w-4xl mx-auto">
-            <FoodTracker />
-          </div>
-        ) : (
-          <div className="max-w-4xl mx-auto">
-            <Card className="p-8 text-center border-2 border-primary/30 neon-border-subtle">
-              <Flame className="w-16 h-16 text-primary mx-auto mb-6" />
-              <h2 className="font-display text-2xl tracking-wide mb-4">
-                SIGN IN TO TRACK FUEL
-              </h2>
-              <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-                Track your nutrition, build meal plans, save recipes, and monitor your progress toward your goals.
-              </p>
-              <Button
-                size="lg"
-                className="font-display tracking-wide"
-                onClick={() => setShowAuthModal(true)}
+      {/* ─── Tab Bar ─── */}
+      <div className="px-2 mb-4">
+        <div className="flex gap-1 overflow-x-auto pb-1 scrollbar-hide">
+          {TABS.map(tab => {
+            const active = activeTab === tab.id;
+            const Icon = tab.icon;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-display tracking-wider shrink-0 transition-all border ${
+                  active
+                    ? 'bg-[#FF5500]/15 text-[#FF5500] border-[#FF5500]/30 shadow-[0_0_12px_rgba(255,85,0,0.1)]'
+                    : 'text-gray-500 border-transparent hover:text-gray-300'
+                }`}
               >
-                GET STARTED
-              </Button>
-            </Card>
-          </div>
-        )}
-      </main>
-
-      {/* Explore Section - matching Power page style */}
-      <section className="container mx-auto px-4 py-12 border-t border-primary/20">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="font-display text-2xl text-foreground mb-8 text-center tracking-wider">
-            EXPLORE <span className="text-primary neon-glow-subtle">FUEL</span>
-          </h2>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-            {/* Snap & Track */}
-            {user && (
-              <div onClick={() => setShowSnapTrack(true)} className="cursor-pointer">
-                <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                  <Card className="relative overflow-hidden p-8 h-full border-2 border-primary/30 hover:border-primary bg-gradient-to-br from-primary/10 via-primary/5 to-transparent transition-all duration-300 neon-border-subtle group shadow-[0_0_20px_hsl(var(--primary)/0.1)] hover:shadow-[0_0_30px_hsl(var(--primary)/0.25)]">
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-                    <div className="relative z-10 space-y-4">
-                      <div className="w-16 h-16 rounded-xl bg-primary/20 flex items-center justify-center neon-glow">
-                        <Camera className="w-8 h-8 text-primary" />
-                      </div>
-                      <h3 className="font-display text-2xl text-foreground tracking-wide">
-                        <span className="text-primary neon-glow-subtle">SNAP & TRACK</span>
-                      </h3>
-                      <p className="text-muted-foreground text-sm leading-relaxed">
-                        Photo scan your meals for instant macro breakdowns powered by <span className="text-primary font-medium">AI</span>.
-                      </p>
-                      <div className="inline-flex items-center gap-2 text-primary font-display tracking-wider text-sm group-hover:gap-3 transition-all">
-                        SCAN NOW
-                        <ArrowRight className="w-4 h-4" />
-                      </div>
-                    </div>
-                  </Card>
-                </motion.div>
-              </div>
-            )}
-
-            {/* Recipes */}
-            <Link to="/fuel/recipes">
-              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                <Card className="relative overflow-hidden p-8 h-full border-2 border-primary/30 hover:border-primary bg-gradient-to-br from-primary/10 via-primary/5 to-transparent transition-all duration-300 neon-border-subtle group shadow-[0_0_20px_hsl(var(--primary)/0.1)] hover:shadow-[0_0_30px_hsl(var(--primary)/0.25)]">
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-                  <div className="relative z-10 space-y-4">
-                    <div className="w-16 h-16 rounded-xl bg-primary/20 flex items-center justify-center neon-glow">
-                      <BookOpen className="w-8 h-8 text-primary" />
-                    </div>
-                    <h3 className="font-display text-2xl text-foreground tracking-wide">
-                      <span className="text-primary neon-glow-subtle">RECIPES</span>
-                    </h3>
-                    <p className="text-muted-foreground text-sm leading-relaxed">
-                      Browse and save recipes with full macro breakdowns. Fuel your goals with purpose.
-                    </p>
-                    <div className="inline-flex items-center gap-2 text-muted-foreground font-display tracking-wider text-sm group-hover:gap-3 group-hover:text-primary transition-all">
-                      BROWSE RECIPES
-                      <ArrowRight className="w-4 h-4" />
-                    </div>
-                  </div>
-                </Card>
-              </motion.div>
-            </Link>
-
-            {/* Meal Planning */}
-            <Link to="/fuel/planning">
-              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                <Card className="relative overflow-hidden p-8 h-full border-2 border-primary/30 hover:border-primary bg-gradient-to-br from-primary/10 via-primary/5 to-transparent transition-all duration-300 neon-border-subtle group shadow-[0_0_20px_hsl(var(--primary)/0.1)] hover:shadow-[0_0_30px_hsl(var(--primary)/0.25)]">
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-                  <div className="relative z-10 space-y-4">
-                    <div className="w-16 h-16 rounded-xl bg-primary/20 flex items-center justify-center neon-glow">
-                      <Calendar className="w-8 h-8 text-primary" />
-                    </div>
-                    <h3 className="font-display text-2xl text-foreground tracking-wide">
-                      <span className="text-primary neon-glow-subtle">PLANNING</span>
-                    </h3>
-                    <p className="text-muted-foreground text-sm leading-relaxed">
-                      Build weekly meal plans tailored to your macros and training schedule.
-                    </p>
-                    <div className="inline-flex items-center gap-2 text-muted-foreground font-display tracking-wider text-sm group-hover:gap-3 group-hover:text-primary transition-all">
-                      BUILD A PLAN
-                      <ArrowRight className="w-4 h-4" />
-                    </div>
-                  </div>
-                </Card>
-              </motion.div>
-            </Link>
-
-            {/* History */}
-            <Link to="/fuel/history">
-              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                <Card className="relative overflow-hidden p-8 h-full border-2 border-primary/30 hover:border-primary bg-gradient-to-br from-primary/10 via-primary/5 to-transparent transition-all duration-300 neon-border-subtle group shadow-[0_0_20px_hsl(var(--primary)/0.1)] hover:shadow-[0_0_30px_hsl(var(--primary)/0.25)]">
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-                  <div className="relative z-10 space-y-4">
-                    <div className="w-16 h-16 rounded-xl bg-primary/20 flex items-center justify-center neon-glow">
-                      <History className="w-8 h-8 text-primary" />
-                    </div>
-                    <h3 className="font-display text-2xl text-foreground tracking-wide">
-                      <span className="text-primary neon-glow-subtle">HISTORY</span>
-                    </h3>
-                    <p className="text-muted-foreground text-sm leading-relaxed">
-                      Review past nutrition logs. Track trends and see how your fuel game evolves.
-                    </p>
-                    <div className="inline-flex items-center gap-2 text-muted-foreground font-display tracking-wider text-sm group-hover:gap-3 group-hover:text-primary transition-all">
-                      VIEW HISTORY
-                      <ArrowRight className="w-4 h-4" />
-                    </div>
-                  </div>
-                </Card>
-              </motion.div>
-            </Link>
-
-            {/* Store Cupboard */}
-            <Link to="/fuel/foods">
-              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                <Card className="relative overflow-hidden p-8 h-full border-2 border-primary/30 hover:border-primary bg-gradient-to-br from-primary/10 via-primary/5 to-transparent transition-all duration-300 neon-border-subtle group shadow-[0_0_20px_hsl(var(--primary)/0.1)] hover:shadow-[0_0_30px_hsl(var(--primary)/0.25)]">
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-                  <div className="relative z-10 space-y-4">
-                    <div className="w-16 h-16 rounded-xl bg-primary/20 flex items-center justify-center neon-glow">
-                      <Apple className="w-8 h-8 text-primary" />
-                    </div>
-                    <h3 className="font-display text-2xl text-foreground tracking-wide">
-                      <span className="text-primary neon-glow-subtle">STORE CUPBOARD</span>
-                    </h3>
-                    <p className="text-muted-foreground text-sm leading-relaxed">
-                      Your scanned ingredients with real product macros for accurate tracking.
-                    </p>
-                    <div className="inline-flex items-center gap-2 text-muted-foreground font-display tracking-wider text-sm group-hover:gap-3 group-hover:text-primary transition-all">
-                      VIEW CUPBOARD
-                      <ArrowRight className="w-4 h-4" />
-                    </div>
-                  </div>
-                </Card>
-              </motion.div>
-            </Link>
-
-            {/* My Fuel */}
-            <Link to="/fuel/my-fuel">
-              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                <Card className="relative overflow-hidden p-8 h-full border-2 border-primary/30 hover:border-primary bg-gradient-to-br from-primary/10 via-primary/5 to-transparent transition-all duration-300 neon-border-subtle group shadow-[0_0_20px_hsl(var(--primary)/0.1)] hover:shadow-[0_0_30px_hsl(var(--primary)/0.25)]">
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-                  <div className="relative z-10 space-y-4">
-                    <div className="w-16 h-16 rounded-xl bg-primary/20 flex items-center justify-center neon-glow">
-                      <BarChart3 className="w-8 h-8 text-primary" />
-                    </div>
-                    <h3 className="font-display text-2xl text-foreground tracking-wide">
-                      <span className="text-primary neon-glow-subtle">MY FUEL</span>
-                    </h3>
-                    <p className="text-muted-foreground text-sm leading-relaxed">
-                      Goals, progress overview, and nutrition insights. See the bigger picture.
-                    </p>
-                    <div className="inline-flex items-center gap-2 text-muted-foreground font-display tracking-wider text-sm group-hover:gap-3 group-hover:text-primary transition-all">
-                      VIEW PROGRESS
-                      <ArrowRight className="w-4 h-4" />
-                    </div>
-                  </div>
-                </Card>
-              </motion.div>
-            </Link>
-          </div>
+                <Icon className="w-3.5 h-3.5" />
+                {tab.label}
+              </button>
+            );
+          })}
         </div>
-      </section>
+      </div>
 
-      {/* Coach Banner */}
-      <section className="container mx-auto px-4 py-12 border-t border-primary/20">
-        <Link to="/help" className="block max-w-3xl mx-auto">
-          <Card className="border-2 border-primary/40 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent p-6 hover:bg-primary/10 transition-all neon-border-subtle shadow-[0_0_20px_hsl(var(--primary)/0.1)]">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className="w-14 h-14 rounded-full bg-primary/20 flex items-center justify-center neon-glow">
-                  <Flame className="w-7 h-7 text-primary" />
-                </div>
-                <div>
-                  <p className="font-display text-xl tracking-wider text-foreground">
-                    NEED HELP? <span className="text-primary neon-glow-subtle">ASK YOUR COACH</span>
-                  </p>
-                  <p className="text-muted-foreground mt-1">
-                    Get personalised guidance on nutrition, meal timing, and food choices
-                  </p>
-                </div>
+      {/* ─── Tab Content ─── */}
+      <div className="px-4">
+        <AnimatePresence mode="wait">
+          {/* ═══ OVERVIEW TAB ═══ */}
+          {activeTab === 'overview' && (
+            <motion.div key="overview" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-5">
+              {/* Description */}
+              <div className="p-4 rounded-xl border border-[#FF5500]/15 bg-[#111]">
+                <p className="text-gray-400 text-sm leading-relaxed">
+                  Food is not the enemy — it's the weapon. Track your nutrition, build meal plans, and fuel
+                  a body built to last. <span className="text-[#FF5500] font-semibold">Unbreakable Fuel</span> gives you
+                  AI-powered tracking, recipe libraries, and macro breakdowns.
+                </p>
+                <p className="text-[#FF5500] font-display text-sm tracking-wide mt-3" style={{ textShadow: '0 0 10px rgba(255,85,0,0.3)' }}>
+                  KEEP SHOWING UP.
+                </p>
               </div>
-              <ArrowRight className="w-6 h-6 text-primary hidden sm:block" />
-            </div>
-          </Card>
-        </Link>
-      </section>
+
+              <p className="text-gray-500/70 text-[10px] italic leading-relaxed px-1">
+                All recipe macro info is for reference only. For accurate tracking, barcode scan your actual ingredients — they're saved to your store cupboard for bespoke macro calculations.
+              </p>
+
+              {/* Explore Cards */}
+              <div className="space-y-2">
+                <h3 className="text-xs font-display tracking-wider text-gray-400">EXPLORE</h3>
+
+                {user && (
+                  <button onClick={() => setShowSnapTrack(true)} className="w-full">
+                    <div className="w-full flex items-center gap-3 p-3.5 rounded-xl border border-gray-800 bg-[#111] hover:border-gray-700 hover:bg-[#151515] transition-all text-left">
+                      <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 border"
+                        style={{ borderColor: '#FF550033', background: '#FF550010' }}>
+                        <Camera className="w-5 h-5 text-[#FF5500]" style={{ filter: 'drop-shadow(0 0 4px #FF550066)' }} />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-display text-sm text-white tracking-wide">SNAP & TRACK</h4>
+                        <p className="text-gray-500 text-xs mt-0.5 line-clamp-1">Photo scan meals for instant AI macro breakdowns</p>
+                      </div>
+                      <ChevronRight className="w-4 h-4 text-gray-600 shrink-0" />
+                    </div>
+                  </button>
+                )}
+
+                {[
+                  { path: '/fuel/recipes', icon: BookOpen, title: 'RECIPES', desc: 'Browse and save recipes with full macro breakdowns' },
+                  { path: '/fuel/planning', icon: Calendar, title: 'MEAL PLANNING', desc: 'Build weekly meal plans tailored to your macros' },
+                  { path: '/fuel/history', icon: History, title: 'HISTORY', desc: 'Review past nutrition logs and track trends' },
+                  { path: '/fuel/foods', icon: Apple, title: 'STORE CUPBOARD', desc: 'Your scanned ingredients with real product macros' },
+                  { path: '/fuel/my-fuel', icon: BarChart3, title: 'MY FUEL', desc: 'Goals, progress overview & nutrition insights' },
+                ].map(card => {
+                  const Icon = card.icon;
+                  return (
+                    <Link key={card.path} to={card.path} className="block">
+                      <div className="w-full flex items-center gap-3 p-3.5 rounded-xl border border-gray-800 bg-[#111] hover:border-gray-700 hover:bg-[#151515] transition-all text-left">
+                        <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 border"
+                          style={{ borderColor: '#FF550033', background: '#FF550010' }}>
+                          <Icon className="w-5 h-5 text-[#FF5500]" style={{ filter: 'drop-shadow(0 0 4px #FF550066)' }} />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-display text-sm text-white tracking-wide">{card.title}</h4>
+                          <p className="text-gray-500 text-xs mt-0.5 line-clamp-1">{card.desc}</p>
+                        </div>
+                        <ChevronRight className="w-4 h-4 text-gray-600 shrink-0" />
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+
+              {/* Coach CTA */}
+              <Link to="/help" className="block">
+                <div className="flex items-center gap-3 p-4 rounded-xl border border-[#FF5500]/20 bg-[#FF5500]/5 hover:bg-[#FF5500]/10 transition-all">
+                  <div className="w-10 h-10 rounded-full bg-[#FF5500]/15 flex items-center justify-center"
+                    style={{ boxShadow: '0 0 15px rgba(255,85,0,0.2)' }}>
+                    <Flame className="w-5 h-5 text-[#FF5500]" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-display text-sm text-white">NEED HELP? <span className="text-[#FF5500]">ASK YOUR COACH</span></p>
+                    <p className="text-gray-500 text-xs mt-0.5">Nutrition, meal timing & food choices guidance</p>
+                  </div>
+                  <ArrowRight className="w-4 h-4 text-[#FF5500]" />
+                </div>
+              </Link>
+            </motion.div>
+          )}
+
+          {/* ═══ TRACKER TAB ═══ */}
+          {activeTab === 'tracker' && (
+            <motion.div key="tracker" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+              {user ? (
+                <FoodTracker />
+              ) : (
+                <div className="text-center py-16">
+                  <Flame className="w-12 h-12 text-[#FF5500] mx-auto mb-4" style={{ filter: 'drop-shadow(0 0 8px rgba(255,85,0,0.4))' }} />
+                  <h2 className="font-display text-xl tracking-wide text-white mb-3">SIGN IN TO TRACK FUEL</h2>
+                  <p className="text-gray-500 text-sm mb-6 max-w-sm mx-auto">
+                    Track nutrition, build meal plans, save recipes, and monitor your progress.
+                  </p>
+                  <button
+                    onClick={() => setShowAuthModal(true)}
+                    className="px-6 py-3 rounded-xl border border-[#FF5500]/30 bg-[#FF5500]/10 text-[#FF5500] font-display tracking-wider text-sm hover:bg-[#FF5500]/20 transition-all"
+                  >
+                    GET STARTED
+                  </button>
+                </div>
+              )}
+            </motion.div>
+          )}
+
+          {/* ═══ RECIPES TAB ═══ */}
+          {activeTab === 'recipes' && (
+            <motion.div key="recipes" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-4">
+              <div className="p-4 rounded-xl border border-[#FF5500]/15 bg-[#111]">
+                <h3 className="font-display text-sm text-[#FF5500] mb-1">FUEL YOUR GOALS</h3>
+                <p className="text-gray-400 text-sm leading-relaxed">
+                  Browse recipes by macro profile, dietary preference, or meal type. Save your favourites and
+                  add them to your <span className="text-[#FF5500]">weekly meal plan</span>.
+                </p>
+              </div>
+
+              {[
+                { path: '/fuel/recipes', icon: BookOpen, title: 'BROWSE RECIPES', desc: 'Full recipe library with macro breakdowns' },
+                { path: '/fuel/planning', icon: Calendar, title: 'MEAL PLANS', desc: 'Build and manage weekly meal plans' },
+              ].map(card => {
+                const Icon = card.icon;
+                return (
+                  <Link key={card.path} to={card.path} className="block">
+                    <div className="w-full flex items-center gap-3 p-3.5 rounded-xl border border-[#FF5500]/20 bg-[#FF5500]/5 hover:bg-[#FF5500]/10 transition-all text-left">
+                      <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 border"
+                        style={{ borderColor: '#FF550033', background: '#FF550015' }}>
+                        <Icon className="w-5 h-5 text-[#FF5500]" style={{ filter: 'drop-shadow(0 0 4px #FF550066)' }} />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-display text-sm text-white tracking-wide">{card.title}</h4>
+                        <p className="text-gray-500 text-xs mt-0.5">{card.desc}</p>
+                      </div>
+                      <ArrowRight className="w-4 h-4 text-[#FF5500] shrink-0" />
+                    </div>
+                  </Link>
+                );
+              })}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
 
       <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
       <SnapTrack isOpen={showSnapTrack} onClose={() => setShowSnapTrack(false)} />
