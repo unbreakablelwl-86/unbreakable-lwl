@@ -1,9 +1,7 @@
 import { useState } from 'react';
-import { Users, Flag, Settings, Activity, Shield, UserCheck, Megaphone } from 'lucide-react';
+import { Users, Flag, Settings, Activity, Shield, UserCheck, Megaphone, ArrowLeft } from 'lucide-react';
 import { AdminProtectedRoute } from '@/components/admin/AdminProtectedRoute';
-import { PageHeader } from '@/components/PageHeader';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
+import { useNavigate } from 'react-router-dom';
 import { AdminUsersPanel } from '@/components/admin/AdminUsersPanel';
 import { AdminReportsPanel } from '@/components/admin/AdminReportsPanel';
 import { AdminSettingsPanel } from '@/components/admin/AdminSettingsPanel';
@@ -12,86 +10,77 @@ import { SocialCommandCentre } from '@/components/admin/SocialCommandCentre';
 import { useUserRole } from '@/hooks/useUserRole';
 import CoachDashboard from '@/pages/CoachDashboard';
 
+type Tab = 'coaching' | 'users' | 'reports' | 'settings' | 'activity' | 'social';
+
+const tabs: { id: Tab; label: string; icon: any; ownerOnly?: boolean }[] = [
+  { id: 'coaching', label: 'COACHING', icon: UserCheck },
+  { id: 'users', label: 'USERS', icon: Users },
+  { id: 'reports', label: 'REPORTS', icon: Flag },
+  { id: 'settings', label: 'SETTINGS', icon: Settings, ownerOnly: true },
+  { id: 'activity', label: 'LOGS', icon: Activity },
+  { id: 'social', label: 'SOCIAL', icon: Megaphone },
+];
+
 export default function Admin() {
-  const [activeTab, setActiveTab] = useState('coaching');
+  const [activeTab, setActiveTab] = useState<Tab>('coaching');
   const { isOwner, role } = useUserRole();
+  const navigate = useNavigate();
+
+  const visibleTabs = tabs.filter(t => !t.ownerOnly || isOwner);
 
   return (
     <AdminProtectedRoute>
-      <div className="min-h-screen bg-background">
-        <PageHeader sectionLabel="DEV" />
-        
-        <div className="container mx-auto px-4 sm:px-6 py-6">
-          {/* Compact Header */}
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-3">
-              <Shield className="w-5 h-5 text-primary" />
-              <h1 className="font-display text-xl text-foreground tracking-wide">
-                DEV DASHBOARD
-              </h1>
-            </div>
-            <Badge variant="outline" className="font-display text-[10px] tracking-wider border-primary/30 text-primary">
-              {role?.toUpperCase()}
-            </Badge>
+      <div className="min-h-screen pb-24" style={{ background: '#080808' }}>
+        {/* Back nav */}
+        <div className="px-4 pt-4">
+          <button onClick={() => navigate('/')} className="flex items-center gap-1 text-gray-500 text-sm hover:text-gray-300 transition-colors">
+            <ArrowLeft className="w-4 h-4" /> Home
+          </button>
+        </div>
+
+        {/* Compact Hero */}
+        <div className="relative px-4 pt-3 pb-5 overflow-hidden">
+          <div className="absolute inset-0 pointer-events-none"
+            style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(255,85,0,0.08), transparent 70%)' }} />
+          <div className="relative z-10">
+            <h1 className="font-display text-2xl tracking-wider text-center">
+              <span className="text-[#FF5500]" style={{ textShadow: '0 0 20px rgba(255,85,0,0.4)' }}>DEV</span>
+              <span className="text-white"> DASHBOARD</span>
+            </h1>
+            <p className="text-center text-gray-500 text-sm mt-1 font-display tracking-wide">
+              {role?.toUpperCase() || 'ADMIN'} • COMMAND CENTRE
+            </p>
           </div>
+        </div>
 
-          {/* Tabs */}
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-            <TabsList className="flex-wrap">
-              <TabsTrigger value="coaching" className="font-display gap-2 text-xs">
-                <UserCheck className="w-4 h-4" />
-                COACHING
-              </TabsTrigger>
-              <TabsTrigger value="users" className="font-display gap-2 text-xs">
-                <Users className="w-4 h-4" />
-                USERS
-              </TabsTrigger>
-              <TabsTrigger value="reports" className="font-display gap-2 text-xs">
-                <Flag className="w-4 h-4" />
-                REPORTS
-              </TabsTrigger>
-              {isOwner && (
-                <TabsTrigger value="settings" className="font-display gap-2 text-xs">
-                  <Settings className="w-4 h-4" />
-                  SETTINGS
-                </TabsTrigger>
-              )}
-              <TabsTrigger value="activity" className="font-display gap-2 text-xs">
-                <Activity className="w-4 h-4" />
-                LOGS
-              </TabsTrigger>
-              <TabsTrigger value="social" className="font-display gap-2 text-xs">
-                <Megaphone className="w-4 h-4" />
-                SOCIAL
-              </TabsTrigger>
-            </TabsList>
+        {/* Tab bar */}
+        <div className="px-2 mb-4">
+          <div className="flex gap-1 overflow-x-auto pb-1 scrollbar-hide">
+            {visibleTabs.map(t => (
+              <button
+                key={t.id}
+                onClick={() => setActiveTab(t.id)}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-display tracking-wider whitespace-nowrap transition-all ${
+                  activeTab === t.id
+                    ? 'bg-[#FF5500] text-white'
+                    : 'border border-[#FF5500]/30 text-gray-400 hover:border-[#FF5500]/60'
+                }`}
+              >
+                <t.icon className="w-3.5 h-3.5" />
+                {t.label}
+              </button>
+            ))}
+          </div>
+        </div>
 
-            <TabsContent value="coaching">
-              <CoachDashboard embedded />
-            </TabsContent>
-
-            <TabsContent value="users">
-              <AdminUsersPanel />
-            </TabsContent>
-
-            <TabsContent value="reports">
-              <AdminReportsPanel />
-            </TabsContent>
-
-            {isOwner && (
-              <TabsContent value="settings">
-                <AdminSettingsPanel />
-              </TabsContent>
-            )}
-
-            <TabsContent value="activity">
-              <AdminActivityPanel />
-            </TabsContent>
-
-            <TabsContent value="social">
-              <SocialCommandCentre />
-            </TabsContent>
-          </Tabs>
+        {/* Tab Content */}
+        <div className="px-4">
+          {activeTab === 'coaching' && <CoachDashboard embedded />}
+          {activeTab === 'users' && <AdminUsersPanel />}
+          {activeTab === 'reports' && <AdminReportsPanel />}
+          {activeTab === 'settings' && isOwner && <AdminSettingsPanel />}
+          {activeTab === 'activity' && <AdminActivityPanel />}
+          {activeTab === 'social' && <SocialCommandCentre />}
         </div>
       </div>
     </AdminProtectedRoute>

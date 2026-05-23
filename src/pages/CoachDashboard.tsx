@@ -1,15 +1,13 @@
 import { useState } from 'react';
-import { PageHeader } from '@/components/PageHeader';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Users, UserCheck, Clock, Eye, MessageSquare,
   Check, X, Loader2, UserPlus, UserCog,
   Dumbbell, Footprints, Utensils, Brain, MoreHorizontal,
-  UserMinus, RotateCcw, Trash2
+  UserMinus, RotateCcw, Trash2, ArrowLeft, ChevronRight
 } from 'lucide-react';
 import {
   AlertDialog,
@@ -29,7 +27,6 @@ import { useNavigate, Link } from 'react-router-dom';
 import { AthleteDataViewer } from '@/components/coaching/AthleteDataViewer';
 import { ClientSearchPanel } from '@/components/coaching/ClientSearchPanel';
 import { CheckInsTab } from '@/components/coaching/CheckInsTab';
-import { CoachProfileEditor } from '@/components/coaching/CoachProfileEditor';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -38,17 +35,17 @@ import {
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 
+type Tab = 'athletes' | 'checkins' | 'clients' | 'requests';
+
 const CoachDashboard = ({ embedded = false }: { embedded?: boolean }) => {
   const { user } = useAuth();
   const { role } = useUserRole();
   const navigate = useNavigate();
   const { myAthletes, endedAthletes, pendingRequests, loading, updateStatus, removeAssignment } = useCoachingAssignments();
   const [selectedAthleteId, setSelectedAthleteId] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState('athletes');
+  const [activeTab, setActiveTab] = useState<Tab>('athletes');
   const [showDeactivated, setShowDeactivated] = useState(false);
   const [confirmRemoveId, setConfirmRemoveId] = useState<string | null>(null);
-
-  const dashboardLabel = '121 COACHING';
 
   if (selectedAthleteId) {
     return (
@@ -66,37 +63,67 @@ const CoachDashboard = ({ embedded = false }: { embedded?: boolean }) => {
     { label: 'Mindset Programme', icon: Brain, path: '/mindset' },
   ];
 
-  const content = (
-    <div className={embedded ? 'space-y-5' : 'container mx-auto px-4 py-6 max-w-3xl space-y-5'}>
-      {!embedded && (
-        <div className="flex items-center justify-between mb-2">
-          <div>
-            <h1 className="font-display text-xl tracking-wide text-foreground">
-              {dashboardLabel} DASHBOARD
-            </h1>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              Manage athletes and provide feedback
-            </p>
-          </div>
-          <Badge variant="outline" className="font-display text-[10px] tracking-wider border-primary/30 text-primary">
-            {role?.toUpperCase()}
-          </Badge>
-        </div>
-      )}
+  const tabItems: { id: Tab; label: string; icon: any; badge?: number }[] = [
+    { id: 'athletes', label: 'ATHLETES', icon: UserCheck },
+    { id: 'checkins', label: 'CHECK-INS', icon: Check },
+    { id: 'clients', label: 'USERS', icon: UserPlus },
+    { id: 'requests', label: 'REQUESTS', icon: Clock, badge: pendingRequests.length },
+  ];
 
-      {/* Quick Actions Row */}
-      <div className="flex justify-center">
+  const confirmDialog = (
+    <AlertDialog open={!!confirmRemoveId} onOpenChange={() => setConfirmRemoveId(null)}>
+      <AlertDialogContent className="bg-[#111] border-gray-800">
+        <AlertDialogHeader>
+          <AlertDialogTitle className="font-display text-white">Remove Athlete</AlertDialogTitle>
+          <AlertDialogDescription className="text-gray-400">
+            This will remove the athlete from your coaching hub. Their account and data remain intact.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel className="border-gray-700 text-gray-300">Cancel</AlertDialogCancel>
+          <AlertDialogAction
+            className="bg-red-600 hover:bg-red-700"
+            onClick={() => { if (confirmRemoveId) { removeAssignment(confirmRemoveId); setConfirmRemoveId(null); } }}
+          >
+            Remove
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+
+  const content = (
+    <>
+      {/* Quick Stats */}
+      <div className="grid grid-cols-3 gap-2 mb-4">
+        <div className="rounded-xl border border-[#FF5500]/15 bg-[#111] p-3 text-center">
+          <p className="font-display text-2xl text-[#FF5500]">{myAthletes.length}</p>
+          <p className="text-[10px] font-display tracking-wider text-gray-500 mt-0.5">ATHLETES</p>
+        </div>
+        <div className="rounded-xl border border-[#FF5500]/15 bg-[#111] p-3 text-center">
+          <p className="font-display text-2xl text-[#FF5500]">{pendingRequests.length}</p>
+          <p className="text-[10px] font-display tracking-wider text-gray-500 mt-0.5">PENDING</p>
+        </div>
+        <Link to="/coach-profile-edit" className="rounded-xl border border-[#FF5500]/15 bg-[#111] p-3 text-center hover:border-[#FF5500]/40 transition-colors">
+          <UserCog className="w-6 h-6 text-[#FF5500] mx-auto" />
+          <p className="text-[10px] font-display tracking-wider text-gray-500 mt-0.5">MY PROFILE</p>
+        </Link>
+      </div>
+
+      {/* Build Plan Dropdown */}
+      <div className="flex justify-center mb-4">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="h-auto py-3 px-6 flex flex-col items-center gap-1.5 border-border hover:border-primary/40 hover:bg-primary/5 transition-all">
-              <Dumbbell className="w-5 h-5 text-primary" />
-              <span className="font-display text-[11px] tracking-wide">BUILD MY OWN</span>
-            </Button>
+            <button className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-[#FF5500]/20 bg-[#FF5500]/5 text-[#FF5500] font-display text-xs tracking-wider hover:border-[#FF5500]/40 transition-all">
+              <Dumbbell className="w-4 h-4" />
+              BUILD PROGRAMME
+              <ChevronRight className="w-3.5 h-3.5" />
+            </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="center">
+          <DropdownMenuContent align="center" className="bg-[#111] border-gray-800">
             {buildPlanOptions.map(opt => (
-              <DropdownMenuItem key={opt.path} onClick={() => navigate(opt.path)}>
-                <opt.icon className="w-4 h-4 mr-2" />
+              <DropdownMenuItem key={opt.path} onClick={() => navigate(opt.path)} className="text-gray-300 hover:text-white focus:bg-[#FF5500]/10">
+                <opt.icon className="w-4 h-4 mr-2 text-[#FF5500]" />
                 {opt.label}
               </DropdownMenuItem>
             ))}
@@ -104,276 +131,211 @@ const CoachDashboard = ({ embedded = false }: { embedded?: boolean }) => {
         </DropdownMenu>
       </div>
 
-      {/* Stats Summary */}
-      <div className="grid grid-cols-3 gap-3">
-        <div className="bg-primary/5 border border-primary/10 rounded-lg px-4 py-3 text-center">
-          <p className="font-display text-2xl text-primary">{myAthletes.length}</p>
-          <p className="text-[10px] font-display tracking-wide text-muted-foreground mt-0.5">ATHLETES</p>
-        </div>
-        <div className="bg-primary/5 border border-primary/10 rounded-lg px-4 py-3 text-center">
-          <p className="font-display text-2xl text-primary">{pendingRequests.length}</p>
-          <p className="text-[10px] font-display tracking-wide text-muted-foreground mt-0.5">PENDING</p>
-        </div>
-        <Link to="/coach-profile-edit" className="bg-primary/5 border border-primary/10 rounded-lg px-4 py-3 text-center hover:border-primary/30 transition-colors">
-          <UserCog className="w-6 h-6 text-primary mx-auto" />
-          <p className="text-[10px] font-display tracking-wide text-muted-foreground mt-0.5">MY PROFILE</p>
-        </Link>
+      {/* Tab bar */}
+      <div className="flex gap-1 overflow-x-auto pb-1 mb-4 scrollbar-hide">
+        {tabItems.map(t => (
+          <button
+            key={t.id}
+            onClick={() => setActiveTab(t.id)}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-display tracking-wider whitespace-nowrap transition-all ${
+              activeTab === t.id
+                ? 'bg-[#FF5500] text-white'
+                : 'border border-[#FF5500]/30 text-gray-400 hover:border-[#FF5500]/60'
+            }`}
+          >
+            <t.icon className="w-3.5 h-3.5" />
+            {t.label}
+            {t.badge && t.badge > 0 ? (
+              <span className="ml-1 bg-red-600 text-white text-[9px] rounded-full w-4 h-4 flex items-center justify-center">
+                {t.badge}
+              </span>
+            ) : null}
+          </button>
+        ))}
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="w-full grid grid-cols-4">
-          <TabsTrigger value="athletes" className="font-display text-xs tracking-wide">
-            <UserCheck className="w-4 h-4 mr-1" />
-            ATHLETES
-          </TabsTrigger>
-          <TabsTrigger value="checkins" className="font-display text-xs tracking-wide">
-            <Check className="w-4 h-4 mr-1" />
-            CHECK-INS
-          </TabsTrigger>
-          <TabsTrigger value="clients" className="font-display text-xs tracking-wide">
-            <UserPlus className="w-4 h-4 mr-1" />
-            USERS
-          </TabsTrigger>
-          <TabsTrigger value="requests" className="font-display text-xs tracking-wide">
-            <Clock className="w-4 h-4 mr-1" />
-            REQUESTS
-            {pendingRequests.length > 0 && (
-              <Badge variant="destructive" className="ml-1 h-4 w-4 p-0 flex items-center justify-center text-[9px]">
-                {pendingRequests.length}
-              </Badge>
-            )}
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="athletes" className="space-y-2 mt-4">
+      {/* Tab Content */}
+      {activeTab === 'athletes' && (
+        <div className="space-y-2">
           {loading ? (
             <div className="flex justify-center py-12">
-              <Loader2 className="w-6 h-6 animate-spin text-primary" />
+              <Loader2 className="w-6 h-6 animate-spin text-[#FF5500]" />
             </div>
           ) : myAthletes.length === 0 && !showDeactivated ? (
-            <Card className="border-border border-gray-800 bg-[#111]">
-              <CardContent className="py-12 text-center">
-                <Users className="w-10 h-10 mx-auto text-muted-foreground mb-3" />
-                <p className="text-muted-foreground text-sm">No athletes assigned yet</p>
-                <p className="text-xs text-muted-foreground mt-1">Use the USERS tab to search and add athletes</p>
-              </CardContent>
-            </Card>
+            <div className="rounded-xl border border-gray-800 bg-[#111] py-12 text-center">
+              <Users className="w-10 h-10 mx-auto text-gray-600 mb-3" />
+              <p className="text-gray-400 text-sm">No athletes assigned yet</p>
+              <p className="text-xs text-gray-600 mt-1">Use the USERS tab to search and add athletes</p>
+            </div>
           ) : (
             <>
-              {myAthletes.map(assignment => (
-                <Card key={assignment.id} className="border-border hover:border-primary/20 transition-colors">
-                  <CardContent className="p-3">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3 min-w-0">
-                        <Avatar className="h-10 w-10 shrink-0">
-                          <AvatarImage src={assignment.athlete_profile?.avatar_url || undefined} />
-                          <AvatarFallback className="font-display text-sm">
-                            {(assignment.athlete_profile?.display_name || '?')[0].toUpperCase()}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="min-w-0">
-                          <p className="font-display text-sm tracking-wide text-foreground truncate">
-                            {assignment.athlete_profile?.display_name || 'Unknown'}
-                          </p>
-                          <p className="text-[11px] text-muted-foreground truncate">
-                            @{assignment.athlete_profile?.username || 'unknown'}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-1 shrink-0">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8"
-                          onClick={() => setSelectedAthleteId(assignment.athlete_id)}
-                          title="View athlete data"
-                        >
-                          <Eye className="w-4 h-4" />
-                        </Button>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-8 w-8">
-                              <MoreHorizontal className="w-4 h-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => navigate(`/inbox?compose=1&to=${assignment.athlete_id}`)}>
-                              <MessageSquare className="w-4 h-4 mr-2" />
-                              Message
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => navigate(`/user/${assignment.athlete_id}`)}>
-                              <Eye className="w-4 h-4 mr-2" />
-                              View Profile
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem onClick={() => updateStatus(assignment.id, 'ended')}>
-                              <UserMinus className="w-4 h-4 mr-2" />
-                              Deactivate
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => setConfirmRemoveId(assignment.id)} className="text-destructive">
-                              <Trash2 className="w-4 h-4 mr-2" />
-                              Remove
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </div>
+              {myAthletes.map(a => (
+                <div key={a.id} className="rounded-xl border border-gray-800 bg-[#111] p-3 flex items-center justify-between hover:border-[#FF5500]/20 transition-colors">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <Avatar className="h-10 w-10 shrink-0 border border-[#FF5500]/20">
+                      <AvatarImage src={a.athlete_profile?.avatar_url || undefined} />
+                      <AvatarFallback className="font-display text-sm bg-[#FF5500]/10 text-[#FF5500]">
+                        {(a.athlete_profile?.display_name || '?')[0].toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="min-w-0">
+                      <p className="font-display text-sm tracking-wide text-white truncate">
+                        {a.athlete_profile?.display_name || 'Unknown'}
+                      </p>
+                      <p className="text-[11px] text-gray-500 truncate">
+                        @{a.athlete_profile?.username || 'unknown'}
+                      </p>
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                  <div className="flex items-center gap-1 shrink-0">
+                    <button
+                      className="p-2 rounded-lg hover:bg-white/5 text-gray-400 hover:text-white transition-colors"
+                      onClick={() => setSelectedAthleteId(a.athlete_id)}
+                      title="View athlete data"
+                    >
+                      <Eye className="w-4 h-4" />
+                    </button>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <button className="p-2 rounded-lg hover:bg-white/5 text-gray-400 hover:text-white transition-colors">
+                          <MoreHorizontal className="w-4 h-4" />
+                        </button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="bg-[#111] border-gray-800">
+                        <DropdownMenuItem onClick={() => navigate(`/inbox?compose=1&to=${a.athlete_id}`)} className="text-gray-300 focus:bg-[#FF5500]/10">
+                          <MessageSquare className="w-4 h-4 mr-2 text-[#FF5500]" /> Message
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => navigate(`/user/${a.athlete_id}`)} className="text-gray-300 focus:bg-[#FF5500]/10">
+                          <Eye className="w-4 h-4 mr-2 text-[#FF5500]" /> View Profile
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator className="bg-gray-800" />
+                        <DropdownMenuItem onClick={() => updateStatus(a.id, 'ended')} className="text-gray-300 focus:bg-[#FF5500]/10">
+                          <UserMinus className="w-4 h-4 mr-2" /> Deactivate
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => setConfirmRemoveId(a.id)} className="text-red-400 focus:bg-red-500/10">
+                          <Trash2 className="w-4 h-4 mr-2" /> Remove
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                </div>
               ))}
 
-              {/* Show deactivated toggle */}
               {endedAthletes.length > 0 && (
                 <div className="flex items-center justify-between pt-2">
-                  <span className="text-xs text-muted-foreground font-display tracking-wide">SHOW DEACTIVATED ({endedAthletes.length})</span>
+                  <span className="text-xs text-gray-500 font-display tracking-wide">SHOW DEACTIVATED ({endedAthletes.length})</span>
                   <Switch checked={showDeactivated} onCheckedChange={setShowDeactivated} />
                 </div>
               )}
 
-              {showDeactivated && endedAthletes.map(assignment => (
-                <Card key={assignment.id} className="border-border opacity-60">
-                  <CardContent className="p-3">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3 min-w-0">
-                        <Avatar className="h-10 w-10 shrink-0">
-                          <AvatarImage src={assignment.athlete_profile?.avatar_url || undefined} />
-                          <AvatarFallback className="font-display text-sm">
-                            {(assignment.athlete_profile?.display_name || '?')[0].toUpperCase()}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="min-w-0">
-                          <p className="font-display text-sm tracking-wide text-foreground truncate">
-                            {assignment.athlete_profile?.display_name || 'Unknown'}
-                          </p>
-                          <Badge variant="outline" className="text-[9px]">DEACTIVATED</Badge>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-1 shrink-0">
-                        <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => updateStatus(assignment.id, 'active')}>
-                          <RotateCcw className="w-3 h-3 mr-1" /> Reactivate
-                        </Button>
-                        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setConfirmRemoveId(assignment.id)}>
-                          <Trash2 className="w-3 h-3 text-destructive" />
-                        </Button>
-                      </div>
+              {showDeactivated && endedAthletes.map(a => (
+                <div key={a.id} className="rounded-xl border border-gray-800 bg-[#111] p-3 flex items-center justify-between opacity-50">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <Avatar className="h-10 w-10 shrink-0">
+                      <AvatarImage src={a.athlete_profile?.avatar_url || undefined} />
+                      <AvatarFallback className="font-display text-sm">{(a.athlete_profile?.display_name || '?')[0].toUpperCase()}</AvatarFallback>
+                    </Avatar>
+                    <div className="min-w-0">
+                      <p className="font-display text-sm tracking-wide text-white truncate">{a.athlete_profile?.display_name || 'Unknown'}</p>
+                      <span className="text-[9px] font-display tracking-wider text-gray-600 border border-gray-700 rounded px-1.5 py-0.5">DEACTIVATED</span>
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                  <div className="flex items-center gap-1 shrink-0">
+                    <button onClick={() => updateStatus(a.id, 'active')} className="flex items-center gap-1 px-2 py-1 rounded text-xs text-gray-400 hover:text-white hover:bg-white/5 transition-colors">
+                      <RotateCcw className="w-3 h-3" /> Reactivate
+                    </button>
+                    <button onClick={() => setConfirmRemoveId(a.id)} className="p-1.5 rounded hover:bg-red-500/10 text-red-400 transition-colors">
+                      <Trash2 className="w-3 h-3" />
+                    </button>
+                  </div>
+                </div>
               ))}
             </>
           )}
-        </TabsContent>
+        </div>
+      )}
 
-        <TabsContent value="checkins" className="mt-4">
-          <CheckInsTab />
-        </TabsContent>
+      {activeTab === 'checkins' && <CheckInsTab />}
+      {activeTab === 'clients' && <ClientSearchPanel />}
 
-        <TabsContent value="clients" className="mt-4">
-          <ClientSearchPanel />
-        </TabsContent>
-
-        <TabsContent value="requests" className="space-y-2 mt-4">
+      {activeTab === 'requests' && (
+        <div className="space-y-2">
           {loading ? (
             <div className="flex justify-center py-12">
-              <Loader2 className="w-6 h-6 animate-spin text-primary" />
+              <Loader2 className="w-6 h-6 animate-spin text-[#FF5500]" />
             </div>
           ) : pendingRequests.length === 0 ? (
-            <Card className="border-border border-gray-800 bg-[#111]">
-              <CardContent className="py-12 text-center">
-                <Clock className="w-10 h-10 mx-auto text-muted-foreground mb-3" />
-                <p className="text-muted-foreground text-sm">No pending requests</p>
-              </CardContent>
-            </Card>
+            <div className="rounded-xl border border-gray-800 bg-[#111] py-12 text-center">
+              <Clock className="w-10 h-10 mx-auto text-gray-600 mb-3" />
+              <p className="text-gray-400 text-sm">No pending requests</p>
+            </div>
           ) : (
-            pendingRequests.map(request => (
-              <Card key={request.id} className="border-border">
-                <CardContent className="p-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3 min-w-0">
-                      <Avatar className="h-10 w-10 shrink-0">
-                        <AvatarImage src={request.athlete_profile?.avatar_url || undefined} />
-                        <AvatarFallback className="font-display text-sm">
-                          {(request.athlete_profile?.display_name || '?')[0].toUpperCase()}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="min-w-0">
-                        <p className="font-display text-sm tracking-wide text-foreground truncate">
-                          {request.athlete_profile?.display_name || 'Unknown'}
-                        </p>
-                        <p className="text-[11px] text-muted-foreground">Coaching request</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2 shrink-0">
-                      <Button
-                        size="sm"
-                        onClick={() => updateStatus(request.id, 'active')}
-                        className="font-display text-[11px] h-8 px-3"
-                      >
-                        <Check className="w-3.5 h-3.5 mr-1" />
-                        ACCEPT
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => updateStatus(request.id, 'declined')}
-                        className="font-display text-[11px] h-8 px-3 text-muted-foreground"
-                      >
-                        <X className="w-3.5 h-3.5 mr-1" />
-                        DECLINE
-                      </Button>
-                    </div>
+            pendingRequests.map(r => (
+              <div key={r.id} className="rounded-xl border border-gray-800 bg-[#111] p-3 flex items-center justify-between">
+                <div className="flex items-center gap-3 min-w-0">
+                  <Avatar className="h-10 w-10 shrink-0 border border-[#FF5500]/20">
+                    <AvatarImage src={r.athlete_profile?.avatar_url || undefined} />
+                    <AvatarFallback className="font-display text-sm bg-[#FF5500]/10 text-[#FF5500]">
+                      {(r.athlete_profile?.display_name || '?')[0].toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="min-w-0">
+                    <p className="font-display text-sm tracking-wide text-white truncate">{r.athlete_profile?.display_name || 'Unknown'}</p>
+                    <p className="text-[11px] text-gray-500">Coaching request</p>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  <button
+                    onClick={() => updateStatus(r.id, 'active')}
+                    className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#FF5500] text-white font-display text-[11px] tracking-wider hover:bg-[#FF5500]/80 transition-colors"
+                  >
+                    <Check className="w-3.5 h-3.5" /> ACCEPT
+                  </button>
+                  <button
+                    onClick={() => updateStatus(r.id, 'declined')}
+                    className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-gray-700 text-gray-400 font-display text-[11px] tracking-wider hover:border-gray-500 transition-colors"
+                  >
+                    <X className="w-3.5 h-3.5" /> DECLINE
+                  </button>
+                </div>
+              </div>
             ))
           )}
-        </TabsContent>
-      </Tabs>
-    </div>
-  );
-
-  if (embedded) return (
-    <>
-      {content}
-      <AlertDialog open={!!confirmRemoveId} onOpenChange={() => setConfirmRemoveId(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle className="font-display">Remove Athlete</AlertDialogTitle>
-            <AlertDialogDescription>
-              This will remove the athlete from your coaching hub. Their account and data remain intact — they simply won't appear in your athlete list.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={() => { if (confirmRemoveId) { removeAssignment(confirmRemoveId); setConfirmRemoveId(null); } }}>
-              Remove
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+        </div>
+      )}
     </>
   );
 
+  if (embedded) return <>{content}{confirmDialog}</>;
+
   return (
-    <div className="min-h-screen bg-background">
-      <PageHeader sectionLabel="121 COACHING" />
-      <main>{content}</main>
-      <AlertDialog open={!!confirmRemoveId} onOpenChange={() => setConfirmRemoveId(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle className="font-display">Remove Athlete</AlertDialogTitle>
-            <AlertDialogDescription>
-              This will remove the athlete from your coaching hub. Their account and data remain intact — they simply won't appear in your athlete list.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={() => { if (confirmRemoveId) { removeAssignment(confirmRemoveId); setConfirmRemoveId(null); } }}>
-              Remove
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+    <div className="min-h-screen pb-24" style={{ background: '#080808' }}>
+      {/* Back nav */}
+      <div className="px-4 pt-4">
+        <button onClick={() => navigate('/')} className="flex items-center gap-1 text-gray-500 text-sm hover:text-gray-300 transition-colors">
+          <ArrowLeft className="w-4 h-4" /> Home
+        </button>
+      </div>
+
+      {/* Compact Hero */}
+      <div className="relative px-4 pt-3 pb-5 overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none"
+          style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(255,85,0,0.08), transparent 70%)' }} />
+        <div className="relative z-10">
+          <h1 className="font-display text-2xl tracking-wider text-center">
+            <span className="text-[#FF5500]" style={{ textShadow: '0 0 20px rgba(255,85,0,0.4)' }}>121</span>
+            <span className="text-white"> COACHING</span>
+          </h1>
+          <p className="text-center text-gray-500 text-sm mt-1 font-display tracking-wide">
+            MANAGE ATHLETES & BUILD PROGRAMMES
+          </p>
+        </div>
+      </div>
+
+      <div className="px-4">
+        {content}
+      </div>
+      {confirmDialog}
     </div>
   );
 };
