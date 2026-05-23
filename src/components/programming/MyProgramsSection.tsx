@@ -191,15 +191,16 @@ export function MyProgramsSection() {
       {programs.map((program) => (
         <div key={program.id}>
           <Card 
-            className={`p-4 border bg-card cursor-pointer transition-all hover:border-primary/50 ${
-              program.is_active ? 'border-primary' : 'border-border'
+            className={`p-5 border bg-card cursor-pointer transition-all hover:border-primary/50 ${
+              program.is_active ? 'border-primary shadow-[0_0_15px_hsl(var(--primary)/0.15)]' : 'border-border'
             }`}
             onClick={() => handleExpandProgram(program.id)}
           >
-            <div className="flex items-center justify-between">
+            {/* Top row: name + status badge + expand chevron */}
+            <div className="flex items-start justify-between gap-3 mb-3">
               <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-1 flex-wrap">
-                  <h3 className="font-display text-lg text-foreground truncate">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h3 className="font-display text-xl text-foreground leading-tight">
                     {program.name}
                   </h3>
                   <Badge 
@@ -209,88 +210,92 @@ export function MyProgramsSection() {
                     {statusConfig[program.status].label}
                   </Badge>
                 </div>
-                <p className="text-sm text-muted-foreground line-clamp-1">
-                  {program.overview || 'Custom training programme'}
-                </p>
-                <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
-                  <span className="flex items-center gap-1">
-                    <Calendar className="w-3 h-3" />
-                    {format(new Date(program.created_at), 'MMM d, yyyy')}
-                  </span>
-                  {program.is_active && program.current_week && (
-                    <span className="flex items-center gap-1">
-                      <Clock className="w-3 h-3" />
-                      Week {program.current_week}, Day {program.current_day}
-                    </span>
-                  )}
-                </div>
               </div>
-              
-              <div className="flex items-center gap-2 ml-4">
-                {program.is_active ? (
-                  <>
-                    {/* Resume button for active programs */}
-                    <Button
-                      variant="default"
-                      size="sm"
-                      onClick={(e) => handleResumeProgramme(program.id, e)}
-                      className="gap-1"
-                    >
-                      <Target className="w-4 h-4" />
-                      Track
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={(e) => handleDeactivate(program.id, e)}
-                      disabled={deactivateProgram.isPending}
-                      className="gap-1"
-                    >
-                      {deactivateProgram.isPending ? (
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                      ) : (
-                        <Pause className="w-4 h-4" />
-                      )}
-                      Pause
-                    </Button>
-                  </>
-                ) : (
+              <ChevronRight className={`w-5 h-5 text-muted-foreground transition-transform shrink-0 mt-1 ${
+                expandedProgramId === program.id ? 'rotate-90' : ''
+              }`} />
+            </div>
+
+            {/* Description */}
+            <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
+              {program.overview || 'Custom training programme'}
+            </p>
+
+            {/* Meta row: date + progress */}
+            <div className="flex items-center gap-4 mb-4 text-xs text-muted-foreground">
+              <span className="flex items-center gap-1.5">
+                <Calendar className="w-3.5 h-3.5 text-primary/60" />
+                {format(new Date(program.created_at), 'MMM d, yyyy')}
+              </span>
+              {program.is_active && program.current_week && (
+                <span className="flex items-center gap-1.5">
+                  <Clock className="w-3.5 h-3.5 text-primary/60" />
+                  Week {program.current_week}, Day {program.current_day}
+                </span>
+              )}
+            </div>
+
+            {/* Actions row — full width buttons */}
+            <div className="flex items-center gap-2 pt-3 border-t border-border/50">
+              {program.is_active ? (
+                <>
                   <Button
                     variant="default"
                     size="sm"
-                    onClick={(e) => handleStartProgramme(program.id, e)}
-                    disabled={startProgrammeExecution.isPending || !canActivateMore}
-                    className="gap-1"
-                    title={!canActivateMore ? `Maximum ${maxActivePrograms} active programmes` : undefined}
+                    onClick={(e) => handleResumeProgramme(program.id, e)}
+                    className="gap-1.5 flex-1"
                   >
-                    {startProgrammeExecution.isPending ? (
+                    <Target className="w-4 h-4" />
+                    Track Session
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={(e) => handleDeactivate(program.id, e)}
+                    disabled={deactivateProgram.isPending}
+                    className="gap-1.5"
+                  >
+                    {deactivateProgram.isPending ? (
                       <Loader2 className="w-4 h-4 animate-spin" />
                     ) : (
-                      <Play className="w-4 h-4" />
+                      <Pause className="w-4 h-4" />
                     )}
-                    Start
+                    Pause
                   </Button>
-                )}
+                </>
+              ) : (
                 <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={(e) => { e.stopPropagation(); setEditingProgramId(program.id); }}
-                  title="Edit programme"
+                  variant="default"
+                  size="sm"
+                  onClick={(e) => handleStartProgramme(program.id, e)}
+                  disabled={startProgrammeExecution.isPending || !canActivateMore}
+                  className="gap-1.5 flex-1"
+                  title={!canActivateMore ? `Maximum ${maxActivePrograms} active programmes` : undefined}
                 >
-                  <Edit className="w-4 h-4" />
+                  {startProgrammeExecution.isPending ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Play className="w-4 h-4" />
+                  )}
+                  Start Programme
                 </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={(e) => handleDelete(program.id, e)}
-                  className="text-destructive hover:text-destructive"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </Button>
-                <ChevronRight className={`w-5 h-5 text-muted-foreground transition-transform ${
-                  expandedProgramId === program.id ? 'rotate-90' : ''
-                }`} />
-              </div>
+              )}
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={(e) => { e.stopPropagation(); setEditingProgramId(program.id); }}
+                title="Edit programme"
+              >
+                <Edit className="w-4 h-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={(e) => handleDelete(program.id, e)}
+                className="text-destructive hover:text-destructive"
+              >
+                <Trash2 className="w-4 h-4" />
+              </Button>
             </div>
           </Card>
 

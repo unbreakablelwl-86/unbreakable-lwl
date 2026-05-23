@@ -91,7 +91,7 @@ const ALL_NAV_ITEMS: NavItemDef[] = [
   {
     id: 'university',
     icon: GraduationCap,
-    label: 'Uni',
+    label: 'Unbreakable Uni',
     path: '/university',
     activeMatch: ['/university'],
     color: '#FF5500',
@@ -136,7 +136,7 @@ const ALL_NAV_ITEMS: NavItemDef[] = [
   {
     id: 'calculators',
     icon: Calculator,
-    label: 'Calc',
+    label: 'Calculators',
     path: '/calculators',
     activeMatch: ['/calculators'],
     color: '#FF5500',
