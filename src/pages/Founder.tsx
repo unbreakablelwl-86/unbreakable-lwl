@@ -59,37 +59,6 @@ const chips = [
   'DO THE HARD THING', 'STAY HONEST', 'KEEP GOING',
 ];
 
-const timeline = [
-  {
-    label: '2018',
-    desc: 'Qualified as a Level 3 Personal Trainer. Wanted to learn how my own body actually works, not to chase an image or become a guru. The more I learned, the more I realised this information should be available to everyone.',
-  },
-  {
-    label: '2018 – 2020',
-    desc: 'Spent two years applying everything I learned to my own life. Training properly, eating with purpose, understanding the science behind it all. The transformation wasn\'t about aesthetics — it was proof that education and consistency work.',
-  },
-  {
-    label: '2020',
-    desc: 'Saw the industry for what it was. Overcomplicated programmes that kept people paying, not progressing. Information locked behind expensive packages. A model built on dependency, not empowerment. Walked away and started thinking bigger.',
-  },
-  {
-    label: 'The Build',
-    desc: 'Started building Unbreakable from scratch. Not a coaching business, not a cookie-cutter app — a genuine community built on truth, education, and the kind of honest connection the fitness industry never offered.',
-  },
-  {
-    label: '2024',
-    desc: 'Levelled up to Level 4 Strength & Conditioning. Added sport-specific science, periodisation and performance programming to the Unbreakable University. Always learning, always building.',
-  },
-  {
-    label: '2025',
-    desc: 'Diagnosed autistic and ADHD at 39. Suddenly a lot of things made sense — the way I process, the intensity, the need for structure. Stepped away from the gym. Started rebuilding from scratch.',
-  },
-  {
-    label: 'Now',
-    desc: 'Back in the gym. Back building Unbreakable. An ad-free safe space to track your progress, educate yourself, and be part of a community that actually gets it. Stronger for every setback. Still showing up.',
-  },
-];
-
 const Founder = () => {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authDefaultMode, setAuthDefaultMode] = useState<'signin' | 'signup'>('signin');
@@ -404,28 +373,6 @@ const Founder = () => {
               <span key={c} className="border border-primary rounded-lg px-4 py-2.5 font-display text-sm tracking-[2px] text-primary bg-primary/10">
                 {c}
               </span>
-            ))}
-          </div>
-        </motion.div>
-      </section>
-
-      {/* ═══ THE JOURNEY SO FAR ═══ */}
-      <section className="py-11 px-6 border-b border-border bg-card/30">
-        <motion.div {...fadeUp} className="max-w-lg mx-auto">
-          <p className="font-mono text-[9px] tracking-[3px] text-primary uppercase mb-2.5">The Journey So Far</p>
-          <h2 className="font-display text-[clamp(30px,7vw,44px)] leading-none tracking-wide text-foreground mb-6">
-            HOW WE <span className="text-primary">GOT HERE</span>
-          </h2>
-
-          <div className="relative pl-5 mt-6">
-            <div className="absolute left-[15px] top-5 bottom-0 w-0.5 bg-gradient-to-b from-primary to-transparent" />
-
-            {timeline.map((t, i) => (
-              <div key={i} className="relative pl-8 pb-7">
-                <div className="absolute left-[-6px] top-1.5 w-3 h-3 rounded-full bg-primary shadow-[0_0_8px_hsl(var(--primary)/0.25)]" />
-                <p className="font-mono text-[8px] tracking-[2px] text-primary uppercase mb-1">{t.label}</p>
-                <p className="text-muted-foreground text-[13px] leading-relaxed">{t.desc}</p>
-              </div>
             ))}
           </div>
         </motion.div>

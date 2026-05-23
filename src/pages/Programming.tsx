@@ -102,7 +102,7 @@ export default function Programming() {
               <div className="p-4 rounded-xl border border-[#FF5500]/15 bg-[#111]">
                 <p className="text-gray-400 text-sm leading-relaxed">
                   Your body is your armour. The <span className="text-[#FF5500] font-semibold">Unbreakable Power</span> system
-                  combines Unbreakable Coaching, a 873-exercise library, and bespoke programme building to create training that's
+                  combines Unbreakable Coaching, a 1,500-exercise library, and bespoke programme building to create training that's
                   built for <span className="text-[#FF5500] font-semibold">you</span>.
                 </p>
                 <p className="text-[#FF5500] font-display text-sm tracking-wide mt-3" style={{ textShadow: '0 0 10px rgba(255,85,0,0.3)' }}>
@@ -115,7 +115,7 @@ export default function Programming() {
                 <h3 className="text-xs font-display tracking-wider text-gray-400">EXPLORE</h3>
                 {[
                   { path: '/programming/create', icon: Wrench, title: 'CREATE PROGRAMME', desc: 'Unbreakable Coach or Manual Builder — build bespoke training plans', onClick: handleCreate },
-                  { path: '/programming/exercises', icon: Dumbbell, title: 'EXERCISE LIBRARY', desc: '873 exercises with images & Unbreakable coaching breakdowns' },
+                  { path: '/programming/exercises', icon: Dumbbell, title: 'EXERCISE LIBRARY', desc: '1,500 exercises with images & Unbreakable coaching breakdowns' },
                   { path: '/programming/my-programmes', icon: BookOpen, title: 'MY PROGRAMMES', desc: 'View saved programmes, track progress & execute sessions' },
                   { path: '/programming/logs', icon: BarChart3, title: 'SESSION LOGS', desc: 'Review past workouts and training history' },
                 ].map(card => {
@@ -185,8 +185,8 @@ export default function Programming() {
               <div className="p-4 rounded-xl border border-[#FF5500]/15 bg-[#111]">
                 <h3 className="font-display text-sm text-[#FF5500] mb-1">UNBREAKABLE EXERCISE LIBRARY</h3>
                 <p className="text-gray-400 text-sm leading-relaxed">
-                  873 exercises with images, coaching breakdowns, and step-by-step instructions. 
-                  150+ enriched with <span className="text-[#FF5500]">Unbreakable coaching</span> tips.
+                  1,500 exercises with images, coaching breakdowns, and step-by-step instructions. 
+                  500+ enriched with <span className="text-[#FF5500]">Unbreakable coaching</span> tips.
                 </p>
               </div>
 
@@ -216,7 +216,7 @@ export default function Programming() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <h4 className="font-display text-sm text-white tracking-wide">BROWSE FULL LIBRARY</h4>
-                    <p className="text-gray-500 text-xs mt-0.5">Search, filter & explore all 873 exercises</p>
+                    <p className="text-gray-500 text-xs mt-0.5">Search, filter & explore all 1,500 exercises</p>
                   </div>
                   <ArrowRight className="w-4 h-4 text-[#FF5500] shrink-0" />
                 </div>

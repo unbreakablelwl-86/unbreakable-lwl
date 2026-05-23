@@ -139,7 +139,7 @@ export default function ProgrammingCreate() {
                   <MessageSquare className="w-5 h-5 text-[#FF5500]" style={{ filter: 'drop-shadow(0 0 6px rgba(255,85,0,0.5))' }} />
                 </div>
                 <div className="flex-1 text-left">
-                  <p className="font-display text-sm tracking-wider text-white">AI COACH BUILDER</p>
+                  <p className="font-display text-sm tracking-wider text-white">UNBREAKABLE COACH BUILDER</p>
                   <p className="text-gray-500 text-xs mt-0.5">Chat with your coach — auto-builds your programme</p>
                 </div>
                 <ChevronRight className="w-4 h-4 text-gray-600 group-hover:text-[#FF5500] transition-colors" />
