@@ -6,13 +6,14 @@ import {
   ArrowLeft, Search, Filter, X, ChevronDown, ChevronUp,
   Dumbbell, ArrowRight, Flame, Info, Lightbulb, Target,
 } from 'lucide-react';
-import { getExerciseImages } from '@/lib/exercise-images';
+import { getExerciseGifUrl } from '@/lib/exercise-images';
 import type { Exercise } from '@/lib/exercise-types';
 
 /* ── Filter options ── */
 const MUSCLE_FILTERS = [
   'chest', 'shoulders', 'biceps', 'triceps', 'lats', 'middle back', 'lower back',
   'quadriceps', 'hamstrings', 'glutes', 'calves', 'abdominals', 'forearms', 'traps', 'neck',
+  'adductors', 'abductors',
 ];
 const EQUIPMENT_FILTERS = [
   'barbell', 'dumbbell', 'body only', 'cable', 'machine', 'kettlebells',
@@ -36,9 +37,7 @@ function ExerciseDetail({
   exercise: EnrichedExercise;
   onClose: () => void;
 }) {
-  const images = getExerciseImages(exercise.id);
-  const [imgIdx, setImgIdx] = useState(0);
-  const imgUrls = [images.start, images.end];
+  const gifSrc = getExerciseGifUrl(exercise);
 
   return (
     <motion.div
@@ -56,30 +55,24 @@ function ExerciseDetail({
         className="w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-t-2xl sm:rounded-2xl border border-[#FF5500]/20 bg-[#0C0C0C]"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Image */}
+        {/* Animated GIF */}
         <div className="relative bg-[#111] border-b border-gray-800">
           <button onClick={onClose} className="absolute top-3 right-3 z-10 p-2 rounded-full bg-black/60 text-white">
             <X className="w-4 h-4" />
           </button>
-          <div className="flex items-center justify-center p-4 min-h-[250px]">
-            <img
-              src={imgUrls[imgIdx]}
-              alt={exercise.name}
-              className="max-h-[250px] object-contain rounded-lg"
-              onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-            />
-          </div>
-          {/* Image toggle */}
-          <div className="flex justify-center gap-2 pb-3">
-            {imgUrls.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setImgIdx(i)}
-                className={`w-8 h-1.5 rounded-full transition-all ${
-                  i === imgIdx ? 'bg-[#FF5500]' : 'bg-gray-700'
-                }`}
+          <div className="flex items-center justify-center p-4 min-h-[280px]">
+            {gifSrc ? (
+              <img
+                src={gifSrc}
+                alt={exercise.name}
+                className="max-h-[280px] object-contain rounded-lg"
+                onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
               />
-            ))}
+            ) : (
+              <div className="w-24 h-24 rounded-2xl bg-[#FF5500]/10 border border-[#FF5500]/25 flex items-center justify-center">
+                <Dumbbell className="w-10 h-10 text-[#FF5500]/40" />
+              </div>
+            )}
           </div>
         </div>
 
@@ -271,7 +264,7 @@ export default function ExerciseLibrary() {
               <span className="text-foreground">EXERCISE LIBRARY</span>
             </h1>
             <p className="text-muted-foreground text-sm md:text-base max-w-xl mx-auto">
-              {exercises.length} exercises with images, coaching tips, and step-by-step breakdowns.
+              {exercises.length} exercises with animated demos, coaching tips, and step-by-step breakdowns.
               Master every movement.
             </p>
           </motion.div>
@@ -417,7 +410,7 @@ export default function ExerciseLibrary() {
           <>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
               {paginated.map(ex => {
-                const images = getExerciseImages(ex.id);
+                const gifSrc = getExerciseGifUrl(ex);
                 const hasCoaching = !!ex.unbreakableDescription;
                 return (
                   <motion.div
@@ -431,18 +424,30 @@ export default function ExerciseLibrary() {
                         ? 'border-primary/25 hover:border-primary/50'
                         : 'border-border hover:border-primary/30'
                     }`}>
-                      {/* Image */}
+                      {/* Animated GIF */}
                       <div className="relative bg-[#111] aspect-square flex items-center justify-center p-2">
-                        <img
-                          src={images.start}
-                          alt={ex.name}
-                          className="max-h-full max-w-full object-contain"
-                          loading="lazy"
-                          onError={(e) => {
-                            (e.target as HTMLImageElement).src = '';
-                            (e.target as HTMLImageElement).className = 'hidden';
-                          }}
-                        />
+                        {gifSrc ? (
+                          <img
+                            src={gifSrc}
+                            alt={ex.name}
+                            className="max-h-full max-w-full object-contain"
+                            loading="lazy"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.style.display = 'none';
+                              // Show fallback icon
+                              const parent = target.parentElement;
+                              if (parent && !parent.querySelector('.fallback-icon')) {
+                                const div = document.createElement('div');
+                                div.className = 'fallback-icon flex items-center justify-center w-full h-full';
+                                div.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#FF5500" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.3"><path d="m6.5 6.5 11 11"/><path d="m21 21-1-1"/><path d="m3 3 1 1"/><path d="m18 22 4-4"/><path d="m2 6 4-4"/><path d="m3 10 7-7"/><path d="m14 21 7-7"/></svg>';
+                                parent.appendChild(div);
+                              }
+                            }}
+                          />
+                        ) : (
+                          <Dumbbell className="w-8 h-8 text-[#FF5500]/30" />
+                        )}
                         {hasCoaching && (
                           <div className="absolute top-1.5 right-1.5">
                             <div className="w-5 h-5 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center"

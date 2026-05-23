@@ -1,9 +1,10 @@
 // ═══════════════════════════════════════════════════
-// Exercise DB Types — from free-exercise-db
+// Exercise DB Types — ExerciseDB (oss.exercisedb.dev)
 // ═══════════════════════════════════════════════════
 
 export interface Exercise {
   id: string
+  exerciseDbId?: string
   name: string
   force: string | null
   level: 'beginner' | 'intermediate' | 'expert'
@@ -14,6 +15,7 @@ export interface Exercise {
   instructions: string[]
   category: string
   images: string[]
+  gifUrl?: string
 }
 
 export interface WorkoutSet {
