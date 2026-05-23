@@ -1,10 +1,14 @@
 import { Moon, Sun } from 'lucide-react';
-import { useUserSettings } from '@/hooks/useUserSettings';
 import { useAuth } from '@/hooks/useAuth';
 import { useState, useEffect, useCallback } from 'react';
 
-// Local-only theme toggle for unauthenticated users
-function useLocalTheme() {
+/**
+ * Theme toggle that works for both authenticated and unauthenticated users.
+ * Uses localStorage as the primary source of truth (instant response),
+ * and syncs to Supabase user_settings in the background when logged in.
+ */
+export function ThemeToggle() {
+  const { user } = useAuth();
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
     try {
       return (localStorage.getItem('unbreakable_theme') as 'dark' | 'light') || 'dark';
@@ -13,6 +17,7 @@ function useLocalTheme() {
     }
   });
 
+  // Apply theme to DOM immediately
   useEffect(() => {
     const root = document.documentElement;
     if (theme === 'light') {
@@ -26,37 +31,38 @@ function useLocalTheme() {
   }, [theme]);
 
   const toggle = useCallback(() => {
-    setTheme(prev => prev === 'dark' ? 'light' : 'dark');
-  }, []);
+    setTheme(prev => {
+      const next = prev === 'dark' ? 'light' : 'dark';
+      // Sync to Supabase in background (fire and forget)
+      if (user) {
+        import('@/integrations/supabase/client').then(({ supabase }) => {
+          supabase
+            .from('user_settings')
+            .update({ theme: next })
+            .eq('user_id', user.id)
+            .then(() => {});
+        });
+      }
+      return next;
+    });
+  }, [user]);
 
-  return { theme, toggle };
-}
-
-export function ThemeToggle() {
-  const { user } = useAuth();
-  const { settings, toggleTheme, loading } = useUserSettings();
-  const local = useLocalTheme();
-
-  // Use user settings when logged in, local otherwise
-  const isDark = user ? (settings?.theme ?? 'dark') === 'dark' : local.theme === 'dark';
-  const handleToggle = user ? toggleTheme : local.toggle;
-
-  if (user && loading) return null;
+  const isDark = theme === 'dark';
 
   return (
     <button
-      onClick={handleToggle}
+      onClick={toggle}
       title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
       className="w-9 h-9 flex items-center justify-center rounded-full 
         border border-[#FF5500]/20 bg-[#111]/80 backdrop-blur-md
         hover:border-[#FF5500]/40 hover:bg-[#FF5500]/10
-        transition-all duration-200"
+        active:scale-90 transition-all duration-200"
       style={{ boxShadow: '0 0 10px rgba(0,0,0,0.5)' }}
     >
       {isDark ? (
-        <Moon className="w-4 h-4 text-[#FF5500]" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.4))' }} />
-      ) : (
         <Sun className="w-4 h-4 text-[#FF5500]" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.4))' }} />
+      ) : (
+        <Moon className="w-4 h-4 text-[#FF5500]" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.4))' }} />
       )}
     </button>
   );

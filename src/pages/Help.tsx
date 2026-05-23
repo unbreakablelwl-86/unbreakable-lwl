@@ -1,9 +1,12 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { Send, MessageSquarePlus, Trash2, Loader2, Flame, Sparkles, UtensilsCrossed, PanelLeftClose, PanelLeftOpen, Dumbbell, TrendingUp, BarChart3, Brain, Zap, Heart, MessageCircle } from 'lucide-react';
-import { motion } from 'framer-motion';
+import {
+  Send, MessageSquarePlus, Trash2, Loader2, Flame, Sparkles, UtensilsCrossed,
+  PanelLeftClose, PanelLeftOpen, Dumbbell, TrendingUp, Brain, Zap, MessageCircle,
+  ArrowRight, Check, X, Eye, BookOpen, Target, Activity
+} from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { ThemeToggle } from '@/components/hub/ThemeToggle';
 import { PageNavigation, SwipeNavigationWrapper } from '@/components/PageNavigation';
@@ -11,10 +14,8 @@ import { AuthModal } from '@/components/tracker/AuthModal';
 import { useAuth } from '@/hooks/useAuth';
 import { useHelpChat, Message } from '@/hooks/useHelpChat';
 import { ThemedLogo } from '@/components/ThemedLogo';
-
 import { ProfileButton } from '@/components/coaching/ProfileButton';
 import { PlanDisplayCard } from '@/components/coaching/PlanDisplayCard';
-
 import { useAIPreferences } from '@/hooks/useAIPreferences';
 import { useCoachName } from '@/hooks/useCoachName';
 import { CoachNameEditor } from '@/components/coaching/CoachNameEditor';
@@ -41,7 +42,9 @@ interface GeneratedPlanInfo {
   messageId?: string;
 }
 
-// ─── Neon Glass Message Bubble ───────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════════════════
+   Neon Message Bubble
+   ═══════════════════════════════════════════════════════════════════ */
 function MessageBubble({ message }: { message: MessageWithMedia }) {
   const isUser = message.role === 'user';
 
@@ -52,7 +55,7 @@ function MessageBubble({ message }: { message: MessageWithMedia }) {
       return (
         <p key={i} className={i > 0 ? 'mt-2' : ''}>
           {parts.map((part, j) =>
-            j % 2 === 1 ? <strong key={j} className="text-primary">{part}</strong> : part
+            j % 2 === 1 ? <strong key={j} className="text-[#FF5500]">{part}</strong> : part
           )}
         </p>
       );
@@ -60,146 +63,125 @@ function MessageBubble({ message }: { message: MessageWithMedia }) {
   };
 
   return (
-    <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-5 animate-fade-in`}>
-      {/* Coach avatar */}
+    <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-4`}>
       {!isUser && (
         <div className="flex-shrink-0 mr-3 mt-1">
-          <div className="w-9 h-9 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center neon-border-subtle">
-            <Flame className="w-4 h-4 text-primary" />
+          <div className="w-8 h-8 rounded-full flex items-center justify-center border border-[#FF5500]/30 bg-[#FF5500]/10"
+            style={{ boxShadow: '0 0 12px rgba(255,85,0,0.15)' }}>
+            <Flame className="w-4 h-4 text-[#FF5500]" />
           </div>
         </div>
       )}
       <div className={`max-w-[80%]`}>
-        <div className={`rounded-2xl px-5 py-4 backdrop-blur-md ${
+        <div className={`rounded-2xl px-4 py-3 ${
           isUser
-            ? 'bg-primary/15 border border-primary/30 rounded-br-md'
-            : 'bg-card/60 border border-primary/20 rounded-bl-md shadow-[0_0_15px_hsl(24_100%_50%/0.08)]'
+            ? 'bg-[#FF5500]/15 border border-[#FF5500]/25 rounded-br-md'
+            : 'bg-[#151515] border border-gray-800 rounded-bl-md'
         }`}>
-          <div className={`text-sm leading-relaxed ${isUser ? 'text-foreground' : 'text-foreground/90'}`}>
+          <div className={`text-sm leading-relaxed ${isUser ? 'text-white' : 'text-gray-300'}`}>
             {isUser ? message.content : formatContent(message.content)}
           </div>
         </div>
-        <div className={`flex items-center gap-2 mt-1.5 px-1 ${isUser ? 'justify-end' : 'justify-start'}`}>
-          <p className="text-[11px] text-muted-foreground">
-            {new Date(message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-          </p>
-        </div>
+        <p className={`text-[10px] text-gray-600 mt-1 px-1 ${isUser ? 'text-right' : ''}`}>
+          {new Date(message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+        </p>
       </div>
     </div>
   );
 }
 
-// ─── Quick Action Tiles ──────────────────────────────────────────────────────
-const QUICK_ACTIONS = [
-  { 
-    icon: Dumbbell, label: 'POWER', 
-    description: 'Build a training programme',
-    greeting: "Let's build your training programme. Tell me about your goals, experience level, and how many days per week you can train.",
-  },
-  { 
-    icon: TrendingUp, label: 'MOVEMENT', 
-    description: 'Build a cardio & mobility plan',
-    greeting: "Let's build your movement plan. What's your current cardio fitness like, and what are you training towards — a race, general fitness, or fat loss?",
-  },
-  { 
-    icon: UtensilsCrossed, label: 'FUEL', 
-    description: 'Create a nutrition plan',
-    greeting: "Let's create your nutrition plan. What's your current goal — fat loss, muscle gain, or maintenance? How many meals per day works for you?",
-  },
-  { 
-    icon: Brain, label: 'MINDSET', 
-    description: 'Build a mindset & recovery routine',
-    greeting: "Let's build your mindset programme. What areas are you looking to improve — focus, stress management, sleep, or mental resilience?",
-  },
-  { 
-    icon: MessageCircle, label: 'GENERAL', 
-    description: 'Just chat & catch up',
-    greeting: "Hey! I'm here whenever you need me. What's on your mind today?",
-  },
+/* ═══════════════════════════════════════════════════════════════════
+   Smart Prompt Chips — context-aware suggestions
+   ═══════════════════════════════════════════════════════════════════ */
+const SMART_PROMPTS = [
+  { icon: '💪', label: 'Build me a programme', prompt: "Build me a bespoke training programme. Pull my saved profile info and ask me anything that's missing before you start." },
+  { icon: '🍽️', label: 'Create a meal plan', prompt: "Create a personalised meal plan for me. Use my saved profile data and ask me about any preferences that are missing." },
+  { icon: '🧠', label: 'Mindset coaching', prompt: "Build me a mindset programme. Pull my profile info and ask me what I want to focus on." },
+  { icon: '🏃', label: 'Cardio plan', prompt: "Help me build a cardio training plan. What are my current fitness levels and what am I training towards?" },
+  { icon: '📊', label: 'Check my progress', prompt: "Analyse my training progress and suggest improvements." },
+  { icon: '💬', label: 'Just chat', prompt: "Hey coach, what's on the agenda today?" },
 ];
 
-function QuickActionTiles({ onSelect, selectedTab, onTabSelect, disabled }: { 
-  onSelect: (prompt: string) => void; 
-  selectedTab: string | null;
-  onTabSelect: (label: string) => void;
-  disabled?: boolean; 
-}) {
+function SmartPromptChips({ onSelect, disabled }: { onSelect: (prompt: string) => void; disabled?: boolean }) {
   return (
-    <div className="w-full max-w-lg mx-auto space-y-6">
-      {/* Tab Row */}
-      <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
-        {QUICK_ACTIONS.map(({ icon: Icon, label }) => {
-          const isSelected = selectedTab === label;
-          return (
-            <button
-              key={label}
-              onClick={() => onTabSelect(label)}
-              disabled={disabled}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border font-display text-xs tracking-wider
-                transition-all duration-300 whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed
-                ${isSelected
-                  ? 'bg-primary text-primary-foreground border-primary shadow-[0_0_20px_hsl(24_100%_50%/0.4)]'
-                  : 'bg-card/50 text-muted-foreground border-primary/20 hover:border-primary/50 hover:text-foreground hover:bg-primary/10'
-                }`}
-            >
-              <Icon className={`w-4 h-4 ${isSelected ? 'text-primary-foreground' : 'text-primary'}`} />
-              {label}
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Selected Tab Content */}
-      {selectedTab && (
-        <motion.div
-          key={selectedTab}
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.25 }}
-          className="p-6 rounded-xl border border-primary/30 bg-gradient-to-br from-primary/10 to-transparent
-            shadow-[0_0_25px_hsl(24_100%_50%/0.08)]"
+    <div className="flex flex-wrap gap-2 justify-center max-w-md mx-auto">
+      {SMART_PROMPTS.map(sp => (
+        <button
+          key={sp.label}
+          onClick={() => onSelect(sp.prompt)}
+          disabled={disabled}
+          className="flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-display tracking-wide
+            bg-[#111] border border-gray-800 text-gray-400
+            hover:border-[#FF5500]/30 hover:text-[#FF5500] hover:bg-[#FF5500]/5
+            active:scale-95 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
         >
-          {(() => {
-            const action = QUICK_ACTIONS.find(a => a.label === selectedTab)!;
-            const ActionIcon = action.icon;
-            return (
-              <div className="text-center space-y-4">
-                <div className="w-14 h-14 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center mx-auto
-                  shadow-[0_0_20px_hsl(24_100%_50%/0.25)]">
-                  <ActionIcon className="w-7 h-7 text-primary" />
-                </div>
-                <div>
-                  <h3 className="font-display text-lg tracking-wider text-foreground mb-1">{action.label}</h3>
-                  <p className="text-sm text-muted-foreground">{action.description}</p>
-                </div>
-                <p className="text-sm text-foreground/80 leading-relaxed italic">"{action.greeting}"</p>
-                <button
-                  onClick={() => onSelect(action.greeting)}
-                  disabled={disabled}
-                  className="mt-2 px-6 py-2.5 rounded-xl bg-primary text-primary-foreground font-display text-sm tracking-wider
-                    hover:shadow-[0_0_20px_hsl(24_100%_50%/0.4)] transition-all duration-300
-                    disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  START CONVERSATION
-                </button>
-              </div>
-            );
-          })()}
-        </motion.div>
-      )}
+          <span>{sp.icon}</span>
+          <span>{sp.label}</span>
+        </button>
+      ))}
     </div>
   );
 }
 
-// ─── Conversation Sidebar ────────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════════════════
+   Build Confirmation Dialog
+   ═══════════════════════════════════════════════════════════════════ */
+function BuildConfirmDialog({
+  type,
+  onConfirm,
+  onCancel,
+}: {
+  type: 'programme' | 'meal_plan' | 'mindset';
+  onConfirm: () => void;
+  onCancel: () => void;
+}) {
+  const labels = {
+    programme: { title: 'BUILD TRAINING PROGRAMME', desc: 'Your coach is ready to build a bespoke training programme based on your conversation.', icon: Dumbbell },
+    meal_plan: { title: 'BUILD MEAL PLAN', desc: 'Your coach is ready to create a personalised meal plan based on your conversation.', icon: UtensilsCrossed },
+    mindset: { title: 'BUILD MINDSET PROGRAMME', desc: 'Your coach is ready to build a mindset programme based on your conversation.', icon: Brain },
+  };
+  const config = labels[type];
+  const Icon = config.icon;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+    >
+      <div className="w-full max-w-sm rounded-2xl border border-[#FF5500]/20 bg-[#111] p-6 text-center"
+        style={{ boxShadow: '0 0 40px rgba(255,85,0,0.1)' }}>
+        <div className="w-14 h-14 rounded-full bg-[#FF5500]/15 border border-[#FF5500]/30 flex items-center justify-center mx-auto mb-4"
+          style={{ boxShadow: '0 0 20px rgba(255,85,0,0.2)' }}>
+          <Icon className="w-7 h-7 text-[#FF5500]" />
+        </div>
+        <h3 className="font-display text-lg text-white tracking-wide mb-2">{config.title}</h3>
+        <p className="text-gray-400 text-sm mb-6">{config.desc}</p>
+        <div className="flex gap-3">
+          <button
+            onClick={onCancel}
+            className="flex-1 py-2.5 rounded-xl border border-gray-700 text-gray-400 hover:text-white text-sm font-display transition-all"
+          >
+            CANCEL
+          </button>
+          <button
+            onClick={onConfirm}
+            className="flex-1 py-2.5 rounded-xl bg-[#FF5500] hover:bg-[#CC4400] text-white text-sm font-display transition-all"
+            style={{ boxShadow: '0 0 15px rgba(255,85,0,0.3)' }}
+          >
+            BUILD IT
+          </button>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   Conversation Sidebar (neon themed)
+   ═══════════════════════════════════════════════════════════════════ */
 function ConversationSidebar({
-  conversations,
-  currentConversationId,
-  onSelect,
-  onDelete,
-  onNewConversation,
-  isOpen,
-  onToggle,
+  conversations, currentConversationId, onSelect, onDelete, onNewConversation, isOpen, onToggle,
 }: {
   conversations: any[];
   currentConversationId: string | null;
@@ -213,67 +195,62 @@ function ConversationSidebar({
 
   return (
     <>
-      {/* Mobile overlay */}
       {isMobile && isOpen && (
-        <div className="fixed inset-0 bg-background/60 backdrop-blur-sm z-40" onClick={onToggle} />
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40" onClick={onToggle} />
       )}
       <aside className={`
         ${isMobile ? 'fixed left-0 top-0 bottom-0 z-50' : 'relative'}
-        ${isOpen ? (isMobile ? 'w-72' : 'w-72') : 'w-0'}
-        bg-card/95 backdrop-blur-md border-r border-primary/15
+        ${isOpen ? 'w-72' : 'w-0'}
+        bg-[#0A0A0A] border-r border-gray-800
         transition-all duration-300 overflow-hidden flex flex-col
         ${isMobile && !isOpen ? 'pointer-events-none' : ''}
       `}>
-        {/* Sidebar header */}
-        <div className="p-4 border-b border-primary/20 flex items-center justify-between flex-shrink-0">
-          <h2 className="font-display text-sm tracking-wider text-primary whitespace-nowrap">CONVERSATIONS</h2>
-          <Button variant="ghost" size="icon" onClick={onToggle} className="h-8 w-8 flex-shrink-0">
+        <div className="p-4 border-b border-gray-800 flex items-center justify-between flex-shrink-0">
+          <h2 className="font-display text-xs tracking-wider text-[#FF5500]">CONVERSATIONS</h2>
+          <button onClick={onToggle} className="p-1.5 rounded-lg text-gray-500 hover:text-white transition-colors">
             <PanelLeftClose className="w-4 h-4" />
-          </Button>
+          </button>
         </div>
 
-        {/* New conversation */}
         <div className="p-3 flex-shrink-0">
-          <Button
-            variant="outline"
-            className="w-full justify-start gap-2 border-primary/30 hover:bg-primary/10 text-sm"
+          <button
             onClick={onNewConversation}
+            className="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl
+              border border-[#FF5500]/30 text-[#FF5500] text-xs font-display tracking-wider
+              hover:bg-[#FF5500]/10 transition-all"
           >
-            <MessageSquarePlus className="w-4 h-4 text-primary" />
-            <span className="whitespace-nowrap">New Conversation</span>
-          </Button>
+            <MessageSquarePlus className="w-4 h-4" />
+            NEW CONVERSATION
+          </button>
         </div>
 
-        {/* Conversation list */}
         <ScrollArea className="flex-1 px-2 pb-4">
           {conversations.length === 0 ? (
-            <p className="text-xs text-muted-foreground text-center py-6 px-3">No conversations yet. Start one below.</p>
+            <p className="text-xs text-gray-600 text-center py-6 px-3">No conversations yet.</p>
           ) : (
             <div className="space-y-1">
               {conversations.map((conv) => (
                 <div
                   key={conv.id}
-                  className={`group flex items-center gap-2 p-3 rounded-lg cursor-pointer transition-all duration-200 border ${
+                  className={`group flex items-center gap-2 p-3 rounded-xl cursor-pointer transition-all border ${
                     currentConversationId === conv.id
-                      ? 'bg-primary/15 border-primary/40 shadow-[0_0_12px_hsl(24_100%_50%/0.15)]'
-                      : 'border-primary/10 hover:border-primary/30 hover:bg-primary/5'
+                      ? 'bg-[#FF5500]/10 border-[#FF5500]/25'
+                      : 'border-transparent hover:border-gray-800 hover:bg-[#111]'
                   }`}
                   onClick={() => onSelect(conv.id)}
                 >
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium truncate">{conv.title || 'Untitled'}</p>
-                    <p className="text-[11px] text-muted-foreground mt-0.5">
+                    <p className="text-sm text-white truncate">{conv.title || 'Untitled'}</p>
+                    <p className="text-[10px] text-gray-600 mt-0.5">
                       {new Date(conv.updated_at).toLocaleDateString()}
                     </p>
                   </div>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-7 w-7 text-destructive/70 hover:text-destructive hover:bg-destructive/10 transition-all flex-shrink-0"
+                  <button
+                    className="h-7 w-7 rounded-lg flex items-center justify-center text-red-400/50 hover:text-red-400 hover:bg-red-400/10 transition-all flex-shrink-0 opacity-0 group-hover:opacity-100"
                     onClick={(e) => { e.stopPropagation(); onDelete(conv.id); }}
                   >
                     <Trash2 className="w-3.5 h-3.5" />
-                  </Button>
+                  </button>
                 </div>
               ))}
             </div>
@@ -284,7 +261,9 @@ function ConversationSidebar({
   );
 }
 
-// ─── Main Page ───────────────────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════════════════
+   Main AI Coach Page
+   ═══════════════════════════════════════════════════════════════════ */
 export default function Help() {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
@@ -299,8 +278,10 @@ export default function Help() {
   const [generatedPlans, setGeneratedPlans] = useState<GeneratedPlanInfo[]>([]);
   const [editingPlan, setEditingPlan] = useState<GeneratedPlanInfo | null>(null);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [selectedChatTab, setSelectedChatTab] = useState<string | null>(null);
-  
+
+  // Build confirmation
+  const [pendingBuild, setPendingBuild] = useState<{ type: 'programme' | 'meal_plan' | 'mindset'; chatContext: string } | null>(null);
+
   const chatEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -325,12 +306,12 @@ export default function Help() {
 
   const lastProcessedMsgRef = useRef<string | null>(null);
 
-  // Auto-scroll to bottom on new messages
+  // Auto-scroll
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // Detect build tags in completed assistant messages
+  // Detect build tags in assistant messages — now with confirmation
   useEffect(() => {
     if (isLoading || messages.length === 0) return;
     const lastMsg = messages[messages.length - 1];
@@ -338,48 +319,53 @@ export default function Help() {
     lastProcessedMsgRef.current = lastMsg.id;
 
     const content = lastMsg.content;
-    const programmeMatch = content.match(/\[BUILD_PROGRAMME\](\{.*\})?/);
-    const mealPlanMatch = content.match(/\[BUILD_MEAL_PLAN\](\{.*\})?/);
-    const mindsetMatch = content.match(/\[BUILD_MINDSET_PROGRAMME\](\{.*\})?/);
+    const chatContext = messages.slice(-10).map(m => `${m.role}: ${m.content}`).join('\n');
 
-    if (programmeMatch) {
-      const chatContext = messages.slice(-10).map(m => `${m.role}: ${m.content}`).join('\n');
+    if (content.match(/\[BUILD_PROGRAMME\](\{.*\})?/)) {
+      setPendingBuild({ type: 'programme', chatContext });
+    } else if (content.match(/\[BUILD_MEAL_PLAN\](\{.*\})?/)) {
+      setPendingBuild({ type: 'meal_plan', chatContext });
+    } else if (content.match(/\[BUILD_MINDSET_PROGRAMME\](\{.*\})?/) || content.match(/\[BUILD_MINDSET\](\{.*\})?/)) {
+      setPendingBuild({ type: 'mindset', chatContext });
+    }
+  }, [messages, isLoading]);
+
+  // Execute confirmed build
+  const executeBuild = useCallback(async (type: 'programme' | 'meal_plan' | 'mindset', chatContext: string) => {
+    if (type === 'programme') {
       setProgrammeGenerating(true);
-      generateProgramme('Build a programme based on our conversation', { chatContext }).then(result => {
-        setProgrammeGenerating(false);
+      try {
+        const result = await generateProgramme('Build a programme based on our conversation', { chatContext });
         if (result?.program) {
           const planInfo: GeneratedPlanInfo = { type: 'programme', planData: result.program, planId: '', savedToHub: false };
           setGeneratedPlans(prev => [...prev, planInfo]);
-          toast({ title: 'Programme Ready for Review', description: 'Review your plan below, then save it to your library.' });
+          toast({ title: '✅ Programme Ready', description: 'Review your plan below, then save it to your library.' });
         }
-      });
-    } else if (mealPlanMatch) {
-      const chatContext = messages.slice(-10).map(m => `${m.role}: ${m.content}`).join('\n');
+      } finally { setProgrammeGenerating(false); }
+    } else if (type === 'meal_plan') {
       setMealPlanGenerating(true);
-      generateMealPlan('Build a meal plan based on our conversation', 'full_plan', { chatContext }).then(result => {
-        setMealPlanGenerating(false);
+      try {
+        const result = await generateMealPlan('Build a meal plan based on our conversation', 'full_plan', { chatContext });
         if (result?.plan) {
           const planInfo: GeneratedPlanInfo = { type: 'meal_plan', planData: result.plan, planId: '', savedToHub: false };
           setGeneratedPlans(prev => [...prev, planInfo]);
-          toast({ title: 'Meal Plan Ready for Review', description: 'Review your plan below, then save it to your library.' });
+          toast({ title: '✅ Meal Plan Ready', description: 'Review your plan below, then save it to your library.' });
         }
-      });
-    } else if (mindsetMatch) {
-      const chatContext = messages.slice(-10).map(m => `${m.role}: ${m.content}`).join('\n');
+      } finally { setMealPlanGenerating(false); }
+    } else if (type === 'mindset') {
       setMindsetGenerating(true);
-      generateMindsetProgramme('Build a mindset programme based on our conversation', chatContext).then(result => {
-        setMindsetGenerating(false);
+      try {
+        const result = await generateMindsetProgramme('Build a mindset programme based on our conversation', chatContext);
         if (result?.programme) {
           const planInfo: GeneratedPlanInfo = { type: 'mindset', planData: result.programme, planId: '', savedToHub: false };
           setGeneratedPlans(prev => [...prev, planInfo]);
-          toast({ title: 'Mindset Programme Ready', description: 'Review your programme below, then save it.' });
+          toast({ title: '✅ Mindset Programme Ready', description: 'Review below, then save it.' });
         }
-      }).catch(() => {
-        setMindsetGenerating(false);
+      } catch {
         toast({ title: 'Error', description: 'Failed to generate mindset programme', variant: 'destructive' });
-      });
+      } finally { setMindsetGenerating(false); }
     }
-  }, [messages, isLoading]);
+  }, [generateProgramme, generateMealPlan, generateMindsetProgramme]);
 
   // Context from URL params or sessionStorage
   useEffect(() => {
@@ -412,7 +398,7 @@ export default function Help() {
         let prompt = '';
         switch (context.type) {
           case 'session': prompt = `I just finished a workout session${context.name ? ` (${context.name})` : ''}. Can you give me feedback on my performance?`; break;
-          case 'programme': prompt = `I'd like to discuss my training programme${context.name ? ` \"${context.name}\"` : ''}. `; break;
+          case 'programme': prompt = `I'd like to discuss my training programme${context.name ? ` "${context.name}"` : ''}. `; break;
           case 'programme_request': prompt = `Build me a bespoke training programme. `; break;
           case 'meal_plan_request': prompt = `Create a meal plan for me. `; break;
           case 'exercise': prompt = `Can you review my technique for ${context.name || 'this exercise'}?`; break;
@@ -425,15 +411,12 @@ export default function Help() {
     }
   }, [searchParams, setSearchParams]);
 
-  // ─── Handlers (unchanged business logic) ─────────────────────────────────
+  // ─── Handlers ──────────────────────────────────────────────────────────────
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim() || isLoading || isGenerating || isMealPlanGenerating) return;
     if (!user) { setShowAuthModal(true); return; }
-
-    sendMessage(input, {
-      callerRole,
-    });
+    sendMessage(input, { callerRole });
     setInput('');
   };
 
@@ -444,13 +427,25 @@ export default function Help() {
   };
 
   const handleEditPlan = (plan: GeneratedPlanInfo) => { setEditingPlan(plan); setShowEditModal(true); };
-  
+
   const handleSavePlanToLibrary = async (plan: GeneratedPlanInfo) => {
     const saveUserId = user!.id;
     try {
       if (plan.type === 'programme') {
         const result = await saveProgram.mutateAsync({ program: plan.planData as GeneratedProgram });
         setGeneratedPlans(prev => prev.map(p => p === plan ? { ...p, planId: result.id, savedToHub: true } : p));
+        toast({
+          title: '✅ Programme Saved!',
+          description: 'Your programme is ready in Power → My Programmes',
+          action: (
+            <button
+              onClick={() => navigate('/programming')}
+              className="px-3 py-1.5 rounded-lg bg-[#FF5500] text-white text-xs font-display"
+            >
+              VIEW IN LIBRARY
+            </button>
+          ),
+        });
       } else if (plan.type === 'mindset') {
         const result = await saveMindsetProgramme.mutateAsync({
           programme: {
@@ -464,17 +459,26 @@ export default function Help() {
           },
         });
         setGeneratedPlans(prev => prev.map(p => p === plan ? { ...p, planId: result.id, savedToHub: true } : p));
-        toast({ title: 'Mindset Programme Saved!', description: 'View it in Mindset → My Programmes' });
+        toast({
+          title: '✅ Mindset Programme Saved!',
+          description: 'View it in Mindset → Programmes',
+          action: (
+            <button
+              onClick={() => navigate('/mindset')}
+              className="px-3 py-1.5 rounded-lg bg-[#FF5500] text-white text-xs font-display"
+            >
+              VIEW IN LIBRARY
+            </button>
+          ),
+        });
       } else {
-        // Save meal plan via supabase directly — use athlete's ID if building for client
         const { data: savedPlan, error } = await supabase
           .from('meal_plans')
           .insert({ user_id: saveUserId, name: plan.planData.planName || 'AI Meal Plan', description: plan.planData.overview, is_active: false })
           .select()
           .single();
         if (error) throw error;
-        
-        // Save items
+
         const planItems: any[] = [];
         for (const day of plan.planData.days || []) {
           const addMeal = (meal: any, mealType: string) => {
@@ -487,10 +491,21 @@ export default function Help() {
           for (const snack of day.meals?.snacks || []) addMeal(snack, 'snack');
         }
         if (planItems.length > 0) await supabase.from('meal_plan_items').insert(planItems);
-        
+
         queryClient.invalidateQueries({ queryKey: ['meal-plans'] });
         setGeneratedPlans(prev => prev.map(p => p === plan ? { ...p, planId: savedPlan.id, savedToHub: true } : p));
-        toast({ title: 'Meal Plan Saved!', description: 'View it in Fuel → My Meal Plans' });
+        toast({
+          title: '✅ Meal Plan Saved!',
+          description: 'View it in Fuel → My Meal Plans',
+          action: (
+            <button
+              onClick={() => navigate('/fuel')}
+              className="px-3 py-1.5 rounded-lg bg-[#FF5500] text-white text-xs font-display"
+            >
+              VIEW IN LIBRARY
+            </button>
+          ),
+        });
       }
     } catch (error) {
       toast({ title: 'Error', description: 'Failed to save plan. Please try again.', variant: 'destructive' });
@@ -504,7 +519,6 @@ export default function Help() {
         if (editingPlan.type === 'programme') {
           await updateProgram.mutateAsync({ programId: editingPlan.planId, programData: editedPlanData as GeneratedProgram });
         } else if (editingPlan.type === 'mindset') {
-          // For mindset, update the programme_data in the database
           await supabase
             .from('mindset_programmes')
             .update({
@@ -526,16 +540,18 @@ export default function Help() {
       }
       setGeneratedPlans(prev => prev.map(p => p.planId === editingPlan.planId || p === editingPlan ? { ...p, planData: editedPlanData } : p));
       setShowEditModal(false); setEditingPlan(null);
-      toast({ title: 'Plan Updated!', description: 'Your changes have been applied.' });
+      toast({ title: '✅ Plan Updated!', description: 'Your changes have been applied.' });
     } catch (error) {
       toast({ title: 'Error', description: 'Failed to save changes. Please try again.', variant: 'destructive' });
     }
   };
-  const handleViewInHub = (plan: GeneratedPlanInfo) => { navigate(plan.type === 'programme' ? '/programming' : plan.type === 'mindset' ? '/mindset' : '/fuel'); };
+
+  const handleViewInHub = (plan: GeneratedPlanInfo) => {
+    navigate(plan.type === 'programme' ? '/programming' : plan.type === 'mindset' ? '/mindset' : '/fuel');
+  };
 
   const isAnyGenerating = isGenerating || isMealPlanGenerating || mindsetGenerating;
   const enrichedMessages: MessageWithMedia[] = messages.map((msg) => {
-    // Strip build tags from assistant messages
     if (msg.role === 'assistant') {
       const cleanContent = msg.content
         .replace(/\[BUILD_PROGRAMME\](\{.*\})?/g, '')
@@ -551,7 +567,6 @@ export default function Help() {
 
   const hasMessages = enrichedMessages.length > 0;
 
-  // Handle textarea auto-resize and Enter key
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -561,29 +576,29 @@ export default function Help() {
 
   return (
     <SwipeNavigationWrapper>
-      <div className="min-h-screen bg-background flex flex-col">
-        {/* Header */}
-        <header className="fixed top-0 left-0 right-0 z-50 bg-background/90 backdrop-blur-md border-b border-primary/15">
-          <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+      <div className="min-h-screen flex flex-col" style={{ background: '#080808' }}>
+        {/* ─── Header ─── */}
+        <header className="fixed top-0 left-0 right-0 z-50 border-b border-gray-800"
+          style={{ background: 'rgba(8,8,8,0.92)', backdropFilter: 'blur(12px)' }}>
+          <div className="container mx-auto px-4 py-3 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <ThemeToggle />
-              <Link to="/" className="flex items-center gap-3">
+              <Link to="/" className="flex items-center gap-2">
                 <ThemedLogo />
-                <span className="font-display text-lg tracking-wide text-foreground hidden sm:block">UNBREAKABLE</span>
+                <span className="font-display text-sm tracking-wider text-white hidden sm:block">UNBREAKABLE</span>
               </Link>
             </div>
             <div className="flex items-center gap-2">
-</div>
+            </div>
           </div>
         </header>
 
-        <div className="pt-[72px]">
+        <div className="pt-[60px]">
           <PageNavigation />
         </div>
 
-        {/* Main content area: sidebar + chat */}
-        <div className="flex-1 flex overflow-hidden" style={{ height: 'calc(100vh - 120px)' }}>
-          {/* Conversation Sidebar */}
+        {/* ─── Main area: sidebar + chat ─── */}
+        <div className="flex-1 flex overflow-hidden" style={{ height: 'calc(100vh - 108px)' }}>
           {user && (
             <ConversationSidebar
               conversations={conversations}
@@ -596,19 +611,23 @@ export default function Help() {
             />
           )}
 
-          {/* Chat Panel */}
+          {/* ─── Chat Panel ─── */}
           <div className="flex-1 flex flex-col min-w-0 relative">
-            {/* Chat panel header bar */}
-            <div className="flex items-center gap-3 px-4 py-3 border-b border-primary/15 bg-card/30 backdrop-blur-sm flex-shrink-0">
+            {/* Chat header */}
+            <div className="flex items-center gap-3 px-4 py-3 border-b border-gray-800 flex-shrink-0"
+              style={{ background: 'rgba(15,15,15,0.8)' }}>
               {user && !sidebarOpen && (
-                <Button variant="ghost" size="icon" onClick={() => setSidebarOpen(true)} className="h-8 w-8">
+                <button onClick={() => setSidebarOpen(true)} className="p-1.5 rounded-lg text-gray-500 hover:text-white">
                   <PanelLeftOpen className="w-4 h-4" />
-                </Button>
+                </button>
               )}
               <div className="flex items-center gap-2 flex-1 min-w-0">
-                <Flame className="w-5 h-5 text-primary flex-shrink-0" />
+                <div className="w-7 h-7 rounded-full bg-[#FF5500]/15 border border-[#FF5500]/30 flex items-center justify-center"
+                  style={{ boxShadow: '0 0 10px rgba(255,85,0,0.15)' }}>
+                  <Flame className="w-3.5 h-3.5 text-[#FF5500]" />
+                </div>
                 {currentConversationId ? (
-                  <h2 className="font-display text-sm tracking-wider text-foreground truncate">
+                  <h2 className="font-display text-xs tracking-wider text-white truncate">
                     {conversations.find(c => c.id === currentConversationId)?.title || 'CONVERSATION'}
                   </h2>
                 ) : (
@@ -616,46 +635,36 @@ export default function Help() {
                 )}
               </div>
               {currentConversationId && (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 text-muted-foreground hover:text-destructive"
-                  onClick={() => {
-                    if (currentConversationId) {
-                      deleteConversation(currentConversationId);
-                    }
-                  }}
+                <button
+                  className="p-1.5 rounded-lg text-gray-600 hover:text-red-400 transition-colors"
+                  onClick={() => { if (currentConversationId) deleteConversation(currentConversationId); }}
                 >
                   <Trash2 className="w-4 h-4" />
-                </Button>
+                </button>
               )}
               <ProfileButton />
             </div>
 
-            {/* Messages area */}
-            <div className="flex-1 overflow-y-auto px-4 md:px-8 py-6">
+            {/* ─── Messages area ─── */}
+            <div className="flex-1 overflow-y-auto px-4 md:px-6 py-6">
               {!hasMessages ? (
                 /* ─── Welcome / Empty State ─── */
-                <div className="flex flex-col items-center justify-center h-full animate-fade-in">
-                  {/* Hero */}
-                  <div className="text-center mb-10">
-                    <div className="w-16 h-16 rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center mx-auto mb-6
-                      shadow-[0_0_30px_hsl(24_100%_50%/0.2)] neon-pulse">
-                      <Flame className="w-8 h-8 text-primary" />
+                <div className="flex flex-col items-center justify-center h-full">
+                  <div className="text-center mb-8">
+                    <div className="w-16 h-16 rounded-full bg-[#FF5500]/10 border border-[#FF5500]/25 flex items-center justify-center mx-auto mb-5"
+                      style={{ boxShadow: '0 0 35px rgba(255,85,0,0.15)' }}>
+                      <Flame className="w-8 h-8 text-[#FF5500]" style={{ filter: 'drop-shadow(0 0 8px rgba(255,85,0,0.5))' }} />
                     </div>
                     <CoachNameEditor coachName={coachName} onSave={setCoachName} variant="hero" />
-                    <p className="text-muted-foreground max-w-md mx-auto text-sm md:text-base leading-relaxed mt-3">
+                    <p className="text-gray-500 max-w-sm mx-auto text-sm leading-relaxed mt-3">
                       Your personal coach for training, nutrition, mindset, and beyond.
                       Ask anything — become{' '}
-                      <span className="text-primary font-semibold">UNBREAKABLE</span>.
-                    </p>
-                    <p className="text-primary font-display text-lg tracking-wider mt-4 neon-glow-subtle">
-                      #UNBREAKABLECOACHING
+                      <span className="text-[#FF5500] font-semibold">UNBREAKABLE</span>.
                     </p>
                   </div>
 
-                  {/* Quick Action Tiles */}
-                  <QuickActionTiles onSelect={handleQuickAction} selectedTab={selectedChatTab} onTabSelect={setSelectedChatTab} disabled={isLoading || isAnyGenerating} />
+                  {/* Smart Prompt Chips */}
+                  <SmartPromptChips onSelect={handleQuickAction} disabled={isLoading || isAnyGenerating} />
                 </div>
               ) : (
                 /* ─── Chat Messages ─── */
@@ -663,55 +672,63 @@ export default function Help() {
                   {enrichedMessages.map((msg) => (
                     <MessageBubble key={msg.id} message={msg} />
                   ))}
+
+                  {/* Loading states */}
                   {isLoading && enrichedMessages[enrichedMessages.length - 1]?.role === 'user' && !isGenerating && (
-                    <div className="flex items-center gap-3 mb-5 animate-fade-in">
-                      <div className="w-9 h-9 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center neon-border-subtle">
-                        <Flame className="w-4 h-4 text-primary" />
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-8 h-8 rounded-full bg-[#FF5500]/10 border border-[#FF5500]/30 flex items-center justify-center">
+                        <Flame className="w-4 h-4 text-[#FF5500]" />
                       </div>
-                      <div className="rounded-2xl rounded-bl-md px-5 py-4 bg-card/60 border border-primary/20 backdrop-blur-md">
+                      <div className="rounded-2xl rounded-bl-md px-4 py-3 bg-[#151515] border border-gray-800">
                         <div className="flex items-center gap-2">
-                          <Loader2 className="w-4 h-4 animate-spin text-primary" />
-                          <span className="text-sm text-muted-foreground">{coachName} is thinking...</span>
+                          <Loader2 className="w-4 h-4 animate-spin text-[#FF5500]" />
+                          <span className="text-sm text-gray-500">{coachName} is thinking...</span>
                         </div>
                       </div>
                     </div>
                   )}
-                  {isGenerating && (
-                    <div className="flex items-center gap-3 mb-5 animate-fade-in">
-                      <div className="w-9 h-9 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center neon-border-subtle">
-                        <Sparkles className="w-4 h-4 text-primary animate-pulse" />
+
+                  {/* Programme generating */}
+                  {(isGenerating || programmeGenerating) && (
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-8 h-8 rounded-full bg-[#FF5500]/15 border border-[#FF5500]/30 flex items-center justify-center">
+                        <Sparkles className="w-4 h-4 text-[#FF5500] animate-pulse" />
                       </div>
-                      <div className="rounded-2xl rounded-bl-md px-5 py-4 bg-primary/10 border border-primary/30 backdrop-blur-md shadow-[0_0_20px_hsl(24_100%_50%/0.1)]">
-                        <span className="text-sm font-medium text-primary">Building your bespoke programme...</span>
-                        <p className="text-xs text-muted-foreground mt-1">This takes about 15-20 seconds</p>
-                      </div>
-                    </div>
-                  )}
-                  {isMealPlanGenerating && (
-                    <div className="flex items-center gap-3 mb-5 animate-fade-in">
-                      <div className="w-9 h-9 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center neon-border-subtle">
-                        <UtensilsCrossed className="w-4 h-4 text-primary animate-pulse" />
-                      </div>
-                      <div className="rounded-2xl rounded-bl-md px-5 py-4 bg-primary/10 border border-primary/30 backdrop-blur-md shadow-[0_0_20px_hsl(24_100%_50%/0.1)]">
-                        <span className="text-sm font-medium text-primary">Building your bespoke meal plan...</span>
-                        <p className="text-xs text-muted-foreground mt-1">This takes about 15-20 seconds</p>
+                      <div className="rounded-2xl rounded-bl-md px-4 py-3 bg-[#FF5500]/5 border border-[#FF5500]/20"
+                        style={{ boxShadow: '0 0 20px rgba(255,85,0,0.05)' }}>
+                        <span className="text-sm font-display text-[#FF5500]">Building your programme...</span>
+                        <p className="text-xs text-gray-500 mt-0.5">This takes about 15-20 seconds</p>
                       </div>
                     </div>
                   )}
+
+                  {mealPlanGenerating && (
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-8 h-8 rounded-full bg-[#FF5500]/15 border border-[#FF5500]/30 flex items-center justify-center">
+                        <UtensilsCrossed className="w-4 h-4 text-[#FF5500] animate-pulse" />
+                      </div>
+                      <div className="rounded-2xl rounded-bl-md px-4 py-3 bg-[#FF5500]/5 border border-[#FF5500]/20">
+                        <span className="text-sm font-display text-[#FF5500]">Building your meal plan...</span>
+                        <p className="text-xs text-gray-500 mt-0.5">This takes about 15-20 seconds</p>
+                      </div>
+                    </div>
+                  )}
+
                   {mindsetGenerating && (
-                    <div className="flex items-center gap-3 mb-5 animate-fade-in">
-                      <div className="w-9 h-9 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center neon-border-subtle">
-                        <Brain className="w-4 h-4 text-primary animate-pulse" />
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-8 h-8 rounded-full bg-[#FF5500]/15 border border-[#FF5500]/30 flex items-center justify-center">
+                        <Brain className="w-4 h-4 text-[#FF5500] animate-pulse" />
                       </div>
-                      <div className="rounded-2xl rounded-bl-md px-5 py-4 bg-primary/10 border border-primary/30 backdrop-blur-md shadow-[0_0_20px_hsl(24_100%_50%/0.1)]">
-                        <span className="text-sm font-medium text-primary">Building your mindset programme...</span>
-                        <p className="text-xs text-muted-foreground mt-1">This takes about 15-20 seconds</p>
+                      <div className="rounded-2xl rounded-bl-md px-4 py-3 bg-[#FF5500]/5 border border-[#FF5500]/20">
+                        <span className="text-sm font-display text-[#FF5500]">Building your mindset programme...</span>
+                        <p className="text-xs text-gray-500 mt-0.5">This takes about 15-20 seconds</p>
                       </div>
                     </div>
                   )}
-                  {/* Generated Plan Display Cards */}
+
+                  {/* Generated Plan Cards */}
                   {generatedPlans.length > 0 && (
-                    <div className="space-y-4 mt-4 pt-4 border-t border-border/50">
+                    <div className="space-y-4 mt-4 pt-4 border-t border-gray-800">
                       {generatedPlans.map((plan, idx) => (
                         <PlanDisplayCard
                           key={plan.planId || `pending-${idx}`}
@@ -732,18 +749,22 @@ export default function Help() {
             </div>
 
             {/* ─── Token Warning ─── */}
-            {tokenBalance !== null && tokenBalance <= 1 && (
-              <div className={`flex-shrink-0 px-4 py-2 text-center text-xs font-medium ${tokenBalance <= 0 ? 'bg-red-500/20 text-red-400' : 'bg-amber-500/20 text-amber-400'}`}>
+            {tokenBalance !== null && tokenBalance <= 2 && (
+              <div className={`flex-shrink-0 px-4 py-2 text-center text-xs font-display ${
+                tokenBalance <= 0
+                  ? 'bg-red-500/10 text-red-400 border-t border-red-500/20'
+                  : 'bg-amber-500/10 text-amber-400 border-t border-amber-500/20'
+              }`}>
                 {tokenBalance <= 0 ? (
-                  <>No tokens remaining — <a href="/ai-tokens" className="underline font-bold">upgrade for more</a></>
+                  <>No tokens remaining — <Link to="/ai-tokens" className="underline font-bold">upgrade for more</Link></>
                 ) : (
                   <>{tokenBalance.toFixed(1)} token{tokenBalance !== 1 ? 's' : ''} remaining</>
                 )}
               </div>
             )}
 
-            {/* ─── Input Area (pinned bottom) ─── */}
-            <div className="flex-shrink-0 border-t border-border/50 bg-card/40 backdrop-blur-md p-4">
+            {/* ─── Input ─── */}
+            <div className="flex-shrink-0 border-t border-gray-800 p-4" style={{ background: 'rgba(15,15,15,0.8)' }}>
               <form onSubmit={handleSubmit} className="max-w-3xl mx-auto">
                 <div className="flex items-end gap-2">
                   <div className="flex-1 relative">
@@ -752,7 +773,6 @@ export default function Help() {
                       value={input}
                       onChange={(e) => {
                         setInput(e.target.value);
-                        // Auto-resize
                         e.target.style.height = 'auto';
                         e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px';
                       }}
@@ -760,29 +780,45 @@ export default function Help() {
                       placeholder="Ask your coach anything..."
                       rows={1}
                       disabled={isLoading || isAnyGenerating}
-                      className="w-full resize-none rounded-xl border border-primary/20 bg-background/80 
-                        px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground 
-                        focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 
-                        focus:shadow-[0_0_15px_hsl(24_100%_50%/0.1)]
-                        disabled:opacity-50 transition-all"
+                      className="w-full resize-none rounded-xl border border-gray-800 bg-[#111]
+                        px-4 py-3 text-sm text-white placeholder:text-gray-600
+                        focus:outline-none focus:border-[#FF5500]/40 focus:ring-1 focus:ring-[#FF5500]/20
+                        disabled:opacity-40 transition-all"
                     />
                   </div>
-                  <Button
+                  <button
                     type="submit"
                     disabled={isLoading || isAnyGenerating || !input.trim()}
-                    className="h-11 px-5 rounded-xl"
+                    className="h-11 w-11 rounded-xl bg-[#FF5500] hover:bg-[#CC4400] text-white
+                      flex items-center justify-center transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                    style={{ boxShadow: input.trim() ? '0 0 15px rgba(255,85,0,0.3)' : 'none' }}
                   >
                     {isLoading || isAnyGenerating ? (
                       <Loader2 className="w-4 h-4 animate-spin" />
                     ) : (
                       <Send className="w-4 h-4" />
                     )}
-                  </Button>
+                  </button>
                 </div>
               </form>
             </div>
           </div>
         </div>
+
+        {/* ─── Build Confirmation Dialog ─── */}
+        <AnimatePresence>
+          {pendingBuild && (
+            <BuildConfirmDialog
+              type={pendingBuild.type}
+              onConfirm={() => {
+                const { type, chatContext } = pendingBuild;
+                setPendingBuild(null);
+                executeBuild(type, chatContext);
+              }}
+              onCancel={() => setPendingBuild(null)}
+            />
+          )}
+        </AnimatePresence>
 
         <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
         {editingPlan && (

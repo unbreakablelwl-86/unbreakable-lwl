@@ -1,3 +1,4 @@
+import { useState, useCallback } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -7,6 +8,7 @@ import { AuthProvider } from "@/hooks/useAuth";
 import { UniversityAdminProvider } from "@/hooks/useUniversityAdmin";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { InstallPrompt } from "@/components/pwa/InstallPrompt";
+import { SplashScreen } from "@/components/SplashScreen";
 import AppLayout from "@/layouts/AppLayout";
 import Index from "./pages/Index";
 import Social from "./pages/Social";
@@ -59,15 +61,26 @@ import SignIn from "./pages/SignIn";
 
 const queryClient = new QueryClient();
 
-const App = () => (
+const App = () => {
+  const [splashDone, setSplashDone] = useState(() => {
+    // Only show splash once per session
+    try { return sessionStorage.getItem('splash_done') === '1'; } catch { return false; }
+  });
+  const handleSplashComplete = useCallback(() => {
+    setSplashDone(true);
+    try { sessionStorage.setItem('splash_done', '1'); } catch {}
+  }, []);
+
+  return (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
       <UniversityAdminProvider>
       <TooltipProvider>
-        <div className="dark min-h-screen bg-background">
+        <div className="min-h-screen bg-background">
           <Toaster />
           <Sonner />
           <InstallPrompt />
+          {!splashDone && <SplashScreen onComplete={handleSplashComplete} />}
           <BrowserRouter>
             <Routes>
               {/* Sign-in — standalone full-page (no bottom nav) */}
@@ -243,6 +256,7 @@ const App = () => (
       </UniversityAdminProvider>
     </AuthProvider>
   </QueryClientProvider>
-);
+  );
+};
 
 export default App;

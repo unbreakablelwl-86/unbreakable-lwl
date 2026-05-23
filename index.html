@@ -1,6 +1,16 @@
 <!doctype html>
 <html lang="en" class="dark">
   <head>
+    <script>
+      // Apply saved theme before first paint to prevent flash
+      try {
+        var t = localStorage.getItem('unbreakable_theme');
+        if (t === 'light') {
+          document.documentElement.classList.remove('dark');
+          document.documentElement.classList.add('light');
+        }
+      } catch(e) {}
+    </script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>UNBREAKABLE | Live Without Limits — Training, Nutrition, Mindset & Education</title>
@@ -34,14 +44,14 @@
 
   <body style="background:#080808;color:#fff">
     <div id="root">
-      <!-- Splash screen while React loads -->
-      <div id="ub-splash" style="position:fixed;inset:0;z-index:9999;background:#080808;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;">
-        <img src="/unbreakable-shield.png" alt="" width="80" height="80" style="animation:ub-pulse 1.5s ease-in-out infinite;filter:drop-shadow(0 0 20px rgba(255,85,0,0.4));" onerror="this.style.display='none'" />
-        <p style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:14px;letter-spacing:0.2em;color:#FF5500;text-shadow:0 0 15px rgba(255,85,0,0.4);">KEEP SHOWING UP</p>
-        <div style="width:48px;height:48px;border:2px solid #FF5500;border-top-color:transparent;border-radius:50%;animation:ub-spin 0.8s linear infinite;"></div>
+      <!-- Pre-React splash — immediately visible while JS loads -->
+      <div id="ub-splash" style="position:fixed;inset:0;z-index:9999;background:#080808;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;">
+        <img src="/unbreakable-logo-clear.png" alt="UNBREAKABLE" width="200" style="opacity:0;animation:ub-fade-in 0.5s 0.3s forwards;object-fit:contain;" onerror="this.style.display='none'" />
+        <p style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:14px;letter-spacing:0.2em;color:#FF5500;text-shadow:0 0 15px rgba(255,85,0,0.4);opacity:0;animation:ub-fade-in 0.5s 0.6s forwards;">KEEP SHOWING UP</p>
+        <div style="width:40px;height:40px;border:2px solid #FF5500;border-top-color:transparent;border-radius:50%;animation:ub-spin 0.8s linear infinite;margin-top:8px;"></div>
         <style>
           @keyframes ub-spin { to { transform:rotate(360deg); } }
-          @keyframes ub-pulse { 0%,100% { opacity:1;transform:scale(1); } 50% { opacity:0.7;transform:scale(0.95); } }
+          @keyframes ub-fade-in { to { opacity:1; } }
         </style>
       </div>
     </div>

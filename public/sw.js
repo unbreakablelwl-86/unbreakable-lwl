@@ -1,5 +1,5 @@
-// UNBREAKABLE Service Worker — minimal, network-first with offline fallback
-const CACHE_NAME = 'unbreakable-v1';
+// UNBREAKABLE Service Worker — network-first with SPA fallback
+const CACHE_NAME = 'unbreakable-v2';
 
 self.addEventListener('install', (e) => {
   e.waitUntil(
@@ -18,10 +18,18 @@ self.addEventListener('activate', (e) => {
 });
 
 self.addEventListener('fetch', (e) => {
-  // Only handle navigation requests (page loads)
+  // Navigation requests (page loads) — always serve index.html for SPA routing
   if (e.request.mode === 'navigate') {
     e.respondWith(
-      fetch(e.request).catch(() => caches.match('/'))
+      fetch(e.request)
+        .then((response) => {
+          // Cache the successful response
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put('/', clone));
+          return response;
+        })
+        .catch(() => caches.match('/'))
     );
+    return;
   }
 });
