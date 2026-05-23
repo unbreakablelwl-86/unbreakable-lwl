@@ -1,6 +1,6 @@
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
-import { usePillarTheme } from '@/hooks/usePillarTheme';
+// pillar theme removed — all neon orange
 import {
   Dumbbell,
   Flame,
@@ -67,7 +67,7 @@ const ALL_NAV_ITEMS: NavItemDef[] = [
     label: 'Fuel',
     path: '/fuel',
     activeMatch: ['/fuel'],
-    color: '#FFD600',
+    color: '#FF5500',
     description: 'Nutrition & meals',
   },
   {
@@ -76,7 +76,7 @@ const ALL_NAV_ITEMS: NavItemDef[] = [
     label: 'Move',
     path: '/tracker',
     activeMatch: ['/tracker'],
-    color: '#00C853',
+    color: '#FF5500',
     description: 'Cardio & movement',
   },
   {
@@ -85,7 +85,7 @@ const ALL_NAV_ITEMS: NavItemDef[] = [
     label: 'Mind',
     path: '/mindset',
     activeMatch: ['/mindset'],
-    color: '#7C4DFF',
+    color: '#FF5500',
     description: 'Mental resilience',
   },
   {
@@ -94,7 +94,7 @@ const ALL_NAV_ITEMS: NavItemDef[] = [
     label: 'Uni',
     path: '/university',
     activeMatch: ['/university'],
-    color: '#2196F3',
+    color: '#FF5500',
     description: 'Courses & learning',
   },
   {
@@ -103,7 +103,7 @@ const ALL_NAV_ITEMS: NavItemDef[] = [
     label: 'Habits',
     path: '/habits',
     activeMatch: ['/habits'],
-    color: '#00C853',
+    color: '#FF5500',
     description: 'Daily habit tracking',
   },
   {
@@ -121,7 +121,7 @@ const ALL_NAV_ITEMS: NavItemDef[] = [
     label: 'Inbox',
     path: '/inbox',
     activeMatch: ['/inbox'],
-    color: '#00BCD4',
+    color: '#FF5500',
     description: 'Messages & chats',
   },
   {
@@ -130,7 +130,7 @@ const ALL_NAV_ITEMS: NavItemDef[] = [
     label: 'AI',
     path: '/ai-tokens',
     activeMatch: ['/ai-tokens'],
-    color: '#FFB300',
+    color: '#FF5500',
     description: 'AI coaching tokens',
   },
   {
@@ -139,7 +139,7 @@ const ALL_NAV_ITEMS: NavItemDef[] = [
     label: 'Calc',
     path: '/calculators',
     activeMatch: ['/calculators'],
-    color: '#4CAF50',
+    color: '#FF5500',
     description: 'Fitness calculators',
   },
   {
@@ -148,7 +148,7 @@ const ALL_NAV_ITEMS: NavItemDef[] = [
     label: 'Explore',
     path: '/explore',
     activeMatch: ['/explore'],
-    color: '#E91E63',
+    color: '#FF5500',
     description: 'Discover content',
   },
   {
@@ -157,7 +157,7 @@ const ALL_NAV_ITEMS: NavItemDef[] = [
     label: 'Profile',
     path: '/profile',
     activeMatch: ['/profile'],
-    color: '#9E9E9E',
+    color: '#FF5500',
     description: 'Your profile',
   },
   {
@@ -166,7 +166,7 @@ const ALL_NAV_ITEMS: NavItemDef[] = [
     label: 'Help',
     path: '/faq',
     activeMatch: ['/faq'],
-    color: '#78909C',
+    color: '#FF5500',
     description: 'FAQ, terms & support',
   },
   {
@@ -209,7 +209,7 @@ export default function AppLayout() {
   const [showCustomize, setShowCustomize] = useState(false);
   const [activeTabs, setActiveTabs] = useState<string[]>(loadSavedTabs);
   const { unreadCount } = useConversations();
-  usePillarTheme();
+  // pillar theme removed — all neon orange
 
   const hideNav = !user || HIDE_NAV_PATHS.some(p => location.pathname.startsWith(p));
 
