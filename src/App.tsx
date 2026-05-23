@@ -9,6 +9,7 @@ import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { InstallPrompt } from "@/components/pwa/InstallPrompt";
 import AppLayout from "@/layouts/AppLayout";
 import Index from "./pages/Index";
+import Social from "./pages/Social";
 import Calculators from "./pages/Calculators";
 import Tracker from "./pages/Tracker";
 import Mindset from "./pages/Mindset";
@@ -76,6 +77,9 @@ const App = () => (
               <Route element={<AppLayout />}>
                 {/* Index handles both logged-in hub and logged-out landing */}
                 <Route path="/" element={<Index />} />
+                <Route path="/social" element={
+                  <ProtectedRoute><Social /></ProtectedRoute>
+                } />
                 
                 {/* Founder page - pre-sign-in */}
                 <Route path="/founder" element={<Founder />} />

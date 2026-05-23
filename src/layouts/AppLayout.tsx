@@ -25,6 +25,7 @@ import {
   Plus,
   Minus,
   Activity,
+  Users,
 } from 'lucide-react';
 import { useState, useEffect, useCallback } from 'react';
 import { useConversations } from '@/hooks/useConversations';
@@ -48,9 +49,18 @@ const ALL_NAV_ITEMS: NavItemDef[] = [
     label: 'Home',
     path: '/',
     isShield: true,
-    activeMatch: ['/', '/explore'],
+    activeMatch: ['/'],
     color: '#FF5500',
-    description: 'Feed & dashboard',
+    description: 'Dashboard & pillars',
+  },
+  {
+    id: 'social',
+    icon: Users,
+    label: 'Social',
+    path: '/social',
+    activeMatch: ['/social'],
+    color: '#FF5500',
+    description: 'Timeline & feed',
   },
   {
     id: 'power',
@@ -181,7 +191,7 @@ const ALL_NAV_ITEMS: NavItemDef[] = [
 ];
 
 /* Default 5 tabs in bottom bar (before More) */
-const DEFAULT_TAB_IDS = ['home', 'power', 'fuel', 'movement', 'mindset'];
+const DEFAULT_TAB_IDS = ['home', 'social', 'power', 'fuel', 'movement', 'mindset'];
 const STORAGE_KEY = 'ub-nav-tabs';
 
 function loadSavedTabs(): string[] {
