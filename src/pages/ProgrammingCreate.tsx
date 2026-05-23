@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -35,6 +35,7 @@ import { useToast } from '@/hooks/use-toast';
 export default function ProgrammingCreate() {
   const { user } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [builderMode, setBuilderMode] = useState<'select' | 'auto' | 'manual'>('select');
   const [currentStep, setCurrentStep] = useState(1);
@@ -153,6 +154,11 @@ export default function ProgrammingCreate() {
   const handleModeSelect = (mode: 'auto' | 'manual') => {
     if (!user) {
       setShowAuthModal(true);
+      return;
+    }
+    if (mode === 'auto') {
+      // Skip the form — go straight to AI Coach chat with programme context
+      navigate('/help?mode=programme');
       return;
     }
     setBuilderMode(mode);

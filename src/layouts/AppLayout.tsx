@@ -67,7 +67,7 @@ const ALL_NAV_ITEMS: NavItemDef[] = [
     label: 'Fuel',
     path: '/fuel',
     activeMatch: ['/fuel'],
-    color: '#FF8C00',
+    color: '#FFD600',
     description: 'Nutrition & meals',
   },
   {
@@ -162,12 +162,12 @@ const ALL_NAV_ITEMS: NavItemDef[] = [
   },
   {
     id: 'help',
-    icon: Sparkles,
-    label: 'AI Coach',
-    path: '/help',
-    activeMatch: ['/help'],
-    color: '#FF5500',
-    description: 'AI coaching chat',
+    icon: HelpCircle,
+    label: 'Help',
+    path: '/faq',
+    activeMatch: ['/faq'],
+    color: '#78909C',
+    description: 'FAQ, terms & support',
   },
   {
     id: 'admin',

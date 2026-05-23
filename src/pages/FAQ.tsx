@@ -1,247 +1,331 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { ArrowLeft, ChevronDown, ChevronUp, HelpCircle, Flame } from 'lucide-react';
-import { LandingFooter } from '@/components/landing/LandingFooter';
-import trademarkBadge from '@/assets/trademark-badge.png';
+import { useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+  ChevronDown,
+  Sparkles,
+  Shield,
+  Users,
+  CreditCard,
+  Dumbbell,
+  Brain,
+  Flame,
+  FileText,
+  Mail,
+  ExternalLink,
+  Instagram,
+} from 'lucide-react';
+import shieldLogo from '@/assets/unbreakable-shield.png';
 
-const fadeUp = {
-  initial: { opacity: 0, y: 16 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true },
-  transition: { duration: 0.4 },
-};
-
+/* ─── FAQ Data ─── */
 interface FAQItem {
-  question: string;
-  answer: string;
+  q: string;
+  a: string;
 }
 
-const faqs: { category: string; items: FAQItem[] }[] = [
+const FAQ_SECTIONS: { title: string; icon: typeof Shield; items: FAQItem[] }[] = [
   {
-    category: 'Getting Started',
+    title: 'Getting Started',
+    icon: Shield,
     items: [
       {
-        question: 'What is UNBREAKABLE?',
-        answer:
-          'UNBREAKABLE is your all-in-one fitness coaching platform. We take the knowledge behind £5,000+ personal training qualifications and make it accessible to everyone — covering Power (gym training), Fuel (nutrition), Movement (cardio & mobility), and Mindset (mental resilience).',
+        q: 'What is UNBREAKABLE?',
+        a: 'UNBREAKABLE is an all-in-one fitness platform built by Live Without Limits LTD. It combines training programmes, nutrition tracking, movement logging, mindset tools, and AI coaching — all in one place. Our mission: help you build a body and mind that cannot be broken.',
       },
       {
-        question: 'Is UNBREAKABLE free to use?',
-        answer:
-          'Yes! Core features like workout tracking, nutrition tools, cardio tracking, habit tracking, calculators, 295+ recipes, and the community timeline are completely free. AI-powered features like the AI Coach, programme builds, meal plans, and Snap & Track use Unbreakable Tokens.',
+        q: 'Is UNBREAKABLE free to use?',
+        a: 'Yes! The free tier gives you access to basic training tools, the community feed, habit tracking, and limited AI coaching. Upgrade to Pro for full AI tokens, bespoke programme generation, 1-2-1 coaching options, and premium content.',
       },
       {
-        question: 'How do I create an account?',
-        answer:
-          'Tap "Get Started" on the homepage, enter your name, date of birth, email, and a password. You\'ll be guided through a quick onboarding flow to personalise your experience across Power, Fuel, Movement, and Mindset.',
+        q: 'How do I set up my profile?',
+        a: 'When you first sign up, the onboarding flow collects your goals, experience level, and body stats. You can update these any time from your Profile page. The more info you give us, the better your AI-generated programmes will be.',
+      },
+      {
+        q: 'What devices does UNBREAKABLE work on?',
+        a: 'UNBREAKABLE is a progressive web app (PWA). It works on any device with a browser — iPhone, Android, tablet, desktop. Add it to your home screen for the full app experience.',
       },
     ],
   },
   {
-    category: 'Unbreakable Tokens',
+    title: 'Training & Power',
+    icon: Dumbbell,
     items: [
       {
-        question: 'What are Unbreakable Tokens?',
-        answer:
-          'Tokens are the currency for AI-powered features. Chat with the AI Coach costs 0.2 tokens, programme builds cost 1.0 token, meal plans cost 1.0 token, and Snap & Track food scanning costs 0.5 tokens. You get tokens through our subscription plans.',
+        q: 'How does the AI Programme Builder work?',
+        a: 'Tap "Auto Builder" in the Power section. The AI Coach pulls your saved profile data (goals, level, availability) and asks for anything missing. It then builds a fully periodised programme tailored to you — review it, confirm, and it saves straight to your profile.',
       },
       {
-        question: 'What subscription plans are available?',
-        answer:
-          'We offer three plans: Starter (£25/month — 50 tokens), Pro (£49/month — 150 tokens), and Elite (£79/month — 500 tokens). All plans include full access to every AI feature.',
+        q: 'Can I build my own programme manually?',
+        a: 'Absolutely. Choose "Manual Builder" to create your own programme from scratch using our full exercise library of 800+ exercises with detailed breakdowns.',
       },
       {
-        question: 'Do tokens roll over?',
-        answer:
-          'Token balances are topped up each billing cycle. Unused tokens from the previous cycle remain in your balance — nothing is wasted.',
+        q: 'What exercises are in the library?',
+        a: 'We have 800+ exercises covering every muscle group, with proper form descriptions, target muscles, difficulty ratings, and real exercise images. Every description is written to UNBREAKABLE standards.',
       },
     ],
   },
   {
-    category: 'Features',
+    title: 'Nutrition & Fuel',
+    icon: Flame,
     items: [
       {
-        question: 'What does the AI Coach do?',
-        answer:
-          'The AI Coach is your personal fitness assistant. It can build custom training programmes, create personalised meal plans, answer any fitness or nutrition question, and analyse your food with Snap & Track (just take a photo and it breaks down the macros).',
+        q: 'How does meal tracking work?',
+        a: 'Log your meals in the Fuel section. You can search foods, scan barcodes, or use the AI to generate a personalised meal plan. Track macros, calories, and water intake daily.',
       },
       {
-        question: 'What is Snap & Track?',
-        answer:
-          'Snap & Track lets you photograph your meals and instantly get a full macro breakdown (calories, protein, carbs, fat) for every item on your plate. Results can be logged straight to your food diary and Store Cupboard.',
-      },
-      {
-        question: 'What is the University?',
-        answer:
-          'The UNBREAKABLE University offers structured courses in Power, Nutrition, and Mindset at Level 2 and Level 3 — the same content taught in professional PT qualifications. Each course has chapters, quizzes, and certificates on completion.',
-      },
-      {
-        question: 'How do the games work?',
-        answer:
-          'We\'ve built fun fitness-themed games (Snake, Tetris, Alleyway) with global high-score leaderboards. They\'re free to play — a bit of fun between sets!',
-      },
-      {
-        question: 'What recipes are available?',
-        answer:
-          'We have 295+ recipes across five collections: High-Protein, Low-Carb, Vegan, 5-Ingredient, and Air Fryer. All recipes include full macro breakdowns and are completely free.',
+        q: 'Can the AI create a meal plan for me?',
+        a: 'Yes — the AI Coach can build a bespoke meal plan based on your goals, dietary preferences, and calorie targets. Just ask!',
       },
     ],
   },
   {
-    category: 'Community',
+    title: 'Mindset',
+    icon: Brain,
     items: [
       {
-        question: 'How does the community timeline work?',
-        answer:
-          'Post updates, share progress photos and videos, and interact with other members. You can tag people with @mentions and use #hashtags. Posts can be public, friends-only, or private.',
+        q: 'What mindset tools are available?',
+        a: 'The Mindset section includes breathing exercises, cold exposure protocols, meditation guides, journaling prompts, and mental resilience programmes — all branded to UNBREAKABLE standards.',
       },
       {
-        question: 'Can I make my profile private?',
-        answer:
-          'Yes — go to your Profile → Settings tab and toggle your profile visibility. Private profiles only show your posts to friends.',
-      },
-      {
-        question: 'How do friends and followers work?',
-        answer:
-          'You can send friend requests (mutual connection) and also follow other members to see their public posts in your timeline. The Follow button appears on posts and user profiles.',
+        q: 'Is this based on Wim Hof?',
+        a: 'Our breathing and cold exposure protocols are built on widely practiced techniques. Everything is developed and branded under UNBREAKABLE and Live Without Limits — delivering our own approach to mental toughness.',
       },
     ],
   },
   {
-    category: 'Account & Support',
+    title: 'Coaching & Pro',
+    icon: Users,
     items: [
       {
-        question: 'How do I change my password?',
-        answer:
-          'Go to your Profile page and scroll down to the Password section. Enter your new password and confirm to update it.',
+        q: 'What does Pro unlock?',
+        a: 'Pro gives you full AI coaching tokens, bespoke programme generation, advanced analytics, and the option for hybrid 1-2-1 human coaching with real UNBREAKABLE coaches.',
       },
       {
-        question: 'How do I update my social links?',
-        answer:
-          'Go to Profile → Settings → Social Links. Add your Instagram, TikTok, Twitter/X, Facebook, YouTube, or Snapchat handles and tap Save.',
+        q: 'How does 1-2-1 coaching work?',
+        a: 'Choose your coach from the Coaches page. Coaches offer weekly, bi-weekly, or monthly check-ins via video. They build custom programme blocks, review your form, and track your progress through the platform.',
       },
       {
-        question: 'Who built UNBREAKABLE?',
-        answer:
-          'UNBREAKABLE is built by Live Without Limits LTD, founded in Liverpool, UK. Our mission is to make professional-grade fitness education affordable and accessible to everyone.',
+        q: 'What is Unbreakable University?',
+        a: 'Unbreakable University is our own unofficial qualification system — branded under UNBREAKABLE, delivering NVQ-level fitness knowledge to the general public. It is NOT a legal NVQ or PT certification.',
+      },
+    ],
+  },
+  {
+    title: 'Billing & Account',
+    icon: CreditCard,
+    items: [
+      {
+        q: 'How do I upgrade to Pro?',
+        a: 'Go to your Profile → Settings → Subscription. You can upgrade to Pro at any time. Payment is handled securely through Stripe.',
       },
       {
-        question: 'How do I get help?',
-        answer:
-          'You can chat with the AI Coach anytime via the Help page — it knows everything about the platform. For account issues, reach out via email at unbreakable.lwl@gmail.com.',
+        q: 'Can I cancel my subscription?',
+        a: 'Yes, you can cancel any time from your subscription settings. You\'ll keep Pro access until the end of your billing period.',
+      },
+      {
+        q: 'How do AI tokens work?',
+        a: 'Free users get a limited number of AI coaching interactions. Pro users get a generous monthly allocation. Tokens reset each billing cycle.',
       },
     ],
   },
 ];
 
-function FAQAccordion({ item }: { item: FAQItem }) {
+/* ─── Team ─── */
+const TEAM = [
+  {
+    name: 'John James',
+    role: 'Founder & CEO',
+    bio: 'Liverpool-born fitness entrepreneur. Founded Live Without Limits LTD to prove that anyone can build an unbreakable body and mind. Keep showing up.',
+    avatar: '🦁',
+  },
+];
+
+/* ─── Accordion Item ─── */
+function AccordionItem({ item }: { item: FAQItem }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="border border-border rounded-lg overflow-hidden">
+    <div className="border-b border-white/[0.06]">
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-primary/5 transition-colors"
+        className="w-full flex items-center justify-between py-4 px-1 text-left transition-colors hover:text-[#FF5500]"
       >
-        <span className="font-semibold text-foreground pr-4">{item.question}</span>
-        {open ? (
-          <ChevronUp className="w-5 h-5 text-primary shrink-0" />
-        ) : (
-          <ChevronDown className="w-5 h-5 text-muted-foreground shrink-0" />
-        )}
-      </button>
-      {open && (
-        <motion.div
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: 'auto' }}
-          exit={{ opacity: 0, height: 0 }}
-          className="px-5 pb-4"
-        >
-          <p className="text-muted-foreground leading-relaxed">{item.answer}</p>
+        <span className="text-[14px] font-semibold text-white pr-4">{item.q}</span>
+        <motion.div animate={{ rotate: open ? 180 : 0 }} transition={{ duration: 0.2 }}>
+          <ChevronDown size={16} className="text-[#555] flex-shrink-0" />
         </motion.div>
-      )}
+      </button>
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            className="overflow-hidden"
+          >
+            <p className="text-[13px] text-[#999] leading-relaxed pb-4 px-1">{item.a}</p>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
 
+/* ─── Main Page ─── */
 export default function FAQ() {
+  const navigate = useNavigate();
+
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col">
+    <div className="min-h-screen" style={{ background: '#080808' }}>
       {/* Header */}
-      <header className="sticky top-0 z-50 border-b border-border bg-card/80 backdrop-blur-md">
-        <div className="container mx-auto px-6 py-4 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-3">
-            <img src={trademarkBadge} alt="UNBREAKABLE" className="h-8 logo-neon-glow" />
-            <span className="font-display text-lg tracking-wide hidden sm:block">UNBREAKABLE</span>
-          </Link>
-          <Link
-            to="/"
-            className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back
-          </Link>
+      <div className="sticky top-0 z-40 border-b border-white/[0.06]" style={{ background: 'rgba(8,8,8,0.95)', backdropFilter: 'blur(20px)' }}>
+        <div className="flex items-center justify-center gap-3 px-4 py-3 max-w-2xl mx-auto">
+          <img src={shieldLogo} alt="UNBREAKABLE" className="h-7 w-7" />
+          <h1 className="text-[15px] font-black uppercase tracking-[0.15em] text-white" style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
+            Help & Support
+          </h1>
         </div>
-      </header>
+      </div>
 
-      {/* Hero */}
-      <section className="py-16 border-b border-border">
-        <div className="container mx-auto px-6 text-center max-w-3xl">
-          <motion.div {...fadeUp} className="space-y-4">
-            <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center mx-auto">
-              <HelpCircle className="w-8 h-8 text-primary" />
+      <div className="max-w-2xl mx-auto px-4 pb-28">
+        {/* AI Coach CTA — top banner */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mt-4 mb-6 rounded-2xl overflow-hidden cursor-pointer"
+          onClick={() => navigate('/help')}
+          style={{
+            background: 'linear-gradient(135deg, rgba(255,85,0,0.15) 0%, rgba(255,85,0,0.05) 100%)',
+            border: '1px solid rgba(255,85,0,0.2)',
+          }}
+        >
+          <div className="flex items-center gap-4 px-5 py-4">
+            <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(255,85,0,0.15)' }}>
+              <Sparkles className="w-6 h-6 text-[#FF5500]" />
             </div>
-            <h1 className="text-4xl sm:text-5xl font-display tracking-wide">
-              <span className="text-primary">FAQ</span>
-            </h1>
-            <p className="text-muted-foreground text-lg">
-              Everything you need to know about UNBREAKABLE
-            </p>
-          </motion.div>
-        </div>
-      </section>
+            <div className="flex-1">
+              <p className="text-[14px] font-bold text-white">Still need help?</p>
+              <p className="text-[12px] text-[#888] mt-0.5">Chat with your AI Coach for instant answers</p>
+            </div>
+            <ExternalLink size={16} className="text-[#FF5500]" />
+          </div>
+        </motion.div>
 
-      {/* FAQ Content */}
-      <main className="flex-1 py-12">
-        <div className="container mx-auto px-6 max-w-3xl space-y-10">
-          {faqs.map((section, i) => (
-            <motion.div
-              key={section.category}
-              {...fadeUp}
-              transition={{ duration: 0.4, delay: i * 0.05 }}
-            >
-              <h2 className="text-xl font-display tracking-wide text-primary mb-4 flex items-center gap-2">
-                <Flame className="w-5 h-5" />
-                {section.category.toUpperCase()}
-              </h2>
-              <div className="space-y-3">
-                {section.items.map((item) => (
-                  <FAQAccordion key={item.question} item={item} />
-                ))}
+        {/* FAQ Sections */}
+        {FAQ_SECTIONS.map((section) => {
+          const Icon = section.icon;
+          return (
+            <div key={section.title} className="mb-8">
+              <div className="flex items-center gap-2.5 mb-3">
+                <Icon size={16} className="text-[#FF5500]" />
+                <h2 className="text-[13px] font-bold uppercase tracking-wider text-[#FF5500]" style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
+                  {section.title}
+                </h2>
               </div>
-            </motion.div>
-          ))}
+              <div className="rounded-xl overflow-hidden" style={{ background: '#111', border: '1px solid rgba(255,255,255,0.04)' }}>
+                <div className="px-4">
+                  {section.items.map((item, i) => (
+                    <AccordionItem key={i} item={item} />
+                  ))}
+                </div>
+              </div>
+            </div>
+          );
+        })}
 
-          {/* Still have questions */}
-          <motion.div {...fadeUp} className="text-center pt-8 border-t border-border">
-            <p className="text-muted-foreground mb-4">Still have questions?</p>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <Link to="/help">
-                <button className="px-6 py-3 bg-primary text-primary-foreground rounded-lg font-display tracking-wide hover:bg-primary/90 transition-colors">
-                  ASK THE AI COACH
-                </button>
-              </Link>
-              <a href="mailto:unbreakable.lwl@gmail.com">
-                <button className="px-6 py-3 border border-primary/40 text-primary rounded-lg font-display tracking-wide hover:bg-primary/10 transition-colors">
-                  EMAIL US
-                </button>
+        {/* Meet the Team */}
+        <div className="mb-8">
+          <div className="flex items-center gap-2.5 mb-3">
+            <Users size={16} className="text-[#FF5500]" />
+            <h2 className="text-[13px] font-bold uppercase tracking-wider text-[#FF5500]" style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
+              Meet the Founder
+            </h2>
+          </div>
+          {TEAM.map((member) => (
+            <div
+              key={member.name}
+              className="rounded-xl p-5"
+              style={{ background: '#111', border: '1px solid rgba(255,255,255,0.04)' }}
+            >
+              <div className="flex items-center gap-4 mb-3">
+                <div className="w-14 h-14 rounded-full flex items-center justify-center text-2xl" style={{ background: 'rgba(255,85,0,0.1)' }}>
+                  {member.avatar}
+                </div>
+                <div>
+                  <p className="text-[15px] font-bold text-white">{member.name}</p>
+                  <p className="text-[12px] text-[#FF5500] font-semibold uppercase tracking-wider">{member.role}</p>
+                </div>
+              </div>
+              <p className="text-[13px] text-[#999] leading-relaxed">{member.bio}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Terms & Legal */}
+        <div className="mb-8">
+          <div className="flex items-center gap-2.5 mb-3">
+            <FileText size={16} className="text-[#FF5500]" />
+            <h2 className="text-[13px] font-bold uppercase tracking-wider text-[#FF5500]" style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
+              Legal
+            </h2>
+          </div>
+          <div className="rounded-xl overflow-hidden" style={{ background: '#111', border: '1px solid rgba(255,255,255,0.04)' }}>
+            <div className="px-4">
+              {[
+                { label: 'Terms of Service', desc: 'Our terms for using the UNBREAKABLE platform' },
+                { label: 'Privacy Policy', desc: 'How we handle and protect your data' },
+                { label: 'Cookie Policy', desc: 'Information about cookies we use' },
+                { label: 'Disclaimer', desc: 'UNBREAKABLE is not a substitute for professional medical advice' },
+              ].map((item, i) => (
+                <div key={i} className="py-4 border-b border-white/[0.06] last:border-0">
+                  <p className="text-[14px] font-semibold text-white">{item.label}</p>
+                  <p className="text-[12px] text-[#666] mt-0.5">{item.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Contact */}
+        <div className="mb-8">
+          <div className="flex items-center gap-2.5 mb-3">
+            <Mail size={16} className="text-[#FF5500]" />
+            <h2 className="text-[13px] font-bold uppercase tracking-wider text-[#FF5500]" style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
+              Contact Us
+            </h2>
+          </div>
+          <div className="rounded-xl p-5" style={{ background: '#111', border: '1px solid rgba(255,255,255,0.04)' }}>
+            <p className="text-[13px] text-[#999] leading-relaxed mb-3">
+              Live Without Limits LTD — Liverpool, UK
+            </p>
+            <div className="space-y-2">
+              <a href="mailto:unbreakable.lwl@gmail.com" className="flex items-center gap-2 text-[13px] text-[#FF5500] hover:underline">
+                <Mail size={14} /> unbreakable.lwl@gmail.com
+              </a>
+              <a href="https://instagram.com/unbreakable.lwl" target="_blank" rel="noreferrer" className="flex items-center gap-2 text-[13px] text-[#FF5500] hover:underline">
+                <Instagram size={14} /> @unbreakable.lwl
               </a>
             </div>
-          </motion.div>
+          </div>
         </div>
-      </main>
 
-      <LandingFooter />
+        {/* Bottom AI Coach CTA */}
+        <motion.div
+          className="rounded-2xl overflow-hidden cursor-pointer mb-4"
+          onClick={() => navigate('/help')}
+          whileTap={{ scale: 0.98 }}
+          style={{
+            background: 'linear-gradient(135deg, #FF5500 0%, #CC4400 100%)',
+          }}
+        >
+          <div className="flex items-center justify-center gap-3 px-5 py-4">
+            <Sparkles className="w-5 h-5 text-white" />
+            <span className="text-[14px] font-bold text-white uppercase tracking-wider" style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
+              Chat with AI Coach
+            </span>
+          </div>
+        </motion.div>
+      </div>
     </div>
   );
 }

@@ -383,6 +383,22 @@ export default function Help() {
 
   // Context from URL params or sessionStorage
   useEffect(() => {
+    const modeParam = searchParams.get('mode');
+    if (modeParam === 'programme') {
+      setInput('Build me a bespoke training programme. Pull my saved profile info and ask me anything that\'s missing before you start.');
+      setSearchParams({});
+      return;
+    }
+    if (modeParam === 'meal') {
+      setInput('Create a personalised meal plan for me. Use my saved profile data and ask me about any preferences or info that\'s missing.');
+      setSearchParams({});
+      return;
+    }
+    if (modeParam === 'mindset') {
+      setInput('Build me a mindset programme. Pull my profile info and ask me what I want to focus on.');
+      setSearchParams({});
+      return;
+    }
     const contextParam = searchParams.get('context');
     if (contextParam) {
       setInput(contextParam);

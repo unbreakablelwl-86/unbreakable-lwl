@@ -27,7 +27,7 @@ const BRAND_DEFAULT: PillarDef = { hex: '#FF5500', hsl: '22 100% 50%' };
 const PILLAR_MAP: Record<string, PillarDef> = {
   '/programming':  { hex: '#FF5500', hsl: '22 100% 50%' },
   '/calculators':  { hex: '#FF5500', hsl: '22 100% 50%' },
-  '/fuel':         { hex: '#FF8C00', hsl: '33 100% 50%' },
+  '/fuel':         { hex: '#FFD600', hsl: '51 100% 50%' },
   '/tracker':      { hex: '#00C853', hsl: '145 100% 39%' },
   '/mindset':      { hex: '#7C4DFF', hsl: '255 100% 65%' },
   '/university':   { hex: '#2196F3', hsl: '207 90% 54%' },

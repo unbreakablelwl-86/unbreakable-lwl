@@ -1,14 +1,14 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
 import { useOnboardingCheck } from '@/hooks/useOnboardingCheck';
-import { useUserSettings } from '@/hooks/useUserSettings';
+
 import { UnifiedFeed } from '@/components/hub/UnifiedFeed';
 import { CardioTrackerModal } from '@/components/tracker/CardioTrackerModal';
 import { RecordActionMenu } from '@/components/hub/RecordActionMenu';
 import { AuthModal } from '@/components/tracker/AuthModal';
-import { MotivationalPopup } from '@/components/MotivationalPopup';
+import { MotivationBanner } from '@/components/MotivationBanner';
 import { UserSearchModal } from '@/components/tracker/UserSearchModal';
 import { FriendRequestsModal } from '@/components/tracker/FriendRequestsModal';
 import { FriendsListModal } from '@/components/tracker/FriendsListModal';
@@ -18,24 +18,9 @@ import { LandingPage } from '@/components/landing/LandingPage';
 
 type Tab = 'feed' | 'messages' | 'notifications';
 
-const MOTIVATION_STORAGE_KEY = 'unbreakable_motivation';
-
-function getMotivationState(): { lastShown: number; visitCount: number } {
-  try {
-    const raw = localStorage.getItem(MOTIVATION_STORAGE_KEY);
-    if (raw) return JSON.parse(raw);
-  } catch {}
-  return { lastShown: 0, visitCount: 0 };
-}
-
-function setMotivationState(state: { lastShown: number; visitCount: number }) {
-  localStorage.setItem(MOTIVATION_STORAGE_KEY, JSON.stringify(state));
-}
-
 const Index = () => {
   const { user, loading } = useAuth();
   const { needsOnboarding, loading: onboardingLoading } = useOnboardingCheck();
-  const { settings } = useUserSettings();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState<Tab>('feed');
@@ -46,10 +31,6 @@ const Index = () => {
   const [showUserSearch, setShowUserSearch] = useState(false);
   const [showFriendRequests, setShowFriendRequests] = useState(false);
   const [showFriendsList, setShowFriendsList] = useState(false);
-  const [showMotivation, setShowMotivation] = useState(false);
-  const [motivationTrigger, setMotivationTrigger] = useState<'sign_in' | 'session_complete' | 'habits_logged' | 'programme_complete'>('sign_in');
-  const [motivationContext, setMotivationContext] = useState<string | undefined>();
-  const hasCheckedMotivation = useRef(false);
   usePresence();
 
   useEffect(() => {
@@ -65,34 +46,7 @@ const Index = () => {
     }
   }, [user, loading, onboardingLoading, needsOnboarding, navigate]);
 
-  useEffect(() => {
-    if (!user || loading || hasCheckedMotivation.current) return;
-    if (settings && (settings as any).motivational_popups_enabled === false) return;
-    hasCheckedMotivation.current = true;
-    const state = getMotivationState();
-    const now = Date.now();
-    const twentyFourHours = 24 * 60 * 60 * 1000;
-    if (now - state.lastShown > twentyFourHours) {
-      const t = setTimeout(() => {
-        setMotivationTrigger('sign_in');
-        setMotivationContext(undefined);
-        setShowMotivation(true);
-        setMotivationState({ lastShown: now, visitCount: 0 });
-      }, 800);
-      return () => clearTimeout(t);
-    }
-    const newCount = state.visitCount + 1;
-    setMotivationState({ ...state, visitCount: newCount });
-    if (newCount >= 10) {
-      const t = setTimeout(() => {
-        setMotivationTrigger('sign_in');
-        setMotivationContext('Random motivational check-in on home page visit');
-        setShowMotivation(true);
-        setMotivationState({ lastShown: now, visitCount: 0 });
-      }, 800);
-      return () => clearTimeout(t);
-    }
-  }, [user, loading, settings]);
+  // Motivation popup removed — replaced by MotivationBanner inline
 
   if (loading || (user && onboardingLoading)) {
     return (
@@ -115,6 +69,9 @@ const Index = () => {
           onShowActionMenu={() => setShowActionMenu(true)}
         />
 
+        {/* Motivation banner — shows on load, cycles quotes */}
+        <MotivationBanner />
+
         <main className="max-w-2xl mx-auto">
           {activeTab === 'feed' && (
             <UnifiedFeed
@@ -133,12 +90,6 @@ const Index = () => {
         <UserSearchModal isOpen={showUserSearch} onClose={() => setShowUserSearch(false)} />
         <FriendRequestsModal isOpen={showFriendRequests} onClose={() => setShowFriendRequests(false)} />
         <FriendsListModal isOpen={showFriendsList} onClose={() => setShowFriendsList(false)} />
-        <MotivationalPopup
-          trigger={motivationTrigger}
-          context={motivationContext}
-          open={showMotivation}
-          onClose={() => setShowMotivation(false)}
-        />
       </div>
     );
   }
