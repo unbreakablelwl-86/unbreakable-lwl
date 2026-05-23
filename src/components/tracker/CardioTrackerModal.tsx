@@ -20,6 +20,7 @@ import { MedalCheckStats } from '@/lib/medalDefinitions';
 import { toast } from 'sonner';
 import { Play, Square, Pause, Timer, Globe, Users, Lock, Footprints, Bike, Edit3, Waves, Droplets, Save, Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { PostSessionSummary } from './PostSessionSummary';
 import { CountdownOverlay } from '@/components/CountdownOverlay';
 import { useCardioVoice } from '@/hooks/useCardioVoice';
 import {
@@ -1299,25 +1300,14 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
                     </div>
                   </div>
 
-                  {/* Final Stats */}
-                  <div className="grid grid-cols-3 gap-3 text-center">
-                    <div className="bg-primary/10 rounded-xl p-4 border-2 border-primary/30 neon-border-subtle">
-                      <p className="font-display text-3xl text-primary neon-glow-subtle">{distance.toFixed(2)}</p>
-                      <p className="text-xs text-muted-foreground uppercase tracking-wide">km</p>
-                    </div>
-                    <div className="bg-primary/10 rounded-xl p-4 border-2 border-primary/30 neon-border-subtle">
-                      <p className="font-display text-3xl text-primary neon-glow-subtle">
-                        {formatTime(elapsedSeconds)}
-                      </p>
-                      <p className="text-xs text-muted-foreground uppercase tracking-wide">time</p>
-                    </div>
-                    <div className="bg-primary/10 rounded-xl p-4 border-2 border-primary/30 neon-border-subtle">
-                      <p className="font-display text-3xl text-primary neon-glow-subtle">
-                        {calculateSpeed().toFixed(1)}
-                      </p>
-                      <p className="text-xs text-muted-foreground uppercase tracking-wide">km/h</p>
-                    </div>
-                  </div>
+                  {/* Detailed Session Summary with Splits */}
+                  <PostSessionSummary
+                    distance={distance}
+                    elapsedSeconds={elapsedSeconds}
+                    positions={positions}
+                    activityLabel={config?.label || 'Session'}
+                    activityIcon={ActivityIcon}
+                  />
 
                   {/* Form Fields */}
                   <div className="space-y-4">
