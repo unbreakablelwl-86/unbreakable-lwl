@@ -20,7 +20,6 @@ const PILLARS = [
     sub: 'Strength & PT Hub',
     icon: Zap,
     path: '/programming',
-    iconBg: 'bg-amber-500/20',
   },
   {
     id: 'fuel',
@@ -28,7 +27,6 @@ const PILLARS = [
     sub: 'Nutrition Tracker',
     icon: Flame,
     path: '/fuel',
-    iconBg: 'bg-red-500/20',
   },
   {
     id: 'movement',
@@ -36,7 +34,6 @@ const PILLARS = [
     sub: 'Cardio & GPS',
     icon: Activity,
     path: '/tracker',
-    iconBg: 'bg-emerald-500/20',
   },
   {
     id: 'mindset',
@@ -44,7 +41,6 @@ const PILLARS = [
     sub: 'Mental Performance',
     icon: Brain,
     path: '/mindset',
-    iconBg: 'bg-pink-500/20',
   },
   {
     id: 'university',
@@ -52,7 +48,6 @@ const PILLARS = [
     sub: 'Unbreakable University',
     icon: GraduationCap,
     path: '/university',
-    iconBg: 'bg-yellow-600/20',
   },
 ];
 
@@ -189,8 +184,8 @@ export function HomeDashboard() {
                 style={{ background: 'linear-gradient(135deg, rgba(26,26,26,0.9) 0%, rgba(17,17,17,0.95) 100%)' }}
               >
                 {/* Icon */}
-                <div className={`w-12 h-12 rounded-xl ${p.iconBg} flex items-center justify-center
-                  shadow-[0_0_15px_rgba(255,85,0,0.15)] group-hover:shadow-[0_0_25px_rgba(255,85,0,0.3)] transition-shadow`}>
+                <div className="w-12 h-12 rounded-xl bg-[#111] border border-[#FF5500]/20 flex items-center justify-center
+                  shadow-[0_0_15px_rgba(255,85,0,0.15)] group-hover:shadow-[0_0_25px_rgba(255,85,0,0.4)] transition-shadow">
                   <p.icon className="w-6 h-6 text-[#FF5500]" 
                     style={{ filter: 'drop-shadow(0 0 6px rgba(255,85,0,0.6))' }} />
                 </div>
