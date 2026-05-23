@@ -43,7 +43,7 @@ export function SportPreferenceCard() {
           SPORT PREFERENCE
         </CardTitle>
         <p className="text-xs text-muted-foreground">
-          Your AI coach will tailor programmes to your sport. Change or remove any time.
+          Your Unbreakable Coach will tailor programmes to your sport. Change or remove any time.
         </p>
       </CardHeader>
       <CardContent className="space-y-3">

@@ -64,7 +64,7 @@ const ALL_QUICK_ACTIONS: QuickAction[] = [
   { id: 'run', label: 'Track Run', icon: Activity, path: '/tracker' },
   { id: 'lift', label: 'Start Lift', icon: Dumbbell, path: '/programming' },
   { id: 'journal', label: 'Journal', icon: BookOpen, path: '/habits' },
-  { id: 'coach', label: 'AI Coach', icon: Sparkles, path: '/help' },
+  { id: 'coach', label: 'Unbreakable Coach', icon: Sparkles, path: '/help' },
   { id: 'calc', label: 'Calculators', icon: Calculator, path: '/calculators' },
   { id: 'inbox', label: 'Inbox', icon: MessageCircle, path: '/inbox' },
   { id: 'profile', label: 'Profile', icon: User, path: '/profile' },
@@ -323,7 +323,7 @@ export function HomeDashboard() {
                     style={{ textShadow: '0 0 15px rgba(255,85,0,0.4)' }}>
                     UPGRADE YOUR TIER
                   </p>
-                  <p className="text-xs text-gray-500 mt-1">Unlock unlimited AI coaching, programmes & more</p>
+                  <p className="text-xs text-gray-500 mt-1">Unlock unlimited Unbreakable Coaching, programmes & more</p>
                 </div>
                 <ChevronRight className="w-5 h-5 text-[#FF5500] group-hover:translate-x-1 transition-transform" />
               </div>

@@ -93,7 +93,7 @@ export function SessionResultsView({ session, onClose, onViewFeedback }: Session
       <ScrollArea className="h-[calc(100vh-180px)]">
         <div className="space-y-6 max-w-2xl mx-auto pb-8">
           {/* Summary Card */}
-          <Card className="p-4 border-primary/30 bg-gradient-to-br from-primary/10 to-primary/5 border-gray-800 bg-[#111]">
+          <Card className="p-4 border-primary/30   border-gray-800 bg-[#111]">
             <div className="flex items-center gap-4 mb-4">
               <div className="w-14 h-14 rounded-full bg-primary/20 flex items-center justify-center">
                 <CheckCircle className="w-7 h-7 text-primary" />

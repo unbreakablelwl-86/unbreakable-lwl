@@ -9,6 +9,9 @@ const DEFAULT_HABITS: HabitState = {
   learnDaily: false,
   water: false,
   hitYourNumbers: false,
+  sauna: false,
+  coldShower: false,
+  breathworkDone: false,
   journal: '',
 };
 
@@ -38,6 +41,9 @@ export function useDailyHabits() {
         learnDaily: data.learn_daily,
         water: data.water,
         hitYourNumbers: data.hit_your_numbers,
+        sauna: (data as any).sauna ?? false,
+        coldShower: (data as any).cold_shower ?? false,
+        breathworkDone: (data as any).breathwork_done ?? false,
         journal: data.journal || '',
       });
     } else {
@@ -65,8 +71,11 @@ export function useDailyHabits() {
         water: newHabits.water,
         do_the_hard_thing: false,
         hit_your_numbers: newHabits.hitYourNumbers,
+        sauna: newHabits.sauna,
+        cold_shower: newHabits.coldShower,
+        breathwork_done: newHabits.breathworkDone,
         journal: newHabits.journal,
-      }, { onConflict: 'user_id,habit_date' });
+      } as any, { onConflict: 'user_id,habit_date' });
 
     setSaving(false);
   }, [user, dateStr]);

@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
-import { useSearchParams, Link } from 'react-router-dom';
+import { useSearchParams, Link, useNavigate } from 'react-router-dom';
 import { ThemedLogo } from '@/components/ThemedLogo';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { ThemeToggle } from '@/components/hub/ThemeToggle';
 import { PageNavigation, SwipeNavigationWrapper } from '@/components/PageNavigation';
-import { Dumbbell, Flame, Timer, ArrowRight } from 'lucide-react';
+import { Dumbbell, Flame, Timer, ArrowRight, ArrowLeft } from 'lucide-react';
 
 import { StrengthForm } from '@/components/StrengthForm';
 import { StrengthResults } from '@/components/StrengthResults';
@@ -70,6 +70,7 @@ const heroContent = {
 };
 
 const Calculators = () => {
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const tabParam = searchParams.get('tab') as Tab | null;
   const [activeTab, setActiveTab] = useState<Tab>(tabParam || 'strength');
@@ -189,8 +190,14 @@ const Calculators = () => {
           <PageNavigation />
         </div>
 
+        {/* Back nav */}
+        <div className="px-4 pt-4">
+          <button onClick={() => navigate('/power')} className="flex items-center gap-1 text-gray-500 text-sm hover:text-gray-300 transition-colors">
+            <ArrowLeft className="w-4 h-4" /> Power
+          </button>
+        </div>
         {/* Compact Mindset Hero */}
-        <div className="relative px-4 pt-4 pb-4 overflow-hidden">
+        <div className="relative px-4 pt-3 pb-4 overflow-hidden">
           <div className="absolute inset-0 pointer-events-none"
             style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(255,85,0,0.08), transparent 70%)' }} />
           <div className="relative z-10">

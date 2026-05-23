@@ -285,7 +285,8 @@ const Mindset = () => {
     ? EXPOSURE_PROTOCOLS
     : EXPOSURE_PROTOCOLS.filter(p => p.category === exposureFilter);
 
-  const completedToday = [habits.train, habits.learnDaily, habits.water, habits.hitYourNumbers].filter(Boolean).length;
+  const allHabitKeys: (keyof typeof habits)[] = ['train', 'learnDaily', 'water', 'hitYourNumbers', 'sauna', 'coldShower', 'breathworkDone'];
+  const completedToday = allHabitKeys.filter(k => habits[k]).length;
 
   /* ─── Active protocol timer ─── */
   if (activeProtocol) {
@@ -346,7 +347,7 @@ const Mindset = () => {
               {/* Quick Stats */}
               <div className="grid grid-cols-3 gap-3">
                 <div className="p-3 rounded-xl border border-gray-800 bg-[#111] text-center">
-                  <p className="text-[#FF5500] font-display text-xl">{completedToday}/4</p>
+                  <p className="text-[#FF5500] font-display text-xl">{completedToday}/7</p>
                   <p className="text-gray-500 text-[10px] mt-0.5">TODAY'S HABITS</p>
                 </div>
                 <div className="p-3 rounded-xl border border-gray-800 bg-[#111] text-center">
@@ -379,7 +380,7 @@ const Mindset = () => {
                   { tab: 'exposure' as MindsetTab, icon: Snowflake, title: 'COLD & HEAT', desc: 'Cold showers, ice baths, sauna protocols — guided timers', colour: '#FF5500' },
                   { tab: 'games' as MindsetTab, icon: Gamepad2, title: 'FOCUS GAMES', desc: 'Reaction training, hand-eye coordination, global leaderboards', colour: '#FF5500' },
                   { tab: 'habits' as MindsetTab, icon: Target, title: 'DAILY HABITS', desc: 'Track your Daily 5 — train, learn, hydrate, hit your numbers, journal', colour: '#FF5500' },
-                  { tab: 'programmes' as MindsetTab, icon: Sparkles, title: 'PROGRAMMES', desc: 'AI or manual mindset programmes — breathwork, cold exposure, focus plans', colour: '#FF5500' },
+                  { tab: 'programmes' as MindsetTab, icon: Sparkles, title: 'PROGRAMMES', desc: 'Unbreakable Coach or manual mindset programmes — breathwork, cold exposure, focus plans', colour: '#FF5500' },
                 ].map(card => (
                   <button
                     key={card.tab}
@@ -592,71 +593,14 @@ const Mindset = () => {
 
           {/* ═══ HABITS TAB ═══ */}
           {activeTab === 'habits' && (
-            <motion.div key="habits" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-4">
-              <div className="p-4 rounded-xl border border-[#FF5500]/15 bg-[#111]">
-                <h3 className="font-display text-sm text-[#FF5500] mb-1">DAILY 5 — HABIT TRACKER</h3>
-                <p className="text-gray-400 text-sm leading-relaxed">
-                  Consistency beats intensity. Track your Daily 5 every day to build unstoppable momentum.
-                  Small actions, repeated daily, create <span className="text-[#FF5500]">UNBREAKABLE</span> habits.
-                </p>
-              </div>
-
-              {/* Today's progress */}
-              <div className="p-4 rounded-xl border border-gray-800 bg-[#111]">
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-xs font-display text-gray-400 tracking-wider">TODAY'S PROGRESS</span>
-                  <span className="text-xs font-display text-[#FF5500]">{completedToday}/4</span>
-                </div>
-                <div className="h-2 bg-gray-800 rounded-full overflow-hidden mb-4">
-                  <div className="h-full bg-[#FF5500] rounded-full transition-all" style={{ width: `${(completedToday / 4) * 100}%` }} />
-                </div>
-
-                {/* Habit toggles */}
-                {[
-                  { key: 'train' as const, label: 'TRAIN', icon: '💪' },
-                  { key: 'learnDaily' as const, label: 'LEARN', icon: '📚' },
-                  { key: 'water' as const, label: 'HYDRATE', icon: '💧' },
-                  { key: 'hitYourNumbers' as const, label: 'HIT YOUR NUMBERS', icon: '🎯' },
-                ].map(h => (
-                  <button
-                    key={h.key}
-                    onClick={() => {
-                      if (isToday && user) {
-                        const updated = { ...habits, [h.key]: !habits[h.key] };
-                        saveHabits(updated);
-                      }
-                    }}
-                    className={`w-full flex items-center gap-3 p-3 rounded-xl mb-2 transition-all border ${
-                      habits[h.key]
-                        ? 'bg-[#FF5500]/10 border-[#FF5500]/20'
-                        : 'bg-[#111] border-gray-800 hover:border-gray-700'
-                    }`}
-                    disabled={!isToday || !user}
-                  >
-                    <span className="text-lg">{h.icon}</span>
-                    <span className={`flex-1 text-left font-display text-sm tracking-wide ${habits[h.key] ? 'text-[#FF5500]' : 'text-gray-400'}`}>
-                      {h.label}
-                    </span>
-                    {habits[h.key] && <Check className="w-4 h-4 text-[#FF5500]" />}
-                  </button>
-                ))}
-              </div>
-
-              {/* Full tracker link */}
-              <button
-                onClick={() => navigate('/habits')}
-                className="w-full flex items-center justify-between p-4 rounded-xl border border-gray-800 bg-[#111] hover:border-gray-700 transition-all"
-              >
-                <div className="flex items-center gap-3">
-                  <BookOpen className="w-5 h-5 text-[#FF5500]" />
-                  <div className="text-left">
-                    <h4 className="font-display text-sm text-white">FULL HABIT TRACKER & JOURNAL</h4>
-                    <p className="text-gray-500 text-xs mt-0.5">Daily journal, history & date navigation</p>
-                  </div>
-                </div>
-                <ArrowRight className="w-4 h-4 text-gray-600" />
-              </button>
-            </motion.div>
+            <HabitsTab
+              habits={habits}
+              saveHabits={saveHabits}
+              isToday={isToday}
+              user={user}
+              completedToday={completedToday}
+              navigate={navigate}
+            />
           )}
 
           {/* ═══ PROGRAMMES TAB ═══ */}
@@ -754,5 +698,177 @@ const Mindset = () => {
     </div>
   );
 };
+
+/* ═══════════════════════════════════════════════════
+   HABITS TAB — inline sub-component
+   ═══════════════════════════════════════════════════ */
+interface HabitsTabProps {
+  habits: any;
+  saveHabits: (h: any) => void;
+  isToday: boolean;
+  user: any;
+  completedToday: number;
+  navigate: (path: string) => void;
+}
+
+function HabitsTab({ habits, saveHabits, isToday, user, completedToday, navigate }: HabitsTabProps) {
+  const [journalText, setJournalText] = useState(habits.journal || '');
+  const [journalSaved, setJournalSaved] = useState(false);
+  const [confirmPopup, setConfirmPopup] = useState(false);
+
+  // Sync journal text when habits load
+  useEffect(() => { setJournalText(habits.journal || ''); }, [habits.journal]);
+
+  const HABIT_ITEMS = [
+    { key: 'train' as const, label: 'TRAIN', LucideIcon: Activity },
+    { key: 'learnDaily' as const, label: 'LEARN', LucideIcon: BookOpen },
+    { key: 'water' as const, label: 'HYDRATE', LucideIcon: Droplets },
+    { key: 'hitYourNumbers' as const, label: 'HIT YOUR NUMBERS', LucideIcon: Target },
+    { key: 'breathworkDone' as const, label: 'BREATHWORK', LucideIcon: Wind },
+    { key: 'sauna' as const, label: 'SAUNA', LucideIcon: ThermometerSun },
+    { key: 'coldShower' as const, label: 'COLD SHOWER', LucideIcon: Snowflake },
+  ];
+
+  const totalHabits = HABIT_ITEMS.length;
+  const journalMinChars = 30;
+  const journalValid = journalText.trim().length >= journalMinChars;
+
+  const handleToggle = (key: string) => {
+    if (!isToday || !user) return;
+    const updated = { ...habits, [key]: !habits[key] };
+    saveHabits(updated);
+  };
+
+  const handleSaveJournal = () => {
+    if (!journalValid || !isToday || !user) return;
+    saveHabits({ ...habits, journal: journalText.trim() });
+    setJournalSaved(true);
+    setConfirmPopup(true);
+    setTimeout(() => setConfirmPopup(false), 2000);
+  };
+
+  return (
+    <motion.div key="habits" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-4">
+      {/* Description */}
+      <div className="p-3.5 rounded-xl border border-[#FF5500]/15 bg-[#111]">
+        <h3 className="font-display text-sm text-[#FF5500] mb-1">DAILY HABITS</h3>
+        <p className="text-gray-400 text-sm leading-relaxed">
+          Consistency beats intensity. Track every day to build unstoppable momentum.
+          Small actions, repeated daily, create <span className="text-[#FF5500]">UNBREAKABLE</span> habits.
+        </p>
+      </div>
+
+      {/* Today's progress */}
+      <div className="p-4 rounded-xl border border-gray-800 bg-[#111]">
+        <div className="flex items-center justify-between mb-3">
+          <span className="text-xs font-display text-gray-400 tracking-wider">TODAY'S PROGRESS</span>
+          <span className="text-xs font-display text-[#FF5500]">{completedToday}/{totalHabits}</span>
+        </div>
+        <div className="h-2 bg-gray-800 rounded-full overflow-hidden mb-4">
+          <div className="h-full rounded-full transition-all" style={{ width: `${(completedToday / totalHabits) * 100}%`, background: '#FF5500', boxShadow: '0 0 8px rgba(255,85,0,0.5)' }} />
+        </div>
+
+        {/* Habit toggles */}
+        <div className="space-y-2">
+          {HABIT_ITEMS.map(h => {
+            const active = !!habits[h.key];
+            const Icon = h.LucideIcon;
+            return (
+              <button
+                key={h.key}
+                onClick={() => handleToggle(h.key)}
+                className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all border ${
+                  active
+                    ? 'bg-[#FF5500]/10 border-[#FF5500]/20'
+                    : 'bg-[#0a0a0a] border-gray-800 hover:border-gray-700'
+                }`}
+                disabled={!isToday || !user}
+              >
+                <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${active ? 'bg-[#FF5500]/20' : 'bg-gray-800/50'}`}>
+                  <Icon className="w-4 h-4 text-[#FF5500]" style={{ filter: active ? 'drop-shadow(0 0 6px rgba(255,85,0,0.6))' : 'none' }} />
+                </div>
+                <span className={`flex-1 text-left font-display text-sm tracking-wide ${active ? 'text-[#FF5500]' : 'text-gray-400'}`}>
+                  {h.label}
+                </span>
+                {active && <Check className="w-4 h-4 text-[#FF5500]" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.5))' }} />}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Daily Journal */}
+      <div className="p-4 rounded-xl border border-gray-800 bg-[#111]">
+        <div className="flex items-center justify-between mb-3">
+          <span className="text-xs font-display text-[#FF5500] tracking-wider">DAILY JOURNAL</span>
+          <span className={`text-xs ${journalText.trim().length >= journalMinChars ? 'text-[#FF5500]' : 'text-gray-600'}`}>
+            {journalText.trim().length}/{journalMinChars} min
+          </span>
+        </div>
+        <textarea
+          value={journalText}
+          onChange={(e) => { setJournalText(e.target.value); setJournalSaved(false); }}
+          placeholder="Reflect on your day — what went well, what you're grateful for, what you'll improve tomorrow..."
+          className="w-full bg-[#0a0a0a] border border-gray-800 rounded-lg p-3 text-sm text-gray-300 placeholder-gray-600 resize-none focus:outline-none focus:border-[#FF5500]/30 transition-colors"
+          rows={4}
+          disabled={!isToday || !user}
+        />
+        <div className="flex items-center justify-between mt-3">
+          <p className="text-gray-600 text-xs">
+            {journalText.trim().length < journalMinChars
+              ? `${journalMinChars - journalText.trim().length} more characters needed`
+              : '✓ Ready to save'}
+          </p>
+          <button
+            onClick={handleSaveJournal}
+            disabled={!journalValid || !isToday || !user}
+            className={`px-4 py-2 rounded-lg font-display text-xs tracking-wider transition-all ${
+              journalValid
+                ? 'bg-[#FF5500] text-black hover:bg-[#FF5500]/90'
+                : 'bg-gray-800 text-gray-600 cursor-not-allowed'
+            }`}
+          >
+            {journalSaved ? 'SAVED ✓' : 'SAVE JOURNAL'}
+          </button>
+        </div>
+      </div>
+
+      {/* Full tracker link */}
+      <button
+        onClick={() => navigate('/habits')}
+        className="w-full flex items-center justify-between p-3.5 rounded-xl border border-gray-800 bg-[#111] hover:border-gray-700 transition-all"
+      >
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-[#FF5500]/10 flex items-center justify-center">
+            <BookOpen className="w-4 h-4 text-[#FF5500]" style={{ filter: 'drop-shadow(0 0 6px rgba(255,85,0,0.5))' }} />
+          </div>
+          <div className="text-left">
+            <h4 className="font-display text-sm text-white tracking-wider">FULL HABIT TRACKER & JOURNAL</h4>
+            <p className="text-gray-500 text-xs mt-0.5">History, date navigation & analytics</p>
+          </div>
+        </div>
+        <ArrowRight className="w-4 h-4 text-gray-600" />
+      </button>
+
+      {/* Confirmation popup */}
+      <AnimatePresence>
+        {confirmPopup && (
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 50 }}
+            className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 bg-[#111] border border-[#FF5500]/30 rounded-xl px-6 py-3 shadow-lg"
+            style={{ boxShadow: '0 0 20px rgba(255,85,0,0.2)' }}
+          >
+            <div className="flex items-center gap-2">
+              <Check className="w-4 h-4 text-[#FF5500]" />
+              <span className="font-display text-sm text-white tracking-wider">JOURNAL SAVED</span>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  );
+}
 
 export default Mindset;

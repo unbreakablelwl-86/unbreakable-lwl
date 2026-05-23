@@ -536,7 +536,7 @@ export default function Tracker() {
                     <Zap className="w-5 h-5 text-[#FF5500]" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.5))' }} />
                     <div>
                       <p className="text-sm font-medium text-white">Build a Programme</p>
-                      <p className="text-[11px] text-gray-500">AI-powered cardio training plans</p>
+                      <p className="text-[11px] text-gray-500">Unbreakable cardio training plans</p>
                     </div>
                   </div>
                   <ChevronRight className="w-5 h-5 text-[#FF5500]" />

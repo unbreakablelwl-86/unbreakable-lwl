@@ -219,7 +219,7 @@ export function useHelpChat() {
         const errorData = await resp.json().catch(() => ({}));
         if (resp.status === 402) {
           setTokenBalance(0);
-          throw new Error(errorData.message || 'You\'ve used all your AI tokens. Head to Tokens to upgrade.');
+          throw new Error(errorData.message || 'You\'ve used all your Unbreakable tokens. Head to Tokens to upgrade.');
         }
         throw new Error(errorData.error || 'Failed to get response');
       }

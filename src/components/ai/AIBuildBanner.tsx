@@ -71,7 +71,7 @@ export function AIBuildBanner({ type, variant = 'default', onBuildClick }: AIBui
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
     >
-      <Card className="border-2 border-primary/30 bg-gradient-to-br from-primary/10 via-background to-primary/5 overflow-hidden border-gray-800 bg-[#111]">
+      <Card className="border-2 border-primary/30    overflow-hidden border-gray-800 bg-[#111]">
         <div className="p-6 md:p-8">
           <div className="flex flex-col md:flex-row items-center gap-6">
             {/* Icon */}

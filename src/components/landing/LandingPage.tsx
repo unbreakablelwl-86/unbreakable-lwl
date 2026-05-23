@@ -88,7 +88,7 @@ const howItWorks = [
     step: '02',
     icon: Target,
     title: 'CHOOSE YOUR PATH',
-    desc: 'Everything is free to use. Grab tokens to unlock your AI Coach, programme builds, and University courses.',
+    desc: 'Everything is free to use. Grab tokens to unlock your Unbreakable Coach, programme builds, and University courses.',
   },
   {
     step: '03',
@@ -107,7 +107,7 @@ const freeFeatures = [
   'Community Hub — feed, stories & messaging',
   'Daily habit diary & lifestyle tracking',
   'Calculators & free tools',
-  '5 free tokens on signup to try the AI coach',
+  '5 free tokens on signup to try the Unbreakable Coach',
 ];
 
 /* ─── Token tiers ─── */
@@ -271,7 +271,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
             {[
               { val: '4', label: 'Training Tracks' },
               { val: '100+', label: 'Programmes' },
-              { val: 'AI', label: 'Powered Coach' },
+              { val: '24/7', label: 'Unbreakable Coach' },
               { val: '∞', label: 'Potential' },
             ].map(s => (
               <div key={s.label}>
@@ -374,7 +374,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
                 Free. Seriously.
               </h2>
               <p className="text-[#888] mt-3 max-w-xl mx-auto">
-                Every tool is free to use. Tokens unlock your AI coach and premium courses.
+                Every tool is free to use. Tokens unlock your Unbreakable Coach and premium courses.
               </p>
             </motion.div>
 
@@ -408,7 +408,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
                 Power Up Your Coach
               </h2>
               <p className="text-[#888] mt-3 max-w-xl mx-auto text-sm">
-                Tokens fuel your AI coach — programmes, meal plans, form feedback, course access.
+                Tokens fuel your Unbreakable Coach — programmes, meal plans, form feedback, course access.
                 Everything else is free.
               </p>
             </motion.div>

@@ -1,4 +1,4 @@
-// AI-powered exercise library data
+// Exercise library data
 
 export type MovementPattern =
   | 'horizontal_push'

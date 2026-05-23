@@ -19,6 +19,9 @@ export interface HabitState {
   learnDaily: boolean;
   water: boolean;
   hitYourNumbers: boolean;
+  sauna: boolean;
+  coldShower: boolean;
+  breathworkDone: boolean;
   journal: string;
 }
 

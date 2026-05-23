@@ -44,7 +44,7 @@ export function MotivationalPopup({ trigger, context, open, onClose }: Motivatio
 
   return (
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
-      <DialogContent className="sm:max-w-md border-2 border-primary/40 bg-gradient-to-br from-card via-card to-primary/5 p-0 overflow-hidden bg-[#0a0a0a] border-gray-800">
+      <DialogContent className="sm:max-w-md border-2 border-primary/40  p-0 overflow-hidden bg-[#0a0a0a] border-gray-800">
         <div className="relative p-8 text-center space-y-6">
           {/* Glow effect */}
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-32 bg-primary/20 rounded-full blur-3xl" />

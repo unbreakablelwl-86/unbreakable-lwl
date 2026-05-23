@@ -142,7 +142,7 @@ const ALL_NAV_ITEMS: NavItemDef[] = [
     path: '/ai-tokens',
     activeMatch: ['/ai-tokens'],
     color: '#FF5500',
-    description: 'AI coaching tokens',
+    description: 'Unbreakable Coaching tokens',
   },
   {
     id: 'calculators',

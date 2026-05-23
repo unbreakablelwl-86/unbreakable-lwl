@@ -17,7 +17,7 @@ const FEATURE_PREVIEWS = [
     icon: Dumbbell,
     colour: 'from-orange-500/20 to-red-500/20',
     borderColour: 'border-orange-500/30',
-    stats: ['272 exercises', 'AI programme builder', 'Session logging'],
+    stats: ['272 exercises', 'Unbreakable builder', 'Session logging'],
   },
   {
     key: 'movement',
@@ -27,7 +27,7 @@ const FEATURE_PREVIEWS = [
     icon: Footprints,
     colour: 'from-blue-500/20 to-cyan-500/20',
     borderColour: 'border-blue-500/30',
-    stats: ['5 disciplines', 'AI cardio builder', 'Session planners'],
+    stats: ['5 disciplines', 'Unbreakable cardio builder', 'Session planners'],
   },
   {
     key: 'fuel',
@@ -37,7 +37,7 @@ const FEATURE_PREVIEWS = [
     icon: Apple,
     colour: 'from-green-500/20 to-emerald-500/20',
     borderColour: 'border-green-500/30',
-    stats: ['Barcode scanner', 'AI meal plans', 'Recipe library'],
+    stats: ['Barcode scanner', 'Unbreakable meal plans', 'Recipe library'],
   },
   {
     key: 'mindset',

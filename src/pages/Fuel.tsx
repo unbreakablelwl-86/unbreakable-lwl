@@ -84,7 +84,7 @@ export default function Fuel() {
                 <p className="text-gray-400 text-sm leading-relaxed">
                   Food is not the enemy — it's the weapon. Track your nutrition, build meal plans, and fuel
                   a body built to last. <span className="text-[#FF5500] font-semibold">Unbreakable Fuel</span> gives you
-                  AI-powered tracking, recipe libraries, and macro breakdowns.
+                  Smart tracking, recipe libraries, and macro breakdowns.
                 </p>
                 <p className="text-[#FF5500] font-display text-sm tracking-wide mt-3" style={{ textShadow: '0 0 10px rgba(255,85,0,0.3)' }}>
                   KEEP SHOWING UP.

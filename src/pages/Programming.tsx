@@ -102,7 +102,7 @@ export default function Programming() {
               <div className="p-4 rounded-xl border border-[#FF5500]/15 bg-[#111]">
                 <p className="text-gray-400 text-sm leading-relaxed">
                   Your body is your armour. The <span className="text-[#FF5500] font-semibold">Unbreakable Power</span> system
-                  combines AI coaching, a 873-exercise library, and bespoke programme building to create training that's
+                  combines Unbreakable Coaching, a 873-exercise library, and bespoke programme building to create training that's
                   built for <span className="text-[#FF5500] font-semibold">you</span>.
                 </p>
                 <p className="text-[#FF5500] font-display text-sm tracking-wide mt-3" style={{ textShadow: '0 0 10px rgba(255,85,0,0.3)' }}>
@@ -114,7 +114,7 @@ export default function Programming() {
               <div className="space-y-2">
                 <h3 className="text-xs font-display tracking-wider text-gray-400">EXPLORE</h3>
                 {[
-                  { path: '/programming/create', icon: Wrench, title: 'CREATE PROGRAMME', desc: 'AI Coach or Manual Builder — build bespoke training plans', onClick: handleCreate },
+                  { path: '/programming/create', icon: Wrench, title: 'CREATE PROGRAMME', desc: 'Unbreakable Coach or Manual Builder — build bespoke training plans', onClick: handleCreate },
                   { path: '/programming/exercises', icon: Dumbbell, title: 'EXERCISE LIBRARY', desc: '873 exercises with images & Unbreakable coaching breakdowns' },
                   { path: '/programming/my-programmes', icon: BookOpen, title: 'MY PROGRAMMES', desc: 'View saved programmes, track progress & execute sessions' },
                   { path: '/programming/logs', icon: BarChart3, title: 'SESSION LOGS', desc: 'Review past workouts and training history' },

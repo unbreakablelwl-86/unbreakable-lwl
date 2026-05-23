@@ -262,7 +262,7 @@ function ConversationSidebar({
 }
 
 /* ═══════════════════════════════════════════════════════════════════
-   Main AI Coach Page
+   Main Unbreakable Coach Page
    ═══════════════════════════════════════════════════════════════════ */
 export default function Help() {
   const navigate = useNavigate();
@@ -449,7 +449,7 @@ export default function Help() {
       } else if (plan.type === 'mindset') {
         const result = await saveMindsetProgramme.mutateAsync({
           programme: {
-            name: plan.planData.name || 'AI Mindset Programme',
+            name: plan.planData.name || 'Unbreakable Mindset Programme',
             description: plan.planData.description,
             goal: plan.planData.goal,
             duration_weeks: plan.planData.durationWeeks || 4,
@@ -474,7 +474,7 @@ export default function Help() {
       } else {
         const { data: savedPlan, error } = await supabase
           .from('meal_plans')
-          .insert({ user_id: saveUserId, name: plan.planData.planName || 'AI Meal Plan', description: plan.planData.overview, is_active: false })
+          .insert({ user_id: saveUserId, name: plan.planData.planName || 'Unbreakable Meal Plan', description: plan.planData.overview, is_active: false })
           .select()
           .single();
         if (error) throw error;

@@ -336,7 +336,7 @@ export const nutritionL4Unit4: Unit = {
     {
       number: 8,
       title: 'Technology, Tracking & Digital Tools',
-      learningOutcome: 'Evaluate and effectively use technology tools in nutrition practice — from food tracking apps to telehealth platforms and AI-assisted coaching.',
+      learningOutcome: 'Evaluate and effectively use technology tools in nutrition practice — from food tracking apps to telehealth platforms and Unbreakable coaching.',
       assessmentCriteria: [
         'Assess the benefits and limitations of food tracking applications',
         'Describe how technology can enhance and hinder nutrition practice',
@@ -356,7 +356,7 @@ export const nutritionL4Unit4: Unit = {
             'Telehealth platforms — Video consultations expand your reach beyond local geography. Quality is comparable to in-person for nutrition coaching. Ensure GDPR-compliant platforms with encryption',
             'Client management systems — Platforms like TrueCoach, Practice Better, or Healthie centralise intake forms, meal plans, progress tracking, and communication. Reduce admin burden significantly',
             'Wearable data — Heart rate, sleep, steps, and activity data from watches and trackers can inform nutrition recommendations. However, calorie burn estimates from wearables are 20-50% inaccurate — never use them as the sole basis for calorie prescription',
-            'AI-assisted tools — AI can generate meal plan templates, answer basic nutrition questions, and automate communication. Use as an efficiency tool, not a replacement for clinical judgment. AI cannot read body language, detect eating disorder signs, or build genuine rapport',
+            'Unbreakable tools — AI can generate meal plan templates, answer basic nutrition questions, and automate communication. Use as an efficiency tool, not a replacement for clinical judgment. AI cannot read body language, detect eating disorder signs, or build genuine rapport',
             'Food photography — Photo-based food diaries are less precise than macro tracking but more practical for many clients. "Send me a photo of every meal" provides coaching insight without requiring the client to weigh and log everything',
           ],
         },

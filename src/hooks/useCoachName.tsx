@@ -5,7 +5,7 @@ const STORAGE_KEY = 'unbreakable_coach_name';
 const DEFAULT_NAME = 'UNBREAKABLE COACH';
 
 /**
- * Hook to manage the user's custom AI coach name.
+ * Hook to manage the user's custom Unbreakable Coach name.
  * Stores per-user in localStorage for instant access.
  * Falls back to "UNBREAKABLE COACH" if not set.
  */

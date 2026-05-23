@@ -332,7 +332,7 @@ export function ProgrammeExecutionView({ program, onClose }: ProgrammeExecutionV
           }
         }
 
-        // Send AI coaching callout message to user's inbox
+        // Send Unbreakable Coaching callout message to user's inbox
         try {
           const { data: aiMsg } = await supabase.functions.invoke('generate-motivation', {
             body: { 
@@ -350,7 +350,7 @@ export function ProgrammeExecutionView({ program, onClose }: ProgrammeExecutionV
             });
           }
         } catch (e) {
-          console.error('AI callout failed:', e);
+          console.error('coaching callout failed:', e);
         }
       }
 
@@ -483,7 +483,7 @@ export function ProgrammeExecutionView({ program, onClose }: ProgrammeExecutionV
       </div>
 
       {/* Progress Card */}
-      <Card className="p-5 border border-primary/50 bg-gradient-to-br from-primary/10 to-transparent border-gray-800 bg-[#111]">
+      <Card className="p-5 border border-primary/50   border-gray-800 bg-[#111]">
         <div className="flex items-center justify-between mb-3">
           <span className="text-sm text-muted-foreground">Programme Progress</span>
           <span className="font-display text-lg text-foreground">

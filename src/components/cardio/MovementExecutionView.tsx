@@ -199,7 +199,7 @@ export function MovementExecutionView({ program, onClose }: MovementExecutionVie
   }, [completedSessions, upcomingSessions, program.program_data.activityType]);
 
   const handleAcceptProgression = (suggestions: ProgressionSuggestion[]) => {
-    // For now just dismiss — the AI suggestions are informational
+    // For now just dismiss — the Unbreakable suggestions are informational
     // Future: apply actual planned_session updates
     toast({ title: 'Progression Noted', description: 'Your upcoming sessions have been noted for adjustment.' });
     setShowProgression(false);
@@ -376,7 +376,7 @@ export function MovementExecutionView({ program, onClose }: MovementExecutionVie
       </div>
 
       {/* Progress */}
-      <Card className="p-5 border border-primary/50 bg-gradient-to-br from-primary/10 to-transparent border-gray-800 bg-[#111]">
+      <Card className="p-5 border border-primary/50   border-gray-800 bg-[#111]">
         <div className="flex items-center justify-between mb-3">
           <span className="text-sm text-muted-foreground">Programme Progress</span>
           <span className="font-display text-lg text-foreground">

@@ -15,13 +15,13 @@ interface PlanSelectionPageProps {
 }
 
 const tier1Features = [
-  { icon: Dumbbell, label: 'Full Power programme builder (manual & AI-built)' },
+  { icon: Dumbbell, label: 'Full Power programme builder (manual & Unbreakable)' },
   { icon: Target, label: 'Session logging, tracking & progression tools' },
   { icon: Flame, label: 'Fuel tracker, meal planning & recipe library' },
   { icon: Brain, label: 'Mindset programmes, breathing & focus games' },
   { icon: BarChart3, label: 'Movement programmes (run, cycle, swim, row, walk)' },
   { icon: MessageSquare, label: 'Unlimited Unbreakable Coach conversations' },
-  { icon: Sparkles, label: 'AI-built bespoke programmes & meal plans' },
+  { icon: Sparkles, label: 'Unbreakable bespoke programmes & meal plans' },
   { icon: BookOpen, label: 'University learning hub & calculators' },
   { icon: Users, label: 'Community Hub — feed, stories & messaging' },
   { icon: Shield, label: 'Full profile, records, trophies & leaderboards' },

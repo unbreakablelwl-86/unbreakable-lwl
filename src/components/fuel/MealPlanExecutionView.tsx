@@ -317,7 +317,7 @@ export function MealPlanExecutionView({ planId, onBack }: MealPlanExecutionViewP
         })}
       </div>
 
-      {/* AI Coaching CTA */}
+      {/* Unbreakable Coaching CTA */}
       <NutritionCoachCTA
         variant="banner"
         label="Get Plan Feedback"

@@ -303,7 +303,7 @@ export default function Onboarding() {
           <div className="space-y-6">
             <div>
               <h2 className="font-display text-2xl text-foreground mb-1">SPORT PREFERENCE</h2>
-              <p className="text-sm text-muted-foreground">Optional — pick your sport and your AI coach will tailor programmes to it. You can change this in settings any time.</p>
+              <p className="text-sm text-muted-foreground">Optional — pick your sport and your Unbreakable Coach will tailor programmes to it. You can change this in settings any time.</p>
             </div>
 
             <div className="space-y-4">

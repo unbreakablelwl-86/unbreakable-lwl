@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Wind, Zap, Target, Heart, Volume2, VolumeX, Flame, ArrowRight, Clock, ChevronRight } from "lucide-react";
+import { Wind, Zap, Target, Heart, Volume2, VolumeX, Flame, ArrowRight, Clock, ChevronRight, ArrowLeft } from "lucide-react";
 import { ThemedLogo } from "@/components/ThemedLogo";
 import { ThemeToggle } from "@/components/hub/ThemeToggle";
 import { CountdownOverlay } from "@/components/CountdownOverlay";
@@ -31,6 +31,7 @@ const heroContent = {
 };
 
 const MindsetBreathing = () => {
+  const navigate = useNavigate();
   const [view, setView] = useState<ViewState>("selection");
   const [selectedExercise, setSelectedExercise] = useState<BreathingExercise | null>(null);
   const [selectedMinutes, setSelectedMinutes] = useState(3);
@@ -247,8 +248,14 @@ const MindsetBreathing = () => {
   if (view === "selection") {
     return (
       <div className="min-h-screen pb-24" style={{ background: '#080808' }}>
+        {/* Back nav */}
+        <div className="px-4 pt-4">
+          <button onClick={() => navigate('/mindset')} className="flex items-center gap-1 text-gray-500 text-sm hover:text-gray-300 transition-colors">
+            <ArrowLeft className="w-4 h-4" /> Mind
+          </button>
+        </div>
         {/* Compact Mindset Hero */}
-        <div className="relative px-4 pt-6 pb-5 overflow-hidden">
+        <div className="relative px-4 pt-3 pb-5 overflow-hidden">
           <div className="absolute inset-0 pointer-events-none"
             style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(255,85,0,0.08), transparent 70%)' }} />
           <div className="relative z-10">

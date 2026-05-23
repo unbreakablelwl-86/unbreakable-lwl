@@ -30,15 +30,15 @@ const FAQ_SECTIONS: { title: string; icon: typeof Shield; items: FAQItem[] }[] =
     items: [
       {
         q: 'What is UNBREAKABLE?',
-        a: 'UNBREAKABLE is an all-in-one fitness platform built by Live Without Limits LTD. It combines training programmes, nutrition tracking, movement logging, mindset tools, and AI coaching — all in one place. Our mission: help you build a body and mind that cannot be broken.',
+        a: 'UNBREAKABLE is an all-in-one fitness platform built by Live Without Limits LTD. It combines training programmes, nutrition tracking, movement logging, mindset tools, and Unbreakable Coaching — all in one place. Our mission: help you build a body and mind that cannot be broken.',
       },
       {
         q: 'Is UNBREAKABLE free to use?',
-        a: 'Yes! The free tier gives you access to basic training tools, the community feed, habit tracking, and limited AI coaching. Upgrade to Pro for full AI tokens, bespoke programme generation, 1-2-1 coaching options, and premium content.',
+        a: 'Yes! The free tier gives you access to basic training tools, the community feed, habit tracking, and limited Unbreakable Coaching. Upgrade to Pro for full AI tokens, bespoke programme generation, 1-2-1 coaching options, and premium content.',
       },
       {
         q: 'How do I set up my profile?',
-        a: 'When you first sign up, the onboarding flow collects your goals, experience level, and body stats. You can update these any time from your Profile page. The more info you give us, the better your AI-generated programmes will be.',
+        a: 'When you first sign up, the onboarding flow collects your goals, experience level, and body stats. You can update these any time from your Profile page. The more info you give us, the better your Unbreakable-generated programmes will be.',
       },
       {
         q: 'What devices does UNBREAKABLE work on?',
@@ -51,8 +51,8 @@ const FAQ_SECTIONS: { title: string; icon: typeof Shield; items: FAQItem[] }[] =
     icon: Dumbbell,
     items: [
       {
-        q: 'How does the AI Programme Builder work?',
-        a: 'Tap "Auto Builder" in the Power section. The AI Coach pulls your saved profile data (goals, level, availability) and asks for anything missing. It then builds a fully periodised programme tailored to you — review it, confirm, and it saves straight to your profile.',
+        q: 'How does the Unbreakable Builder work?',
+        a: 'Tap "Auto Builder" in the Power section. The Unbreakable Coach pulls your saved profile data (goals, level, availability) and asks for anything missing. It then builds a fully periodised programme tailored to you — review it, confirm, and it saves straight to your profile.',
       },
       {
         q: 'Can I build my own programme manually?',
@@ -70,11 +70,11 @@ const FAQ_SECTIONS: { title: string; icon: typeof Shield; items: FAQItem[] }[] =
     items: [
       {
         q: 'How does meal tracking work?',
-        a: 'Log your meals in the Fuel section. You can search foods, scan barcodes, or use the AI to generate a personalised meal plan. Track macros, calories, and water intake daily.',
+        a: 'Log your meals in the Fuel section. You can search foods, scan barcodes, or use the Unbreakable to generate a personalised meal plan. Track macros, calories, and water intake daily.',
       },
       {
-        q: 'Can the AI create a meal plan for me?',
-        a: 'Yes — the AI Coach can build a bespoke meal plan based on your goals, dietary preferences, and calorie targets. Just ask!',
+        q: 'Can the Unbreakable create a meal plan for me?',
+        a: 'Yes — the Unbreakable Coach can build a bespoke meal plan based on your goals, dietary preferences, and calorie targets. Just ask!',
       },
     ],
   },
@@ -98,7 +98,7 @@ const FAQ_SECTIONS: { title: string; icon: typeof Shield; items: FAQItem[] }[] =
     items: [
       {
         q: 'What does Pro unlock?',
-        a: 'Pro gives you full AI coaching tokens, bespoke programme generation, advanced analytics, and the option for hybrid 1-2-1 human coaching with real UNBREAKABLE coaches.',
+        a: 'Pro gives you full Unbreakable Coaching tokens, bespoke programme generation, advanced analytics, and the option for hybrid 1-2-1 human coaching with real UNBREAKABLE coaches.',
       },
       {
         q: 'How does 1-2-1 coaching work?',
@@ -124,7 +124,7 @@ const FAQ_SECTIONS: { title: string; icon: typeof Shield; items: FAQItem[] }[] =
       },
       {
         q: 'How do AI tokens work?',
-        a: 'Free users get a limited number of AI coaching interactions. Pro users get a generous monthly allocation. Tokens reset each billing cycle.',
+        a: 'Free users get a limited number of Unbreakable Coaching interactions. Pro users get a generous monthly allocation. Tokens reset each billing cycle.',
       },
     ],
   },
@@ -188,7 +188,7 @@ export default function FAQ() {
       </div>
 
       <div className="max-w-2xl mx-auto px-4 pb-28">
-        {/* AI Coach CTA — top banner */}
+        {/* Unbreakable Coach CTA — top banner */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -205,7 +205,7 @@ export default function FAQ() {
             </div>
             <div className="flex-1">
               <p className="text-[14px] font-bold text-white">Still need help?</p>
-              <p className="text-[12px] text-[#888] mt-0.5">Chat with your AI Coach for instant answers</p>
+              <p className="text-[12px] text-[#888] mt-0.5">Chat with your Unbreakable Coach for instant answers</p>
             </div>
             <ExternalLink size={16} className="text-[#FF5500]" />
           </div>
@@ -309,7 +309,7 @@ export default function FAQ() {
           </div>
         </div>
 
-        {/* Bottom AI Coach CTA */}
+        {/* Bottom Unbreakable Coach CTA */}
         <motion.div
           className="rounded-2xl overflow-hidden cursor-pointer mb-4"
           onClick={() => navigate('/help')}
@@ -321,7 +321,7 @@ export default function FAQ() {
           <div className="flex items-center justify-center gap-3 px-5 py-4">
             <Sparkles className="w-5 h-5 text-white" />
             <span className="text-[14px] font-bold text-white uppercase tracking-wider" style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
-              Chat with AI Coach
+              Chat with Unbreakable Coach
             </span>
           </div>
         </motion.div>
