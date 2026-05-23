@@ -3,7 +3,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { ClickableAvatar } from '@/components/ClickableAvatar';
 import { ClickableUsername } from '@/components/ClickableUsername';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
+
 import { Dumbbell, MessageCircle, Globe, Users, Lock, Play, Pause, Volume2, VolumeX, Maximize, Bookmark } from 'lucide-react';
 import { PostWithProfile } from '@/hooks/usePosts';
 import { useAuth } from '@/hooks/useAuth';
@@ -148,16 +148,16 @@ export function StatusCard({ post, onKudos, onDelete, onToggleComments, onUpdate
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
     >
-      <Card className="bg-card border-border overflow-hidden">
-        {/* Header — compact Instagram-style */}
+      <div className="overflow-hidden border-b border-white/[0.04]" style={{ background: '#080808' }}>
+        {/* Header — Instagram-style */}
         <div className="px-4 py-3 flex items-center gap-3">
           <ClickableAvatar
             userId={post.user_id}
             displayName={post.profiles?.display_name}
             username={post.profiles?.username}
             avatarUrl={post.profiles?.avatar_url}
-            className="h-9 w-9 ring-2 ring-primary/20 ring-offset-1 ring-offset-card"
-            fallbackClassName="bg-primary text-primary-foreground font-display text-xs"
+            className="h-9 w-9 ring-2 ring-[#FF5500]/20 ring-offset-1 ring-offset-[#080808]"
+            fallbackClassName="bg-[#1a1a1a] text-[#888] font-heading text-xs font-bold"
           />
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
@@ -165,14 +165,14 @@ export function StatusCard({ post, onKudos, onDelete, onToggleComments, onUpdate
                 userId={post.user_id}
                 displayName={post.profiles?.display_name}
                 username={post.profiles?.username}
-                className="font-display text-sm tracking-wide truncate hover:opacity-70 transition-opacity"
+                className="font-semibold text-sm text-white truncate hover:opacity-70 transition-opacity"
               />
               {!isOwner && (
-                <span className="text-muted-foreground text-xs">•</span>
+                <span className="text-[#555] text-xs">•</span>
               )}
               {!isOwner && <FollowButton targetUserId={post.user_id} />}
             </div>
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-0.5">
+            <div className="flex items-center gap-1.5 text-xs text-[#666] mt-0.5">
               <span>{formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}</span>
               <span className="flex items-center gap-0.5">
                 {getVisibilityIcon()}
@@ -318,7 +318,7 @@ export function StatusCard({ post, onKudos, onDelete, onToggleComments, onUpdate
               ))}
             </AnimatePresence>
             <button
-              className={`flex items-center gap-1.5 transition-colors ${post.has_kudos ? 'text-primary' : 'text-foreground hover:text-muted-foreground'}`}
+              className={`flex items-center gap-1.5 transition-colors active:scale-125 ${post.has_kudos ? 'text-[#FF5500]' : 'text-white hover:text-[#888]'}`}
               onClick={handleKudos}
               disabled={!user || isLiking}
             >
@@ -326,14 +326,14 @@ export function StatusCard({ post, onKudos, onDelete, onToggleComments, onUpdate
                 animate={isLiking ? { scale: [1, 1.4, 1] } : {}}
                 transition={{ duration: 0.3 }}
               >
-                <Dumbbell className={`w-6 h-6 ${post.has_kudos ? 'fill-primary' : ''}`} />
+                <Dumbbell className={`w-6 h-6 ${post.has_kudos ? 'fill-[#FF5500]' : ''}`} />
               </motion.div>
             </button>
             <button
-              className={`flex items-center gap-1.5 transition-colors ${showComments ? 'text-primary' : 'text-foreground hover:text-muted-foreground'}`}
+              className={`flex items-center gap-1.5 transition-colors active:scale-110 ${showComments ? 'text-[#FF5500]' : 'text-white hover:text-[#888]'}`}
               onClick={() => setShowComments(!showComments)}
             >
-              <MessageCircle className={`w-6 h-6 ${showComments ? 'fill-primary/20' : ''}`} />
+              <MessageCircle className={`w-6 h-6 ${showComments ? 'fill-[#FF5500]/20' : ''}`} />
             </button>
             <ShareMenu 
               onShareToStory={handleShareToStory}
@@ -341,17 +341,17 @@ export function StatusCard({ post, onKudos, onDelete, onToggleComments, onUpdate
             />
           </div>
           <button
-            className={`transition-colors ${saved ? 'text-primary' : 'text-foreground hover:text-muted-foreground'}`}
+            className={`transition-colors active:scale-110 ${saved ? 'text-white' : 'text-white hover:text-[#888]'}`}
             onClick={() => setSaved(!saved)}
           >
-            <Bookmark className={`w-6 h-6 ${saved ? 'fill-primary' : ''}`} />
+            <Bookmark className={`w-6 h-6 ${saved ? 'fill-white' : ''}`} />
           </button>
         </div>
 
         {/* Likes count */}
         {(post.kudos_count ?? 0) > 0 && (
           <div className="px-4 pb-1">
-            <p className="text-sm font-display tracking-wide">
+            <p className="text-sm font-semibold text-white">
               {post.kudos_count} {post.kudos_count === 1 ? 'like' : 'likes'}
             </p>
           </div>
@@ -362,7 +362,7 @@ export function StatusCard({ post, onKudos, onDelete, onToggleComments, onUpdate
           <div className="px-4 pb-2">
             <RichContent
               text={post.content}
-              className="text-sm text-foreground"
+              className="text-sm text-[#ddd]"
               usernamePrefix={post.profiles?.display_name || post.profiles?.username}
             />
           </div>
@@ -371,7 +371,7 @@ export function StatusCard({ post, onKudos, onDelete, onToggleComments, onUpdate
         {/* Comment count teaser */}
         {!showComments && (post.comments_count ?? 0) > 0 && (
           <button
-            className="px-4 pb-2 text-sm text-muted-foreground hover:text-foreground transition-colors text-left"
+            className="px-4 pb-2 text-sm text-[#666] hover:text-[#aaa] transition-colors text-left"
             onClick={() => setShowComments(true)}
           >
             View {post.comments_count === 1 ? '1 comment' : `all ${post.comments_count} comments`}
@@ -385,7 +385,7 @@ export function StatusCard({ post, onKudos, onDelete, onToggleComments, onUpdate
           isExpanded={showComments}
           onToggle={() => setShowComments(!showComments)}
         />
-      </Card>
+      </div>
 
       {/* Edit Post Modal */}
       <EditPostModal

@@ -65,9 +65,9 @@ export function SettingsPanel() {
   return (
     <div className="space-y-6">
       {/* Theme Settings */}
-      <Card className="bg-card border-border">
+      <Card className="bg-[#111] border-white/[0.06]">
         <CardHeader>
-          <CardTitle className="font-display text-xl tracking-wide flex items-center gap-2">
+          <CardTitle className="font-heading text-xl tracking-wide flex items-center gap-2">
             {settings.theme === 'dark' ? <Moon className="w-5 h-5 text-primary" /> : <Sun className="w-5 h-5 text-primary" />}
             APPEARANCE
           </CardTitle>
@@ -75,18 +75,18 @@ export function SettingsPanel() {
         <CardContent className="space-y-4">
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
-              <Label className="text-foreground font-medium">Theme</Label>
-              <p className="text-sm text-muted-foreground">
+              <Label className="text-white font-medium">Theme</Label>
+              <p className="text-sm text-[#888]">
                 Switch between dark and light mode
               </p>
             </div>
             <div className="flex items-center gap-3">
-              <Sun className={`w-4 h-4 ${settings.theme === 'light' ? 'text-primary' : 'text-muted-foreground'}`} />
+              <Sun className={`w-4 h-4 ${settings.theme === 'light' ? 'text-primary' : 'text-[#888]'}`} />
               <Switch
                 checked={settings.theme === 'dark'}
                 onCheckedChange={handleThemeToggle}
               />
-              <Moon className={`w-4 h-4 ${settings.theme === 'dark' ? 'text-primary' : 'text-muted-foreground'}`} />
+              <Moon className={`w-4 h-4 ${settings.theme === 'dark' ? 'text-primary' : 'text-[#888]'}`} />
             </div>
           </div>
         </CardContent>
@@ -96,9 +96,9 @@ export function SettingsPanel() {
       <BlockedUsersSection />
 
       {/* Programme Tracking Preferences */}
-      <Card className="bg-card border-border">
+      <Card className="bg-[#111] border-white/[0.06]">
         <CardHeader>
-          <CardTitle className="font-display text-xl tracking-wide flex items-center gap-2">
+          <CardTitle className="font-heading text-xl tracking-wide flex items-center gap-2">
             <Dumbbell className="w-5 h-5 text-primary" />
             PROGRAMME TRACKING
           </CardTitle>
@@ -106,11 +106,11 @@ export function SettingsPanel() {
         <CardContent className="space-y-4">
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
-              <Label className="text-foreground font-medium flex items-center gap-2">
+              <Label className="text-white font-medium flex items-center gap-2">
                 <Flame className="w-4 h-4 text-primary" />
                 Motivational Popups
               </Label>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-[#888]">
                 Motivational quotes on sign-in and milestones
               </p>
             </div>
@@ -122,11 +122,11 @@ export function SettingsPanel() {
 
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
-              <Label className="text-foreground font-medium flex items-center gap-2">
+              <Label className="text-white font-medium flex items-center gap-2">
                 <Mic className="w-4 h-4 text-primary" />
                 Cardio Voice Prompts
               </Label>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-[#888]">
                 Voice updates every 1km during live cardio tracking
               </p>
             </div>
@@ -139,9 +139,9 @@ export function SettingsPanel() {
       </Card>
 
       {/* Coaching Settings */}
-      <Card className="bg-card border-border">
+      <Card className="bg-[#111] border-white/[0.06]">
         <CardHeader>
-          <CardTitle className="font-display text-xl tracking-wide flex items-center gap-2">
+          <CardTitle className="font-heading text-xl tracking-wide flex items-center gap-2">
             <Brain className="w-5 h-5 text-primary" />
             UNBREAKABLE COACH
           </CardTitle>
@@ -149,11 +149,11 @@ export function SettingsPanel() {
         <CardContent className="space-y-6">
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
-              <Label className="text-foreground font-medium flex items-center gap-2">
+              <Label className="text-white font-medium flex items-center gap-2">
                 <Volume2 className="w-4 h-4 text-primary" />
                 Breathing Voice
               </Label>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-[#888]">
                 Voice guidance for breathing meditation exercises
               </p>
             </div>
@@ -166,11 +166,11 @@ export function SettingsPanel() {
 
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
-              <Label className="text-foreground font-medium flex items-center gap-2">
+              <Label className="text-white font-medium flex items-center gap-2">
                 <Video className="w-4 h-4 text-primary" />
                 Movement Analysis
               </Label>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-[#888]">
                 Analyse technique from uploaded videos
               </p>
             </div>
@@ -190,11 +190,11 @@ export function SettingsPanel() {
       <SocialLinksCard profile={profile} updateProfile={updateProfile} />
 
       {/* Sign Out */}
-      <Card className="bg-card border-border border-destructive/30">
+      <Card className="bg-[#111] border-white/[0.06] border-destructive/30">
         <CardContent className="pt-6">
           <Button 
             variant="destructive" 
-            className="w-full font-display tracking-wide"
+            className="w-full font-heading tracking-wide"
             onClick={handleSignOut}
           >
             <LogOut className="w-4 h-4 mr-2" />
