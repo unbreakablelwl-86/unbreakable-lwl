@@ -410,6 +410,14 @@ export default function Profile() {
           >
             Share Profile
           </button>
+          <button
+            onClick={() => navigate('/admin')}
+            className="py-2.5 px-4 rounded-xl text-sm font-semibold text-white transition-colors"
+            style={{ background: '#222' }}
+            title="Admin & Content Studio"
+          >
+            ⚙️
+          </button>
         </div>
       </section>
 

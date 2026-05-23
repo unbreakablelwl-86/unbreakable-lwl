@@ -22,6 +22,10 @@
 
 @layer base {
   :root {
+    /* Pillar accent — dynamically set by usePillarTheme hook */
+    --pillar-accent: #FF5500;
+    --pillar-glow: rgba(255,85,0,0.25);
+
     /* Light Mode - Soft industrial warmth */
     --background: 30 8% 96%;
     --foreground: 20 10% 10%;
@@ -282,6 +286,18 @@
   /* Nav active glow */
   .nav-glow {
     filter: drop-shadow(0 0 6px rgba(255, 85, 0, 0.6));
+  }
+
+  /* Pillar accent utilities — uses dynamic --pillar-accent var */
+  .pillar-text { color: var(--pillar-accent); }
+  .pillar-bg { background-color: var(--pillar-accent); }
+  .pillar-border { border-color: var(--pillar-accent); }
+  .pillar-glow {
+    box-shadow: 0 0 20px var(--pillar-glow), 0 0 60px color-mix(in srgb, var(--pillar-accent) 10%, transparent);
+  }
+  .pillar-heading {
+    color: var(--pillar-accent);
+    text-shadow: 0 0 20px var(--pillar-glow);
   }
 }
 

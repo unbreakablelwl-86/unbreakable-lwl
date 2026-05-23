@@ -1,5 +1,6 @@
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { usePillarTheme } from '@/hooks/usePillarTheme';
 import {
   Dumbbell,
   Flame,
@@ -161,12 +162,21 @@ const ALL_NAV_ITEMS: NavItemDef[] = [
   },
   {
     id: 'help',
-    icon: HelpCircle,
-    label: 'Help',
+    icon: Sparkles,
+    label: 'AI Coach',
     path: '/help',
     activeMatch: ['/help'],
-    color: '#78909C',
-    description: 'FAQ & support',
+    color: '#FF5500',
+    description: 'AI coaching chat',
+  },
+  {
+    id: 'admin',
+    icon: Settings,
+    label: 'Admin',
+    path: '/admin',
+    activeMatch: ['/admin'],
+    color: '#FF5500',
+    description: 'Content studio & admin',
   },
 ];
 
@@ -199,6 +209,7 @@ export default function AppLayout() {
   const [showCustomize, setShowCustomize] = useState(false);
   const [activeTabs, setActiveTabs] = useState<string[]>(loadSavedTabs);
   const { unreadCount } = useConversations();
+  usePillarTheme();
 
   const hideNav = !user || HIDE_NAV_PATHS.some(p => location.pathname.startsWith(p));
 
