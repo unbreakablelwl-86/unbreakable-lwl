@@ -35,6 +35,7 @@ import Profile from "./pages/Profile";
 import ProgrammingLogs from "./pages/ProgrammingLogs";
 import ProgrammingMyProgrammes from "./pages/ProgrammingMyProgrammes";
 import ProgrammingCreate from "./pages/ProgrammingCreate";
+import ExerciseLibrary from "./pages/ExerciseLibrary";
 import FuelHistory from "./pages/FuelHistory";
 import FuelRecipes from "./pages/FuelRecipes";
 import FuelPlanning from "./pages/FuelPlanning";
@@ -151,6 +152,7 @@ const App = () => {
                 <Route path="/programming/logs" element={
                   <ProtectedRoute><ProgrammingLogs /></ProtectedRoute>
                 } />
+                <Route path="/programming/exercises" element={<ExerciseLibrary />} />
                 
                 {/* Tracker (Movement) routes */}
                 <Route path="/tracker" element={

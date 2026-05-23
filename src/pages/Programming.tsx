@@ -47,6 +47,30 @@ export default function Programming() {
           </h2>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+            {/* Exercise Library Card */}
+            <Link to="/programming/exercises">
+              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                <Card className="relative overflow-hidden p-8 h-full border-2 border-primary/30 hover:border-primary bg-gradient-to-br from-primary/10 via-primary/5 to-transparent transition-all duration-300 neon-border-subtle group shadow-[0_0_20px_hsl(var(--primary)/0.1)] hover:shadow-[0_0_30px_hsl(var(--primary)/0.25)]">
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+                  <div className="relative z-10 space-y-4">
+                    <div className="w-16 h-16 rounded-xl bg-primary/20 flex items-center justify-center neon-glow">
+                      <Dumbbell className="w-8 h-8 text-primary" />
+                    </div>
+                    <h3 className="font-display text-2xl text-foreground tracking-wide">
+                      <span className="text-primary neon-glow-subtle">EXERCISE LIBRARY</span>
+                    </h3>
+                    <p className="text-muted-foreground text-sm leading-relaxed">
+                      873 exercises with images, coaching breakdowns, and step-by-step instructions. Master every movement.
+                    </p>
+                    <div className="inline-flex items-center gap-2 text-primary font-display tracking-wider text-sm group-hover:gap-3 transition-all">
+                      BROWSE LIBRARY
+                      <ArrowRight className="w-4 h-4" />
+                    </div>
+                  </div>
+                </Card>
+              </motion.div>
+            </Link>
+
             {/* Create Card */}
             <Link to="/programming/create">
               <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>

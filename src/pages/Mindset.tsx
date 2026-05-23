@@ -38,7 +38,7 @@ const EXPOSURE_PROTOCOLS: ExposureProtocol[] = [
       { label: 'Full Cold', duration: 30 },
     ],
     category: 'cold',
-    colour: '#38BDF8',
+    colour: '#FF5500',
   },
   {
     id: 'cold-shower-intermediate',
@@ -51,7 +51,7 @@ const EXPOSURE_PROTOCOLS: ExposureProtocol[] = [
       { label: 'Full Cold', duration: 90 },
     ],
     category: 'cold',
-    colour: '#38BDF8',
+    colour: '#FF5500',
   },
   {
     id: 'cold-shower-advanced',
@@ -63,7 +63,7 @@ const EXPOSURE_PROTOCOLS: ExposureProtocol[] = [
       { label: 'Recovery Breathing', duration: 30 },
     ],
     category: 'cold',
-    colour: '#38BDF8',
+    colour: '#FF5500',
   },
   {
     id: 'ice-bath-standard',
@@ -76,7 +76,7 @@ const EXPOSURE_PROTOCOLS: ExposureProtocol[] = [
       { label: 'Recovery', duration: 60 },
     ],
     category: 'cold',
-    colour: '#818CF8',
+    colour: '#FF5500',
   },
   {
     id: 'ice-bath-extended',
@@ -89,7 +89,7 @@ const EXPOSURE_PROTOCOLS: ExposureProtocol[] = [
       { label: 'Active Recovery', duration: 120 },
     ],
     category: 'cold',
-    colour: '#818CF8',
+    colour: '#FF5500',
   },
   {
     id: 'sauna-standard',
@@ -103,7 +103,7 @@ const EXPOSURE_PROTOCOLS: ExposureProtocol[] = [
       { label: 'Recovery', duration: 180 },
     ],
     category: 'heat',
-    colour: '#F97316',
+    colour: '#FF5500',
   },
   {
     id: 'sauna-contrast',
@@ -118,7 +118,7 @@ const EXPOSURE_PROTOCOLS: ExposureProtocol[] = [
       { label: 'Final Recovery', duration: 120 },
     ],
     category: 'heat',
-    colour: '#F97316',
+    colour: '#FF5500',
   },
 ];
 
@@ -376,10 +376,10 @@ const Mindset = () => {
                 <h3 className="text-xs font-display tracking-wider text-gray-400">EXPLORE</h3>
                 {[
                   { tab: 'breathwork' as MindsetTab, icon: Wind, title: 'BREATHWORK', desc: 'Voice-guided sessions — Box Breathing, 4-7-8, Tactical Calm', colour: '#FF5500' },
-                  { tab: 'exposure' as MindsetTab, icon: Snowflake, title: 'COLD & HEAT', desc: 'Cold showers, ice baths, sauna protocols — guided timers', colour: '#38BDF8' },
-                  { tab: 'games' as MindsetTab, icon: Gamepad2, title: 'FOCUS GAMES', desc: 'Reaction training, hand-eye coordination, global leaderboards', colour: '#A78BFA' },
-                  { tab: 'habits' as MindsetTab, icon: Target, title: 'DAILY HABITS', desc: 'Track your Daily 5 — train, learn, hydrate, hit your numbers, journal', colour: '#34D399' },
-                  { tab: 'programmes' as MindsetTab, icon: Sparkles, title: 'PROGRAMMES', desc: 'AI or manual mindset programmes — breathwork, cold exposure, focus plans', colour: '#FBBF24' },
+                  { tab: 'exposure' as MindsetTab, icon: Snowflake, title: 'COLD & HEAT', desc: 'Cold showers, ice baths, sauna protocols — guided timers', colour: '#FF5500' },
+                  { tab: 'games' as MindsetTab, icon: Gamepad2, title: 'FOCUS GAMES', desc: 'Reaction training, hand-eye coordination, global leaderboards', colour: '#FF5500' },
+                  { tab: 'habits' as MindsetTab, icon: Target, title: 'DAILY HABITS', desc: 'Track your Daily 5 — train, learn, hydrate, hit your numbers, journal', colour: '#FF5500' },
+                  { tab: 'programmes' as MindsetTab, icon: Sparkles, title: 'PROGRAMMES', desc: 'AI or manual mindset programmes — breathwork, cold exposure, focus plans', colour: '#FF5500' },
                 ].map(card => (
                   <button
                     key={card.tab}
@@ -472,8 +472,8 @@ const Mindset = () => {
           {/* ═══ COLD & HEAT TAB ═══ */}
           {activeTab === 'exposure' && (
             <motion.div key="exposure" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-4">
-              <div className="p-4 rounded-xl border border-[#38BDF8]/15 bg-[#111]">
-                <h3 className="font-display text-sm text-[#38BDF8] mb-1">THE UNBREAKABLE EXPOSURE METHOD</h3>
+              <div className="p-4 rounded-xl border border-[#FF5500]/15 bg-[#111]">
+                <h3 className="font-display text-sm text-[#FF5500] mb-1">THE UNBREAKABLE EXPOSURE METHOD</h3>
                 <p className="text-gray-400 text-sm leading-relaxed">
                   Cold and heat exposure rewire your stress response. Cold showers, ice baths, and sauna protocols
                   build cardiovascular resilience, boost immune function, and forge <span className="text-[#FF5500]">unbreakable mental control</span>.
@@ -548,8 +548,8 @@ const Mindset = () => {
           {/* ═══ FOCUS GAMES TAB ═══ */}
           {activeTab === 'games' && (
             <motion.div key="games" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-4">
-              <div className="p-4 rounded-xl border border-[#A78BFA]/15 bg-[#111]">
-                <h3 className="font-display text-sm text-[#A78BFA] mb-1">SWITCH OFF THE WORLD. SWITCH ON YOUR MIND.</h3>
+              <div className="p-4 rounded-xl border border-[#FF5500]/15 bg-[#111]">
+                <h3 className="font-display text-sm text-[#FF5500] mb-1">SWITCH OFF THE WORLD. SWITCH ON YOUR MIND.</h3>
                 <p className="text-gray-400 text-sm leading-relaxed">
                   These games are your switch-off. No distractions, no noise — just you and the screen. 
                   Auto-scaling difficulty keeps you at your edge. Compete on global leaderboards.
@@ -568,12 +568,12 @@ const Mindset = () => {
                   className="w-full text-left p-4 rounded-xl border border-gray-800 bg-[#111] hover:border-gray-700 hover:bg-[#151515] transition-all"
                 >
                   <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-[#A78BFA]/10 border border-[#A78BFA]/20 flex items-center justify-center shrink-0">
-                      <game.icon className="w-5 h-5 text-[#A78BFA]" style={{ filter: 'drop-shadow(0 0 4px rgba(167,139,250,0.5))' }} />
+                    <div className="w-10 h-10 rounded-lg bg-[#FF5500]/10 border border-[#FF5500]/20 flex items-center justify-center shrink-0">
+                      <game.icon className="w-5 h-5 text-[#FF5500]" style={{ filter: 'drop-shadow(0 0 4px rgba(167,139,250,0.5))' }} />
                     </div>
                     <div className="flex-1 min-w-0">
                       <h4 className="font-display text-sm text-white">{game.name}</h4>
-                      <p className="text-[#A78BFA] text-[10px] font-display">{game.subtitle}</p>
+                      <p className="text-[#FF5500] text-[10px] font-display">{game.subtitle}</p>
                       <p className="text-gray-500 text-xs mt-1">{game.desc}</p>
                       <div className="flex items-center gap-2 mt-2 text-[10px] text-gray-600">
                         <span>Endless mode</span>
@@ -593,8 +593,8 @@ const Mindset = () => {
           {/* ═══ HABITS TAB ═══ */}
           {activeTab === 'habits' && (
             <motion.div key="habits" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-4">
-              <div className="p-4 rounded-xl border border-[#34D399]/15 bg-[#111]">
-                <h3 className="font-display text-sm text-[#34D399] mb-1">DAILY 5 — HABIT TRACKER</h3>
+              <div className="p-4 rounded-xl border border-[#FF5500]/15 bg-[#111]">
+                <h3 className="font-display text-sm text-[#FF5500] mb-1">DAILY 5 — HABIT TRACKER</h3>
                 <p className="text-gray-400 text-sm leading-relaxed">
                   Consistency beats intensity. Track your Daily 5 every day to build unstoppable momentum.
                   Small actions, repeated daily, create <span className="text-[#FF5500]">UNBREAKABLE</span> habits.
@@ -605,10 +605,10 @@ const Mindset = () => {
               <div className="p-4 rounded-xl border border-gray-800 bg-[#111]">
                 <div className="flex items-center justify-between mb-3">
                   <span className="text-xs font-display text-gray-400 tracking-wider">TODAY'S PROGRESS</span>
-                  <span className="text-xs font-display text-[#34D399]">{completedToday}/4</span>
+                  <span className="text-xs font-display text-[#FF5500]">{completedToday}/4</span>
                 </div>
                 <div className="h-2 bg-gray-800 rounded-full overflow-hidden mb-4">
-                  <div className="h-full bg-[#34D399] rounded-full transition-all" style={{ width: `${(completedToday / 4) * 100}%` }} />
+                  <div className="h-full bg-[#FF5500] rounded-full transition-all" style={{ width: `${(completedToday / 4) * 100}%` }} />
                 </div>
 
                 {/* Habit toggles */}
@@ -628,16 +628,16 @@ const Mindset = () => {
                     }}
                     className={`w-full flex items-center gap-3 p-3 rounded-xl mb-2 transition-all border ${
                       habits[h.key]
-                        ? 'bg-[#34D399]/10 border-[#34D399]/20'
+                        ? 'bg-[#FF5500]/10 border-[#FF5500]/20'
                         : 'bg-[#111] border-gray-800 hover:border-gray-700'
                     }`}
                     disabled={!isToday || !user}
                   >
                     <span className="text-lg">{h.icon}</span>
-                    <span className={`flex-1 text-left font-display text-sm tracking-wide ${habits[h.key] ? 'text-[#34D399]' : 'text-gray-400'}`}>
+                    <span className={`flex-1 text-left font-display text-sm tracking-wide ${habits[h.key] ? 'text-[#FF5500]' : 'text-gray-400'}`}>
                       {h.label}
                     </span>
-                    {habits[h.key] && <Check className="w-4 h-4 text-[#34D399]" />}
+                    {habits[h.key] && <Check className="w-4 h-4 text-[#FF5500]" />}
                   </button>
                 ))}
               </div>
@@ -648,7 +648,7 @@ const Mindset = () => {
                 className="w-full flex items-center justify-between p-4 rounded-xl border border-gray-800 bg-[#111] hover:border-gray-700 transition-all"
               >
                 <div className="flex items-center gap-3">
-                  <BookOpen className="w-5 h-5 text-[#34D399]" />
+                  <BookOpen className="w-5 h-5 text-[#FF5500]" />
                   <div className="text-left">
                     <h4 className="font-display text-sm text-white">FULL HABIT TRACKER & JOURNAL</h4>
                     <p className="text-gray-500 text-xs mt-0.5">Daily journal, history & date navigation</p>
@@ -662,8 +662,8 @@ const Mindset = () => {
           {/* ═══ PROGRAMMES TAB ═══ */}
           {activeTab === 'programmes' && (
             <motion.div key="programmes" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-4">
-              <div className="p-4 rounded-xl border border-[#FBBF24]/15 bg-[#111]">
-                <h3 className="font-display text-sm text-[#FBBF24] mb-1">MINDSET PROGRAMMES</h3>
+              <div className="p-4 rounded-xl border border-[#FF5500]/15 bg-[#111]">
+                <h3 className="font-display text-sm text-[#FF5500] mb-1">MINDSET PROGRAMMES</h3>
                 <p className="text-gray-400 text-sm leading-relaxed">
                   Build a structured mindset training plan. Let AI create one based on your goals, 
                   or build your own from scratch. Combine breathwork, cold exposure, focus training, 
@@ -701,7 +701,7 @@ const Mindset = () => {
                 <div className="space-y-2">
                   <h3 className="text-xs font-display tracking-wider text-gray-400">ACTIVE PROGRAMMES</h3>
                   {activeProgrammes.map(p => (
-                    <div key={p.id} className="p-3.5 rounded-xl border border-[#34D399]/20 bg-[#34D399]/5">
+                    <div key={p.id} className="p-3.5 rounded-xl border border-[#FF5500]/20 bg-[#FF5500]/5">
                       <div className="flex items-center justify-between">
                         <div>
                           <h4 className="font-display text-sm text-white">{p.name}</h4>
@@ -710,7 +710,7 @@ const Mindset = () => {
                             {p.focus_areas && ` • ${p.focus_areas.join(', ')}`}
                           </p>
                         </div>
-                        <span className="px-2 py-1 rounded-full bg-[#34D399]/15 text-[#34D399] text-[10px] font-display border border-[#34D399]/20">
+                        <span className="px-2 py-1 rounded-full bg-[#FF5500]/15 text-[#FF5500] text-[10px] font-display border border-[#FF5500]/20">
                           ACTIVE
                         </span>
                       </div>
