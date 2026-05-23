@@ -11,12 +11,13 @@ import { usePersonalRecords, PersonalRecord } from '@/hooks/usePersonalRecords';
 import { useSegments, Segment } from '@/hooks/useSegments';
 import { CardioTrackerModal } from '@/components/tracker/CardioTrackerModal';
 import { AuthModal } from '@/components/tracker/AuthModal';
-import { format, startOfWeek, endOfWeek, isWithinInterval, subWeeks, differenceInSeconds } from 'date-fns';
+import { MEDAL_DEFINITIONS } from '@/lib/medalDefinitions';
+import { format, startOfWeek, endOfWeek, isWithinInterval, subWeeks } from 'date-fns';
 import {
   Footprints, Bike, Play, Trophy, Medal, Crown,
   MapPin, Clock, Flame as FlameIcon, TrendingUp, ChevronRight,
   Timer, Activity, Waves, Droplets, BarChart3, Route,
-  Zap, Target, Star, Award, Calendar,
+  Zap, Target, Star, Award, Calendar, Edit3, Layers,
 } from 'lucide-react';
 
 /* ── Activity config ── */
@@ -29,6 +30,7 @@ const ACTIVITY_LABELS: Record<CardioActivityType, string> = {
 
 /* ── Tabs ── */
 type TabId = 'activity' | 'trophies' | 'segments' | 'stats';
+type ActivityFilter = 'all' | CardioActivityType;
 
 function formatDuration(seconds: number): string {
   const h = Math.floor(seconds / 3600);
@@ -65,14 +67,12 @@ function useWeeklyStats(runs: Run[]) {
     const totalDistance = thisWeek.reduce((s, r) => s + r.distance_km, 0);
     const totalTime = thisWeek.reduce((s, r) => s + r.duration_seconds, 0);
     const totalCalories = thisWeek.reduce((s, r) => s + (r.calories_burned || 0), 0);
-    const totalElevation = thisWeek.reduce((s, r) => s + (r.elevation_gain_m || 0), 0);
     const lastDistance = lastWeek.reduce((s, r) => s + r.distance_km, 0);
 
     return {
       distance: totalDistance,
       time: totalTime,
       calories: totalCalories,
-      elevation: totalElevation,
       activities: thisWeek.length,
       distanceDelta: lastDistance > 0 ? ((totalDistance - lastDistance) / lastDistance) * 100 : 0,
     };
@@ -86,17 +86,31 @@ export default function Tracker() {
   const { records, loading: recordsLoading } = usePersonalRecords();
   const { segments, loading: segmentsLoading } = useSegments();
   const [activeTab, setActiveTab] = useState<TabId>('activity');
+  const [activityFilter, setActivityFilter] = useState<ActivityFilter>('all');
   const [showTracker, setShowTracker] = useState(false);
-  const [trackerActivity, setTrackerActivity] = useState<CardioActivityType>('run');
   const [showAuth, setShowAuth] = useState(false);
   const navigate = useNavigate();
 
   const weekly = useWeeklyStats(runs || []);
-  const recentRuns = useMemo(() => (runs || []).slice(0, 20), [runs]);
 
-  function startActivity(type: CardioActivityType) {
+  const filteredRuns = useMemo(() => {
+    const allRuns = runs || [];
+    if (activityFilter === 'all') return allRuns.slice(0, 30);
+    return allRuns.filter(r => r.activity_type === activityFilter).slice(0, 30);
+  }, [runs, activityFilter]);
+
+  // Count activities per type for the filter badges
+  const activityCounts = useMemo(() => {
+    const allRuns = runs || [];
+    const counts: Record<string, number> = { all: allRuns.length };
+    for (const r of allRuns) {
+      counts[r.activity_type] = (counts[r.activity_type] || 0) + 1;
+    }
+    return counts;
+  }, [runs]);
+
+  function handleStartSession() {
     if (!user) { setShowAuth(true); return; }
-    setTrackerActivity(type);
     setShowTracker(true);
   }
 
@@ -105,6 +119,15 @@ export default function Tracker() {
     { id: 'trophies', label: 'Trophies', icon: Trophy },
     { id: 'segments', label: 'Segments', icon: Route },
     { id: 'stats', label: 'Stats', icon: BarChart3 },
+  ];
+
+  const FILTERS: { id: ActivityFilter; label: string; icon: React.ComponentType<any> }[] = [
+    { id: 'all', label: 'All', icon: Layers },
+    { id: 'run', label: 'Run', icon: Activity },
+    { id: 'walk', label: 'Walk', icon: Footprints },
+    { id: 'cycle', label: 'Cycle', icon: Bike },
+    { id: 'row', label: 'Row', icon: Waves },
+    { id: 'swim', label: 'Swim', icon: Droplets },
   ];
 
   return (
@@ -118,25 +141,27 @@ export default function Tracker() {
         <p className="text-gray-500 text-sm mt-1">Every finish line is a new starting point</p>
       </div>
 
-      {/* ─── Quick Start Buttons ─── */}
-      <div className="px-4 mb-4">
-        <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
-          {(['run', 'walk', 'cycle', 'row', 'swim'] as CardioActivityType[]).map(type => {
-            const Icon = ACTIVITY_ICONS[type];
-            return (
-              <button
-                key={type}
-                onClick={() => startActivity(type)}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-full border border-[#FF5500]/30 
-                  bg-[#FF5500]/10 hover:bg-[#FF5500]/20 hover:border-[#FF5500]/50 
-                  transition-all duration-200 shrink-0 group"
-              >
-                <Icon className="w-4 h-4 text-[#FF5500]" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.5))' }} />
-                <span className="text-sm font-medium text-white">{ACTIVITY_LABELS[type]}</span>
-              </button>
-            );
-          })}
-        </div>
+      {/* ─── Action Buttons ─── */}
+      <div className="px-4 mb-4 flex gap-3">
+        <button
+          onClick={handleStartSession}
+          className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl border border-[#FF5500]/30 
+            bg-[#FF5500]/10 hover:bg-[#FF5500]/20 hover:border-[#FF5500]/50 transition-all group"
+        >
+          <Play className="w-5 h-5 text-[#FF5500]" style={{ filter: 'drop-shadow(0 0 6px rgba(255,85,0,0.5))' }} />
+          <span className="font-display text-sm tracking-wide text-white">START SESSION</span>
+        </button>
+        <button
+          onClick={() => {
+            if (!user) { setShowAuth(true); return; }
+            setShowTracker(true);
+          }}
+          className="flex items-center justify-center gap-2 px-5 py-3 rounded-xl border border-gray-700 
+            bg-[#111] hover:bg-[#1A1A1A] hover:border-gray-600 transition-all"
+        >
+          <Edit3 className="w-4 h-4 text-gray-400" />
+          <span className="text-sm text-gray-400">Manual</span>
+        </button>
       </div>
 
       {/* ─── Weekly Stats Banner ─── */}
@@ -191,26 +216,63 @@ export default function Tracker() {
         <AnimatePresence mode="wait">
           {activeTab === 'activity' && (
             <motion.div key="activity" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-3">
+              
+              {/* ── Activity Type Filters ── */}
+              <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+                {FILTERS.map(f => {
+                  const count = activityCounts[f.id] || 0;
+                  const active = activityFilter === f.id;
+                  const Icon = f.icon;
+                  return (
+                    <button
+                      key={f.id}
+                      onClick={() => setActivityFilter(f.id)}
+                      className={`flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-medium shrink-0 transition-all border ${
+                        active
+                          ? 'bg-[#FF5500]/15 text-[#FF5500] border-[#FF5500]/30 shadow-[0_0_12px_rgba(255,85,0,0.15)]'
+                          : 'bg-[#111] text-gray-500 border-gray-800 hover:border-gray-600 hover:text-gray-300'
+                      }`}
+                    >
+                      <Icon className="w-3.5 h-3.5" />
+                      {f.label}
+                      {count > 0 && (
+                        <span className={`text-[10px] ${active ? 'text-[#FF5500]/70' : 'text-gray-600'}`}>
+                          {count}
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* ── Activity Feed ── */}
               {runsLoading ? (
                 <div className="flex justify-center py-12">
                   <div className="w-8 h-8 border-2 border-[#FF5500] border-t-transparent rounded-full animate-spin" />
                 </div>
-              ) : recentRuns.length === 0 ? (
+              ) : filteredRuns.length === 0 ? (
                 <Card className="p-8 text-center border-gray-800 bg-[#111]">
                   <Activity className="w-12 h-12 text-[#FF5500] mx-auto mb-4" style={{ filter: 'drop-shadow(0 0 10px rgba(255,85,0,0.4))' }} />
-                  <h3 className="font-display text-lg text-white mb-2">NO ACTIVITIES YET</h3>
-                  <p className="text-gray-500 text-sm mb-4">Start your first session and begin tracking your journey</p>
-                  <Button onClick={() => startActivity('run')} className="gap-2">
-                    <Play className="w-4 h-4" /> Start Running
+                  <h3 className="font-display text-lg text-white mb-2">
+                    {activityFilter === 'all' ? 'NO ACTIVITIES YET' : `NO ${ACTIVITY_LABELS[activityFilter as CardioActivityType]?.toUpperCase()} SESSIONS`}
+                  </h3>
+                  <p className="text-gray-500 text-sm mb-4">
+                    {activityFilter === 'all' 
+                      ? 'Start your first session and begin tracking your journey' 
+                      : `Start a ${ACTIVITY_LABELS[activityFilter as CardioActivityType]?.toLowerCase()} session to see it here`}
+                  </p>
+                  <Button onClick={handleStartSession} className="gap-2 bg-[#FF5500] hover:bg-[#CC4400]">
+                    <Play className="w-4 h-4" /> Start Session
                   </Button>
                 </Card>
               ) : (
-                recentRuns.map((run) => {
+                filteredRuns.map((run) => {
                   const Icon = ACTIVITY_ICONS[run.activity_type] || Activity;
                   return (
                     <Card key={run.id} className="p-4 border-gray-800 bg-[#111] hover:border-[#FF5500]/30 transition-all">
                       <div className="flex items-start gap-3">
-                        <div className="w-10 h-10 rounded-lg bg-[#FF5500]/10 flex items-center justify-center shrink-0">
+                        <div className="w-10 h-10 rounded-lg bg-[#111] border border-[#FF5500]/20 flex items-center justify-center shrink-0"
+                          style={{ boxShadow: '0 0 10px rgba(255,85,0,0.1)' }}>
                           <Icon className="w-5 h-5 text-[#FF5500]" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.5))' }} />
                         </div>
                         <div className="flex-1 min-w-0">
@@ -266,9 +328,26 @@ export default function Tracker() {
 
           {activeTab === 'trophies' && (
             <motion.div key="trophies" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
-              {/* Trophy Cabinet */}
+              {/* Summary banner */}
+              <div className="flex items-center justify-between mb-4 p-3 rounded-xl bg-[#111] border border-gray-800">
+                <div className="flex items-center gap-3">
+                  <Trophy className="w-6 h-6 text-[#FF5500]" style={{ filter: 'drop-shadow(0 0 6px rgba(255,85,0,0.5))' }} />
+                  <div>
+                    <p className="text-sm font-medium text-white">{medals.length} / {MEDAL_DEFINITIONS.length} Trophies</p>
+                    <p className="text-[10px] text-gray-500">Keep pushing to unlock more</p>
+                  </div>
+                </div>
+                <div className="w-20 h-2 bg-gray-800 rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-gradient-to-r from-[#FF5500] to-[#FF7733] rounded-full transition-all"
+                    style={{ width: `${MEDAL_DEFINITIONS.length > 0 ? (medals.length / MEDAL_DEFINITIONS.length) * 100 : 0}%` }}
+                  />
+                </div>
+              </div>
+
+              {/* Earned Trophies */}
               <div className="mb-6">
-                <h3 className="font-display text-sm tracking-widest text-gray-400 uppercase mb-3">Trophy Cabinet</h3>
+                <h3 className="font-display text-sm tracking-widest text-gray-400 uppercase mb-3">Earned</h3>
                 {medalsLoading ? (
                   <div className="flex justify-center py-8">
                     <div className="w-8 h-8 border-2 border-[#FF5500] border-t-transparent rounded-full animate-spin" />
@@ -282,7 +361,7 @@ export default function Tracker() {
                 ) : (
                   <div className="grid grid-cols-3 gap-3">
                     {medals.map(medal => (
-                      <Card key={medal.id} className="p-4 text-center border-gray-800 bg-[#111] hover:border-[#FF5500]/30 transition-all">
+                      <Card key={medal.id} className="p-4 text-center border-[#FF5500]/20 bg-[#111] hover:border-[#FF5500]/40 transition-all">
                         <div className="text-3xl mb-2">{medal.icon || '🏅'}</div>
                         <p className="text-xs font-medium text-white truncate">{medal.name}</p>
                         <p className="text-[10px] text-gray-500 mt-1">{format(new Date(medal.earned_at), 'MMM d, yyyy')}</p>
@@ -291,6 +370,42 @@ export default function Tracker() {
                   </div>
                 )}
               </div>
+
+              {/* Locked Trophies */}
+              {(() => {
+                const earnedCodes = new Set(medals.map(m => m.code));
+                const locked = MEDAL_DEFINITIONS.filter(d => !earnedCodes.has(d.code));
+                if (locked.length === 0) return null;
+                
+                const categories = [...new Set(locked.map(d => d.category))];
+                const categoryLabels: Record<string, string> = {
+                  distance: 'Distance', pace: 'Speed', milestone: 'Milestones', 
+                  streak: 'Consistency', special: 'Special', strength: 'Strength', cardio: 'Cardio'
+                };
+                
+                return (
+                  <div className="mb-6">
+                    <h3 className="font-display text-sm tracking-widest text-gray-400 uppercase mb-3">Locked</h3>
+                    {categories.map(cat => {
+                      const items = locked.filter(d => d.category === cat);
+                      return (
+                        <div key={cat} className="mb-4">
+                          <p className="text-[10px] uppercase tracking-wider text-gray-600 mb-2">{categoryLabels[cat] || cat}</p>
+                          <div className="grid grid-cols-3 gap-2">
+                            {items.map(d => (
+                              <div key={d.code} className="p-3 text-center rounded-xl border border-gray-800/50 bg-[#0A0A0A] opacity-50">
+                                <div className="text-2xl mb-1 grayscale">{d.icon}</div>
+                                <p className="text-[10px] font-medium text-gray-500 truncate">{d.name}</p>
+                                <p className="text-[8px] text-gray-600 mt-0.5 line-clamp-1">{d.description}</p>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                );
+              })()}
 
               {/* Personal Records */}
               <div>
@@ -426,7 +541,6 @@ export default function Tracker() {
       <CardioTrackerModal 
         isOpen={showTracker} 
         onClose={() => setShowTracker(false)} 
-        initialActivity={trackerActivity}
       />
       <AuthModal isOpen={showAuth} onClose={() => setShowAuth(false)} />
     </div>
