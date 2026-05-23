@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Wind, Zap, Target, Heart, Volume2, VolumeX, Flame, ArrowRight, Clock } from "lucide-react";
+import { Wind, Zap, Target, Heart, Volume2, VolumeX, Flame, ArrowRight, Clock, ChevronRight } from "lucide-react";
 import { ThemedLogo } from "@/components/ThemedLogo";
 import { ThemeToggle } from "@/components/hub/ThemeToggle";
 import { CountdownOverlay } from "@/components/CountdownOverlay";
@@ -247,128 +247,86 @@ const MindsetBreathing = () => {
   if (view === "selection") {
     return (
       <div className="min-h-screen pb-24" style={{ background: '#080808' }}>
-        <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm border-b border-border">
-          <div className="container mx-auto px-6 py-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <ThemeToggle />
-                <Link to="/" className="flex items-center gap-3">
-                  <ThemedLogo />
-                  <span className="font-display text-lg tracking-wide text-foreground hidden sm:block">UNBREAKABLE</span>
-                </Link>
-              </div>
-              <div className="flex items-center gap-2">
-                <VoiceSettingsSheet />
-</div>
-            </div>
-          </div>
-        </header>
-
-        <section className="pt-32 pb-12 text-center px-6">
-          <div className="max-w-4xl mx-auto">
-            <ThemedLogo className="h-32 md:h-40 object-contain mx-auto mb-6" />
-            <h1 className="font-display text-6xl md:text-8xl text-primary tracking-wide leading-none mb-2">
-              {heroContent.title}
+        {/* Compact Mindset Hero */}
+        <div className="relative px-4 pt-6 pb-5 overflow-hidden">
+          <div className="absolute inset-0 pointer-events-none"
+            style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(255,85,0,0.08), transparent 70%)' }} />
+          <div className="relative z-10">
+            <h1 className="font-display text-2xl tracking-wider text-center">
+              <span className="text-[#FF5500]" style={{ textShadow: '0 0 20px rgba(255,85,0,0.4)' }}>UNBREAKABLE</span>
+              <span className="text-white"> BREATHING</span>
             </h1>
-            <h1 className="font-display text-6xl md:text-8xl text-foreground tracking-wide leading-none">
-              {heroContent.titleAccent}
-            </h1>
-            <p className="text-primary font-display text-xl md:text-2xl tracking-wide mt-6">
-              {heroContent.tagline}
+            <p className="text-center text-gray-500 text-sm mt-1 font-display tracking-wide">
+              BREATHE WITH PURPOSE
             </p>
-            <div className="flex items-center justify-center gap-2 mt-6 text-sm">
-              {voiceEnabled ? (
-                <>
-                  <Volume2 className="w-4 h-4 text-primary" />
-                  <span className="text-muted-foreground">Voice guidance enabled</span>
-                </>
-              ) : (
-                <>
-                  <VolumeX className="w-4 h-4 text-muted-foreground" />
-                  <span className="text-muted-foreground">Voice guidance disabled</span>
-                </>
-              )}
-            </div>
           </div>
-        </section>
+        </div>
 
-        <main className="container mx-auto px-6 py-8">
-          <div className="max-w-6xl mx-auto">
-            <div className="bg-card border-2 border-primary/30 rounded-lg p-8 md:p-10 mb-10 text-center max-w-4xl mx-auto">
-              <p className="text-muted-foreground leading-relaxed mb-4">
-                {heroContent.intro}{' '}
-                <span className="text-primary font-semibold">{heroContent.emphasis}</span>.
-              </p>
-              <p className="text-muted-foreground leading-relaxed mb-4">
-                {heroContent.description}
-              </p>
-              <p className="text-muted-foreground leading-relaxed mb-4">
-                <span className="text-primary font-semibold">{heroContent.descEmphasis}</span>{heroContent.descEnd}
-              </p>
-              <p className="text-muted-foreground leading-relaxed">
-                {heroContent.goal}{' '}
-                <span className="text-primary font-semibold">{heroContent.goalEmphasis}</span>{heroContent.goalEnd}
-              </p>
-              <p className="text-primary font-display text-2xl tracking-wide mt-6">
-                {heroContent.hashtag}
-              </p>
-            </div>
-
-            <h2 className="font-display text-2xl text-primary mb-8 tracking-wide text-center">
-              SELECT YOUR SESSION
-            </h2>
-
-            <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
-              {getVisibleExercises().map((exercise) => {
-                const cycleSec = exercise.phases.inhale + exercise.phases.hold + exercise.phases.exhale + (exercise.phases.rest || 0);
-                return (
-                  <Card
-                    key={exercise.id}
-                    className="bg-card border-2 border-primary/30 border-l-4 border-l-primary p-6 cursor-pointer hover:bg-muted/50 transition-all group"
-                    onClick={() => selectExercise(exercise)}
-                  >
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="p-3 rounded-lg bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all">
-                        {getIntensityIcon(exercise.intensity)}
-                      </div>
-                      <div>
-                        <h3 className="font-display text-xl text-foreground tracking-wide">{exercise.name}</h3>
-                        <p className="text-xs text-primary font-display">{cycleSec}s per cycle</p>
-                      </div>
-                    </div>
-                    <p className="text-primary font-display text-sm tracking-wide mb-3">{exercise.tagline}</p>
-                    <p className="text-muted-foreground text-sm leading-relaxed mb-4">{exercise.description}</p>
-                    <div className="flex items-center justify-between text-xs text-muted-foreground pt-4 border-t border-border">
-                      <span>Choose your duration</span>
-                      <span className="capitalize">{exercise.intensity} intensity</span>
-                    </div>
-                  </Card>
-                );
-              })}
-            </div>
+        <div className="px-4 space-y-4">
+          {/* Description Card */}
+          <div className="p-3.5 rounded-xl border border-[#FF5500]/15 bg-[#111]">
+            <p className="text-gray-400 text-sm leading-relaxed">
+              Controlled breathing isn't relaxation — it's <span className="text-[#FF5500] font-semibold">nervous system training</span>.
+              Every pattern here is built on proven science. Master your breath, master your mind.
+              Stay calm in chaos, focused under fire, and <span className="text-[#FF5500] font-semibold">UNBREAKABLE</span>.
+            </p>
+            <p className="text-[#FF5500] font-display text-xs tracking-wider mt-2">KEEP SHOWING UP.</p>
           </div>
-        </main>
 
-        <section className="container mx-auto px-6 py-12 border-t border-border">
-          <Link to="/help" className="block max-w-3xl mx-auto">
-            <Card className="border-2 border-primary/40 bg-primary/5 p-6 hover:bg-primary/10 transition-all border-gray-800 bg-[#111]">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="w-14 h-14 rounded-full bg-primary/20 flex items-center justify-center">
-                    <Flame className="w-7 h-7 text-primary" />
+          {/* Voice toggle row */}
+          <div className="flex items-center justify-center gap-2 text-xs">
+            {voiceEnabled ? (
+              <><Volume2 className="w-3.5 h-3.5 text-[#FF5500]" /><span className="text-gray-500">Voice guidance enabled</span></>
+            ) : (
+              <><VolumeX className="w-3.5 h-3.5 text-gray-600" /><span className="text-gray-500">Voice guidance disabled</span></>
+            )}
+          </div>
+
+          {/* Section Header */}
+          <p className="text-xs font-display tracking-wider text-gray-400 pt-2">SELECT YOUR SESSION</p>
+
+          {/* Session Cards — Mindset compact rows */}
+          <div className="space-y-2">
+            {getVisibleExercises().map((exercise) => {
+              const cycleSec = exercise.phases.inhale + exercise.phases.hold + exercise.phases.exhale + (exercise.phases.rest || 0);
+              return (
+                <button
+                  key={exercise.id}
+                  onClick={() => selectExercise(exercise)}
+                  className="w-full p-3.5 rounded-xl border border-gray-800 bg-[#111] flex items-center gap-3 hover:border-[#FF5500]/30 transition-all group text-left"
+                >
+                  <div className="w-10 h-10 rounded-lg border border-[#FF5500]/20 flex items-center justify-center shrink-0" style={{ background: 'rgba(255,85,0,0.1)' }}>
+                    <span className="text-[#FF5500]" style={{ filter: 'drop-shadow(0 0 6px rgba(255,85,0,0.5))' }}>
+                      {getIntensityIcon(exercise.intensity)}
+                    </span>
                   </div>
-                  <div>
-                    <p className="font-display text-xl tracking-wide text-foreground">
-                      NEED MORE? <span className="text-primary">ASK YOUR COACH</span>
-                    </p>
-                    <p className="text-muted-foreground mt-1">Breathing techniques, stress management, and mental resilience coaching</p>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-display text-sm tracking-wider text-white">{exercise.name}</p>
+                    <p className="text-gray-500 text-xs mt-0.5">{exercise.tagline} — {cycleSec}s/cycle</p>
                   </div>
-                </div>
-                <ArrowRight className="w-6 h-6 text-primary hidden sm:block" />
+                  <div className="text-right shrink-0">
+                    <p className="text-[#FF5500] text-xs font-display capitalize">{exercise.intensity}</p>
+                    <ChevronRight className="w-4 h-4 text-gray-600 group-hover:text-[#FF5500] transition-colors ml-auto mt-0.5" />
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Coach CTA */}
+          <div className="mt-4 p-3.5 rounded-xl border border-[#FF5500]/20 bg-[#FF5500]/5">
+            <Link to="/help" className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg border border-[#FF5500]/20 flex items-center justify-center" style={{ background: 'rgba(255,85,0,0.1)' }}>
+                <Flame className="w-5 h-5 text-[#FF5500]" style={{ filter: 'drop-shadow(0 0 6px rgba(255,85,0,0.5))' }} />
               </div>
-            </Card>
-          </Link>
-        </section>
+              <div className="flex-1">
+                <p className="font-display text-sm tracking-wider text-white">NEED HELP?</p>
+                <p className="text-gray-500 text-xs mt-0.5">Ask your Unbreakable Coach</p>
+              </div>
+              <ChevronRight className="w-4 h-4 text-[#FF5500]" />
+            </Link>
+          </div>
+        </div>
 </div>
     );
   }

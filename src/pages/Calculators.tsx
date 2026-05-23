@@ -189,41 +189,38 @@ const Calculators = () => {
           <PageNavigation />
         </div>
 
-        {/* Hero Section - Calculator Title */}
-        <section className="pt-12 pb-12 text-center px-6">
-        <div className="max-w-4xl mx-auto">
-          <ThemedLogo className="h-32 md:h-40 object-contain mx-auto mb-6" />
-          <h1 className="font-display text-6xl md:text-8xl text-foreground tracking-wide leading-none mb-2">
-            {hero.title}
-          </h1>
-          <h1 className="font-display text-6xl md:text-8xl text-primary tracking-wide leading-none">
-            {hero.titleAccent}
-          </h1>
-          <p className="text-primary font-display text-xl md:text-2xl tracking-wide mt-6">
-            {hero.tagline}
-          </p>
-        </div>
-      </section>
-
-      {/* Tab Navigation - Centered Pills */}
-      <div className="container mx-auto px-6 py-8">
-        <div className="flex justify-center">
-          <div className="inline-flex bg-card border border-border rounded-lg p-1.5 gap-1">
-            {tabs.map((tab) => (
-              <button
-                key={tab.key}
-                onClick={() => handleTabChange(tab.key)}
-                className={`flex items-center gap-2 px-6 py-3 rounded-md font-display tracking-wide transition-all ${
-                  activeTab === tab.key
-                    ? 'bg-primary text-primary-foreground'
-                    : 'text-muted-foreground hover:text-foreground'
-                }`}
-              >
-                {tab.icon}
-                {tab.label}
-              </button>
-            ))}
+        {/* Compact Mindset Hero */}
+        <div className="relative px-4 pt-4 pb-4 overflow-hidden">
+          <div className="absolute inset-0 pointer-events-none"
+            style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(255,85,0,0.08), transparent 70%)' }} />
+          <div className="relative z-10">
+            <h1 className="font-display text-2xl tracking-wider text-center">
+              <span className="text-white">{hero.title} </span>
+              <span className="text-[#FF5500]" style={{ textShadow: '0 0 20px rgba(255,85,0,0.4)' }}>{hero.titleAccent}</span>
+            </h1>
+            <p className="text-center text-gray-500 text-sm mt-1 font-display tracking-wide">
+              {hero.tagline}
+            </p>
           </div>
+        </div>
+
+      {/* Tab Navigation - Pill Bar */}
+      <div className="px-2 mb-4">
+        <div className="flex gap-1 overflow-x-auto pb-1">
+          {tabs.map((tab) => (
+            <button
+              key={tab.key}
+              onClick={() => handleTabChange(tab.key)}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full font-display text-xs tracking-wider whitespace-nowrap transition-all ${
+                activeTab === tab.key
+                  ? 'bg-[#FF5500]/15 text-[#FF5500] border border-[#FF5500]/30'
+                  : 'text-gray-500 border border-transparent hover:text-gray-300'
+              }`}
+            >
+              {tab.icon}
+              {tab.label}
+            </button>
+          ))}
         </div>
       </div>
 
@@ -231,33 +228,19 @@ const Calculators = () => {
       <main className="container mx-auto px-6 py-8">
         <div className="max-w-6xl mx-auto">
           {/* Description Card */}
-          <div className="bg-card border-2 border-primary/30 rounded-lg p-8 md:p-10 mb-10 text-center max-w-4xl mx-auto">
-            <p className="text-muted-foreground leading-relaxed mb-4">
+          <div className="p-3.5 rounded-xl border border-[#FF5500]/15 bg-[#111] mb-4">
+            <p className="text-gray-400 text-sm leading-relaxed">
               {hero.intro}{' '}
-              <span className="text-primary font-semibold">{hero.emphasis}</span>.
+              <span className="text-[#FF5500] font-semibold">{hero.emphasis}</span>.{' '}
+              {hero.description}
             </p>
-            
-            <p className="text-muted-foreground leading-relaxed mb-4">
-              {hero.description}{' '}
-              <span className="text-primary font-semibold">{hero.descEmphasis}</span>
-              {hero.descEnd}
-            </p>
-            
-            <p className="text-muted-foreground leading-relaxed">
-              {hero.goal}{' '}
-              <span className="text-primary font-semibold">{hero.goalEmphasis}</span>{' '}
-              {hero.goalEnd}
-            </p>
-            
-            <p className="text-primary font-display text-2xl tracking-wide mt-6">
-              {hero.hashtag}
-            </p>
+            <p className="text-[#FF5500] font-display text-xs tracking-wider mt-2">KEEP SHOWING UP.</p>
           </div>
 
           {/* Calculator Grid */}
           <div className="grid lg:grid-cols-2 gap-8">
             {/* Form */}
-            <div className="bg-card border-2 border-primary/30 rounded-lg p-8">
+            <div className="rounded-xl border border-gray-800 bg-[#111] p-4">
               <h3 className="font-display text-2xl text-primary mb-8 tracking-wide text-center">
                 {activeTab === 'strength' && 'ENTER YOUR LIFT'}
                 {activeTab === 'fuel' && 'ENTER YOUR DETAILS'}
@@ -311,7 +294,7 @@ const Calculators = () => {
 
 function EmptyState({ emoji, title, description }: { emoji: string; title: string; description: string }) {
   return (
-    <div className="bg-card border-2 border-primary/30 rounded-lg p-10 h-full flex items-center justify-center min-h-[450px]">
+    <div className="rounded-xl border border-gray-800 bg-[#111] p-4 h-full flex items-center justify-center min-h-[450px]">
       <div className="text-center">
         <div className="w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
           <span className="text-5xl">{emoji}</span>
