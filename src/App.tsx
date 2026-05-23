@@ -54,6 +54,7 @@ import Terms from "./pages/Terms";
 import FAQ from "./pages/FAQ";
 import Explore from "./pages/Explore";
 import AITokens from "./pages/AITokens";
+import SignIn from "./pages/SignIn";
 
 const queryClient = new QueryClient();
 
@@ -68,6 +69,9 @@ const App = () => (
           <InstallPrompt />
           <BrowserRouter>
             <Routes>
+              {/* Sign-in — standalone full-page (no bottom nav) */}
+              <Route path="/signin" element={<SignIn />} />
+
               {/* All pages wrapped in AppLayout (provides bottom nav) */}
               <Route element={<AppLayout />}>
                 {/* Index handles both logged-in hub and logged-out landing */}

@@ -72,42 +72,42 @@
     --brick-glow-opacity: 0.015;
   }
 
-  /* Dark Mode - Deep charcoal industrial */
+  /* Dark Mode — UNBREAKABLE 2.0: Pure black + neon orange */
   .dark {
-    --background: 0 0% 7%;
+    --background: 0 0% 3%;
     --foreground: 0 0% 98%;
 
-    --card: 0 0% 11%;
+    --card: 0 0% 7%;
     --card-foreground: 0 0% 98%;
 
-    --popover: 0 0% 10%;
+    --popover: 0 0% 6%;
     --popover-foreground: 0 0% 98%;
 
-    --primary: 24 100% 52%;
+    --primary: 22 100% 50%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 30 100% 60%;
+    --primary-glow: 22 100% 58%;
 
-    --secondary: 0 0% 17%;
+    --secondary: 0 0% 13%;
     --secondary-foreground: 0 0% 98%;
 
-    --muted: 0 0% 14%;
-    --muted-foreground: 0 0% 65%;
+    --muted: 0 0% 10%;
+    --muted-foreground: 0 0% 60%;
 
-    --accent: 24 100% 52%;
+    --accent: 22 100% 50%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 70% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0% 20%;
-    --input: 0 0% 7%;
-    --ring: 24 100% 52%;
+    --border: 0 0% 15%;
+    --input: 0 0% 5%;
+    --ring: 22 100% 50%;
 
-    --surface: 0 0% 13%;
+    --surface: 0 0% 9%;
     --locked: 0 0% 40%;
     --locked-foreground: 0 0% 55%;
 
-    --sidebar-background: 0 0% 8%;
+    --sidebar-background: 0 0% 4%;
     --sidebar-foreground: 0 0% 90%;
     --sidebar-primary: 24 100% 52%;
     --sidebar-primary-foreground: 0 0% 100%;
@@ -259,6 +259,29 @@
 
   .neon-pulse {
     animation: glow-pulse 2s ease-in-out infinite;
+  }
+
+  /* 2.0-style orange CTA glow */
+  .ub-glow {
+    box-shadow: 0 0 20px rgba(255, 85, 0, 0.35), 0 0 60px rgba(255, 85, 0, 0.12);
+  }
+
+  .ub-glow-lg {
+    box-shadow: 0 0 30px rgba(255, 85, 0, 0.5), 0 0 80px rgba(255, 85, 0, 0.2), 0 0 120px rgba(255, 85, 0, 0.08);
+  }
+
+  /* Shield pulsing glow */
+  @keyframes shield-pulse {
+    0%, 100% { filter: drop-shadow(0 0 8px rgba(255, 85, 0, 0.4)); }
+    50% { filter: drop-shadow(0 0 24px rgba(255, 85, 0, 0.8)); }
+  }
+  .shield-pulse {
+    animation: shield-pulse 2.5s ease-in-out infinite;
+  }
+
+  /* Nav active glow */
+  .nav-glow {
+    filter: drop-shadow(0 0 6px rgba(255, 85, 0, 0.6));
   }
 }
 

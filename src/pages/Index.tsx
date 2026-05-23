@@ -127,7 +127,7 @@ const Index = () => {
   // If logged in, show the unified hub
   if (user) {
     return (
-      <div className="min-h-screen bg-background pb-20 md:pb-8">
+      <div className="min-h-screen bg-background">
         {/* Facebook-style Header */}
         <SocialHeader
           activeTab={activeTab}
