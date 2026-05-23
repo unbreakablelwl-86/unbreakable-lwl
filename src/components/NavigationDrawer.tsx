@@ -24,6 +24,7 @@ const freeHubLinks = [
 ];
 
 const paidHubLinks = [
+  { to: '/unbreakable-86', label: 'UNBREAKABLE 86', icon: Flame, paid: true },
   { to: '/programming', label: 'POWER', icon: Dumbbell, paid: true },
   { to: '/tracker', label: 'MOVEMENT', icon: Footprints, paid: true },
   { to: '/fuel', label: 'FUEL', icon: Apple, paid: true },

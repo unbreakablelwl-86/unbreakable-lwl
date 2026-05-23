@@ -169,6 +169,36 @@ export function HomeDashboard() {
         <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#FF5500] to-transparent opacity-60" />
       </div>
 
+      {/* ─── UNBREAKABLE 86 Featured Card ─── */}
+      <section className="px-4 mt-6">
+        <Link to="/unbreakable-86">
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="relative overflow-hidden rounded-xl border border-[#FF5500]/30 p-4"
+            style={{ background: 'linear-gradient(135deg, rgba(255,85,0,0.12) 0%, rgba(255,85,0,0.03) 50%, rgba(17,17,17,0.95) 100%)' }}
+          >
+            <div className="absolute top-0 right-0 w-20 h-20 opacity-10">
+              <Flame className="w-full h-full text-[#FF5500]" />
+            </div>
+            <div className="relative z-10 flex items-center gap-3">
+              <div className="w-12 h-12 rounded-xl bg-[#FF5500]/15 border border-[#FF5500]/30 flex items-center justify-center"
+                style={{ boxShadow: '0 0 20px rgba(255,85,0,0.2)' }}>
+                <Flame className="w-6 h-6 text-[#FF5500]" style={{ filter: 'drop-shadow(0 0 8px rgba(255,85,0,0.6))' }} />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-display text-base tracking-wider text-[#FF5500]"
+                  style={{ textShadow: '0 0 15px rgba(255,85,0,0.3)' }}>
+                  UNBREAKABLE 86
+                </h3>
+                <p className="text-xs text-gray-400">86 days · 5 pillars · No days off</p>
+              </div>
+              <ChevronRight className="w-5 h-5 text-[#FF5500]/60" />
+            </div>
+          </motion.div>
+        </Link>
+      </section>
+
       {/* ─── Your Pillars ─── */}
       <section className="px-4 mt-8">
         <h3 className="font-display text-sm tracking-[0.2em] text-gray-400 mb-4 uppercase">Your Pillars</h3>

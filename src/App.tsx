@@ -60,6 +60,7 @@ import FAQ from "./pages/FAQ";
 import Explore from "./pages/Explore";
 import AITokens from "./pages/AITokens";
 import SignIn from "./pages/SignIn";
+import Unbreakable86 from "./pages/Unbreakable86";
 
 const queryClient = new QueryClient();
 
@@ -228,6 +229,10 @@ const App = () => {
                 {/* Habits - free to build daily engagement */}
                 <Route path="/habits" element={
                   <ProtectedRoute><Habits /></ProtectedRoute>
+                } />
+
+                <Route path="/unbreakable-86" element={
+                  <ProtectedRoute><Unbreakable86 /></ProtectedRoute>
                 } />
                 
                 {/* Coach Dashboard - role-protected + subscribed */}
