@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ThemedLogo } from '@/components/ThemedLogo';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { NavigationDrawer } from '@/components/NavigationDrawer';
 import { ThemeToggle } from '@/components/hub/ThemeToggle';
 import { NotificationsPanel } from '@/components/hub/NotificationsPanel';
 
@@ -115,8 +114,7 @@ export function SocialHeader({
               </Button>
 
               <ThemeToggle />
-              <NavigationDrawer variant="minimal" />
-            </div>
+</div>
           </div>
         </div>
       </header>

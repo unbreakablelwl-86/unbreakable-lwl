@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom';
 import { ThemedLogo } from '@/components/ThemedLogo';
 import { ThemeToggle } from '@/components/hub/ThemeToggle';
-import { NavigationDrawer } from '@/components/NavigationDrawer';
 import { Button } from '@/components/ui/button';
 
 interface PageHeaderProps {
@@ -58,8 +57,7 @@ export function PageHeader({
                 SIGN IN
               </Button>
             )}
-            <NavigationDrawer />
-          </div>
+</div>
         </div>
       </div>
     </header>

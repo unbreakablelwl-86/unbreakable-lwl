@@ -4,10 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Gamepad2, Zap, Flame, ArrowRight, Blocks } from "lucide-react";
 import { ThemedLogo } from "@/components/ThemedLogo";
-import { NavigationDrawer } from "@/components/NavigationDrawer";
 import { ThemeToggle } from "@/components/hub/ThemeToggle";
-import { UnifiedFooter } from "@/components/UnifiedFooter";
-
 const SnakeGame = lazy(() => import("@/components/mindset/SnakeGame"));
 const AlleywayGame = lazy(() => import("@/components/mindset/AlleywayGame"));
 const TetrisGame = lazy(() => import("@/components/mindset/TetrisGame"));
@@ -47,8 +44,7 @@ const MindsetGames = () => {
                 <Button variant="ghost" size="sm" className="font-display text-xs tracking-wide" onClick={() => setView("selection")}>
                   ← BACK
                 </Button>
-                <NavigationDrawer />
-              </div>
+</div>
             </div>
           </div>
         </header>
@@ -61,8 +57,7 @@ const MindsetGames = () => {
             <SnakeGame />
           </Suspense>
         </main>
-        <UnifiedFooter className="mt-16" />
-      </div>
+</div>
     );
   }
 
@@ -83,8 +78,7 @@ const MindsetGames = () => {
                 <Button variant="ghost" size="sm" className="font-display text-xs tracking-wide" onClick={() => setView("selection")}>
                   ← BACK
                 </Button>
-                <NavigationDrawer />
-              </div>
+</div>
             </div>
           </div>
         </header>
@@ -97,8 +91,7 @@ const MindsetGames = () => {
             <AlleywayGame />
           </Suspense>
         </main>
-        <UnifiedFooter className="mt-16" />
-      </div>
+</div>
     );
   }
 
@@ -119,8 +112,7 @@ const MindsetGames = () => {
                 <Button variant="ghost" size="sm" className="font-display text-xs tracking-wide" onClick={() => setView("selection")}>
                   ← BACK
                 </Button>
-                <NavigationDrawer />
-              </div>
+</div>
             </div>
           </div>
         </header>
@@ -133,13 +125,9 @@ const MindsetGames = () => {
             <TetrisGame />
           </Suspense>
         </main>
-        <UnifiedFooter className="mt-16" />
-      </div>
+</div>
     );
   }
-
-
-
 
   return (
     <div className="min-h-screen bg-background">
@@ -153,8 +141,7 @@ const MindsetGames = () => {
                 <span className="font-display text-lg tracking-wide text-foreground hidden sm:block">UNBREAKABLE</span>
               </Link>
             </div>
-            <NavigationDrawer />
-          </div>
+</div>
         </div>
       </header>
 
@@ -268,8 +255,6 @@ const MindsetGames = () => {
               </div>
             </Card>
 
-
-
           </div>
         </div>
       </main>
@@ -295,9 +280,7 @@ const MindsetGames = () => {
           </Card>
         </Link>
       </section>
-
-      <UnifiedFooter className="mt-16" />
-    </div>
+</div>
   );
 };
 

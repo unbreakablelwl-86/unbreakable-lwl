@@ -1,8 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MainNavigation } from '@/components/MainNavigation';
-import { UnifiedFooter } from '@/components/UnifiedFooter';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -207,8 +205,7 @@ export default function TrackerCreate() {
   if (view === 'program' && generatedProgram) {
     return (
       <div className="min-h-screen bg-background">
-        <MainNavigation />
-        <main className="container mx-auto px-4 py-24 md:py-28">
+<main className="container mx-auto px-4 py-24 md:py-28">
           <CardioProgramDisplay
             program={generatedProgram}
             onSave={handleSaveProgram}
@@ -216,8 +213,7 @@ export default function TrackerCreate() {
             isSaving={isSaving}
           />
         </main>
-        <UnifiedFooter className="mt-auto" />
-      </div>
+</div>
     );
   }
 
@@ -225,9 +221,7 @@ export default function TrackerCreate() {
   if (view === 'wizard') {
     return (
       <div className="min-h-screen bg-background">
-        <MainNavigation />
-
-        <main className="container mx-auto px-4 py-24 md:py-28">
+<main className="container mx-auto px-4 py-24 md:py-28">
           <Button variant="ghost" onClick={handleBackToSelect} className="mb-6 gap-2">
             <Home className="w-4 h-4" />
             Back to Selection
@@ -441,9 +435,7 @@ export default function TrackerCreate() {
             </div>
           </div>
         </main>
-
-        <UnifiedFooter className="mt-auto" />
-        <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
+<AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
       </div>
     );
   }
@@ -451,9 +443,7 @@ export default function TrackerCreate() {
   // Mode selection view (default)
   return (
     <div className="min-h-screen bg-background">
-      <MainNavigation />
-
-      {/* Hero */}
+{/* Hero */}
       <section className="pt-24 pb-12 md:pt-28 md:pb-16 border-b border-border">
         <div className="container mx-auto px-4 text-center max-w-4xl">
           <motion.div
@@ -509,9 +499,7 @@ export default function TrackerCreate() {
           </Card>
         </Link>
       </section>
-
-      <UnifiedFooter className="mt-auto" />
-      <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
+<AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
     </div>
   );
 }

@@ -1,8 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { MainNavigation } from '@/components/MainNavigation';
-import { UnifiedFooter } from '@/components/UnifiedFooter';
 import { NutritionHistoryView } from '@/components/fuel/NutritionHistoryView';
 import { useAuth } from '@/hooks/useAuth';
 import { AuthModal } from '@/components/tracker/AuthModal';
@@ -24,9 +22,7 @@ export default function FuelHistory() {
 
   return (
     <div className="min-h-screen bg-background">
-      <MainNavigation />
-
-      {/* Hero Section */}
+{/* Hero Section */}
       <section className="pt-24 pb-16 md:pt-28 md:pb-20 border-b border-primary/20">
         <div className="container mx-auto px-4 text-center max-w-4xl">
           <motion.div
@@ -101,9 +97,7 @@ export default function FuelHistory() {
           </Card>
         </Link>
       </section>
-
-      <UnifiedFooter className="mt-auto" />
-      <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
+<AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
     </div>
   );
 }

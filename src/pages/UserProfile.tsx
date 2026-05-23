@@ -1,8 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MainNavigation } from '@/components/MainNavigation';
-import { UnifiedFooter } from '@/components/UnifiedFooter';
 import { useAuth } from '@/hooks/useAuth';
 import { useFriends } from '@/hooks/useFriends';
 import { useConversations } from '@/hooks/useConversations';
@@ -450,8 +448,7 @@ export default function UserProfile() {
   if (!profile) {
     return (
       <div className="min-h-screen bg-background">
-        <MainNavigation />
-        <div className="pt-24 pb-12 container mx-auto px-4 text-center">
+<div className="pt-24 pb-12 container mx-auto px-4 text-center">
           <User className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
           <h1 className="font-display text-2xl tracking-wide mb-2">USER NOT FOUND</h1>
           <p className="text-muted-foreground mb-6">This profile doesn't exist or has been removed.</p>
@@ -460,8 +457,7 @@ export default function UserProfile() {
             Go Back
           </Button>
         </div>
-        <UnifiedFooter />
-      </div>
+</div>
     );
   }
 
@@ -470,9 +466,7 @@ export default function UserProfile() {
 
   return (
     <div className="min-h-screen bg-background">
-      <MainNavigation />
-
-      <main className="pt-20 pb-12">
+<main className="pt-20 pb-12">
         <div className="max-w-2xl mx-auto px-4">
           {/* Back button */}
           <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="mb-4 -ml-2">
@@ -665,10 +659,7 @@ export default function UserProfile() {
           </motion.div>
         </div>
       </main>
-
-      <UnifiedFooter />
-
-      {/* Post Detail Modal */}
+{/* Post Detail Modal */}
       <AnimatePresence>
         {selectedPost && profile && (
           <PostDetailModal

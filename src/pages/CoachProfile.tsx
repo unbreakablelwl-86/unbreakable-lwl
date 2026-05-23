@@ -1,6 +1,4 @@
 import { useParams, Link } from 'react-router-dom';
-import { MainNavigation } from '@/components/MainNavigation';
-import { UnifiedFooter } from '@/components/UnifiedFooter';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -29,8 +27,7 @@ export default function CoachProfile() {
   if (!profile) {
     return (
       <div className="min-h-screen bg-background">
-        <MainNavigation />
-        <main className="container mx-auto px-4 py-24 max-w-2xl text-center">
+<main className="container mx-auto px-4 py-24 max-w-2xl text-center">
           <UserCheck className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
           <h1 className="font-display text-2xl tracking-wide text-foreground mb-2">COACH NOT FOUND</h1>
           <p className="text-muted-foreground text-sm">This coach profile doesn't exist or isn't published yet.</p>
@@ -38,8 +35,7 @@ export default function CoachProfile() {
             <Button variant="outline" className="mt-4 font-display tracking-wide">BROWSE COACHES</Button>
           </Link>
         </main>
-        <UnifiedFooter />
-      </div>
+</div>
     );
   }
 
@@ -51,8 +47,7 @@ export default function CoachProfile() {
 
   return (
     <div className="min-h-screen bg-background">
-      <MainNavigation />
-      <main className="container mx-auto px-4 py-24 max-w-2xl space-y-6">
+<main className="container mx-auto px-4 py-24 max-w-2xl space-y-6">
         {/* Profile Header */}
         <div className="text-center space-y-4">
           <Avatar className="h-24 w-24 mx-auto border-4 border-primary/20">
@@ -228,7 +223,6 @@ export default function CoachProfile() {
           </Card>
         )}
       </main>
-      <UnifiedFooter />
-    </div>
+</div>
   );
 }

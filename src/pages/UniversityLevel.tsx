@@ -1,7 +1,5 @@
 import { useNavigate, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { MainNavigation } from '@/components/MainNavigation';
-import { UnifiedFooter } from '@/components/UnifiedFooter';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { CourseProgressBar } from '@/components/university/CourseProgressBar';
@@ -47,8 +45,7 @@ export default function UniversityLevel() {
     const prevLevel = levelNum - 1;
     return (
       <div className="min-h-screen bg-background">
-        <MainNavigation />
-        <div className="pt-24 pb-6 container mx-auto px-4 max-w-2xl text-center">
+<div className="pt-24 pb-6 container mx-auto px-4 max-w-2xl text-center">
           <Button variant="ghost" size="sm" onClick={() => navigate(`/university?course=${backTab}`)} className="mb-6 text-muted-foreground">
             <ChevronLeft className="w-4 h-4 mr-1" /> University
           </Button>
@@ -63,8 +60,7 @@ export default function UniversityLevel() {
             Go to Level {prevLevel}
           </Button>
         </div>
-        <UnifiedFooter className="mt-auto" />
-      </div>
+</div>
     );
   }
 
@@ -93,9 +89,7 @@ export default function UniversityLevel() {
 
   return (
     <div className="min-h-screen bg-background">
-      <MainNavigation />
-
-      {/* Level Header */}
+{/* Level Header */}
       <div className="pt-24 pb-8 border-b border-primary/20 relative overflow-hidden">
         <div className={`absolute inset-0 bg-gradient-to-b ${colors.bgGradient} opacity-30 pointer-events-none`} />
         <div className="container mx-auto px-4 max-w-3xl relative z-10">
@@ -354,7 +348,6 @@ export default function UniversityLevel() {
       </main>
 
       <AdminControlPanel />
-      <UnifiedFooter className="mt-auto" />
-    </div>
+</div>
   );
 }

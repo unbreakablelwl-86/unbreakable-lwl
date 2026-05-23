@@ -1,5 +1,3 @@
-import { MainNavigation } from '@/components/MainNavigation';
-import { UnifiedFooter } from '@/components/UnifiedFooter';
 import { CoachProfileEditor } from '@/components/coaching/CoachProfileEditor';
 import { useAuth } from '@/hooks/useAuth';
 import { Navigate } from 'react-router-dom';
@@ -20,8 +18,7 @@ export default function CoachProfileEdit() {
 
   return (
     <div className="min-h-screen bg-background">
-      <MainNavigation />
-      <main className="container mx-auto px-4 py-24 max-w-2xl">
+<main className="container mx-auto px-4 py-24 max-w-2xl">
         <div className="space-y-2 mb-6">
           <h1 className="font-display text-2xl tracking-wide">
             <span className="text-primary">COACH </span>
@@ -33,7 +30,6 @@ export default function CoachProfileEdit() {
         </div>
         <CoachProfileEditor />
       </main>
-      <UnifiedFooter />
-    </div>
+</div>
   );
 }

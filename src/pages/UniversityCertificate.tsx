@@ -1,6 +1,4 @@
 import { useParams, useNavigate, Navigate } from 'react-router-dom';
-import { MainNavigation } from '@/components/MainNavigation';
-import { UnifiedFooter } from '@/components/UnifiedFooter';
 import { CertificateView } from '@/components/university/CertificateView';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
@@ -44,9 +42,7 @@ export default function UniversityCertificate() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <MainNavigation />
-
-      <section className="pt-24 pb-8 border-b border-primary/20 relative overflow-hidden">
+<section className="pt-24 pb-8 border-b border-primary/20 relative overflow-hidden">
         <div className={`absolute inset-0 bg-gradient-to-b ${colors.bgGradient} opacity-20 pointer-events-none`} />
         <div className="container mx-auto px-4 max-w-3xl relative z-10">
           <Button variant="ghost" size="sm" className="mb-4 gap-1.5" onClick={() => navigate(-1)}>
@@ -82,8 +78,6 @@ export default function UniversityCertificate() {
           </div>
         )}
       </main>
-
-      <UnifiedFooter className="mt-auto" />
-    </div>
+</div>
   );
 }

@@ -3,9 +3,7 @@ import { useSearchParams, Link } from 'react-router-dom';
 import { ThemedLogo } from '@/components/ThemedLogo';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { NavigationDrawer } from '@/components/NavigationDrawer';
 import { ThemeToggle } from '@/components/hub/ThemeToggle';
-import { UnifiedFooter } from '@/components/UnifiedFooter';
 import { PageNavigation, SwipeNavigationWrapper } from '@/components/PageNavigation';
 import { Dumbbell, Flame, Timer, ArrowRight } from 'lucide-react';
 
@@ -182,8 +180,7 @@ const Calculators = () => {
                   </span>
                 </Link>
               </div>
-              <NavigationDrawer />
-            </div>
+</div>
           </div>
         </header>
 
@@ -329,9 +326,7 @@ const Calculators = () => {
           </Card>
         </Link>
       </section>
-
-        <UnifiedFooter className="mt-16" />
-      </div>
+</div>
     </SwipeNavigationWrapper>
   );
 };

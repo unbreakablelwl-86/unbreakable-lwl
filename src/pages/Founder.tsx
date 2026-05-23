@@ -3,8 +3,6 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ThemedLogo } from '@/components/ThemedLogo';
 import { Button } from '@/components/ui/button';
-import { NavigationDrawer } from '@/components/NavigationDrawer';
-import { UnifiedFooter } from '@/components/UnifiedFooter';
 import { ThemeToggle } from '@/components/hub/ThemeToggle';
 import { AuthModal } from '@/components/tracker/AuthModal';
 import { Card } from '@/components/ui/card';
@@ -120,8 +118,7 @@ const Founder = () => {
               <Button className="font-display tracking-wide" onClick={handleSignUp}>
                 START YOUR JOURNEY
               </Button>
-              <NavigationDrawer />
-            </div>
+</div>
           </div>
         </div>
       </header>
@@ -481,10 +478,7 @@ const Founder = () => {
           </Card>
         </motion.div>
       </section>
-
-      <UnifiedFooter />
-
-      <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} defaultMode={authDefaultMode} />
+<AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} defaultMode={authDefaultMode} />
     </div>
   );
 };

@@ -4,9 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Wind, Zap, Target, Heart, Volume2, VolumeX, Flame, ArrowRight, Clock } from "lucide-react";
 import { ThemedLogo } from "@/components/ThemedLogo";
-import { NavigationDrawer } from "@/components/NavigationDrawer";
 import { ThemeToggle } from "@/components/hub/ThemeToggle";
-import { UnifiedFooter } from "@/components/UnifiedFooter";
 import { CountdownOverlay } from "@/components/CountdownOverlay";
 import { getVisibleExercises, BreathingExercise, DURATION_OPTIONS } from "@/lib/breathingExercises";
 import { ImmersiveSessionView } from "@/components/mindset/ImmersiveSessionView";
@@ -261,8 +259,7 @@ const MindsetBreathing = () => {
               </div>
               <div className="flex items-center gap-2">
                 <VoiceSettingsSheet />
-                <NavigationDrawer />
-              </div>
+</div>
             </div>
           </div>
         </header>
@@ -372,9 +369,7 @@ const MindsetBreathing = () => {
             </Card>
           </Link>
         </section>
-
-        <UnifiedFooter className="mt-16" />
-      </div>
+</div>
     );
   }
 

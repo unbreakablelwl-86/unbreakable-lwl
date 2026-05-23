@@ -7,6 +7,7 @@ import { AuthProvider } from "@/hooks/useAuth";
 import { UniversityAdminProvider } from "@/hooks/useUniversityAdmin";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { InstallPrompt } from "@/components/pwa/InstallPrompt";
+import AppLayout from "@/layouts/AppLayout";
 import Index from "./pages/Index";
 import Calculators from "./pages/Calculators";
 import Tracker from "./pages/Tracker";
@@ -61,169 +62,172 @@ const App = () => (
     <AuthProvider>
       <UniversityAdminProvider>
       <TooltipProvider>
-        <div className="brick-texture min-h-screen">
+        <div className="dark min-h-screen bg-background">
           <Toaster />
           <Sonner />
           <InstallPrompt />
           <BrowserRouter>
             <Routes>
-              {/* Index handles both logged-in hub and logged-out landing */}
-              <Route path="/" element={<Index />} />
-              
-              {/* Founder page - pre-sign-in */}
-              <Route path="/founder" element={<Founder />} />
-              
-              {/* Legal pages - public */}
-              <Route path="/privacy" element={<Privacy />} />
-              <Route path="/terms" element={<Terms />} />
-              <Route path="/faq" element={<FAQ />} />
-              <Route path="/explore" element={<Explore />} />
-              
-              {/* Onboarding wizard - mandatory for new users */}
-              <Route path="/onboarding" element={<Onboarding />} />
-              
-              {/* Profile - free access (has membership tab) */}
-              <Route path="/profile" element={
-                <ProtectedRoute><Profile /></ProtectedRoute>
-              } />
-              
-              {/* Unbreakable Tokens - token tier selection */}
-              <Route path="/ai-tokens" element={
-                <ProtectedRoute><AITokens /></ProtectedRoute>
-              } />
+              {/* All pages wrapped in AppLayout (provides bottom nav) */}
+              <Route element={<AppLayout />}>
+                {/* Index handles both logged-in hub and logged-out landing */}
+                <Route path="/" element={<Index />} />
+                
+                {/* Founder page - pre-sign-in */}
+                <Route path="/founder" element={<Founder />} />
+                
+                {/* Legal pages - public */}
+                <Route path="/privacy" element={<Privacy />} />
+                <Route path="/terms" element={<Terms />} />
+                <Route path="/faq" element={<FAQ />} />
+                <Route path="/explore" element={<Explore />} />
+                
+                {/* Onboarding wizard - mandatory for new users */}
+                <Route path="/onboarding" element={<Onboarding />} />
+                
+                {/* Profile - free access (has membership tab) */}
+                <Route path="/profile" element={
+                  <ProtectedRoute><Profile /></ProtectedRoute>
+                } />
+                
+                {/* Unbreakable Tokens - token tier selection */}
+                <Route path="/ai-tokens" element={
+                  <ProtectedRoute><AITokens /></ProtectedRoute>
+                } />
 
-              {/* Plans - subscription selection */}
-              <Route path="/plans" element={
-                <ProtectedRoute><Plans /></ProtectedRoute>
-              } />
-              
-              {/* Inbox - free (hub feature) */}
-              <Route path="/inbox" element={
-                <ProtectedRoute><Inbox /></ProtectedRoute>
-              } />
-              
-              {/* User Profile - Public profile viewing */}
-              <Route path="/user/:userId" element={<UserProfile />} />
-              
-              {/* ============ FREE TIER (logged in, no subscription) ============ */}
-              
-              {/* Calculators - free to drive engagement */}
-              <Route path="/calculators" element={
-                <ProtectedRoute><Calculators /></ProtectedRoute>
-              } />
-              
-              {/* ============ SUBSCRIBED ROUTES (paid tier) ============ */}
-              
-              {/* Programming (Power) routes */}
-              <Route path="/programming" element={
-                <ProtectedRoute><Programming /></ProtectedRoute>
-              } />
-              <Route path="/programming/create" element={
-                <ProtectedRoute><ProgrammingCreate /></ProtectedRoute>
-              } />
-              <Route path="/programming/my-programmes" element={
-                <ProtectedRoute><ProgrammingMyProgrammes /></ProtectedRoute>
-              } />
-              <Route path="/programming/logs" element={
-                <ProtectedRoute><ProgrammingLogs /></ProtectedRoute>
-              } />
-              
-              {/* Tracker (Movement) routes */}
-              <Route path="/tracker" element={
-                <ProtectedRoute><Tracker /></ProtectedRoute>
-              } />
-              <Route path="/tracker/create" element={
-                <ProtectedRoute><TrackerCreate /></ProtectedRoute>
-              } />
-              <Route path="/tracker/my-programmes" element={
-                <ProtectedRoute><TrackerMyProgrammes /></ProtectedRoute>
-              } />
-              
-              {/* Fuel routes */}
-              <Route path="/fuel" element={
-                <ProtectedRoute><Fuel /></ProtectedRoute>
-              } />
-              <Route path="/fuel/history" element={
-                <ProtectedRoute><FuelHistory /></ProtectedRoute>
-              } />
-              <Route path="/fuel/recipes" element={
-                <ProtectedRoute><FuelRecipes /></ProtectedRoute>
-              } />
-              <Route path="/fuel/planning" element={
-                <ProtectedRoute><FuelPlanning /></ProtectedRoute>
-              } />
-              <Route path="/fuel/foods" element={
-                <ProtectedRoute><FuelFoods /></ProtectedRoute>
-              } />
-              <Route path="/fuel/my-fuel" element={
-                <ProtectedRoute><FuelMyFuel /></ProtectedRoute>
-              } />
-              
-              {/* Mindset routes */}
-              <Route path="/mindset" element={
-                <ProtectedRoute><Mindset /></ProtectedRoute>
-              } />
-              <Route path="/mindset/breathing" element={
-                <ProtectedRoute><MindsetBreathing /></ProtectedRoute>
-              } />
-              <Route path="/mindset/games" element={
-                <ProtectedRoute><MindsetGames /></ProtectedRoute>
-              } />
-              
-              {/* Coaching (Help) — uses Unbreakable token system, not subscription */}
-              <Route path="/help" element={
-                <ProtectedRoute><Help /></ProtectedRoute>
-              } />
-              
-              {/* University */}
-              <Route path="/university" element={
-                <ProtectedRoute><University /></ProtectedRoute>
-              } />
-              <Route path="/university/:courseType/:level" element={
-                <ProtectedRoute><UniversityLevel /></ProtectedRoute>
-              } />
-              <Route path="/university/:courseType/:level/:unit/:chapter" element={
-                <ProtectedRoute><UniversityChapter /></ProtectedRoute>
-              } />
-              <Route path="/university/:courseType/:level/:unit/:chapter/quiz" element={
-                <ProtectedRoute><UniversityChapterQuiz /></ProtectedRoute>
-              } />
-              <Route path="/university/:courseType/:level/:unit/assessment" element={
-                <ProtectedRoute><UniversityAssessment /></ProtectedRoute>
-              } />
-              <Route path="/university/:courseType/:level/certificate" element={
-                <ProtectedRoute><UniversityCertificate /></ProtectedRoute>
-              } />
-              
-              {/* Habits - free to build daily engagement */}
-              <Route path="/habits" element={
-                <ProtectedRoute><Habits /></ProtectedRoute>
-              } />
-              
-              {/* Coach Dashboard - role-protected + subscribed */}
-              <Route path="/coach" element={
-                <ProtectedRoute><CoachDashboard /></ProtectedRoute>
-              } />
-              
-              {/* Athlete coaching page */}
-              <Route path="/my-coaching" element={
-                <MyCoaching />
-              } />
-              <Route path="/coach-profile-edit" element={
-                <ProtectedRoute><CoachProfileEdit /></ProtectedRoute>
-              } />
-              <Route path="/coach/:userId" element={
-                <CoachProfile />
-              } />
-              <Route path="/coaches" element={
-                <Coaches />
-              } />
-              
-              {/* Admin Dashboard - Hidden, role-protected */}
-              <Route path="/admin" element={<Admin />} />
-              
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
+                {/* Plans - subscription selection */}
+                <Route path="/plans" element={
+                  <ProtectedRoute><Plans /></ProtectedRoute>
+                } />
+                
+                {/* Inbox - free (hub feature) */}
+                <Route path="/inbox" element={
+                  <ProtectedRoute><Inbox /></ProtectedRoute>
+                } />
+                
+                {/* User Profile - Public profile viewing */}
+                <Route path="/user/:userId" element={<UserProfile />} />
+                
+                {/* ============ FREE TIER (logged in, no subscription) ============ */}
+                
+                {/* Calculators - free to drive engagement */}
+                <Route path="/calculators" element={
+                  <ProtectedRoute><Calculators /></ProtectedRoute>
+                } />
+                
+                {/* ============ SUBSCRIBED ROUTES (paid tier) ============ */}
+                
+                {/* Programming (Power) routes */}
+                <Route path="/programming" element={
+                  <ProtectedRoute><Programming /></ProtectedRoute>
+                } />
+                <Route path="/programming/create" element={
+                  <ProtectedRoute><ProgrammingCreate /></ProtectedRoute>
+                } />
+                <Route path="/programming/my-programmes" element={
+                  <ProtectedRoute><ProgrammingMyProgrammes /></ProtectedRoute>
+                } />
+                <Route path="/programming/logs" element={
+                  <ProtectedRoute><ProgrammingLogs /></ProtectedRoute>
+                } />
+                
+                {/* Tracker (Movement) routes */}
+                <Route path="/tracker" element={
+                  <ProtectedRoute><Tracker /></ProtectedRoute>
+                } />
+                <Route path="/tracker/create" element={
+                  <ProtectedRoute><TrackerCreate /></ProtectedRoute>
+                } />
+                <Route path="/tracker/my-programmes" element={
+                  <ProtectedRoute><TrackerMyProgrammes /></ProtectedRoute>
+                } />
+                
+                {/* Fuel routes */}
+                <Route path="/fuel" element={
+                  <ProtectedRoute><Fuel /></ProtectedRoute>
+                } />
+                <Route path="/fuel/history" element={
+                  <ProtectedRoute><FuelHistory /></ProtectedRoute>
+                } />
+                <Route path="/fuel/recipes" element={
+                  <ProtectedRoute><FuelRecipes /></ProtectedRoute>
+                } />
+                <Route path="/fuel/planning" element={
+                  <ProtectedRoute><FuelPlanning /></ProtectedRoute>
+                } />
+                <Route path="/fuel/foods" element={
+                  <ProtectedRoute><FuelFoods /></ProtectedRoute>
+                } />
+                <Route path="/fuel/my-fuel" element={
+                  <ProtectedRoute><FuelMyFuel /></ProtectedRoute>
+                } />
+                
+                {/* Mindset routes */}
+                <Route path="/mindset" element={
+                  <ProtectedRoute><Mindset /></ProtectedRoute>
+                } />
+                <Route path="/mindset/breathing" element={
+                  <ProtectedRoute><MindsetBreathing /></ProtectedRoute>
+                } />
+                <Route path="/mindset/games" element={
+                  <ProtectedRoute><MindsetGames /></ProtectedRoute>
+                } />
+                
+                {/* Coaching (Help) — uses Unbreakable token system, not subscription */}
+                <Route path="/help" element={
+                  <ProtectedRoute><Help /></ProtectedRoute>
+                } />
+                
+                {/* University */}
+                <Route path="/university" element={
+                  <ProtectedRoute><University /></ProtectedRoute>
+                } />
+                <Route path="/university/:courseType/:level" element={
+                  <ProtectedRoute><UniversityLevel /></ProtectedRoute>
+                } />
+                <Route path="/university/:courseType/:level/:unit/:chapter" element={
+                  <ProtectedRoute><UniversityChapter /></ProtectedRoute>
+                } />
+                <Route path="/university/:courseType/:level/:unit/:chapter/quiz" element={
+                  <ProtectedRoute><UniversityChapterQuiz /></ProtectedRoute>
+                } />
+                <Route path="/university/:courseType/:level/:unit/assessment" element={
+                  <ProtectedRoute><UniversityAssessment /></ProtectedRoute>
+                } />
+                <Route path="/university/:courseType/:level/certificate" element={
+                  <ProtectedRoute><UniversityCertificate /></ProtectedRoute>
+                } />
+                
+                {/* Habits - free to build daily engagement */}
+                <Route path="/habits" element={
+                  <ProtectedRoute><Habits /></ProtectedRoute>
+                } />
+                
+                {/* Coach Dashboard - role-protected + subscribed */}
+                <Route path="/coach" element={
+                  <ProtectedRoute><CoachDashboard /></ProtectedRoute>
+                } />
+                
+                {/* Athlete coaching page */}
+                <Route path="/my-coaching" element={
+                  <MyCoaching />
+                } />
+                <Route path="/coach-profile-edit" element={
+                  <ProtectedRoute><CoachProfileEdit /></ProtectedRoute>
+                } />
+                <Route path="/coach/:userId" element={
+                  <CoachProfile />
+                } />
+                <Route path="/coaches" element={
+                  <Coaches />
+                } />
+                
+                {/* Admin Dashboard - Hidden, role-protected */}
+                <Route path="/admin" element={<Admin />} />
+                
+                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                <Route path="*" element={<NotFound />} />
+              </Route>
             </Routes>
           </BrowserRouter>
         </div>

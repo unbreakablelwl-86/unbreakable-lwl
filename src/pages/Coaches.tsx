@@ -1,6 +1,4 @@
 import { Link } from 'react-router-dom';
-import { MainNavigation } from '@/components/MainNavigation';
-import { UnifiedFooter } from '@/components/UnifiedFooter';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -14,9 +12,7 @@ export default function Coaches() {
 
   return (
     <div className="min-h-screen bg-background">
-      <MainNavigation />
-
-      {/* Hero */}
+{/* Hero */}
       <section className="pt-24 pb-8 md:pt-28 md:pb-10 border-b border-border">
         <div className="container mx-auto px-4 text-center max-w-3xl">
           <motion.div
@@ -114,7 +110,6 @@ export default function Coaches() {
           </div>
         )}
       </main>
-      <UnifiedFooter />
-    </div>
+</div>
   );
 }

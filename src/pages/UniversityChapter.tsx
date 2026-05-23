@@ -1,8 +1,6 @@
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { MainNavigation } from '@/components/MainNavigation';
-import { UnifiedFooter } from '@/components/UnifiedFooter';
 import { Button } from '@/components/ui/button';
 import { ChapterContent } from '@/components/university/ChapterContent';
 import { ChevronLeft, ChevronRight, CheckCircle, ClipboardCheck, Lock, BookOpen, Clock } from 'lucide-react';
@@ -71,9 +69,7 @@ export default function UniversityChapter() {
 
   return (
     <div className="min-h-screen bg-background">
-      <MainNavigation />
-
-      {/* Chapter Header */}
+{/* Chapter Header */}
       <div className="pt-24 pb-6 border-b border-primary/20 relative overflow-hidden">
         <div className={`absolute inset-0 bg-gradient-to-b ${colors.bgGradient} opacity-20 pointer-events-none`} />
         <div className="container mx-auto px-4 max-w-2xl relative z-10">
@@ -214,7 +210,6 @@ export default function UniversityChapter() {
       </main>
 
       <AdminControlPanel />
-      <UnifiedFooter className="mt-auto" />
-    </div>
+</div>
   );
 }

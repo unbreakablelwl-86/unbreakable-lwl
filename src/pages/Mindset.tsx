@@ -2,9 +2,7 @@ import { Link } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Brain, Wind, Gamepad2, Flame, ArrowRight, BookOpen } from "lucide-react";
 import { ThemedLogo } from "@/components/ThemedLogo";
-import { NavigationDrawer } from "@/components/NavigationDrawer";
 import { ThemeToggle } from "@/components/hub/ThemeToggle";
-import { UnifiedFooter } from "@/components/UnifiedFooter";
 import { MindsetProgrammes } from "@/components/mindset/MindsetProgrammes";
 
 const heroContent = {
@@ -61,8 +59,7 @@ const Mindset = () => {
                 </span>
               </Link>
             </div>
-            <NavigationDrawer />
-          </div>
+</div>
         </div>
       </header>
 
@@ -168,9 +165,7 @@ const Mindset = () => {
           </Card>
         </Link>
       </section>
-
-      <UnifiedFooter className="mt-16" />
-    </div>
+</div>
   );
 };
 

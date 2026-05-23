@@ -1,8 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MainNavigation } from '@/components/MainNavigation';
-import { UnifiedFooter } from '@/components/UnifiedFooter';
 import { ProfileView } from '@/components/tracker/ProfileView';
 import { AthleteCoachSection } from '@/components/profile/AthleteCoachSection';
 import { PasswordChangeCard } from '@/components/profile/PasswordChangeCard';
@@ -315,9 +313,7 @@ export default function Profile() {
 
   return (
     <div className="min-h-screen bg-background">
-      <MainNavigation />
-
-      {user && profile ? (
+{user && profile ? (
         <main className="pt-20 pb-12">
           <div className="max-w-2xl mx-auto px-4">
             <motion.div
@@ -524,9 +520,7 @@ export default function Profile() {
           </Card>
         </Link>
       </section>
-
-      <UnifiedFooter className="mt-auto" />
-      <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
+<AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
 
       {/* Post Detail Modal */}
       <AnimatePresence>

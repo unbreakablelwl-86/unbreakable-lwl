@@ -153,51 +153,6 @@ const Index = () => {
           </div>
         </main>
 
-        {/* Mobile Bottom Navigation — Instagram-style 5-tab */}
-        <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-card/95 backdrop-blur-md border-t border-border z-50 safe-area-pb">
-          <div className="flex items-center justify-around py-1.5 px-2">
-            <button
-              onClick={() => setActiveTab('feed')}
-              className={`flex flex-col items-center gap-0.5 p-2 ${
-                activeTab === 'feed' ? 'text-foreground' : 'text-muted-foreground'
-              }`}
-            >
-              <Home className="w-6 h-6" />
-            </button>
-            <button
-              onClick={() => navigate('/explore')}
-              className="flex flex-col items-center gap-0.5 p-2 text-muted-foreground"
-            >
-              <Search className="w-6 h-6" />
-            </button>
-            <button
-              onClick={() => setShowActionMenu(true)}
-              className="flex flex-col items-center gap-0.5 p-2"
-            >
-              <div className="w-10 h-10 rounded-lg bg-primary/10 border border-primary/30 flex items-center justify-center">
-                <Plus className="w-6 h-6 text-primary" />
-              </div>
-            </button>
-            <button
-              onClick={() => navigate('/inbox')}
-              className="relative flex flex-col items-center gap-0.5 p-2 text-muted-foreground"
-            >
-              <MessageCircle className="w-6 h-6" />
-              {messageCount > 0 && (
-                <Badge className="absolute -top-0.5 right-0 h-4 min-w-4 p-0 flex items-center justify-center text-[9px] bg-destructive border-card border-2">
-                  {messageCount > 9 ? '9+' : messageCount}
-                </Badge>
-              )}
-            </button>
-            <button
-              onClick={() => navigate('/profile')}
-              className="flex flex-col items-center gap-0.5 p-2 text-muted-foreground"
-            >
-              <User className="w-6 h-6" />
-            </button>
-          </div>
-        </nav>
-
         <RecordActionMenu 
           isOpen={showActionMenu} 
           onClose={() => setShowActionMenu(false)}

@@ -1,8 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MainNavigation } from '@/components/MainNavigation';
-import { UnifiedFooter } from '@/components/UnifiedFooter';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ProgramFormStep1 } from '@/components/programming/ProgramFormStep1';
@@ -163,20 +161,16 @@ export default function ProgrammingCreate() {
   if (generatedProgram) {
     return (
       <div className="min-h-screen bg-background">
-      <MainNavigation />
-        <main className="container mx-auto px-4 py-24 md:py-28">
+<main className="container mx-auto px-4 py-24 md:py-28">
           <ProgramDisplay program={generatedProgram} onReset={handleReset} />
         </main>
-        <UnifiedFooter className="mt-auto" />
-      </div>
+</div>
     );
   }
 
   return (
     <div className="min-h-screen bg-background">
-      <MainNavigation />
-
-      {/* Hero */}
+{/* Hero */}
       <section className="pt-24 pb-16 md:pt-28 md:pb-20 border-b border-primary/20">
         <div className="container mx-auto px-4 text-center max-w-4xl">
           <motion.div
@@ -379,9 +373,7 @@ export default function ProgrammingCreate() {
           </Card>
         </Link>
       </section>
-
-      <UnifiedFooter className="mt-auto" />
-      <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
+<AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
     </div>
   );
 }

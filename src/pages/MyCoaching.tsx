@@ -1,8 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { MainNavigation } from '@/components/MainNavigation';
-import { UnifiedFooter } from '@/components/UnifiedFooter';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -125,9 +123,7 @@ export default function MyCoaching() {
 
   return (
     <div className="min-h-screen bg-background">
-      <MainNavigation />
-
-      {/* Hero */}
+{/* Hero */}
       <section className="pt-24 pb-8 md:pt-28 md:pb-10 border-b border-border">
         <div className="container mx-auto px-4 text-center max-w-3xl">
           <motion.div
@@ -436,9 +432,7 @@ export default function MyCoaching() {
           </div>
         )}
       </main>
-
-      <UnifiedFooter className="mt-auto" />
-      <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
+<AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
     </div>
   );
 }

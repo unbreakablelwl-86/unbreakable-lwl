@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MainNavigation } from '@/components/MainNavigation';
 import { useTokenBalance } from '@/hooks/useTokenBalance';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -106,8 +105,7 @@ export default function AITokens() {
 
   return (
     <>
-      <MainNavigation />
-      <div className="min-h-screen bg-background pt-20 pb-16 px-4">
+<div className="min-h-screen bg-background pt-20 pb-16 px-4">
         <div className="max-w-5xl mx-auto">
           {/* Header */}
           <div className="text-center mb-12">

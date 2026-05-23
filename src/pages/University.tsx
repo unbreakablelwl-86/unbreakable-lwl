@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MainNavigation } from '@/components/MainNavigation';
-import { UnifiedFooter } from '@/components/UnifiedFooter';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { CourseProgressBar } from '@/components/university/CourseProgressBar';
@@ -60,9 +58,7 @@ export default function University() {
 
   return (
     <div className="min-h-screen bg-background">
-      <MainNavigation />
-
-      {/* Hero */}
+{/* Hero */}
       <section className="pt-24 pb-14 md:pt-28 md:pb-20 border-b border-primary/20 relative overflow-hidden">
         {/* Gradient backdrop */}
         <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent pointer-events-none" />
@@ -413,7 +409,6 @@ export default function University() {
       </main>
 
       <AdminControlPanel />
-      <UnifiedFooter className="mt-auto" />
-    </div>
+</div>
   );
 }

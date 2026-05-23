@@ -1,4 +1,5 @@
 @import '@fontsource/bebas-neue';
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700;800;900&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,11 +7,16 @@
 
 /* ========================================
    LIVE WITHOUT LIMITS - UNBREAKABLE
-   Premium Industrial Design System
+   Premium Industrial Design System v2
    ======================================== */
 
 .font-display {
   font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 0.02em;
+}
+
+.font-heading {
+  font-family: 'Barlow Condensed', 'Bebas Neue', sans-serif;
   letter-spacing: 0.02em;
 }
 

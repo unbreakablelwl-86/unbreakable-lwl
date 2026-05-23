@@ -1,8 +1,6 @@
 import { useNavigate, useParams } from 'react-router-dom';
 import { useState, useMemo, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { MainNavigation } from '@/components/MainNavigation';
-import { UnifiedFooter } from '@/components/UnifiedFooter';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
@@ -89,8 +87,7 @@ export default function UniversityChapterQuiz() {
   if (!accessLoading && !hasAccess) {
     return (
       <div className="min-h-screen bg-background">
-        <MainNavigation />
-        <div className="pt-24 container mx-auto px-4 max-w-2xl">
+<div className="pt-24 container mx-auto px-4 max-w-2xl">
           <CoursePurchaseGate
             courseKey={courseKey}
             courseName={unitData.title}
@@ -98,8 +95,7 @@ export default function UniversityChapterQuiz() {
             variant="full"
           />
         </div>
-        <UnifiedFooter className="mt-auto" />
-      </div>
+</div>
     );
   }
 
@@ -153,8 +149,7 @@ export default function UniversityChapterQuiz() {
   if (submitted) {
     return (
       <div className="min-h-screen bg-background">
-        <MainNavigation />
-        <div className="pt-24 pb-6 border-b border-primary/20 relative overflow-hidden">
+<div className="pt-24 pb-6 border-b border-primary/20 relative overflow-hidden">
           <div className={`absolute inset-0 bg-gradient-to-b ${colors.bgGradient} opacity-20 pointer-events-none`} />
           <div className="container mx-auto px-4 max-w-2xl relative z-10">
             <Button variant="ghost" size="sm" onClick={() => navigate(`/university/${ct}/level-${levelNum}/unit-${unitNum}/chapter-${chapterNum}`)} className="mb-2 -ml-2 text-muted-foreground hover:text-foreground">
@@ -228,16 +223,14 @@ export default function UniversityChapterQuiz() {
             )}
           </div>
         </main>
-        <UnifiedFooter className="mt-auto" />
-      </div>
+</div>
     );
   }
 
   /* ── Quiz screen ── */
   return (
     <div className="min-h-screen bg-background">
-      <MainNavigation />
-      <div className="pt-24 pb-6 border-b border-primary/20 relative overflow-hidden">
+<div className="pt-24 pb-6 border-b border-primary/20 relative overflow-hidden">
         <div className={`absolute inset-0 bg-gradient-to-b ${colors.bgGradient} opacity-20 pointer-events-none`} />
         <div className="container mx-auto px-4 max-w-2xl relative z-10">
           <Button variant="ghost" size="sm" onClick={() => navigate(`/university/${ct}/level-${levelNum}/unit-${unitNum}/chapter-${chapterNum}`)} className="mb-2 -ml-2 text-muted-foreground hover:text-foreground">
@@ -323,7 +316,6 @@ export default function UniversityChapterQuiz() {
         </div>
       </main>
       <AdminControlPanel />
-      <UnifiedFooter className="mt-auto" />
-    </div>
+</div>
   );
 }

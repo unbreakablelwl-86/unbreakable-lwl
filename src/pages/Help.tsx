@@ -5,9 +5,7 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { NavigationDrawer } from '@/components/NavigationDrawer';
 import { ThemeToggle } from '@/components/hub/ThemeToggle';
-import { UnifiedFooter } from '@/components/UnifiedFooter';
 import { PageNavigation, SwipeNavigationWrapper } from '@/components/PageNavigation';
 import { AuthModal } from '@/components/tracker/AuthModal';
 import { useAuth } from '@/hooks/useAuth';
@@ -559,8 +557,7 @@ export default function Help() {
               </Link>
             </div>
             <div className="flex items-center gap-2">
-              <NavigationDrawer />
-            </div>
+</div>
           </div>
         </header>
 
@@ -618,9 +615,6 @@ export default function Help() {
               )}
               <ProfileButton />
             </div>
-
-
-
 
             {/* Messages area */}
             <div className="flex-1 overflow-y-auto px-4 md:px-8 py-6">

@@ -16,7 +16,6 @@ import { useAuth } from '@/hooks/useAuth';
 import { useUserRole } from '@/hooks/useUserRole';
 import { AuthModal } from '@/components/tracker/AuthModal';
 import { TokenBalanceBadge } from '@/components/ai/TokenBalanceBadge';
-import { NavigationDrawer } from '@/components/NavigationDrawer';
 import {
   Calculator,
   Dumbbell,
@@ -215,8 +214,7 @@ export function MainNavigation() {
                   SIGN IN
                 </Button>
               )}
-              <NavigationDrawer />
-            </div>
+</div>
           </div>
         </div>
       </header>

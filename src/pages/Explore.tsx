@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { MainNavigation } from '@/components/MainNavigation';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -75,9 +74,7 @@ export default function Explore() {
 
   return (
     <div className="min-h-screen bg-background">
-      <MainNavigation />
-
-      <main className="pt-20 pb-20">
+<main className="pt-20 pb-20">
         <div className="max-w-2xl mx-auto px-4">
           {/* Search Bar */}
           <div className="sticky top-16 z-10 bg-background py-2 -mx-4 px-4">
