@@ -54,7 +54,7 @@ export function ImmersiveSessionView({
   };
 
   return (
-    <div className="fixed inset-0 z-40 bg-background flex flex-col items-center justify-center overflow-hidden">
+    <div className="fixed inset-0 z-[100] bg-background flex flex-col items-center justify-center overflow-hidden">
       {/* Ambient background glow */}
       <div 
         className={`absolute inset-0 transition-opacity duration-1000 ${

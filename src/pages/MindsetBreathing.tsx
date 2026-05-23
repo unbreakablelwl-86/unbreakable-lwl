@@ -343,7 +343,7 @@ const MindsetBreathing = () => {
     const cycleSec = selectedExercise.phases.inhale + selectedExercise.phases.hold + selectedExercise.phases.exhale + (selectedExercise.phases.rest || 0);
     
     return (
-      <div className="fixed inset-0 z-40 bg-background flex flex-col items-center justify-center overflow-hidden">
+      <div className="fixed inset-0 z-[100] bg-background flex flex-col items-center justify-center overflow-hidden">
         <div 
           className="absolute inset-0 pointer-events-none"
           style={{
