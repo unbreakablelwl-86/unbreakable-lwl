@@ -399,7 +399,30 @@ serve(async (req) => {
       });
     }
 
-    return new Response(response.body, {
+    // Prepend token balance info as a custom SSE event, then pipe AI stream
+    const tokenMeta = `data: ${JSON.stringify({ tokenBalance: tokenGuard.remaining })}\n\n`;
+    const metaBlob = new Blob([new TextEncoder().encode(tokenMeta)]);
+    const combined = new ReadableStream({
+      async start(controller) {
+        // 1) Send token balance event
+        const metaReader = metaBlob.stream().getReader();
+        while (true) {
+          const { done, value } = await metaReader.read();
+          if (done) break;
+          controller.enqueue(value);
+        }
+        // 2) Pipe upstream AI stream
+        const reader = response.body!.getReader();
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          controller.enqueue(value);
+        }
+        controller.close();
+      },
+    });
+
+    return new Response(combined, {
       headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
     });
   } catch (e) {

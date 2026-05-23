@@ -310,7 +310,7 @@ export default function Help() {
   const { user } = useAuth();
   const {
     messages, conversations, currentConversationId, isLoading,
-    conversationsLoading, sendMessage, loadConversation,
+    conversationsLoading, tokenBalance, sendMessage, loadConversation,
     deleteConversation, startNewConversation,
   } = useHelpChat();
 
@@ -730,6 +730,17 @@ export default function Help() {
                 </div>
               )}
             </div>
+
+            {/* ─── Token Warning ─── */}
+            {tokenBalance !== null && tokenBalance <= 1 && (
+              <div className={`flex-shrink-0 px-4 py-2 text-center text-xs font-medium ${tokenBalance <= 0 ? 'bg-red-500/20 text-red-400' : 'bg-amber-500/20 text-amber-400'}`}>
+                {tokenBalance <= 0 ? (
+                  <>No tokens remaining — <a href="/ai-tokens" className="underline font-bold">upgrade for more</a></>
+                ) : (
+                  <>{tokenBalance.toFixed(1)} token{tokenBalance !== 1 ? 's' : ''} remaining</>
+                )}
+              </div>
+            )}
 
             {/* ─── Input Area (pinned bottom) ─── */}
             <div className="flex-shrink-0 border-t border-border/50 bg-card/40 backdrop-blur-md p-4">

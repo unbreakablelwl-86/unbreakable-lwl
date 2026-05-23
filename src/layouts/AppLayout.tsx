@@ -127,7 +127,7 @@ const ALL_NAV_ITEMS: NavItemDef[] = [
   {
     id: 'ai',
     icon: Sparkles,
-    label: 'AI',
+    label: 'Tokens',
     path: '/ai-tokens',
     activeMatch: ['/ai-tokens'],
     color: '#FF5500',

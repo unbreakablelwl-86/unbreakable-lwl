@@ -33,6 +33,7 @@ export function useHelpChat() {
   const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [tokenBalance, setTokenBalance] = useState<number | null>(null);
   const { gatherContext, gatherContextForUser, formatContextForAI } = useCoachContext();
 
   // Fetch all conversations
@@ -216,6 +217,10 @@ export function useHelpChat() {
       
       if (!resp.ok || !resp.body) {
         const errorData = await resp.json().catch(() => ({}));
+        if (resp.status === 402) {
+          setTokenBalance(0);
+          throw new Error(errorData.message || 'You\'ve used all your AI tokens. Head to Tokens to upgrade.');
+        }
         throw new Error(errorData.error || 'Failed to get response');
       }
       
@@ -256,6 +261,11 @@ export function useHelpChat() {
           
           try {
             const parsed = JSON.parse(jsonStr);
+            // Token balance metadata event from edge function
+            if (parsed.tokenBalance !== undefined) {
+              setTokenBalance(parsed.tokenBalance);
+              continue;
+            }
             const content = parsed.choices?.[0]?.delta?.content;
             if (content) {
               assistantContent += content;
@@ -300,6 +310,7 @@ export function useHelpChat() {
     currentConversationId,
     isLoading,
     conversationsLoading,
+    tokenBalance,
     sendMessage,
     loadConversation,
     deleteConversation: deleteConversation.mutate,
