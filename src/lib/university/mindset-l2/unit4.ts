@@ -179,7 +179,7 @@ export const mindsetL2Unit4: Unit = {
         {
           heading: 'Building Your Protocol',
           bullets: [
-            'Morning (10 minutes minimum) — Choose one: box breathing, diaphragmatic breathing, or Wim Hof. Add journaling (3 questions)',
+            'Morning (10 minutes minimum) — Choose one: box breathing, diaphragmatic breathing, or Unbreakable Breathwork. Add journaling (3 questions)',
             'Pre-training (3 minutes) — Process visualisation of the upcoming session',
             'During the day — One mindful moment (eating, walking, or commuting without distraction)',
             'Evening (5 minutes) — Reflective journaling: what went well, what you learned, what you are grateful for',

@@ -134,7 +134,7 @@ const FAQ_SECTIONS: { title: string; icon: typeof Shield; items: FAQItem[] }[] =
     items: [
       {
         q: 'What mindset tools are available?',
-        a: 'The Mindset section includes voice-guided breathing exercises (Box Breathing, 4-7-8, Tactical Calm, Wim Hof), cold and heat exposure protocols with guided timers, focus games with global leaderboards, daily habit tracking, and journaling.',
+        a: 'The Mindset section includes voice-guided breathing exercises (Box Breathing, 4-7-8, Tactical Calm, Unbreakable Breathwork), cold and heat exposure protocols with guided timers, focus games with global leaderboards, daily habit tracking, and journaling.',
       },
       {
         q: 'How does the Daily 7 habit tracker work?',
@@ -153,8 +153,8 @@ const FAQ_SECTIONS: { title: string; icon: typeof Shield; items: FAQItem[] }[] =
         a: 'Reaction time tests, hand-eye coordination challenges, and memory games — all with global leaderboards so you can compete with the UNBREAKABLE community.',
       },
       {
-        q: 'Is this based on Wim Hof?',
-        a: 'Our breathing and cold exposure protocols are built on widely practiced techniques from multiple disciplines. Everything is developed and branded under UNBREAKABLE — delivering our own approach to building mental toughness.',
+        q: 'Where do the breathing techniques come from?',
+        a: 'Our breathing and cold exposure protocols are built on widely practiced techniques from multiple disciplines — refined and delivered as the Unbreakable Breathwork Method. Everything is developed under UNBREAKABLE standards with our own approach to building mental toughness.',
       },
     ],
   },

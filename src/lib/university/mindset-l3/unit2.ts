@@ -24,11 +24,11 @@ export const mindsetL3Unit2: Unit = {
         {
           heading: 'Cyclic Hyperventilation — Controlled Intensity',
           paragraphs: [
-            'Cyclic hyperventilation protocols (such as Wim Hof breathing, Tummo, and holotropic breathwork) deliberately lower blood CO2, raising blood pH (respiratory alkalosis). This creates tingling sensations, lightheadedness, and a controlled adrenaline response. The subsequent breath hold after exhalation allows CO2 to rise sharply, creating a powerful sympathetic-to-parasympathetic transition.',
+            'Cyclic hyperventilation protocols (such as the Unbreakable Breathwork Method, Tummo, and holotropic breathwork) deliberately lower blood CO2, raising blood pH (respiratory alkalosis). This creates tingling sensations, lightheadedness, and a controlled adrenaline response. The subsequent breath hold after exhalation allows CO2 to rise sharply, creating a powerful sympathetic-to-parasympathetic transition.',
             'Advanced protocols extend round counts (4–5 rounds vs beginner 3), increase breath pace, and extend retention times. The physiological benefits include improved CO2 tolerance, enhanced vagal tone (from the recovery phase), and acute increases in noradrenaline and dopamine that can last hours.',
           ],
           imageUrl: ch1AdvancedBreathwork,
-          imageAlt: 'Advanced breathwork protocols showing Wim Hof method cycles, CO2 tolerance curve, and oxygen-CO2 exchange diagram',
+          imageAlt: 'Advanced breathwork protocols showing Unbreakable Breathwork Method cycles, CO2 tolerance curve, and oxygen-CO2 exchange diagram',
           imagePlaceholder: 'Graph showing blood CO2 and O2 levels across a 4-round cyclic hyperventilation session, with breath hold periods and recovery phases marked',
         },
         {

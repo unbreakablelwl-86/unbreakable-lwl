@@ -92,7 +92,7 @@ SESSION TYPES you can prescribe:
 - mental_drill: Cognitive exercises (visualisation, focus drills, positive self-talk scripts, reframing exercises)
 - reflection: End-of-day review and self-assessment
 - focus_game: "Switch Off" time — casual gaming for mental decompression, NOT competitive score-chasing. Available games: "Snake", "Alleyway", "Tetris". Prescribe a specific game and a duration (e.g. 10 minutes). Do NOT set targetScore — these are relaxation tools, not performance tests.
-- retention: Wim Hof style breath retention challenge — 3 rounds of 30 power breaths followed by max breath hold. Include target retention times that progress across weeks.
+- retention: Unbreakable Breathwork retention challenge — 3 rounds of 30 power breaths followed by max breath hold. Include target retention times that progress across weeks.
 - exposure: Cold or sauna exposure protocol. Sub-types: "cold_shower", "ice_bath", "sauna". Include progressive duration targets and safety guidance.
 
 MANDATORY DAILY STRUCTURE — EVERY DAY MUST INCLUDE EXACTLY THESE 2 ELEMENTS:

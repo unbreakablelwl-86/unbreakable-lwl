@@ -168,7 +168,7 @@ export const mindsetL2Unit2: Unit = {
       learningOutcome: 'Learn breathing techniques designed to increase alertness, energy, and sympathetic nervous system activation for performance.',
       assessmentCriteria: [
         'Describe the physiological mechanism behind energising breathwork',
-        'Explain the Wim Hof breathing method and its effects',
+        'Explain the Unbreakable Breathwork Method and its effects',
         'Discuss safety considerations for hyperventilation-based techniques',
       ],
       content: [
@@ -182,9 +182,9 @@ export const mindsetL2Unit2: Unit = {
           imageAlt: 'Calming versus energising breathwork nervous system effects',
         },
         {
-          heading: 'The Wim Hof Method',
+          heading: 'The Unbreakable Breathwork Method',
           paragraphs: [
-            'The Wim Hof breathing technique involves 30–40 deep, rapid breaths followed by an exhale and breath retention (holding with lungs empty) for as long as comfortable, then a recovery breath held for 15 seconds. This cycle is repeated 3–4 times.',
+            'The Unbreakable Breathwork technique involves 30–40 deep, rapid breaths followed by an exhale and breath retention (holding with lungs empty) for as long as comfortable, then a recovery breath held for 15 seconds. This cycle is repeated 3–4 times.',
             'The rapid breathing phase lowers CO2 levels (respiratory alkalosis), which allows you to hold your breath longer than normal and triggers a controlled adrenaline release. The breath retention phase activates the dive reflex and influences autonomic tone. Research has shown this method can influence the innate immune response and increase pain tolerance.',
           ],
           bullets: [
@@ -203,10 +203,10 @@ export const mindsetL2Unit2: Unit = {
         },
       ],
       unbreakableInsight: 'Your breath can be a sedative or a stimulant — the same tool used differently produces opposite effects. Learning to control both sides of this spectrum gives you a level of autonomic control most people never access.',
-      coachNote: 'Practise Wim Hof breathing in the morning on an empty stomach, never near water or while standing. Start with 3 rounds and build tolerance over weeks. Track your retention times — they are a useful measure of CO2 tolerance improvement.',
+      coachNote: 'Practise Unbreakable Breathwork in the morning on an empty stomach, never near water or while standing. Start with 3 rounds and build tolerance over weeks. Track your retention times — they are a useful measure of CO2 tolerance improvement.',
       practicalTask: {
         title: 'Energising Breathwork Session',
-        instructions: 'Complete one Wim Hof breathing session (3 rounds) in a safe environment — seated or lying down, not near water. Record your breath hold time for each round. Note how you feel before and after.',
+        instructions: 'Complete one Unbreakable Breathwork session (3 rounds) in a safe environment — seated or lying down, not near water. Record your breath hold time for each round. Note how you feel before and after.',
         reflectionQuestions: [
           'Did your retention time increase across the three rounds?',
           'What physical sensations did you notice during the rapid breathing phase?',
@@ -392,7 +392,7 @@ export const mindsetL2Unit2: Unit = {
         {
           heading: 'Matching Techniques to Contexts',
           bullets: [
-            'Morning activation — 2–3 minutes of energising breathwork (e.g., rhythmic breathing or gentle Wim Hof-style rounds) to shift from parasympathetic sleep state to alert wakefulness',
+            'Morning activation — 2–3 minutes of energising breathwork (e.g., rhythmic breathing or gentle cyclic breathing rounds) to shift from parasympathetic sleep state to alert wakefulness',
             'Pre-training — 60 seconds of energising nasal breathing to prime the nervous system without over-stimulating',
             'Post-training — 3–5 minutes of extended exhale breathing (e.g., 4-count inhale, 6–8-count exhale) to accelerate parasympathetic recovery',
             'Stressful moments — Box breathing (4-4-4-4) as an immediate calming intervention during acute stress',
