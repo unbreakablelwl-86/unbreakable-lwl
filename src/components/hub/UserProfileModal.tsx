@@ -191,7 +191,7 @@ export function UserProfileModal({ userId, onClose, onStartConversation }: UserP
 
   return (
     <Dialog open={!!userId} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="bg-card border-border max-w-md">
+      <DialogContent className="bg-card border-border max-w-md bg-[#0a0a0a] border-gray-800">
         <DialogHeader>
           <DialogTitle className="sr-only">User Profile</DialogTitle>
         </DialogHeader>

@@ -97,8 +97,7 @@ export function FullscreenVideoViewer({ isOpen, onClose, videoUrl }: FullscreenV
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent 
-        className="max-w-[95vw] max-h-[95vh] w-auto h-auto p-0 bg-black border-none"
+      <DialogContent className="max-w-[95vw] max-h-[95vh] w-auto h-auto p-0 bg-black border-none bg-[#0a0a0a] border-gray-800"
         onInteractOutside={(e) => e.preventDefault()}
       >
         <div 

@@ -273,7 +273,7 @@ export function CombinedRecordsView() {
                   <Card
                     className={`p-4 border-l-4 ${
                       pr.record
-                        ? 'bg-card border-primary/20 border-l-primary neon-border-subtle'
+                        ? 'bg-card border-primary/20 border-l-primary'
                         : 'bg-background border-border border-l-muted opacity-60'
                     }`}
                   >
@@ -300,7 +300,7 @@ export function CombinedRecordsView() {
                       <div className="flex items-center gap-2">
                         {pr.record && pr.record.time_seconds && (
                           <div className="text-right">
-                            <p className="font-display text-xl text-primary neon-glow-subtle">{formatTime(pr.record.time_seconds)}</p>
+                            <p className="font-display text-xl text-primary">{formatTime(pr.record.time_seconds)}</p>
                             {pr.record.pace_per_km_seconds && (
                               <p className="text-sm text-muted-foreground">{formatPace(pr.record.pace_per_km_seconds)}</p>
                             )}
@@ -368,7 +368,7 @@ export function CombinedRecordsView() {
                   exit={{ height: 0, opacity: 0 }}
                   className="overflow-hidden mb-4"
                 >
-                  <Card className="p-4 border-primary/30 bg-card">
+                  <Card className="p-4 border-primary/30 border-gray-800 bg-[#111]">
                     <div className="relative mb-3">
                       <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                       <Input
@@ -423,7 +423,7 @@ export function CombinedRecordsView() {
             </div>
 
             {strengthRecords.length === 0 && (
-              <Card className="p-8 text-center border-border">
+              <Card className="p-8 text-center border-border border-gray-800 bg-[#111]">
                 <Dumbbell className="w-12 h-12 text-muted-foreground/30 mx-auto mb-4" />
                 <p className="text-muted-foreground">Add exercises to track your strength records</p>
               </Card>
@@ -470,7 +470,7 @@ function ExerciseRecordCard({
       animate={{ opacity: 1, x: 0 }}
       transition={{ delay: index * 0.05 }}
     >
-      <Card className="p-4 bg-card border-primary/20 border-l-4 border-l-primary neon-border-subtle">
+      <Card className="p-4 border-primary/20 border-l-4 border-l-primary border-gray-800 bg-[#111]">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center shadow-[0_0_10px_hsl(var(--primary)/0.3)]">
@@ -499,12 +499,12 @@ function ExerciseRecordCard({
                 </div>
                 <div className="text-right">
                   {isBodyweight ? (
-                    <span className="font-display text-lg text-primary neon-glow-subtle">
+                    <span className="font-display text-lg text-primary">
                       {record.reps} reps
                     </span>
                   ) : (
                     <>
-                      <span className="font-display text-lg text-primary neon-glow-subtle">{record.weight}kg</span>
+                      <span className="font-display text-lg text-primary">{record.weight}kg</span>
                       <span className="text-sm text-muted-foreground ml-2">× {record.reps}</span>
                       <span className="text-xs text-primary/60 ml-2">
                         ({Math.round(record.estimated1RM)}kg e1RM)

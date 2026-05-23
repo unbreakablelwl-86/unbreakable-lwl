@@ -75,13 +75,13 @@ export function InlineExerciseLibrary({
   }, [onSelectExercise]);
 
   return (
-    <div className={cn('flex flex-col border border-primary/30 rounded-lg bg-card overflow-hidden neon-border-subtle', className)}>
+    <div className={cn('flex flex-col border border-primary/30 rounded-lg bg-card overflow-hidden', className)}>
       {/* Header */}
       <div className="p-3 border-b border-primary/20 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent">
         <div className="flex items-center justify-between mb-3">
           <h4 className="font-display text-sm tracking-wider text-foreground flex items-center gap-2">
             <Flame className="w-4 h-4 text-primary" />
-            <span className="text-primary neon-glow-subtle">UNBREAKABLE</span> EXERCISE LIBRARY
+            <span className="text-primary">UNBREAKABLE</span> EXERCISE LIBRARY
           </h4>
           {onClose && (
             <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-foreground" onClick={onClose}>
@@ -115,7 +115,7 @@ export function InlineExerciseLibrary({
             }}
             className={cn(
               'h-7 text-xs font-display tracking-wide px-3',
-              selectedBodyPart === 'all' && 'neon-border-subtle'
+              selectedBodyPart === 'all' && ''
             )}
           >
             ALL
@@ -131,7 +131,7 @@ export function InlineExerciseLibrary({
               className={cn(
                 'h-7 text-xs px-3 font-display tracking-wide',
                 selectedBodyPart === value 
-                  ? 'bg-primary text-primary-foreground neon-border-subtle hover:bg-primary/90' 
+                  ? 'bg-primary text-primary-foreground hover:bg-primary/90' 
                   : 'bg-card text-foreground border border-border hover:bg-muted'
               )}
             >
@@ -151,7 +151,7 @@ export function InlineExerciseLibrary({
                 <div className="sticky top-0 z-10 bg-card/95 backdrop-blur-sm py-1.5 px-1 mb-1.5 border-b border-primary/20">
                   <div className="flex items-center gap-2">
                     <BodyPartBadge bodyPart={bodyPart as BodyPart} size="sm" active />
-                    <span className="font-display text-xs text-primary uppercase tracking-wider neon-glow-subtle">
+                    <span className="font-display text-xs text-primary uppercase tracking-wider">
                       {BODY_PART_LABELS[bodyPart as BodyPart] || bodyPart}
                     </span>
                     <Badge variant="secondary" className="text-[10px] h-4 font-display">

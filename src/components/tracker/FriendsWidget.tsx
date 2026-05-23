@@ -18,7 +18,7 @@ export function FriendsWidget() {
 
   if (loading) {
     return (
-      <Card className="bg-card border-border">
+      <Card className=" border-border border-gray-800 bg-[#111]">
         <CardContent className="p-4">
           <div className="animate-pulse flex space-x-4">
             <div className="h-10 w-10 bg-muted rounded-full"></div>
@@ -34,7 +34,7 @@ export function FriendsWidget() {
 
   return (
     <>
-      <Card className="bg-card border-border">
+      <Card className=" border-border border-gray-800 bg-[#111]">
         <CardHeader className="pb-3">
           <CardTitle className="font-display text-lg tracking-wide flex items-center gap-2">
             <Users className="w-5 h-5 text-primary" />

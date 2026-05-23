@@ -154,7 +154,7 @@ export function MealPlanExecutionView({ planId, onBack }: MealPlanExecutionViewP
       </div>
 
       {/* Day Progress Card */}
-      <Card className="border-2 border-primary/30 neon-border-subtle">
+      <Card className="border-2 border-primary/30 border-gray-800 bg-[#111]">
         <CardHeader className="pb-2">
           <CardTitle className="font-display tracking-wide flex items-center gap-2">
             <Target className="w-5 h-5 text-primary" />

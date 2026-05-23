@@ -54,7 +54,7 @@ export function SessionPlannerView({ programId, onStartSession }: SessionPlanner
 
   if (isLoading) {
     return (
-      <Card className="p-6 border border-border bg-card flex items-center justify-center">
+      <Card className="p-6 border border-border flex items-center justify-center border-gray-800 bg-[#111]">
         <Loader2 className="w-6 h-6 animate-spin text-primary" />
       </Card>
     );
@@ -63,7 +63,7 @@ export function SessionPlannerView({ programId, onStartSession }: SessionPlanner
   return (
     <div className="space-y-4">
       {/* Week Navigator */}
-      <Card className="p-4 border border-border bg-card">
+      <Card className="p-4 border border-border border-gray-800 bg-[#111]">
         <div className="flex items-center justify-between">
           <Button variant="ghost" size="icon" onClick={handlePrevWeek}>
             <ChevronLeft className="w-5 h-5" />
@@ -108,7 +108,7 @@ export function SessionPlannerView({ programId, onStartSession }: SessionPlanner
                   onSkip={() => markSkipped.mutate(planner.id)}
                 />
               ) : (
-                <Card className="p-2 border border-dashed border-border bg-card/50 min-h-[80px] flex items-center justify-center">
+                <Card className="p-2 border border-dashed border-border/50 min-h-[80px] flex items-center justify-center border-gray-800 bg-[#111]">
                   <span className="text-xs text-muted-foreground">Rest</span>
                 </Card>
               )}
@@ -118,7 +118,7 @@ export function SessionPlannerView({ programId, onStartSession }: SessionPlanner
       </div>
 
       {/* Upcoming Sessions */}
-      <Card className="border border-border bg-card">
+      <Card className="border border-border border-gray-800 bg-[#111]">
         <CardHeader>
           <CardTitle className="font-display text-lg tracking-wide flex items-center gap-2">
             <Clock className="w-5 h-5 text-primary" />
@@ -238,7 +238,7 @@ function UpcomingSessionCard({
   onStart: () => void;
 }) {
   return (
-    <Card className="p-3 border border-border bg-card">
+    <Card className="p-3 border border-border border-gray-800 bg-[#111]">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">

@@ -71,7 +71,7 @@ export function FriendRequestsModal({ isOpen, onClose }: FriendRequestsModalProp
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md bg-card border-border">
+      <DialogContent className="sm:max-w-md bg-card border-border bg-[#0a0a0a] border-gray-800">
         <DialogHeader>
           <DialogTitle className="font-display text-xl tracking-wide">
             Friend Requests

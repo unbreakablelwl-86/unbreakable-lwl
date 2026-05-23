@@ -1,0 +1,172 @@
+=== Full list of files needing dark theme rework ===
+
+Files with neon-border-subtle (44 total):
+components/ai/AIBuildBanner.tsx
+components/ai/ControlledAIBuildFlow.tsx
+components/cardio/CardioProgramBuilder.tsx
+components/cardio/MovementExecutionView.tsx
+components/cardio/SavedCardioPrograms.tsx
+components/coaching/AskCoachCTA.tsx
+components/coaching/CoachFeedbackPanel.tsx
+components/coaching/PlanDisplayCard.tsx
+components/fuel/FoodTracker.tsx
+components/fuel/MealPlanExecutionView.tsx
+components/fuel/MealPlanning.tsx
+components/fuel/MyFuel.tsx
+components/fuel/NutritionCoachCTA.tsx
+components/fuel/NutritionHistoryView.tsx
+components/hub/RecordActionMenu.tsx
+components/mindset/MindsetProgrammeDetail.tsx
+components/mindset/MindsetProgrammes.tsx
+components/programming/BuilderModeSelector.tsx
+components/programming/InlineExerciseLibrary.tsx
+components/programming/ManualProgramBuilder.tsx
+components/programming/RestTimer.tsx
+components/programming/ScrollableExerciseLibrary.tsx
+components/programming/SessionActionTiles.tsx
+components/programming/SessionResultsView.tsx
+components/settings/CoachingBioForm.tsx
+components/settings/MetaCredentialsForm.tsx
+components/subscription/PlanSelectionPage.tsx
+components/tracker/CardioTrackerModal.tsx
+components/tracker/CombinedRecordsView.tsx
+components/tracker/CombinedStatsView.tsx
+pages/Calculators.tsx
+pages/FuelFoods.tsx
+pages/FuelHistory.tsx
+pages/FuelMyFuel.tsx
+pages/FuelPlanning.tsx
+pages/FuelRecipes.tsx
+pages/MindsetBreathing.tsx
+pages/MindsetGames.tsx
+pages/NotFound.tsx
+pages/ProgrammingCreate.tsx
+pages/ProgrammingLogs.tsx
+pages/ProgrammingMyProgrammes.tsx
+pages/TrackerCreate.tsx
+pages/TrackerMyProgrammes.tsx
+
+Files using Card without dark override:
+  components/FuelResults.tsx
+  components/SpeedResults.tsx
+  components/StrengthResults.tsx
+  components/admin/AdminActivityPanel.tsx
+  components/admin/AdminReportsPanel.tsx
+  components/admin/AdminSettingsPanel.tsx
+  components/admin/AdminUsersPanel.tsx
+  components/admin/SocialCommandCentre.tsx
+  components/ai/AIBuildBanner.tsx
+  components/ai/AIPlanReviewModal.tsx
+  components/ai/ControlledAIBuildFlow.tsx
+  components/cardio/CardioProgramBuilder.tsx
+  components/cardio/CardioProgramDisplay.tsx
+  components/cardio/MovementExecutionView.tsx
+  components/cardio/MovementProgressionDialog.tsx
+  components/cardio/MovementSessionSwapSheet.tsx
+  components/cardio/SavedCardioPrograms.tsx
+  components/coaching/AskCoachCTA.tsx
+  components/coaching/AthleteDataViewer.tsx
+  components/coaching/CheckInForm.tsx
+  components/coaching/CheckInReview.tsx
+  components/coaching/CheckInsTab.tsx
+  components/coaching/ClientSearchPanel.tsx
+  components/coaching/CoachFeedbackPanel.tsx
+  components/coaching/CoachProfileEditor.tsx
+  components/coaching/CoachUpdatesView.tsx
+  components/coaching/PlanContentRenderer.tsx
+  components/coaching/PlanDisplayCard.tsx
+  components/coaching/RequestCoachCard.tsx
+  components/fuel/BarcodeScanner.tsx
+  components/fuel/FoodLibrary.tsx
+  components/fuel/FoodTracker.tsx
+  components/fuel/MealPlanExecutionView.tsx
+  components/fuel/MealPlanning.tsx
+  components/fuel/MyFuel.tsx
+  components/fuel/NutritionCoachCTA.tsx
+  components/fuel/NutritionHistoryView.tsx
+  components/fuel/RecipeDetailModal.tsx
+  components/fuel/RecipeLibrary.tsx
+  components/fuel/SnapTrack.tsx
+  components/hub/MilestoneCard.tsx
+  components/hub/RecordActionMenu.tsx
+  components/hub/WorkoutCard.tsx
+  components/mindset/AlleywayLeaderboard.tsx
+  components/mindset/MindsetProgrammeDetail.tsx
+  components/mindset/MindsetProgrammes.tsx
+  components/mindset/SnakeLeaderboard.tsx
+  components/mindset/TetrisLeaderboard.tsx
+  components/profile/AthleteCoachSection.tsx
+  components/profile/MembershipTab.tsx
+  components/profile/PasswordChangeCard.tsx
+  components/programming/AIFeedbackView.tsx
+  components/programming/ActiveWorkoutModal.tsx
+  components/programming/AddExerciseSheet.tsx
+  components/programming/BuilderModeSelector.tsx
+  components/programming/CompactRestTimer.tsx
+  components/programming/DailyHabitDiary.tsx
+  components/programming/ExerciseSwapSheet.tsx
+  components/programming/InlineProgramEditor.tsx
+  components/programming/ManualProgramBuilder.tsx
+  components/programming/ManualWorkoutBuilder.tsx
+  components/programming/MyProgramsSection.tsx
+  components/programming/PowerProgressionDialog.tsx
+  components/programming/ProgramDisplay.tsx
+  components/programming/ProgrammeBuilder.tsx
+  components/programming/ProgrammeExecutionView.tsx
+  components/programming/ProgrammeLogsView.tsx
+  components/programming/ProgressMetricsView.tsx
+  components/programming/ProgressionTracker.tsx
+  components/programming/RestTimer.tsx
+  components/programming/SessionActionTiles.tsx
+  components/programming/SessionLoggingView.tsx
+  components/programming/SessionPlannerView.tsx
+  components/programming/SessionResultsView.tsx
+  components/programming/SupersetBuilder.tsx
+  components/programming/SupersetGroup.tsx
+  components/programming/VideoRecorder.tsx
+  components/programming/VideoToolView.tsx
+  components/programming/WorkoutFeedbackPanel.tsx
+  components/programming/WorkoutLogger.tsx
+  components/settings/BlockedUsersSection.tsx
+  components/settings/CoachingBioForm.tsx
+  components/settings/MetaCredentialsForm.tsx
+  components/settings/SocialLinksCard.tsx
+  components/settings/SportPreferenceCard.tsx
+  components/subscription/PlanSelectionPage.tsx
+  components/tracker/ActivityFeed.tsx
+  components/tracker/CombinedRecordsView.tsx
+  components/tracker/CombinedStatsView.tsx
+  components/tracker/FriendsWidget.tsx
+  components/tracker/LeaderboardsView.tsx
+  components/tracker/ProfileView.tsx
+  components/tracker/RecordsView.tsx
+  components/tracker/SegmentAchievementsView.tsx
+  components/tracker/StatsView.tsx
+  components/tracker/TrophyCase.tsx
+  components/university/AdminControlPanel.tsx
+  components/university/AssessmentQuiz.tsx
+  components/university/ChapterContent.tsx
+  components/university/CoursePurchaseGate.tsx
+  components/upgrade/FeaturePreviewCard.tsx
+  components/upgrade/UpgradeCTA.tsx
+  pages/Calculators.tsx
+  pages/CoachDashboard.tsx
+  pages/CoachProfile.tsx
+  pages/Coaches.tsx
+  pages/Founder.tsx
+  pages/FuelFoods.tsx
+  pages/FuelHistory.tsx
+  pages/FuelMyFuel.tsx
+  pages/FuelPlanning.tsx
+  pages/FuelRecipes.tsx
+  pages/MindsetBreathing.tsx
+  pages/MindsetGames.tsx
+  pages/MyCoaching.tsx
+  pages/ProgrammingCreate.tsx
+  pages/ProgrammingLogs.tsx
+  pages/ProgrammingMyProgrammes.tsx
+  pages/TrackerMyProgrammes.tsx
+  pages/University.tsx
+  pages/UniversityAssessment.tsx
+  pages/UniversityChapterQuiz.tsx
+  pages/UniversityLevel.tsx

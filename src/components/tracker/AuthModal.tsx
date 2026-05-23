@@ -117,7 +117,7 @@ export function AuthModal({ isOpen, onClose, defaultMode = 'signin' }: AuthModal
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md bg-card border-border">
+      <DialogContent className="sm:max-w-md bg-card border-border bg-[#0a0a0a] border-gray-800">
         <DialogHeader>
           <DialogTitle className="font-display text-2xl tracking-wide text-center">
             {mode === 'signin' ? 'WELCOME BACK' : 'JOIN THE MOVEMENT'}

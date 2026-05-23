@@ -462,7 +462,7 @@ export function FoodLibrary() {
                     exit={{ opacity: 0 }}
                     transition={{ delay: index * 0.05 }}
                   >
-                    <Card className="hover:border-primary/50 transition-all">
+                    <Card className="hover:border-primary/50 transition-all border-gray-800 bg-[#111]">
                       <CardContent className="p-4">
                         <div className="flex items-start gap-3">
                           {food.imageUrl && (
@@ -547,7 +547,7 @@ export function FoodLibrary() {
           
           {selectedFood && (
             <div className="space-y-4 mt-4">
-              <Card className="bg-muted/30">
+              <Card className="bg-muted/30 border-gray-800 bg-[#111]">
                 <CardContent className="p-4">
                   <div className="flex items-center gap-3">
                     {selectedFood.imageUrl && (

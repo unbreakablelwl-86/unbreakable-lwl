@@ -16,7 +16,7 @@ export function StrengthResults({ result, exercise, unit }: StrengthResultsProps
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* 1RM Result - Matches Speed Calculator Hero Card */}
-      <Card className="bg-card border-border overflow-hidden">
+      <Card className=" border-border overflow-hidden border-gray-800 bg-[#111]">
         <div className="bg-primary/10 border-b border-border px-6 py-4">
           <h3 className="font-display text-lg text-muted-foreground uppercase tracking-wider">
             ESTIMATED ONE-REP MAX
@@ -37,7 +37,7 @@ export function StrengthResults({ result, exercise, unit }: StrengthResultsProps
       </Card>
 
       {/* Strength Level - Matches Speed Performance Level */}
-      <Card className="bg-card border-border overflow-hidden">
+      <Card className=" border-border overflow-hidden border-gray-800 bg-[#111]">
         <div className="bg-primary/10 border-b border-border px-6 py-4">
           <h3 className="font-display text-lg text-muted-foreground uppercase tracking-wider">
             STRENGTH LEVEL
@@ -78,7 +78,7 @@ export function StrengthResults({ result, exercise, unit }: StrengthResultsProps
 
       {/* Stats Grid - Matches Speed Pace Stats Layout */}
       <div className="grid grid-cols-2 gap-4">
-        <Card className="bg-card border-border">
+        <Card className=" border-border border-gray-800 bg-[#111]">
           <CardContent className="p-6 text-center">
             <Scale className="w-8 h-8 text-primary mx-auto mb-2" />
             <div className="font-display text-3xl text-primary mb-1">
@@ -87,7 +87,7 @@ export function StrengthResults({ result, exercise, unit }: StrengthResultsProps
             <p className="text-sm text-muted-foreground">Bodyweight Ratio</p>
           </CardContent>
         </Card>
-        <Card className="bg-card border-border">
+        <Card className=" border-border border-gray-800 bg-[#111]">
           <CardContent className="p-6 text-center">
             <TrendingUp className="w-8 h-8 text-primary mx-auto mb-2" />
             <div className="font-display text-3xl text-primary mb-1">
@@ -100,7 +100,7 @@ export function StrengthResults({ result, exercise, unit }: StrengthResultsProps
 
       {/* Percentile Stats - Matches Speed Percentile Grid */}
       <div className="grid grid-cols-2 gap-4">
-        <Card className="bg-card border-border">
+        <Card className=" border-border border-gray-800 bg-[#111]">
           <CardContent className="p-6 text-center">
             <div className="font-display text-4xl text-primary mb-1">
               TOP {100 - percentile}%
@@ -108,7 +108,7 @@ export function StrengthResults({ result, exercise, unit }: StrengthResultsProps
             <p className="text-sm text-muted-foreground">Overall Ranking</p>
           </CardContent>
         </Card>
-        <Card className="bg-card border-border">
+        <Card className=" border-border border-gray-800 bg-[#111]">
           <CardContent className="p-6 text-center">
             <div className="font-display text-4xl text-primary mb-1">
               TOP {100 - ageAdjustedPercentile}%
@@ -119,7 +119,7 @@ export function StrengthResults({ result, exercise, unit }: StrengthResultsProps
       </div>
 
       {/* Age-Adjusted Stats - Exact Match to Speed Calculator */}
-      <Card className="bg-card border-border overflow-hidden">
+      <Card className=" border-border overflow-hidden border-gray-800 bg-[#111]">
         <div className="bg-primary/10 border-b border-border px-6 py-4">
           <h3 className="font-display text-lg text-muted-foreground uppercase tracking-wider">
             AGE-ADJUSTED RANKING

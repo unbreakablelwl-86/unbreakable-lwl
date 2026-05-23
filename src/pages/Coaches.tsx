@@ -42,7 +42,7 @@ export default function Coaches() {
             <Loader2 className="w-8 h-8 animate-spin text-primary" />
           </div>
         ) : coaches.length === 0 ? (
-          <Card className="border-border">
+          <Card className="border-border border-gray-800 bg-[#111]">
             <CardContent className="py-16 text-center">
               <UserCheck className="w-14 h-14 text-muted-foreground mx-auto mb-4" />
               <h2 className="font-display text-xl tracking-wide text-foreground mb-2">COACHES COMING SOON</h2>
@@ -58,7 +58,7 @@ export default function Coaches() {
           <div className="space-y-4">
             {coaches.map(coach => (
               <Link key={coach.id} to={`/coach/${coach.user_id}`}>
-                <Card className="border-border hover:border-primary/20 transition-colors mb-4">
+                <Card className="border-border hover:border-primary/20 transition-colors mb-4 border-gray-800 bg-[#111]">
                   <CardContent className="p-4">
                     <div className="flex items-start gap-4">
                       <Avatar className="h-14 w-14 border-2 border-primary/20 shrink-0">

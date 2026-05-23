@@ -40,7 +40,7 @@ export function VideoToolView({ sessionId, exerciseName, onClose }: VideoToolVie
           </TabsList>
 
           <TabsContent value="record" className="mt-4">
-            <Card className="p-4 border-border bg-card">
+            <Card className="p-4 border-border border-gray-800 bg-[#111]">
               <VideoRecorder
                 sessionId={sessionId}
                 exerciseName={exerciseName || 'Exercise'}
@@ -123,7 +123,7 @@ export function VideoToolView({ sessionId, exerciseName, onClose }: VideoToolVie
                 </Card>
               ))
             ) : (
-              <Card className="p-8 text-center border-border bg-card">
+              <Card className="p-8 text-center border-border border-gray-800 bg-[#111]">
                 <Video className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
                 <h3 className="font-display text-lg text-foreground mb-2">No Videos Yet</h3>
                 <p className="text-sm text-muted-foreground">

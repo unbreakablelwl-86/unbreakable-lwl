@@ -43,7 +43,7 @@ export function AIBuildBanner({ type, variant = 'default', onBuildClick }: AIBui
   if (variant === 'compact') {
     return (
       <Link to={`${link}?context=${encodeURIComponent(context)}`}>
-        <Card className="border-2 border-primary/40 bg-primary/5 p-4 hover:bg-primary/10 transition-all neon-border-subtle group cursor-pointer">
+        <Card className="border-2 border-primary/40 bg-primary/5 p-4 hover:bg-primary/10 transition-all group cursor-pointer border-gray-800 bg-[#111]">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center group-hover:scale-110 transition-transform">
@@ -71,7 +71,7 @@ export function AIBuildBanner({ type, variant = 'default', onBuildClick }: AIBui
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
     >
-      <Card className="border-2 border-primary/30 bg-gradient-to-br from-primary/10 via-background to-primary/5 overflow-hidden neon-border-subtle">
+      <Card className="border-2 border-primary/30 bg-gradient-to-br from-primary/10 via-background to-primary/5 overflow-hidden border-gray-800 bg-[#111]">
         <div className="p-6 md:p-8">
           <div className="flex flex-col md:flex-row items-center gap-6">
             {/* Icon */}
@@ -83,7 +83,7 @@ export function AIBuildBanner({ type, variant = 'default', onBuildClick }: AIBui
             <div className="flex-1 text-center md:text-left">
               <h3 className="font-display text-xl md:text-2xl tracking-wide mb-2">
                 <span className="text-foreground">BUILD YOUR </span>
-                <span className="text-primary neon-glow-subtle">UNBREAKABLE</span>
+                <span className="text-primary">UNBREAKABLE</span>
                 <span className="text-foreground"> {type === 'programme' ? 'PROGRAMME' : 'MEAL PLAN'}</span>
               </h3>
               <p className="text-muted-foreground">

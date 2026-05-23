@@ -93,7 +93,7 @@ export function NavigationDrawer({ variant = 'default' }: NavigationDrawerProps)
         </SheetTrigger>
         <SheetContent side="right" className="w-80 bg-card/95 backdrop-blur-md border-l border-primary/20">
           <SheetHeader className="text-left">
-            <SheetTitle className="font-display text-xl tracking-wide text-primary neon-glow-subtle">
+            <SheetTitle className="font-display text-xl tracking-wide text-primary">
               MENU
             </SheetTitle>
           </SheetHeader>

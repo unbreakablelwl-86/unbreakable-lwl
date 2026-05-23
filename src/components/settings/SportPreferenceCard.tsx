@@ -36,7 +36,7 @@ export function SportPreferenceCard() {
   };
 
   return (
-    <Card className="bg-card border-border">
+    <Card className=" border-border border-gray-800 bg-[#111]">
       <CardHeader className="pb-3">
         <CardTitle className="font-display text-lg tracking-wide flex items-center gap-2">
           <Trophy className="w-5 h-5 text-primary" />

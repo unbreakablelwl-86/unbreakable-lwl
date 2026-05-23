@@ -208,7 +208,7 @@ export function MovementExecutionView({ program, onClose }: MovementExecutionVie
 
   if (isLoading) {
     return (
-      <Card className="p-8 border border-border bg-card flex items-center justify-center">
+      <Card className="p-8 border border-border flex items-center justify-center border-gray-800 bg-[#111]">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </Card>
     );
@@ -216,7 +216,7 @@ export function MovementExecutionView({ program, onClose }: MovementExecutionVie
 
   if (!planners || planners.length === 0) {
     return (
-      <Card className="p-8 border border-border bg-card text-center">
+      <Card className="p-8 border border-border text-center border-gray-800 bg-[#111]">
         <Target className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
         <h3 className="font-display text-lg text-foreground mb-2">No Sessions Scheduled</h3>
         <p className="text-sm text-muted-foreground">
@@ -259,7 +259,7 @@ export function MovementExecutionView({ program, onClose }: MovementExecutionVie
         </div>
 
         {/* Session Details */}
-        <Card className="p-5 border border-border bg-card space-y-4">
+        <Card className="p-5 border border-border space-y-4 border-gray-800 bg-[#111]">
           {session?.warmup && (
             <div>
               <h4 className="font-display text-sm text-primary tracking-wide mb-1">WARM UP</h4>
@@ -376,7 +376,7 @@ export function MovementExecutionView({ program, onClose }: MovementExecutionVie
       </div>
 
       {/* Progress */}
-      <Card className="p-5 border border-primary/50 bg-gradient-to-br from-primary/10 to-transparent neon-border-subtle">
+      <Card className="p-5 border border-primary/50 bg-gradient-to-br from-primary/10 to-transparent border-gray-800 bg-[#111]">
         <div className="flex items-center justify-between mb-3">
           <span className="text-sm text-muted-foreground">Programme Progress</span>
           <span className="font-display text-lg text-foreground">
@@ -389,7 +389,7 @@ export function MovementExecutionView({ program, onClose }: MovementExecutionVie
 
       {/* Next Session CTA */}
       {nextSession && (
-        <Card className="p-6 border-2 border-primary bg-card neon-border-subtle">
+        <Card className="p-6 border-2 border-primary border-gray-800 bg-[#111]">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="flex items-center gap-4">
               <div className="w-14 h-14 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
@@ -419,7 +419,7 @@ export function MovementExecutionView({ program, onClose }: MovementExecutionVie
 
       {/* Previous Results */}
       {completedSessions.length > 0 && (
-        <Card className="border border-border bg-card p-5">
+        <Card className="border border-border p-5 border-gray-800 bg-[#111]">
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-display text-foreground tracking-wide flex items-center gap-2">
               <Trophy className="w-5 h-5 text-primary" />
@@ -497,7 +497,7 @@ export function MovementExecutionView({ program, onClose }: MovementExecutionVie
 
       {/* Completion Dialog */}
       <Dialog open={!!completingPlanner} onOpenChange={(open) => { if (!open) setCompletingPlanner(null); }}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md bg-[#0a0a0a] border-gray-800">
           <DialogHeader>
             <DialogTitle className="font-display tracking-wide">SESSION COMPLETE 🎉</DialogTitle>
           </DialogHeader>

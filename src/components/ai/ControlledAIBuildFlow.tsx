@@ -109,12 +109,12 @@ export function ControlledAIBuildFlow({
         animate={{ opacity: 1 }}
         className="space-y-6"
       >
-        <Card className="border-2 border-primary/30 neon-border-subtle">
+        <Card className="border-2 border-primary/30 border-gray-800 bg-[#111]">
           <CardContent className="p-8">
             <div className="text-center space-y-6">
               {/* Animated Icon */}
               <motion.div
-                className="w-24 h-24 rounded-full bg-primary/20 flex items-center justify-center mx-auto neon-glow"
+                className="w-24 h-24 rounded-full bg-primary/20 flex items-center justify-center mx-auto"
                 animate={{
                   scale: [1, 1.1, 1],
                   boxShadow: [
@@ -136,7 +136,7 @@ export function ControlledAIBuildFlow({
               <div>
                 <h2 className="font-display text-2xl tracking-wide mb-2">
                   <span className="text-foreground">BUILDING YOUR </span>
-                  <span className="text-primary neon-glow-subtle">UNBREAKABLE</span>
+                  <span className="text-primary">UNBREAKABLE</span>
                 </h2>
                 <h2 className="font-display text-2xl tracking-wide">
                   {type === 'programme' ? 'PROGRAMME' : 'MEAL PLAN'}
@@ -218,7 +218,7 @@ export function ControlledAIBuildFlow({
   // Error State
   if (error) {
     return (
-      <Card className="border-destructive/50">
+      <Card className="border-destructive/50 border-gray-800 bg-[#111]">
         <CardContent className="p-8 text-center">
           <p className="text-destructive mb-4">{error}</p>
           <Button onClick={handleCancel}>Go Back</Button>
@@ -249,14 +249,14 @@ export function ControlledAIBuildFlow({
         className="text-center py-8"
       >
         <motion.div
-          className="w-20 h-20 rounded-full bg-primary/20 flex items-center justify-center mx-auto mb-4 neon-glow"
+          className="w-20 h-20 rounded-full bg-primary/20 flex items-center justify-center mx-auto mb-4"
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           transition={{ type: 'spring', stiffness: 200 }}
         >
           <Check className="w-10 h-10 text-primary" />
         </motion.div>
-        <h2 className="font-display text-2xl tracking-wide text-primary neon-glow-subtle">
+        <h2 className="font-display text-2xl tracking-wide text-primary">
           SUCCESS!
         </h2>
         <p className="text-muted-foreground mt-2">

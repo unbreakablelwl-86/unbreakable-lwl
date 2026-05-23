@@ -116,7 +116,7 @@ export function ActivityFeed({ onSignIn }: ActivityFeedProps) {
 
       {/* Empty State */}
       {feedItems.length === 0 && (
-        <Card className="bg-card border-border p-8 text-center">
+        <Card className=" border-border p-8 text-center border-gray-800 bg-[#111]">
           <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
             <Activity className="w-10 h-10 text-primary" />
           </div>

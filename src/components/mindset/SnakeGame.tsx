@@ -393,7 +393,7 @@ const SnakeGame = () => {
               className="absolute inset-0 flex flex-col items-center justify-center rounded-lg"
               style={{ background: "rgba(0,0,0,0.85)" }}
             >
-              <p className="font-display text-4xl sm:text-5xl text-primary tracking-wide neon-glow-subtle mb-2">FUEL</p>
+              <p className="font-display text-4xl sm:text-5xl text-primary tracking-wide mb-2">FUEL</p>
               <p className="font-display text-lg text-foreground tracking-wide mb-1">UNBREAKABLE</p>
               <p className="font-display text-xs text-muted-foreground tracking-wide mb-6">EDITION</p>
               <Button onClick={startGame} size="lg" className="font-display text-lg tracking-wide gap-2 bg-primary text-primary-foreground hover:bg-primary/90 px-8 py-6">
@@ -411,7 +411,7 @@ const SnakeGame = () => {
               className="absolute inset-0 flex flex-col items-center justify-center rounded-lg"
               style={{ background: "rgba(0,0,0,0.85)" }}
             >
-              <p className="font-display text-3xl text-primary tracking-wide neon-glow-subtle mb-6">PAUSED</p>
+              <p className="font-display text-3xl text-primary tracking-wide mb-6">PAUSED</p>
               <Button onClick={togglePause} size="lg" className="font-display text-lg tracking-wide gap-2 bg-primary text-primary-foreground hover:bg-primary/90 px-8 py-6">
                 <Play className="w-5 h-5" /> RESUME
               </Button>
@@ -424,7 +424,7 @@ const SnakeGame = () => {
               className="absolute inset-0 flex flex-col items-center justify-center rounded-lg"
               style={{ background: "rgba(0,0,0,0.9)" }}
             >
-              <p className="font-display text-3xl text-primary tracking-wide neon-glow-subtle mb-2">GAME OVER</p>
+              <p className="font-display text-3xl text-primary tracking-wide mb-2">GAME OVER</p>
               <p className="font-display text-5xl text-foreground tracking-wide mb-1">{score}</p>
               <p className="font-display text-sm text-muted-foreground tracking-wide mb-1">
                 LEVEL {themeShifts + 1}{themeShifts > 0 ? ` · ${getLevelMessage(themeShifts)}` : ""}

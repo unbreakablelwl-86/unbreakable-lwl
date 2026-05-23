@@ -273,7 +273,7 @@ export function CheckInForm({ checkIn, onSubmit, onBack }: CheckInFormProps) {
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.2 }}
       >
-        <Card className="border-border">
+        <Card className="border-border border-gray-800 bg-[#111]">
           <CardContent className="p-4">
             {renderStep()}
           </CardContent>

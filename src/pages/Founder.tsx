@@ -100,7 +100,7 @@ const Founder = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen pb-24" style={{ background: '#080808' }}>
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm border-b border-border">
         <div className="container mx-auto px-6 py-4">
@@ -132,7 +132,7 @@ const Founder = () => {
           </span>
           <h1 className="font-display text-[clamp(48px,12vw,80px)] leading-[0.88] tracking-wide text-foreground mb-6">
             NOT A<br />
-            <span className="text-primary neon-glow-subtle">GURU.</span><br />
+            <span className="text-primary">GURU.</span><br />
             <span className="text-[clamp(28px,7vw,48px)]">JUST SOMEONE<br />WHO GETS IT.</span>
           </h1>
           <p className="text-muted-foreground text-[15px] leading-relaxed max-w-[380px] mx-auto mb-8">
@@ -197,7 +197,7 @@ const Founder = () => {
           <p className="font-mono text-[9px] tracking-[3px] text-primary uppercase mb-2.5">The Journey</p>
           <h2 className="font-display text-[clamp(28px,7vw,42px)] leading-[1.05] tracking-wide text-foreground mb-5">
             2018 – 2020.{' '}
-            <span className="text-primary neon-glow-subtle">EDUCATION IN ACTION.</span>
+            <span className="text-primary">EDUCATION IN ACTION.</span>
           </h2>
           <p className="text-muted-foreground text-[15px] leading-[1.85] mb-6">
             This isn't a transformation for likes. It's what happens when you stop guessing, start understanding your body, and stay consistent. No shortcuts. No magic supplements. Just education, applied daily, over two years.
@@ -236,7 +236,7 @@ const Founder = () => {
           <p className="font-mono text-[9px] tracking-[3px] text-primary uppercase mb-2.5">The Return</p>
           <h2 className="font-display text-[clamp(28px,7vw,42px)] leading-[1.05] tracking-wide text-foreground mb-5">
             REBUILD. WEEK{' '}
-            <span className="text-primary neon-glow-subtle">BY WEEK.</span>
+            <span className="text-primary">BY WEEK.</span>
           </h2>
           <p className="text-muted-foreground text-[15px] leading-[1.85] mb-6">
             In 2025, at 39, I was diagnosed autistic and ADHD. Suddenly a lifetime of feeling like I was wired differently had a name. It knocked me sideways — I stepped away from the gym, away from most things, and had to figure out how to plug back into the world on my own terms. Six months later, I walked back in. Not because I was fixed, but because <strong className="text-foreground">showing up is what I teach and it had to start with me.</strong>
@@ -265,7 +265,7 @@ const Founder = () => {
         <motion.div {...fadeUp} className="max-w-lg mx-auto">
           <p className="font-mono text-[9px] tracking-[3px] text-primary uppercase mb-2.5">Being Honest</p>
           <h2 className="font-display text-[clamp(28px,7vw,42px)] leading-[1.05] tracking-wide text-foreground mb-5">
-            NOT JUST <span className="text-primary neon-glow-subtle">FITNESS.</span>
+            NOT JUST <span className="text-primary">FITNESS.</span>
           </h2>
 
           <p className="text-muted-foreground text-[15px] leading-[1.85] mb-4">
@@ -288,7 +288,7 @@ const Founder = () => {
         <motion.div {...fadeUp} className="max-w-lg mx-auto">
           <p className="font-mono text-[9px] tracking-[3px] text-primary uppercase mb-2.5">Why I Built This</p>
           <h2 className="font-display text-[clamp(28px,7vw,42px)] leading-[1.05] tracking-wide text-foreground mb-5">
-            THE INDUSTRY <span className="text-primary neon-glow-subtle">FAILED YOU.</span>
+            THE INDUSTRY <span className="text-primary">FAILED YOU.</span>
           </h2>
 
           <p className="text-muted-foreground text-[15px] leading-[1.85] mb-4">
@@ -311,7 +311,7 @@ const Founder = () => {
         <motion.div {...fadeUp} className="max-w-lg mx-auto">
           <p className="font-mono text-[9px] tracking-[3px] text-primary uppercase mb-2.5">The Real Reason</p>
           <h2 className="font-display text-[clamp(28px,7vw,42px)] leading-[1.05] tracking-wide text-foreground mb-5">
-            I BUILT AN <span className="text-primary neon-glow-subtle">AD-FREE SAFE SPACE</span>
+            I BUILT AN <span className="text-primary">AD-FREE SAFE SPACE</span>
           </h2>
 
           <p className="text-muted-foreground text-[15px] leading-[1.85] mb-4">
@@ -331,7 +331,7 @@ const Founder = () => {
         <motion.div {...fadeUp} className="max-w-lg mx-auto">
           <p className="font-mono text-[9px] tracking-[3px] text-primary uppercase mb-2.5">The Foundation</p>
           <h2 className="font-display text-[clamp(26px,7vw,42px)] leading-[1.05] tracking-wide text-foreground mb-5">
-            COMMUNITY AND EDUCATION FIRST. <span className="text-primary neon-glow-subtle">ALWAYS.</span>
+            COMMUNITY AND EDUCATION FIRST. <span className="text-primary">ALWAYS.</span>
           </h2>
 
           <p className="text-muted-foreground text-[15px] leading-[1.85] mb-4">
@@ -370,7 +370,7 @@ const Founder = () => {
         <motion.div {...fadeUp} className="max-w-lg mx-auto">
           <p className="font-mono text-[9px] tracking-[3px] text-primary uppercase mb-2.5">What I Believe</p>
           <h2 className="font-display text-[clamp(30px,7vw,44px)] leading-none tracking-wide text-foreground mb-5">
-            THE <span className="text-primary neon-glow-subtle">NON-NEGOTIABLES</span>
+            THE <span className="text-primary">NON-NEGOTIABLES</span>
           </h2>
 
           <div className="flex flex-col gap-2.5 mt-6">
@@ -394,7 +394,7 @@ const Founder = () => {
         <motion.div {...fadeUp} className="max-w-lg mx-auto">
           <p className="font-mono text-[9px] tracking-[3px] text-primary uppercase mb-2.5">Daily Practice</p>
           <h2 className="font-display text-[clamp(30px,7vw,44px)] leading-none tracking-wide text-foreground mb-5">
-            WHAT <span className="text-primary neon-glow-subtle">SHOWING UP</span> LOOKS LIKE
+            WHAT <span className="text-primary">SHOWING UP</span> LOOKS LIKE
           </h2>
           <p className="text-muted-foreground text-[15px] leading-[1.85] mb-5">
             Being Unbreakable isn't about grand gestures. It's about <strong className="text-foreground">daily choices</strong> that stack into something extraordinary.
@@ -414,7 +414,7 @@ const Founder = () => {
         <motion.div {...fadeUp} className="max-w-lg mx-auto">
           <p className="font-mono text-[9px] tracking-[3px] text-primary uppercase mb-2.5">The Journey So Far</p>
           <h2 className="font-display text-[clamp(30px,7vw,44px)] leading-none tracking-wide text-foreground mb-6">
-            HOW WE <span className="text-primary neon-glow-subtle">GOT HERE</span>
+            HOW WE <span className="text-primary">GOT HERE</span>
           </h2>
 
           <div className="relative pl-5 mt-6">
@@ -449,7 +449,7 @@ const Founder = () => {
       {/* ═══ CTA ═══ */}
       <section className="py-11 px-6 pb-16">
         <motion.div {...fadeUp} className="max-w-lg mx-auto">
-          <Card className="bg-card border border-border rounded-xl p-9 text-center relative overflow-hidden">
+          <Card className=" border border-border rounded-xl p-9 text-center relative overflow-hidden border-gray-800 bg-[#111]">
             <div className="absolute bottom-[-60px] left-1/2 -translate-x-1/2 w-[300px] h-[300px] bg-[radial-gradient(circle,hsl(var(--primary)/0.08)_0%,transparent_65%)] pointer-events-none" />
 
             <p className="font-mono text-[9px] tracking-[3px] text-primary uppercase mb-3.5 relative z-10">
@@ -457,7 +457,7 @@ const Founder = () => {
             </p>
             <h2 className="font-display text-[clamp(30px,9vw,48px)] tracking-[2px] leading-[0.95] text-foreground mb-2 relative z-10">
               BECOME<br />
-              <span className="text-primary neon-glow-subtle">UNBREAKABLE.</span><br />
+              <span className="text-primary">UNBREAKABLE.</span><br />
               <span className="text-[clamp(22px,6vw,36px)]">LIVE WITHOUT LIMITS.</span>
             </h2>
             <p className="text-muted-foreground text-[13px] leading-relaxed max-w-[340px] mx-auto mb-7 relative z-10">

@@ -109,7 +109,7 @@ export function StatsView() {
 
   if (!stats) {
     return (
-      <Card className="bg-card border-border p-8 text-center">
+      <Card className=" border-border p-8 text-center border-gray-800 bg-[#111]">
         <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
           <Activity className="w-10 h-10 text-primary" />
         </div>
@@ -181,7 +181,7 @@ export function StatsView() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 }}
           >
-            <Card className="bg-card border-border p-4">
+            <Card className=" border-border p-4 border-gray-800 bg-[#111]">
               <div className="flex items-center gap-3 mb-2">
                 <stat.icon className={`w-5 h-5 ${stat.color}`} />
                 <span className="text-sm text-muted-foreground">{stat.label}</span>
@@ -195,7 +195,7 @@ export function StatsView() {
       </div>
 
       {/* Weekly Distance Chart */}
-      <Card className="bg-card border-border p-6">
+      <Card className=" border-border p-6 border-gray-800 bg-[#111]">
         <h3 className="font-display text-xl text-foreground mb-4 tracking-wide">
           WEEKLY DISTANCE
         </h3>
@@ -243,7 +243,7 @@ export function StatsView() {
       </Card>
 
       {/* This Week's Activity */}
-      <Card className="bg-card border-border p-6">
+      <Card className=" border-border p-6 border-gray-800 bg-[#111]">
         <h3 className="font-display text-xl text-foreground mb-4 tracking-wide">
           THIS WEEK
         </h3>

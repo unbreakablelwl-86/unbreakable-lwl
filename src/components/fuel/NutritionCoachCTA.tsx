@@ -33,8 +33,7 @@ export function NutritionCoachCTA({
 
   if (variant === 'banner') {
     return (
-      <Card 
-        className="border-2 border-primary/40 bg-primary/5 p-4 cursor-pointer hover:bg-primary/10 transition-all neon-border-subtle"
+      <Card className="border-2 border-primary/40 bg-primary/5 p-4 cursor-pointer hover:bg-primary/10 transition-all border-gray-800 bg-[#111]"
         onClick={handleClick}
       >
         <div className="flex items-center justify-between">
@@ -94,8 +93,7 @@ export function MealPlanCTA({ variant = 'button' }: { variant?: 'button' | 'bann
 
   if (variant === 'banner') {
     return (
-      <Card 
-        className="border-2 border-primary/40 bg-gradient-to-r from-primary/10 to-primary/5 p-4 cursor-pointer hover:from-primary/15 hover:to-primary/10 transition-all neon-border-subtle"
+      <Card className="border-2 border-primary/40 bg-gradient-to-r from-primary/10 to-primary/5 p-4 cursor-pointer hover:from-primary/15 hover:to-primary/10 transition-all border-gray-800 bg-[#111]"
         onClick={handleClick}
       >
         <div className="flex items-center justify-between">

@@ -12,7 +12,7 @@ export function AthleteCoachSection() {
   if (!myCoach) return null;
 
   return (
-    <Card className="border-primary/30 bg-primary/5">
+    <Card className="border-primary/30 bg-primary/5 border-gray-800 bg-[#111]">
       <CardContent className="p-4">
         <div className="flex items-center gap-3">
           <Avatar className="h-12 w-12 border-2 border-primary/20">

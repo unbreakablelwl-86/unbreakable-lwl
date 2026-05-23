@@ -50,7 +50,7 @@ export default function UniversityCertificate() {
           </Button>
 
           <h1 className="font-display text-3xl sm:text-4xl tracking-wide text-center">
-            <span className="text-primary neon-glow-subtle">YOUR </span>
+            <span className="text-primary">YOUR </span>
             <span className="text-foreground">CERTIFICATE</span>
           </h1>
           {!finalPassed && (

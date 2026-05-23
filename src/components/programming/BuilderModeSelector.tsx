@@ -23,7 +23,7 @@ export function BuilderModeSelector({ onSelectMode }: BuilderModeSelectorProps) 
               'border-2 border-primary/40 hover:border-primary',
               'bg-gradient-to-br from-primary/10 via-primary/5 to-transparent',
               'transition-all duration-300',
-              'neon-border-subtle shadow-[0_0_20px_hsl(var(--primary)/0.15)]',
+              ' shadow-[0_0_20px_hsl(var(--primary)/0.15)]',
               'hover:shadow-[0_0_30px_hsl(var(--primary)/0.3)]'
             )}
           >
@@ -31,12 +31,12 @@ export function BuilderModeSelector({ onSelectMode }: BuilderModeSelectorProps) 
             <div className="absolute bottom-0 left-0 w-24 h-24 bg-primary/5 rounded-full blur-2xl translate-y-1/2 -translate-x-1/2" />
             
             <div className="relative z-10 space-y-5">
-              <div className="w-16 h-16 md:w-18 md:h-18 rounded-xl bg-primary/20 flex items-center justify-center neon-glow">
+              <div className="w-16 h-16 md:w-18 md:h-18 rounded-xl bg-primary/20 flex items-center justify-center">
                 <Sparkles className="w-8 h-8 md:w-9 md:h-9 text-primary" />
               </div>
               
               <h3 className="font-display text-2xl md:text-3xl text-foreground tracking-wide">
-                <span className="text-primary neon-glow-subtle">UNBREAKABLE</span> AUTO
+                <span className="text-primary">UNBREAKABLE</span> AUTO
               </h3>
               
               <p className="text-muted-foreground text-sm md:text-base leading-relaxed">
@@ -69,7 +69,7 @@ export function BuilderModeSelector({ onSelectMode }: BuilderModeSelectorProps) 
               'border-2 border-primary/30 hover:border-primary',
               'bg-gradient-to-br from-primary/10 via-primary/5 to-transparent',
               'transition-all duration-300',
-              'neon-border-subtle shadow-[0_0_20px_hsl(var(--primary)/0.1)]',
+              ' shadow-[0_0_20px_hsl(var(--primary)/0.1)]',
               'hover:shadow-[0_0_30px_hsl(var(--primary)/0.25)]'
             )}
           >
@@ -77,12 +77,12 @@ export function BuilderModeSelector({ onSelectMode }: BuilderModeSelectorProps) 
             <div className="absolute bottom-0 left-0 w-24 h-24 bg-primary/5 rounded-full blur-2xl translate-y-1/2 -translate-x-1/2" />
             
             <div className="relative z-10 space-y-5">
-              <div className="w-16 h-16 md:w-18 md:h-18 rounded-xl bg-primary/20 flex items-center justify-center neon-glow">
+              <div className="w-16 h-16 md:w-18 md:h-18 rounded-xl bg-primary/20 flex items-center justify-center">
                 <Wrench className="w-8 h-8 md:w-9 md:h-9 text-primary" />
               </div>
               
               <h3 className="font-display text-2xl md:text-3xl text-foreground tracking-wide">
-                <span className="text-primary neon-glow-subtle">UNBREAKABLE</span> MANUAL
+                <span className="text-primary">UNBREAKABLE</span> MANUAL
               </h3>
               
               <p className="text-muted-foreground text-sm md:text-base leading-relaxed">

@@ -35,7 +35,7 @@ export const SnakeLeaderboard = ({ scores, userBest, onClose, onRefetch }: Snake
         <Button onClick={onClose} variant="ghost" size="sm" className="font-display text-xs tracking-wide gap-1">
           <ArrowLeft className="w-4 h-4" /> BACK
         </Button>
-        <h2 className="font-display text-2xl text-primary tracking-wide neon-glow-subtle">
+        <h2 className="font-display text-2xl text-primary tracking-wide">
           LEADERBOARD
         </h2>
         <Button onClick={onRefetch} variant="ghost" size="icon" className="h-8 w-8">
@@ -45,16 +45,16 @@ export const SnakeLeaderboard = ({ scores, userBest, onClose, onRefetch }: Snake
 
       {/* User's best */}
       {userBest !== null && (
-        <Card className="bg-primary/10 border-primary/30 p-4 mb-4 text-center">
+        <Card className="bg-primary/10 border-primary/30 p-4 mb-4 text-center border-gray-800 bg-[#111]">
           <p className="font-display text-xs tracking-wider text-muted-foreground">YOUR BEST</p>
-          <p className="font-display text-4xl text-primary neon-glow-subtle">{userBest}</p>
+          <p className="font-display text-4xl text-primary">{userBest}</p>
         </Card>
       )}
 
       {/* Scores list */}
       <div className="space-y-2">
         {scores.length === 0 ? (
-          <Card className="bg-card border-border p-8 text-center">
+          <Card className=" border-border p-8 text-center border-gray-800 bg-[#111]">
             <Trophy className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
             <p className="font-display text-lg text-muted-foreground tracking-wide">NO SCORES YET</p>
             <p className="text-sm text-muted-foreground mt-1">Be the first on the board!</p>
@@ -67,7 +67,7 @@ export const SnakeLeaderboard = ({ scores, userBest, onClose, onRefetch }: Snake
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: index * 0.05 }}
             >
-              <Card className="bg-card border-border hover:border-primary/30 transition-all p-3">
+              <Card className=" border-border hover:border-primary/30 transition-all p-3 border-gray-800 bg-[#111]">
                 <div className="flex items-center gap-3">
                   {/* Rank */}
                   <div className="w-8 flex justify-center">

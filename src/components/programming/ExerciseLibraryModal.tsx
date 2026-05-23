@@ -71,7 +71,7 @@ export function ExerciseLibraryModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[85vh] flex flex-col">
+      <DialogContent className="max-w-2xl max-h-[85vh] flex flex-col bg-[#0a0a0a] border-gray-800">
         <DialogHeader>
           <DialogTitle className="font-display text-xl flex items-center gap-2">
             <Dumbbell className="w-5 h-5 text-primary" />

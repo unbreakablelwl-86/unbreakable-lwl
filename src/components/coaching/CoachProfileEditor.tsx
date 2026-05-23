@@ -112,7 +112,7 @@ export function CoachProfileEditor() {
       </Card>
 
       {/* Bio */}
-      <Card className="border-border">
+      <Card className="border-border border-gray-800 bg-[#111]">
         <CardContent className="p-3 space-y-3">
           <p className="font-display text-xs tracking-wider">ABOUT YOU</p>
           <div>
@@ -141,7 +141,7 @@ export function CoachProfileEditor() {
       </Card>
 
       {/* Specializations */}
-      <Card className="border-border">
+      <Card className="border-border border-gray-800 bg-[#111]">
         <CardContent className="p-3 space-y-3">
           <p className="font-display text-xs tracking-wider">SPECIALIZATIONS</p>
           <div className="flex flex-wrap gap-1.5">
@@ -164,7 +164,7 @@ export function CoachProfileEditor() {
       </Card>
 
       {/* Certifications */}
-      <Card className="border-border">
+      <Card className="border-border border-gray-800 bg-[#111]">
         <CardContent className="p-3 space-y-3">
           <p className="font-display text-xs tracking-wider">CERTIFICATIONS</p>
           <div className="flex flex-wrap gap-1.5">
@@ -187,7 +187,7 @@ export function CoachProfileEditor() {
       </Card>
 
       {/* Coaching Settings */}
-      <Card className="border-border">
+      <Card className="border-border border-gray-800 bg-[#111]">
         <CardContent className="p-3 space-y-3">
           <p className="font-display text-xs tracking-wider">COACHING SETTINGS</p>
           <div className="grid grid-cols-2 gap-3">
@@ -219,7 +219,7 @@ export function CoachProfileEditor() {
       </Card>
 
       {/* Social */}
-      <Card className="border-border">
+      <Card className="border-border border-gray-800 bg-[#111]">
         <CardContent className="p-3 space-y-3">
           <p className="font-display text-xs tracking-wider">SOCIAL</p>
           <div className="grid grid-cols-2 gap-3">

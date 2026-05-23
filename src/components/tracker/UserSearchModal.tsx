@@ -181,7 +181,7 @@ export function UserSearchModal({ isOpen, onClose }: UserSearchModalProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-md bg-card border-border">
+      <DialogContent className="sm:max-w-md bg-card border-border bg-[#0a0a0a] border-gray-800">
         <DialogHeader>
           <DialogTitle className="font-display text-xl tracking-wide">
             Find Friends

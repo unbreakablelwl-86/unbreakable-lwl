@@ -207,7 +207,7 @@ export function MealPlanning({ forUserId }: MealPlanningProps = {}) {
           const totalC = dayItems.reduce((s, i) => s + Number(i.carbs_g || 0), 0);
           const totalF = dayItems.reduce((s, i) => s + Number(i.fat_g || 0), 0);
           return (
-            <Card className="border-2 border-primary/30 neon-border-subtle">
+            <Card className="border-2 border-primary/30 border-gray-800 bg-[#111]">
               <CardContent className="py-4">
                 <div className="flex items-center justify-between mb-2">
                   <span className="font-display tracking-wide text-sm">
@@ -241,7 +241,7 @@ export function MealPlanning({ forUserId }: MealPlanningProps = {}) {
             const mealCal = items.reduce((s, i) => s + (i.calories || 0), 0);
 
             return (
-              <Card key={mealType} className="border border-primary/20 neon-border-subtle">
+              <Card key={mealType} className="border border-primary/20">
                 <CardHeader className="py-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
@@ -390,7 +390,7 @@ export function MealPlanning({ forUserId }: MealPlanningProps = {}) {
       <AIBuildBanner type="meal_plan" />
 
       {/* Active Plans Limit */}
-      <Card className="border-2 border-primary/20 neon-border-subtle">
+      <Card className="border-2 border-primary/20 border-gray-800 bg-[#111]">
         <CardContent className="py-4">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
@@ -465,7 +465,7 @@ export function MealPlanning({ forUserId }: MealPlanningProps = {}) {
             >
               <Card
                 className={`border-2 cursor-pointer transition-all hover:shadow-[0_0_15px_hsl(var(--primary)/0.2)] ${
-                  plan.is_active ? 'border-primary/50 bg-primary/5 neon-border-subtle' : 'border-border hover:border-primary/30'
+                  plan.is_active ? 'border-primary/50 bg-primary/5' : 'border-border hover:border-primary/30'
                 }`}
                 onClick={() => {
                   setEditingPlanId(plan.id);
@@ -545,8 +545,8 @@ export function MealPlanning({ forUserId }: MealPlanningProps = {}) {
 
       {/* No plans message */}
       {(!mealPlans || mealPlans.length === 0) && (
-        <Card className="p-8 text-center border-2 border-primary/20 neon-border-subtle">
-          <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center mx-auto mb-4 neon-glow">
+        <Card className="p-8 text-center border-2 border-primary/20 border-gray-800 bg-[#111]">
+          <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center mx-auto mb-4">
             <Calendar className="w-8 h-8 text-primary" />
           </div>
           <h3 className="font-display text-xl tracking-wide mb-2">NO MEAL PLANS YET</h3>

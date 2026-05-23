@@ -58,7 +58,7 @@ export function SocialLinksCard({ profile, updateProfile }: SocialLinksCardProps
   };
 
   return (
-    <Card className="bg-card border-border">
+    <Card className=" border-border border-gray-800 bg-[#111]">
       <CardHeader>
         <CardTitle className="font-display text-xl tracking-wide flex items-center gap-2">
           <Share2 className="w-5 h-5 text-primary" />

@@ -107,7 +107,7 @@ export function WorkoutCard({ workout, onKudos, onDelete, onToggleComments, onUp
 
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-      <Card className="bg-card border-border overflow-hidden">
+      <Card className=" border-border overflow-hidden border-gray-800 bg-[#111]">
         {/* Header */}
         <div className="p-4 flex items-start justify-between">
           <div className="flex items-center gap-3">

@@ -81,7 +81,7 @@ function CardioSubStats({ runs, activityType, onViewRecords }: { runs: any[]; ac
 
   if (!stats) {
     return (
-      <Card className="bg-card border-primary/20 p-8 text-center neon-border-subtle">
+      <Card className=" border-primary/20 p-8 text-center border-gray-800 bg-[#111]">
         <config.icon className="w-12 h-12 text-primary/30 mx-auto mb-3" />
         <p className="font-display text-lg text-foreground tracking-wide">
           NO {config.label} SESSIONS YET
@@ -112,7 +112,7 @@ function CardioSubStats({ runs, activityType, onViewRecords }: { runs: any[]; ac
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.08 }}
           >
-            <Card className="bg-card border-primary/20 p-4 neon-border-subtle hover:shadow-[0_0_20px_hsl(var(--primary)/0.2)] transition-shadow">
+            <Card className=" border-primary/20 p-4 hover:shadow-[0_0_20px_hsl(var(--primary)/0.2)] transition-shadow border-gray-800 bg-[#111]">
               <div className="flex items-center gap-3 mb-2">
                 <stat.icon className={`w-5 h-5 ${stat.color}`} />
                 <span className="text-sm text-muted-foreground">{stat.label}</span>
@@ -126,7 +126,7 @@ function CardioSubStats({ runs, activityType, onViewRecords }: { runs: any[]; ac
       </div>
 
       {/* Weekly Chart */}
-      <Card className="bg-card border-primary/20 p-6 neon-border-subtle">
+      <Card className=" border-primary/20 p-6 border-gray-800 bg-[#111]">
         <h3 className="font-display text-xl text-foreground mb-4 tracking-wide">
           WEEKLY <span className="text-primary">{config.label}</span> DISTANCE
         </h3>
@@ -189,7 +189,7 @@ function SessionHistoryBrowser({ sessions, activityLabel }: { sessions: any[]; a
   };
 
   return (
-    <Card className="bg-card border-primary/20 p-5 neon-border-subtle">
+    <Card className=" border-primary/20 p-5 border-gray-800 bg-[#111]">
       <div className="flex items-center justify-between mb-4">
         <h3 className="font-display text-lg text-foreground tracking-wide">
           {activityLabel} <span className="text-primary">HISTORY</span>
@@ -349,7 +349,7 @@ export function CombinedStatsView({ onViewRecords }: CombinedStatsViewProps) {
 
   if (hasNoData) {
     return (
-      <Card className="bg-card border-primary/20 p-8 text-center neon-border-subtle">
+      <Card className=" border-primary/20 p-8 text-center border-gray-800 bg-[#111]">
         <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4 shadow-[0_0_20px_hsl(var(--primary)/0.2)]">
           <Activity className="w-10 h-10 text-primary" />
         </div>
@@ -367,7 +367,7 @@ export function CombinedStatsView({ onViewRecords }: CombinedStatsViewProps) {
     <div className="space-y-6">
       <div className="text-center">
         <h2 className="font-display text-3xl md:text-4xl text-foreground tracking-wide">
-          YOUR <span className="text-primary neon-glow-subtle">STATS</span>
+          YOUR <span className="text-primary">STATS</span>
         </h2>
         <p className="text-muted-foreground mt-2">Track your progress across all activities</p>
       </div>
@@ -447,7 +447,7 @@ export function CombinedStatsView({ onViewRecords }: CombinedStatsViewProps) {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.08 }}
                   >
-                    <Card className="bg-card border-primary/20 p-4 neon-border-subtle hover:shadow-[0_0_20px_hsl(var(--primary)/0.2)] transition-shadow">
+                    <Card className=" border-primary/20 p-4 hover:shadow-[0_0_20px_hsl(var(--primary)/0.2)] transition-shadow border-gray-800 bg-[#111]">
                       <div className="flex items-center gap-3 mb-2">
                         <stat.icon className="w-5 h-5 text-primary" />
                         <span className="text-sm text-muted-foreground">{stat.label}</span>
@@ -462,7 +462,7 @@ export function CombinedStatsView({ onViewRecords }: CombinedStatsViewProps) {
 
               {/* Programme Progress */}
               {workoutStats.programProgress && (
-                <Card className="bg-card border-primary/20 p-6 neon-border-subtle">
+                <Card className=" border-primary/20 p-6 border-gray-800 bg-[#111]">
                   <div className="flex items-center justify-between mb-3">
                     <div>
                       <p className="text-sm text-muted-foreground font-display tracking-wide">PROGRAMME PROGRESS</p>
@@ -471,7 +471,7 @@ export function CombinedStatsView({ onViewRecords }: CombinedStatsViewProps) {
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="font-display text-2xl text-primary neon-glow-subtle">
+                      <p className="font-display text-2xl text-primary">
                         {workoutStats.programProgress.current}/{workoutStats.programProgress.total}
                       </p>
                       <p className="text-xs text-muted-foreground">weeks</p>
@@ -485,7 +485,7 @@ export function CombinedStatsView({ onViewRecords }: CombinedStatsViewProps) {
               )}
 
               {/* Weekly Sessions Bar Chart */}
-              <Card className="bg-card border-primary/20 p-6 neon-border-subtle">
+              <Card className=" border-primary/20 p-6 border-gray-800 bg-[#111]">
                 <h3 className="font-display text-xl text-foreground mb-4 tracking-wide">
                   WEEKLY <span className="text-primary">CONSISTENCY</span>
                 </h3>

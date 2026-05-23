@@ -53,7 +53,7 @@ export function UpgradeCTA({ feature, description, icon: Icon, variant = 'card',
         animate={{ opacity: 1, scale: 1 }}
         className={`w-full ${className}`}
       >
-        <Card className="relative overflow-hidden border-2 border-primary/20 hover:border-primary/40 transition-all duration-300 bg-gradient-to-br from-primary/5 via-transparent to-primary/5">
+        <Card className="relative overflow-hidden border-2 border-primary/20 hover:border-primary/40 transition-all duration-300 bg-gradient-to-br from-primary/5 via-transparent to-primary/5 border-gray-800 bg-[#111]">
           {/* Glow effect */}
           <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
           
@@ -85,7 +85,7 @@ export function UpgradeCTA({ feature, description, icon: Icon, variant = 'card',
       animate={{ opacity: 1, y: 0 }}
       className={`w-full max-w-md mx-auto ${className}`}
     >
-      <Card className="relative overflow-hidden border-2 border-primary/30 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent p-8 text-center">
+      <Card className="relative overflow-hidden border-2 border-primary/30 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent p-8 text-center border-gray-800 bg-[#111]">
         {/* Glow effects */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-48 bg-primary/15 rounded-full blur-3xl -translate-y-1/2" />
         <div className="absolute bottom-0 right-0 w-24 h-24 bg-primary/10 rounded-full blur-2xl translate-y-1/2 translate-x-1/2" />

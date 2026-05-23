@@ -213,7 +213,7 @@ export default function TrackerCreate() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center" style={{ background: '#080808' }}>
         <div className="w-12 h-12 border-2 border-primary border-t-transparent rounded-full animate-spin" />
       </div>
     );
@@ -222,7 +222,7 @@ export default function TrackerCreate() {
   // Program display view
   if (view === 'program' && generatedProgram) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen pb-24" style={{ background: '#080808' }}>
 <main className="container mx-auto px-4 py-24 md:py-28">
           <CardioProgramDisplay
             program={generatedProgram}
@@ -473,7 +473,7 @@ export default function TrackerCreate() {
   // Wizard view (auto programme builder)
   if (view === 'wizard') {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen pb-24" style={{ background: '#080808' }}>
 <main className="container mx-auto px-4 py-24 md:py-28">
           <Button variant="ghost" onClick={handleBackToSelect} className="mb-6 gap-2">
             <Home className="w-4 h-4" />
@@ -695,63 +695,28 @@ export default function TrackerCreate() {
 
   // Mode selection view (default)
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen pb-24" style={{ background: '#080808' }}>
 {/* Hero */}
-      <section className="pt-24 pb-12 md:pt-28 md:pb-16 border-b border-border">
-        <div className="container mx-auto px-4 text-center max-w-4xl">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="space-y-6"
-          >
-            <div className="w-20 h-20 rounded-full bg-primary/20 flex items-center justify-center mx-auto neon-glow">
-              <Wrench className="w-10 h-10 text-primary" />
-            </div>
-            <h1 className="font-display text-4xl sm:text-5xl md:text-6xl tracking-wide leading-none">
-              <span className="text-primary neon-glow-subtle">UNBREAKABLE </span>
-              <span className="text-foreground">CARDIO</span>
-            </h1>
-            <p className="text-primary font-display text-xl tracking-wide neon-glow-subtle">
-              BUILD YOUR MOVEMENT PROGRAMME
-            </p>
-            <p className="text-muted-foreground text-base md:text-lg max-w-2xl mx-auto leading-relaxed">
-              Build a personalised 12-week cardio programme for Walk, Run, Cycle, Row, or Swim.
-              Every step forward makes you{' '}
-              <span className="text-primary font-semibold">UNBREAKABLE</span>. Keep showing up.
-            </p>
-          </motion.div>
+      <div className="relative px-4 pt-6 pb-5 overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none"
+          style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(255,85,0,0.08), transparent 70%)' }} />
+        <div className="relative z-10">
+          <h1 className="font-display text-2xl tracking-wider text-center">
+            <span className="text-[#FF5500]" style={{ textShadow: '0 0 20px rgba(255,85,0,0.4)' }}>UNBREAKABLE</span>
+            <span className="text-white"> CARDIO</span>
+          </h1>
+          <p className="text-center text-gray-500 text-sm mt-1 font-display tracking-wide">
+            KEEP SHOWING UP
+          </p>
         </div>
-      </section>
+      </div>
 
       {/* Mode Selector */}
-      <main className="container mx-auto px-4 py-8 md:py-12">
+      <main className="px-4">
         <CardioModeSelector onSelectMode={handleModeSelect} />
       </main>
 
-      {/* Coach Banner - Bottom of page */}
-      <section className="container mx-auto px-4 py-12 border-t border-border">
-        <Link to="/help" className="block max-w-3xl mx-auto">
-          <Card className="border-2 border-primary/40 bg-primary/5 p-6 hover:bg-primary/10 transition-all neon-border-subtle">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className="w-14 h-14 rounded-full bg-primary/20 flex items-center justify-center neon-glow">
-                  <Flame className="w-7 h-7 text-primary" />
-                </div>
-                <div>
-                  <p className="font-display text-xl tracking-wide text-foreground">
-                    NEED HELP? <span className="text-primary neon-glow-subtle">ASK YOUR COACH</span>
-                  </p>
-                  <p className="text-muted-foreground mt-1">
-                    Get personalised guidance on cardio programming, pacing, and endurance training
-                  </p>
-                </div>
-              </div>
-              <ArrowRight className="w-6 h-6 text-primary hidden sm:block" />
-            </div>
-          </Card>
-        </Link>
-      </section>
+      
 <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
     </div>
   );

@@ -135,7 +135,7 @@ export function ScrollableExerciseLibrary({
               }}
               className={cn(
                 'h-8 text-xs gap-1.5',
-                selectedBodyPart === value && 'neon-border-subtle'
+                selectedBodyPart === value && ''
               )}
             >
               <Icon className={cn(

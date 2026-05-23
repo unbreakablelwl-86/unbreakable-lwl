@@ -35,7 +35,7 @@ export function MindsetProgrammes() {
   if (!user) {
     return (
       <Link to="/help?context=Build%20me%20a%20mindset%20programme">
-        <Card className="border-2 border-primary/30 bg-primary/5 p-6 hover:bg-primary/10 transition-all neon-border-subtle group cursor-pointer">
+        <Card className="border-2 border-primary/30 bg-primary/5 p-6 hover:bg-primary/10 transition-all group cursor-pointer border-gray-800 bg-[#111]">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
@@ -121,7 +121,7 @@ export function MindsetProgrammes() {
                 <Card
                   className={`border-2 cursor-pointer transition-all hover:shadow-[0_0_15px_hsl(var(--primary)/0.2)] ${
                     prog.is_active
-                      ? 'border-primary/50 bg-primary/5 neon-border-subtle'
+                      ? 'border-primary/50 bg-primary/5'
                       : 'border-border hover:border-primary/30'
                   }`}
                   onClick={() => setViewingProgramme(prog)}
@@ -200,7 +200,7 @@ export function MindsetProgrammes() {
       ) : (
         /* Empty state with AI CTA */
         <Link to="/help?context=Build%20me%20a%20mindset%20programme">
-          <Card className="border-2 border-dashed border-primary/30 p-8 text-center hover:bg-primary/5 transition-all cursor-pointer">
+          <Card className="border-2 border-dashed border-primary/30 p-8 text-center hover:bg-primary/5 transition-all cursor-pointer border-gray-800 bg-[#111]">
             <Brain className="w-12 h-12 text-primary/40 mx-auto mb-4" />
             <p className="font-display tracking-wide mb-2">NO PROGRAMMES YET</p>
             <p className="text-sm text-muted-foreground mb-4">

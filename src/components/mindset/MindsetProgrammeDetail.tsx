@@ -149,7 +149,7 @@ export function MindsetProgrammeDetail({ programme, onBack }: Props) {
       </div>
 
       {/* Overview */}
-      <Card className="border-2 border-primary/30 neon-border-subtle">
+      <Card className="border-2 border-primary/30 border-gray-800 bg-[#111]">
         <CardContent className="py-4">
           <div className="grid grid-cols-3 gap-3 text-center">
             <div className="p-2 bg-muted/30 rounded-lg">
@@ -176,7 +176,7 @@ export function MindsetProgrammeDetail({ programme, onBack }: Props) {
       </Card>
 
       {data?.coachNotes && (
-        <Card className="border border-primary/20">
+        <Card className="border border-primary/20 border-gray-800 bg-[#111]">
           <CardContent className="py-4">
             <p className="text-sm text-muted-foreground italic">"{data.coachNotes}"</p>
           </CardContent>
@@ -188,7 +188,7 @@ export function MindsetProgrammeDetail({ programme, onBack }: Props) {
         {weeks.map((week: any, wi: number) => {
           const isExpanded = expandedWeek === wi;
           return (
-            <Card key={wi} className={`border-2 ${isExpanded ? 'border-primary/40 neon-border-subtle' : 'border-border'}`}>
+            <Card key={wi} className={`border-2 ${isExpanded ? 'border-primary/40' : 'border-border'}`}>
               <button
                 className="w-full p-4 flex items-center justify-between text-left"
                 onClick={() => setExpandedWeek(isExpanded ? -1 : wi)}

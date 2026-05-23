@@ -903,7 +903,7 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
       />
       
       <Dialog open={isOpen && phase !== 'countdown'} onOpenChange={handleClose}>
-        <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto border-[#FF5500]/15 shadow-[0_0_40px_rgba(255,85,0,0.08)]" style={{ background: '#0A0A0A' }}>
+        <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto border-[#FF5500]/15 shadow-[0_0_40px_rgba(255,85,0,0.08)] bg-[#0a0a0a] border-gray-800" style={{ background: '#0A0A0A' }}>
           <AnimatePresence mode="wait">
             {/* Activity Selection */}
             {phase === 'select' && (
@@ -1198,20 +1198,20 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
 
                 {/* Stats Grid */}
                 <div className="grid grid-cols-3 gap-3 mb-8">
-                  <div className="bg-primary/10 rounded-xl p-4 text-center border-2 border-primary/30 neon-border-subtle">
-                    <p className="font-display text-3xl text-primary neon-glow-subtle tracking-wide">
+                  <div className="bg-primary/10 rounded-xl p-4 text-center border-2 border-primary/30">
+                    <p className="font-display text-3xl text-primary tracking-wide">
                       {distance.toFixed(2)}
                     </p>
                     <p className="text-xs text-muted-foreground uppercase tracking-wide">km</p>
                   </div>
-                  <div className="bg-primary/10 rounded-xl p-4 text-center border-2 border-primary/30 neon-border-subtle">
-                    <p className="font-display text-3xl text-primary neon-glow-subtle tracking-wide">
+                  <div className="bg-primary/10 rounded-xl p-4 text-center border-2 border-primary/30">
+                    <p className="font-display text-3xl text-primary tracking-wide">
                       {currentSpeed !== null ? currentSpeed.toFixed(1) : calculateSpeed().toFixed(1)}
                     </p>
                     <p className="text-xs text-muted-foreground uppercase tracking-wide">km/h</p>
                   </div>
-                  <div className="bg-primary/10 rounded-xl p-4 text-center border-2 border-primary/30 neon-border-subtle">
-                    <p className="font-display text-3xl text-primary neon-glow-subtle tracking-wide">
+                  <div className="bg-primary/10 rounded-xl p-4 text-center border-2 border-primary/30">
+                    <p className="font-display text-3xl text-primary tracking-wide">
                       {calculatePace()}
                     </p>
                     <p className="text-xs text-muted-foreground uppercase tracking-wide">/km</p>
@@ -1301,7 +1301,7 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
                 exit={{ opacity: 0 }}
               >
                 <DialogHeader>
-                  <DialogTitle className="font-display text-2xl tracking-wide text-center neon-glow-subtle">
+                  <DialogTitle className="font-display text-2xl tracking-wide text-center">
                     SESSION COMPLETE
                   </DialogTitle>
                 </DialogHeader>
@@ -1309,7 +1309,7 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
                 <div className="py-6 space-y-6">
                   {/* Activity Badge */}
                   <div className="flex justify-center">
-                    <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full ${config?.bgColor} neon-border-subtle`}>
+                    <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full ${config?.bgColor}`}>
                       <ActivityIcon className={`w-5 h-5 ${config?.color}`} />
                       <span className={`font-display tracking-wide ${config?.color}`}>
                         {config?.label}

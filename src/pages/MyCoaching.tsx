@@ -147,7 +147,7 @@ export default function MyCoaching() {
         {!user ? (
           /* Unauthenticated - show hero pitch + sign in */
           <div className="space-y-8">
-            <Card className="border-primary/20 bg-primary/5 p-6 text-center">
+            <Card className="border-primary/20 bg-primary/5 p-6 text-center border-gray-800 bg-[#111]">
               <p className="text-muted-foreground text-sm max-w-lg mx-auto leading-relaxed">
                 Online hybrid coaching — a real human coach paired with you for personalised programming, 
                 weekly check-ins, video and image upload review, direct feedback on your workouts, 
@@ -167,7 +167,7 @@ export default function MyCoaching() {
               ))}
             </div>
 
-            <Card className="p-8 text-center border-2 border-primary/30">
+            <Card className="p-8 text-center border-2 border-primary/30 border-gray-800 bg-[#111]">
               <User className="w-12 h-12 text-primary mx-auto mb-4" />
               <h2 className="font-display text-xl tracking-wide mb-3">GET STARTED</h2>
               <p className="text-muted-foreground text-sm mb-4">Sign in to request your coach.</p>
@@ -179,7 +179,7 @@ export default function MyCoaching() {
         ) : !myCoach ? (
           /* Authenticated but no coach */
           <div className="space-y-8">
-            <Card className="border-primary/20 bg-primary/5 p-6 text-center">
+            <Card className="border-primary/20 bg-primary/5 p-6 text-center border-gray-800 bg-[#111]">
               <p className="text-muted-foreground text-sm max-w-lg mx-auto leading-relaxed">
                 Online hybrid coaching — a real human coach paired with you for personalised programming, 
                 weekly check-ins, video and image upload review, direct feedback on your workouts, 
@@ -200,7 +200,7 @@ export default function MyCoaching() {
             </div>
 
             {myPendingRequest ? (
-              <Card className="border-primary/30 bg-primary/5 p-6 text-center">
+              <Card className="border-primary/30 bg-primary/5 p-6 text-center border-gray-800 bg-[#111]">
                 <CheckCircle2 className="w-10 h-10 text-primary mx-auto mb-3" />
                 <h2 className="font-display text-lg tracking-wide text-foreground mb-2">REQUEST SENT</h2>
                 <p className="text-muted-foreground text-sm">
@@ -208,7 +208,7 @@ export default function MyCoaching() {
                 </p>
               </Card>
             ) : !hasActiveSubscription ? (
-              <Card className="border-border p-6 text-center">
+              <Card className="border-border p-6 text-center border-gray-800 bg-[#111]">
                 <Lock className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
                 <h2 className="font-display text-lg tracking-wide text-foreground mb-2">SUBSCRIPTION REQUIRED</h2>
                 <p className="text-muted-foreground text-sm max-w-md mx-auto mb-4">
@@ -221,7 +221,7 @@ export default function MyCoaching() {
                 </Link>
               </Card>
             ) : (
-              <Card className="border-border p-6 text-center">
+              <Card className="border-border p-6 text-center border-gray-800 bg-[#111]">
                 <UserCheck className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
                 <h2 className="font-display text-lg tracking-wide text-foreground mb-2">READY TO START?</h2>
                 <p className="text-muted-foreground text-sm max-w-md mx-auto mb-4">
@@ -242,7 +242,7 @@ export default function MyCoaching() {
           /* Has a coach - show dashboard */
           <div className="space-y-6">
             {/* Coach Card */}
-            <Card className="border-primary/20 bg-primary/5">
+            <Card className="border-primary/20 bg-primary/5 border-gray-800 bg-[#111]">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
@@ -313,7 +313,7 @@ export default function MyCoaching() {
                     />
                   )
                 ) : checkIns.length === 0 ? (
-                  <Card className="border-border">
+                  <Card className="border-border border-gray-800 bg-[#111]">
                     <CardContent className="py-10 text-center">
                       <ClipboardCheck className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
                       <p className="text-muted-foreground text-sm">No check-ins yet</p>
@@ -360,7 +360,7 @@ export default function MyCoaching() {
 
               <TabsContent value="plans" className="mt-4 space-y-3">
                 {activeTraining.length === 0 && activeCardio.length === 0 && activeMeals.length === 0 ? (
-                  <Card className="border-border">
+                  <Card className="border-border border-gray-800 bg-[#111]">
                     <CardContent className="py-10 text-center">
                       <Dumbbell className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
                       <p className="text-muted-foreground text-sm">No active plans yet</p>
@@ -373,7 +373,7 @@ export default function MyCoaching() {
                   <>
                     {activeTraining.map(p => (
                       <Link key={p.id} to="/programming/my-programmes">
-                        <Card className="border-border hover:border-primary/20 transition-colors">
+                        <Card className="border-border hover:border-primary/20 transition-colors border-gray-800 bg-[#111]">
                           <CardContent className="p-3 flex items-center gap-3">
                             <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
                               <Dumbbell className="w-4 h-4 text-primary" />
@@ -391,7 +391,7 @@ export default function MyCoaching() {
                     ))}
                     {activeCardio.map(p => (
                       <Link key={p.id} to="/tracker/my-programmes">
-                        <Card className="border-border hover:border-primary/20 transition-colors">
+                        <Card className="border-border hover:border-primary/20 transition-colors border-gray-800 bg-[#111]">
                           <CardContent className="p-3 flex items-center gap-3">
                             <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
                               <Footprints className="w-4 h-4 text-primary" />
@@ -409,7 +409,7 @@ export default function MyCoaching() {
                     ))}
                     {activeMeals.map(p => (
                       <Link key={p.id} to="/fuel/planning">
-                        <Card className="border-border hover:border-primary/20 transition-colors">
+                        <Card className="border-border hover:border-primary/20 transition-colors border-gray-800 bg-[#111]">
                           <CardContent className="p-3 flex items-center gap-3">
                             <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
                               <Utensils className="w-4 h-4 text-primary" />

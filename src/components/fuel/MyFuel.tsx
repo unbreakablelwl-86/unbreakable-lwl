@@ -107,7 +107,7 @@ export function MyFuel() {
 
         <TabsContent value="dashboard" className="mt-6 space-y-6">
           {/* Nutrition Goals Card */}
-          <Card className="border-2 border-primary/30 neon-border-subtle">
+          <Card className="border-2 border-primary/30 border-gray-800 bg-[#111]">
             <CardHeader>
               <CardTitle className="font-display tracking-wide flex items-center justify-between">
                 <div className="flex items-center gap-2">

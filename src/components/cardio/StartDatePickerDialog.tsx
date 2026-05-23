@@ -37,7 +37,7 @@ export function StartDatePickerDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md bg-[#0a0a0a] border-gray-800">
         <DialogHeader>
           <DialogTitle className="font-display tracking-wide">START PROGRAMME</DialogTitle>
           <DialogDescription>

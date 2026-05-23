@@ -269,7 +269,7 @@ export function ManualProgramBuilder({ onBack }: ManualProgramBuilderProps) {
         <Button
           onClick={handleSaveProgram}
           disabled={isSaving || days.every(d => d.exercises.length === 0)}
-          className="gap-2 font-display tracking-wide neon-border-subtle"
+          className="gap-2 font-display tracking-wide"
         >
           {isSaving ? (
             <>
@@ -286,7 +286,7 @@ export function ManualProgramBuilder({ onBack }: ManualProgramBuilderProps) {
       </div>
 
       {/* Programme Name Card */}
-      <Card className="border-primary/30 neon-border-subtle overflow-hidden">
+      <Card className="border-primary/30 overflow-hidden border-gray-800 bg-[#111]">
         <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-transparent p-1" />
         <CardContent className="pt-5 pb-5">
           <label className="text-xs text-primary mb-2 block font-display tracking-widest">
@@ -302,12 +302,12 @@ export function ManualProgramBuilder({ onBack }: ManualProgramBuilderProps) {
       </Card>
 
       {/* Day Selection Card */}
-      <Card className="border-primary/30 neon-border-subtle overflow-hidden">
+      <Card className="border-primary/30 overflow-hidden border-gray-800 bg-[#111]">
         <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-transparent p-1" />
         <CardHeader className="pb-3">
           <CardTitle className="font-display text-lg tracking-wider flex items-center gap-2">
             <Calendar className="w-5 h-5 text-primary" />
-            <span className="text-primary neon-glow-subtle">SELECT</span> TRAINING DAYS
+            <span className="text-primary">SELECT</span> TRAINING DAYS
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -320,7 +320,7 @@ export function ManualProgramBuilder({ onBack }: ManualProgramBuilderProps) {
                 onClick={() => handleDayToggle(day)}
                 className={cn(
                   'font-display tracking-wide',
-                  selectedDays.includes(day) && 'neon-border-subtle shadow-[0_0_12px_hsl(var(--primary)/0.3)]'
+                  selectedDays.includes(day) && ' shadow-[0_0_12px_hsl(var(--primary)/0.3)]'
                 )}
               >
                 {day.toUpperCase()}
@@ -335,7 +335,7 @@ export function ManualProgramBuilder({ onBack }: ManualProgramBuilderProps) {
 
       {/* Day Selection & Exercise Builder */}
       {days.length > 0 && (
-        <Card className="border-primary/30 neon-border-subtle overflow-hidden">
+        <Card className="border-primary/30 overflow-hidden border-gray-800 bg-[#111]">
           <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-transparent p-1" />
           <CardContent className="pt-5">
             {/* Day Dropdown Selector */}
@@ -379,7 +379,7 @@ export function ManualProgramBuilder({ onBack }: ManualProgramBuilderProps) {
                     {/* Exercise List */}
                     <div className="space-y-3">
                       <div className="flex items-center justify-between sticky top-0 z-10 bg-card py-2">
-                        <h4 className="font-display text-xs tracking-widest text-primary neon-glow-subtle">
+                        <h4 className="font-display text-xs tracking-widest text-primary">
                           {day.name.toUpperCase()} — EXERCISES
                         </h4>
                         <Button
@@ -405,7 +405,7 @@ export function ManualProgramBuilder({ onBack }: ManualProgramBuilderProps) {
                         <motion.div
                           initial={{ opacity: 0, y: -10 }}
                           animate={{ opacity: 1, y: 0 }}
-                          className="flex items-center justify-between p-3 bg-primary/10 border border-primary/30 rounded-lg neon-border-subtle"
+                          className="flex items-center justify-between p-3 bg-primary/10 border border-primary/30 rounded-lg"
                         >
                           <div className="flex items-center gap-2">
                             <Link2 className="w-4 h-4 text-primary" />
@@ -429,7 +429,7 @@ export function ManualProgramBuilder({ onBack }: ManualProgramBuilderProps) {
                       {day.supersets.length > 0 && (
                         <div className="space-y-2">
                           {day.supersets.map((superset) => (
-                            <Card key={superset.id} className="border-primary/40 bg-primary/5 p-3 space-y-2 neon-border-subtle">
+                            <Card key={superset.id} className="border-primary/40 bg-primary/5 p-3 space-y-2">
                               <div className="flex items-center justify-between">
                                 <Badge className="gap-1 bg-primary/20 text-primary border-primary/40 font-display tracking-wide text-[10px]">
                                   <Link2 className="w-3 h-3" />
@@ -686,7 +686,7 @@ export function ManualProgramBuilder({ onBack }: ManualProgramBuilderProps) {
       )}
 
       {/* Coach Help Section */}
-      <Card className="border-primary/30 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent neon-border-subtle overflow-hidden">
+      <Card className="border-primary/30 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent overflow-hidden border-gray-800 bg-[#111]">
         <CardContent className="py-4">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center neon-glow shrink-0">
@@ -694,7 +694,7 @@ export function ManualProgramBuilder({ onBack }: ManualProgramBuilderProps) {
             </div>
             <div className="flex-1">
               <p className="text-sm font-display tracking-wide">
-                NEED HELP? <span className="text-primary neon-glow-subtle">ASK YOUR COACH</span>
+                NEED HELP? <span className="text-primary">ASK YOUR COACH</span>
               </p>
               <p className="text-xs text-muted-foreground">
                 Get personalised guidance on exercise selection, form, and progression

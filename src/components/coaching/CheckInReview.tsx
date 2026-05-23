@@ -104,7 +104,7 @@ export function CheckInReview({ checkIn, onReview, onBack }: CheckInReviewProps)
       </div>
 
       {checkIn.status === 'pending' ? (
-        <Card className="border-border">
+        <Card className="border-border border-gray-800 bg-[#111]">
           <CardContent className="py-10 text-center">
             <Eye className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
             <p className="text-muted-foreground text-sm">Waiting for athlete to submit</p>
@@ -113,7 +113,7 @@ export function CheckInReview({ checkIn, onReview, onBack }: CheckInReviewProps)
       ) : (
         <>
           {/* Body Measurements */}
-          <Card className="border-border">
+          <Card className="border-border border-gray-800 bg-[#111]">
             <button
               onClick={() => setShowBody(!showBody)}
               className="w-full p-3 flex items-center justify-between"
@@ -137,7 +137,7 @@ export function CheckInReview({ checkIn, onReview, onBack }: CheckInReviewProps)
           </Card>
 
           {/* Wellness */}
-          <Card className="border-border">
+          <Card className="border-border border-gray-800 bg-[#111]">
             <button
               onClick={() => setShowWellness(!showWellness)}
               className="w-full p-3 flex items-center justify-between"
@@ -159,7 +159,7 @@ export function CheckInReview({ checkIn, onReview, onBack }: CheckInReviewProps)
           </Card>
 
           {/* Compliance */}
-          <Card className="border-border">
+          <Card className="border-border border-gray-800 bg-[#111]">
             <button
               onClick={() => setShowCompliance(!showCompliance)}
               className="w-full p-3 flex items-center justify-between"
@@ -181,7 +181,7 @@ export function CheckInReview({ checkIn, onReview, onBack }: CheckInReviewProps)
 
           {/* Reflections */}
           {(checkIn.wins || checkIn.challenges || checkIn.athlete_notes) && (
-            <Card className="border-border">
+            <Card className="border-border border-gray-800 bg-[#111]">
               <CardContent className="p-3 space-y-3">
                 <p className="font-display text-xs tracking-wider flex items-center gap-2">
                   <MessageSquare className="w-4 h-4 text-primary" /> REFLECTIONS
@@ -214,14 +214,14 @@ export function CheckInReview({ checkIn, onReview, onBack }: CheckInReviewProps)
 
           {/* Coach Response */}
           {checkIn.status === 'reviewed' && checkIn.coach_response ? (
-            <Card className="border-primary/20 bg-primary/5">
+            <Card className="border-primary/20 bg-primary/5 border-gray-800 bg-[#111]">
               <CardContent className="p-3">
                 <p className="text-[10px] font-display tracking-wider text-primary mb-2">COACH RESPONSE</p>
                 <p className="text-sm text-foreground whitespace-pre-wrap">{checkIn.coach_response}</p>
               </CardContent>
             </Card>
           ) : checkIn.status === 'submitted' ? (
-            <Card className="border-border">
+            <Card className="border-border border-gray-800 bg-[#111]">
               <CardContent className="p-3 space-y-3">
                 <p className="font-display text-xs tracking-wider flex items-center gap-2">
                   <Send className="w-4 h-4 text-primary" /> YOUR RESPONSE

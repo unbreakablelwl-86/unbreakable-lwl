@@ -149,7 +149,7 @@ export function ProgrammeLogsView() {
 
   if (!user) {
     return (
-      <Card className="p-6 border border-border bg-card text-center">
+      <Card className="p-6 border border-border text-center border-gray-800 bg-[#111]">
         <History className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
         <h3 className="font-display text-lg text-foreground mb-2">Sign in to view your logs</h3>
         <p className="text-sm text-muted-foreground">
@@ -161,7 +161,7 @@ export function ProgrammeLogsView() {
 
   if (isLoading) {
     return (
-      <Card className="p-6 border border-border bg-card flex items-center justify-center">
+      <Card className="p-6 border border-border flex items-center justify-center border-gray-800 bg-[#111]">
         <Loader2 className="w-6 h-6 animate-spin text-primary" />
       </Card>
     );
@@ -169,7 +169,7 @@ export function ProgrammeLogsView() {
 
   if (completedSessions.length === 0) {
     return (
-      <Card className="p-6 border border-border bg-card text-center">
+      <Card className="p-6 border border-border text-center border-gray-800 bg-[#111]">
         <FolderOpen className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
         <h3 className="font-display text-lg text-foreground mb-2">No logged workouts yet</h3>
         <p className="text-sm text-muted-foreground">
@@ -206,7 +206,7 @@ export function ProgrammeLogsView() {
     <div className="space-y-6">
       {/* Stats Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card className="p-4 border border-border bg-card">
+        <Card className="p-4 border border-border border-gray-800 bg-[#111]">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
               <Flame className="w-5 h-5 text-primary" />
@@ -221,7 +221,7 @@ export function ProgrammeLogsView() {
           </div>
         </Card>
 
-        <Card className="p-4 border border-border bg-card">
+        <Card className="p-4 border border-border border-gray-800 bg-[#111]">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
               <Clock className="w-5 h-5 text-primary" />
@@ -235,7 +235,7 @@ export function ProgrammeLogsView() {
           </div>
         </Card>
 
-        <Card className="p-4 border border-border bg-card">
+        <Card className="p-4 border border-border border-gray-800 bg-[#111]">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
               <TrendingUp className="w-5 h-5 text-primary" />
@@ -249,7 +249,7 @@ export function ProgrammeLogsView() {
           </div>
         </Card>
 
-        <Card className="p-4 border border-border bg-card">
+        <Card className="p-4 border border-border border-gray-800 bg-[#111]">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
               <Dumbbell className="w-5 h-5 text-primary" />
@@ -265,7 +265,7 @@ export function ProgrammeLogsView() {
       </div>
 
       {/* Weekly Goal Progress */}
-      <Card className="p-4 border border-border bg-card">
+      <Card className="p-4 border border-border border-gray-800 bg-[#111]">
         <div className="flex items-center justify-between mb-2">
           <span className="text-sm text-muted-foreground">Weekly Goal Progress</span>
           <span className="text-sm font-medium text-foreground">
@@ -383,7 +383,7 @@ function SessionCard({
 
   return (
     <Collapsible open={isExpanded} onOpenChange={onToggle}>
-      <Card className="border border-border bg-card overflow-hidden">
+      <Card className="border border-border overflow-hidden border-gray-800 bg-[#111]">
         <CollapsibleTrigger asChild>
           <div className="p-4 cursor-pointer hover:bg-muted/50 transition-colors">
             <div className="flex items-center justify-between">

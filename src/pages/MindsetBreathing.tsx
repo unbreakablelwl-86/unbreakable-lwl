@@ -246,7 +246,7 @@ const MindsetBreathing = () => {
   // Selection view
   if (view === "selection") {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen pb-24" style={{ background: '#080808' }}>
         <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm border-b border-border">
           <div className="container mx-auto px-6 py-4">
             <div className="flex items-center justify-between">
@@ -267,13 +267,13 @@ const MindsetBreathing = () => {
         <section className="pt-32 pb-12 text-center px-6">
           <div className="max-w-4xl mx-auto">
             <ThemedLogo className="h-32 md:h-40 object-contain mx-auto mb-6" />
-            <h1 className="font-display text-6xl md:text-8xl text-primary tracking-wide leading-none mb-2 neon-glow-subtle">
+            <h1 className="font-display text-6xl md:text-8xl text-primary tracking-wide leading-none mb-2">
               {heroContent.title}
             </h1>
             <h1 className="font-display text-6xl md:text-8xl text-foreground tracking-wide leading-none">
               {heroContent.titleAccent}
             </h1>
-            <p className="text-primary font-display text-xl md:text-2xl tracking-wide mt-6 neon-glow-subtle">
+            <p className="text-primary font-display text-xl md:text-2xl tracking-wide mt-6">
               {heroContent.tagline}
             </p>
             <div className="flex items-center justify-center gap-2 mt-6 text-sm">
@@ -294,7 +294,7 @@ const MindsetBreathing = () => {
 
         <main className="container mx-auto px-6 py-8">
           <div className="max-w-6xl mx-auto">
-            <div className="bg-card border-2 border-primary/30 neon-border-subtle rounded-lg p-8 md:p-10 mb-10 text-center max-w-4xl mx-auto">
+            <div className="bg-card border-2 border-primary/30 rounded-lg p-8 md:p-10 mb-10 text-center max-w-4xl mx-auto">
               <p className="text-muted-foreground leading-relaxed mb-4">
                 {heroContent.intro}{' '}
                 <span className="text-primary font-semibold">{heroContent.emphasis}</span>.
@@ -309,12 +309,12 @@ const MindsetBreathing = () => {
                 {heroContent.goal}{' '}
                 <span className="text-primary font-semibold">{heroContent.goalEmphasis}</span>{heroContent.goalEnd}
               </p>
-              <p className="text-primary font-display text-2xl tracking-wide mt-6 neon-glow-subtle">
+              <p className="text-primary font-display text-2xl tracking-wide mt-6">
                 {heroContent.hashtag}
               </p>
             </div>
 
-            <h2 className="font-display text-2xl text-primary mb-8 tracking-wide text-center neon-glow-subtle">
+            <h2 className="font-display text-2xl text-primary mb-8 tracking-wide text-center">
               SELECT YOUR SESSION
             </h2>
 
@@ -324,7 +324,7 @@ const MindsetBreathing = () => {
                 return (
                   <Card
                     key={exercise.id}
-                    className="bg-card border-2 border-primary/30 neon-border-subtle border-l-4 border-l-primary p-6 cursor-pointer hover:bg-muted/50 transition-all group"
+                    className="bg-card border-2 border-primary/30 border-l-4 border-l-primary p-6 cursor-pointer hover:bg-muted/50 transition-all group"
                     onClick={() => selectExercise(exercise)}
                   >
                     <div className="flex items-center gap-3 mb-4">
@@ -351,15 +351,15 @@ const MindsetBreathing = () => {
 
         <section className="container mx-auto px-6 py-12 border-t border-border">
           <Link to="/help" className="block max-w-3xl mx-auto">
-            <Card className="border-2 border-primary/40 bg-primary/5 p-6 hover:bg-primary/10 transition-all neon-border-subtle">
+            <Card className="border-2 border-primary/40 bg-primary/5 p-6 hover:bg-primary/10 transition-all border-gray-800 bg-[#111]">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                  <div className="w-14 h-14 rounded-full bg-primary/20 flex items-center justify-center neon-glow">
+                  <div className="w-14 h-14 rounded-full bg-primary/20 flex items-center justify-center">
                     <Flame className="w-7 h-7 text-primary" />
                   </div>
                   <div>
                     <p className="font-display text-xl tracking-wide text-foreground">
-                      NEED MORE? <span className="text-primary neon-glow-subtle">ASK YOUR COACH</span>
+                      NEED MORE? <span className="text-primary">ASK YOUR COACH</span>
                     </p>
                     <p className="text-muted-foreground mt-1">Breathing techniques, stress management, and mental resilience coaching</p>
                   </div>
@@ -387,7 +387,7 @@ const MindsetBreathing = () => {
         />
 
         <div className="relative z-10 text-center px-6 max-w-md w-full">
-          <h2 className="font-display text-3xl md:text-4xl text-primary tracking-wide mb-2 neon-glow-subtle">
+          <h2 className="font-display text-3xl md:text-4xl text-primary tracking-wide mb-2">
             {selectedExercise.name}
           </h2>
           <p className="text-muted-foreground font-display tracking-wide mb-2">

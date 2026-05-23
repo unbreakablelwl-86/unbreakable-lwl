@@ -39,7 +39,7 @@ export function MovementProgressionDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md bg-[#0a0a0a] border-gray-800">
         <DialogHeader>
           <DialogTitle className="font-display tracking-wide flex items-center gap-2">
             <TrendingUp className="w-5 h-5 text-primary" />

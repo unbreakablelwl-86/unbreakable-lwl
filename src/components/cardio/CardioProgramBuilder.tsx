@@ -132,7 +132,7 @@ export function CardioProgramBuilder({ onProgramGenerated, onCancel }: CardioPro
                   key={option.value}
                   className={`cursor-pointer transition-all ${
                     formData.activityType === option.value
-                      ? 'border-primary bg-primary/10 neon-border-subtle'
+                      ? 'border-primary bg-primary/10'
                       : 'border-border hover:border-primary/50'
                   }`}
                   onClick={() => setFormData({ ...formData, activityType: option.value })}
@@ -166,7 +166,7 @@ export function CardioProgramBuilder({ onProgramGenerated, onCancel }: CardioPro
                   key={option.value}
                   className={`cursor-pointer transition-all ${
                     formData.goal === option.value
-                      ? 'border-primary bg-primary/10 neon-border-subtle'
+                      ? 'border-primary bg-primary/10'
                       : 'border-border hover:border-primary/50'
                   }`}
                   onClick={() => setFormData({ ...formData, goal: option.value })}

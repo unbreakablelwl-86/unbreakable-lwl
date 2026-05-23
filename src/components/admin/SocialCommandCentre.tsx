@@ -381,7 +381,7 @@ export function SocialCommandCentre() {
 
           {/* OUTPUT */}
           {generatedPost && (
-            <Card className="border-primary">
+            <Card className="border-primary border-gray-800 bg-[#111]">
               <CardContent className="pt-5 space-y-4">
                 <div className="flex items-center justify-between">
                   <p className="text-[10px] text-primary font-display tracking-widest">✅ YOUR POST</p>
@@ -709,7 +709,7 @@ export function SocialCommandCentre() {
           <MetaCredentialsForm />
           
           {!hasCredentials && (
-            <Card className="border-primary/30">
+            <Card className="border-primary/30 border-gray-800 bg-[#111]">
               <CardContent className="pt-5 space-y-3">
                 <p className="text-[10px] text-primary font-display tracking-widest">🔗 WHY CONNECT?</p>
                 <ul className="space-y-2 text-xs text-muted-foreground">

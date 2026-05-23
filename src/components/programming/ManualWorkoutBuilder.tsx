@@ -251,7 +251,7 @@ export function ManualWorkoutBuilder() {
   };
 
   return (
-    <Card className="border-primary/20">
+    <Card className="border-primary/20 border-gray-800 bg-[#111]">
       <CardHeader>
         <CardTitle className="font-display text-xl flex items-center gap-2">
           <Dumbbell className="w-5 h-5 text-primary" />

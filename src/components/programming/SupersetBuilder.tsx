@@ -170,7 +170,7 @@ export function SupersetBuilder({
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
           >
-            <Card className="border-primary/40 bg-primary/5 p-3 space-y-3">
+            <Card className="border-primary/40 bg-primary/5 p-3 space-y-3 border-gray-800 bg-[#111]">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <GripVertical className="w-4 h-4 text-muted-foreground cursor-grab" />

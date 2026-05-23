@@ -92,7 +92,7 @@ export function CoursePurchaseGate({
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
       >
-        <Card className="border-primary/30 bg-primary/5 p-4 sm:p-5">
+        <Card className="border-primary/30 bg-primary/5 p-4 sm:p-5 border-gray-800 bg-[#111]">
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
             <div className="flex items-center gap-3 flex-1 min-w-0">
               <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">

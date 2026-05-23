@@ -67,7 +67,7 @@ export function RecipeDetailModal({
 
   return (
     <Dialog open={!!recipe} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto p-0 gap-0">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto p-0 gap-0 bg-[#0a0a0a] border-gray-800">
         {/* Hero Section */}
         <div className="relative">
           {recipe.image_url ? (
@@ -118,7 +118,7 @@ export function RecipeDetailModal({
               {recipe.name}
             </h2>
             {recipe.pack && (
-              <p className="text-xs font-display tracking-widest text-primary mt-1 neon-glow-subtle">
+              <p className="text-xs font-display tracking-widest text-primary mt-1">
                 {packLabel} PACK
               </p>
             )}
@@ -175,9 +175,9 @@ export function RecipeDetailModal({
               NUTRITION PER SERVING
             </h3>
 
-            <Card className="p-4 border-primary/25 shadow-[0_0_15px_hsl(var(--primary)/0.1)]">
+            <Card className="p-4 border-primary/25 shadow-[0_0_15px_hsl(var(--primary)/0.1)] border-gray-800 bg-[#111]">
               <div className="text-center mb-4">
-                <p className="font-display text-4xl text-primary neon-glow-subtle">
+                <p className="font-display text-4xl text-primary">
                   {recipe.calories_per_serving || 0}
                 </p>
                 <p className="text-xs font-display tracking-widest text-muted-foreground">CALORIES</p>
@@ -317,7 +317,7 @@ export function RecipeDetailModal({
 
           {/* UNBREAKABLE Footer */}
           <div className="text-center py-2">
-            <p className="font-display text-xs tracking-[0.3em] text-primary/60 neon-glow-subtle">
+            <p className="font-display text-xs tracking-[0.3em] text-primary/60">
               FUEL YOUR RESULTS • KEEP SHOWING UP
             </p>
           </div>

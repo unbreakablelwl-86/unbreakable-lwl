@@ -73,13 +73,12 @@ export function SessionActionTiles({
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.05 }}
           >
-            <Card
-              className="p-4 border border-border bg-card hover:border-primary/50 hover:neon-border-subtle cursor-pointer transition-all group"
+            <Card className="p-4 border border-border hover:border-primary/50 hover: cursor-pointer transition-all group border-gray-800 bg-[#111]"
               onClick={tile.onClick}
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center neon-border-subtle">
+                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
                     <Icon className="w-5 h-5 text-primary" />
                   </div>
                   <div>
@@ -93,7 +92,7 @@ export function SessionActionTiles({
                 </div>
                 <div className="flex items-center gap-2">
                   {indicator && (
-                    <span className="text-sm font-medium text-primary neon-glow-subtle">
+                    <span className="text-sm font-medium text-primary">
                       {indicator}
                     </span>
                   )}

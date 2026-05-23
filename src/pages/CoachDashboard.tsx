@@ -151,7 +151,7 @@ const CoachDashboard = ({ embedded = false }: { embedded?: boolean }) => {
               <Loader2 className="w-6 h-6 animate-spin text-primary" />
             </div>
           ) : myAthletes.length === 0 && !showDeactivated ? (
-            <Card className="border-border">
+            <Card className="border-border border-gray-800 bg-[#111]">
               <CardContent className="py-12 text-center">
                 <Users className="w-10 h-10 mx-auto text-muted-foreground mb-3" />
                 <p className="text-muted-foreground text-sm">No athletes assigned yet</p>
@@ -278,7 +278,7 @@ const CoachDashboard = ({ embedded = false }: { embedded?: boolean }) => {
               <Loader2 className="w-6 h-6 animate-spin text-primary" />
             </div>
           ) : pendingRequests.length === 0 ? (
-            <Card className="border-border">
+            <Card className="border-border border-gray-800 bg-[#111]">
               <CardContent className="py-12 text-center">
                 <Clock className="w-10 h-10 mx-auto text-muted-foreground mb-3" />
                 <p className="text-muted-foreground text-sm">No pending requests</p>

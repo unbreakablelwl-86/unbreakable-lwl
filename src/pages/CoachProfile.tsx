@@ -80,7 +80,7 @@ export default function CoachProfile() {
 
         {/* Bio */}
         {profile.bio && (
-          <Card className="border-border">
+          <Card className="border-border border-gray-800 bg-[#111]">
             <CardContent className="p-4">
               <p className="text-sm text-foreground leading-relaxed whitespace-pre-wrap">{profile.bio}</p>
             </CardContent>
@@ -112,7 +112,7 @@ export default function CoachProfile() {
 
         {/* Specializations */}
         {profile.specializations.length > 0 && (
-          <Card className="border-border">
+          <Card className="border-border border-gray-800 bg-[#111]">
             <CardContent className="p-4 space-y-2">
               <p className="font-display text-xs tracking-wider flex items-center gap-2">
                 <Dumbbell className="w-4 h-4 text-primary" /> SPECIALIZATIONS
@@ -130,7 +130,7 @@ export default function CoachProfile() {
 
         {/* Certifications */}
         {profile.certifications.length > 0 && (
-          <Card className="border-border">
+          <Card className="border-border border-gray-800 bg-[#111]">
             <CardContent className="p-4 space-y-2">
               <p className="font-display text-xs tracking-wider flex items-center gap-2">
                 <Award className="w-4 h-4 text-primary" /> CERTIFICATIONS
@@ -148,7 +148,7 @@ export default function CoachProfile() {
 
         {/* Coaching Style & Ideal Client */}
         {(profile.coaching_style || profile.ideal_client) && (
-          <Card className="border-border">
+          <Card className="border-border border-gray-800 bg-[#111]">
             <CardContent className="p-4 space-y-4">
               {profile.coaching_style && (
                 <div>
@@ -198,7 +198,7 @@ export default function CoachProfile() {
 
         {/* CTA */}
         {profile.accepting_clients && (
-          <Card className="border-primary/20 bg-primary/5">
+          <Card className="border-primary/20 bg-primary/5 border-gray-800 bg-[#111]">
             <CardContent className="p-6 text-center space-y-3">
               <h2 className="font-display tracking-wide text-lg">READY TO START?</h2>
               <p className="text-sm text-muted-foreground">

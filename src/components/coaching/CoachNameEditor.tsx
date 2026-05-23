@@ -75,7 +75,7 @@ export function CoachNameEditor({ coachName, onSave, variant = 'inline' }: Coach
               onClick={() => { setDraft(coachName); setEditing(true); }}
             >
               <h1 className="font-display text-3xl md:text-5xl tracking-wider">
-                <span className="text-primary neon-glow-subtle">{coachName.split(' ')[0]}</span>{' '}
+                <span className="text-primary">{coachName.split(' ')[0]}</span>{' '}
                 <span className="text-foreground">{coachName.split(' ').slice(1).join(' ')}</span>
               </h1>
               <Pencil className="w-4 h-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />

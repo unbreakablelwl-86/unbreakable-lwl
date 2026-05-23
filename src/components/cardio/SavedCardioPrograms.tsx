@@ -68,7 +68,7 @@ export function SavedCardioPrograms({ onViewProgram }: SavedCardioProgramsProps)
 
   if (isLoading) {
     return (
-      <Card className="bg-card border-border">
+      <Card className=" border-border border-gray-800 bg-[#111]">
         <CardContent className="p-6 flex items-center justify-center">
           <Loader2 className="w-6 h-6 animate-spin text-primary" />
         </CardContent>
@@ -138,7 +138,7 @@ export function SavedCardioPrograms({ onViewProgram }: SavedCardioProgramsProps)
   return (
     <div className="space-y-4">
       {/* Header with status */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-4 bg-card rounded-lg border border-border neon-border-subtle">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-4 bg-card rounded-lg border border-border">
         <div className="flex items-center gap-3">
           <AlertCircle className="w-5 h-5 text-primary shrink-0" />
           <span className="text-sm md:text-base text-muted-foreground">
@@ -156,7 +156,7 @@ export function SavedCardioPrograms({ onViewProgram }: SavedCardioProgramsProps)
         <div key={program.id}>
           <Card
             className={`p-4 border bg-card cursor-pointer transition-all hover:border-primary/50 ${
-              program.is_active ? 'border-primary neon-border-subtle' : 'border-border'
+              program.is_active ? 'border-primary' : 'border-border'
             }`}
             onClick={() => handleExpand(program.id)}
           >

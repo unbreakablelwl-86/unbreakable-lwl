@@ -77,7 +77,7 @@ export function MilestoneCard({ milestone, onShare, onUnshare }: MilestoneCardPr
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.3 }}
     >
-      <Card className="bg-card border-border border-l-4 border-l-primary overflow-hidden">
+      <Card className=" border-border border-l-4 border-l-primary overflow-hidden border-gray-800 bg-[#111]">
         <CardContent className="p-4">
           {/* Header */}
           <div className="flex items-start gap-3 mb-4">

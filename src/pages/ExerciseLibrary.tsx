@@ -256,7 +256,7 @@ export default function ExerciseLibrary() {
   useEffect(() => { setPage(1); }, [query, selectedMuscle, selectedEquipment, selectedLevel]);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen pb-24" style={{ background: '#080808' }}>
       {/* Hero */}
       <section className="pt-24 pb-10 md:pt-28 md:pb-14 border-b border-primary/20">
         <div className="container mx-auto px-4 text-center max-w-4xl">
@@ -266,8 +266,8 @@ export default function ExerciseLibrary() {
             transition={{ duration: 0.6 }}
             className="space-y-4"
           >
-            <h1 className="font-display text-4xl sm:text-5xl md:text-6xl tracking-wide leading-none">
-              <span className="text-primary neon-glow-subtle">UNBREAKABLE </span>
+            <h1 className="font-display text-2xl tracking-wide leading-none">
+              <span className="text-primary">UNBREAKABLE </span>
               <span className="text-foreground">EXERCISE LIBRARY</span>
             </h1>
             <p className="text-muted-foreground text-sm md:text-base max-w-xl mx-auto">

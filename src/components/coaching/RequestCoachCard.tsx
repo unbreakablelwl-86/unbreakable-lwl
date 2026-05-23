@@ -13,7 +13,7 @@ export function RequestCoachCard() {
   if (!myCoach) return null;
 
   return (
-    <Card className="border-primary/30">
+    <Card className="border-primary/30 border-gray-800 bg-[#111]">
       <CardContent className="p-4">
         <div className="flex items-center gap-3">
           <Avatar className="h-12 w-12">

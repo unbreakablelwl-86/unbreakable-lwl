@@ -93,9 +93,9 @@ export function SessionResultsView({ session, onClose, onViewFeedback }: Session
       <ScrollArea className="h-[calc(100vh-180px)]">
         <div className="space-y-6 max-w-2xl mx-auto pb-8">
           {/* Summary Card */}
-          <Card className="p-4 border-primary/30 bg-gradient-to-br from-primary/10 to-primary/5">
+          <Card className="p-4 border-primary/30 bg-gradient-to-br from-primary/10 to-primary/5 border-gray-800 bg-[#111]">
             <div className="flex items-center gap-4 mb-4">
-              <div className="w-14 h-14 rounded-full bg-primary/20 flex items-center justify-center neon-border-subtle">
+              <div className="w-14 h-14 rounded-full bg-primary/20 flex items-center justify-center">
                 <CheckCircle className="w-7 h-7 text-primary" />
               </div>
               <div>
@@ -118,7 +118,7 @@ export function SessionResultsView({ session, onClose, onViewFeedback }: Session
 
           {/* Stats Grid */}
           <div className="grid grid-cols-3 gap-3">
-            <Card className="p-3 border-border bg-card text-center relative">
+            <Card className="p-3 border-border text-center relative border-gray-800 bg-[#111]">
               <Clock className="w-5 h-5 text-primary mx-auto mb-1" />
               <p className="text-xs text-muted-foreground">Duration</p>
               {editingDuration ? (
@@ -171,7 +171,7 @@ export function SessionResultsView({ session, onClose, onViewFeedback }: Session
             
 
             
-            <Card className="p-3 border-border bg-card text-center">
+            <Card className="p-3 border-border text-center border-gray-800 bg-[#111]">
               <Target className="w-5 h-5 text-primary mx-auto mb-1" />
               <p className="text-xs text-muted-foreground">Avg RPE</p>
               <p className="font-display text-lg text-foreground">
@@ -182,13 +182,12 @@ export function SessionResultsView({ session, onClose, onViewFeedback }: Session
 
           {/* AI Feedback CTA - Using new component */}
           {onViewFeedback && (
-            <Card 
-              className="p-4 border-primary/30 bg-primary/5 cursor-pointer hover:bg-primary/10 transition-colors"
+            <Card className="p-4 border-primary/30 bg-primary/5 cursor-pointer hover:bg-primary/10 transition-colors border-gray-800 bg-[#111]"
               onClick={onViewFeedback}
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center neon-border-subtle">
+                  <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
                     <Sparkles className="w-5 h-5 text-primary" />
                   </div>
                   <div>
@@ -276,7 +275,7 @@ export function SessionResultsView({ session, onClose, onViewFeedback }: Session
 
           {/* Session Notes */}
           {session.notes && (
-            <Card className="p-4 border-border bg-card">
+            <Card className="p-4 border-border border-gray-800 bg-[#111]">
               <div className="flex items-start gap-3">
                 <MessageSquare className="w-4 h-4 text-primary shrink-0 mt-0.5" />
                 <div>

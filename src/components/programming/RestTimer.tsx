@@ -111,13 +111,13 @@ export function RestTimer({ suggestedTime, exerciseType = 'strength', onComplete
     <Card className={`p-4 border-2 transition-all ${
       isComplete ? 'border-green-500 bg-green-500/10 neon-border' :
       isWarning ? 'border-primary bg-primary/10 neon-border' :
-      'border-primary/50 bg-card neon-border-subtle'
+      'border-primary/50 bg-card'
     }`}>
       {/* Header Row */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
-          <Timer className="w-5 h-5 text-primary neon-glow-subtle" />
-          <span className="font-display text-sm text-primary tracking-wider neon-glow-subtle">REST TIMER</span>
+          <Timer className="w-5 h-5 text-primary" />
+          <span className="font-display text-sm text-primary tracking-wider">REST TIMER</span>
         </div>
         <Button
           variant="ghost"
@@ -253,7 +253,7 @@ export function RestTimer({ suggestedTime, exerciseType = 'strength', onComplete
                 size="sm"
                 className={`text-xs h-7 px-3 ${
                   initialTime === preset 
-                    ? 'bg-primary text-primary-foreground neon-border-subtle' 
+                    ? 'bg-primary text-primary-foreground' 
                     : 'border-primary/30 text-muted-foreground hover:text-primary hover:border-primary/50'
                 }`}
                 onClick={() => {

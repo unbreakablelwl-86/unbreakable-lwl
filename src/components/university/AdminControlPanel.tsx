@@ -37,7 +37,7 @@ export function AdminControlPanel() {
   return (
     <>
       <div className="fixed bottom-20 right-4 z-50 w-72">
-        <Card className="p-4 border-primary/30 bg-card shadow-xl">
+        <Card className="p-4 border-primary/30 shadow-xl border-gray-800 bg-[#111]">
           <div className="flex items-center justify-between mb-3">
             <h3 className="font-display text-xs tracking-wider text-primary">ADMIN CONTROLS</h3>
             <Button size="icon" variant="ghost" onClick={() => setExpanded(false)} className="h-6 w-6">

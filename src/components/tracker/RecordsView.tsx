@@ -163,7 +163,7 @@ export function RecordsView() {
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: index * 0.03 }}
                   >
-                    <Card className="p-3 bg-card border border-border border-l-4 border-l-primary text-center group relative">
+                    <Card className="p-3 border border-border border-l-4 border-l-primary text-center group relative border-gray-800 bg-[#111]">
                       <div className="text-3xl mb-1 medal-unlocked">{medal.icon}</div>
                       <p className="font-display text-xs text-foreground tracking-wide line-clamp-2">
                         {medal.name}
@@ -211,7 +211,7 @@ export function RecordsView() {
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ delay: index * 0.02 }}
                     >
-                      <Card className="p-3 bg-background border border-border text-center group relative">
+                      <Card className="p-3 bg-background border border-border text-center group relative border-gray-800 bg-[#111]">
                         <div className="text-3xl mb-1 medal-locked grayscale">{medal.icon}</div>
                         <p className="font-display text-xs text-locked-foreground tracking-wide line-clamp-2">
                           {medal.name}

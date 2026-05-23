@@ -166,7 +166,7 @@ const Calculators = () => {
 
   return (
     <SwipeNavigationWrapper>
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen pb-24" style={{ background: '#080808' }}>
         {/* Header with Theme Toggle */}
         <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm border-b border-border">
           <div className="container mx-auto px-6 py-4">
@@ -196,10 +196,10 @@ const Calculators = () => {
           <h1 className="font-display text-6xl md:text-8xl text-foreground tracking-wide leading-none mb-2">
             {hero.title}
           </h1>
-          <h1 className="font-display text-6xl md:text-8xl text-primary tracking-wide leading-none neon-glow-subtle">
+          <h1 className="font-display text-6xl md:text-8xl text-primary tracking-wide leading-none">
             {hero.titleAccent}
           </h1>
-          <p className="text-primary font-display text-xl md:text-2xl tracking-wide mt-6 neon-glow-subtle">
+          <p className="text-primary font-display text-xl md:text-2xl tracking-wide mt-6">
             {hero.tagline}
           </p>
         </div>
@@ -231,7 +231,7 @@ const Calculators = () => {
       <main className="container mx-auto px-6 py-8">
         <div className="max-w-6xl mx-auto">
           {/* Description Card */}
-          <div className="bg-card border-2 border-primary/30 neon-border-subtle rounded-lg p-8 md:p-10 mb-10 text-center max-w-4xl mx-auto">
+          <div className="bg-card border-2 border-primary/30 rounded-lg p-8 md:p-10 mb-10 text-center max-w-4xl mx-auto">
             <p className="text-muted-foreground leading-relaxed mb-4">
               {hero.intro}{' '}
               <span className="text-primary font-semibold">{hero.emphasis}</span>.
@@ -249,7 +249,7 @@ const Calculators = () => {
               {hero.goalEnd}
             </p>
             
-            <p className="text-primary font-display text-2xl tracking-wide mt-6 neon-glow-subtle">
+            <p className="text-primary font-display text-2xl tracking-wide mt-6">
               {hero.hashtag}
             </p>
           </div>
@@ -257,8 +257,8 @@ const Calculators = () => {
           {/* Calculator Grid */}
           <div className="grid lg:grid-cols-2 gap-8">
             {/* Form */}
-            <div className="bg-card border-2 border-primary/30 neon-border-subtle rounded-lg p-8">
-              <h3 className="font-display text-2xl text-primary mb-8 tracking-wide text-center neon-glow-subtle">
+            <div className="bg-card border-2 border-primary/30 rounded-lg p-8">
+              <h3 className="font-display text-2xl text-primary mb-8 tracking-wide text-center">
                 {activeTab === 'strength' && 'ENTER YOUR LIFT'}
                 {activeTab === 'fuel' && 'ENTER YOUR DETAILS'}
                 {activeTab === 'speed' && 'ENTER YOUR RACE'}
@@ -303,29 +303,7 @@ const Calculators = () => {
         </div>
       </main>
 
-      {/* Coach Banner - Bottom of page */}
-      <section className="container mx-auto px-6 py-12 border-t border-border">
-        <Link to="/help" className="block max-w-3xl mx-auto">
-          <Card className="border-2 border-primary/40 bg-primary/5 p-6 hover:bg-primary/10 transition-all neon-border-subtle">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className="w-14 h-14 rounded-full bg-primary/20 flex items-center justify-center neon-glow">
-                  <Flame className="w-7 h-7 text-primary" />
-                </div>
-                <div>
-                  <p className="font-display text-xl tracking-wide text-foreground">
-                    QUESTIONS? <span className="text-primary neon-glow-subtle">ASK YOUR COACH</span>
-                  </p>
-                  <p className="text-muted-foreground mt-1">
-                    Get help understanding your results and what to do next
-                  </p>
-                </div>
-              </div>
-              <ArrowRight className="w-6 h-6 text-primary hidden sm:block" />
-            </div>
-          </Card>
-        </Link>
-      </section>
+      
 </div>
     </SwipeNavigationWrapper>
   );
@@ -333,12 +311,12 @@ const Calculators = () => {
 
 function EmptyState({ emoji, title, description }: { emoji: string; title: string; description: string }) {
   return (
-    <div className="bg-card border-2 border-primary/30 neon-border-subtle rounded-lg p-10 h-full flex items-center justify-center min-h-[450px]">
+    <div className="bg-card border-2 border-primary/30 rounded-lg p-10 h-full flex items-center justify-center min-h-[450px]">
       <div className="text-center">
-        <div className="w-24 h-24 rounded-full bg-primary/10 neon-border-subtle flex items-center justify-center mx-auto mb-6">
+        <div className="w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
           <span className="text-5xl">{emoji}</span>
         </div>
-        <h3 className="font-display text-2xl text-primary mb-3 tracking-wide neon-glow-subtle">
+        <h3 className="font-display text-2xl text-primary mb-3 tracking-wide">
           {title}
         </h3>
         <p className="text-muted-foreground max-w-sm mx-auto">

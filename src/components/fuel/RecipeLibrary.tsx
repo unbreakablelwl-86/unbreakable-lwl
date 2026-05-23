@@ -255,7 +255,7 @@ export function RecipeLibrary() {
       <div className="text-center py-8">
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
           <h1 className="font-display text-4xl sm:text-5xl tracking-wider">
-            <span className="text-primary neon-glow">FUEL</span>{' '}
+            <span className="text-primary">FUEL</span>{' '}
             <span className="text-foreground">YOUR RESULTS</span>
           </h1>
           <p className="font-display text-xs tracking-[0.4em] text-muted-foreground mt-3">
@@ -314,7 +314,7 @@ export function RecipeLibrary() {
                 CREATE
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+            <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto bg-[#0a0a0a] border-gray-800">
               <DialogHeader>
                 <DialogTitle className="font-display tracking-wide text-primary">CREATE RECIPE</DialogTitle>
               </DialogHeader>
@@ -449,7 +449,7 @@ export function RecipeLibrary() {
 
       {/* Dietary Filters */}
       {showFilters && (
-        <Card className="p-4 border-primary/30 shadow-[0_0_15px_hsl(var(--primary)/0.15)]">
+        <Card className="p-4 border-primary/30 shadow-[0_0_15px_hsl(var(--primary)/0.15)] border-gray-800 bg-[#111]">
           <p className="text-sm font-display tracking-wider text-primary mb-3">DIETARY FILTERS</p>
           <div className="flex flex-wrap gap-2">
             {Object.entries(DIETARY_TAG_MAP).map(([code, label]) => (
@@ -491,8 +491,7 @@ export function RecipeLibrary() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
             >
-              <Card 
-                className="cursor-pointer hover:border-primary/60 transition-all h-full border-primary/15 overflow-hidden group hover:shadow-[0_0_20px_hsl(var(--primary)/0.2)]"
+              <Card className="cursor-pointer hover:border-primary/60 transition-all h-full border-primary/15 overflow-hidden group hover:shadow-[0_0_20px_hsl(var(--primary)/0.2)] border-gray-800 bg-[#111]"
                 onClick={() => setViewingRecipe(recipe)}
               >
                 {/* Recipe Image */}
@@ -520,7 +519,7 @@ export function RecipeLibrary() {
                   )}
                   {/* Calorie badge */}
                   <div className="absolute bottom-2 right-2 bg-background/90 backdrop-blur-sm rounded-full px-3 py-1 border border-primary/30 shadow-[0_0_8px_hsl(var(--primary)/0.2)]">
-                    <span className="font-display text-sm text-primary neon-glow-subtle">{recipe.calories_per_serving || 0}</span>
+                    <span className="font-display text-sm text-primary">{recipe.calories_per_serving || 0}</span>
                     <span className="text-[10px] text-muted-foreground ml-0.5">kcal</span>
                   </div>
                 </div>
@@ -638,7 +637,7 @@ export function RecipeLibrary() {
 
       {/* Add to Plan Modal */}
       <Dialog open={!!addToPlanRecipe} onOpenChange={(open) => !open && setAddToPlanRecipe(null)}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md bg-[#0a0a0a] border-gray-800">
           <DialogHeader>
             <DialogTitle className="font-display tracking-wide text-primary">ADD TO MEAL PLAN</DialogTitle>
           </DialogHeader>

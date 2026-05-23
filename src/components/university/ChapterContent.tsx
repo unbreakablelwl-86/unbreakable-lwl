@@ -32,7 +32,7 @@ function SportChapterContent({ chapter }: Props) {
       {/* Description */}
       {ch.description && (
         <motion.div {...fadeIn} transition={{ delay: 0.1 }}>
-          <Card className="p-5 border-primary/20 bg-gradient-to-br from-primary/5 to-transparent relative overflow-hidden">
+          <Card className="p-5 border-primary/20 bg-gradient-to-br from-primary/5 to-transparent relative overflow-hidden border-gray-800 bg-[#111]">
             <div className="absolute -top-6 -right-6 w-20 h-20 bg-primary/5 rounded-full blur-2xl pointer-events-none" />
             <div className="relative">
               <div className="flex items-center gap-2 mb-2">
@@ -55,7 +55,7 @@ function SportChapterContent({ chapter }: Props) {
       {/* Key Takeaways */}
       {takeaways.length > 0 && (
         <motion.div {...fadeIn} transition={{ delay: 0.3 }}>
-          <Card className="p-5 border-primary/20 bg-gradient-to-br from-primary/5 to-transparent relative overflow-hidden">
+          <Card className="p-5 border-primary/20 bg-gradient-to-br from-primary/5 to-transparent relative overflow-hidden border-gray-800 bg-[#111]">
             <div className="relative">
               <div className="flex items-center gap-2 mb-3">
                 <Lightbulb className="w-4 h-4 text-primary" />
@@ -84,7 +84,7 @@ function SportChapterContent({ chapter }: Props) {
       {/* Practical Application */}
       {practicalApp && (
         <motion.div {...fadeIn} transition={{ delay: 0.4 }}>
-          <Card className="p-6 border-primary/20 bg-gradient-to-br from-card to-primary/5 relative overflow-hidden">
+          <Card className="p-6 border-primary/20 bg-gradient-to-br from-card to-primary/5 relative overflow-hidden border-gray-800 bg-[#111]">
             <div className="absolute -bottom-8 -right-8 w-24 h-24 bg-primary/5 rounded-full blur-2xl pointer-events-none" />
             <div className="relative">
               <div className="flex items-center gap-2.5 mb-4">
@@ -115,7 +115,7 @@ export function ChapterContent({ chapter }: Props) {
       {/* Learning Outcome */}
       {chapter.learningOutcome && (
         <motion.div {...fadeIn} transition={{ delay: 0.1 }}>
-          <Card className="p-5 border-primary/20 bg-gradient-to-br from-primary/5 to-transparent relative overflow-hidden">
+          <Card className="p-5 border-primary/20 bg-gradient-to-br from-primary/5 to-transparent relative overflow-hidden border-gray-800 bg-[#111]">
             <div className="absolute -top-6 -right-6 w-20 h-20 bg-primary/5 rounded-full blur-2xl pointer-events-none" />
             <div className="relative">
               <div className="flex items-center gap-2 mb-2">
@@ -202,7 +202,7 @@ export function ChapterContent({ chapter }: Props) {
       {/* Practical Task */}
       {chapter.practicalTask && (
         <motion.div {...fadeIn} transition={{ delay: 0.4 }}>
-          <Card className="p-6 border-primary/20 bg-gradient-to-br from-card to-primary/5 relative overflow-hidden">
+          <Card className="p-6 border-primary/20 bg-gradient-to-br from-card to-primary/5 relative overflow-hidden border-gray-800 bg-[#111]">
             <div className="absolute -bottom-8 -right-8 w-24 h-24 bg-primary/5 rounded-full blur-2xl pointer-events-none" />
             <div className="relative">
               <div className="flex items-center gap-2.5 mb-4">

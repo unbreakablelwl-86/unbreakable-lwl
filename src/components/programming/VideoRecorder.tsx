@@ -275,7 +275,7 @@ export function VideoRecorder({
           className="hidden"
         />
         
-        <Card className="p-6 border-destructive/30 bg-destructive/5">
+        <Card className="p-6 border-destructive/30 bg-destructive/5 border-gray-800 bg-[#111]">
           <div className="flex flex-col items-center text-center space-y-3">
             <div className="w-12 h-12 rounded-full bg-destructive/10 flex items-center justify-center">
               <AlertCircle className="w-6 h-6 text-destructive" />

@@ -605,7 +605,7 @@ export default function UserProfile() {
 
             {/* ─── Private Profile Notice ─── */}
             {!profile.is_public && !isFriend && !isOwnProfile && (
-              <Card className="p-6 border border-white/[0.06] text-center">
+              <Card className="p-6 border border-white/[0.06] text-center border-gray-800 bg-[#111]">
                 <Lock className="w-10 h-10 text-[#888] mx-auto mb-3" />
                 <h2 className="font-heading text-sm tracking-wider mb-1">PRIVATE PROFILE</h2>
                 <p className="text-xs text-[#888]">

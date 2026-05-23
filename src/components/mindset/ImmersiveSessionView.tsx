@@ -73,7 +73,7 @@ export function ImmersiveSessionView({
           </p>
         ) : (
           <>
-            <p className="font-display text-3xl text-primary tracking-widest neon-glow-subtle">
+            <p className="font-display text-3xl text-primary tracking-widest">
               {formatTime(remainingSeconds)}
             </p>
             <p className="font-display text-sm text-muted-foreground tracking-widest mt-1">

@@ -115,7 +115,7 @@ export function AdminUsersPanel() {
   };
 
   return (
-    <Card>
+    <Card className="border-gray-800 bg-[#111]">
       <CardHeader>
         <CardTitle className="font-display flex items-center justify-between">
           <span>USER MANAGEMENT</span>

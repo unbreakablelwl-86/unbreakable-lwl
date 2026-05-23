@@ -57,7 +57,7 @@ export default function University() {
   const activeTabData = courseTabs.find(t => t.key === activeTab) || courseTabs[0];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen pb-24" style={{ background: '#080808' }}>
 {/* Hero */}
       <section className="pt-24 pb-14 md:pt-28 md:pb-20 border-b border-primary/20 relative overflow-hidden">
         {/* Gradient backdrop */}
@@ -76,8 +76,8 @@ export default function University() {
               <span className="text-xs font-display tracking-wider text-primary">EDUCATION FOR EVERYONE</span>
             </div>
 
-            <h1 className="font-display text-4xl sm:text-5xl md:text-6xl tracking-wide leading-none">
-              <span className="text-primary neon-glow-subtle">UNBREAKABLE </span>
+            <h1 className="font-display text-2xl tracking-wide leading-none">
+              <span className="text-primary">UNBREAKABLE </span>
               <span className="text-foreground">UNIVERSITY</span>
             </h1>
 
@@ -399,7 +399,7 @@ export default function University() {
           transition={{ delay: 0.6 }}
           className="text-center mt-14 space-y-2"
         >
-          <p className="text-primary font-display text-lg tracking-wider neon-glow-subtle">
+          <p className="text-primary font-display text-lg tracking-wider">
             KNOWLEDGE IS POWER. EDUCATION IS FREEDOM.
           </p>
           <p className="text-xs text-muted-foreground">

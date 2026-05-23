@@ -382,10 +382,10 @@ export function AIPlanReviewModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] p-0 flex flex-col overflow-hidden">
+      <DialogContent className="max-w-2xl max-h-[90vh] p-0 flex flex-col overflow-hidden bg-[#0a0a0a] border-gray-800">
         <DialogHeader className="border-b border-border px-6 py-4 shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-lg bg-primary/20 flex items-center justify-center neon-glow">
+            <div className="w-12 h-12 rounded-lg bg-primary/20 flex items-center justify-center">
               <Icon className="w-6 h-6 text-primary" />
             </div>
             <div>
@@ -427,7 +427,7 @@ export function AIPlanReviewModal({
                       placeholder="Plan name..."
                     />
                   ) : (
-                    <h2 className="font-display text-2xl tracking-wide text-primary neon-glow-subtle text-center">
+                    <h2 className="font-display text-2xl tracking-wide text-primary text-center">
                       {editedPlan.programName || editedPlan.planName || editedPlan.name || 'Your Plan'}
                     </h2>
                   )}
@@ -847,7 +847,7 @@ export function AIPlanReviewModal({
             {step === 'confirm' && (
               <motion.div key="confirm" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-6 py-4">
                 <div className="text-center space-y-4 pb-6 border-b border-border">
-                  <div className="w-20 h-20 rounded-full bg-primary/20 flex items-center justify-center mx-auto neon-glow">
+                  <div className="w-20 h-20 rounded-full bg-primary/20 flex items-center justify-center mx-auto">
                     <Save className="w-10 h-10 text-primary" />
                   </div>
                   <h2 className="font-display text-2xl tracking-wide">READY TO SAVE?</h2>
@@ -858,7 +858,7 @@ export function AIPlanReviewModal({
                   </p>
                 </div>
 
-                <Card className="border-primary/20 bg-primary/5">
+                <Card className="border-primary/20 bg-primary/5 border-gray-800 bg-[#111]">
                   <CardContent className="pt-6">
                     <div className="space-y-4">
                       <div className="flex items-center gap-3">
@@ -903,7 +903,7 @@ export function AIPlanReviewModal({
                 </div>
 
                 <div className="text-center pt-4 border-t border-border">
-                  <p className="text-primary font-display text-sm tracking-wide neon-glow-subtle">KEEP SHOWING UP.</p>
+                  <p className="text-primary font-display text-sm tracking-wide">KEEP SHOWING UP.</p>
                 </div>
               </motion.div>
             )}

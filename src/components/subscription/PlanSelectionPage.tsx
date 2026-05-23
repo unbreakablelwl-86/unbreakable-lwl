@@ -49,7 +49,7 @@ export function PlanSelectionPage({ onSelectPlan, loading }: PlanSelectionPagePr
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-12">
           <h1 className="font-display text-4xl md:text-6xl text-foreground tracking-wide mb-1">CHOOSE YOUR</h1>
-          <h1 className="font-display text-4xl md:text-6xl text-primary tracking-wide neon-glow-subtle mb-4">UNBREAKABLE PLAN</h1>
+          <h1 className="font-display text-4xl md:text-6xl text-primary tracking-wide mb-4">UNBREAKABLE PLAN</h1>
           <p className="text-muted-foreground text-lg max-w-xl mx-auto">
             Pick the plan that fits your goals. Cancel anytime from your profile.
           </p>
@@ -58,7 +58,7 @@ export function PlanSelectionPage({ onSelectPlan, loading }: PlanSelectionPagePr
         <div className="grid md:grid-cols-2 gap-8">
           {/* Tier 1 — Coaching */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-            <Card className="h-full relative bg-card border-2 border-primary/20 hover:border-primary/40 transition-all p-6 md:p-8 flex flex-col">
+            <Card className="h-full relative border-2 border-primary/20 hover:border-primary/40 transition-all p-6 md:p-8 flex flex-col border-gray-800 bg-[#111]">
               <div className="mb-6">
                 <div className="flex items-center gap-2 mb-2">
                   <Shield className="w-5 h-5 text-primary" />
@@ -69,7 +69,7 @@ export function PlanSelectionPage({ onSelectPlan, loading }: PlanSelectionPagePr
                 <p className="text-muted-foreground text-sm mb-4">Full platform access with your personal Unbreakable Coach</p>
 
                 <div className="text-center py-4 bg-primary/5 rounded-lg border border-primary/10">
-                  <p className="font-display text-5xl text-primary neon-glow-subtle">£{t1.totalPrice}</p>
+                  <p className="font-display text-5xl text-primary">£{t1.totalPrice}</p>
                   <p className="text-muted-foreground text-sm mt-1">
                     every 3 months · just <span className="text-foreground font-semibold">£{t1PerDay}/day</span>
                   </p>
@@ -100,7 +100,7 @@ export function PlanSelectionPage({ onSelectPlan, loading }: PlanSelectionPagePr
 
           {/* Tier 2 — 1-to-1 */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-            <Card className="h-full relative bg-card border-2 border-primary/40 neon-border-subtle p-6 md:p-8 flex flex-col overflow-hidden">
+            <Card className="h-full relative border-2 border-primary/40 p-6 md:p-8 flex flex-col overflow-hidden border-gray-800 bg-[#111]">
               <Badge className="absolute top-4 right-4 bg-primary text-primary-foreground font-display tracking-wider">
                 PREMIUM
               </Badge>
@@ -115,7 +115,7 @@ export function PlanSelectionPage({ onSelectPlan, loading }: PlanSelectionPagePr
                 <p className="text-muted-foreground text-sm mb-4">Everything in Coaching + dedicated human coach</p>
 
                 <div className="text-center py-4 bg-primary/5 rounded-lg border border-primary/20">
-                  <p className="font-display text-5xl text-primary neon-glow-subtle">£{t2.totalPrice}</p>
+                  <p className="font-display text-5xl text-primary">£{t2.totalPrice}</p>
                   <p className="text-muted-foreground text-sm mt-1">
                     every 3 months · just <span className="text-foreground font-semibold">£{t2PerDay}/day</span>
                   </p>
