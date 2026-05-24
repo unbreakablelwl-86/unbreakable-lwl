@@ -172,14 +172,14 @@ export function CompactRestTimer({ exerciseType = 'strength', onComplete, minimi
           isRunning
             ? 'border-primary bg-primary/10'
             : isComplete
-              ? 'border-green-500 bg-green-500/10'
+              ? 'border-[#FF5500] bg-[#FF5500]/10'
               : 'border-border bg-card'
         }`}
       >
         <div className="flex items-center gap-2">
-          <Timer className={`w-4 h-4 ${isRunning ? 'text-primary' : isComplete ? 'text-green-500' : 'text-muted-foreground'}`} />
+          <Timer className={`w-4 h-4 ${isRunning ? 'text-primary' : isComplete ? 'text-[#FF5500]' : 'text-muted-foreground'}`} />
           <span className={`font-display text-lg ${
-            isComplete ? 'text-green-500' :
+            isComplete ? 'text-[#FF5500]' :
             isWarning ? 'text-primary' :
             isRunning ? 'text-foreground' :
             'text-muted-foreground'
@@ -198,7 +198,7 @@ export function CompactRestTimer({ exerciseType = 'strength', onComplete, minimi
   // EXPANDED VIEW — full controls
   return (
     <Card className={`border-2 transition-all ${
-      isComplete ? 'border-green-500 bg-green-500/10' :
+      isComplete ? 'border-[#FF5500] bg-[#FF5500]/10' :
       isWarning ? 'border-primary bg-primary/10' :
       'border-primary/50 bg-background/95'
     }`}>
@@ -225,9 +225,9 @@ export function CompactRestTimer({ exerciseType = 'strength', onComplete, minimi
           {/* Timer Display with +/- buttons */}
           <div className="flex items-center gap-2">
             <div className={`w-9 h-9 rounded-full flex items-center justify-center ${
-              isComplete ? 'bg-green-500/20' : 'bg-primary/20'
+              isComplete ? 'bg-[#FF5500]/20' : 'bg-primary/20'
             }`}>
-              <Timer className={`w-4 h-4 ${isComplete ? 'text-green-500' : 'text-primary'}`} />
+              <Timer className={`w-4 h-4 ${isComplete ? 'text-[#FF5500]' : 'text-primary'}`} />
             </div>
             
             <Button
@@ -241,7 +241,7 @@ export function CompactRestTimer({ exerciseType = 'strength', onComplete, minimi
             </Button>
             
             <div className={`font-display text-2xl min-w-[70px] text-center ${
-              isComplete ? 'text-green-500 neon-glow' :
+              isComplete ? 'text-[#FF5500] neon-glow' :
               isWarning ? 'text-primary neon-glow' :
               'text-foreground'
             }`}>

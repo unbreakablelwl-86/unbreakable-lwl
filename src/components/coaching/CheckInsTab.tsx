@@ -62,18 +62,18 @@ export function CheckInsTab() {
 
   const statusIcon = (status: string) => {
     switch (status) {
-      case 'pending': return <Clock className="w-3.5 h-3.5 text-yellow-500" />;
-      case 'submitted': return <Send className="w-3.5 h-3.5 text-blue-500" />;
-      case 'reviewed': return <Check className="w-3.5 h-3.5 text-green-500" />;
+      case 'pending': return <Clock className="w-3.5 h-3.5 text-[#FF5500]" />;
+      case 'submitted': return <Send className="w-3.5 h-3.5 text-[#FF5500]" />;
+      case 'reviewed': return <Check className="w-3.5 h-3.5 text-[#FF5500]" />;
       default: return <Clock className="w-3.5 h-3.5 text-muted-foreground" />;
     }
   };
 
   const statusBadge = (status: string) => {
     const styles = {
-      pending: 'text-yellow-500 bg-yellow-500/10 border-yellow-500/20',
-      submitted: 'text-blue-500 bg-blue-500/10 border-blue-500/20',
-      reviewed: 'text-green-500 bg-green-500/10 border-green-500/20',
+      pending: 'text-[#FF5500] bg-[#FF5500]/10 border-[#FF5500]/20',
+      submitted: 'text-[#FF5500] bg-[#FF5500]/10 border-[#FF5500]/20',
+      reviewed: 'text-[#FF5500] bg-[#FF5500]/10 border-[#FF5500]/20',
       skipped: 'text-muted-foreground bg-muted border-border',
     }[status] || '';
     return <Badge className={`font-display text-[9px] tracking-wider border ${styles}`}>{status.toUpperCase()}</Badge>;

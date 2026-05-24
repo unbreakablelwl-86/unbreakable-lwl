@@ -23,7 +23,7 @@ export function TokenBalanceBadge({ className, showTier = false, size = 'sm' }: 
         isEmpty
           ? 'border-destructive/30 bg-destructive/10 text-destructive'
           : isLow
-            ? 'border-yellow-500/30 bg-yellow-500/10 text-yellow-500'
+            ? 'border-[#FF5500]/30 bg-[#FF5500]/10 text-[#FF5500]'
             : 'border-primary/20 bg-primary/5 text-primary',
         size === 'md' && 'px-3 py-1.5',
         className

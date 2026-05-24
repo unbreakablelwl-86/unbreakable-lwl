@@ -148,10 +148,10 @@ export default function UniversityLevel() {
                   <div className="p-5 pb-4">
                     <div className="flex items-center gap-3 mb-3">
                       <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
-                        allUnitQuizzesPassed ? 'bg-green-500/15' : colors.iconBg
+                        allUnitQuizzesPassed ? 'bg-[#FF5500]/15' : colors.iconBg
                       }`}>
                         {allUnitQuizzesPassed ? (
-                          <CheckCircle className="w-5 h-5 text-green-500" />
+                          <CheckCircle className="w-5 h-5 text-[#FF5500]" />
                         ) : (
                           <span className={`font-display text-sm ${colors.text}`}>{unit.number}</span>
                         )}
@@ -211,7 +211,7 @@ export default function UniversityLevel() {
                             <div className="relative flex flex-col items-center">
                               <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs shrink-0 z-10 ${
                                 qPassed
-                                  ? 'bg-green-500/15 text-green-500'
+                                  ? 'bg-[#FF5500]/15 text-[#FF5500]'
                                   : done
                                   ? `${colors.iconBg} ${colors.text}`
                                   : !accessible
@@ -229,7 +229,7 @@ export default function UniversityLevel() {
                             </div>
                             <div className="flex-1 min-w-0">
                               <p className="text-sm text-foreground truncate">{ch.title}</p>
-                              {qPassed && <p className="text-[11px] text-green-500 font-display tracking-wider">PASSED</p>}
+                              {qPassed && <p className="text-[11px] text-[#FF5500] font-display tracking-wider">PASSED</p>}
                               {done && !qPassed && accessible && <p className={`text-[11px] ${colors.text} font-display tracking-wider`}>QUIZ PENDING</p>}
                             </div>
                             {accessible && <ChevronRight className={`w-4 h-4 text-muted-foreground shrink-0`} />}
@@ -247,8 +247,8 @@ export default function UniversityLevel() {
                         className={`w-full flex items-center gap-3 p-3 rounded-xl border border-border/30 hover:${colors.borderActive} cursor-pointer transition-all ${colors.hoverBg} text-left`}
                       >
                         {passed ? (
-                          <div className="w-8 h-8 rounded-lg bg-green-500/15 flex items-center justify-center shrink-0">
-                            <CheckCircle className="w-4 h-4 text-green-500" />
+                          <div className="w-8 h-8 rounded-lg bg-[#FF5500]/15 flex items-center justify-center shrink-0">
+                            <CheckCircle className="w-4 h-4 text-[#FF5500]" />
                           </div>
                         ) : (
                           <div className={`w-8 h-8 rounded-lg bg-muted/50 flex items-center justify-center shrink-0`}>
@@ -295,12 +295,12 @@ export default function UniversityLevel() {
                     <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${
                       allQuizzesPassed
                         ? hasPassedAssessment(levelNum, 0, ct)
-                          ? 'bg-green-500/15'
+                          ? 'bg-[#FF5500]/15'
                           : colors.iconBg
                         : 'bg-muted/30'
                     }`}>
                       {hasPassedAssessment(levelNum, 0, ct) ? (
-                        <CheckCircle className="w-6 h-6 text-green-500" />
+                        <CheckCircle className="w-6 h-6 text-[#FF5500]" />
                       ) : (
                         <Trophy className={`w-6 h-6 ${allQuizzesPassed ? colors.text : 'text-muted-foreground'}`} />
                       )}
@@ -323,7 +323,7 @@ export default function UniversityLevel() {
                   )}
 
                   {hasPassedAssessment(levelNum, 0, ct) && (
-                    <p className="text-sm text-green-500/80 leading-relaxed mb-5">
+                    <p className="text-sm text-[#FF5500]/80 leading-relaxed mb-5">
                       You've passed this assessment. You can retake it anytime for practice.
                     </p>
                   )}

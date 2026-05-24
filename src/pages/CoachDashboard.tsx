@@ -226,7 +226,7 @@ const CoachDashboard = ({ embedded = false }: { embedded?: boolean }) => {
                         <DropdownMenuItem onClick={() => updateStatus(a.id, 'ended')} className="text-gray-300 focus:bg-[#FF5500]/10">
                           <UserMinus className="w-4 h-4 mr-2" /> Deactivate
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => setConfirmRemoveId(a.id)} className="text-red-400 focus:bg-red-500/10">
+                        <DropdownMenuItem onClick={() => setConfirmRemoveId(a.id)} className="text-[#FF5500] focus:bg-[#FF5500]/10">
                           <Trash2 className="w-4 h-4 mr-2" /> Remove
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -258,7 +258,7 @@ const CoachDashboard = ({ embedded = false }: { embedded?: boolean }) => {
                     <button onClick={() => updateStatus(a.id, 'active')} className="flex items-center gap-1 px-2 py-1 rounded text-xs text-gray-400 hover:text-white hover:bg-white/5 transition-colors">
                       <RotateCcw className="w-3 h-3" /> Reactivate
                     </button>
-                    <button onClick={() => setConfirmRemoveId(a.id)} className="p-1.5 rounded hover:bg-red-500/10 text-red-400 transition-colors">
+                    <button onClick={() => setConfirmRemoveId(a.id)} className="p-1.5 rounded hover:bg-[#FF5500]/10 text-[#FF5500] transition-colors">
                       <Trash2 className="w-3 h-3" />
                     </button>
                   </div>

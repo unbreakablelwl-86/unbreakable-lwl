@@ -96,10 +96,10 @@ export function CoachProfileEditor() {
   return (
     <div className="space-y-4">
       {/* Publish toggle */}
-      <Card className={`border-border ${isPublished ? 'border-green-500/30 bg-green-500/5' : ''}`}>
+      <Card className={`border-border ${isPublished ? 'border-[#FF5500]/30 bg-[#FF5500]/5' : ''}`}>
         <CardContent className="p-3 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            {isPublished ? <Eye className="w-4 h-4 text-green-500" /> : <EyeOff className="w-4 h-4 text-muted-foreground" />}
+            {isPublished ? <Eye className="w-4 h-4 text-[#FF5500]" /> : <EyeOff className="w-4 h-4 text-muted-foreground" />}
             <div>
               <p className="font-display text-xs tracking-wider">{isPublished ? 'PUBLISHED' : 'DRAFT'}</p>
               <p className="text-[10px] text-muted-foreground">

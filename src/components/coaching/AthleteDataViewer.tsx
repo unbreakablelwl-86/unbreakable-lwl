@@ -730,7 +730,7 @@ export function AthleteDataViewer({ athleteId, onBack }: AthleteDataViewerProps)
                     const missed = sessionPlanners.filter(s => s.status === 'missed' || s.status === 'skipped').length;
                     return (
                       <div className="flex items-center gap-2 flex-wrap">
-                        <Badge variant="outline" className="text-[10px] border-green-500/40 text-green-500">
+                        <Badge variant="outline" className="text-[10px] border-[#FF5500]/40 text-[#FF5500]">
                           ✅ {completed} Completed
                         </Badge>
                         <Badge variant="outline" className="text-[10px] border-muted">
@@ -749,7 +749,7 @@ export function AthleteDataViewer({ athleteId, onBack }: AthleteDataViewerProps)
                     <div className="space-y-1">
                       {filteredPlanners.map(sp => {
                         const statusColor = sp.status === 'completed' 
-                          ? 'border-green-500/30 text-green-500' 
+                          ? 'border-[#FF5500]/30 text-[#FF5500]' 
                           : sp.status === 'missed' || sp.status === 'skipped'
                           ? 'border-destructive/30 text-destructive'
                           : sp.status === 'in_progress'
@@ -1127,7 +1127,7 @@ export function AthleteDataViewer({ athleteId, onBack }: AthleteDataViewerProps)
                                   <div className="flex items-center gap-1">
                                     {latest.adjustment_type && (
                                       <Badge variant="outline" className={`text-[10px] ${
-                                        latest.adjustment_type === 'increase' ? 'border-green-500/40 text-green-500' :
+                                        latest.adjustment_type === 'increase' ? 'border-[#FF5500]/40 text-[#FF5500]' :
                                         latest.adjustment_type === 'decrease' ? 'border-destructive/40 text-destructive' :
                                         latest.adjustment_type === 'deload' ? 'border-orange-400/40 text-orange-400' :
                                         ''
@@ -1246,7 +1246,7 @@ export function AthleteDataViewer({ athleteId, onBack }: AthleteDataViewerProps)
                                         <p className="font-display text-sm text-foreground">{fb.title}</p>
                                         <Badge variant="outline" className="text-[10px]">{fb.feedback_type.replace('_', ' ')}</Badge>
                                         {hasAck && (
-                                          <Badge className="text-[10px] bg-green-500/20 text-green-400 border-green-500/30">
+                                          <Badge className="text-[10px] bg-[#FF5500]/20 text-[#FF5500] border-[#FF5500]/30">
                                             <CheckCircle2 className="w-3 h-3 mr-0.5" /> Acknowledged
                                           </Badge>
                                         )}
@@ -1294,7 +1294,7 @@ export function AthleteDataViewer({ athleteId, onBack }: AthleteDataViewerProps)
                                           {fbResps.map(r => (
                                             <div key={r.id} className="flex items-start gap-2 py-1">
                                               {r.response_type === 'acknowledged' ? (
-                                                <div className="flex items-center gap-1 text-xs text-green-400">
+                                                <div className="flex items-center gap-1 text-xs text-[#FF5500]">
                                                   <CheckCircle2 className="w-3 h-3" />
                                                   <span>Acknowledged</span>
                                                   <span className="text-muted-foreground ml-1">
@@ -1343,7 +1343,7 @@ export function AthleteDataViewer({ athleteId, onBack }: AthleteDataViewerProps)
                                     {fbResps.map(r => (
                                       <div key={r.id} className="py-1">
                                         {r.response_type === 'acknowledged' ? (
-                                          <div className="flex items-center gap-1 text-xs text-green-400">
+                                          <div className="flex items-center gap-1 text-xs text-[#FF5500]">
                                             <CheckCircle2 className="w-3 h-3" />
                                             <span>Acknowledged</span>
                                             <span className="text-muted-foreground ml-1">

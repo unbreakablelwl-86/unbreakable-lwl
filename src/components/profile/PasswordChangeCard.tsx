@@ -87,7 +87,7 @@ export function PasswordChangeCard() {
             <p className="text-xs text-destructive mt-1">Passwords don't match</p>
           )}
           {confirmPassword.length > 0 && newPassword === confirmPassword && newPassword.length >= 6 && (
-            <p className="text-xs text-green-500 mt-1 flex items-center gap-1">
+            <p className="text-xs text-[#FF5500] mt-1 flex items-center gap-1">
               <CheckCircle className="w-3 h-3" /> Passwords match
             </p>
           )}

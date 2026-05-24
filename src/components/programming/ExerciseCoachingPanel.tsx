@@ -85,10 +85,10 @@ export const ExerciseCoachingPanel = memo(function ExerciseCoachingPanel({
       </div>
 
       {/* Breathing Pattern */}
-      <div className="rounded-lg bg-blue-500/10 border border-blue-500/30 p-3">
+      <div className="rounded-lg bg-[#FF5500]/10 border border-[#FF5500]/30 p-3">
         <div className="flex items-center gap-2 mb-2">
-          <Wind className="w-4 h-4 text-blue-400" />
-          <span className="text-sm font-display text-blue-400 tracking-wide">BREATHING</span>
+          <Wind className="w-4 h-4 text-[#FF5500]" />
+          <span className="text-sm font-display text-[#FF5500] tracking-wide">BREATHING</span>
         </div>
         <div className={`grid gap-3 ${coachingData.breathing.brace ? 'grid-cols-3' : 'grid-cols-2'}`}>
           <div>
@@ -111,15 +111,15 @@ export const ExerciseCoachingPanel = memo(function ExerciseCoachingPanel({
       {/* Muscles Targeted */}
       <div className="space-y-2">
         <div className="flex items-center gap-2">
-          <Dumbbell className="w-4 h-4 text-green-400" />
-          <span className="text-sm font-display text-green-400 tracking-wide">MUSCLES TARGETED</span>
+          <Dumbbell className="w-4 h-4 text-[#FF5500]" />
+          <span className="text-sm font-display text-[#FF5500] tracking-wide">MUSCLES TARGETED</span>
         </div>
         <div className="space-y-2">
           <div>
             <span className="text-xs text-muted-foreground block mb-1">Primary</span>
             <div className="flex flex-wrap gap-1">
               {coachingData.musclesTargeted.primary.map((muscle, idx) => (
-                <Badge key={idx} className="bg-green-500/20 text-green-400 border-green-500/30 text-xs">
+                <Badge key={idx} className="bg-[#FF5500]/20 text-[#FF5500] border-[#FF5500]/30 text-xs">
                   {muscle}
                 </Badge>
               ))}
@@ -152,8 +152,8 @@ export const ExerciseCoachingPanel = memo(function ExerciseCoachingPanel({
                 <span className="text-xs text-orange-400">{item.mistake}</span>
               </div>
               <div className="flex items-start gap-2 mt-1">
-                <span className="text-xs text-green-400 font-medium">✓</span>
-                <span className="text-xs text-green-400">{item.correction}</span>
+                <span className="text-xs text-[#FF5500] font-medium">✓</span>
+                <span className="text-xs text-[#FF5500]">{item.correction}</span>
               </div>
             </div>
           ))}
@@ -164,8 +164,8 @@ export const ExerciseCoachingPanel = memo(function ExerciseCoachingPanel({
       {coachingData.loadGuidelines && (
         <div className="space-y-2">
           <div className="flex items-center gap-2">
-            <Gauge className="w-4 h-4 text-purple-400" />
-            <span className="text-sm font-display text-purple-400 tracking-wide">LOAD & INTENSITY</span>
+            <Gauge className="w-4 h-4 text-[#FF5500]" />
+            <span className="text-sm font-display text-[#FF5500] tracking-wide">LOAD & INTENSITY</span>
           </div>
           <div className="space-y-2">
             <div className="rounded-lg bg-muted/40 p-2 border border-border/50">
@@ -190,13 +190,13 @@ export const ExerciseCoachingPanel = memo(function ExerciseCoachingPanel({
           {coachingData.regressions && coachingData.regressions.length > 0 && (
             <div className="space-y-2">
               <div className="flex items-center gap-2">
-                <TrendingDown className="w-4 h-4 text-cyan-400" />
-                <span className="text-xs font-display text-cyan-400 tracking-wide">REGRESSIONS</span>
+                <TrendingDown className="w-4 h-4 text-[#FF5500]" />
+                <span className="text-xs font-display text-[#FF5500] tracking-wide">REGRESSIONS</span>
               </div>
               <ul className="space-y-1">
                 {coachingData.regressions.map((r, idx) => (
                   <li key={idx} className="text-xs text-foreground/80 flex items-start gap-1.5">
-                    <span className="text-cyan-400 mt-0.5">•</span>
+                    <span className="text-[#FF5500] mt-0.5">•</span>
                     <span>{r}</span>
                   </li>
                 ))}
@@ -206,13 +206,13 @@ export const ExerciseCoachingPanel = memo(function ExerciseCoachingPanel({
           {coachingData.progressions && coachingData.progressions.length > 0 && (
             <div className="space-y-2">
               <div className="flex items-center gap-2">
-                <TrendingUp className="w-4 h-4 text-amber-400" />
-                <span className="text-xs font-display text-amber-400 tracking-wide">PROGRESSIONS</span>
+                <TrendingUp className="w-4 h-4 text-[#FF5500]" />
+                <span className="text-xs font-display text-[#FF5500] tracking-wide">PROGRESSIONS</span>
               </div>
               <ul className="space-y-1">
                 {coachingData.progressions.map((p, idx) => (
                   <li key={idx} className="text-xs text-foreground/80 flex items-start gap-1.5">
-                    <span className="text-amber-400 mt-0.5">•</span>
+                    <span className="text-[#FF5500] mt-0.5">•</span>
                     <span>{p}</span>
                   </li>
                 ))}
@@ -224,15 +224,15 @@ export const ExerciseCoachingPanel = memo(function ExerciseCoachingPanel({
 
       {/* Safety Notes */}
       {coachingData.safetyNotes && coachingData.safetyNotes.length > 0 && (
-        <div className="rounded-lg bg-red-500/10 border border-red-500/30 p-3">
+        <div className="rounded-lg bg-[#FF5500]/10 border border-[#FF5500]/30 p-3">
           <div className="flex items-center gap-2 mb-2">
-            <Shield className="w-4 h-4 text-red-400" />
-            <span className="text-sm font-display text-red-400 tracking-wide">SAFETY NOTES</span>
+            <Shield className="w-4 h-4 text-[#FF5500]" />
+            <span className="text-sm font-display text-[#FF5500] tracking-wide">SAFETY NOTES</span>
           </div>
           <ul className="space-y-1">
             {coachingData.safetyNotes.map((note, idx) => (
               <li key={idx} className="text-xs text-foreground/80 flex items-start gap-2">
-                <ChevronRight className="w-3 h-3 text-red-400 mt-0.5 flex-shrink-0" />
+                <ChevronRight className="w-3 h-3 text-[#FF5500] mt-0.5 flex-shrink-0" />
                 <span>{note}</span>
               </li>
             ))}

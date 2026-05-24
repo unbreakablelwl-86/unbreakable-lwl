@@ -261,8 +261,8 @@ export default function Tracker() {
                 </div>
                 {weekly.distanceDelta !== 0 && (
                   <div className="mt-3 pt-3 border-t border-gray-800 flex items-center gap-1 justify-center">
-                    <TrendingUp className={`w-3 h-3 ${weekly.distanceDelta > 0 ? 'text-green-400' : 'text-red-400'}`} />
-                    <span className={`text-xs ${weekly.distanceDelta > 0 ? 'text-green-400' : 'text-red-400'}`}>
+                    <TrendingUp className={`w-3 h-3 ${weekly.distanceDelta > 0 ? 'text-[#FF5500]' : 'text-[#FF5500]'}`} />
+                    <span className={`text-xs ${weekly.distanceDelta > 0 ? 'text-[#FF5500]' : 'text-[#FF5500]'}`}>
                       {weekly.distanceDelta > 0 ? '+' : ''}{weekly.distanceDelta.toFixed(0)}% vs last week
                     </span>
                   </div>
@@ -518,7 +518,7 @@ export default function Tracker() {
                             {pr.pace_per_km_seconds ? ` · ${formatPace(pr.pace_per_km_seconds)}/km` : ''}
                           </p>
                         </div>
-                        <Crown className="w-4 h-4 text-yellow-400" />
+                        <Crown className="w-4 h-4 text-[#FF5500]" />
                       </div>
                     ))}
                   </div>

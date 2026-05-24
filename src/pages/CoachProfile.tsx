@@ -81,7 +81,7 @@ export default function CoachProfile() {
             )}
           </div>
           {profile.accepting_clients ? (
-            <span className="inline-block text-[10px] font-display tracking-wider px-3 py-1 rounded-full bg-green-500/10 text-green-500 border border-green-500/20">
+            <span className="inline-block text-[10px] font-display tracking-wider px-3 py-1 rounded-full bg-[#FF5500]/10 text-[#FF5500] border border-[#FF5500]/20">
               ACCEPTING CLIENTS
             </span>
           ) : (

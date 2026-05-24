@@ -65,9 +65,9 @@ export function CheckInReview({ checkIn, onReview, onBack }: CheckInReviewProps)
   };
 
   const statusColor = {
-    pending: 'text-yellow-500 bg-yellow-500/10 border-yellow-500/20',
-    submitted: 'text-blue-500 bg-blue-500/10 border-blue-500/20',
-    reviewed: 'text-green-500 bg-green-500/10 border-green-500/20',
+    pending: 'text-[#FF5500] bg-[#FF5500]/10 border-[#FF5500]/20',
+    submitted: 'text-[#FF5500] bg-[#FF5500]/10 border-[#FF5500]/20',
+    reviewed: 'text-[#FF5500] bg-[#FF5500]/10 border-[#FF5500]/20',
     skipped: 'text-muted-foreground bg-muted border-border',
   }[checkIn.status];
 
@@ -187,16 +187,16 @@ export function CheckInReview({ checkIn, onReview, onBack }: CheckInReviewProps)
                   <MessageSquare className="w-4 h-4 text-primary" /> REFLECTIONS
                 </p>
                 {checkIn.wins && (
-                  <div className="bg-green-500/5 border border-green-500/10 rounded-lg p-3">
-                    <p className="text-[10px] font-display tracking-wider text-green-500 mb-1 flex items-center gap-1">
+                  <div className="bg-[#FF5500]/5 border border-[#FF5500]/10 rounded-lg p-3">
+                    <p className="text-[10px] font-display tracking-wider text-[#FF5500] mb-1 flex items-center gap-1">
                       <Trophy className="w-3 h-3" /> WINS
                     </p>
                     <p className="text-sm text-foreground">{checkIn.wins}</p>
                   </div>
                 )}
                 {checkIn.challenges && (
-                  <div className="bg-yellow-500/5 border border-yellow-500/10 rounded-lg p-3">
-                    <p className="text-[10px] font-display tracking-wider text-yellow-500 mb-1 flex items-center gap-1">
+                  <div className="bg-[#FF5500]/5 border border-[#FF5500]/10 rounded-lg p-3">
+                    <p className="text-[10px] font-display tracking-wider text-[#FF5500] mb-1 flex items-center gap-1">
                       <AlertTriangle className="w-3 h-3" /> CHALLENGES
                     </p>
                     <p className="text-sm text-foreground">{checkIn.challenges}</p>

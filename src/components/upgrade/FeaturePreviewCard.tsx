@@ -26,7 +26,7 @@ const FEATURE_PREVIEWS = [
     description: 'Structured cardio programmes with distance, pace and heart-rate tracking. Build endurance that lasts decades.',
     icon: Footprints,
     colour: 'from-blue-500/20 to-cyan-500/20',
-    borderColour: 'border-blue-500/30',
+    borderColour: 'border-[#FF5500]/30',
     stats: ['5 disciplines', 'Unbreakable cardio builder', 'Session planners'],
   },
   {
@@ -36,7 +36,7 @@ const FEATURE_PREVIEWS = [
     description: 'Track calories and macros, scan barcodes, build meal plans, browse recipes. Your nutrition dialled in.',
     icon: Apple,
     colour: 'from-green-500/20 to-emerald-500/20',
-    borderColour: 'border-green-500/30',
+    borderColour: 'border-[#FF5500]/30',
     stats: ['Barcode scanner', 'Unbreakable meal plans', 'Recipe library'],
   },
   {
@@ -46,7 +46,7 @@ const FEATURE_PREVIEWS = [
     description: 'Voice-guided breathing, focus games with leaderboards, mental conditioning programmes. Build resilience under pressure.',
     icon: Brain,
     colour: 'from-purple-500/20 to-violet-500/20',
-    borderColour: 'border-purple-500/30',
+    borderColour: 'border-[#FF5500]/30',
     stats: ['Breathing exercises', 'Focus games', 'Mental programmes'],
   },
   {
@@ -56,7 +56,7 @@ const FEATURE_PREVIEWS = [
     description: 'Four course tracks — Power, Fuel, Mindset, Sport. 1,800+ quiz questions. Turn a £5k PT qualification into affordable education.',
     icon: GraduationCap,
     colour: 'from-amber-500/20 to-yellow-500/20',
-    borderColour: 'border-amber-500/30',
+    borderColour: 'border-[#FF5500]/30',
     stats: ['4 tracks', '1,800+ questions', 'Certificates'],
   },
   {

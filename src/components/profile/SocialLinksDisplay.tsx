@@ -53,12 +53,12 @@ const LINKS: {
   urlFn: (handle: string) => string;
   color: string;
 }[] = [
-  { key: 'instagram', propKey: 'instagram', urlFn: (h) => `https://instagram.com/${h}`, color: 'hover:text-pink-500' },
+  { key: 'instagram', propKey: 'instagram', urlFn: (h) => `https://instagram.com/${h}`, color: 'hover:text-[#FF5500]' },
   { key: 'tiktok',    propKey: 'tiktok',    urlFn: (h) => `https://tiktok.com/@${h}`,   color: 'hover:text-foreground' },
   { key: 'twitter',   propKey: 'twitter',   urlFn: (h) => `https://x.com/${h}`,         color: 'hover:text-foreground' },
-  { key: 'facebook',  propKey: 'facebook',  urlFn: (h) => h.startsWith('http') ? h : `https://facebook.com/${h}`, color: 'hover:text-blue-500' },
-  { key: 'youtube',   propKey: 'youtube',   urlFn: (h) => h.startsWith('http') ? h : `https://youtube.com/${h}`,  color: 'hover:text-red-500' },
-  { key: 'snapchat',  propKey: 'snapchat',  urlFn: (h) => `https://snapchat.com/add/${h}`, color: 'hover:text-yellow-400' },
+  { key: 'facebook',  propKey: 'facebook',  urlFn: (h) => h.startsWith('http') ? h : `https://facebook.com/${h}`, color: 'hover:text-[#FF5500]' },
+  { key: 'youtube',   propKey: 'youtube',   urlFn: (h) => h.startsWith('http') ? h : `https://youtube.com/${h}`,  color: 'hover:text-[#FF5500]' },
+  { key: 'snapchat',  propKey: 'snapchat',  urlFn: (h) => `https://snapchat.com/add/${h}`, color: 'hover:text-[#FF5500]' },
 ];
 
 export function SocialLinksDisplay(props: SocialLinksDisplayProps) {

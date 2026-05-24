@@ -124,7 +124,7 @@ export function CancelRetention({ currentTier, onClose, onConfirmCancel }: Cance
                   className={cn(
                     'flex-1 py-2.5 rounded-xl text-sm font-display tracking-wider transition-all',
                     selectedReason
-                      ? 'bg-red-500/10 border border-red-500/30 text-red-400 hover:bg-red-500/20'
+                      ? 'bg-[#FF5500]/10 border border-[#FF5500]/30 text-[#FF5500] hover:bg-[#FF5500]/20'
                       : 'bg-muted text-muted-foreground cursor-not-allowed'
                   )}
                 >
@@ -150,11 +150,11 @@ export function CancelRetention({ currentTier, onClose, onConfirmCancel }: Cance
                   <button
                     onClick={() => handleDowngrade(lowerTier.key)}
                     disabled={loading}
-                    className="w-full p-4 rounded-xl border border-blue-500/30 bg-blue-500/5 text-left
-                      hover:bg-blue-500/10 transition-all"
+                    className="w-full p-4 rounded-xl border border-[#FF5500]/30 bg-[#FF5500]/5 text-left
+                      hover:bg-[#FF5500]/10 transition-all"
                   >
                     <div className="flex items-center gap-3 mb-2">
-                      <ArrowDown className="w-5 h-5 text-blue-400" />
+                      <ArrowDown className="w-5 h-5 text-[#FF5500]" />
                       <span className="font-display text-sm tracking-wider text-foreground">
                         DOWNGRADE TO {lowerTier.displayName.toUpperCase()}
                       </span>
@@ -199,8 +199,8 @@ export function CancelRetention({ currentTier, onClose, onConfirmCancel }: Cance
                   <button
                     onClick={onConfirmCancel}
                     disabled={loading}
-                    className="w-full py-2.5 rounded-xl border border-red-500/20 text-sm text-red-400
-                      hover:bg-red-500/5 transition-all font-display tracking-wider"
+                    className="w-full py-2.5 rounded-xl border border-[#FF5500]/20 text-sm text-[#FF5500]
+                      hover:bg-[#FF5500]/5 transition-all font-display tracking-wider"
                   >
                     NO THANKS, CANCEL MY SUBSCRIPTION
                   </button>

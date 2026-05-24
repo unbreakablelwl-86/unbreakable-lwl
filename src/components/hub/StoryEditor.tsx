@@ -667,7 +667,7 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
               transition={{ duration: 0.15 }}
               className={`absolute bottom-0 left-0 right-0 z-40 flex flex-col items-center justify-center py-8 transition-colors duration-150 ${
                 isOverDeleteZone
-                  ? 'bg-red-500/40'
+                  ? 'bg-[#FF5500]/40'
                   : 'bg-gradient-to-t from-black/60 to-transparent'
               }`}
             >
@@ -675,9 +675,9 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
                 animate={isOverDeleteZone ? { scale: 1.3 } : { scale: 1 }}
                 transition={{ type: 'spring', stiffness: 300 }}
               >
-                <Trash2 className={`w-8 h-8 transition-colors ${isOverDeleteZone ? 'text-red-400' : 'text-white/60'}`} />
+                <Trash2 className={`w-8 h-8 transition-colors ${isOverDeleteZone ? 'text-[#FF5500]' : 'text-white/60'}`} />
               </motion.div>
-              <span className={`text-xs mt-1 font-display tracking-wider transition-colors ${isOverDeleteZone ? 'text-red-300' : 'text-white/40'}`}>
+              <span className={`text-xs mt-1 font-display tracking-wider transition-colors ${isOverDeleteZone ? 'text-[#FF5500]' : 'text-white/40'}`}>
                 {isOverDeleteZone ? 'RELEASE TO DELETE' : 'DRAG HERE TO DELETE'}
               </span>
             </motion.div>

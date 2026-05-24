@@ -204,7 +204,7 @@ export default function SignIn() {
           </div>
 
           {formError && (
-            <div className="text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3">
+            <div className="text-sm text-[#FF5500] bg-[#FF5500]/10 border border-[#FF5500]/20 rounded-xl px-4 py-3">
               {formError}
             </div>
           )}

@@ -341,7 +341,7 @@ export function MindsetProgrammeDetail({ programme, onBack }: Props) {
                                                 {activity.targetDurationSeconds && ` · ${Math.floor(activity.targetDurationSeconds / 60)}:${String(activity.targetDurationSeconds % 60).padStart(2, '0')}`}
                                               </Badge>
                                               {activity.safetyNotes && (
-                                                <p className="text-xs text-amber-500/80 pl-3 border-l-2 border-amber-500/30">
+                                                <p className="text-xs text-[#FF5500]/80 pl-3 border-l-2 border-[#FF5500]/30">
                                                   ⚠️ {activity.safetyNotes}
                                                 </p>
                                               )}

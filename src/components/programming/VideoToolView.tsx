@@ -99,10 +99,10 @@ export function VideoToolView({ sessionId, exerciseName, onClose }: VideoToolVie
                           variant="outline"
                           className={
                             video.analysis_status === 'completed'
-                              ? 'border-green-500 text-green-400'
+                              ? 'border-[#FF5500] text-[#FF5500]'
                               : video.analysis_status === 'pending'
-                              ? 'border-yellow-500 text-yellow-400'
-                              : 'border-red-500 text-red-400'
+                              ? 'border-[#FF5500] text-[#FF5500]'
+                              : 'border-[#FF5500] text-[#FF5500]'
                           }
                         >
                           {video.analysis_status}

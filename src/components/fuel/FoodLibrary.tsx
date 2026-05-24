@@ -358,7 +358,7 @@ export function FoodLibrary() {
                               </Badge>
                             )}
                             {isLow && !isOut && (
-                              <Badge variant="outline" className="text-[10px] font-display tracking-wider text-amber-500 border-amber-500/50">
+                              <Badge variant="outline" className="text-[10px] font-display tracking-wider text-[#FF5500] border-[#FF5500]/50">
                                 LOW
                               </Badge>
                             )}

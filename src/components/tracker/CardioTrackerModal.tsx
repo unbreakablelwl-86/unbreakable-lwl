@@ -1177,9 +1177,9 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
                         }`}
                       />
                       <span className={
-                        gpsStatus === 'active' ? 'text-emerald-500' : 
-                        gpsStatus === 'weak' ? 'text-amber-500' :
-                        gpsStatus === 'acquiring' ? 'text-amber-500' : 
+                        gpsStatus === 'active' ? 'text-[#FF5500]' : 
+                        gpsStatus === 'weak' ? 'text-[#FF5500]' :
+                        gpsStatus === 'acquiring' ? 'text-[#FF5500]' : 
                         gpsStatus === 'paused' ? 'text-primary' : 'text-destructive'
                       }>
                         {gpsStatus === 'active' ? 'GPS Tracking' : 

@@ -300,9 +300,9 @@ export default function AITokens() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
               {/* FREE actions */}
-              <div className="rounded-2xl border border-green-500/20 bg-green-500/5 p-4">
-                <div className="bg-green-500/10 rounded-full px-3 py-1 inline-block mb-3">
-                  <span className="text-xs font-display tracking-wider text-green-500">FREE</span>
+              <div className="rounded-2xl border border-[#FF5500]/20 bg-[#FF5500]/5 p-4">
+                <div className="bg-[#FF5500]/10 rounded-full px-3 py-1 inline-block mb-3">
+                  <span className="text-xs font-display tracking-wider text-[#FF5500]">FREE</span>
                 </div>
                 <ul className="space-y-2">
                   {[
@@ -315,7 +315,7 @@ export default function AITokens() {
                     'University Level 1',
                   ].map((item, i) => (
                     <li key={i} className="flex items-center gap-2 text-xs text-muted-foreground">
-                      <Check className="w-3 h-3 text-green-500 shrink-0" />
+                      <Check className="w-3 h-3 text-[#FF5500] shrink-0" />
                       {item}
                     </li>
                   ))}
@@ -323,9 +323,9 @@ export default function AITokens() {
               </div>
 
               {/* Chat / Light AI */}
-              <div className="rounded-2xl border border-blue-500/20 bg-blue-500/5 p-4">
-                <div className="bg-blue-500/10 rounded-full px-3 py-1 inline-block mb-3">
-                  <span className="text-xs font-display tracking-wider text-blue-400">0.25 – 0.5 TOKENS</span>
+              <div className="rounded-2xl border border-[#FF5500]/20 bg-[#FF5500]/5 p-4">
+                <div className="bg-[#FF5500]/10 rounded-full px-3 py-1 inline-block mb-3">
+                  <span className="text-xs font-display tracking-wider text-[#FF5500]">0.25 – 0.5 TOKENS</span>
                 </div>
                 <ul className="space-y-2.5">
                   {[
@@ -334,15 +334,15 @@ export default function AITokens() {
                     { icon: Activity, label: 'Progression tip', cost: '0.25' },
                   ].map((item, i) => (
                     <li key={i} className="flex items-start gap-2">
-                      <item.icon className="w-3.5 h-3.5 text-blue-400 shrink-0 mt-0.5" />
+                      <item.icon className="w-3.5 h-3.5 text-[#FF5500] shrink-0 mt-0.5" />
                       <div className="flex-1">
                         <span className="text-xs text-foreground">{item.label}</span>
-                        <span className="text-[10px] text-blue-400 ml-1">({item.cost})</span>
+                        <span className="text-[10px] text-[#FF5500] ml-1">({item.cost})</span>
                       </div>
                     </li>
                   ))}
                 </ul>
-                <p className="text-[10px] text-blue-400/70 mt-3 font-display tracking-wider">
+                <p className="text-[10px] text-[#FF5500]/70 mt-3 font-display tracking-wider">
                   75 TOKENS ≈ 150 CHAT MESSAGES
                 </p>
               </div>
@@ -453,7 +453,7 @@ export default function AITokens() {
                     </div>
                   </div>
                   <div className="mt-2 ml-13">
-                    <span className="inline-flex items-center bg-green-500/10 text-green-400 text-[10px] font-display tracking-wider px-2 py-0.5 rounded-full">
+                    <span className="inline-flex items-center bg-[#FF5500]/10 text-[#FF5500] text-[10px] font-display tracking-wider px-2 py-0.5 rounded-full">
                       {bundle.savings}
                     </span>
                   </div>

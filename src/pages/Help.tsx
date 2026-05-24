@@ -246,7 +246,7 @@ function ConversationSidebar({
                     </p>
                   </div>
                   <button
-                    className="h-7 w-7 rounded-lg flex items-center justify-center text-red-400/50 hover:text-red-400 hover:bg-red-400/10 transition-all flex-shrink-0 opacity-0 group-hover:opacity-100"
+                    className="h-7 w-7 rounded-lg flex items-center justify-center text-[#FF5500]/50 hover:text-[#FF5500] hover:bg-[#FF5500]/10 transition-all flex-shrink-0 opacity-0 group-hover:opacity-100"
                     onClick={(e) => { e.stopPropagation(); onDelete(conv.id); }}
                   >
                     <Trash2 className="w-3.5 h-3.5" />
@@ -636,7 +636,7 @@ export default function Help() {
               </div>
               {currentConversationId && (
                 <button
-                  className="p-1.5 rounded-lg text-gray-600 hover:text-red-400 transition-colors"
+                  className="p-1.5 rounded-lg text-gray-600 hover:text-[#FF5500] transition-colors"
                   onClick={() => { if (currentConversationId) deleteConversation(currentConversationId); }}
                 >
                   <Trash2 className="w-4 h-4" />
@@ -752,8 +752,8 @@ export default function Help() {
             {tokenBalance !== null && tokenBalance <= 2 && (
               <div className={`flex-shrink-0 px-4 py-2 text-center text-xs font-display ${
                 tokenBalance <= 0
-                  ? 'bg-red-500/10 text-red-400 border-t border-red-500/20'
-                  : 'bg-amber-500/10 text-amber-400 border-t border-amber-500/20'
+                  ? 'bg-[#FF5500]/10 text-[#FF5500] border-t border-[#FF5500]/20'
+                  : 'bg-[#FF5500]/10 text-[#FF5500] border-t border-[#FF5500]/20'
               }`}>
                 {tokenBalance <= 0 ? (
                   <>No tokens remaining — <Link to="/ai-tokens" className="underline font-bold">upgrade for more</Link></>

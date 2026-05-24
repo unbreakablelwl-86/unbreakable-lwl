@@ -45,9 +45,9 @@ const mealIcons: Record<MealType, React.ReactNode> = {
 };
 
 const confidenceColors: Record<string, string> = {
-  high: 'bg-green-500/20 text-green-400 border-green-500/30',
-  medium: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
-  low: 'bg-red-500/20 text-red-400 border-red-500/30',
+  high: 'bg-[#FF5500]/20 text-[#FF5500] border-[#FF5500]/30',
+  medium: 'bg-[#FF5500]/20 text-[#FF5500] border-[#FF5500]/30',
+  low: 'bg-[#FF5500]/20 text-[#FF5500] border-[#FF5500]/30',
 };
 
 export function SnapTrack({ isOpen, onClose, defaultMealType = 'lunch' }: SnapTrackProps) {
@@ -544,7 +544,7 @@ export function SnapTrack({ isOpen, onClose, defaultMealType = 'lunch' }: SnapTr
                         key={index}
                         className={`border transition-all ${
                           loggedItems.has(index)
-                            ? 'border-green-500/30 bg-green-500/5'
+                            ? 'border-[#FF5500]/30 bg-[#FF5500]/5'
                             : 'border-border hover:border-primary/30'
                         }`}
                       >
@@ -577,7 +577,7 @@ export function SnapTrack({ isOpen, onClose, defaultMealType = 'lunch' }: SnapTr
                               variant={loggedItems.has(index) ? 'ghost' : 'outline'}
                               className={`shrink-0 ${
                                 loggedItems.has(index)
-                                  ? 'text-green-400 cursor-default'
+                                  ? 'text-[#FF5500] cursor-default'
                                   : 'border-primary/30 hover:bg-primary/10'
                               }`}
                               onClick={() => !loggedItems.has(index) && handleLogItem(item, index)}

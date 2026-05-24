@@ -291,9 +291,9 @@ export default function MyCoaching() {
                           </p>
                         </div>
                         <span className={`text-[9px] font-display tracking-wider px-2 py-0.5 rounded-full border ${
-                          ci.status === 'pending' ? 'text-yellow-500 bg-yellow-500/10 border-yellow-500/20' :
-                          ci.status === 'submitted' ? 'text-blue-500 bg-blue-500/10 border-blue-500/20' :
-                          ci.status === 'reviewed' ? 'text-green-500 bg-green-500/10 border-green-500/20' :
+                          ci.status === 'pending' ? 'text-[#FF5500] bg-[#FF5500]/10 border-[#FF5500]/20' :
+                          ci.status === 'submitted' ? 'text-[#FF5500] bg-[#FF5500]/10 border-[#FF5500]/20' :
+                          ci.status === 'reviewed' ? 'text-[#FF5500] bg-[#FF5500]/10 border-[#FF5500]/20' :
                           'text-gray-500 bg-gray-800 border-gray-700'
                         }`}>
                           {ci.status.toUpperCase()}

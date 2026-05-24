@@ -402,7 +402,7 @@ export default function TrackerCreate() {
               <div key={idx} className="p-4 rounded-xl border border-gray-800 bg-[#111] space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-display text-[#FF5500]">SESSION {idx + 1}</span>
-                  <button onClick={() => removeSession(idx)} className="text-xs text-red-400 hover:text-red-300">Remove</button>
+                  <button onClick={() => removeSession(idx)} className="text-xs text-[#FF5500] hover:text-[#FF5500]">Remove</button>
                 </div>
                 <Input
                   placeholder="Session title (e.g., Tempo Run)"

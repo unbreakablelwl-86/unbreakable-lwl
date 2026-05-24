@@ -344,7 +344,7 @@ export default function CoachCommandCentre() {
                     <p className="text-[11px] text-gray-500">@{selectedClient.username}</p>
                   </div>
                   {selectedClient.status === 'pending' && (
-                    <span className="text-[9px] font-display tracking-wider px-2 py-0.5 rounded-full bg-yellow-500/10 text-yellow-500 border border-yellow-500/20">
+                    <span className="text-[9px] font-display tracking-wider px-2 py-0.5 rounded-full bg-[#FF5500]/10 text-[#FF5500] border border-[#FF5500]/20">
                       PENDING
                     </span>
                   )}
@@ -487,8 +487,8 @@ export default function CoachCommandCentre() {
                 <div className="space-y-2">
                   <p className="text-[10px] font-display tracking-wider text-gray-600">STATUS</p>
                   <span className={`text-[10px] font-display tracking-wider px-2 py-0.5 rounded-full border ${
-                    selectedClient.status === 'active' ? 'text-green-500 bg-green-500/10 border-green-500/20' :
-                    selectedClient.status === 'pending' ? 'text-yellow-500 bg-yellow-500/10 border-yellow-500/20' :
+                    selectedClient.status === 'active' ? 'text-[#FF5500] bg-[#FF5500]/10 border-[#FF5500]/20' :
+                    selectedClient.status === 'pending' ? 'text-[#FF5500] bg-[#FF5500]/10 border-[#FF5500]/20' :
                     'text-gray-500 bg-gray-800 border-gray-700'
                   }`}>
                     {selectedClient.status.toUpperCase()}

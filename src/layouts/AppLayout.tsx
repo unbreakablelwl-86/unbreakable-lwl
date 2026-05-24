@@ -465,7 +465,7 @@ export default function AppLayout() {
                           <button
                             onClick={() => toggleTab(id)}
                             disabled={activeTabs.length <= 2}
-                            className="p-1.5 rounded-full hover:bg-red-500/10 text-[#555] hover:text-red-400 disabled:opacity-20 transition-all"
+                            className="p-1.5 rounded-full hover:bg-[#FF5500]/10 text-[#555] hover:text-[#FF5500] disabled:opacity-20 transition-all"
                             title="Remove from nav"
                           >
                             <Minus size={14} />

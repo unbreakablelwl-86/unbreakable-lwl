@@ -60,15 +60,15 @@ export function WorkoutFeedbackPanel({
   const getRatingIcon = (rating: string | null) => {
     switch (rating) {
       case 'excellent':
-        return <CheckCircle className="w-5 h-5 text-green-500" />;
+        return <CheckCircle className="w-5 h-5 text-[#FF5500]" />;
       case 'good':
-        return <TrendingUp className="w-5 h-5 text-green-400" />;
+        return <TrendingUp className="w-5 h-5 text-[#FF5500]" />;
       case 'average':
-        return <Minus className="w-5 h-5 text-yellow-500" />;
+        return <Minus className="w-5 h-5 text-[#FF5500]" />;
       case 'below_average':
         return <TrendingDown className="w-5 h-5 text-orange-500" />;
       case 'poor':
-        return <AlertTriangle className="w-5 h-5 text-red-500" />;
+        return <AlertTriangle className="w-5 h-5 text-[#FF5500]" />;
       default:
         return <Sparkles className="w-5 h-5 text-primary" />;
     }
@@ -76,11 +76,11 @@ export function WorkoutFeedbackPanel({
 
   const getRatingColor = (rating: string | null) => {
     switch (rating) {
-      case 'excellent': return 'text-green-500 border-green-500';
-      case 'good': return 'text-green-400 border-green-400';
-      case 'average': return 'text-yellow-500 border-yellow-500';
+      case 'excellent': return 'text-[#FF5500] border-[#FF5500]';
+      case 'good': return 'text-[#FF5500] border-[#FF5500]';
+      case 'average': return 'text-[#FF5500] border-[#FF5500]';
       case 'below_average': return 'text-orange-500 border-orange-500';
-      case 'poor': return 'text-red-500 border-red-500';
+      case 'poor': return 'text-[#FF5500] border-[#FF5500]';
       default: return 'text-primary border-primary';
     }
   };

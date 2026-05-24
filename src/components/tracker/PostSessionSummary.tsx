@@ -178,8 +178,8 @@ export function PostSessionSummary({ distance, elapsedSeconds, positions, activi
                   <div
                     key={split.km}
                     className={`grid grid-cols-3 items-center px-3 py-2 rounded-lg text-sm ${
-                      isFastest ? 'bg-green-500/10 border border-green-500/20' : 
-                      isSlowest ? 'bg-red-500/10 border border-red-500/20' : 
+                      isFastest ? 'bg-[#FF5500]/10 border border-[#FF5500]/20' : 
+                      isSlowest ? 'bg-[#FF5500]/10 border border-[#FF5500]/20' : 
                       'bg-[#111] border border-gray-800'
                     }`}
                   >
@@ -187,7 +187,7 @@ export function PostSessionSummary({ distance, elapsedSeconds, positions, activi
                       {isLast ? `${(distance % 1).toFixed(2)} km` : `Km ${split.km}`}
                     </span>
                     <span className={`text-center font-mono ${
-                      isFastest ? 'text-green-400' : isSlowest ? 'text-red-400' : 'text-white'
+                      isFastest ? 'text-[#FF5500]' : isSlowest ? 'text-[#FF5500]' : 'text-white'
                     }`}>
                       {formatPace(split.paceSeconds)}
                     </span>

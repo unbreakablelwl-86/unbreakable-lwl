@@ -150,7 +150,7 @@ export function HomeDashboard() {
             <div className="flex-1 text-center">
               <p className="text-2xl font-bold text-white">{Math.floor(tokenState.balance)}</p>
               <p className="text-xs text-gray-400 flex items-center justify-center gap-1 mt-1">
-                <span className="text-yellow-400">🪙</span> Tokens
+                <span className="text-[#FF5500]">🪙</span> Tokens
               </p>
             </div>
             <div className="w-px h-10 bg-gray-600" />
@@ -161,7 +161,7 @@ export function HomeDashboard() {
                 {tierLabel}
               </p>
               <p className="text-xs text-gray-400 flex items-center justify-center gap-1 mt-1">
-                <span className="text-yellow-400">⚡</span> Tier
+                <span className="text-[#FF5500]">⚡</span> Tier
               </p>
             </div>
           </div>

@@ -181,8 +181,8 @@ function ExposureTimer({ protocol, onBack }: { protocol: ExposureProtocol; onBac
   if (complete) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
-        <div className="w-20 h-20 rounded-full bg-green-500/20 flex items-center justify-center mb-4">
-          <Check className="w-10 h-10 text-green-400" />
+        <div className="w-20 h-20 rounded-full bg-[#FF5500]/20 flex items-center justify-center mb-4">
+          <Check className="w-10 h-10 text-[#FF5500]" />
         </div>
         <h2 className="font-display text-2xl text-white mb-2">SESSION COMPLETE</h2>
         <p className="text-gray-400 mb-6">{protocol.name} — {fmtTime(totalDuration)} total</p>
@@ -249,7 +249,7 @@ function ExposureTimer({ protocol, onBack }: { protocol: ExposureProtocol; onBac
             i === stepIdx ? 'bg-white/5 border border-white/10' : ''
           } ${i < stepIdx ? 'opacity-50' : ''}`}>
             <div className="flex items-center gap-2">
-              {i < stepIdx ? <Check className="w-3.5 h-3.5 text-green-400" /> : (
+              {i < stepIdx ? <Check className="w-3.5 h-3.5 text-[#FF5500]" /> : (
                 <span className="w-3.5 h-3.5 rounded-full border" style={{ borderColor: i === stepIdx ? protocol.colour : '#555' }} />
               )}
               <span className={i === stepIdx ? 'text-white' : 'text-gray-500'}>{s.label}</span>

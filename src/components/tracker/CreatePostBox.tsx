@@ -290,7 +290,7 @@ export function CreatePostBox({ onPostCreated }: CreatePostBoxProps) {
               animate={{ scale: 1 }}
               transition={{ type: 'spring', stiffness: 200 }}
             >
-              <CheckCircle2 className="w-12 h-12 text-green-500" />
+              <CheckCircle2 className="w-12 h-12 text-[#FF5500]" />
             </motion.div>
             <p className="text-white font-heading tracking-wide text-lg">Post is live!</p>
           </motion.div>
@@ -342,8 +342,8 @@ export function CreatePostBox({ onPostCreated }: CreatePostBoxProps) {
                       </div>
                     )}
                     {item.status === 'done' && (
-                      <div className="absolute inset-0 bg-green-500/20 flex items-center justify-center">
-                        <CheckCircle2 className="w-5 h-5 text-green-400" />
+                      <div className="absolute inset-0 bg-[#FF5500]/20 flex items-center justify-center">
+                        <CheckCircle2 className="w-5 h-5 text-[#FF5500]" />
                       </div>
                     )}
                     {item.status === 'error' && (

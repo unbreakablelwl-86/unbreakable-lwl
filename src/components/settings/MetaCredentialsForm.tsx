@@ -73,7 +73,7 @@ export function MetaCredentialsForm() {
             META API CREDENTIALS
           </CardTitle>
           {hasCredentials && (
-            <Badge className="bg-green-500/20 text-green-400 text-[9px] font-display">
+            <Badge className="bg-[#FF5500]/20 text-[#FF5500] text-[9px] font-display">
               <Check className="w-3 h-3 mr-1" /> CONNECTED
             </Badge>
           )}
@@ -110,7 +110,7 @@ export function MetaCredentialsForm() {
 
           <div className="space-y-1.5">
             <Label className="text-[10px] font-display tracking-wider text-muted-foreground flex items-center gap-1.5">
-              <Facebook className="w-3 h-3 text-blue-500" /> PAGE ACCESS TOKEN *
+              <Facebook className="w-3 h-3 text-[#FF5500]" /> PAGE ACCESS TOKEN *
             </Label>
             <Input
               type="password"
@@ -123,7 +123,7 @@ export function MetaCredentialsForm() {
 
           <div className="space-y-1.5">
             <Label className="text-[10px] font-display tracking-wider text-muted-foreground flex items-center gap-1.5">
-              <Facebook className="w-3 h-3 text-blue-500" /> FACEBOOK PAGE ID *
+              <Facebook className="w-3 h-3 text-[#FF5500]" /> FACEBOOK PAGE ID *
             </Label>
             <Input
               value={pageId}
@@ -135,7 +135,7 @@ export function MetaCredentialsForm() {
 
           <div className="space-y-1.5">
             <Label className="text-[10px] font-display tracking-wider text-muted-foreground flex items-center gap-1.5">
-              <Instagram className="w-3 h-3 text-pink-500" /> INSTAGRAM BUSINESS ACCOUNT ID
+              <Instagram className="w-3 h-3 text-[#FF5500]" /> INSTAGRAM BUSINESS ACCOUNT ID
             </Label>
             <Input
               value={igId}
