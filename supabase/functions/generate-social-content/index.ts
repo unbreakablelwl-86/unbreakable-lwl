@@ -42,8 +42,8 @@ serve(async (req) => {
       return new Response(JSON.stringify({ error: "Platform and content type are required" }), { status: 400, headers: corsHeaders });
     }
 
-    const GOOGLE_AI_API_KEY = Deno.env.get("GOOGLE_AI_API_KEY");
-    if (!GOOGLE_AI_API_KEY) throw new Error("GOOGLE_AI_API_KEY is not configured");
+    const ANTHROPIC_API_KEY = Deno.env.get("ANTHROPIC_API_KEY");
+    if (!ANTHROPIC_API_KEY) throw new Error("ANTHROPIC_API_KEY is not configured");
 
     const platformGuides: Record<string, string> = {
       instagram: "Instagram post. Use line breaks for readability. Include 5-10 relevant hashtags at the end. Keep under 2200 chars. Use emojis sparingly but effectively.",
@@ -80,16 +80,18 @@ ${inspiration ? `Style inspiration from these posts the user likes:\n${inspirati
 
 Return ONLY valid JSON with "post" and "imagePrompt" keys. No markdown, no code blocks.`;
 
-    const response = await fetch("https://generativelanguage.googleapis.com/v1beta/openai/chat/completions", {
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${GOOGLE_AI_API_KEY}`,
+        "x-api-key": ANTHROPIC_API_KEY,
+        "anthropic-version": "2023-06-01",
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "gemini-2.5-flash",
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 4096,
+        system: systemPrompt,
         messages: [
-          { role: "system", content: systemPrompt },
           { role: "user", content: userPrompt },
         ],
       }),
@@ -108,7 +110,7 @@ Return ONLY valid JSON with "post" and "imagePrompt" keys. No markdown, no code 
     }
 
     const aiData = await response.json();
-    const rawContent = aiData.choices?.[0]?.message?.content || "";
+    const rawContent = aiData.content?.[0]?.text || "";
 
     // Parse JSON from response (handle possible markdown wrapping)
     let parsed;

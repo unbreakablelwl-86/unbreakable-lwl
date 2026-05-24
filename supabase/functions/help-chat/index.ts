@@ -303,9 +303,9 @@ serve(async (req) => {
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
-    const GOOGLE_AI_API_KEY = Deno.env.get("GOOGLE_AI_API_KEY");
+    const ANTHROPIC_API_KEY = Deno.env.get("ANTHROPIC_API_KEY");
     
-    if (!GOOGLE_AI_API_KEY) {
+    if (!ANTHROPIC_API_KEY) {
       throw new Error("AI service is temporarily unavailable");
     }
 
@@ -327,53 +327,64 @@ serve(async (req) => {
       enhancedSystemPrompt += `\n\n${contextLabel}\n${userContext}`;
     }
 
-    // Process messages to include media as proper multimodal content parts
-    const processedMessages = messages.map((msg: any, index: number) => {
-      const isLastUserMessage = index === messages.length - 1 && msg.role === 'user';
-      
-      if (isLastUserMessage && mediaUrls && mediaUrls.length > 0) {
-        const contentParts: any[] = [
-          { type: 'text', text: msg.content }
-        ];
-        
-        for (const media of mediaUrls) {
-          if (media.type === 'video' || media.url?.match(/\.(mp4|mov|webm|avi)(\?|$)/i)) {
-            contentParts.push({
-              type: 'video_url',
-              video_url: { url: media.url }
-            });
-            contentParts.push({
-              type: 'text',
-              text: `[VIDEO ANALYSIS INSTRUCTION: Watch this video carefully. Identify the EXACT movement being performed before giving any feedback. Do NOT assume it is a barbell or weighted exercise unless you can clearly see weights. Common bodyweight movements include: Push Ups, Pull Ups, Bodyweight Squats, Lunges, Dips, Planks. Only use exercise names from the approved library.]`
-            });
-          } else {
-            contentParts.push({
-              type: 'image_url',
-              image_url: { url: media.url }
-            });
-          }
-        }
-        
-        return {
-          role: msg.role,
-          content: contentParts,
-        };
-      }
-      return msg;
-    });
+    // Process messages: filter out system role, convert media to Anthropic format
+    const processedMessages = messages
+      .filter((msg: any) => msg.role !== 'system')
+      .map((msg: any, index: number, arr: any[]) => {
+        const isLastUserMessage = index === arr.length - 1 && msg.role === 'user';
 
-    const response = await fetch("https://generativelanguage.googleapis.com/v1beta/openai/chat/completions", {
+        if (isLastUserMessage && mediaUrls && mediaUrls.length > 0) {
+          const contentParts: any[] = [
+            { type: 'text', text: msg.content }
+          ];
+
+          for (const media of mediaUrls) {
+            if (media.type === 'video' || media.url?.match(/\.(mp4|mov|webm|avi)(\?|$)/i)) {
+              // Video not supported by Anthropic — add text instruction instead
+              contentParts.push({
+                type: 'text',
+                text: `[The user uploaded a video. VIDEO ANALYSIS INSTRUCTION: The user has shared a movement video for feedback. Ask them to describe the movement they performed, the weight used (if any), and any specific concerns. If they can share a still frame/screenshot, you can analyse that instead.]`
+              });
+            } else {
+              contentParts.push({
+                type: 'image',
+                source: { type: 'url', url: media.url }
+              });
+            }
+          }
+
+          return { role: msg.role, content: contentParts };
+        }
+
+        // Ensure content is in Anthropic format (string or content array)
+        if (typeof msg.content === 'string') {
+          return { role: msg.role, content: msg.content };
+        }
+        // Convert any OpenAI-style content arrays
+        if (Array.isArray(msg.content)) {
+          const parts = msg.content.map((part: any) => {
+            if (part.type === 'image_url') {
+              return { type: 'image', source: { type: 'url', url: part.image_url?.url } };
+            }
+            return part;
+          });
+          return { role: msg.role, content: parts };
+        }
+        return { role: msg.role, content: msg.content };
+      });
+
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${GOOGLE_AI_API_KEY}`,
-        "Content-Type": "application/json",
+        "x-api-key": ANTHROPIC_API_KEY,
+        "anthropic-version": "2023-06-01",
+        "content-type": "application/json",
       },
       body: JSON.stringify({
-        model: "gemini-2.5-flash",
-        messages: [
-          { role: "system", content: enhancedSystemPrompt },
-          ...processedMessages,
-        ],
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 4096,
+        system: enhancedSystemPrompt,
+        messages: processedMessages,
         stream: true,
       }),
     });
@@ -399,25 +410,57 @@ serve(async (req) => {
       });
     }
 
-    // Prepend token balance info as a custom SSE event, then pipe AI stream
+    // Convert Anthropic SSE stream → OpenAI-compatible SSE stream
+    // Frontend expects: data: {"choices":[{"delta":{"content":"..."}}]}
+    const encoder = new TextEncoder();
+    const decoder = new TextDecoder();
+
     const tokenMeta = `data: ${JSON.stringify({ tokenBalance: tokenGuard.remaining })}\n\n`;
-    const metaBlob = new Blob([new TextEncoder().encode(tokenMeta)]);
+
     const combined = new ReadableStream({
       async start(controller) {
         // 1) Send token balance event
-        const metaReader = metaBlob.stream().getReader();
-        while (true) {
-          const { done, value } = await metaReader.read();
-          if (done) break;
-          controller.enqueue(value);
-        }
-        // 2) Pipe upstream AI stream
+        controller.enqueue(encoder.encode(tokenMeta));
+
+        // 2) Read Anthropic stream and convert to OpenAI format
         const reader = response.body!.getReader();
+        let buffer = '';
+
         while (true) {
           const { done, value } = await reader.read();
           if (done) break;
-          controller.enqueue(value);
+
+          buffer += decoder.decode(value, { stream: true });
+
+          let newlineIndex: number;
+          while ((newlineIndex = buffer.indexOf('\n')) !== -1) {
+            const line = buffer.slice(0, newlineIndex).trim();
+            buffer = buffer.slice(newlineIndex + 1);
+
+            if (!line.startsWith('data: ')) continue;
+            const jsonStr = line.slice(6);
+            if (!jsonStr || jsonStr === '[DONE]') continue;
+
+            try {
+              const event = JSON.parse(jsonStr);
+
+              if (event.type === 'content_block_delta' && event.delta?.type === 'text_delta') {
+                const text = event.delta.text;
+                if (text) {
+                  const openAiChunk = JSON.stringify({
+                    choices: [{ delta: { content: text } }]
+                  });
+                  controller.enqueue(encoder.encode(`data: ${openAiChunk}\n\n`));
+                }
+              }
+            } catch {
+              // Skip unparseable lines
+            }
+          }
         }
+
+        // 3) Send [DONE] signal
+        controller.enqueue(encoder.encode('data: [DONE]\n\n'));
         controller.close();
       },
     });

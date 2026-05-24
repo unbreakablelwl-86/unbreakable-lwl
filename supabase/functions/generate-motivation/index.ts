@@ -36,8 +36,8 @@ serve(async (req) => {
 
     const { trigger, context } = await req.json();
 
-    const GOOGLE_AI_API_KEY = Deno.env.get("GOOGLE_AI_API_KEY");
-    if (!GOOGLE_AI_API_KEY) throw new Error("Missing configuration");
+    const ANTHROPIC_API_KEY = Deno.env.get("ANTHROPIC_API_KEY");
+    if (!ANTHROPIC_API_KEY) throw new Error("Missing configuration");
 
     const triggerDescriptions: Record<string, string> = {
       sign_in: "The athlete just opened the app for a new session.",
@@ -48,18 +48,17 @@ serve(async (req) => {
 
     const triggerContext = triggerDescriptions[trigger] || "The athlete is using the app.";
 
-    const response = await fetch("https://generativelanguage.googleapis.com/v1beta/openai/chat/completions", {
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${GOOGLE_AI_API_KEY}`,
+        "x-api-key": ANTHROPIC_API_KEY,
+        "anthropic-version": "2023-06-01",
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "gemini-2.5-flash",
-        messages: [
-          {
-            role: "system",
-            content: `You write short, punchy motivational one-liners for a fitness app called UNBREAKABLE.
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 4096,
+        system: `You write short, punchy motivational one-liners for a fitness app called UNBREAKABLE.
 
 RULES:
 - EXACTLY 1-2 short sentences. Never more. Keep it under 25 words total.
@@ -81,8 +80,8 @@ BAD EXAMPLES (never do this):
 - "That fire in your gut? That's the sound of your old limits screaming uncle..." (too long, too flowery)
 - Generic quotes about believing in yourself
 
-Return ONLY the message text, nothing else.`
-          },
+Return ONLY the message text, nothing else.`,
+        messages: [
           {
             role: "user",
             content: `${triggerContext}${context ? ` Context: ${context}` : ''}\n\nGenerate a unique, branded Unbreakable motivational message.`
@@ -97,7 +96,7 @@ Return ONLY the message text, nothing else.`
     }
 
     const aiResponse = await response.json();
-    const quote = aiResponse.choices?.[0]?.message?.content?.trim();
+    const quote = aiResponse.content?.[0]?.text?.trim();
     if (!quote) throw new Error("No response");
 
     return new Response(JSON.stringify({ quote }), {

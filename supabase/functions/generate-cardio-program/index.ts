@@ -89,10 +89,10 @@ serve(async (req) => {
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
-    const GOOGLE_AI_API_KEY = Deno.env.get("GOOGLE_AI_API_KEY");
+    const ANTHROPIC_API_KEY = Deno.env.get("ANTHROPIC_API_KEY");
     
-    if (!GOOGLE_AI_API_KEY) {
-      throw new Error("GOOGLE_AI_API_KEY is not configured");
+    if (!ANTHROPIC_API_KEY) {
+      throw new Error("ANTHROPIC_API_KEY is not configured");
     }
 
     const { 
@@ -180,16 +180,17 @@ Create a progressive 12-week programme with ${sessionsPerWeek} sessions per week
         await new Promise(resolve => setTimeout(resolve, delayMs));
       }
 
-      response = await fetch("https://generativelanguage.googleapis.com/v1beta/openai/chat/completions", {
+      response = await fetch("https://api.anthropic.com/v1/messages", {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${GOOGLE_AI_API_KEY}`,
+          "x-api-key": ANTHROPIC_API_KEY,
+          "anthropic-version": "2023-06-01",
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: "gemini-2.5-flash",
+          model: "claude-sonnet-4-20250514",
+          system: systemPrompt,
           messages: [
-            { role: "system", content: systemPrompt },
             { role: "user", content: userPrompt },
           ],
           temperature: 0.7,
@@ -222,7 +223,7 @@ Create a progressive 12-week programme with ${sessionsPerWeek} sessions per week
     }
 
     const data = await response.json();
-    const content = data.choices?.[0]?.message?.content;
+    const content = data.content?.[0]?.text;
     
     if (!content) {
       throw new Error("No content in response");

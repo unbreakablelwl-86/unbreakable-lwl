@@ -62,10 +62,10 @@ serve(async (req) => {
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
-    const GOOGLE_AI_API_KEY = Deno.env.get('GOOGLE_AI_API_KEY');
+    const ANTHROPIC_API_KEY = Deno.env.get('ANTHROPIC_API_KEY');
 
-    if (!GOOGLE_AI_API_KEY) {
-      throw new Error('GOOGLE_AI_API_KEY is not configured');
+    if (!ANTHROPIC_API_KEY) {
+      throw new Error('ANTHROPIC_API_KEY is not configured');
     }
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
@@ -110,19 +110,20 @@ Respond in JSON format:
   "confidence_score": 0.85
 }`;
 
-    const aiResponse = await fetch('https://generativelanguage.googleapis.com/v1beta/openai/chat/completions', {
+    const aiResponse = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${GOOGLE_AI_API_KEY}`,
+        "x-api-key": ANTHROPIC_API_KEY,
+        "anthropic-version": "2023-06-01",
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gemini-2.5-flash',
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 4096,
+        system: 'You are an expert movement coach and biomechanics specialist.',
         messages: [
-          { role: 'system', content: 'You are an expert movement coach and biomechanics specialist.' },
           { role: 'user', content: analysisPrompt },
         ],
-        response_format: { type: 'json_object' },
       }),
     });
 
@@ -131,7 +132,7 @@ Respond in JSON format:
     }
 
     const analysisData = await aiResponse.json();
-    const analysis = JSON.parse(analysisData.choices[0].message.content);
+    const analysis = JSON.parse(analysisData.content[0].text);
 
     // Update video with analysis result
     const updateResponse = await fetch(`${supabaseUrl}/rest/v1/exercise_videos?id=eq.${videoId}`, {

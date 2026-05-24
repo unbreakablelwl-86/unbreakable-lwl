@@ -109,8 +109,8 @@ serve(async (req) => {
       );
     }
 
-    const GOOGLE_AI_API_KEY = Deno.env.get("GOOGLE_AI_API_KEY");
-    if (!GOOGLE_AI_API_KEY) {
+    const ANTHROPIC_API_KEY = Deno.env.get("ANTHROPIC_API_KEY");
+    if (!ANTHROPIC_API_KEY) {
       throw new Error("Scanner service unavailable");
     }
 
@@ -121,40 +121,45 @@ serve(async (req) => {
     let mimeType = "image/jpeg";
     if (image.startsWith("data:image/png")) mimeType = "image/png";
     else if (image.startsWith("data:image/webp")) mimeType = "image/webp";
+    else if (image.startsWith("data:image/gif")) mimeType = "image/gif";
 
-    // Call Gemini 2.5 Flash with vision
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GOOGLE_AI_API_KEY}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [
-            {
-              parts: [
-                { text: systemPrompt },
-                {
-                  inline_data: {
-                    mime_type: mimeType,
-                    data: base64Data,
-                  },
+    // Call Claude with vision
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "x-api-key": ANTHROPIC_API_KEY,
+        "anthropic-version": "2023-06-01",
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 2048,
+        system: systemPrompt,
+        messages: [
+          {
+            role: "user",
+            content: [
+              {
+                type: "image",
+                source: {
+                  type: "base64",
+                  media_type: mimeType,
+                  data: base64Data,
                 },
-                { text: "Identify the food in this image and estimate macros. Return JSON only." },
-              ],
-            },
-          ],
-          generationConfig: {
-            temperature: 0.2,
-            maxOutputTokens: 2048,
-            responseMimeType: "application/json",
+              },
+              {
+                type: "text",
+                text: "Identify the food in this image and estimate macros. Return JSON only.",
+              },
+            ],
           },
-        }),
-      }
-    );
+        ],
+      }),
+    });
 
     if (!response.ok) {
       const errText = await response.text();
-      console.error("Gemini API error:", response.status, errText);
+      console.error("Anthropic API error:", response.status, errText);
 
       if (response.status === 429) {
         return new Response(
@@ -166,8 +171,7 @@ serve(async (req) => {
     }
 
     const aiResult = await response.json();
-    const content =
-      aiResult.candidates?.[0]?.content?.parts?.[0]?.text;
+    const content = aiResult.content?.[0]?.text;
 
     if (!content) {
       throw new Error("No analysis received from scanner");
@@ -180,7 +184,7 @@ serve(async (req) => {
       const cleaned = content.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
       parsed = JSON.parse(cleaned);
     } catch {
-      console.error("Failed to parse Gemini response:", content);
+      console.error("Failed to parse AI response:", content);
       throw new Error("Scanner returned invalid data — try again");
     }
 
