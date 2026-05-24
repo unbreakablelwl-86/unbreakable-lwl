@@ -183,7 +183,14 @@ export default function SignIn() {
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-[11px] uppercase tracking-wider text-[#666] font-semibold">Password</label>
+            <div className="flex items-center justify-between">
+              <label className="text-[11px] uppercase tracking-wider text-[#666] font-semibold">Password</label>
+              {mode === 'signin' && (
+                <Link to="/forgot-password" className="text-[11px] text-[#FF5500] hover:underline font-medium">
+                  Forgot password?
+                </Link>
+              )}
+            </div>
             <div className="relative">
               <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#555]" />
               <input

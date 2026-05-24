@@ -60,6 +60,8 @@ import FAQ from "./pages/FAQ";
 import Explore from "./pages/Explore";
 import AITokens from "./pages/AITokens";
 import SignIn from "./pages/SignIn";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 import Unbreakable86 from "./pages/Unbreakable86";
 
 const queryClient = new QueryClient();
@@ -88,6 +90,8 @@ const App = () => {
             <Routes>
               {/* Sign-in — standalone full-page (no bottom nav) */}
               <Route path="/signin" element={<SignIn />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
 
               {/* Legacy /hub redirect (old PWA installs) */}
               <Route path="/hub" element={<Navigate to="/" replace />} />
