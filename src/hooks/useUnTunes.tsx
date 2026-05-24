@@ -439,14 +439,14 @@ export function useSearchTracks() {
 
 /* ─── Genre Definitions ─── */
 export const GENRES = [
-  { key: 'workout', label: 'Workout', emoji: '💪', color: '#FF5500' },
-  { key: 'running', label: 'Running', emoji: '🏃', color: '#22C55E' },
-  { key: 'hip-hop', label: 'Hip Hop', emoji: '🎤', color: '#8B5CF6' },
-  { key: 'electronic', label: 'Electronic', emoji: '🎧', color: '#06B6D4' },
-  { key: 'rock', label: 'Rock', emoji: '🎸', color: '#EF4444' },
-  { key: 'motivation', label: 'Motivation', emoji: '🔥', color: '#F59E0B' },
-  { key: 'chill', label: 'Chill', emoji: '🌊', color: '#3B82F6' },
-  { key: 'podcast', label: 'Podcasts', emoji: '🎙️', color: '#EC4899' },
-  { key: 'boxing', label: 'Boxing', emoji: '🥊', color: '#DC2626' },
-  { key: 'drum-and-bass', label: 'Drum & Bass', emoji: '🥁', color: '#7C3AED' },
+  { key: 'workout', label: 'Workout', icon: 'Dumbbell', color: '#FF5500' },
+  { key: 'running', label: 'Running', icon: 'Footprints', color: '#FF5500' },
+  { key: 'hip-hop', label: 'Hip Hop', icon: 'Mic2', color: '#FF5500' },
+  { key: 'electronic', label: 'Electronic', icon: 'Headphones', color: '#FF5500' },
+  { key: 'rock', label: 'Rock', icon: 'Guitar', color: '#FF5500' },
+  { key: 'motivation', label: 'Motivation', icon: 'Flame', color: '#FF5500' },
+  { key: 'chill', label: 'Chill', icon: 'Waves', color: '#FF5500' },
+  { key: 'podcast', label: 'Podcasts', icon: 'Podcast', color: '#FF5500' },
+  { key: 'boxing', label: 'Boxing', icon: 'Swords', color: '#FF5500' },
+  { key: 'drum-and-bass', label: 'Drum & Bass', icon: 'Drum', color: '#FF5500' },
 ];

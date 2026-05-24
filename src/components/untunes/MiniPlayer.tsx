@@ -1,11 +1,12 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Play, Pause, SkipBack, SkipForward, Volume2, VolumeX,
-  Shuffle, Repeat, Repeat1, ChevronUp, ChevronDown, Music,
+  Shuffle, Repeat, Repeat1, ChevronDown, Music,
   Heart, Share2, ListMusic
 } from 'lucide-react';
 import { useState } from 'react';
 import { usePlayer } from '@/hooks/useUnTunes';
+import { toast } from 'sonner';
 
 function formatTime(seconds: number): string {
   if (!seconds || isNaN(seconds)) return '0:00';
@@ -13,8 +14,6 @@ function formatTime(seconds: number): string {
   const s = Math.floor(seconds % 60);
   return `${m}:${s.toString().padStart(2, '0')}`;
 }
-
-const DEFAULT_HASHTAGS = '#Unbreakable #LiveWithoutLimits #KeepShowingUp';
 
 export function UnTunesMiniPlayer() {
   const { state, togglePlay, nextTrack, prevTrack, seekTo, setVolume, toggleShuffle, toggleRepeat } = usePlayer();
@@ -25,6 +24,20 @@ export function UnTunesMiniPlayer() {
 
   const track = state.currentTrack;
   const progress = state.duration > 0 ? (state.currentTime / state.duration) * 100 : 0;
+
+  const handleShare = async () => {
+    const text = `🎵 Now listening to "${track.title}" by ${track.artist_name || 'Unknown Artist'} on Un-Tunes\n\n#Unbreakable #LiveWithoutLimits #KeepShowingUp`;
+    try {
+      if (navigator.share) {
+        await navigator.share({ text, title: `${track.title} — Un-Tunes` });
+      } else {
+        await navigator.clipboard.writeText(text);
+        toast.success('Copied to clipboard — share to social media!');
+      }
+    } catch {
+      toast.info('Share cancelled');
+    }
+  };
 
   return (
     <>
@@ -43,7 +56,7 @@ export function UnTunesMiniPlayer() {
               <button onClick={() => setExpanded(false)}>
                 <ChevronDown className="w-5 h-5 text-muted-foreground" />
               </button>
-              <p className="font-display text-xs tracking-wider text-muted-foreground">NOW PLAYING</p>
+              <p className="font-display text-xs tracking-wider text-primary drop-shadow-[0_0_4px_rgba(255,85,0,0.5)]">NOW PLAYING</p>
               <button>
                 <ListMusic className="w-5 h-5 text-muted-foreground" />
               </button>
@@ -54,13 +67,13 @@ export function UnTunesMiniPlayer() {
               <motion.div
                 animate={{ rotate: state.isPlaying ? 360 : 0 }}
                 transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
-                className="w-64 h-64 sm:w-72 sm:h-72 rounded-2xl overflow-hidden border-2 border-primary/20 shadow-2xl shadow-primary/10"
+                className="w-64 h-64 sm:w-72 sm:h-72 rounded-2xl overflow-hidden border-2 border-primary/20 shadow-[0_0_40px_rgba(255,85,0,0.2)]"
               >
                 {track.cover_url ? (
                   <img src={track.cover_url} alt={track.title} className="w-full h-full object-cover" />
                 ) : (
                   <div className="w-full h-full bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center">
-                    <Music className="w-16 h-16 text-primary/40" />
+                    <Music className="w-16 h-16 text-primary/40 drop-shadow-[0_0_12px_rgba(255,85,0,0.3)]" />
                   </div>
                 )}
               </motion.div>
@@ -83,11 +96,11 @@ export function UnTunesMiniPlayer() {
                 }}
               >
                 <div
-                  className="absolute inset-y-0 left-0 bg-primary rounded-full transition-all"
+                  className="absolute inset-y-0 left-0 bg-primary rounded-full transition-all shadow-[0_0_8px_rgba(255,85,0,0.4)]"
                   style={{ width: `${progress}%` }}
                 />
                 <div
-                  className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-primary rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                  className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-primary rounded-full shadow-[0_0_8px_rgba(255,85,0,0.6)] opacity-0 group-hover:opacity-100 transition-opacity"
                   style={{ left: `${progress}%`, marginLeft: '-6px' }}
                 />
               </div>
@@ -101,7 +114,7 @@ export function UnTunesMiniPlayer() {
             <div className="flex items-center justify-center gap-6 px-6 mb-4">
               <button
                 onClick={toggleShuffle}
-                className={`transition-colors ${state.shuffle ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}
+                className={`transition-colors ${state.shuffle ? 'text-primary drop-shadow-[0_0_6px_rgba(255,85,0,0.5)]' : 'text-muted-foreground hover:text-foreground'}`}
               >
                 <Shuffle className="w-4 h-4" />
               </button>
@@ -110,7 +123,7 @@ export function UnTunesMiniPlayer() {
               </button>
               <button
                 onClick={togglePlay}
-                className="w-14 h-14 rounded-full bg-primary flex items-center justify-center shadow-lg shadow-primary/25 hover:scale-105 transition-transform"
+                className="w-14 h-14 rounded-full bg-primary flex items-center justify-center shadow-[0_0_24px_rgba(255,85,0,0.4)] hover:scale-105 transition-transform"
               >
                 {state.isPlaying ? (
                   <Pause className="w-6 h-6 text-primary-foreground" />
@@ -123,7 +136,7 @@ export function UnTunesMiniPlayer() {
               </button>
               <button
                 onClick={toggleRepeat}
-                className={`transition-colors ${state.repeat !== 'off' ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}
+                className={`transition-colors ${state.repeat !== 'off' ? 'text-primary drop-shadow-[0_0_6px_rgba(255,85,0,0.5)]' : 'text-muted-foreground hover:text-foreground'}`}
               >
                 {state.repeat === 'one' ? <Repeat1 className="w-4 h-4" /> : <Repeat className="w-4 h-4" />}
               </button>
@@ -134,7 +147,7 @@ export function UnTunesMiniPlayer() {
               <button className="text-muted-foreground hover:text-primary transition-colors">
                 <Heart className="w-5 h-5" />
               </button>
-              <button className="text-muted-foreground hover:text-primary transition-colors">
+              <button onClick={handleShare} className="text-muted-foreground hover:text-primary transition-colors">
                 <Share2 className="w-5 h-5" />
               </button>
               <button
@@ -168,10 +181,10 @@ export function UnTunesMiniPlayer() {
         animate={{ y: 0 }}
         className="fixed bottom-16 left-0 right-0 z-40 px-2"
       >
-        <div className="bg-card/95 backdrop-blur-xl border border-border/50 rounded-xl shadow-lg shadow-black/20 overflow-hidden">
+        <div className="bg-card/95 backdrop-blur-xl border border-primary/20 rounded-xl shadow-[0_0_20px_rgba(255,85,0,0.1)] overflow-hidden">
           {/* Progress bar (thin) */}
           <div className="h-0.5 bg-muted/20">
-            <div className="h-full bg-primary transition-all" style={{ width: `${progress}%` }} />
+            <div className="h-full bg-primary transition-all shadow-[0_0_4px_rgba(255,85,0,0.6)]" style={{ width: `${progress}%` }} />
           </div>
 
           <div
@@ -179,7 +192,7 @@ export function UnTunesMiniPlayer() {
             onClick={() => setExpanded(true)}
           >
             {/* Cover */}
-            <div className="w-10 h-10 rounded-lg overflow-hidden bg-primary/10 shrink-0">
+            <div className="w-10 h-10 rounded-lg overflow-hidden bg-primary/10 shrink-0 shadow-[0_0_8px_rgba(255,85,0,0.2)]">
               {track.cover_url ? (
                 <img src={track.cover_url} alt={track.title} className="w-full h-full object-cover" />
               ) : (
@@ -202,7 +215,7 @@ export function UnTunesMiniPlayer() {
               </button>
               <button
                 onClick={togglePlay}
-                className="w-8 h-8 rounded-full bg-primary flex items-center justify-center"
+                className="w-8 h-8 rounded-full bg-primary flex items-center justify-center shadow-[0_0_12px_rgba(255,85,0,0.3)]"
               >
                 {state.isPlaying ? (
                   <Pause className="w-3.5 h-3.5 text-primary-foreground" />
