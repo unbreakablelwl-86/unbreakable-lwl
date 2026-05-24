@@ -12,54 +12,57 @@ export interface CoursePriceInfo {
   product_id: string;
   price_id: string;
   name: string;
-  price: number; // GBP (legacy reference)
+  price: number; // GBP
   coinCost: number; // Token cost to unlock
   type: 'course' | 'bundle';
 }
 
-// Individual courses — 150 tokens each
+// Individual courses — 150 tokens / £50 each
 export const COURSE_PRICES: Record<string, CoursePriceInfo> = {
-  gym_l2: { product_id: 'prod_UWyFq7rGIj83qk', price_id: 'price_1TXuIsD5KOEmeWH2gw9eXyGi', name: 'Power Level 2', price: 50, coinCost: 150, type: 'course' },
-  gym_l3: { product_id: 'prod_UWyFVHQlTte6GM', price_id: 'price_1TXuIsD5KOEmeWH2CjrE8w0Q', name: 'Power Level 3', price: 50, coinCost: 150, type: 'course' },
-  gym_l4: { product_id: 'prod_UWyFLlk6fDzGRh', price_id: 'price_1TXuItD5KOEmeWH2zAGVTH3v', name: 'Power Level 4', price: 50, coinCost: 150, type: 'course' },
-  nutrition_l2: { product_id: 'prod_UWyFKPIp6amKJS', price_id: 'price_1TXuItD5KOEmeWH2QkP9L3Oz', name: 'Fuel Level 2', price: 50, coinCost: 150, type: 'course' },
-  nutrition_l3: { product_id: 'prod_UWyF1HaXCpPvvj', price_id: 'price_1TXuIuD5KOEmeWH2fZ1yJPSr', name: 'Fuel Level 3', price: 50, coinCost: 150, type: 'course' },
-  nutrition_l4: { product_id: 'prod_UWyFs7DlZ6lE6c', price_id: 'price_1TXuIuD5KOEmeWH2KLkbYQ6i', name: 'Fuel Level 4', price: 50, coinCost: 150, type: 'course' },
-  mindset_l2: { product_id: 'prod_UWyFbpyh6esCjq', price_id: 'price_1TXuIvD5KOEmeWH2Zq6L2bh5', name: 'Mindset Level 2', price: 50, coinCost: 150, type: 'course' },
-  mindset_l3: { product_id: 'prod_UWyFvBgJAgugFt', price_id: 'price_1TXuIvD5KOEmeWH2oDkkinkt', name: 'Mindset Level 3', price: 50, coinCost: 150, type: 'course' },
-  mindset_l4: { product_id: 'prod_UYJ7FYcNVrdibv', price_id: 'price_1TZCVPD5KOEmeWH26odCv5iC', name: 'Mindset Level 4', price: 50, coinCost: 150, type: 'course' },
-  // Sport courses — 150 tokens each
-  sport_football: { product_id: 'prod_UWyFRH7UuQIlhm', price_id: 'price_1TXuIwD5KOEmeWH2CeLpOTQn', name: 'Sport: Football', price: 50, coinCost: 150, type: 'course' },
-  sport_rugby: { product_id: 'prod_UWyFbnA7OSkbS0', price_id: 'price_1TXuIwD5KOEmeWH2KcCtfuyl', name: 'Sport: Rugby', price: 50, coinCost: 150, type: 'course' },
-  sport_cricket: { product_id: 'prod_UWyFCm5SBChDCd', price_id: 'price_1TXuIxD5KOEmeWH2GjPqk3y6', name: 'Sport: Cricket', price: 50, coinCost: 150, type: 'course' },
-  sport_tennis: { product_id: 'prod_UWyFBChLQKu5nj', price_id: 'price_1TXuIxD5KOEmeWH23nTLPsJd', name: 'Sport: Tennis', price: 50, coinCost: 150, type: 'course' },
-  sport_swimming: { product_id: 'prod_UWyFA7q0wKF0Pm', price_id: 'price_1TXuIyD5KOEmeWH2KDRwd1DQ', name: 'Sport: Swimming', price: 50, coinCost: 150, type: 'course' },
-  sport_boxing: { product_id: 'prod_UWyFB3XVyl77zJ', price_id: 'price_1TXuIyD5KOEmeWH2wHGUWQWw', name: 'Sport: Boxing', price: 50, coinCost: 150, type: 'course' },
-  sport_athletics: { product_id: 'prod_UWyFYltjzExXfn', price_id: 'price_1TXuIzD5KOEmeWH2bWMR1eVn', name: 'Sport: Athletics', price: 50, coinCost: 150, type: 'course' },
-  sport_cycling: { product_id: 'prod_UWyFQbGWk6Fsqn', price_id: 'price_1TXuIzD5KOEmeWH2CSobLFJy', name: 'Sport: Cycling', price: 50, coinCost: 150, type: 'course' },
-  sport_gymnastics: { product_id: 'prod_UWyFilJeyGgKqB', price_id: 'price_1TXuIzD5KOEmeWH2BxUyi1DW', name: 'Sport: Gymnastics', price: 50, coinCost: 150, type: 'course' },
-  sport_martial_arts: { product_id: 'prod_UWyFb5bZTCFSFf', price_id: 'price_1TXuJ0D5KOEmeWH25A1MjTMX', name: 'Sport: Martial Arts', price: 50, coinCost: 150, type: 'course' },
+  // Power (gym)
+  gym_l2: { product_id: 'prod_UZYxDeNCxQJGDi', price_id: 'price_1TaPpuD5KOEmeWH2SgCLX7TY', name: 'Power Level 2', price: 50, coinCost: 150, type: 'course' },
+  gym_l3: { product_id: 'prod_UZYxAAT0aztKBe', price_id: 'price_1TaPptD5KOEmeWH2Sqnp8zbG', name: 'Power Level 3', price: 50, coinCost: 150, type: 'course' },
+  gym_l4: { product_id: 'prod_UZYxG42VXSIfCA', price_id: 'price_1TaPpzD5KOEmeWH2dKbZDJZq', name: 'Power Level 4', price: 50, coinCost: 150, type: 'course' },
+  // Fuel (nutrition)
+  nutrition_l2: { product_id: 'prod_UZYxkbtOT9l2mg', price_id: 'price_1TaPq3D5KOEmeWH2cKqTXZBC', name: 'Fuel Level 2', price: 50, coinCost: 150, type: 'course' },
+  nutrition_l3: { product_id: 'prod_UZYy4JVUvnAXcu', price_id: 'price_1TaPqAD5KOEmeWH2AfXOGEM0', name: 'Fuel Level 3', price: 50, coinCost: 150, type: 'course' },
+  nutrition_l4: { product_id: 'prod_UZYy11qDLIEQxX', price_id: 'price_1TaPqBD5KOEmeWH2tx9eGeCQ', name: 'Fuel Level 4', price: 50, coinCost: 150, type: 'course' },
+  // Mindset
+  mindset_l2: { product_id: 'prod_UZYyc2eChkLGiO', price_id: 'price_1TaPqJD5KOEmeWH2bwG0iwL1', name: 'Mindset Level 2', price: 50, coinCost: 150, type: 'course' },
+  mindset_l3: { product_id: 'prod_UZYyzK0gHNcAPz', price_id: 'price_1TaPqID5KOEmeWH2Dc3CNb6w', name: 'Mindset Level 3', price: 50, coinCost: 150, type: 'course' },
+  mindset_l4: { product_id: 'prod_UZYydqfV7QJ6lM', price_id: 'price_1TaPqOD5KOEmeWH2aFTrPnKF', name: 'Mindset Level 4', price: 50, coinCost: 150, type: 'course' },
+  // Sport courses — 150 tokens / £50 each
+  sport_football: { product_id: 'prod_UZYygXZnGJ7CjG', price_id: 'price_1TaPqPD5KOEmeWH2DtBH1LZ5', name: 'Sport: Football', price: 50, coinCost: 150, type: 'course' },
+  sport_rugby: { product_id: 'prod_UZYy9p49pRToP1', price_id: 'price_1TaPqLD5KOEmeWH2OQFR2rSh', name: 'Sport: Rugby', price: 50, coinCost: 150, type: 'course' },
+  sport_cricket: { product_id: 'prod_UZYyfOVWTqMydg', price_id: 'price_1TaPqJD5KOEmeWH2A6GMlIbO', name: 'Sport: Cricket', price: 50, coinCost: 150, type: 'course' },
+  sport_tennis: { product_id: 'prod_UZYysz31XtbrPc', price_id: 'price_1TaPqND5KOEmeWH2wegxy9AP', name: 'Sport: Tennis', price: 50, coinCost: 150, type: 'course' },
+  sport_swimming: { product_id: 'prod_UZYyyWUkTkO1wL', price_id: 'price_1TaPqQD5KOEmeWH2P2DwUhNB', name: 'Sport: Swimming', price: 50, coinCost: 150, type: 'course' },
+  sport_boxing: { product_id: 'prod_UZYyTP8OU8HqxU', price_id: 'price_1TaPqMD5KOEmeWH2CWobt6Tl', name: 'Sport: Boxing', price: 50, coinCost: 150, type: 'course' },
+  sport_athletics: { product_id: 'prod_UZYyqPBJIZjG0a', price_id: 'price_1TaPqQD5KOEmeWH2QLZaol8s', name: 'Sport: Athletics', price: 50, coinCost: 150, type: 'course' },
+  sport_cycling: { product_id: 'prod_UZYyGW4qO4It9z', price_id: 'price_1TaPqMD5KOEmeWH2wTi8yOBy', name: 'Sport: Cycling', price: 50, coinCost: 150, type: 'course' },
+  sport_gymnastics: { product_id: 'prod_UZYyHukvepBwoh', price_id: 'price_1TaPqMD5KOEmeWH2RtsHUKsO', name: 'Sport: Gymnastics', price: 50, coinCost: 150, type: 'course' },
+  sport_martial_arts: { product_id: 'prod_UZYyaFFY0MlYAo', price_id: 'price_1TaPqQD5KOEmeWH2B5G3ogSW', name: 'Sport: Martial Arts', price: 50, coinCost: 150, type: 'course' },
 };
 
 // Bundles — discounted course packages
 export const BUNDLE_PRICES: Record<string, CoursePriceInfo & { courses: string[], savings: number, coinSavings: number }> = {
   power: {
-    product_id: 'prod_UWyFfXn0nOsoGu', price_id: 'price_1TXuJ0D5KOEmeWH2PWtxTQgJ',
+    product_id: 'prod_UZYyTKThnwdyVK', price_id: 'price_1TaPqQD5KOEmeWH2XLjqBvgo',
     name: 'Power Bundle (L2+L3+L4)', price: 117, coinCost: 350, type: 'bundle',
     courses: ['gym_l2', 'gym_l3', 'gym_l4'], savings: 33, coinSavings: 100,
   },
   fuel: {
-    product_id: 'prod_UWyFSs88HjBwM0', price_id: 'price_1TXuJ1D5KOEmeWH2oamniYan',
+    product_id: 'prod_UZYyfrSSQ8uduI', price_id: 'price_1TaPqQD5KOEmeWH2eYRVS2Yd',
     name: 'Fuel Bundle (L2+L3+L4)', price: 117, coinCost: 350, type: 'bundle',
     courses: ['nutrition_l2', 'nutrition_l3', 'nutrition_l4'], savings: 33, coinSavings: 100,
   },
   mindset: {
-    product_id: 'prod_UWyFmzTFHKYsZV', price_id: 'price_1TXuJ1D5KOEmeWH2hMG8fGsv',
+    product_id: 'prod_UZYyi9FHKlN7R2', price_id: 'price_1TaPqQD5KOEmeWH2vNGarseX',
     name: 'Mindset Bundle (L2+L3+L4)', price: 117, coinCost: 350, type: 'bundle',
     courses: ['mindset_l2', 'mindset_l3', 'mindset_l4'], savings: 33, coinSavings: 100,
   },
   all: {
-    product_id: 'prod_UWyFRMjKeuUf3s', price_id: 'price_1TXuJ2D5KOEmeWH2u32ngbbo',
+    product_id: 'prod_UZYy62q7EPCaY7', price_id: 'price_1TaPqQD5KOEmeWH29Dy4Q3kN',
     name: 'Mega Bundle (All Courses)', price: 300, coinCost: 900, type: 'bundle',
     courses: ['gym_l2', 'gym_l3', 'gym_l4', 'nutrition_l2', 'nutrition_l3', 'nutrition_l4', 'mindset_l2', 'mindset_l3', 'mindset_l4'],
     savings: 150, coinSavings: 450,
