@@ -165,6 +165,8 @@ export function ActivityCard({ run, onKudos, onDelete, onToggleComments, onUpdat
               onEdit={() => setShowEditModal(true)}
               onShareToStory={handleShareToStory}
               itemType="run"
+              authorUserId={run.user_id}
+              itemId={run.id}
             />
           </div>
         </div>

@@ -8,6 +8,7 @@ import { Lock, Coins, GraduationCap, CheckCircle, Sparkles, Package, AlertCircle
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useTokenBalance } from '@/hooks/useTokenBalance';
+import { useUserRole } from '@/hooks/useUserRole';
 import {
   getCoursePrice,
   getBestBundleFor,
@@ -30,7 +31,11 @@ export function CoursePurchaseGate({
   const [loading, setLoading] = useState<string | null>(null);
   const navigate = useNavigate();
   const { balance, refresh: refreshBalance } = useTokenBalance();
+  const { isDev, isCoach } = useUserRole();
   const coursePrice = getCoursePrice(courseKey);
+
+  // Dev and Coach roles get free access to all courses
+  if (isDev || isCoach) return null;
   const bestBundle = getBestBundleFor(courseKey, ownedCourses);
 
   const handleCoinPurchase = async (

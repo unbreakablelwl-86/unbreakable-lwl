@@ -144,6 +144,8 @@ export function WorkoutCard({ workout, onKudos, onDelete, onToggleComments, onUp
             onEdit={() => setShowEditModal(true)}
             onShareToStory={handleShareToStory}
             itemType="workout"
+            authorUserId={workout.user_id}
+            itemId={workout.id}
           />
         </div>
 

@@ -10,6 +10,7 @@ import { useFriends } from '@/hooks/useFriends';
 import { useConversations } from '@/hooks/useConversations';
 import { usePresence } from '@/hooks/usePresence';
 import { useBlockedUsers } from '@/hooks/useBlockedUsers';
+import { ReportUserButton } from '@/components/ReportUserButton';
 import { toast } from 'sonner';
 import { 
   MessageCircle, 
@@ -332,20 +333,30 @@ export function UserProfileModal({ userId, onClose, onStartConversation }: UserP
                   )}
                 </div>
 
-                {/* Block Button */}
-                <Button
-                  variant="ghost"
-                  onClick={handleBlockUser}
-                  disabled={blockLoading}
-                  className="w-full text-destructive hover:text-destructive hover:bg-destructive/10"
-                >
-                  {blockLoading ? (
-                    <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                  ) : (
-                    <Ban className="w-4 h-4 mr-2" />
+                {/* Report & Block */}
+                <div className="flex gap-2">
+                  {userId && (
+                    <ReportUserButton
+                      reportedUserId={userId}
+                      contentType="profile"
+                      variant="text"
+                      className="flex-1"
+                    />
                   )}
-                  Block User
-                </Button>
+                  <Button
+                    variant="ghost"
+                    onClick={handleBlockUser}
+                    disabled={blockLoading}
+                    className="flex-1 text-destructive hover:text-destructive hover:bg-destructive/10"
+                  >
+                    {blockLoading ? (
+                      <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                    ) : (
+                      <Ban className="w-4 h-4 mr-2" />
+                    )}
+                    Block User
+                  </Button>
+                </div>
               </div>
             )}
 

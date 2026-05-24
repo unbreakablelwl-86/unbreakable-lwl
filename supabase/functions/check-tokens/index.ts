@@ -78,22 +78,27 @@ serve(async (req) => {
       .order("created_at", { ascending: false })
       .limit(10);
 
-    // Check if user is dev (unlimited)
+    // Check if user is dev or coach (unlimited access)
     const { data: isDev } = await serviceClient.rpc("has_role", {
       _user_id: user.id,
       _role: "dev",
     });
+    const { data: isCoach } = await serviceClient.rpc("has_role", {
+      _user_id: user.id,
+      _role: "coach",
+    });
+    const isUnlimited = !!isDev || !!isCoach;
 
     return new Response(
       JSON.stringify({
-        balance: isDev ? 999999 : balance?.balance ?? 0,
+        balance: isUnlimited ? 999999 : balance?.balance ?? 0,
         lifetime_earned: balance?.lifetime_earned ?? 0,
         lifetime_spent: balance?.lifetime_spent ?? 0,
-        current_tier: balance?.current_tier ?? "free",
-        tier_display_name: tier?.display_name ?? "Free",
-        monthly_tokens: tier?.monthly_tokens ?? 5,
+        current_tier: isUnlimited ? "elite" : balance?.current_tier ?? "free",
+        tier_display_name: isUnlimited ? (isDev ? "Dev" : "Coach") : tier?.display_name ?? "Free",
+        monthly_tokens: isUnlimited ? 999999 : tier?.monthly_tokens ?? 5,
         tier_renews_at: balance?.tier_renews_at,
-        is_unlimited: !!isDev,
+        is_unlimited: isUnlimited,
         recent_transactions: transactions ?? [],
       }),
       {

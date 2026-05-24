@@ -187,6 +187,8 @@ export function StatusCard({ post, onKudos, onDelete, onToggleComments, onUpdate
             onEdit={() => setShowEditModal(true)}
             onShareToStory={handleShareToStory}
             itemType="post"
+            authorUserId={post.user_id}
+            itemId={post.id}
           />
         </div>
 

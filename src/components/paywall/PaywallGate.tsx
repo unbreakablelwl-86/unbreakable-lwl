@@ -14,6 +14,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Lock, Zap, ChevronRight } from 'lucide-react';
 import { useTokenBalance } from '@/hooks/useTokenBalance';
+import { useUserRole } from '@/hooks/useUserRole';
 import { hasFeatureAccess, getRequiredTier, FEATURE_GATES } from '@/lib/featureGating';
 import { getTier } from '@/lib/subscriptionTiers';
 import type { FeatureId } from '@/lib/featureGating';
@@ -30,8 +31,14 @@ interface PaywallGateProps {
 
 export function PaywallGate({ feature, children, inline, fallback }: PaywallGateProps) {
   const { currentTier } = useTokenBalance();
+  const { isDev, isCoach } = useUserRole();
   const navigate = useNavigate();
   const userTier = (currentTier || 'free') as TierKey;
+
+  // Dev and Coach roles bypass all paywalls — full access to every feature
+  if (isDev || isCoach) {
+    return <>{children}</>;
+  }
 
   if (hasFeatureAccess(userTier, feature)) {
     return <>{children}</>;

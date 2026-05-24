@@ -86,7 +86,7 @@ export const TOKEN_ACTIONS: Record<string, TokenAction> = {
     name: 'Motivation & mindset',
     description: 'Daily motivation, affirmations, mindset tips',
     category: 'chat',
-    baseCost: 0.25,
+    baseCost: 0,
   },
   progression_tip: {
     id: 'progression_tip',

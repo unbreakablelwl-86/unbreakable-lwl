@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { MoreHorizontal, Trash2, MessageSquareOff, MessageSquare, Pencil, BookImage, X } from 'lucide-react';
+import { MoreHorizontal, Trash2, MessageSquareOff, MessageSquare, Pencil, BookImage, Flag } from 'lucide-react';
 import { DeleteConfirmModal } from './DeleteConfirmModal';
+import { ReportUserButton } from '@/components/ReportUserButton';
 import { AnimatePresence, motion } from 'framer-motion';
 
 interface PostMenuProps {
@@ -12,6 +13,10 @@ interface PostMenuProps {
   onEdit: () => void;
   onShareToStory: () => void;
   itemType?: 'post' | 'run' | 'workout';
+  /** User ID of the post author — needed for non-owner report */
+  authorUserId?: string;
+  /** Post/item ID for the report */
+  itemId?: string;
 }
 
 export function PostMenu({
@@ -22,11 +27,11 @@ export function PostMenu({
   onEdit,
   onShareToStory,
   itemType = 'post',
+  authorUserId,
+  itemId,
 }: PostMenuProps) {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
-
-  if (!isOwner) return null;
 
   const getEditLabel = () => {
     switch (itemType) {
@@ -52,7 +57,8 @@ export function PostMenu({
     }
   };
 
-  const menuItems = [
+  // Owner actions
+  const ownerItems = [
     { icon: Pencil, label: getEditLabel(), action: () => { onEdit(); setShowMenu(false); } },
     { icon: BookImage, label: 'Share to Story', action: () => { onShareToStory(); setShowMenu(false); } },
     {
@@ -103,18 +109,30 @@ export function PostMenu({
                 <div className="w-10 h-1 rounded-full bg-muted-foreground/30" />
               </div>
               <div className="px-4 pb-4 space-y-1">
-                {menuItems.map((item, idx) => (
-                  <button
-                    key={idx}
-                    className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-xl text-left transition-colors active:bg-muted/50 ${
-                      item.destructive ? 'text-destructive' : 'text-foreground'
-                    }`}
-                    onClick={item.action}
-                  >
-                    <item.icon className="w-5 h-5 shrink-0" />
-                    <span className="font-display tracking-wide text-sm">{item.label}</span>
-                  </button>
-                ))}
+                {isOwner ? (
+                  ownerItems.map((item, idx) => (
+                    <button
+                      key={idx}
+                      className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-xl text-left transition-colors active:bg-muted/50 ${
+                        item.destructive ? 'text-destructive' : 'text-foreground'
+                      }`}
+                      onClick={item.action}
+                    >
+                      <item.icon className="w-5 h-5 shrink-0" />
+                      <span className="font-display tracking-wide text-sm">{item.label}</span>
+                    </button>
+                  ))
+                ) : (
+                  /* Non-owner: Report button that opens the report dialog */
+                  authorUserId && (
+                    <ReportUserButton
+                      reportedUserId={authorUserId}
+                      contentType={itemType}
+                      contentId={itemId}
+                      variant="menu"
+                    />
+                  )
+                )}
               </div>
               <div className="px-4 pb-2">
                 <button
@@ -129,16 +147,18 @@ export function PostMenu({
         )}
       </AnimatePresence>
 
-      <DeleteConfirmModal
-        isOpen={showDeleteModal}
-        onClose={() => setShowDeleteModal(false)}
-        onConfirm={() => {
-          onDelete();
-          setShowDeleteModal(false);
-        }}
-        title={getDeleteLabel()}
-        description={getDeleteDescription()}
-      />
+      {isOwner && (
+        <DeleteConfirmModal
+          isOpen={showDeleteModal}
+          onClose={() => setShowDeleteModal(false)}
+          onConfirm={() => {
+            onDelete();
+            setShowDeleteModal(false);
+          }}
+          title={getDeleteLabel()}
+          description={getDeleteDescription()}
+        />
+      )}
     </>
   );
 }
