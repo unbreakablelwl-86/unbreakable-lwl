@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
-import { Mail, Lock, User, Cake } from 'lucide-react';
+import { Mail, Lock, User, Cake, Gift } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface AuthModalProps {
@@ -24,6 +24,7 @@ export function AuthModal({ isOpen, onClose, defaultMode = 'signin' }: AuthModal
   const [fullName, setFullName] = useState('');
   const [dateOfBirth, setDateOfBirth] = useState('');
   const [loading, setLoading] = useState(false);
+  const [promoCode, setPromoCode] = useState('');
   const [formError, setFormError] = useState<string | null>(null);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
 
@@ -97,6 +98,24 @@ export function AuthModal({ isOpen, onClose, defaultMode = 'signin' }: AuthModal
                 .from('profiles')
                 .update({ date_of_birth: dateOfBirth })
                 .eq('user_id', newUser.id);
+            }
+
+            // Redeem promo code if provided
+            if (newUser && promoCode.trim()) {
+              try {
+                const { data: promoResult, error: promoError } = await supabase.functions.invoke('redeem-promo-code', {
+                  body: { code: promoCode.trim() },
+                });
+                if (promoError) {
+                  console.error('Promo code error:', promoError);
+                } else if (promoResult?.success) {
+                  toast.success(`🎉 Promo code applied! ${promoResult.tokens_credited} coins credited — ${promoResult.tier} tier for ${promoResult.duration_months} months`);
+                } else {
+                  toast.error(promoResult?.error || 'Invalid promo code');
+                }
+              } catch (promoErr) {
+                console.error('Failed to redeem promo code:', promoErr);
+              }
             }
           } catch (dobErr) {
             console.error('Failed to save DOB:', dobErr);
@@ -206,6 +225,25 @@ export function AuthModal({ isOpen, onClose, defaultMode = 'signin' }: AuthModal
                 />
               </div>
             </div>
+
+            {mode === 'signup' && (
+              <div className="space-y-2">
+                <Label htmlFor="promoCode" className="text-muted-foreground">
+                  Promo Code <span className="text-xs text-muted-foreground/60">(optional)</span>
+                </Label>
+                <div className="relative">
+                  <Gift className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <Input
+                    id="promoCode"
+                    type="text"
+                    placeholder="Enter code"
+                    value={promoCode}
+                    onChange={(e) => setPromoCode(e.target.value)}
+                    className="pl-10 bg-input border-border"
+                  />
+                </div>
+              </div>
+            )}
 
             {formError && (
               <div className="bg-destructive/10 border border-destructive/30 rounded-md p-3 text-sm text-destructive">
