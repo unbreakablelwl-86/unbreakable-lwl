@@ -56,7 +56,7 @@ export function LeaderboardsView() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
       >
-        <Card className=" border-border p-6 border-gray-800 bg-[#111]">
+        <Card className=" border-border p-6 border-border bg-card">
           <div className="flex items-center gap-3 mb-4">
             <Trophy className="w-8 h-8 text-primary" />
             <h2 className="font-display text-2xl text-foreground tracking-wide">
@@ -75,7 +75,7 @@ export function LeaderboardsView() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
       >
-        <Card className=" border-border p-4 border-gray-800 bg-[#111]">
+        <Card className=" border-border p-4 border-border bg-card">
           <div className="flex items-center gap-2 mb-4">
             <Filter className="w-5 h-5 text-primary" />
             <span className="font-display text-lg tracking-wide text-foreground">FILTERS</span>
@@ -130,7 +130,7 @@ export function LeaderboardsView() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
       >
-        <Card className=" border-border overflow-hidden border-gray-800 bg-[#111]">
+        <Card className=" border-border overflow-hidden border-border bg-card">
           <div className="flex items-center gap-2 p-4 border-b border-border">
             <Users className="w-5 h-5 text-primary" />
             <span className="font-display text-lg tracking-wide text-foreground">

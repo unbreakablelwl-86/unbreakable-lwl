@@ -51,7 +51,7 @@ export function SegmentAchievementsView() {
       </div>
 
       {/* PR Medals Summary */}
-      <Card className="p-4 border border-border border-l-4 border-l-primary border-gray-800 bg-[#111]">
+      <Card className="p-4 border border-border border-l-4 border-l-primary border-border bg-card">
         <h3 className="font-display text-sm text-muted-foreground mb-3 tracking-wide">
           PERSONAL RECORD MEDALS
         </h3>
@@ -127,7 +127,7 @@ function AchievementCard({
       animate={{ opacity: 1, scale: 1 }}
       whileHover={{ scale: 1.02 }}
     >
-      <Card className="p-4 border border-border border-l-4 border-l-primary border-gray-800 bg-[#111]">
+      <Card className="p-4 border border-border border-l-4 border-l-primary border-border bg-card">
         <div className="flex items-center gap-3">
           <div className="text-2xl medal-unlocked">{icon}</div>
           <div>
@@ -174,7 +174,7 @@ function SegmentsList({
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: index * 0.03 }}
         >
-          <Card className="p-3 border border-border border-l-4 border-l-primary hover:border-primary cursor-pointer transition-colors border-gray-800 bg-[#111]"
+          <Card className="p-3 border border-border border-l-4 border-l-primary hover:border-primary cursor-pointer transition-colors border-border bg-card"
             onClick={() => onSelectSegment(segment.id)}
           >
             <div className="flex items-center justify-between">
@@ -214,7 +214,7 @@ function SegmentDetailModal({
 
   return (
     <Dialog open={!!segmentId} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-md bg-background border-border bg-[#0a0a0a] border-gray-800">
+      <DialogContent className="max-w-md bg-background border-border bg-background border-border">
         <DialogHeader>
           <DialogTitle className="font-display text-lg tracking-wide flex items-center gap-2">
             <Route className="w-5 h-5 text-primary" />
@@ -250,7 +250,7 @@ function SegmentDetailModal({
 
             {/* Your Best */}
             {segment.userBestEffort && (
-              <Card className="p-3 border border-border border-l-4 border-l-primary border-gray-800 bg-[#111]">
+              <Card className="p-3 border border-border border-l-4 border-l-primary border-border bg-card">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span className="text-xl medal-unlocked">🏃</span>

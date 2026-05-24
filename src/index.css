@@ -125,10 +125,9 @@
     --brick-glow-opacity: 0.025;
   }
 
-  /* Default to dark mode */
-  :root {
-    color-scheme: dark;
-  }
+  /* Color scheme follows theme class */
+  :root { color-scheme: dark; }
+  .light { color-scheme: light; }
 }
 
 @layer base {

@@ -56,7 +56,7 @@ export function EditWorkoutModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-[500px] bg-[#0a0a0a] border-gray-800">
+      <DialogContent className="sm:max-w-[500px] bg-background border-border">
         <DialogHeader>
           <DialogTitle className="font-display tracking-wide">Edit Workout</DialogTitle>
         </DialogHeader>

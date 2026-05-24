@@ -54,10 +54,10 @@ export function ThemeToggle() {
       onClick={toggle}
       title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
       className="w-9 h-9 flex items-center justify-center rounded-full 
-        border border-[#FF5500]/20 bg-[#111]/80 backdrop-blur-md
-        hover:border-[#FF5500]/40 hover:bg-[#FF5500]/10
+        border border-primary/20 bg-card/80 backdrop-blur-md
+        hover:border-primary/40 hover:bg-primary/10
         active:scale-90 transition-all duration-200"
-      style={{ boxShadow: '0 0 10px rgba(0,0,0,0.5)' }}
+      style={{ boxShadow: isDark ? '0 0 10px rgba(0,0,0,0.5)' : '0 0 10px rgba(0,0,0,0.1)' }}
     >
       {isDark ? (
         <Sun className="w-4 h-4 text-[#FF5500]" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.4))' }} />

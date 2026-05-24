@@ -80,7 +80,7 @@ export default function Fuel() {
           {activeTab === 'overview' && (
             <motion.div key="overview" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-5">
               {/* Description */}
-              <div className="p-4 rounded-xl border border-[#FF5500]/15 bg-[#111]">
+              <div className="p-4 rounded-xl border border-[#FF5500]/15 bg-card">
                 <p className="text-gray-400 text-sm leading-relaxed">
                   Food is not the enemy — it's the weapon. Track your nutrition, build meal plans, and fuel
                   a body built to last. <span className="text-[#FF5500] font-semibold">Unbreakable Fuel</span> gives you
@@ -101,7 +101,7 @@ export default function Fuel() {
 
                 {user && (
                   <button onClick={() => setShowSnapTrack(true)} className="w-full">
-                    <div className="w-full flex items-center gap-3 p-3.5 rounded-xl border border-gray-800 bg-[#111] hover:border-gray-700 hover:bg-[#151515] transition-all text-left">
+                    <div className="w-full flex items-center gap-3 p-3.5 rounded-xl border border-border bg-card hover:border-border hover:bg-[#151515] transition-all text-left">
                       <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 border"
                         style={{ borderColor: '#FF550033', background: '#FF550010' }}>
                         <Camera className="w-5 h-5 text-[#FF5500]" style={{ filter: 'drop-shadow(0 0 4px #FF550066)' }} />
@@ -125,7 +125,7 @@ export default function Fuel() {
                   const Icon = card.icon;
                   return (
                     <Link key={card.path} to={card.path} className="block">
-                      <div className="w-full flex items-center gap-3 p-3.5 rounded-xl border border-gray-800 bg-[#111] hover:border-gray-700 hover:bg-[#151515] transition-all text-left">
+                      <div className="w-full flex items-center gap-3 p-3.5 rounded-xl border border-border bg-card hover:border-border hover:bg-[#151515] transition-all text-left">
                         <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 border"
                           style={{ borderColor: '#FF550033', background: '#FF550010' }}>
                           <Icon className="w-5 h-5 text-[#FF5500]" style={{ filter: 'drop-shadow(0 0 4px #FF550066)' }} />
@@ -184,7 +184,7 @@ export default function Fuel() {
           {/* ═══ RECIPES TAB ═══ */}
           {activeTab === 'recipes' && (
             <motion.div key="recipes" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-4">
-              <div className="p-4 rounded-xl border border-[#FF5500]/15 bg-[#111]">
+              <div className="p-4 rounded-xl border border-[#FF5500]/15 bg-card">
                 <h3 className="font-display text-sm text-[#FF5500] mb-1">FUEL YOUR GOALS</h3>
                 <p className="text-gray-400 text-sm leading-relaxed">
                   Browse recipes by macro profile, dietary preference, or meal type. Save your favourites and

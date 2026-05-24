@@ -85,7 +85,7 @@ export default function CoachProfile() {
               ACCEPTING CLIENTS
             </span>
           ) : (
-            <span className="inline-block text-[10px] font-display tracking-wider px-3 py-1 rounded-full bg-gray-800 text-gray-500 border border-gray-700">
+            <span className="inline-block text-[10px] font-display tracking-wider px-3 py-1 rounded-full bg-gray-800 text-gray-500 border border-border">
               FULLY BOOKED
             </span>
           )}
@@ -93,7 +93,7 @@ export default function CoachProfile() {
 
         {/* Bio */}
         {profile.bio && (
-          <div className="rounded-xl border border-gray-800 bg-[#111] p-4">
+          <div className="rounded-xl border border-border bg-card p-4">
             <p className="text-sm text-gray-300 leading-relaxed whitespace-pre-wrap">{profile.bio}</p>
           </div>
         )}
@@ -101,19 +101,19 @@ export default function CoachProfile() {
         {/* Quick Stats */}
         <div className="grid grid-cols-3 gap-2">
           {profile.years_experience && (
-            <div className="rounded-xl border border-[#FF5500]/15 bg-[#111] p-3 text-center">
+            <div className="rounded-xl border border-[#FF5500]/15 bg-card p-3 text-center">
               <Award className="w-5 h-5 text-[#FF5500] mx-auto mb-1" />
               <p className="font-display text-lg text-white">{profile.years_experience}</p>
               <p className="text-[9px] font-display tracking-wider text-gray-500">YEARS</p>
             </div>
           )}
-          <div className="rounded-xl border border-[#FF5500]/15 bg-[#111] p-3 text-center">
+          <div className="rounded-xl border border-[#FF5500]/15 bg-card p-3 text-center">
             <Clock className="w-5 h-5 text-[#FF5500] mx-auto mb-1" />
             <p className="font-display text-sm text-white">{freqLabel}</p>
             <p className="text-[9px] font-display tracking-wider text-gray-500">CHECK-INS</p>
           </div>
           {profile.monthly_price_gbp && (
-            <div className="rounded-xl border border-[#FF5500]/15 bg-[#111] p-3 text-center">
+            <div className="rounded-xl border border-[#FF5500]/15 bg-card p-3 text-center">
               <PoundSterling className="w-5 h-5 text-[#FF5500] mx-auto mb-1" />
               <p className="font-display text-lg text-white">£{profile.monthly_price_gbp}</p>
               <p className="text-[9px] font-display tracking-wider text-gray-500">/MONTH</p>
@@ -123,13 +123,13 @@ export default function CoachProfile() {
 
         {/* Specializations */}
         {profile.specializations.length > 0 && (
-          <div className="rounded-xl border border-gray-800 bg-[#111] p-4 space-y-2">
+          <div className="rounded-xl border border-border bg-card p-4 space-y-2">
             <p className="font-display text-xs tracking-wider text-gray-400 flex items-center gap-2">
               <Dumbbell className="w-4 h-4 text-[#FF5500]" /> SPECIALIZATIONS
             </p>
             <div className="flex flex-wrap gap-2">
               {profile.specializations.map(s => (
-                <Badge key={s} variant="outline" className="font-display text-[10px] tracking-wide border-gray-700 text-gray-300">
+                <Badge key={s} variant="outline" className="font-display text-[10px] tracking-wide border-border text-gray-300">
                   {s}
                 </Badge>
               ))}
@@ -139,7 +139,7 @@ export default function CoachProfile() {
 
         {/* Certifications */}
         {profile.certifications.length > 0 && (
-          <div className="rounded-xl border border-gray-800 bg-[#111] p-4 space-y-2">
+          <div className="rounded-xl border border-border bg-card p-4 space-y-2">
             <p className="font-display text-xs tracking-wider text-gray-400 flex items-center gap-2">
               <Award className="w-4 h-4 text-[#FF5500]" /> CERTIFICATIONS
             </p>
@@ -155,7 +155,7 @@ export default function CoachProfile() {
 
         {/* Coaching Style & Ideal Client */}
         {(profile.coaching_style || profile.ideal_client) && (
-          <div className="rounded-xl border border-gray-800 bg-[#111] p-4 space-y-4">
+          <div className="rounded-xl border border-border bg-card p-4 space-y-4">
             {profile.coaching_style && (
               <div>
                 <p className="font-display text-xs tracking-wider text-gray-400 flex items-center gap-2 mb-1">

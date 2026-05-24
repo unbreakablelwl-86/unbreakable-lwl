@@ -693,7 +693,7 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
               <div
                 key={idx}
                 className={`relative w-12 h-12 rounded-lg overflow-hidden border-2 transition-all cursor-pointer ${
-                  idx === activeMediaIndex ? 'border-primary scale-110' : 'border-white/20'
+                  idx === activeMediaIndex ? 'border-primary scale-110' : 'border-border/60'
                 }`}
                 onClick={(e) => { e.stopPropagation(); setActiveMediaIndex(idx); }}
               >
@@ -786,7 +786,7 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
                    colorTarget === 'overlay-bg' ? selectedOverlay?.backgroundColor :
                    selectedOverlay?.color) === c
                     ? 'border-white scale-125'
-                    : 'border-white/20'
+                    : 'border-border/60'
                 }`}
                 style={{ backgroundColor: c }}
                 onClick={(e) => {
@@ -873,7 +873,7 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
                   className="w-7 h-7 rounded-full flex items-center justify-center text-white"
                   onClick={(e) => { e.stopPropagation(); setColorTarget('overlay-bg'); setShowColorPicker(true); }}
                 >
-                  <div className="w-4 h-4 rounded border border-white/50" style={{ backgroundColor: selectedOverlay.backgroundColor }} />
+                  <div className="w-4 h-4 rounded border border-border0" style={{ backgroundColor: selectedOverlay.backgroundColor }} />
                 </button>
               )}
               <button

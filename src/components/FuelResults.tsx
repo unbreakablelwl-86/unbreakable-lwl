@@ -11,7 +11,7 @@ export function FuelResults({ result }: FuelResultsProps) {
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* Target Calories - Matches Speed Calculator Hero Card */}
-      <Card className=" border-border overflow-hidden border-gray-800 bg-[#111]">
+      <Card className=" border-border overflow-hidden border-border bg-card">
         <div className="bg-primary/10 border-b border-border px-6 py-4">
           <h3 className="font-display text-lg text-muted-foreground uppercase tracking-wider">
             DAILY CALORIE TARGET
@@ -31,7 +31,7 @@ export function FuelResults({ result }: FuelResultsProps) {
       </Card>
 
       {/* Macro Breakdown - Matches Speed Performance Level Card */}
-      <Card className=" border-border overflow-hidden border-gray-800 bg-[#111]">
+      <Card className=" border-border overflow-hidden border-border bg-card">
         <div className="bg-primary/10 border-b border-border px-6 py-4">
           <h3 className="font-display text-lg text-muted-foreground uppercase tracking-wider">
             MACRO BREAKDOWN
@@ -89,7 +89,7 @@ export function FuelResults({ result }: FuelResultsProps) {
 
       {/* BMR/TDEE Stats - Matches Speed Pace Stats Grid */}
       <div className="grid grid-cols-2 gap-4">
-        <Card className=" border-border border-gray-800 bg-[#111]">
+        <Card className=" border-border border-border bg-card">
           <CardContent className="p-6 text-center">
             <Activity className="w-8 h-8 text-primary mx-auto mb-2" />
             <div className="font-display text-3xl text-primary mb-1">
@@ -98,7 +98,7 @@ export function FuelResults({ result }: FuelResultsProps) {
             <p className="text-sm text-muted-foreground">BMR cal/day</p>
           </CardContent>
         </Card>
-        <Card className=" border-border border-gray-800 bg-[#111]">
+        <Card className=" border-border border-border bg-card">
           <CardContent className="p-6 text-center">
             <TrendingUp className="w-8 h-8 text-primary mx-auto mb-2" />
             <div className="font-display text-3xl text-primary mb-1">
@@ -111,7 +111,7 @@ export function FuelResults({ result }: FuelResultsProps) {
 
       {/* Calorie Distribution Stats - Matches Speed Percentile Grid */}
       <div className="grid grid-cols-2 gap-4">
-        <Card className=" border-border border-gray-800 bg-[#111]">
+        <Card className=" border-border border-border bg-card">
           <CardContent className="p-6 text-center">
             <div className="font-display text-4xl text-primary mb-1">
               {Math.round(result.protein * 4)}
@@ -119,7 +119,7 @@ export function FuelResults({ result }: FuelResultsProps) {
             <p className="text-sm text-muted-foreground">Protein Calories</p>
           </CardContent>
         </Card>
-        <Card className=" border-border border-gray-800 bg-[#111]">
+        <Card className=" border-border border-border bg-card">
           <CardContent className="p-6 text-center">
             <div className="font-display text-4xl text-primary mb-1">
               {Math.round(result.carbs * 4 + result.fat * 9)}
@@ -130,7 +130,7 @@ export function FuelResults({ result }: FuelResultsProps) {
       </div>
 
       {/* Quick Reference - Matches Speed Age-Adjusted Card */}
-      <Card className=" border-border overflow-hidden border-gray-800 bg-[#111]">
+      <Card className=" border-border overflow-hidden border-border bg-card">
         <div className="bg-primary/10 border-b border-border px-6 py-4">
           <h3 className="font-display text-lg text-muted-foreground uppercase tracking-wider">
             FUEL REFERENCE

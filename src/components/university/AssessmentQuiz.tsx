@@ -115,7 +115,7 @@ export function AssessmentQuiz({ assessment, onComplete, bestScore }: Props) {
       </div>
 
       {/* Question */}
-      <Card className="p-5 border-gray-800 bg-[#111]">
+      <Card className="p-5 border-border bg-card">
         {question.scenario && (
           <div className="bg-muted/50 rounded-lg p-3 mb-4">
             <p className="text-xs font-display tracking-wider text-muted-foreground mb-1">SCENARIO</p>

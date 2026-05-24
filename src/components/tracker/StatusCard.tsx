@@ -157,7 +157,7 @@ export function StatusCard({ post, onKudos, onDelete, onToggleComments, onUpdate
             username={post.profiles?.username}
             avatarUrl={post.profiles?.avatar_url}
             className="h-9 w-9 ring-2 ring-[#FF5500]/20 ring-offset-1 ring-offset-[#080808]"
-            fallbackClassName="bg-[#1a1a1a] text-[#888] font-heading text-xs font-bold"
+            fallbackClassName="bg-muted text-muted-foreground font-heading text-xs font-bold"
           />
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
@@ -168,11 +168,11 @@ export function StatusCard({ post, onKudos, onDelete, onToggleComments, onUpdate
                 className="font-semibold text-sm text-white truncate hover:opacity-70 transition-opacity"
               />
               {!isOwner && (
-                <span className="text-[#555] text-xs">•</span>
+                <span className="text-muted-foreground text-xs">•</span>
               )}
               {!isOwner && <FollowButton targetUserId={post.user_id} />}
             </div>
-            <div className="flex items-center gap-1.5 text-xs text-[#666] mt-0.5">
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-0.5">
               <span>{formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}</span>
               <span className="flex items-center gap-0.5">
                 {getVisibilityIcon()}
@@ -318,7 +318,7 @@ export function StatusCard({ post, onKudos, onDelete, onToggleComments, onUpdate
               ))}
             </AnimatePresence>
             <button
-              className={`flex items-center gap-1.5 transition-colors active:scale-125 ${post.has_kudos ? 'text-[#FF5500]' : 'text-white hover:text-[#888]'}`}
+              className={`flex items-center gap-1.5 transition-colors active:scale-125 ${post.has_kudos ? 'text-[#FF5500]' : 'text-white hover:text-muted-foreground'}`}
               onClick={handleKudos}
               disabled={!user || isLiking}
             >
@@ -330,7 +330,7 @@ export function StatusCard({ post, onKudos, onDelete, onToggleComments, onUpdate
               </motion.div>
             </button>
             <button
-              className={`flex items-center gap-1.5 transition-colors active:scale-110 ${showComments ? 'text-[#FF5500]' : 'text-white hover:text-[#888]'}`}
+              className={`flex items-center gap-1.5 transition-colors active:scale-110 ${showComments ? 'text-[#FF5500]' : 'text-white hover:text-muted-foreground'}`}
               onClick={() => setShowComments(!showComments)}
             >
               <MessageCircle className={`w-6 h-6 ${showComments ? 'fill-[#FF5500]/20' : ''}`} />
@@ -341,7 +341,7 @@ export function StatusCard({ post, onKudos, onDelete, onToggleComments, onUpdate
             />
           </div>
           <button
-            className={`transition-colors active:scale-110 ${saved ? 'text-white' : 'text-white hover:text-[#888]'}`}
+            className={`transition-colors active:scale-110 ${saved ? 'text-white' : 'text-white hover:text-muted-foreground'}`}
             onClick={() => setSaved(!saved)}
           >
             <Bookmark className={`w-6 h-6 ${saved ? 'fill-white' : ''}`} />
@@ -362,7 +362,7 @@ export function StatusCard({ post, onKudos, onDelete, onToggleComments, onUpdate
           <div className="px-4 pb-2">
             <RichContent
               text={post.content}
-              className="text-sm text-[#ddd]"
+              className="text-sm text-foreground/80"
               usernamePrefix={post.profiles?.display_name || post.profiles?.username}
             />
           </div>
@@ -371,7 +371,7 @@ export function StatusCard({ post, onKudos, onDelete, onToggleComments, onUpdate
         {/* Comment count teaser */}
         {!showComments && (post.comments_count ?? 0) > 0 && (
           <button
-            className="px-4 pb-2 text-sm text-[#666] hover:text-[#aaa] transition-colors text-left"
+            className="px-4 pb-2 text-sm text-muted-foreground hover:text-muted-foreground transition-colors text-left"
             onClick={() => setShowComments(true)}
           >
             View {post.comments_count === 1 ? '1 comment' : `all ${post.comments_count} comments`}

@@ -104,7 +104,7 @@ export function WorkoutLogger({ exerciseLogs, onUpdateLog, onStartRest, mode }: 
             }}
           />
         ) : (
-          <Card className="p-8 text-center border-[#FF5500] bg-[#FF5500]/10 border-gray-800 bg-[#111]">
+          <Card className="p-8 text-center border-[#FF5500] bg-[#FF5500]/10 border-border bg-card">
             <Check className="w-12 h-12 text-[#FF5500] mx-auto mb-4" />
             <h3 className="font-display text-xl text-foreground mb-2">All Sets Complete!</h3>
             <p className="text-muted-foreground">Great work on your workout.</p>
@@ -343,7 +343,7 @@ function GuidedSetCard({
   };
 
   return (
-    <Card className="p-6 border-primary bg-primary/5 border-gray-800 bg-[#111]">
+    <Card className="p-6 border-primary bg-primary/5 border-border bg-card">
       <div className="flex items-center justify-between mb-4">
         <Badge variant="outline" className={`${equipmentColors[log.equipment] || ''} gap-1`}>
           {equipmentIcons[log.equipment]}

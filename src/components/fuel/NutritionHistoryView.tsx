@@ -104,7 +104,7 @@ export function NutritionHistoryView() {
   return (
     <div className="space-y-6">
       {/* Week Navigator */}
-      <Card className="border-2 border-primary/30 border-gray-800 bg-[#111]">
+      <Card className="border-2 border-primary/30 border-border bg-card">
         <CardHeader className="pb-2">
           <div className="flex items-center justify-between">
             <Button variant="ghost" size="icon" onClick={() => navigateWeek('prev')}>

@@ -58,7 +58,7 @@ export function MyProgramsSection() {
 
   if (!user) {
     return (
-      <Card className="p-6 border border-border text-center border-gray-800 bg-[#111]">
+      <Card className="p-6 border border-border text-center border-border bg-card">
         <FolderOpen className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
         <h3 className="font-display text-lg text-foreground mb-2">Sign in to view your programmes</h3>
         <p className="text-sm text-muted-foreground mb-4">
@@ -73,7 +73,7 @@ export function MyProgramsSection() {
 
   if (isLoading) {
     return (
-      <Card className="p-6 border border-border flex items-center justify-center border-gray-800 bg-[#111]">
+      <Card className="p-6 border border-border flex items-center justify-center border-border bg-card">
         <Loader2 className="w-6 h-6 animate-spin text-primary" />
       </Card>
     );
@@ -81,7 +81,7 @@ export function MyProgramsSection() {
 
   if (!programs || programs.length === 0) {
     return (
-      <Card className="p-6 border border-border text-center border-gray-800 bg-[#111]">
+      <Card className="p-6 border border-border text-center border-border bg-card">
         <Dumbbell className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
         <h3 className="font-display text-lg text-foreground mb-2">No saved programmes</h3>
         <p className="text-sm text-muted-foreground mb-4">

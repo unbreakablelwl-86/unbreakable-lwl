@@ -92,17 +92,21 @@ export function useUserSettings() {
     fetchSettings();
   }, [fetchSettings]);
 
-  // Apply theme to document
+  // Sync DB theme to localStorage + DOM (ThemeToggle is the live controller)
   useEffect(() => {
-    const theme = settings?.theme || 'dark';
-    const root = document.documentElement;
-    
-    if (theme === 'light') {
-      root.classList.add('light');
-      root.classList.remove('dark');
-    } else {
-      root.classList.add('dark');
-      root.classList.remove('light');
+    if (!settings?.theme) return;
+    const stored = localStorage.getItem('unbreakable_theme');
+    // Only apply DB theme if localStorage hasn't been set yet
+    if (!stored) {
+      localStorage.setItem('unbreakable_theme', settings.theme);
+      const root = document.documentElement;
+      if (settings.theme === 'light') {
+        root.classList.add('light');
+        root.classList.remove('dark');
+      } else {
+        root.classList.add('dark');
+        root.classList.remove('light');
+      }
     }
   }, [settings?.theme]);
 

@@ -405,7 +405,7 @@ export function ProgrammeBuilder() {
 
   return (
     <>
-      <Card className="border-primary/20 border-gray-800 bg-[#111]">
+      <Card className="border-primary/20 border-border bg-card">
         <CardHeader>
           <CardTitle className="font-display text-xl flex items-center gap-2">
             <Dumbbell className="w-5 h-5 text-primary" />

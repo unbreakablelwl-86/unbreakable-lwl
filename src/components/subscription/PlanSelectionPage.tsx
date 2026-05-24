@@ -58,7 +58,7 @@ export function PlanSelectionPage({ onSelectPlan, loading }: PlanSelectionPagePr
         <div className="grid md:grid-cols-2 gap-8">
           {/* Tier 1 — Coaching */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-            <Card className="h-full relative border-2 border-primary/20 hover:border-primary/40 transition-all p-6 md:p-8 flex flex-col border-gray-800 bg-[#111]">
+            <Card className="h-full relative border-2 border-primary/20 hover:border-primary/40 transition-all p-6 md:p-8 flex flex-col border-border bg-card">
               <div className="mb-6">
                 <div className="flex items-center gap-2 mb-2">
                   <Shield className="w-5 h-5 text-primary" />
@@ -100,7 +100,7 @@ export function PlanSelectionPage({ onSelectPlan, loading }: PlanSelectionPagePr
 
           {/* Tier 2 — 1-to-1 */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-            <Card className="h-full relative border-2 border-primary/40 p-6 md:p-8 flex flex-col overflow-hidden border-gray-800 bg-[#111]">
+            <Card className="h-full relative border-2 border-primary/40 p-6 md:p-8 flex flex-col overflow-hidden border-border bg-card">
               <Badge className="absolute top-4 right-4 bg-primary text-primary-foreground font-display tracking-wider">
                 PREMIUM
               </Badge>

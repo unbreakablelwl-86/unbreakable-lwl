@@ -83,7 +83,7 @@ export function CheckInsTab() {
     <div className="space-y-4">
       {/* Create check-in */}
       {myAthletes.length > 0 && (
-        <Card className="border-border border-gray-800 bg-[#111]">
+        <Card className="border-border border-border bg-card">
           <CardContent className="p-3">
             <p className="font-display text-xs tracking-wider mb-2 flex items-center gap-1.5">
               <Plus className="w-3.5 h-3.5 text-primary" /> SEND CHECK-IN
@@ -139,7 +139,7 @@ export function CheckInsTab() {
           <Loader2 className="w-6 h-6 animate-spin text-primary" />
         </div>
       ) : filtered.length === 0 ? (
-        <Card className="border-border border-gray-800 bg-[#111]">
+        <Card className="border-border border-border bg-card">
           <CardContent className="py-12 text-center">
             <ClipboardCheck className="w-10 h-10 mx-auto text-muted-foreground mb-3" />
             <p className="text-muted-foreground text-sm">No check-ins yet</p>

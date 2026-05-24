@@ -104,7 +104,7 @@ export function NewMessageDialog({
         </Button>
       )}
       <Dialog open={open} onOpenChange={handleOpenChange}>
-        <DialogContent className="sm:max-w-md bg-[#0a0a0a] border-gray-800">
+        <DialogContent className="sm:max-w-md bg-background border-border">
           <DialogHeader>
             <DialogTitle className="font-display tracking-wide">
               NEW MESSAGE

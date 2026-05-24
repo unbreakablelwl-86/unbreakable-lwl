@@ -275,7 +275,7 @@ export function CreatePostBox({ onPostCreated }: CreatePostBoxProps) {
   };
 
   return (
-    <Card className="bg-[#111] border-white/[0.06] p-4 relative overflow-hidden">
+    <Card className="bg-card border-border p-4 relative overflow-hidden">
       {/* Success Overlay */}
       <AnimatePresence>
         {showSuccess && (
@@ -283,7 +283,7 @@ export function CreatePostBox({ onPostCreated }: CreatePostBoxProps) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute inset-0 z-20 bg-[#111] flex flex-col items-center justify-center gap-3"
+            className="absolute inset-0 z-20 bg-card flex flex-col items-center justify-center gap-3"
           >
             <motion.div
               initial={{ scale: 0 }}
@@ -326,12 +326,12 @@ export function CreatePostBox({ onPostCreated }: CreatePostBoxProps) {
                 className="flex flex-wrap gap-2"
               >
                 {mediaItems.map((item, idx) => (
-                  <div key={idx} className="relative w-20 h-20 rounded-lg overflow-hidden border border-white/[0.06]">
+                  <div key={idx} className="relative w-20 h-20 rounded-lg overflow-hidden border border-border">
                     {item.type === 'image' ? (
                       <img src={item.previewUrl} alt="" className="w-full h-full object-cover" />
                     ) : (
                       <div className="w-full h-full bg-muted flex items-center justify-center">
-                        <Video className="w-6 h-6 text-[#888]" />
+                        <Video className="w-6 h-6 text-muted-foreground" />
                       </div>
                     )}
 
@@ -369,7 +369,7 @@ export function CreatePostBox({ onPostCreated }: CreatePostBoxProps) {
                 {mediaItems.length < MAX_MEDIA && !isSubmitting && (
                   <button
                     onClick={() => fileInputRef.current?.click()}
-                    className="w-20 h-20 rounded-lg border-2 border-dashed border-white/[0.06] hover:border-primary/50 flex items-center justify-center text-[#888] hover:text-primary transition-colors"
+                    className="w-20 h-20 rounded-lg border-2 border-dashed border-border hover:border-primary/50 flex items-center justify-center text-muted-foreground hover:text-primary transition-colors"
                   >
                     <span className="text-2xl font-light">+</span>
                   </button>
@@ -388,7 +388,7 @@ export function CreatePostBox({ onPostCreated }: CreatePostBoxProps) {
                 className="space-y-1"
               >
                 <Progress value={overallProgress} className="h-2" />
-                <p className="text-xs text-[#888]">{progressLabel || `${overallProgress}%`}</p>
+                <p className="text-xs text-muted-foreground">{progressLabel || `${overallProgress}%`}</p>
               </motion.div>
             )}
           </AnimatePresence>
@@ -400,7 +400,7 @@ export function CreatePostBox({ onPostCreated }: CreatePostBoxProps) {
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
                 exit={{ opacity: 0, height: 0 }}
-                className="flex items-center justify-between gap-2 pt-2 border-t border-white/[0.06]"
+                className="flex items-center justify-between gap-2 pt-2 border-t border-border"
               >
                 <div className="flex items-center gap-2">
                   <input
@@ -415,7 +415,7 @@ export function CreatePostBox({ onPostCreated }: CreatePostBoxProps) {
                     variant="ghost"
                     size="sm"
                     onClick={() => fileInputRef.current?.click()}
-                    className="text-[#888]"
+                    className="text-muted-foreground"
                     disabled={isSubmitting || mediaItems.length >= MAX_MEDIA}
                   >
                     <Image className="w-5 h-5 mr-1" />
@@ -427,7 +427,7 @@ export function CreatePostBox({ onPostCreated }: CreatePostBoxProps) {
 
                   <Select value={visibility} onValueChange={setVisibility}>
                     <SelectTrigger className="w-auto h-8 border-0 bg-transparent">
-                      <div className="flex items-center gap-1 text-[#888]">
+                      <div className="flex items-center gap-1 text-muted-foreground">
                         {getVisibilityIcon()}
                         <SelectValue />
                       </div>

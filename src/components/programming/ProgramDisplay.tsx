@@ -81,7 +81,7 @@ export function ProgramDisplay({ program, onReset, savedProgramId, forUserId }: 
 
       {/* Phases Overview - Cardio Style */}
       {phases.length > 0 && (
-        <Card className=" border-border border-gray-800 bg-[#111]">
+        <Card className=" border-border border-border bg-card">
           <CardContent className="p-6">
             <h3 className="font-display text-lg text-muted-foreground mb-4 tracking-wide">
               PROGRAMME PHASES
@@ -109,7 +109,7 @@ export function ProgramDisplay({ program, onReset, savedProgramId, forUserId }: 
       )}
 
       {/* Block Info */}
-      <Card className=" border-border border-gray-800 bg-[#111]">
+      <Card className=" border-border border-border bg-card">
         <CardContent className="p-4">
           <p className="text-sm text-muted-foreground text-center">
             <Sparkles className="w-4 h-4 inline mr-1 text-primary" />
@@ -121,7 +121,7 @@ export function ProgramDisplay({ program, onReset, savedProgramId, forUserId }: 
       {/* Tips - Cardio Style */}
       <div className="grid md:grid-cols-2 gap-6">
         {program.progressionRules && program.progressionRules.length > 0 && (
-          <Card className=" border-border border-gray-800 bg-[#111]">
+          <Card className=" border-border border-border bg-card">
             <CardContent className="p-6">
               <h4 className="font-display text-lg text-primary tracking-wide mb-4 flex items-center gap-2">
                 <TrendingUp className="w-5 h-5" />
@@ -140,7 +140,7 @@ export function ProgramDisplay({ program, onReset, savedProgramId, forUserId }: 
         )}
 
         {program.nutritionTips && program.nutritionTips.length > 0 && (
-          <Card className=" border-border border-gray-800 bg-[#111]">
+          <Card className=" border-border border-border bg-card">
             <CardContent className="p-6">
               <h4 className="font-display text-lg text-primary tracking-wide mb-4 flex items-center gap-2">
                 <Utensils className="w-5 h-5" />

@@ -109,7 +109,7 @@ export function ControlledAIBuildFlow({
         animate={{ opacity: 1 }}
         className="space-y-6"
       >
-        <Card className="border-2 border-primary/30 border-gray-800 bg-[#111]">
+        <Card className="border-2 border-primary/30 border-border bg-card">
           <CardContent className="p-8">
             <div className="text-center space-y-6">
               {/* Animated Icon */}
@@ -218,7 +218,7 @@ export function ControlledAIBuildFlow({
   // Error State
   if (error) {
     return (
-      <Card className="border-destructive/50 border-gray-800 bg-[#111]">
+      <Card className="border-destructive/50 border-border bg-card">
         <CardContent className="p-8 text-center">
           <p className="text-destructive mb-4">{error}</p>
           <Button onClick={handleCancel}>Go Back</Button>

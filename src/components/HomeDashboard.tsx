@@ -213,12 +213,12 @@ export function HomeDashboard() {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: i * 0.06, duration: 0.3 }}
-                className="flex items-center gap-4 p-4 rounded-xl border border-gray-800 hover:border-[#FF5500]/40 
+                className="flex items-center gap-4 p-4 rounded-xl border border-border hover:border-[#FF5500]/40 
                   transition-all duration-300 group"
                 style={{ background: 'linear-gradient(135deg, rgba(26,26,26,0.9) 0%, rgba(17,17,17,0.95) 100%)' }}
               >
                 {/* Icon */}
-                <div className="w-12 h-12 rounded-xl bg-[#111] border border-[#FF5500]/20 flex items-center justify-center
+                <div className="w-12 h-12 rounded-xl bg-card border border-[#FF5500]/20 flex items-center justify-center
                   shadow-[0_0_15px_rgba(255,85,0,0.15)] group-hover:shadow-[0_0_25px_rgba(255,85,0,0.4)] transition-shadow">
                   <p.icon className="w-6 h-6 text-[#FF5500]" 
                     style={{ filter: 'drop-shadow(0 0 6px rgba(255,85,0,0.6))' }} />
@@ -286,7 +286,7 @@ export function HomeDashboard() {
                 </button>
               ) : (
                 <Link to={a.path}>
-                  <div className="flex flex-col items-center gap-2 p-4 rounded-xl border border-gray-800 
+                  <div className="flex flex-col items-center gap-2 p-4 rounded-xl border border-border 
                     hover:border-[#FF5500]/40 bg-[#1A1A1A] hover:bg-[#1A1A1A]/80 
                     transition-all duration-300 group">
                     <div className="w-10 h-10 rounded-xl bg-[#FF5500]/10 flex items-center justify-center
@@ -320,8 +320,8 @@ export function HomeDashboard() {
                     key={a.id}
                     onClick={() => toggleAction(a.id)}
                     disabled={activeActions.length >= MAX_ACTIONS}
-                    className="flex flex-col items-center gap-2 p-4 rounded-xl border border-dashed border-gray-700 
-                      bg-[#111] hover:border-[#FF5500]/30 transition-all duration-300 disabled:opacity-30 relative"
+                    className="flex flex-col items-center gap-2 p-4 rounded-xl border border-dashed border-border 
+                      bg-card hover:border-[#FF5500]/30 transition-all duration-300 disabled:opacity-30 relative"
                   >
                     <div className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-[#FF5500] flex items-center justify-center">
                       <Plus className="w-3 h-3 text-white" />

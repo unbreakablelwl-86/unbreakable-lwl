@@ -53,7 +53,7 @@ export function RecordActionMenu({ isOpen, onClose, onOpenRunModal }: RecordActi
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="bg-card border-border max-w-sm bg-[#0a0a0a] border-gray-800">
+      <DialogContent className="bg-card border-border max-w-sm bg-background border-border">
         <DialogHeader>
           <DialogTitle className="font-display text-xl text-foreground tracking-wide text-center">
             TRACK ACTIVITY
@@ -65,7 +65,7 @@ export function RecordActionMenu({ isOpen, onClose, onOpenRunModal }: RecordActi
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
               <Collapsible open={programsOpen} onOpenChange={setProgramsOpen}>
                 <CollapsibleTrigger asChild>
-                  <Card className="cursor-pointer transition-all border-2 border-primary/30 hover:border-primary hover:bg-primary/10 border-gray-800 bg-[#111]">
+                  <Card className="cursor-pointer transition-all border-2 border-primary/30 hover:border-primary hover:bg-primary/10 border-border bg-card">
                     <div className="p-6 text-center relative">
                       <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3">
                         <Dumbbell className="w-8 h-8 text-primary" />
@@ -179,7 +179,7 @@ export function RecordActionMenu({ isOpen, onClose, onOpenRunModal }: RecordActi
 
             {/* Cardio Tracker - unchanged */}
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-              <Card className="cursor-pointer transition-all border-2 border-primary/30 hover:border-primary hover:bg-primary/10 border-gray-800 bg-[#111]"
+              <Card className="cursor-pointer transition-all border-2 border-primary/30 hover:border-primary hover:bg-primary/10 border-border bg-card"
                 onClick={handleCardioTracker}
               >
                 <div className="p-6 text-center">
@@ -194,7 +194,7 @@ export function RecordActionMenu({ isOpen, onClose, onOpenRunModal }: RecordActi
 
             {/* Habit Tracker - unchanged */}
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
-              <Card className="cursor-pointer transition-all border-2 border-primary/30 hover:border-primary hover:bg-primary/10 border-gray-800 bg-[#111]"
+              <Card className="cursor-pointer transition-all border-2 border-primary/30 hover:border-primary hover:bg-primary/10 border-border bg-card"
                 onClick={handleHabitTracker}
               >
                 <div className="p-6 text-center">

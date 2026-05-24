@@ -170,12 +170,12 @@ export function UnifiedFeed({ onSignIn, onOpenMessages }: UnifiedFeedProps) {
 
       {/* Empty State */}
       {feedItems.length === 0 && (
-        <Card className="bg-[#111] border-white/[0.06] p-8 text-center">
+        <Card className="bg-card border-border p-8 text-center">
           <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
             <Activity className="w-10 h-10 text-primary" />
           </div>
           <h3 className="font-heading text-2xl text-white mb-2 tracking-wide">NO ACTIVITY YET</h3>
-          <p className="text-[#888] mb-4">
+          <p className="text-muted-foreground mb-4">
             {user
               ? 'Be the first to share something! Post an update, record a run, or complete a workout.'
               : 'Sign in to see the activity feed and share your own updates.'}
@@ -278,14 +278,14 @@ export function UnifiedFeed({ onSignIn, onOpenMessages }: UnifiedFeedProps) {
       {loadingMore && (
         <div className="flex items-center justify-center py-8">
           <Loader2 className="w-6 h-6 text-primary animate-spin" />
-          <span className="ml-2 text-[#888]">Loading more...</span>
+          <span className="ml-2 text-muted-foreground">Loading more...</span>
         </div>
       )}
 
       {/* End of Feed */}
       {!hasMore && feedItems.length > 0 && (
         <div className="text-center py-8">
-          <p className="text-[#888] text-sm">You've reached the end of your feed</p>
+          <p className="text-muted-foreground text-sm">You've reached the end of your feed</p>
         </div>
       )}
 
@@ -296,7 +296,7 @@ export function UnifiedFeed({ onSignIn, onOpenMessages }: UnifiedFeedProps) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-[#080808]"
+            className="fixed inset-0 z-[100] bg-background"
           >
             <StoryEditor
               onPublish={handlePublishStory}

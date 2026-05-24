@@ -81,7 +81,7 @@ function CardioSubStats({ runs, activityType, onViewRecords }: { runs: any[]; ac
 
   if (!stats) {
     return (
-      <Card className=" border-primary/20 p-8 text-center border-gray-800 bg-[#111]">
+      <Card className=" border-primary/20 p-8 text-center border-border bg-card">
         <config.icon className="w-12 h-12 text-primary/30 mx-auto mb-3" />
         <p className="font-display text-lg text-foreground tracking-wide">
           NO {config.label} SESSIONS YET
@@ -112,7 +112,7 @@ function CardioSubStats({ runs, activityType, onViewRecords }: { runs: any[]; ac
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.08 }}
           >
-            <Card className=" border-primary/20 p-4 hover:shadow-[0_0_20px_hsl(var(--primary)/0.2)] transition-shadow border-gray-800 bg-[#111]">
+            <Card className=" border-primary/20 p-4 hover:shadow-[0_0_20px_hsl(var(--primary)/0.2)] transition-shadow border-border bg-card">
               <div className="flex items-center gap-3 mb-2">
                 <stat.icon className={`w-5 h-5 ${stat.color}`} />
                 <span className="text-sm text-muted-foreground">{stat.label}</span>
@@ -126,7 +126,7 @@ function CardioSubStats({ runs, activityType, onViewRecords }: { runs: any[]; ac
       </div>
 
       {/* Weekly Chart */}
-      <Card className=" border-primary/20 p-6 border-gray-800 bg-[#111]">
+      <Card className=" border-primary/20 p-6 border-border bg-card">
         <h3 className="font-display text-xl text-foreground mb-4 tracking-wide">
           WEEKLY <span className="text-primary">{config.label}</span> DISTANCE
         </h3>
@@ -189,7 +189,7 @@ function SessionHistoryBrowser({ sessions, activityLabel }: { sessions: any[]; a
   };
 
   return (
-    <Card className=" border-primary/20 p-5 border-gray-800 bg-[#111]">
+    <Card className=" border-primary/20 p-5 border-border bg-card">
       <div className="flex items-center justify-between mb-4">
         <h3 className="font-display text-lg text-foreground tracking-wide">
           {activityLabel} <span className="text-primary">HISTORY</span>
@@ -349,7 +349,7 @@ export function CombinedStatsView({ onViewRecords }: CombinedStatsViewProps) {
 
   if (hasNoData) {
     return (
-      <Card className=" border-primary/20 p-8 text-center border-gray-800 bg-[#111]">
+      <Card className=" border-primary/20 p-8 text-center border-border bg-card">
         <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4 shadow-[0_0_20px_hsl(var(--primary)/0.2)]">
           <Activity className="w-10 h-10 text-primary" />
         </div>
@@ -447,7 +447,7 @@ export function CombinedStatsView({ onViewRecords }: CombinedStatsViewProps) {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.08 }}
                   >
-                    <Card className=" border-primary/20 p-4 hover:shadow-[0_0_20px_hsl(var(--primary)/0.2)] transition-shadow border-gray-800 bg-[#111]">
+                    <Card className=" border-primary/20 p-4 hover:shadow-[0_0_20px_hsl(var(--primary)/0.2)] transition-shadow border-border bg-card">
                       <div className="flex items-center gap-3 mb-2">
                         <stat.icon className="w-5 h-5 text-primary" />
                         <span className="text-sm text-muted-foreground">{stat.label}</span>
@@ -462,7 +462,7 @@ export function CombinedStatsView({ onViewRecords }: CombinedStatsViewProps) {
 
               {/* Programme Progress */}
               {workoutStats.programProgress && (
-                <Card className=" border-primary/20 p-6 border-gray-800 bg-[#111]">
+                <Card className=" border-primary/20 p-6 border-border bg-card">
                   <div className="flex items-center justify-between mb-3">
                     <div>
                       <p className="text-sm text-muted-foreground font-display tracking-wide">PROGRAMME PROGRESS</p>
@@ -485,7 +485,7 @@ export function CombinedStatsView({ onViewRecords }: CombinedStatsViewProps) {
               )}
 
               {/* Weekly Sessions Bar Chart */}
-              <Card className=" border-primary/20 p-6 border-gray-800 bg-[#111]">
+              <Card className=" border-primary/20 p-6 border-border bg-card">
                 <h3 className="font-display text-xl text-foreground mb-4 tracking-wide">
                   WEEKLY <span className="text-primary">CONSISTENCY</span>
                 </h3>

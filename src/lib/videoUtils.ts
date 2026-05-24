@@ -83,6 +83,6 @@ export async function compressVideo(
   // For larger files, just return original to preserve audio
   // Browser-based video transcoding via canvas loses audio track
   // Better to upload larger file than lose audio
-  console.log(`Video is ${fileSizeMB.toFixed(1)}MB, keeping original to preserve audio`);
+  // Video size check passed
   return videoFile;
 }

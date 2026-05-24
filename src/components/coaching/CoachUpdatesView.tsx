@@ -145,7 +145,7 @@ export function CoachUpdatesView() {
 
           return (
             <Collapsible key={fb.id} open={isExpanded} onOpenChange={() => toggleExpanded(fb.id)}>
-              <Card className="border-border border-gray-800 bg-[#111]">
+              <Card className="border-border border-border bg-card">
                 <CardContent className="p-0">
                   <CollapsibleTrigger className="w-full p-3 flex items-center justify-between text-left hover:bg-muted/30 transition-colors">
                     <div className="flex-1 min-w-0">

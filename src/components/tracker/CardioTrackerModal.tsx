@@ -903,7 +903,7 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
       />
       
       <Dialog open={isOpen && phase !== 'countdown'} onOpenChange={handleClose}>
-        <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto border-[#FF5500]/15 shadow-[0_0_40px_rgba(255,85,0,0.08)] bg-[#0a0a0a] border-gray-800" style={{ background: '#0A0A0A' }}>
+        <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto border-[#FF5500]/15 shadow-[0_0_40px_rgba(255,85,0,0.08)] bg-background border-border" style={{ background: '#0A0A0A' }}>
           <AnimatePresence mode="wait">
             {/* Activity Selection */}
             {phase === 'select' && (
@@ -921,7 +921,7 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
                 
                 <div className="py-6 space-y-6">
                   {/* Entry Mode Toggle */}
-                  <div className="flex gap-1 p-1 rounded-xl bg-[#111] border border-gray-800">
+                  <div className="flex gap-1 p-1 rounded-xl bg-card border border-border">
                     <button
                       onClick={() => setEntryMode('live')}
                       className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-xs font-display tracking-wide transition-all ${
@@ -960,7 +960,7 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
                         className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-display tracking-wide transition-all border ${
                           voiceEnabled
                             ? 'bg-[#FF5500]/15 text-[#FF5500] border-[#FF5500]/30'
-                            : 'bg-[#111] text-gray-500 border-gray-700'
+                            : 'bg-card text-gray-500 border-border'
                         }`}
                       >
                         {voiceEnabled ? '🔊 VOICE ON' : '🔇 VOICE OFF'}
@@ -975,13 +975,13 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
                       return (
                         <button
                           key={type}
-                          className="p-5 cursor-pointer rounded-xl border border-[#FF5500]/20 bg-[#111] 
+                          className="p-5 cursor-pointer rounded-xl border border-[#FF5500]/20 bg-card 
                             hover:border-[#FF5500]/50 hover:bg-[#FF5500]/10 hover:shadow-[0_0_20px_rgba(255,85,0,0.15)]
                             transition-all duration-200 active:scale-95"
                           onClick={() => selectActivity(type)}
                         >
                           <div className="flex flex-col items-center gap-3">
-                            <div className="w-14 h-14 rounded-full bg-[#111] border border-[#FF5500]/20 flex items-center justify-center"
+                            <div className="w-14 h-14 rounded-full bg-card border border-[#FF5500]/20 flex items-center justify-center"
                               style={{ boxShadow: '0 0 15px rgba(255,85,0,0.15)' }}>
                               <Icon className="w-7 h-7 text-[#FF5500]" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.5))' }} />
                             </div>

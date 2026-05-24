@@ -40,7 +40,7 @@ export function SocialHeader({
   return (
     <>
       {/* Instagram-style header */}
-      <header className="sticky top-0 z-50 border-b border-white/[0.06]"
+      <header className="sticky top-0 z-50 border-b border-border"
         style={{ background: 'rgba(8,8,8,0.95)', backdropFilter: 'blur(20px)' }}>
         <div className="px-4 py-2.5">
           <div className="flex items-center justify-between">
@@ -59,7 +59,7 @@ export function SocialHeader({
                 onClick={onShowActionMenu}
                 className="p-2.5 rounded-full hover:bg-white/[0.05] transition-colors"
               >
-                <Plus size={22} className="text-[#ddd]" />
+                <Plus size={22} className="text-foreground/80" />
               </button>
 
               {/* Search */}
@@ -67,7 +67,7 @@ export function SocialHeader({
                 onClick={onShowUserSearch}
                 className="p-2.5 rounded-full hover:bg-white/[0.05] transition-colors"
               >
-                <Search size={22} className="text-[#ddd]" />
+                <Search size={22} className="text-foreground/80" />
               </button>
 
               {/* Activity / Notifications */}
@@ -75,7 +75,7 @@ export function SocialHeader({
                 onClick={() => setShowNotifications(true)}
                 className="p-2.5 rounded-full hover:bg-white/[0.05] transition-colors relative"
               >
-                <Heart size={22} className={notifCount > 0 ? 'text-[#FF5500] fill-[#FF5500]' : 'text-[#ddd]'} />
+                <Heart size={22} className={notifCount > 0 ? 'text-[#FF5500] fill-[#FF5500]' : 'text-foreground/80'} />
                 {(notifCount + incomingRequestCount) > 0 && (
                   <span className="absolute top-1 right-1 w-4 h-4 bg-[#FF5500] rounded-full text-[9px] text-white font-bold flex items-center justify-center"
                     style={{ boxShadow: '0 0 6px rgba(255,85,0,0.5)' }}>
@@ -89,7 +89,7 @@ export function SocialHeader({
                 onClick={() => navigate('/inbox')}
                 className="p-2.5 rounded-full hover:bg-white/[0.05] transition-colors relative"
               >
-                <Send size={20} className="text-[#ddd]" />
+                <Send size={20} className="text-foreground/80" />
                 {messageCount > 0 && (
                   <span className="absolute top-1 right-1 w-4 h-4 bg-[#FF5500] rounded-full text-[9px] text-white font-bold flex items-center justify-center"
                     style={{ boxShadow: '0 0 6px rgba(255,85,0,0.5)' }}>

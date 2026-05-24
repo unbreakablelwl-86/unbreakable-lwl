@@ -80,7 +80,7 @@ export default function ResetPassword() {
       {/* Back */}
       <button
         onClick={() => navigate('/signin')}
-        className="absolute top-5 left-5 flex items-center gap-1.5 text-[#666] hover:text-white transition-colors text-sm"
+        className="absolute top-5 left-5 flex items-center gap-1.5 text-muted-foreground hover:text-white transition-colors text-sm"
       >
         <ArrowLeft size={16} /> Back to sign in
       </button>
@@ -91,7 +91,7 @@ export default function ResetPassword() {
         <h1 className="font-heading font-black text-2xl tracking-[0.15em] text-white uppercase">
           UNBREAKABLE
         </h1>
-        <p className="text-[#666] text-xs tracking-[0.2em] uppercase mt-1">Live Without Limits</p>
+        <p className="text-muted-foreground text-xs tracking-[0.2em] uppercase mt-1">Live Without Limits</p>
       </div>
 
       {/* Card */}
@@ -115,7 +115,7 @@ export default function ResetPassword() {
                 <CheckCircle className="w-8 h-8 text-[#FF5500]" />
               </div>
               <h2 className="font-heading font-bold text-xl tracking-wide text-white">Password Updated</h2>
-              <p className="text-[#888] text-sm leading-relaxed">
+              <p className="text-muted-foreground text-sm leading-relaxed">
                 Your password has been reset. Taking you to the app…
               </p>
               <div className="w-5 h-5 border-2 border-[#FF5500]/30 border-t-[#FF5500] rounded-full animate-spin mx-auto" />
@@ -124,7 +124,7 @@ export default function ResetPassword() {
             /* ── No valid recovery session ── */
             <div className="text-center space-y-4">
               <h2 className="font-heading font-bold text-xl tracking-wide text-white">Invalid or Expired Link</h2>
-              <p className="text-[#888] text-sm leading-relaxed">
+              <p className="text-muted-foreground text-sm leading-relaxed">
                 This password reset link may have expired or already been used.
                 Request a new one below.
               </p>
@@ -145,17 +145,17 @@ export default function ResetPassword() {
               <h2 className="font-heading font-bold text-xl tracking-wide text-white text-center mb-2">
                 Choose New Password
               </h2>
-              <p className="text-[#888] text-sm text-center mb-6">
+              <p className="text-muted-foreground text-sm text-center mb-6">
                 Enter your new password below. Make it at least 6 characters.
               </p>
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-1.5">
-                  <label className="text-[11px] uppercase tracking-wider text-[#666] font-semibold">
+                  <label className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
                     New Password
                   </label>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#555]" />
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <input
                       type={showPassword ? 'text' : 'password'}
                       placeholder="••••••••"
@@ -173,7 +173,7 @@ export default function ResetPassword() {
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[#555] hover:text-[#888] transition-colors"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-muted-foreground transition-colors"
                     >
                       {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                     </button>
@@ -181,11 +181,11 @@ export default function ResetPassword() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[11px] uppercase tracking-wider text-[#666] font-semibold">
+                  <label className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
                     Confirm Password
                   </label>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#555]" />
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <input
                       type={showPassword ? 'text' : 'password'}
                       placeholder="••••••••"
@@ -225,7 +225,7 @@ export default function ResetPassword() {
                         />
                       ))}
                     </div>
-                    <p className="text-[10px] text-[#666]">
+                    <p className="text-[10px] text-muted-foreground">
                       {password.length < 6
                         ? 'Too short'
                         : password.length < 8

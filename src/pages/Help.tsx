@@ -77,7 +77,7 @@ function MessageBubble({ message }: { message: MessageWithMedia }) {
         <div className={`rounded-2xl px-4 py-3 ${
           isUser
             ? 'bg-[#FF5500]/15 border border-[#FF5500]/25 rounded-br-md'
-            : 'bg-[#151515] border border-gray-800 rounded-bl-md'
+            : 'bg-[#151515] border border-border rounded-bl-md'
         }`}>
           <div className={`text-sm leading-relaxed ${isUser ? 'text-white' : 'text-gray-300'}`}>
             {isUser ? message.content : formatContent(message.content)}
@@ -112,7 +112,7 @@ function SmartPromptChips({ onSelect, disabled }: { onSelect: (prompt: string) =
           onClick={() => onSelect(sp.prompt)}
           disabled={disabled}
           className="flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-display tracking-wide
-            bg-[#111] border border-gray-800 text-gray-400
+            bg-card border border-border text-gray-400
             hover:border-[#FF5500]/30 hover:text-[#FF5500] hover:bg-[#FF5500]/5
             active:scale-95 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
         >
@@ -150,7 +150,7 @@ function BuildConfirmDialog({
       animate={{ opacity: 1, scale: 1 }}
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
     >
-      <div className="w-full max-w-sm rounded-2xl border border-[#FF5500]/20 bg-[#111] p-6 text-center"
+      <div className="w-full max-w-sm rounded-2xl border border-[#FF5500]/20 bg-card p-6 text-center"
         style={{ boxShadow: '0 0 40px rgba(255,85,0,0.1)' }}>
         <div className="w-14 h-14 rounded-full bg-[#FF5500]/15 border border-[#FF5500]/30 flex items-center justify-center mx-auto mb-4"
           style={{ boxShadow: '0 0 20px rgba(255,85,0,0.2)' }}>
@@ -161,7 +161,7 @@ function BuildConfirmDialog({
         <div className="flex gap-3">
           <button
             onClick={onCancel}
-            className="flex-1 py-2.5 rounded-xl border border-gray-700 text-gray-400 hover:text-white text-sm font-display transition-all"
+            className="flex-1 py-2.5 rounded-xl border border-border text-gray-400 hover:text-white text-sm font-display transition-all"
           >
             CANCEL
           </button>
@@ -202,11 +202,11 @@ function ConversationSidebar({
       <aside className={`
         ${isMobile ? 'fixed left-0 top-0 bottom-0 z-50' : 'relative'}
         ${isOpen ? 'w-72' : 'w-0'}
-        bg-[#0A0A0A] border-r border-gray-800
+        bg-[#0A0A0A] border-r border-border
         transition-all duration-300 overflow-hidden flex flex-col
         ${isMobile && !isOpen ? 'pointer-events-none' : ''}
       `}>
-        <div className="p-4 border-b border-gray-800 flex items-center justify-between flex-shrink-0">
+        <div className="p-4 border-b border-border flex items-center justify-between flex-shrink-0">
           <h2 className="font-display text-xs tracking-wider text-[#FF5500]">CONVERSATIONS</h2>
           <button onClick={onToggle} className="p-1.5 rounded-lg text-gray-500 hover:text-white transition-colors">
             <PanelLeftClose className="w-4 h-4" />
@@ -236,7 +236,7 @@ function ConversationSidebar({
                   className={`group flex items-center gap-2 p-3 rounded-xl cursor-pointer transition-all border ${
                     currentConversationId === conv.id
                       ? 'bg-[#FF5500]/10 border-[#FF5500]/25'
-                      : 'border-transparent hover:border-gray-800 hover:bg-[#111]'
+                      : 'border-transparent hover:border-border hover:bg-card'
                   }`}
                   onClick={() => onSelect(conv.id)}
                 >
@@ -580,7 +580,7 @@ export default function Help() {
     <SwipeNavigationWrapper>
       <div className="min-h-screen flex flex-col" style={{ background: '#080808' }}>
         {/* ─── Header ─── */}
-        <header className="fixed top-0 left-0 right-0 z-50 border-b border-gray-800"
+        <header className="fixed top-0 left-0 right-0 z-50 border-b border-border"
           style={{ background: 'rgba(8,8,8,0.92)', backdropFilter: 'blur(12px)' }}>
           <div className="container mx-auto px-4 py-3 flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -616,7 +616,7 @@ export default function Help() {
           {/* ─── Chat Panel ─── */}
           <div className="flex-1 flex flex-col min-w-0 relative">
             {/* Chat header */}
-            <div className="flex items-center gap-3 px-4 py-3 border-b border-gray-800 flex-shrink-0"
+            <div className="flex items-center gap-3 px-4 py-3 border-b border-border flex-shrink-0"
               style={{ background: 'rgba(15,15,15,0.8)' }}>
               {user && !sidebarOpen && (
                 <button onClick={() => setSidebarOpen(true)} className="p-1.5 rounded-lg text-gray-500 hover:text-white">
@@ -681,7 +681,7 @@ export default function Help() {
                       <div className="w-8 h-8 rounded-full bg-[#FF5500]/10 border border-[#FF5500]/30 flex items-center justify-center">
                         <Flame className="w-4 h-4 text-[#FF5500]" />
                       </div>
-                      <div className="rounded-2xl rounded-bl-md px-4 py-3 bg-[#151515] border border-gray-800">
+                      <div className="rounded-2xl rounded-bl-md px-4 py-3 bg-[#151515] border border-border">
                         <div className="flex items-center gap-2">
                           <Loader2 className="w-4 h-4 animate-spin text-[#FF5500]" />
                           <span className="text-sm text-gray-500">{coachName} is thinking...</span>
@@ -730,7 +730,7 @@ export default function Help() {
 
                   {/* Generated Plan Cards */}
                   {generatedPlans.length > 0 && (
-                    <div className="space-y-4 mt-4 pt-4 border-t border-gray-800">
+                    <div className="space-y-4 mt-4 pt-4 border-t border-border">
                       {generatedPlans.map((plan, idx) => (
                         <PlanDisplayCard
                           key={plan.planId || `pending-${idx}`}
@@ -766,7 +766,7 @@ export default function Help() {
             )}
 
             {/* ─── Input ─── */}
-            <div className="flex-shrink-0 border-t border-gray-800 p-4" style={{ background: 'rgba(15,15,15,0.8)' }}>
+            <div className="flex-shrink-0 border-t border-border p-4" style={{ background: 'rgba(15,15,15,0.8)' }}>
               <form onSubmit={handleSubmit} className="max-w-3xl mx-auto">
                 <div className="flex items-end gap-2">
                   <div className="flex-1 relative">
@@ -782,7 +782,7 @@ export default function Help() {
                       placeholder="Ask your coach anything..."
                       rows={1}
                       disabled={isLoading || isAnyGenerating}
-                      className="w-full resize-none rounded-xl border border-gray-800 bg-[#111]
+                      className="w-full resize-none rounded-xl border border-border bg-card
                         px-4 py-3 text-sm text-white placeholder:text-gray-600
                         focus:outline-none focus:border-[#FF5500]/40 focus:ring-1 focus:ring-[#FF5500]/20
                         disabled:opacity-40 transition-all"

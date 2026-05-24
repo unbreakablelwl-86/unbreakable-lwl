@@ -59,7 +59,7 @@ export function AdminReportsPanel() {
   };
 
   return (
-    <Card className="border-gray-800 bg-[#111]">
+    <Card className="border-border bg-card">
       <CardHeader>
         <CardTitle className="font-display flex items-center gap-2">
           <AlertTriangle className="w-5 h-5 text-primary" />

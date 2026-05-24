@@ -262,7 +262,7 @@ const FAQ_SECTIONS: { title: string; icon: typeof Shield; items: FAQItem[] }[] =
 function AccordionItem({ item }: { item: FAQItem }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="border-b border-gray-800/50 last:border-0">
+    <div className="border-b border-border/50 last:border-0">
       <button
         onClick={() => setOpen(!open)}
         className="w-full flex items-center justify-between py-4 px-4 text-left group"
@@ -344,7 +344,7 @@ export default function FAQ() {
                 <Icon className="w-4 h-4 text-[#FF5500]" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.5))' }} />
                 <span className="text-xs font-display tracking-wider text-gray-400">{section.title.toUpperCase()}</span>
               </div>
-              <div className="rounded-xl border border-gray-800 bg-[#111] overflow-hidden">
+              <div className="rounded-xl border border-border bg-card overflow-hidden">
                 {section.items.map((item, i) => (
                   <AccordionItem key={i} item={item} />
                 ))}
@@ -361,7 +361,7 @@ export default function FAQ() {
           </div>
           <button
             onClick={() => navigate('/founder')}
-            className="w-full rounded-xl border border-gray-800 bg-[#111] p-5 text-left hover:border-gray-700 transition-all"
+            className="w-full rounded-xl border border-border bg-card p-5 text-left hover:border-border transition-all"
           >
             <div className="flex items-center gap-4 mb-3">
               <div className="w-14 h-14 rounded-full flex items-center justify-center text-2xl border border-[#FF5500]/20" style={{ background: 'rgba(255,85,0,0.1)' }}>
@@ -386,7 +386,7 @@ export default function FAQ() {
             <FileText className="w-4 h-4 text-[#FF5500]" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.5))' }} />
             <span className="text-xs font-display tracking-wider text-gray-400">LEGAL</span>
           </div>
-          <div className="rounded-xl border border-gray-800 bg-[#111] overflow-hidden">
+          <div className="rounded-xl border border-border bg-card overflow-hidden">
             {[
               { label: 'Terms of Service', desc: 'Our terms for using the UNBREAKABLE platform', path: '/terms' },
               { label: 'Privacy Policy', desc: 'How we handle and protect your data', path: '/privacy' },
@@ -394,7 +394,7 @@ export default function FAQ() {
               <button
                 key={item.label}
                 onClick={() => navigate(item.path)}
-                className="w-full flex items-center justify-between p-4 border-b border-gray-800/50 last:border-0 text-left hover:bg-[#151515] transition-all"
+                className="w-full flex items-center justify-between p-4 border-b border-border/50 last:border-0 text-left hover:bg-[#151515] transition-all"
               >
                 <div>
                   <p className="text-sm font-display text-white tracking-wide">{item.label}</p>
@@ -412,7 +412,7 @@ export default function FAQ() {
             <Mail className="w-4 h-4 text-[#FF5500]" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.5))' }} />
             <span className="text-xs font-display tracking-wider text-gray-400">CONTACT US</span>
           </div>
-          <div className="rounded-xl border border-gray-800 bg-[#111] p-4 space-y-3">
+          <div className="rounded-xl border border-border bg-card p-4 space-y-3">
             <p className="text-sm text-gray-500">Live Without Limits LTD — Liverpool, UK</p>
             <div className="space-y-2">
               <a href="mailto:unbreakable.lwl@gmail.com" className="flex items-center gap-2 text-sm text-[#FF5500] hover:underline">

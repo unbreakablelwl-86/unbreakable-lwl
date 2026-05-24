@@ -79,7 +79,7 @@ export function PlanDisplayCard({
   const summary = getSummary();
 
   return (
-    <Card className="border-2 border-primary/40   max-w-full overflow-hidden border-gray-800 bg-[#111]">
+    <Card className="border-2 border-primary/40   max-w-full overflow-hidden border-border bg-card">
       <CardContent className="p-4 space-y-3">
         {/* Header */}
         <div className="flex items-start gap-3">

@@ -425,7 +425,7 @@ export function ProgrammeExecutionView({ program, onClose }: ProgrammeExecutionV
 
   if (plannersLoading) {
     return (
-      <Card className="p-8 border border-border flex items-center justify-center border-gray-800 bg-[#111]">
+      <Card className="p-8 border border-border flex items-center justify-center border-border bg-card">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </Card>
     );
@@ -433,7 +433,7 @@ export function ProgrammeExecutionView({ program, onClose }: ProgrammeExecutionV
 
   if (!planners || planners.length === 0) {
     return (
-      <Card className="p-8 border border-border text-center border-gray-800 bg-[#111]">
+      <Card className="p-8 border border-border text-center border-border bg-card">
         <Target className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
         <h3 className="font-display text-lg text-foreground mb-2">No Sessions Scheduled</h3>
         <p className="text-sm text-muted-foreground">
@@ -483,7 +483,7 @@ export function ProgrammeExecutionView({ program, onClose }: ProgrammeExecutionV
       </div>
 
       {/* Progress Card */}
-      <Card className="p-5 border border-primary/50   border-gray-800 bg-[#111]">
+      <Card className="p-5 border border-primary/50   border-border bg-card">
         <div className="flex items-center justify-between mb-3">
           <span className="text-sm text-muted-foreground">Programme Progress</span>
           <span className="font-display text-lg text-foreground">
@@ -576,7 +576,7 @@ export function ProgrammeExecutionView({ program, onClose }: ProgrammeExecutionV
 
       {/* Inline Session Editor */}
       {showEditor && nextSession && (
-        <Card className="border-2 border-primary p-4 border-gray-800 bg-[#111]">
+        <Card className="border-2 border-primary p-4 border-border bg-card">
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-display text-foreground tracking-wide">EDIT SESSION</h3>
             <Button variant="ghost" size="sm" onClick={() => setShowEditor(false)} className="text-xs font-display">
@@ -594,7 +594,7 @@ export function ProgrammeExecutionView({ program, onClose }: ProgrammeExecutionV
 
       {/* Session History */}
       {completedSessions.length > 0 && !viewingResultSession && (
-        <Card className="border border-border p-5 border-gray-800 bg-[#111]">
+        <Card className="border border-border p-5 border-border bg-card">
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-display text-foreground tracking-wide flex items-center gap-2">
               <Trophy className="w-5 h-5 text-primary" />

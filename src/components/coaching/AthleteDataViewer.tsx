@@ -394,21 +394,21 @@ export function AthleteDataViewer({ athleteId, onBack }: AthleteDataViewerProps)
 
         {/* Quick Stats */}
         <div className="grid grid-cols-3 gap-3">
-          <Card className="border-border border-gray-800 bg-[#111]">
+          <Card className="border-border border-border bg-card">
             <CardContent className="p-3 text-center">
               <Dumbbell className="w-5 h-5 mx-auto text-primary mb-1" />
               <p className="font-display text-lg text-foreground">{recentSessions.length}</p>
               <p className="text-[10px] text-muted-foreground">RECENT SESSIONS</p>
             </CardContent>
           </Card>
-          <Card className="border-border border-gray-800 bg-[#111]">
+          <Card className="border-border border-border bg-card">
             <CardContent className="p-3 text-center">
               <Target className="w-5 h-5 mx-auto text-primary mb-1" />
               <p className="font-display text-lg text-foreground">{habitCompletionRate}%</p>
               <p className="text-[10px] text-muted-foreground">HABIT RATE (7D)</p>
             </CardContent>
           </Card>
-          <Card className="border-border border-gray-800 bg-[#111]">
+          <Card className="border-border border-border bg-card">
             <CardContent className="p-3 text-center">
               <Activity className="w-5 h-5 mx-auto text-primary mb-1" />
               <p className="font-display text-lg text-foreground">{programs.filter(p => p.is_active).length + cardioPrograms.filter(p => p.is_active).length + mealPlans.filter(p => p.is_active).length + mindsetProgrammes.filter(p => p.is_active).length}</p>
@@ -419,7 +419,7 @@ export function AthleteDataViewer({ athleteId, onBack }: AthleteDataViewerProps)
 
         {/* Coaching Profile Summary — Editable */}
         {coachingProfile && !editingBio && (
-          <Card className="border-border border-gray-800 bg-[#111]">
+          <Card className="border-border border-border bg-card">
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between">
                 <CardTitle className="font-display text-sm tracking-wide">ATHLETE PROFILE</CardTitle>
@@ -473,7 +473,7 @@ export function AthleteDataViewer({ athleteId, onBack }: AthleteDataViewerProps)
 
         {/* Editable Bio Form */}
         {coachingProfile && editingBio && (
-          <Card className="border-border border-primary/30 border-gray-800 bg-[#111]">
+          <Card className="border-border border-primary/30 border-border bg-card">
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between">
                 <CardTitle className="font-display text-sm tracking-wide">EDIT ATHLETE PROFILE</CardTitle>
@@ -806,7 +806,7 @@ export function AthleteDataViewer({ athleteId, onBack }: AthleteDataViewerProps)
                   const isExpanded = expandedSessionIds.has(s.id);
                   return (
                     <Collapsible key={s.id} open={isExpanded} onOpenChange={() => toggleSession(s.id)}>
-                      <Card className="border-border border-gray-800 bg-[#111]">
+                      <Card className="border-border border-border bg-card">
                         <CardContent className="p-0">
                           <CollapsibleTrigger className="w-full p-3 flex items-center justify-between text-left hover:bg-muted/30 transition-colors">
                             <div>
@@ -915,7 +915,7 @@ export function AthleteDataViewer({ athleteId, onBack }: AthleteDataViewerProps)
                 const total = completed + (journalDone ? 1 : 0);
                 return (
                   <Collapsible key={h.id}>
-                    <Card className="border-border border-gray-800 bg-[#111]">
+                    <Card className="border-border border-border bg-card">
                       <CardContent className="p-3">
                         <CollapsibleTrigger className="w-full text-left">
                           <div className="flex items-center justify-between mb-2">
@@ -961,7 +961,7 @@ export function AthleteDataViewer({ athleteId, onBack }: AthleteDataViewerProps)
           <TabsContent value="nutrition" className="space-y-3 mt-4">
             {/* Nutrition Goals */}
             {nutritionGoals && (
-              <Card className="border-border border-gray-800 bg-[#111]">
+              <Card className="border-border border-border bg-card">
                 <CardHeader className="pb-2">
                   <CardTitle className="font-display text-xs tracking-wide">NUTRITION GOALS</CardTitle>
                 </CardHeader>
@@ -1029,7 +1029,7 @@ export function AthleteDataViewer({ athleteId, onBack }: AthleteDataViewerProps)
                     <div className="space-y-2">
                       {dailyFuelSummaries.map(day => (
                         <Collapsible key={day.date}>
-                          <Card className="border-border border-gray-800 bg-[#111]">
+                          <Card className="border-border border-border bg-card">
                             <CardContent className="p-0">
                               <CollapsibleTrigger className="w-full p-3 flex items-center justify-between text-left hover:bg-muted/30 transition-colors">
                                 <div>
@@ -1072,7 +1072,7 @@ export function AthleteDataViewer({ athleteId, onBack }: AthleteDataViewerProps)
           {/* ===== RECORDS TAB ===== */}
           <TabsContent value="records" className="space-y-3 mt-4">
             {/* Workout Volume Stats (30 day) */}
-            <Card className="border-border border-gray-800 bg-[#111]">
+            <Card className="border-border border-border bg-card">
               <CardHeader className="pb-2">
                 <CardTitle className="font-display text-xs tracking-wide">30-DAY VOLUME</CardTitle>
               </CardHeader>
@@ -1115,7 +1115,7 @@ export function AthleteDataViewer({ athleteId, onBack }: AthleteDataViewerProps)
                         const latest = entries[0];
                         return (
                           <Collapsible key={exercise} open={isOpen} onOpenChange={() => toggleProgressionExercise(exercise)}>
-                            <Card className="border-border border-gray-800 bg-[#111]">
+                            <Card className="border-border border-border bg-card">
                               <CardContent className="p-0">
                                 <CollapsibleTrigger className="w-full p-3 flex items-center justify-between text-left hover:bg-muted/30 transition-colors">
                                   <div>
@@ -1238,7 +1238,7 @@ export function AthleteDataViewer({ athleteId, onBack }: AthleteDataViewerProps)
                           const replies = fbResps.filter(r => r.response_type === 'reply').length;
                           return (
                             <Collapsible key={fb.id} open={isExpanded} onOpenChange={() => toggleFeedback(fb.id)}>
-                              <Card className="border-border border-gray-800 bg-[#111]">
+                              <Card className="border-border border-border bg-card">
                                 <CardContent className="p-0">
                                   <CollapsibleTrigger className="w-full p-3 flex items-center justify-between text-left hover:bg-muted/30 transition-colors">
                                     <div className="flex-1 min-w-0">
@@ -1658,7 +1658,7 @@ function MealPlanEditor({
 
   return (
     <Collapsible open={isOpen} onOpenChange={onToggle}>
-      <Card className="border-border border-gray-800 bg-[#111]">
+      <Card className="border-border border-border bg-card">
         <CardContent className="p-0">
           <CollapsibleTrigger className="w-full p-3 flex items-center justify-between text-left hover:bg-muted/30 transition-colors">
             <div>

@@ -382,7 +382,7 @@ export function AIPlanReviewModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] p-0 flex flex-col overflow-hidden bg-[#0a0a0a] border-gray-800">
+      <DialogContent className="max-w-2xl max-h-[90vh] p-0 flex flex-col overflow-hidden bg-background border-border">
         <DialogHeader className="border-b border-border px-6 py-4 shrink-0">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-lg bg-primary/20 flex items-center justify-center">
@@ -858,7 +858,7 @@ export function AIPlanReviewModal({
                   </p>
                 </div>
 
-                <Card className="border-primary/20 bg-primary/5 border-gray-800 bg-[#111]">
+                <Card className="border-primary/20 bg-primary/5 border-border bg-card">
                   <CardContent className="pt-6">
                     <div className="space-y-4">
                       <div className="flex items-center gap-3">

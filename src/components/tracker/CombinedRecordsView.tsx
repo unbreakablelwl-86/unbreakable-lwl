@@ -368,7 +368,7 @@ export function CombinedRecordsView() {
                   exit={{ height: 0, opacity: 0 }}
                   className="overflow-hidden mb-4"
                 >
-                  <Card className="p-4 border-primary/30 border-gray-800 bg-[#111]">
+                  <Card className="p-4 border-primary/30 border-border bg-card">
                     <div className="relative mb-3">
                       <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                       <Input
@@ -423,7 +423,7 @@ export function CombinedRecordsView() {
             </div>
 
             {strengthRecords.length === 0 && (
-              <Card className="p-8 text-center border-border border-gray-800 bg-[#111]">
+              <Card className="p-8 text-center border-border border-border bg-card">
                 <Dumbbell className="w-12 h-12 text-muted-foreground/30 mx-auto mb-4" />
                 <p className="text-muted-foreground">Add exercises to track your strength records</p>
               </Card>
@@ -470,7 +470,7 @@ function ExerciseRecordCard({
       animate={{ opacity: 1, x: 0 }}
       transition={{ delay: index * 0.05 }}
     >
-      <Card className="p-4 border-primary/20 border-l-4 border-l-primary border-gray-800 bg-[#111]">
+      <Card className="p-4 border-primary/20 border-l-4 border-l-primary border-border bg-card">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center shadow-[0_0_10px_hsl(var(--primary)/0.3)]">

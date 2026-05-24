@@ -205,7 +205,7 @@ export function ActiveWorkoutModal({
   return (
     <>
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto p-0 bg-[#0a0a0a] border-gray-800">
+      <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto p-0 bg-background border-border">
         {/* Header */}
         <DialogHeader className="p-4 pb-0">
           <div className="flex items-center justify-between">
@@ -234,7 +234,7 @@ export function ActiveWorkoutModal({
 
         <div className="p-4 space-y-4">
           {/* Timer + Progress Card */}
-          <Card className="p-4 border-primary/30 bg-primary/5 border-gray-800 bg-[#111]">
+          <Card className="p-4 border-primary/30 bg-primary/5 border-border bg-card">
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
                 <span className="text-sm text-muted-foreground">Elapsed</span>
@@ -283,7 +283,7 @@ export function ActiveWorkoutModal({
           </Card>
 
           {/* Exercise List with Tips/Alternatives Dropdown */}
-          <Card className="border-border border-gray-800 bg-[#111]">
+          <Card className="border-border border-border bg-card">
             <button
               onClick={() => setShowExercises(!showExercises)}
               className="w-full p-4 flex items-center justify-between"

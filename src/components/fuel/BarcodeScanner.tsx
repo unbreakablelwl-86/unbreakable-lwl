@@ -327,7 +327,7 @@ export function BarcodeScanner({ isOpen, onClose, mealType = 'snack' }: BarcodeS
         onClose();
       }
     }}>
-      <DialogContent className="max-w-lg max-h-[90vh] overflow-hidden flex flex-col bg-[#0a0a0a] border-gray-800">
+      <DialogContent className="max-w-lg max-h-[90vh] overflow-hidden flex flex-col bg-background border-border">
         <DialogHeader>
           <DialogTitle className="font-display tracking-wide flex items-center gap-2">
             <Barcode className="w-5 h-5 text-primary" />
@@ -458,7 +458,7 @@ export function BarcodeScanner({ isOpen, onClose, mealType = 'snack' }: BarcodeS
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
               >
-                <Card className="border-destructive/50 bg-destructive/5 border-gray-800 bg-[#111]">
+                <Card className="border-destructive/50 bg-destructive/5 border-border bg-card">
                   <CardContent className="p-4 text-center">
                     <X className="w-8 h-8 text-destructive mx-auto mb-2" />
                     <p className="font-medium">Product not found</p>
@@ -480,7 +480,7 @@ export function BarcodeScanner({ isOpen, onClose, mealType = 'snack' }: BarcodeS
                 exit={{ opacity: 0 }}
                 className="space-y-4"
               >
-                <Card className="border-primary/50 bg-primary/5 border-gray-800 bg-[#111]">
+                <Card className="border-primary/50 bg-primary/5 border-border bg-card">
                   <CardHeader className="pb-2">
                     <div className="flex items-start justify-between">
                       <div className="flex gap-3">
@@ -635,7 +635,7 @@ export function BarcodeScanner({ isOpen, onClose, mealType = 'snack' }: BarcodeS
                       animate={{ opacity: 1, height: 'auto' }}
                       exit={{ opacity: 0, height: 0 }}
                     >
-                      <Card className="border-primary/30 border-gray-800 bg-[#111]">
+                      <Card className="border-primary/30 border-border bg-card">
                         <CardHeader className="pb-2">
                           <CardTitle className="text-sm font-display flex items-center gap-2">
                             <Flame className="w-4 h-4 text-primary" />

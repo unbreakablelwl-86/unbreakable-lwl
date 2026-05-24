@@ -36,7 +36,7 @@ export function TrophyCase() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
       >
-        <Card className=" border-border p-6 border-gray-800 bg-[#111]">
+        <Card className=" border-border p-6 border-border bg-card">
           <div className="flex items-center gap-3 mb-4">
             <TrophyIcon className="w-6 h-6 text-primary" />
             <h3 className="font-display text-xl text-foreground tracking-wide">

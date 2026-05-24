@@ -67,7 +67,7 @@ export function RecipeDetailModal({
 
   return (
     <Dialog open={!!recipe} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto p-0 gap-0 bg-[#0a0a0a] border-gray-800">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto p-0 gap-0 bg-background border-border">
         {/* Hero Section */}
         <div className="relative">
           {recipe.image_url ? (
@@ -175,7 +175,7 @@ export function RecipeDetailModal({
               NUTRITION PER SERVING
             </h3>
 
-            <Card className="p-4 border-primary/25 shadow-[0_0_15px_hsl(var(--primary)/0.1)] border-gray-800 bg-[#111]">
+            <Card className="p-4 border-primary/25 shadow-[0_0_15px_hsl(var(--primary)/0.1)] border-border bg-card">
               <div className="text-center mb-4">
                 <p className="font-display text-4xl text-primary">
                   {recipe.calories_per_serving || 0}

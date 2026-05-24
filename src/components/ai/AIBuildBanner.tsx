@@ -43,7 +43,7 @@ export function AIBuildBanner({ type, variant = 'default', onBuildClick }: AIBui
   if (variant === 'compact') {
     return (
       <Link to={`${link}?context=${encodeURIComponent(context)}`}>
-        <Card className="border-2 border-primary/40 bg-primary/5 p-4 hover:bg-primary/10 transition-all group cursor-pointer border-gray-800 bg-[#111]">
+        <Card className="border-2 border-primary/40 bg-primary/5 p-4 hover:bg-primary/10 transition-all group cursor-pointer border-border bg-card">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center group-hover:scale-110 transition-transform">
@@ -71,7 +71,7 @@ export function AIBuildBanner({ type, variant = 'default', onBuildClick }: AIBui
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
     >
-      <Card className="border-2 border-primary/30    overflow-hidden border-gray-800 bg-[#111]">
+      <Card className="border-2 border-primary/30    overflow-hidden border-border bg-card">
         <div className="p-6 md:p-8">
           <div className="flex flex-col md:flex-row items-center gap-6">
             {/* Icon */}

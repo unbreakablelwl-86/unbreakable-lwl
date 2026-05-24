@@ -14,7 +14,7 @@ export function SpeedResults({ result }: SpeedResultsProps) {
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* Finish Time Result */}
-      <Card className=" border-border overflow-hidden border-gray-800 bg-[#111]">
+      <Card className=" border-border overflow-hidden border-border bg-card">
         <div className="bg-primary/10 border-b border-border px-6 py-4">
           <h3 className="font-display text-lg text-muted-foreground uppercase tracking-wider">
             {distanceLabels[distance]} FINISH TIME
@@ -34,7 +34,7 @@ export function SpeedResults({ result }: SpeedResultsProps) {
       </Card>
 
       {/* Speed Level */}
-      <Card className=" border-border overflow-hidden border-gray-800 bg-[#111]">
+      <Card className=" border-border overflow-hidden border-border bg-card">
         <div className="bg-primary/10 border-b border-border px-6 py-4">
           <h3 className="font-display text-lg text-muted-foreground uppercase tracking-wider">
             PERFORMANCE LEVEL
@@ -75,7 +75,7 @@ export function SpeedResults({ result }: SpeedResultsProps) {
 
       {/* Pace Stats */}
       <div className="grid grid-cols-2 gap-4">
-        <Card className=" border-border border-gray-800 bg-[#111]">
+        <Card className=" border-border border-border bg-card">
           <CardContent className="p-6 text-center">
             <Gauge className="w-8 h-8 text-primary mx-auto mb-2" />
             <div className="font-display text-3xl text-primary mb-1">
@@ -84,7 +84,7 @@ export function SpeedResults({ result }: SpeedResultsProps) {
             <p className="text-sm text-muted-foreground">Pace /km</p>
           </CardContent>
         </Card>
-        <Card className=" border-border border-gray-800 bg-[#111]">
+        <Card className=" border-border border-border bg-card">
           <CardContent className="p-6 text-center">
             <Gauge className="w-8 h-8 text-primary mx-auto mb-2" />
             <div className="font-display text-3xl text-primary mb-1">
@@ -97,7 +97,7 @@ export function SpeedResults({ result }: SpeedResultsProps) {
 
       {/* Speed Stats */}
       <div className="grid grid-cols-2 gap-4">
-        <Card className=" border-border border-gray-800 bg-[#111]">
+        <Card className=" border-border border-border bg-card">
           <CardContent className="p-6 text-center">
             <TrendingUp className="w-8 h-8 text-primary mx-auto mb-2" />
             <div className="font-display text-3xl text-primary mb-1">
@@ -106,7 +106,7 @@ export function SpeedResults({ result }: SpeedResultsProps) {
             <p className="text-sm text-muted-foreground">km/h</p>
           </CardContent>
         </Card>
-        <Card className=" border-border border-gray-800 bg-[#111]">
+        <Card className=" border-border border-border bg-card">
           <CardContent className="p-6 text-center">
             <TrendingUp className="w-8 h-8 text-primary mx-auto mb-2" />
             <div className="font-display text-3xl text-primary mb-1">
@@ -119,7 +119,7 @@ export function SpeedResults({ result }: SpeedResultsProps) {
 
       {/* Percentile Stats */}
       <div className="grid grid-cols-2 gap-4">
-        <Card className=" border-border border-gray-800 bg-[#111]">
+        <Card className=" border-border border-border bg-card">
           <CardContent className="p-6 text-center">
             <div className="font-display text-4xl text-primary mb-1">
               TOP {100 - percentile}%
@@ -127,7 +127,7 @@ export function SpeedResults({ result }: SpeedResultsProps) {
             <p className="text-sm text-muted-foreground">Overall Percentile</p>
           </CardContent>
         </Card>
-        <Card className=" border-border border-gray-800 bg-[#111]">
+        <Card className=" border-border border-border bg-card">
           <CardContent className="p-6 text-center">
             <div className="font-display text-4xl text-primary mb-1">
               TOP {100 - ageAdjustedPercentile}%
@@ -138,7 +138,7 @@ export function SpeedResults({ result }: SpeedResultsProps) {
       </div>
 
       {/* Age-Adjusted Stats */}
-      <Card className=" border-border overflow-hidden border-gray-800 bg-[#111]">
+      <Card className=" border-border overflow-hidden border-border bg-card">
         <div className="bg-primary/10 border-b border-border px-6 py-4">
           <h3 className="font-display text-lg text-muted-foreground uppercase tracking-wider">
             AGE-ADJUSTED RANKING

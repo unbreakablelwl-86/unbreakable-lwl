@@ -57,7 +57,7 @@ function ExerciseDetail({
         onClick={(e) => e.stopPropagation()}
       >
         {/* Animated GIF */}
-        <div className="relative bg-[#111] border-b border-gray-800">
+        <div className="relative bg-card border-b border-border">
           <button onClick={onClose} className="absolute top-3 right-3 z-10 p-2 rounded-full bg-black/60 text-white">
             <X className="w-4 h-4" />
           </button>
@@ -86,11 +86,11 @@ function ExerciseDetail({
                 {exercise.level?.toUpperCase() || 'ALL LEVELS'}
               </span>
               {exercise.equipment && (
-                <span className="px-2 py-0.5 rounded-md text-[10px] font-display tracking-wider border border-gray-700 bg-[#111] text-gray-400">
+                <span className="px-2 py-0.5 rounded-md text-[10px] font-display tracking-wider border border-border bg-card text-gray-400">
                   {exercise.equipment.toUpperCase()}
                 </span>
               )}
-              <span className="px-2 py-0.5 rounded-md text-[10px] font-display tracking-wider border border-gray-700 bg-[#111] text-gray-400">
+              <span className="px-2 py-0.5 rounded-md text-[10px] font-display tracking-wider border border-border bg-card text-gray-400">
                 {exercise.category.toUpperCase()}
               </span>
             </div>
@@ -106,7 +106,7 @@ function ExerciseDetail({
                 </span>
               ))}
               {exercise.secondaryMuscles.map(m => (
-                <span key={m} className="px-2.5 py-1 rounded-lg text-xs border border-gray-700 text-gray-500">
+                <span key={m} className="px-2.5 py-1 rounded-lg text-xs border border-border text-gray-500">
                   {m}
                 </span>
               ))}
@@ -117,13 +117,13 @@ function ExerciseDetail({
           {(exercise.defaultSets || exercise.defaultReps) && (
             <div className="flex gap-4">
               {exercise.defaultSets && (
-                <div className="p-3 rounded-xl border border-gray-800 bg-[#111] text-center flex-1">
+                <div className="p-3 rounded-xl border border-border bg-card text-center flex-1">
                   <p className="text-[#FF5500] font-display text-lg">{exercise.defaultSets}</p>
                   <p className="text-gray-500 text-[10px]">SETS</p>
                 </div>
               )}
               {exercise.defaultReps && (
-                <div className="p-3 rounded-xl border border-gray-800 bg-[#111] text-center flex-1">
+                <div className="p-3 rounded-xl border border-border bg-card text-center flex-1">
                   <p className="text-[#FF5500] font-display text-lg">{exercise.defaultReps}</p>
                   <p className="text-gray-500 text-[10px]">REPS</p>
                 </div>
@@ -427,7 +427,7 @@ export default function ExerciseLibrary() {
                         : 'border-border hover:border-primary/30'
                     }`}>
                       {/* Animated GIF */}
-                      <div className="relative bg-[#111] aspect-square flex items-center justify-center p-2">
+                      <div className="relative bg-card aspect-square flex items-center justify-center p-2">
                         {gifSrc ? (
                           <img
                             src={gifSrc}

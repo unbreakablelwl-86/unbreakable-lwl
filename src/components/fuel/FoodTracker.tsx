@@ -132,7 +132,7 @@ function FoodSearchModal({ mealType, onClose }: FoodSearchModalProps) {
   };
 
   return (
-    <DialogContent className="max-w-lg max-h-[80vh] overflow-hidden flex flex-col bg-[#0a0a0a] border-gray-800">
+    <DialogContent className="max-w-lg max-h-[80vh] overflow-hidden flex flex-col bg-background border-border">
       <DialogHeader>
         <DialogTitle className="font-display tracking-wide flex items-center gap-2">
           {mealIcons[mealType]}
@@ -391,7 +391,7 @@ export function FoodTracker() {
   return (
     <div className="space-y-6">
       {/* Daily Summary Card */}
-      <Card className="border-2 border-primary/30 border-gray-800 bg-[#111]">
+      <Card className="border-2 border-primary/30 border-border bg-card">
         <CardHeader>
           <CardTitle className="font-display text-xl tracking-wide flex items-center justify-between">
             <span>TODAY'S NUTRITION</span>

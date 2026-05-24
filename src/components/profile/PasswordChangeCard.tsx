@@ -34,7 +34,7 @@ export function PasswordChangeCard() {
   };
 
   return (
-    <Card className="border-primary/20 overflow-hidden border-gray-800 bg-[#111]">
+    <Card className="border-primary/20 overflow-hidden border-border bg-card">
       <div className="p-5 pb-4 border-b border-border/50">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-primary/15 flex items-center justify-center shrink-0">

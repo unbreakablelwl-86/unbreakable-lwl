@@ -56,7 +56,7 @@ export function MetaCredentialsForm() {
 
   if (loading) {
     return (
-      <Card className=" border-gray-800 bg-[#111]">
+      <Card className=" border-border bg-card">
         <CardContent className="flex items-center justify-center py-8">
           <Loader2 className="w-5 h-5 animate-spin text-primary" />
         </CardContent>
@@ -65,7 +65,7 @@ export function MetaCredentialsForm() {
   }
 
   return (
-    <Card className=" border-gray-800 bg-[#111]">
+    <Card className=" border-border bg-card">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="font-display text-sm tracking-wider flex items-center gap-2">

@@ -73,7 +73,7 @@ export function SessionActionTiles({
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.05 }}
           >
-            <Card className="p-4 border border-border hover:border-primary/50 hover: cursor-pointer transition-all group border-gray-800 bg-[#111]"
+            <Card className="p-4 border border-border hover:border-primary/50 hover: cursor-pointer transition-all group border-border bg-card"
               onClick={tile.onClick}
             >
               <div className="flex items-center justify-between">

@@ -72,7 +72,7 @@ const CoachDashboard = ({ embedded = false }: { embedded?: boolean }) => {
 
   const confirmDialog = (
     <AlertDialog open={!!confirmRemoveId} onOpenChange={() => setConfirmRemoveId(null)}>
-      <AlertDialogContent className="bg-[#111] border-gray-800">
+      <AlertDialogContent className="bg-card border-border">
         <AlertDialogHeader>
           <AlertDialogTitle className="font-display text-white">Remove Athlete</AlertDialogTitle>
           <AlertDialogDescription className="text-gray-400">
@@ -80,7 +80,7 @@ const CoachDashboard = ({ embedded = false }: { embedded?: boolean }) => {
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel className="border-gray-700 text-gray-300">Cancel</AlertDialogCancel>
+          <AlertDialogCancel className="border-border text-gray-300">Cancel</AlertDialogCancel>
           <AlertDialogAction
             className="bg-red-600 hover:bg-red-700"
             onClick={() => { if (confirmRemoveId) { removeAssignment(confirmRemoveId); setConfirmRemoveId(null); } }}
@@ -96,15 +96,15 @@ const CoachDashboard = ({ embedded = false }: { embedded?: boolean }) => {
     <>
       {/* Quick Stats */}
       <div className="grid grid-cols-3 gap-2 mb-4">
-        <div className="rounded-xl border border-[#FF5500]/15 bg-[#111] p-3 text-center">
+        <div className="rounded-xl border border-[#FF5500]/15 bg-card p-3 text-center">
           <p className="font-display text-2xl text-[#FF5500]">{myAthletes.length}</p>
           <p className="text-[10px] font-display tracking-wider text-gray-500 mt-0.5">ATHLETES</p>
         </div>
-        <div className="rounded-xl border border-[#FF5500]/15 bg-[#111] p-3 text-center">
+        <div className="rounded-xl border border-[#FF5500]/15 bg-card p-3 text-center">
           <p className="font-display text-2xl text-[#FF5500]">{pendingRequests.length}</p>
           <p className="text-[10px] font-display tracking-wider text-gray-500 mt-0.5">PENDING</p>
         </div>
-        <Link to="/coach-profile-edit" className="rounded-xl border border-[#FF5500]/15 bg-[#111] p-3 text-center hover:border-[#FF5500]/40 transition-colors">
+        <Link to="/coach-profile-edit" className="rounded-xl border border-[#FF5500]/15 bg-card p-3 text-center hover:border-[#FF5500]/40 transition-colors">
           <UserCog className="w-6 h-6 text-[#FF5500] mx-auto" />
           <p className="text-[10px] font-display tracking-wider text-gray-500 mt-0.5">MY PROFILE</p>
         </Link>
@@ -134,7 +134,7 @@ const CoachDashboard = ({ embedded = false }: { embedded?: boolean }) => {
               <ChevronRight className="w-3.5 h-3.5" />
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="center" className="bg-[#111] border-gray-800">
+          <DropdownMenuContent align="center" className="bg-card border-border">
             {buildPlanOptions.map(opt => (
               <DropdownMenuItem key={opt.path} onClick={() => navigate(opt.path)} className="text-gray-300 hover:text-white focus:bg-[#FF5500]/10">
                 <opt.icon className="w-4 h-4 mr-2 text-[#FF5500]" />
@@ -176,7 +176,7 @@ const CoachDashboard = ({ embedded = false }: { embedded?: boolean }) => {
               <Loader2 className="w-6 h-6 animate-spin text-[#FF5500]" />
             </div>
           ) : myAthletes.length === 0 && !showDeactivated ? (
-            <div className="rounded-xl border border-gray-800 bg-[#111] py-12 text-center">
+            <div className="rounded-xl border border-border bg-card py-12 text-center">
               <Users className="w-10 h-10 mx-auto text-gray-600 mb-3" />
               <p className="text-gray-400 text-sm">No athletes assigned yet</p>
               <p className="text-xs text-gray-600 mt-1">Use the USERS tab to search and add athletes</p>
@@ -184,7 +184,7 @@ const CoachDashboard = ({ embedded = false }: { embedded?: boolean }) => {
           ) : (
             <>
               {myAthletes.map(a => (
-                <div key={a.id} className="rounded-xl border border-gray-800 bg-[#111] p-3 flex items-center justify-between hover:border-[#FF5500]/20 transition-colors">
+                <div key={a.id} className="rounded-xl border border-border bg-card p-3 flex items-center justify-between hover:border-[#FF5500]/20 transition-colors">
                   <div className="flex items-center gap-3 min-w-0">
                     <Avatar className="h-10 w-10 shrink-0 border border-[#FF5500]/20">
                       <AvatarImage src={a.athlete_profile?.avatar_url || undefined} />
@@ -215,7 +215,7 @@ const CoachDashboard = ({ embedded = false }: { embedded?: boolean }) => {
                           <MoreHorizontal className="w-4 h-4" />
                         </button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="bg-[#111] border-gray-800">
+                      <DropdownMenuContent align="end" className="bg-card border-border">
                         <DropdownMenuItem onClick={() => navigate(`/inbox?compose=1&to=${a.athlete_id}`)} className="text-gray-300 focus:bg-[#FF5500]/10">
                           <MessageSquare className="w-4 h-4 mr-2 text-[#FF5500]" /> Message
                         </DropdownMenuItem>
@@ -243,7 +243,7 @@ const CoachDashboard = ({ embedded = false }: { embedded?: boolean }) => {
               )}
 
               {showDeactivated && endedAthletes.map(a => (
-                <div key={a.id} className="rounded-xl border border-gray-800 bg-[#111] p-3 flex items-center justify-between opacity-50">
+                <div key={a.id} className="rounded-xl border border-border bg-card p-3 flex items-center justify-between opacity-50">
                   <div className="flex items-center gap-3 min-w-0">
                     <Avatar className="h-10 w-10 shrink-0">
                       <AvatarImage src={a.athlete_profile?.avatar_url || undefined} />
@@ -251,7 +251,7 @@ const CoachDashboard = ({ embedded = false }: { embedded?: boolean }) => {
                     </Avatar>
                     <div className="min-w-0">
                       <p className="font-display text-sm tracking-wide text-white truncate">{a.athlete_profile?.display_name || 'Unknown'}</p>
-                      <span className="text-[9px] font-display tracking-wider text-gray-600 border border-gray-700 rounded px-1.5 py-0.5">DEACTIVATED</span>
+                      <span className="text-[9px] font-display tracking-wider text-gray-600 border border-border rounded px-1.5 py-0.5">DEACTIVATED</span>
                     </div>
                   </div>
                   <div className="flex items-center gap-1 shrink-0">
@@ -279,13 +279,13 @@ const CoachDashboard = ({ embedded = false }: { embedded?: boolean }) => {
               <Loader2 className="w-6 h-6 animate-spin text-[#FF5500]" />
             </div>
           ) : pendingRequests.length === 0 ? (
-            <div className="rounded-xl border border-gray-800 bg-[#111] py-12 text-center">
+            <div className="rounded-xl border border-border bg-card py-12 text-center">
               <Clock className="w-10 h-10 mx-auto text-gray-600 mb-3" />
               <p className="text-gray-400 text-sm">No pending requests</p>
             </div>
           ) : (
             pendingRequests.map(r => (
-              <div key={r.id} className="rounded-xl border border-gray-800 bg-[#111] p-3 flex items-center justify-between">
+              <div key={r.id} className="rounded-xl border border-border bg-card p-3 flex items-center justify-between">
                 <div className="flex items-center gap-3 min-w-0">
                   <Avatar className="h-10 w-10 shrink-0 border border-[#FF5500]/20">
                     <AvatarImage src={r.athlete_profile?.avatar_url || undefined} />
@@ -307,7 +307,7 @@ const CoachDashboard = ({ embedded = false }: { embedded?: boolean }) => {
                   </button>
                   <button
                     onClick={() => updateStatus(r.id, 'declined')}
-                    className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-gray-700 text-gray-400 font-display text-[11px] tracking-wider hover:border-gray-500 transition-colors"
+                    className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-border text-gray-400 font-display text-[11px] tracking-wider hover:border-gray-500 transition-colors"
                   >
                     <X className="w-3.5 h-3.5" /> DECLINE
                   </button>

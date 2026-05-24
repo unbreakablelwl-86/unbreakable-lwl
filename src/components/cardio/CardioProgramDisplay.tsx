@@ -60,7 +60,7 @@ export function CardioProgramDisplay({ program, onSave, onBack, isSaving }: Card
       </div>
 
       {/* Phases Overview */}
-      <Card className=" border-border mb-8 border-gray-800 bg-[#111]">
+      <Card className=" border-border mb-8 border-border bg-card">
         <CardContent className="p-6">
           <h3 className="font-display text-lg text-muted-foreground mb-4 tracking-wide">
             PROGRAMME PHASES
@@ -238,7 +238,7 @@ export function CardioProgramDisplay({ program, onSave, onBack, isSaving }: Card
       {/* Tips */}
       <div className="grid md:grid-cols-2 gap-6 mt-8">
         {program.progressionRules && program.progressionRules.length > 0 && (
-          <Card className=" border-border border-gray-800 bg-[#111]">
+          <Card className=" border-border border-border bg-card">
             <CardContent className="p-6">
               <h4 className="font-display text-lg text-primary tracking-wide mb-4 flex items-center gap-2">
                 <TrendingUp className="w-5 h-5" />
@@ -257,7 +257,7 @@ export function CardioProgramDisplay({ program, onSave, onBack, isSaving }: Card
         )}
 
         {program.recoveryTips && program.recoveryTips.length > 0 && (
-          <Card className=" border-border border-gray-800 bg-[#111]">
+          <Card className=" border-border border-border bg-card">
             <CardContent className="p-6">
               <h4 className="font-display text-lg text-primary tracking-wide mb-4 flex items-center gap-2">
                 <Heart className="w-5 h-5" />

@@ -271,7 +271,7 @@ const MindsetBreathing = () => {
 
         <div className="px-4 space-y-4">
           {/* Description Card */}
-          <div className="p-3.5 rounded-xl border border-[#FF5500]/15 bg-[#111]">
+          <div className="p-3.5 rounded-xl border border-[#FF5500]/15 bg-card">
             <p className="text-gray-400 text-sm leading-relaxed">
               Controlled breathing isn't relaxation — it's <span className="text-[#FF5500] font-semibold">nervous system training</span>.
               Every pattern here is built on proven science. Master your breath, master your mind.
@@ -300,7 +300,7 @@ const MindsetBreathing = () => {
                 <button
                   key={exercise.id}
                   onClick={() => selectExercise(exercise)}
-                  className="w-full p-3.5 rounded-xl border border-gray-800 bg-[#111] flex items-center gap-3 hover:border-[#FF5500]/30 transition-all group text-left"
+                  className="w-full p-3.5 rounded-xl border border-border bg-card flex items-center gap-3 hover:border-[#FF5500]/30 transition-all group text-left"
                 >
                   <div className="w-10 h-10 rounded-lg border border-[#FF5500]/20 flex items-center justify-center shrink-0" style={{ background: 'rgba(255,85,0,0.1)' }}>
                     <span className="text-[#FF5500]" style={{ filter: 'drop-shadow(0 0 6px rgba(255,85,0,0.5))' }}>

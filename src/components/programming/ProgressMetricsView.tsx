@@ -108,7 +108,7 @@ export function ProgressMetricsView({ onClose }: ProgressMetricsViewProps) {
             );
           })
         ) : (
-          <Card className="p-8 text-center border-border border-gray-800 bg-[#111]">
+          <Card className="p-8 text-center border-border border-border bg-card">
             <BarChart3 className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
             <h3 className="font-display text-lg text-foreground mb-2">No Progress Data</h3>
             <p className="text-sm text-muted-foreground mb-4">

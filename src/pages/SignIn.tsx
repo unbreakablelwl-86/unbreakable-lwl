@@ -81,7 +81,7 @@ export default function SignIn() {
       {/* Back to home */}
       <button
         onClick={() => navigate('/')}
-        className="absolute top-5 left-5 flex items-center gap-1.5 text-[#666] hover:text-white transition-colors text-sm"
+        className="absolute top-5 left-5 flex items-center gap-1.5 text-muted-foreground hover:text-white transition-colors text-sm"
       >
         <ArrowLeft size={16} /> Back
       </button>
@@ -92,7 +92,7 @@ export default function SignIn() {
         <h1 className="font-heading font-black text-3xl tracking-[0.15em] text-white uppercase">
           UNBREAKABLE
         </h1>
-        <p className="text-[#666] text-xs tracking-[0.2em] uppercase mt-1">Live Without Limits</p>
+        <p className="text-muted-foreground text-xs tracking-[0.2em] uppercase mt-1">Live Without Limits</p>
       </div>
 
       {/* Auth Card */}
@@ -103,11 +103,11 @@ export default function SignIn() {
         boxShadow: '0 0 40px rgba(0,0,0,0.5)',
       }}>
         {/* Tab Toggle */}
-        <div className="flex border-b border-white/[0.06]">
+        <div className="flex border-b border-border">
           <button
             onClick={() => { setMode('signin'); setFormError(null); }}
             className={`flex-1 py-3.5 text-sm font-bold uppercase tracking-wider transition-all relative ${
-              mode === 'signin' ? 'text-[#FF5500]' : 'text-[#555] hover:text-[#888]'
+              mode === 'signin' ? 'text-[#FF5500]' : 'text-muted-foreground hover:text-muted-foreground'
             }`}
           >
             Sign In
@@ -119,7 +119,7 @@ export default function SignIn() {
           <button
             onClick={() => { setMode('signup'); setFormError(null); }}
             className={`flex-1 py-3.5 text-sm font-bold uppercase tracking-wider transition-all relative ${
-              mode === 'signup' ? 'text-[#FF5500]' : 'text-[#555] hover:text-[#888]'
+              mode === 'signup' ? 'text-[#FF5500]' : 'text-muted-foreground hover:text-muted-foreground'
             }`}
           >
             Sign Up
@@ -134,9 +134,9 @@ export default function SignIn() {
           {mode === 'signup' && (
             <>
               <div className="space-y-1.5">
-                <label className="text-[11px] uppercase tracking-wider text-[#666] font-semibold">Full Name</label>
+                <label className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">Full Name</label>
                 <div className="relative">
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#555]" />
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <input
                     type="text"
                     placeholder="Your name"
@@ -149,9 +149,9 @@ export default function SignIn() {
                 </div>
               </div>
               <div className="space-y-1.5">
-                <label className="text-[11px] uppercase tracking-wider text-[#666] font-semibold">Date of Birth</label>
+                <label className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">Date of Birth</label>
                 <div className="relative">
-                  <Cake className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#555]" />
+                  <Cake className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <input
                     type="date"
                     value={dateOfBirth}
@@ -167,9 +167,9 @@ export default function SignIn() {
           )}
 
           <div className="space-y-1.5">
-            <label className="text-[11px] uppercase tracking-wider text-[#666] font-semibold">Email</label>
+            <label className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">Email</label>
             <div className="relative">
-              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#555]" />
+              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <input
                 type="email"
                 placeholder="you@example.com"
@@ -184,7 +184,7 @@ export default function SignIn() {
 
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
-              <label className="text-[11px] uppercase tracking-wider text-[#666] font-semibold">Password</label>
+              <label className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">Password</label>
               {mode === 'signin' && (
                 <Link to="/forgot-password" className="text-[11px] text-[#FF5500] hover:underline font-medium">
                   Forgot password?
@@ -192,7 +192,7 @@ export default function SignIn() {
               )}
             </div>
             <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#555]" />
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <input
                 type={showPassword ? 'text' : 'password'}
                 placeholder="••••••••"
@@ -204,7 +204,7 @@ export default function SignIn() {
                 minLength={6}
               />
               <button type="button" onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-[#555] hover:text-[#888] transition-colors">
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-muted-foreground transition-colors">
                 {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
             </div>
@@ -224,7 +224,7 @@ export default function SignIn() {
                 onChange={e => setAcceptedTerms(e.target.checked)}
                 className="mt-0.5 w-4 h-4 rounded accent-[#FF5500]"
               />
-              <span className="text-[11px] text-[#666] leading-relaxed">
+              <span className="text-[11px] text-muted-foreground leading-relaxed">
                 I agree to the{' '}
                 <Link to="/terms" className="text-[#FF5500] hover:underline">Terms</Link>
                 {' '}and{' '}

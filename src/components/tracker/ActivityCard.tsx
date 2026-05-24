@@ -122,7 +122,7 @@ export function ActivityCard({ run, onKudos, onDelete, onToggleComments, onUpdat
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
     >
-      <Card className="bg-[#111] border-white/[0.06] overflow-hidden">
+      <Card className="bg-card border-border overflow-hidden">
         {/* Header */}
         <div className="p-4 flex items-start gap-3">
           <ClickableAvatar
@@ -140,7 +140,7 @@ export function ActivityCard({ run, onKudos, onDelete, onToggleComments, onUpdat
               username={run.profiles?.username}
               className="font-semibold truncate hover:underline"
             />
-            <p className="text-sm text-[#888]">
+            <p className="text-sm text-muted-foreground">
               {formatDistanceToNow(new Date(run.started_at), { addSuffix: true })}
             </p>
           </div>
@@ -152,7 +152,7 @@ export function ActivityCard({ run, onKudos, onDelete, onToggleComments, onUpdat
               </div>
             )}
             {run.visibility !== 'public' && (
-              <div className="flex items-center gap-1 text-xs text-[#888] bg-muted px-2 py-1 rounded-full">
+              <div className="flex items-center gap-1 text-xs text-muted-foreground bg-muted px-2 py-1 rounded-full">
                 {getVisibilityIcon()}
                 {getVisibilityLabel()}
               </div>
@@ -175,7 +175,7 @@ export function ActivityCard({ run, onKudos, onDelete, onToggleComments, onUpdat
             {run.title || 'Morning Run'}
           </h3>
           {run.description && (
-            <p className="text-[#888] text-sm mt-1">{run.description}</p>
+            <p className="text-muted-foreground text-sm mt-1">{run.description}</p>
           )}
         </div>
 
@@ -185,26 +185,26 @@ export function ActivityCard({ run, onKudos, onDelete, onToggleComments, onUpdat
             <p className="text-2xl font-heading text-primary tracking-wide">
               {run.distance_km.toFixed(2)}
             </p>
-            <p className="text-xs text-[#888] uppercase tracking-wide">km</p>
+            <p className="text-xs text-muted-foreground uppercase tracking-wide">km</p>
           </div>
-          <div className="text-center border-x border-white/[0.06]">
+          <div className="text-center border-x border-border">
             <p className="text-2xl font-heading text-white tracking-wide">
               {formatDuration(run.duration_seconds)}
             </p>
-            <p className="text-xs text-[#888] uppercase tracking-wide">time</p>
+            <p className="text-xs text-muted-foreground uppercase tracking-wide">time</p>
           </div>
           <div className="text-center">
             <p className="text-2xl font-heading text-white tracking-wide">
               {formatPace(run.pace_per_km_seconds)}
             </p>
-            <p className="text-xs text-[#888] uppercase tracking-wide">/km</p>
+            <p className="text-xs text-muted-foreground uppercase tracking-wide">/km</p>
           </div>
         </div>
 
         {/* GPS tracked indicator */}
         {run.is_gps_tracked && (
           <div className="px-4 py-2">
-            <div className="flex items-center gap-2 text-xs text-[#888]">
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
               <div className="w-2 h-2 rounded-full bg-emerald-500" />
               <span>GPS Tracked</span>
             </div>
@@ -213,7 +213,7 @@ export function ActivityCard({ run, onKudos, onDelete, onToggleComments, onUpdat
 
         {/* Additional Stats */}
         {(run.elevation_gain_m || run.calories_burned || run.average_speed_kph) && (
-          <div className="flex items-center gap-4 px-4 py-3 text-sm text-[#888] border-t border-white/[0.06]">
+          <div className="flex items-center gap-4 px-4 py-3 text-sm text-muted-foreground border-t border-border">
             {run.elevation_gain_m && (
               <div className="flex items-center gap-1">
                 <TrendingUp className="w-4 h-4" />
@@ -236,7 +236,7 @@ export function ActivityCard({ run, onKudos, onDelete, onToggleComments, onUpdat
         )}
 
         {/* Actions */}
-        <div className="flex items-center gap-2 px-4 py-3 border-t border-white/[0.06] relative overflow-visible">
+        <div className="flex items-center gap-2 px-4 py-3 border-t border-border relative overflow-visible">
           <AnimatePresence>
             {floatingDumbbells.map((d) => (
               <motion.div
@@ -254,7 +254,7 @@ export function ActivityCard({ run, onKudos, onDelete, onToggleComments, onUpdat
           <Button
             variant="ghost"
             size="sm"
-            className={`gap-2 ${run.has_kudos ? 'text-primary' : 'text-[#888]'}`}
+            className={`gap-2 ${run.has_kudos ? 'text-primary' : 'text-muted-foreground'}`}
             onClick={handleKudos}
             disabled={!user || isLiking}
           >
@@ -269,7 +269,7 @@ export function ActivityCard({ run, onKudos, onDelete, onToggleComments, onUpdat
           <Button
             variant="ghost"
             size="sm"
-            className={`gap-2 ${showComments ? 'text-primary' : 'text-[#888]'}`}
+            className={`gap-2 ${showComments ? 'text-primary' : 'text-muted-foreground'}`}
             onClick={() => setShowComments(!showComments)}
           >
             <MessageCircle className={`w-5 h-5 ${showComments ? 'fill-primary/20' : ''}`} />

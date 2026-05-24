@@ -99,7 +99,7 @@ export function MotivationBanner() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6 }}
-            className="flex-1 text-[13px] text-[#ccc] leading-relaxed font-medium"
+            className="flex-1 text-[13px] text-muted-foreground leading-relaxed font-medium"
           >
             {MOTIVATION_QUOTES[quoteIndex]}
           </motion.p>
@@ -107,7 +107,7 @@ export function MotivationBanner() {
             onClick={dismiss}
             className="flex-shrink-0 p-1 rounded-full hover:bg-white/5 transition-colors"
           >
-            <X size={14} className="text-[#555]" />
+            <X size={14} className="text-muted-foreground" />
           </button>
         </div>
       </motion.div>

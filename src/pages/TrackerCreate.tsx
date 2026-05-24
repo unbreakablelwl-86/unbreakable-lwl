@@ -327,7 +327,7 @@ export default function TrackerCreate() {
               placeholder="e.g., 5K Race Prep"
               value={manualData.name}
               onChange={e => setManualData(prev => ({ ...prev, name: e.target.value }))}
-              className="bg-[#111] border-gray-800 focus:border-[#FF5500]/50"
+              className="bg-card border-border focus:border-[#FF5500]/50"
             />
           </div>
 
@@ -342,7 +342,7 @@ export default function TrackerCreate() {
                   className={`flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-medium shrink-0 transition-all border ${
                     manualData.activityType === opt.value
                       ? 'bg-[#FF5500]/15 text-[#FF5500] border-[#FF5500]/30'
-                      : 'bg-[#111] text-gray-500 border-gray-800'
+                      : 'bg-card text-gray-500 border-border'
                   }`}
                 >
                   {opt.icon && <span className="[&>svg]:w-3.5 [&>svg]:h-3.5">{opt.icon}</span>}
@@ -392,14 +392,14 @@ export default function TrackerCreate() {
             </div>
 
             {manualData.sessions.length === 0 && (
-              <div className="p-6 rounded-xl border border-gray-800 bg-[#111] text-center">
+              <div className="p-6 rounded-xl border border-border bg-card text-center">
                 <Wrench className="w-8 h-8 text-[#FF5500] mx-auto mb-2" style={{ filter: 'drop-shadow(0 0 8px rgba(255,85,0,0.4))' }} />
                 <p className="text-sm text-gray-400">No sessions yet. Tap "Add Session" to build your weekly template.</p>
               </div>
             )}
 
             {manualData.sessions.map((session, idx) => (
-              <div key={idx} className="p-4 rounded-xl border border-gray-800 bg-[#111] space-y-3">
+              <div key={idx} className="p-4 rounded-xl border border-border bg-card space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-display text-[#FF5500]">SESSION {idx + 1}</span>
                   <button onClick={() => removeSession(idx)} className="text-xs text-[#FF5500] hover:text-[#FF5500]">Remove</button>
@@ -408,7 +408,7 @@ export default function TrackerCreate() {
                   placeholder="Session title (e.g., Tempo Run)"
                   value={session.title}
                   onChange={e => updateSession(idx, 'title', e.target.value)}
-                  className="bg-[#0A0A0A] border-gray-800 text-sm"
+                  className="bg-[#0A0A0A] border-border text-sm"
                 />
                 <div className="flex gap-2 overflow-x-auto pb-1">
                   {SESSION_TYPES.map(t => (
@@ -418,7 +418,7 @@ export default function TrackerCreate() {
                       className={`px-2.5 py-1 rounded-full text-[10px] font-medium shrink-0 border transition-all ${
                         session.type === t
                           ? 'bg-[#FF5500]/15 text-[#FF5500] border-[#FF5500]/30'
-                          : 'bg-transparent text-gray-600 border-gray-800'
+                          : 'bg-transparent text-gray-600 border-border'
                       }`}
                     >
                       {t}
@@ -430,20 +430,20 @@ export default function TrackerCreate() {
                     placeholder="Distance (km)"
                     value={session.distance || ''}
                     onChange={e => updateSession(idx, 'distance', e.target.value)}
-                    className="bg-[#0A0A0A] border-gray-800 text-sm"
+                    className="bg-[#0A0A0A] border-border text-sm"
                   />
                   <Input
                     placeholder="Duration (min)"
                     value={session.duration || ''}
                     onChange={e => updateSession(idx, 'duration', e.target.value)}
-                    className="bg-[#0A0A0A] border-gray-800 text-sm"
+                    className="bg-[#0A0A0A] border-border text-sm"
                   />
                 </div>
                 <Input
                   placeholder="Notes / description"
                   value={session.description}
                   onChange={e => updateSession(idx, 'description', e.target.value)}
-                  className="bg-[#0A0A0A] border-gray-800 text-sm"
+                  className="bg-[#0A0A0A] border-border text-sm"
                 />
               </div>
             ))}

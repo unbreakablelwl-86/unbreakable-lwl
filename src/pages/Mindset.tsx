@@ -187,7 +187,7 @@ function ExposureTimer({ protocol, onBack }: { protocol: ExposureProtocol; onBac
         <h2 className="font-display text-2xl text-white mb-2">SESSION COMPLETE</h2>
         <p className="text-gray-400 mb-6">{protocol.name} — {fmtTime(totalDuration)} total</p>
         <div className="flex gap-3">
-          <button onClick={reset} className="px-4 py-2 rounded-xl border border-gray-700 text-gray-400 hover:text-white text-sm">
+          <button onClick={reset} className="px-4 py-2 rounded-xl border border-border text-gray-400 hover:text-white text-sm">
             Repeat
           </button>
           <button onClick={onBack} className="px-4 py-2 rounded-xl bg-[#FF5500] text-white text-sm font-display">
@@ -229,7 +229,7 @@ function ExposureTimer({ protocol, onBack }: { protocol: ExposureProtocol; onBac
 
       {/* Controls */}
       <div className="flex items-center gap-4">
-        <button onClick={reset} className="w-12 h-12 rounded-full border border-gray-700 flex items-center justify-center text-gray-400 hover:text-white">
+        <button onClick={reset} className="w-12 h-12 rounded-full border border-border flex items-center justify-center text-gray-400 hover:text-white">
           <RotateCcw className="w-5 h-5" />
         </button>
         <button
@@ -246,7 +246,7 @@ function ExposureTimer({ protocol, onBack }: { protocol: ExposureProtocol; onBac
       <div className="w-full max-w-xs mt-8 space-y-2">
         {protocol.steps.map((s, i) => (
           <div key={i} className={`flex items-center justify-between px-3 py-2 rounded-lg text-sm ${
-            i === stepIdx ? 'bg-white/5 border border-white/10' : ''
+            i === stepIdx ? 'bg-white/5 border border-border' : ''
           } ${i < stepIdx ? 'opacity-50' : ''}`}>
             <div className="flex items-center gap-2">
               {i < stepIdx ? <Check className="w-3.5 h-3.5 text-[#FF5500]" /> : (
@@ -348,22 +348,22 @@ const Mindset = () => {
             <motion.div key="overview" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-5">
               {/* Quick Stats */}
               <div className="grid grid-cols-3 gap-3">
-                <div className="p-3 rounded-xl border border-gray-800 bg-[#111] text-center">
+                <div className="p-3 rounded-xl border border-border bg-card text-center">
                   <p className="text-[#FF5500] font-display text-xl">{completedToday}/7</p>
                   <p className="text-gray-500 text-[10px] mt-0.5">TODAY'S HABITS</p>
                 </div>
-                <div className="p-3 rounded-xl border border-gray-800 bg-[#111] text-center">
+                <div className="p-3 rounded-xl border border-border bg-card text-center">
                   <p className="text-[#FF5500] font-display text-xl">{activeProgrammes?.length || 0}</p>
                   <p className="text-gray-500 text-[10px] mt-0.5">ACTIVE PROGS</p>
                 </div>
-                <div className="p-3 rounded-xl border border-gray-800 bg-[#111] text-center">
+                <div className="p-3 rounded-xl border border-border bg-card text-center">
                   <p className="text-[#FF5500] font-display text-xl">{programmes?.length || 0}</p>
                   <p className="text-gray-500 text-[10px] mt-0.5">TOTAL PROGS</p>
                 </div>
               </div>
 
               {/* Description */}
-              <div className="p-4 rounded-xl border border-[#FF5500]/15 bg-[#111]">
+              <div className="p-4 rounded-xl border border-[#FF5500]/15 bg-card">
                 <p className="text-gray-400 text-sm leading-relaxed">
                   Your mind is your ultimate weapon. The <span className="text-[#FF5500] font-semibold">Unbreakable Mindset Method</span> combines
                   controlled breathwork, cold & heat exposure, focus training, and daily habit tracking to build 
@@ -387,7 +387,7 @@ const Mindset = () => {
                   <button
                     key={card.tab}
                     onClick={() => setActiveTab(card.tab)}
-                    className="w-full flex items-center gap-3 p-3.5 rounded-xl border border-gray-800 bg-[#111] hover:border-gray-700 hover:bg-[#151515] transition-all text-left"
+                    className="w-full flex items-center gap-3 p-3.5 rounded-xl border border-border bg-card hover:border-border hover:bg-[#151515] transition-all text-left"
                   >
                     <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 border"
                       style={{ borderColor: `${card.colour}33`, background: `${card.colour}10` }}>
@@ -422,7 +422,7 @@ const Mindset = () => {
           {/* ═══ BREATHWORK TAB ═══ */}
           {activeTab === 'breathwork' && (
             <motion.div key="breathwork" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-4">
-              <div className="p-4 rounded-xl border border-[#FF5500]/15 bg-[#111]">
+              <div className="p-4 rounded-xl border border-[#FF5500]/15 bg-card">
                 <h3 className="font-display text-sm text-[#FF5500] mb-1">BREATHE WITH PURPOSE</h3>
                 <p className="text-gray-400 text-sm leading-relaxed">
                   Controlled breathing isn't relaxation — it's <span className="text-[#FF5500]">nervous system training</span>. 
@@ -434,10 +434,10 @@ const Mindset = () => {
               {/* Link to full breathing page */}
               <button
                 onClick={() => navigate('/mindset/breathing')}
-                className="w-full p-5 rounded-xl border border-[#FF5500]/20 bg-[#111] hover:border-[#FF5500]/40 transition-all text-left"
+                className="w-full p-5 rounded-xl border border-[#FF5500]/20 bg-card hover:border-[#FF5500]/40 transition-all text-left"
               >
                 <div className="flex items-center gap-3 mb-3">
-                  <div className="w-12 h-12 rounded-xl bg-[#111] border border-[#FF5500]/20 flex items-center justify-center"
+                  <div className="w-12 h-12 rounded-xl bg-card border border-[#FF5500]/20 flex items-center justify-center"
                     style={{ boxShadow: '0 0 15px rgba(255,85,0,0.15)' }}>
                     <Wind className="w-6 h-6 text-[#FF5500]" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.5))' }} />
                   </div>
@@ -459,7 +459,7 @@ const Mindset = () => {
                 </div>
               </button>
 
-              <div className="p-3 rounded-xl border border-gray-800 bg-[#111]">
+              <div className="p-3 rounded-xl border border-border bg-card">
                 <div className="flex items-center gap-2 mb-2">
                   <Volume2 className="w-4 h-4 text-gray-500" />
                   <span className="text-xs text-gray-400">Voice guidance available for all breathing sessions</span>
@@ -475,7 +475,7 @@ const Mindset = () => {
           {/* ═══ COLD & HEAT TAB ═══ */}
           {activeTab === 'exposure' && (
             <motion.div key="exposure" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-4">
-              <div className="p-4 rounded-xl border border-[#FF5500]/15 bg-[#111]">
+              <div className="p-4 rounded-xl border border-[#FF5500]/15 bg-card">
                 <h3 className="font-display text-sm text-[#FF5500] mb-1">THE UNBREAKABLE EXPOSURE METHOD</h3>
                 <p className="text-gray-400 text-sm leading-relaxed">
                   Cold and heat exposure rewire your stress response. Cold showers, ice baths, and sauna protocols
@@ -496,7 +496,7 @@ const Mindset = () => {
                     className={`px-3 py-1.5 rounded-full text-xs font-display border transition-all ${
                       exposureFilter === f.id
                         ? 'bg-[#FF5500]/15 text-[#FF5500] border-[#FF5500]/30'
-                        : 'text-gray-500 border-gray-800'
+                        : 'text-gray-500 border-border'
                     }`}
                   >
                     {f.label}
@@ -513,7 +513,7 @@ const Mindset = () => {
                     <button
                       key={protocol.id}
                       onClick={() => setActiveProtocol(protocol)}
-                      className="w-full text-left p-4 rounded-xl border border-gray-800 bg-[#111] hover:border-gray-700 hover:bg-[#151515] transition-all"
+                      className="w-full text-left p-4 rounded-xl border border-border bg-card hover:border-border hover:bg-[#151515] transition-all"
                     >
                       <div className="flex items-start gap-3">
                         <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 border"
@@ -539,7 +539,7 @@ const Mindset = () => {
                 })}
               </div>
 
-              <div className="p-3 rounded-xl border border-gray-800 bg-[#111] text-center">
+              <div className="p-3 rounded-xl border border-border bg-card text-center">
                 <p className="text-gray-500 text-xs">
                   Always consult a healthcare professional before starting cold or heat exposure protocols.
                   <br/>Start slow, build gradually. <span className="text-[#FF5500]">Your body adapts.</span>
@@ -551,7 +551,7 @@ const Mindset = () => {
           {/* ═══ FOCUS GAMES TAB ═══ */}
           {activeTab === 'games' && (
             <motion.div key="games" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-4">
-              <div className="p-4 rounded-xl border border-[#FF5500]/15 bg-[#111]">
+              <div className="p-4 rounded-xl border border-[#FF5500]/15 bg-card">
                 <h3 className="font-display text-sm text-[#FF5500] mb-1">SWITCH OFF THE WORLD. SWITCH ON YOUR MIND.</h3>
                 <p className="text-gray-400 text-sm leading-relaxed">
                   These games are your switch-off. No distractions, no noise — just you and the screen. 
@@ -568,7 +568,7 @@ const Mindset = () => {
                 <button
                   key={game.name}
                   onClick={() => navigate('/mindset/games')}
-                  className="w-full text-left p-4 rounded-xl border border-gray-800 bg-[#111] hover:border-gray-700 hover:bg-[#151515] transition-all"
+                  className="w-full text-left p-4 rounded-xl border border-border bg-card hover:border-border hover:bg-[#151515] transition-all"
                 >
                   <div className="flex items-start gap-3">
                     <div className="w-10 h-10 rounded-lg bg-[#FF5500]/10 border border-[#FF5500]/20 flex items-center justify-center shrink-0">
@@ -608,7 +608,7 @@ const Mindset = () => {
           {/* ═══ PROGRAMMES TAB ═══ */}
           {activeTab === 'programmes' && (
             <motion.div key="programmes" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-4">
-              <div className="p-4 rounded-xl border border-[#FF5500]/15 bg-[#111]">
+              <div className="p-4 rounded-xl border border-[#FF5500]/15 bg-card">
                 <h3 className="font-display text-sm text-[#FF5500] mb-1">MINDSET PROGRAMMES</h3>
                 <p className="text-gray-400 text-sm leading-relaxed">
                   Build a structured mindset training plan. Let AI create one based on your goals, 
@@ -621,7 +621,7 @@ const Mindset = () => {
               <div className="grid grid-cols-2 gap-3">
                 <button
                   onClick={() => navigate('/help')}
-                  className="p-4 rounded-xl border border-[#FF5500]/20 bg-[#111] hover:border-[#FF5500]/40 transition-all text-left"
+                  className="p-4 rounded-xl border border-[#FF5500]/20 bg-card hover:border-[#FF5500]/40 transition-all text-left"
                 >
                   <div className="w-10 h-10 rounded-lg bg-[#FF5500]/10 border border-[#FF5500]/20 flex items-center justify-center mb-3"
                     style={{ boxShadow: '0 0 12px rgba(255,85,0,0.12)' }}>
@@ -632,9 +632,9 @@ const Mindset = () => {
                 </button>
                 <button
                   onClick={() => {/* Manual builder could link to existing MindsetProgrammes component */}}
-                  className="p-4 rounded-xl border border-gray-800 bg-[#111] hover:border-gray-700 transition-all text-left"
+                  className="p-4 rounded-xl border border-border bg-card hover:border-border transition-all text-left"
                 >
-                  <div className="w-10 h-10 rounded-lg bg-gray-800 border border-gray-700 flex items-center justify-center mb-3">
+                  <div className="w-10 h-10 rounded-lg bg-gray-800 border border-border flex items-center justify-center mb-3">
                     <Settings2 className="w-5 h-5 text-gray-400" />
                   </div>
                   <h4 className="font-display text-xs text-white">MANUAL BUILD</h4>
@@ -670,7 +670,7 @@ const Mindset = () => {
                 <div className="space-y-2">
                   <h3 className="text-xs font-display tracking-wider text-gray-400">ALL PROGRAMMES</h3>
                   {programmes.filter(p => !p.is_active).map(p => (
-                    <div key={p.id} className="p-3 rounded-xl border border-gray-800 bg-[#111]">
+                    <div key={p.id} className="p-3 rounded-xl border border-border bg-card">
                       <div className="flex items-center justify-between">
                         <div>
                           <h4 className="font-display text-sm text-white">{p.name}</h4>
@@ -688,7 +688,7 @@ const Mindset = () => {
               )}
 
               {(!programmes || programmes.length === 0) && !progsLoading && (
-                <div className="p-6 rounded-xl border border-gray-800 bg-[#111] text-center">
+                <div className="p-6 rounded-xl border border-border bg-card text-center">
                   <Brain className="w-8 h-8 text-[#FF5500] mx-auto mb-2" style={{ filter: 'drop-shadow(0 0 8px rgba(255,85,0,0.4))' }} />
                   <p className="text-gray-400 text-sm">No programmes yet. Build one to start your mindset training journey.</p>
                 </div>
@@ -761,7 +761,7 @@ function HabitsTab({ habits, saveHabits, isToday, user, completedToday, navigate
   return (
     <motion.div key="habits" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-4">
       {/* Description */}
-      <div className="p-3.5 rounded-xl border border-[#FF5500]/15 bg-[#111]">
+      <div className="p-3.5 rounded-xl border border-[#FF5500]/15 bg-card">
         <h3 className="font-display text-sm text-[#FF5500] mb-1">DAILY HABITS</h3>
         <p className="text-gray-400 text-sm leading-relaxed">
           Consistency beats intensity. Track every day to build unstoppable momentum.
@@ -770,7 +770,7 @@ function HabitsTab({ habits, saveHabits, isToday, user, completedToday, navigate
       </div>
 
       {/* Today's progress */}
-      <div className="p-4 rounded-xl border border-gray-800 bg-[#111]">
+      <div className="p-4 rounded-xl border border-border bg-card">
         <div className="flex items-center justify-between mb-3">
           <span className="text-xs font-display text-gray-400 tracking-wider">TODAY'S PROGRESS</span>
           <span className="text-xs font-display text-[#FF5500]">{completedToday}/{totalHabits}</span>
@@ -791,7 +791,7 @@ function HabitsTab({ habits, saveHabits, isToday, user, completedToday, navigate
                 className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all border ${
                   active
                     ? 'bg-[#FF5500]/10 border-[#FF5500]/20'
-                    : 'bg-[#0a0a0a] border-gray-800 hover:border-gray-700'
+                    : 'bg-background border-border hover:border-border'
                 }`}
                 disabled={!isToday || !user}
               >
@@ -809,7 +809,7 @@ function HabitsTab({ habits, saveHabits, isToday, user, completedToday, navigate
       </div>
 
       {/* Water Tracker — 8 Glasses */}
-      <div className="p-4 rounded-xl border border-gray-800 bg-[#111]">
+      <div className="p-4 rounded-xl border border-border bg-card">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <Droplets className="w-4 h-4 text-[#FF5500]" style={{ filter: waterComplete ? 'drop-shadow(0 0 6px rgba(255,85,0,0.6))' : 'none' }} />
@@ -833,7 +833,7 @@ function HabitsTab({ habits, saveHabits, isToday, user, completedToday, navigate
                   className={`w-full aspect-[3/4] rounded-lg border-2 transition-all relative overflow-hidden ${
                     filled
                       ? 'border-[#FF5500]/40'
-                      : 'border-gray-700 hover:border-gray-600'
+                      : 'border-border hover:border-gray-600'
                   }`}
                   style={filled ? { boxShadow: '0 0 8px rgba(255,85,0,0.3)' } : {}}
                 >
@@ -865,7 +865,7 @@ function HabitsTab({ habits, saveHabits, isToday, user, completedToday, navigate
       </div>
 
       {/* Daily Journal */}
-      <div className="p-4 rounded-xl border border-gray-800 bg-[#111]">
+      <div className="p-4 rounded-xl border border-border bg-card">
         <div className="flex items-center justify-between mb-3">
           <span className="text-xs font-display text-[#FF5500] tracking-wider">DAILY JOURNAL</span>
           <span className={`text-xs ${journalText.trim().length >= journalMinChars ? 'text-[#FF5500]' : 'text-gray-600'}`}>
@@ -876,7 +876,7 @@ function HabitsTab({ habits, saveHabits, isToday, user, completedToday, navigate
           value={journalText}
           onChange={(e) => { setJournalText(e.target.value); setJournalSaved(false); }}
           placeholder="Reflect on your day — what went well, what you're grateful for, what you'll improve tomorrow..."
-          className="w-full bg-[#0a0a0a] border border-gray-800 rounded-lg p-3 text-sm text-gray-300 placeholder-gray-600 resize-none focus:outline-none focus:border-[#FF5500]/30 transition-colors"
+          className="w-full bg-background border border-border rounded-lg p-3 text-sm text-gray-300 placeholder-gray-600 resize-none focus:outline-none focus:border-[#FF5500]/30 transition-colors"
           rows={4}
           disabled={!isToday || !user}
         />
@@ -910,7 +910,7 @@ function HabitsTab({ habits, saveHabits, isToday, user, completedToday, navigate
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 50 }}
-            className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 bg-[#111] border border-[#FF5500]/30 rounded-xl px-6 py-3 shadow-lg"
+            className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 bg-card border border-[#FF5500]/30 rounded-xl px-6 py-3 shadow-lg"
             style={{ boxShadow: '0 0 20px rgba(255,85,0,0.2)' }}
           >
             <div className="flex items-center gap-2">
@@ -953,7 +953,7 @@ function JournalHistory({ userId }: { userId?: string }) {
   if (!userId) return null;
 
   return (
-    <div className="rounded-xl border border-gray-800 bg-[#111] overflow-hidden">
+    <div className="rounded-xl border border-border bg-card overflow-hidden">
       <button
         onClick={() => setExpanded(!expanded)}
         className="w-full flex items-center justify-between p-3.5 hover:bg-[#151515] transition-all"
@@ -989,7 +989,7 @@ function JournalHistory({ userId }: { userId?: string }) {
                 <p className="text-gray-600 text-sm text-center py-4">No journal entries yet — start writing today!</p>
               )}
               {!loading && entries.map((entry) => (
-                <div key={entry.habit_date} className="p-3 rounded-lg border border-gray-800/50 bg-[#0a0a0a]">
+                <div key={entry.habit_date} className="p-3 rounded-lg border border-border/50 bg-background">
                   <div className="flex items-center gap-2 mb-2">
                     <Calendar className="w-3.5 h-3.5 text-[#FF5500]" />
                     <span className="text-xs font-display text-[#FF5500] tracking-wider">

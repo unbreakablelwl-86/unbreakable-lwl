@@ -208,7 +208,7 @@ export function ProfileView() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
       >
-        <Card className=" border-border overflow-hidden border-gray-800 bg-[#111]">
+        <Card className=" border-border overflow-hidden border-border bg-card">
           <div className="h-32 bg-gradient-to-r from-primary/20 to-primary/5" />
           
           <div className="px-6 pb-6">
@@ -471,7 +471,7 @@ export function ProfileView() {
           <CoachingBioForm />
 
           {/* Combined Programme Library */}
-          <Card className=" border-border p-6 border-gray-800 bg-[#111]">
+          <Card className=" border-border p-6 border-border bg-card">
             <button
               onClick={() => setLibraryOpen(!libraryOpen)}
               className="flex items-center justify-between w-full"

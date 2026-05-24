@@ -73,25 +73,25 @@ export default function Explore() {
   const showSearchResults = isSearchFocused && query.length >= 2;
 
   return (
-    <div className="min-h-screen bg-[#080808]">
+    <div className="min-h-screen bg-background">
 <main className="pt-20 pb-20">
         <div className="max-w-2xl mx-auto px-4">
           {/* Search Bar */}
-          <div className="sticky top-16 z-10 bg-[#080808] py-2 -mx-4 px-4">
+          <div className="sticky top-16 z-10 bg-background py-2 -mx-4 px-4">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#888]" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
                 placeholder="Search members..."
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 onFocus={() => setIsSearchFocused(true)}
-                className="pl-10 bg-[#1a1a1a]/50 border-0 h-10 rounded-lg font-heading text-sm placeholder:text-[#888]/60"
+                className="pl-10 bg-muted/50 border-0 h-10 rounded-lg font-heading text-sm placeholder:text-muted-foreground/60"
                 autoFocus
               />
               {query && (
                 <button
                   onClick={() => { setQuery(''); clearResults(); }}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#888] hover:text-white"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-white"
                 >
                   ×
                 </button>
@@ -109,7 +109,7 @@ export default function Explore() {
               )}
               {!searchLoading && results.length === 0 && (
                 <div className="text-center py-8">
-                  <p className="text-[#888] text-sm">No results for "{query}"</p>
+                  <p className="text-muted-foreground text-sm">No results for "{query}"</p>
                 </div>
               )}
               {!searchLoading && results.map((result) => (
@@ -117,7 +117,7 @@ export default function Explore() {
                   key={result.user_id}
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="flex items-center gap-3 p-3 rounded-lg hover:bg-[#1a1a1a]/50 transition-colors cursor-pointer"
+                  className="flex items-center gap-3 p-3 rounded-lg hover:bg-muted/50 transition-colors cursor-pointer"
                   onClick={() => {
                     if (user?.id === result.user_id) {
                       navigate('/profile');
@@ -137,7 +137,7 @@ export default function Explore() {
                       {result.display_name || result.username || 'Member'}
                     </p>
                     {result.username && (
-                      <p className="text-xs text-[#888] truncate">@{result.username}</p>
+                      <p className="text-xs text-muted-foreground truncate">@{result.username}</p>
                     )}
                   </div>
                   <div onClick={(e) => e.stopPropagation()}>
@@ -164,7 +164,7 @@ export default function Explore() {
                     return (
                       <div
                         key={post.id}
-                        className="relative aspect-square bg-[#1a1a1a] cursor-pointer group overflow-hidden"
+                        className="relative aspect-square bg-muted cursor-pointer group overflow-hidden"
                         onClick={() => {
                           // Could open post detail — for now just go to feed
                           navigate('/');
@@ -198,9 +198,9 @@ export default function Explore() {
                 </div>
               ) : (
                 <div className="text-center py-16">
-                  <Grid3X3 className="w-16 h-16 text-[#888]/30 mx-auto mb-4" />
+                  <Grid3X3 className="w-16 h-16 text-muted-foreground/30 mx-auto mb-4" />
                   <p className="text-white font-heading tracking-wide text-lg">Explore</p>
-                  <p className="text-sm text-[#888] mt-1">Photos and videos from the community will appear here</p>
+                  <p className="text-sm text-muted-foreground mt-1">Photos and videos from the community will appear here</p>
                 </div>
               )}
             </>

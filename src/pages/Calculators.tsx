@@ -235,7 +235,7 @@ const Calculators = () => {
       <main className="container mx-auto px-6 py-8">
         <div className="max-w-6xl mx-auto">
           {/* Description Card */}
-          <div className="p-3.5 rounded-xl border border-[#FF5500]/15 bg-[#111] mb-4">
+          <div className="p-3.5 rounded-xl border border-[#FF5500]/15 bg-card mb-4">
             <p className="text-gray-400 text-sm leading-relaxed">
               {hero.intro}{' '}
               <span className="text-[#FF5500] font-semibold">{hero.emphasis}</span>.{' '}
@@ -247,7 +247,7 @@ const Calculators = () => {
           {/* Calculator Grid */}
           <div className="grid lg:grid-cols-2 gap-8">
             {/* Form */}
-            <div className="rounded-xl border border-gray-800 bg-[#111] p-4">
+            <div className="rounded-xl border border-border bg-card p-4">
               <h3 className="font-display text-2xl text-primary mb-8 tracking-wide text-center">
                 {activeTab === 'strength' && 'ENTER YOUR LIFT'}
                 {activeTab === 'fuel' && 'ENTER YOUR DETAILS'}
@@ -301,7 +301,7 @@ const Calculators = () => {
 
 function EmptyState({ emoji, title, description }: { emoji: string; title: string; description: string }) {
   return (
-    <div className="rounded-xl border border-gray-800 bg-[#111] p-4 h-full flex items-center justify-center min-h-[450px]">
+    <div className="rounded-xl border border-border bg-card p-4 h-full flex items-center justify-center min-h-[450px]">
       <div className="text-center">
         <div className="w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
           <span className="text-5xl">{emoji}</span>

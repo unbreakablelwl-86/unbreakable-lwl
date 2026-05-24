@@ -301,7 +301,7 @@ export function CoachingBioForm() {
 
   if (loading) {
     return (
-      <Card className="border-primary/30 border-gray-800 bg-[#111]">
+      <Card className="border-primary/30 border-border bg-card">
         <CardContent className="py-8 flex justify-center">
           <Loader2 className="w-6 h-6 animate-spin text-primary" />
         </CardContent>
@@ -312,7 +312,7 @@ export function CoachingBioForm() {
   const weightUnit = useMetricWeight ? 'kg' : 'lb';
 
   return (
-    <Card className="border-primary/30 border-gray-800 bg-[#111]">
+    <Card className="border-primary/30 border-border bg-card">
       <CardHeader>
         <div className="flex items-center gap-2">
           <Flame className="w-5 h-5 text-primary" />

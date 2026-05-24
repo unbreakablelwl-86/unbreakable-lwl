@@ -44,7 +44,7 @@ export default function FuelRecipes() {
           </div>
         ) : (
           <div className="max-w-2xl mx-auto">
-            <Card className="p-8 text-center border-2 border-primary/30 border-gray-800 bg-[#111]">
+            <Card className="p-8 text-center border-2 border-primary/30 border-border bg-card">
               <Flame className="w-16 h-16 text-primary mx-auto mb-6" />
               <h2 className="font-display text-2xl tracking-wide mb-4">
                 SIGN IN TO ACCESS RECIPES

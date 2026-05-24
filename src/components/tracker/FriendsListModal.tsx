@@ -69,7 +69,7 @@ export function FriendsListModal({ isOpen, onClose }: FriendsListModalProps) {
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="sm:max-w-md bg-card border-border bg-[#0a0a0a] border-gray-800">
+        <DialogContent className="sm:max-w-md bg-card border-border bg-background border-border">
           <DialogHeader>
             <DialogTitle className="font-display text-xl tracking-wide">
               My Friends ({friends.length})

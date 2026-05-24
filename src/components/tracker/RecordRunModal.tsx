@@ -502,7 +502,7 @@ export function RecordRunModal({ isOpen, onClose }: RecordRunModalProps) {
       />
       
       <Dialog open={isOpen} onOpenChange={handleClose}>
-        <DialogContent className="sm:max-w-lg bg-card border-border max-h-[90vh] overflow-y-auto bg-[#0a0a0a] border-gray-800">
+        <DialogContent className="sm:max-w-lg bg-card border-border max-h-[90vh] overflow-y-auto bg-background border-border">
           <DialogHeader>
             <DialogTitle className="font-display text-2xl tracking-wide text-center">
               RECORD YOUR RUN

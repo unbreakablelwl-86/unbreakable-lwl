@@ -192,7 +192,7 @@ export default function CoachCommandCentre() {
     <PaywallGate feature="coach_command">
     <div className="h-screen flex flex-col" style={{ background: '#080808' }}>
       {/* Top bar */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-800 shrink-0">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-border shrink-0">
         <div className="flex items-center gap-3">
           <button onClick={() => navigate('/')} className="text-gray-500 hover:text-gray-300 transition-colors">
             <ArrowLeft className="w-5 h-5" />
@@ -201,7 +201,7 @@ export default function CoachCommandCentre() {
             <span className="text-[#FF5500]">COMMAND</span>
             <span className="text-white"> CENTRE</span>
           </h1>
-          <span className="text-[10px] font-display tracking-wider text-gray-600 border border-gray-700 rounded px-2 py-0.5">
+          <span className="text-[10px] font-display tracking-wider text-gray-600 border border-border rounded px-2 py-0.5">
             {role?.toUpperCase()}
           </span>
         </div>
@@ -219,9 +219,9 @@ export default function CoachCommandCentre() {
 
       <div className="flex flex-1 overflow-hidden">
         {/* ─── LEFT SIDEBAR ─── */}
-        <div className={`${sidebarCollapsed ? 'w-16' : 'w-72'} border-r border-gray-800 flex flex-col shrink-0 transition-all duration-200`}>
+        <div className={`${sidebarCollapsed ? 'w-16' : 'w-72'} border-r border-border flex flex-col shrink-0 transition-all duration-200`}>
           {/* Sidebar header */}
-          <div className="p-3 border-b border-gray-800 flex items-center justify-between">
+          <div className="p-3 border-b border-border flex items-center justify-between">
             {!sidebarCollapsed && (
               <div className="relative flex-1 mr-2">
                 <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-600" />
@@ -229,7 +229,7 @@ export default function CoachCommandCentre() {
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
                   placeholder="Search clients..."
-                  className="w-full bg-[#111] border border-gray-800 rounded-lg pl-8 pr-3 py-1.5 text-sm text-gray-300 placeholder-gray-600 focus:outline-none focus:border-[#FF5500]/30"
+                  className="w-full bg-card border border-border rounded-lg pl-8 pr-3 py-1.5 text-sm text-gray-300 placeholder-gray-600 focus:outline-none focus:border-[#FF5500]/30"
                 />
               </div>
             )}
@@ -252,7 +252,7 @@ export default function CoachCommandCentre() {
           )}
 
           {/* Divider */}
-          <div className="border-t border-gray-800 mx-3" />
+          <div className="border-t border-border mx-3" />
 
           {/* Client list */}
           <div className="flex-1 overflow-y-auto">
@@ -333,7 +333,7 @@ export default function CoachCommandCentre() {
           ) : (
             <>
               {/* Chat header */}
-              <div className="flex items-center justify-between px-4 py-3 border-b border-gray-800 shrink-0">
+              <div className="flex items-center justify-between px-4 py-3 border-b border-border shrink-0">
                 <div className="flex items-center gap-3">
                   <Avatar className="h-9 w-9 border border-[#FF5500]/20">
                     <AvatarImage src={selectedClient.avatar || undefined} />
@@ -407,16 +407,16 @@ export default function CoachCommandCentre() {
                             </div>
                           )}
                           {msg.image_url && (
-                            <img src={msg.image_url} alt="" className="max-w-full rounded-lg mb-1 border border-gray-800" />
+                            <img src={msg.image_url} alt="" className="max-w-full rounded-lg mb-1 border border-border" />
                           )}
                           {msg.video_url && (
-                            <video src={msg.video_url} controls className="max-w-full rounded-lg mb-1 border border-gray-800" />
+                            <video src={msg.video_url} controls className="max-w-full rounded-lg mb-1 border border-border" />
                           )}
                           {msg.content && (
                             <div className={`inline-block px-3 py-2 rounded-xl text-sm leading-relaxed ${
                               isMe
                                 ? 'bg-[#FF5500] text-white rounded-tr-sm'
-                                : 'bg-[#111] text-gray-300 border border-gray-800 rounded-tl-sm'
+                                : 'bg-card text-gray-300 border border-border rounded-tl-sm'
                             }`}>
                               {msg.content}
                             </div>
@@ -430,9 +430,9 @@ export default function CoachCommandCentre() {
               </div>
 
               {/* Message input */}
-              <div className="border-t border-gray-800 px-4 py-3 shrink-0">
+              <div className="border-t border-border px-4 py-3 shrink-0">
                 {mediaAttachment && (
-                  <div className="flex items-center gap-2 mb-2 px-3 py-2 rounded-lg bg-[#111] border border-gray-800">
+                  <div className="flex items-center gap-2 mb-2 px-3 py-2 rounded-lg bg-card border border-border">
                     {mediaAttachment.type === 'image' ? <Image className="w-4 h-4 text-[#FF5500]" /> : <Video className="w-4 h-4 text-[#FF5500]" />}
                     <span className="text-xs text-gray-400 truncate flex-1">{mediaAttachment.file?.name || 'Attachment'}</span>
                     <button onClick={() => setMediaAttachment(null)} className="text-gray-600 hover:text-gray-400"><X className="w-3.5 h-3.5" /></button>
@@ -446,7 +446,7 @@ export default function CoachCommandCentre() {
                     onChange={e => setMessageText(e.target.value)}
                     onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); } }}
                     placeholder={`Message ${selectedClient.name}...`}
-                    className="flex-1 bg-[#111] border border-gray-800 rounded-xl px-4 py-2.5 text-sm text-gray-300 placeholder-gray-600 focus:outline-none focus:border-[#FF5500]/30 transition-colors"
+                    className="flex-1 bg-card border border-border rounded-xl px-4 py-2.5 text-sm text-gray-300 placeholder-gray-600 focus:outline-none focus:border-[#FF5500]/30 transition-colors"
                   />
                   <button
                     onClick={handleSend}
@@ -463,8 +463,8 @@ export default function CoachCommandCentre() {
 
         {/* ─── RIGHT PANEL ─── */}
         {rightPanel && selectedClient && (
-          <div className="w-72 border-l border-gray-800 overflow-y-auto shrink-0">
-            <div className="p-4 border-b border-gray-800 flex items-center justify-between">
+          <div className="w-72 border-l border-border overflow-y-auto shrink-0">
+            <div className="p-4 border-b border-border flex items-center justify-between">
               <p className="font-display text-xs tracking-wider text-gray-400">
                 {rightPanel === 'profile' ? 'CLIENT PROFILE' : 'QUICK ACTIONS'}
               </p>
@@ -491,7 +491,7 @@ export default function CoachCommandCentre() {
                   <span className={`text-[10px] font-display tracking-wider px-2 py-0.5 rounded-full border ${
                     selectedClient.status === 'active' ? 'text-[#FF5500] bg-[#FF5500]/10 border-[#FF5500]/20' :
                     selectedClient.status === 'pending' ? 'text-[#FF5500] bg-[#FF5500]/10 border-[#FF5500]/20' :
-                    'text-gray-500 bg-gray-800 border-gray-700'
+                    'text-gray-500 bg-gray-800 border-border'
                   }`}>
                     {selectedClient.status.toUpperCase()}
                   </span>
@@ -499,7 +499,7 @@ export default function CoachCommandCentre() {
 
                 <button
                   onClick={() => navigate(`/user/${selectedClient.id}`)}
-                  className="w-full flex items-center justify-between px-3 py-2 rounded-lg border border-gray-800 bg-[#111] text-gray-400 hover:border-[#FF5500]/20 hover:text-gray-300 transition-colors text-xs"
+                  className="w-full flex items-center justify-between px-3 py-2 rounded-lg border border-border bg-card text-gray-400 hover:border-[#FF5500]/20 hover:text-gray-300 transition-colors text-xs"
                 >
                   <span className="flex items-center gap-2"><Eye className="w-3.5 h-3.5 text-[#FF5500]" /> View Full Profile</span>
                   <ChevronRight className="w-3.5 h-3.5" />
@@ -514,7 +514,7 @@ export default function CoachCommandCentre() {
                   <button
                     key={i}
                     onClick={() => action.path && navigate(action.path)}
-                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg border border-gray-800 bg-[#111] text-gray-300 hover:border-[#FF5500]/20 hover:text-white transition-colors"
+                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg border border-border bg-card text-gray-300 hover:border-[#FF5500]/20 hover:text-white transition-colors"
                   >
                     <div className="w-8 h-8 rounded-lg bg-[#FF5500]/10 border border-[#FF5500]/20 flex items-center justify-center shrink-0">
                       <action.icon className="w-4 h-4 text-[#FF5500]" />
@@ -523,11 +523,11 @@ export default function CoachCommandCentre() {
                   </button>
                 ))}
 
-                <div className="border-t border-gray-800 pt-3 mt-3">
+                <div className="border-t border-border pt-3 mt-3">
                   <p className="text-[10px] font-display tracking-wider text-gray-600 mb-2">NOTES</p>
                   <textarea
                     placeholder="Add private notes about this client..."
-                    className="w-full bg-[#111] border border-gray-800 rounded-lg p-3 text-sm text-gray-300 placeholder-gray-600 focus:outline-none focus:border-[#FF5500]/30 resize-none h-24 transition-colors"
+                    className="w-full bg-card border border-border rounded-lg p-3 text-sm text-gray-300 placeholder-gray-600 focus:outline-none focus:border-[#FF5500]/30 resize-none h-24 transition-colors"
                   />
                 </div>
               </div>

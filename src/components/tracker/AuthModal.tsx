@@ -71,9 +71,9 @@ export function AuthModal({ isOpen, onClose, defaultMode = 'signin' }: AuthModal
           return;
         }
         
-        console.log('Attempting signup with email:', email, 'name:', fullName);
+        // Signup attempt
         const { error } = await signUp(email, password, fullName);
-        console.log('Signup result - error:', error);
+        if (error) console.error('Signup error:', error.message);
         if (error) {
           console.error('Sign up error details:', error.message, error);
           let msg: string;
@@ -117,7 +117,7 @@ export function AuthModal({ isOpen, onClose, defaultMode = 'signin' }: AuthModal
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md bg-card border-border bg-[#0a0a0a] border-gray-800">
+      <DialogContent className="sm:max-w-md bg-card border-border bg-background border-border">
         <DialogHeader>
           <DialogTitle className="font-display text-2xl tracking-wide text-center">
             {mode === 'signin' ? 'WELCOME BACK' : 'JOIN THE MOVEMENT'}

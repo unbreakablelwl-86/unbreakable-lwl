@@ -454,7 +454,7 @@ export function StoriesSection() {
                 style={{ background: 'rgba(20,20,20,0.8)' }}>
                 <Avatar className="w-full h-full">
                   <AvatarImage src={profile?.avatar_url || undefined} />
-                  <AvatarFallback className="bg-[#1a1a1a] text-[#888] font-heading text-sm font-bold">
+                  <AvatarFallback className="bg-muted text-muted-foreground font-heading text-sm font-bold">
                     {getInitials(profile?.display_name)}
                   </AvatarFallback>
                 </Avatar>
@@ -464,7 +464,7 @@ export function StoriesSection() {
                 <Plus className="w-3 h-3 text-white" />
               </div>
             </div>
-            <span className="text-[11px] text-[#888] font-heading font-semibold tracking-wide">
+            <span className="text-[11px] text-muted-foreground font-heading font-semibold tracking-wide">
               Your Story
             </span>
           </button>
@@ -486,13 +486,13 @@ export function StoriesSection() {
                 <div className="w-[60px] h-[60px] rounded-full border-2 border-[#080808] overflow-hidden">
                   <Avatar className="w-full h-full">
                     <AvatarImage src={group.profile?.avatar_url || undefined} />
-                    <AvatarFallback className="bg-[#1a1a1a] text-[#888] font-heading text-sm font-bold">
+                    <AvatarFallback className="bg-muted text-muted-foreground font-heading text-sm font-bold">
                       {getInitials(group.profile?.display_name)}
                     </AvatarFallback>
                   </Avatar>
                 </div>
               </div>
-              <span className={`text-[11px] truncate max-w-16 ${isViewed ? 'text-[#555]' : 'text-[#aaa]'}`}>
+              <span className={`text-[11px] truncate max-w-16 ${isViewed ? 'text-muted-foreground' : 'text-muted-foreground'}`}>
                 {group.userId === user?.id ? 'My Story' : (group.profile?.display_name?.split(' ')[0] || 'User')}
               </span>
             </button>

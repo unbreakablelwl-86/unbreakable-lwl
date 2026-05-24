@@ -201,7 +201,7 @@ export function MediaCarousel({ items }: MediaCarouselProps) {
       )}
 
       <Dialog open={showExpanded} onOpenChange={setShowExpanded}>
-        <DialogContent className="max-w-[96vw] border-border bg-background p-4 sm:max-w-5xl bg-[#0a0a0a] border-gray-800">
+        <DialogContent className="max-w-[96vw] border-border bg-background p-4 sm:max-w-5xl bg-background border-border">
           <div
             className="relative overflow-hidden rounded-xl"
             onTouchStart={handleTouchStart}

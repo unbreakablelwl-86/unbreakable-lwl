@@ -33,7 +33,7 @@ export function BlockedUsersSection() {
   };
 
   return (
-    <Card className=" border-border border-gray-800 bg-[#111]">
+    <Card className=" border-border border-border bg-card">
       <CardHeader>
         <CardTitle className="font-display text-xl tracking-wide flex items-center gap-2">
           <Ban className="w-5 h-5 text-primary" />

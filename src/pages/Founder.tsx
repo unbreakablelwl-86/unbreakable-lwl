@@ -396,7 +396,7 @@ const Founder = () => {
       {/* ═══ CTA ═══ */}
       <section className="py-11 px-6 pb-16">
         <motion.div {...fadeUp} className="max-w-lg mx-auto">
-          <Card className=" border border-border rounded-xl p-9 text-center relative overflow-hidden border-gray-800 bg-[#111]">
+          <Card className=" border border-border rounded-xl p-9 text-center relative overflow-hidden border-border bg-card">
             <div className="absolute bottom-[-60px] left-1/2 -translate-x-1/2 w-[300px] h-[300px] bg-[radial-gradient(circle,hsl(var(--primary)/0.08)_0%,transparent_65%)] pointer-events-none" />
 
             <p className="font-mono text-[9px] tracking-[3px] text-primary uppercase mb-3.5 relative z-10">

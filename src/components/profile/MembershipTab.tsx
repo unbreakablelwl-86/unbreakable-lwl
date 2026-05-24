@@ -26,7 +26,7 @@ export function MembershipTab() {
   return (
     <div className="space-y-4">
       {/* Coin balance card */}
-      <Card className="p-6 border-2 border-primary/30 space-y-4 border-gray-800 bg-[#111]">
+      <Card className="p-6 border-2 border-primary/30 space-y-4 border-border bg-card">
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
             <Coins className="w-6 h-6 text-primary" />
@@ -66,7 +66,7 @@ export function MembershipTab() {
 
       {/* Upgrade prompt for free users */}
       {currentTier === 'free' && (
-        <Card className="p-5 border border-border/50 space-y-3 border-gray-800 bg-[#111]">
+        <Card className="p-5 border border-border/50 space-y-3 border-border bg-card">
           <div className="flex items-center gap-2">
             <TrendingUp className="w-5 h-5 text-primary" />
             <h4 className="font-display text-sm tracking-wide text-foreground">WANT MORE TOKENS?</h4>

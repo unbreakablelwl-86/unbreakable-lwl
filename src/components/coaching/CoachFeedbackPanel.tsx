@@ -71,7 +71,7 @@ export function CoachFeedbackPanel({ athleteId, sessions = [], programs = [], on
   };
 
   return (
-    <Card className="border-primary/30 border-gray-800 bg-[#111]">
+    <Card className="border-primary/30 border-border bg-card">
       <CardHeader className="pb-3">
         <CardTitle className="font-display text-sm tracking-wide flex items-center gap-2">
           <Send className="w-4 h-4 text-primary" />

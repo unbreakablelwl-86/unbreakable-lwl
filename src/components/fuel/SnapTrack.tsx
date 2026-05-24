@@ -261,7 +261,7 @@ export function SnapTrack({ isOpen, onClose, defaultMealType = 'lunch' }: SnapTr
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
-      <DialogContent className="max-w-lg p-0 gap-0 bg-background border-primary/30 overflow-hidden max-h-[90vh] bg-[#0a0a0a] border-gray-800">
+      <DialogContent className="max-w-lg p-0 gap-0 bg-background border-primary/30 overflow-hidden max-h-[90vh] bg-background border-border">
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-background/95 backdrop-blur">
           <div className="flex items-center gap-2">
@@ -503,7 +503,7 @@ export function SnapTrack({ isOpen, onClose, defaultMealType = 'lunch' }: SnapTr
                   )}
 
                   {/* Total macros summary */}
-                  <Card className="border-primary/30 bg-primary/5 border-gray-800 bg-[#111]">
+                  <Card className="border-primary/30 bg-primary/5 border-border bg-card">
                     <CardContent className="p-4">
                       <div className="grid grid-cols-4 gap-3 text-center">
                         <div>

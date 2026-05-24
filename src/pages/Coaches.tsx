@@ -43,7 +43,7 @@ export default function Coaches() {
             <Loader2 className="w-8 h-8 animate-spin text-[#FF5500]" />
           </div>
         ) : coaches.length === 0 ? (
-          <div className="rounded-xl border border-gray-800 bg-[#111] py-16 text-center">
+          <div className="rounded-xl border border-border bg-card py-16 text-center">
             <UserCheck className="w-14 h-14 text-gray-600 mx-auto mb-4" />
             <h2 className="font-display text-xl tracking-wide text-white mb-2">COACHES COMING SOON</h2>
             <p className="text-gray-400 text-sm max-w-md mx-auto mb-4">
@@ -59,7 +59,7 @@ export default function Coaches() {
           <div className="space-y-3">
             {coaches.map(coach => (
               <Link key={coach.id} to={`/coach/${coach.user_id}`}>
-                <div className="rounded-xl border border-gray-800 bg-[#111] p-4 hover:border-[#FF5500]/20 transition-colors mb-3">
+                <div className="rounded-xl border border-border bg-card p-4 hover:border-[#FF5500]/20 transition-colors mb-3">
                   <div className="flex items-start gap-4">
                     <Avatar className="h-14 w-14 border-2 border-[#FF5500]/20 shrink-0">
                       <AvatarImage src={coach.avatar_url || undefined} />
@@ -84,7 +84,7 @@ export default function Coaches() {
                       )}
                       <div className="flex flex-wrap gap-2 mt-3">
                         {coach.specializations.slice(0, 3).map(s => (
-                          <Badge key={s} variant="outline" className="text-[9px] font-display tracking-wide border-gray-700 text-gray-400">
+                          <Badge key={s} variant="outline" className="text-[9px] font-display tracking-wide border-border text-gray-400">
                             {s}
                           </Badge>
                         ))}
@@ -94,7 +94,7 @@ export default function Coaches() {
                           </Badge>
                         )}
                         {coach.monthly_price_gbp && (
-                          <Badge variant="outline" className="text-[9px] font-display tracking-wide border-gray-700 text-gray-400">
+                          <Badge variant="outline" className="text-[9px] font-display tracking-wide border-border text-gray-400">
                             <PoundSterling className="w-3 h-3 mr-0.5" /> £{coach.monthly_price_gbp}/mo
                           </Badge>
                         )}

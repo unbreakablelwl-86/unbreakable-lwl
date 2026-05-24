@@ -115,22 +115,22 @@ export function PostSessionSummary({ distance, elapsedSeconds, positions, activi
     <div className="space-y-4">
       {/* Stats Grid */}
       <div className="grid grid-cols-2 gap-3">
-        <Card className="p-4 border-gray-800 bg-[#111] text-center">
+        <Card className="p-4 border-border bg-card text-center">
           <MapPin className="w-4 h-4 text-[#FF5500] mx-auto mb-1" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.5))' }} />
           <p className="font-display text-2xl text-white">{distance.toFixed(2)}</p>
           <p className="text-[10px] text-gray-500 uppercase tracking-wide">Kilometres</p>
         </Card>
-        <Card className="p-4 border-gray-800 bg-[#111] text-center">
+        <Card className="p-4 border-border bg-card text-center">
           <Clock className="w-4 h-4 text-[#FF5500] mx-auto mb-1" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.5))' }} />
           <p className="font-display text-2xl text-white">{formatDuration(elapsedSeconds)}</p>
           <p className="text-[10px] text-gray-500 uppercase tracking-wide">Duration</p>
         </Card>
-        <Card className="p-4 border-gray-800 bg-[#111] text-center">
+        <Card className="p-4 border-border bg-card text-center">
           <Timer className="w-4 h-4 text-[#FF5500] mx-auto mb-1" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.5))' }} />
           <p className="font-display text-2xl text-white">{avgPace > 0 ? formatPace(avgPace) : '--:--'}</p>
           <p className="text-[10px] text-gray-500 uppercase tracking-wide">Avg Pace /km</p>
         </Card>
-        <Card className="p-4 border-gray-800 bg-[#111] text-center">
+        <Card className="p-4 border-border bg-card text-center">
           <Zap className="w-4 h-4 text-[#FF5500] mx-auto mb-1" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.5))' }} />
           <p className="font-display text-2xl text-white">{avgSpeed.toFixed(1)}</p>
           <p className="text-[10px] text-gray-500 uppercase tracking-wide">Avg km/h</p>
@@ -180,7 +180,7 @@ export function PostSessionSummary({ distance, elapsedSeconds, positions, activi
                     className={`grid grid-cols-3 items-center px-3 py-2 rounded-lg text-sm ${
                       isFastest ? 'bg-[#FF5500]/10 border border-[#FF5500]/20' : 
                       isSlowest ? 'bg-[#FF5500]/10 border border-[#FF5500]/20' : 
-                      'bg-[#111] border border-gray-800'
+                      'bg-card border border-border'
                     }`}
                   >
                     <span className="text-gray-300">

@@ -68,7 +68,7 @@ export function SavedCardioPrograms({ onViewProgram }: SavedCardioProgramsProps)
 
   if (isLoading) {
     return (
-      <Card className=" border-border border-gray-800 bg-[#111]">
+      <Card className=" border-border border-border bg-card">
         <CardContent className="p-6 flex items-center justify-center">
           <Loader2 className="w-6 h-6 animate-spin text-primary" />
         </CardContent>

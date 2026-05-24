@@ -1836,7 +1836,7 @@ If the user hasn't provided enough information, make intelligent assumptions bas
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
+          model: "claude-sonnet-4-6",
           system: systemPrompt,
           messages: [
             { role: "user", content: userPrompt },

@@ -149,7 +149,7 @@ export function MindsetProgrammeDetail({ programme, onBack }: Props) {
       </div>
 
       {/* Overview */}
-      <Card className="border-2 border-primary/30 border-gray-800 bg-[#111]">
+      <Card className="border-2 border-primary/30 border-border bg-card">
         <CardContent className="py-4">
           <div className="grid grid-cols-3 gap-3 text-center">
             <div className="p-2 bg-muted/30 rounded-lg">
@@ -176,7 +176,7 @@ export function MindsetProgrammeDetail({ programme, onBack }: Props) {
       </Card>
 
       {data?.coachNotes && (
-        <Card className="border border-primary/20 border-gray-800 bg-[#111]">
+        <Card className="border border-primary/20 border-border bg-card">
           <CardContent className="py-4">
             <p className="text-sm text-muted-foreground italic">"{data.coachNotes}"</p>
           </CardContent>

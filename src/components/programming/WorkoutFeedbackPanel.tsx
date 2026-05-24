@@ -87,7 +87,7 @@ export function WorkoutFeedbackPanel({
 
   if (isLoading) {
     return (
-      <Card className="p-4 border border-border border-gray-800 bg-[#111]">
+      <Card className="p-4 border border-border border-border bg-card">
         <div className="flex items-center justify-center py-4">
           <Loader2 className="w-6 h-6 animate-spin text-primary" />
         </div>
@@ -96,7 +96,7 @@ export function WorkoutFeedbackPanel({
   }
 
   return (
-    <Card className="border border-border overflow-hidden border-gray-800 bg-[#111]">
+    <Card className="border border-border overflow-hidden border-border bg-card">
       <CardHeader 
         className="cursor-pointer"
         onClick={() => setIsExpanded(!isExpanded)}

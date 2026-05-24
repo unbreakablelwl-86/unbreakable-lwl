@@ -42,7 +42,7 @@ export function AIFeedbackView({ sessionId, onClose }: AIFeedbackViewProps) {
           <>
             {/* Performance Rating */}
             {latestFeedback.performance_rating && (
-              <Card className="p-4 border-primary bg-primary/5 border-gray-800 bg-[#111]">
+              <Card className="p-4 border-primary bg-primary/5 border-border bg-card">
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
                     <TrendingUp className="w-6 h-6 text-primary" />
@@ -58,7 +58,7 @@ export function AIFeedbackView({ sessionId, onClose }: AIFeedbackViewProps) {
             )}
 
             {/* Main Feedback */}
-            <Card className="p-4 border-border border-gray-800 bg-[#111]">
+            <Card className="p-4 border-border border-border bg-card">
               <div className="flex items-start gap-3 mb-3">
                 <Lightbulb className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                 <div>
@@ -77,7 +77,7 @@ export function AIFeedbackView({ sessionId, onClose }: AIFeedbackViewProps) {
 
             {/* Suggestions */}
             {latestFeedback.suggestions && Array.isArray(latestFeedback.suggestions) && latestFeedback.suggestions.length > 0 && (
-              <Card className="p-4 border-border border-gray-800 bg-[#111]">
+              <Card className="p-4 border-border border-border bg-card">
                 <h3 className="font-display text-lg text-foreground mb-3 flex items-center gap-2">
                   <AlertCircle className="w-5 h-5 text-primary" />
                   SUGGESTIONS
@@ -120,7 +120,7 @@ export function AIFeedbackView({ sessionId, onClose }: AIFeedbackViewProps) {
           />
           </>
         ) : (
-          <Card className="p-8 text-center border-border border-gray-800 bg-[#111]">
+          <Card className="p-8 text-center border-border border-border bg-card">
             <Sparkles className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
             <h3 className="font-display text-lg text-foreground mb-2">No Feedback Yet</h3>
             <p className="text-sm text-muted-foreground mb-6">

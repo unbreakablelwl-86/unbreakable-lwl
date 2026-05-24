@@ -14,13 +14,13 @@ export function CardioModeSelector({ onSelectMode }: CardioModeSelectorProps) {
         <button
           onClick={() => onSelectMode('auto')}
           className="w-full text-left relative overflow-hidden rounded-xl p-5 
-            border border-[#FF5500]/20 bg-[#111] hover:border-[#FF5500]/40 
+            border border-[#FF5500]/20 bg-card hover:border-[#FF5500]/40 
             hover:bg-[#FF5500]/5 transition-all"
         >
           <div className="absolute top-0 right-0 w-32 h-32 bg-[#FF5500]/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
           
           <div className="relative z-10 flex items-start gap-4">
-            <div className="w-12 h-12 rounded-xl bg-[#111] border border-[#FF5500]/20 flex items-center justify-center shrink-0"
+            <div className="w-12 h-12 rounded-xl bg-card border border-[#FF5500]/20 flex items-center justify-center shrink-0"
               style={{ boxShadow: '0 0 15px rgba(255,85,0,0.15)' }}>
               <Sparkles className="w-6 h-6 text-[#FF5500]" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.5))' }} />
             </div>
@@ -36,7 +36,7 @@ export function CardioModeSelector({ onSelectMode }: CardioModeSelectorProps) {
               <div className="flex items-center gap-3">
                 <div className="flex -space-x-2">
                   {[Footprints, Zap, Bike].map((Icon, i) => (
-                    <div key={i} className="w-7 h-7 rounded-full bg-[#111] border border-gray-700 flex items-center justify-center">
+                    <div key={i} className="w-7 h-7 rounded-full bg-card border border-border flex items-center justify-center">
                       <Icon className="w-3.5 h-3.5 text-gray-400" />
                     </div>
                   ))}
@@ -55,11 +55,11 @@ export function CardioModeSelector({ onSelectMode }: CardioModeSelectorProps) {
         <button
           onClick={() => onSelectMode('manual')}
           className="w-full text-left relative overflow-hidden rounded-xl p-5 
-            border border-gray-800 bg-[#111] hover:border-gray-600 
+            border border-border bg-card hover:border-gray-600 
             hover:bg-[#0F0F0F] transition-all"
         >
           <div className="relative z-10 flex items-start gap-4">
-            <div className="w-12 h-12 rounded-xl bg-[#111] border border-gray-700 flex items-center justify-center shrink-0">
+            <div className="w-12 h-12 rounded-xl bg-card border border-border flex items-center justify-center shrink-0">
               <Edit3 className="w-6 h-6 text-gray-400" />
             </div>
             

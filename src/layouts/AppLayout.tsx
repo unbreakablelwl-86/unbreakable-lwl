@@ -27,6 +27,7 @@ import {
   Minus,
   Activity,
   Users,
+  Bot,
 } from 'lucide-react';
 import { useState, useEffect, useCallback } from 'react';
 import { useConversations } from '@/hooks/useConversations';
@@ -120,11 +121,20 @@ const ALL_NAV_ITEMS: NavItemDef[] = [
   {
     id: 'coaching',
     icon: UserCheck,
-    label: 'Coach',
+    label: '121 Coaches',
     path: '/coaches',
     activeMatch: ['/coaches'],
     color: '#FF5500',
     description: '1-2-1 coaching',
+  },
+  {
+    id: 'ai-coach',
+    icon: Bot,
+    label: 'AI Coach',
+    path: '/help',
+    activeMatch: ['/help'],
+    color: '#FF5500',
+    description: 'Unbreakable AI Coach',
   },
   {
     id: 'inbox',
@@ -302,7 +312,7 @@ export default function AppLayout() {
 
       {/* ━━━ Bottom Navigation ━━━ */}
       {!hideBottomNav && (
-        <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-white/[0.06]"
+        <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-border"
           style={{ background: 'rgba(8,8,8,0.96)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)' }}
         >
           <div className="flex items-center justify-around py-1.5 px-0.5 max-w-lg mx-auto safe-area-pb">
@@ -395,7 +405,7 @@ export default function AppLayout() {
             onClick={e => e.stopPropagation()}
           >
             {/* Header */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-white/[0.06]">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-border">
               <div className="flex items-center gap-2.5">
                 <img src={shieldLogo} alt="UNBREAKABLE" className="h-7 w-7 object-contain shield-pulse" />
                 <span className="text-sm font-black uppercase tracking-[0.15em] text-white font-heading">
@@ -405,13 +415,13 @@ export default function AppLayout() {
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setShowCustomize(!showCustomize)}
-                  className={`p-1.5 rounded-full transition-colors ${showCustomize ? 'bg-[#FF5500]/20 text-[#FF5500]' : 'hover:bg-white/5 text-[#666]'}`}
+                  className={`p-1.5 rounded-full transition-colors ${showCustomize ? 'bg-[#FF5500]/20 text-[#FF5500]' : 'hover:bg-white/5 text-muted-foreground'}`}
                   title="Customise navigation"
                 >
                   <Settings size={16} />
                 </button>
                 <button onClick={() => { setShowMore(false); setShowCustomize(false); }} className="p-1.5 rounded-full hover:bg-white/5 transition-colors">
-                  <X size={18} className="text-[#666]" />
+                  <X size={18} className="text-muted-foreground" />
                 </button>
               </div>
             </div>
@@ -421,12 +431,12 @@ export default function AppLayout() {
               <div className="overflow-y-auto" style={{ maxHeight: 'calc(70vh - 56px)' }}>
                 <div className="px-4 py-3 border-b border-white/[0.04]">
                   <p className="text-[11px] uppercase tracking-wider text-[#FF5500] font-bold mb-1">Customise Navigation</p>
-                  <p className="text-[10px] text-[#555]">Tap to add/remove from your bottom bar (2-6 tabs). Long-press to reorder.</p>
+                  <p className="text-[10px] text-muted-foreground">Tap to add/remove from your bottom bar (2-6 tabs). Long-press to reorder.</p>
                 </div>
 
                 {/* Current tabs */}
                 <div className="px-4 py-3 border-b border-white/[0.04]">
-                  <p className="text-[10px] uppercase tracking-wider text-[#888] font-semibold mb-2">Your tabs ({activeTabs.length}/6)</p>
+                  <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold mb-2">Your tabs ({activeTabs.length}/6)</p>
                   <div className="space-y-1">
                     {activeTabs.map((id, idx) => {
                       const item = ALL_NAV_ITEMS.find(n => n.id === id);
@@ -438,14 +448,14 @@ export default function AppLayout() {
                             <button
                               onClick={() => moveTab(id, -1)}
                               disabled={idx === 0}
-                              className="text-[#555] hover:text-white disabled:opacity-20 transition-colors"
+                              className="text-muted-foreground hover:text-white disabled:opacity-20 transition-colors"
                             >
                               <svg width="12" height="8" viewBox="0 0 12 8"><path d="M6 0L12 8H0z" fill="currentColor"/></svg>
                             </button>
                             <button
                               onClick={() => moveTab(id, 1)}
                               disabled={idx === activeTabs.length - 1}
-                              className="text-[#555] hover:text-white disabled:opacity-20 transition-colors"
+                              className="text-muted-foreground hover:text-white disabled:opacity-20 transition-colors"
                             >
                               <svg width="12" height="8" viewBox="0 0 12 8"><path d="M6 8L0 0h12z" fill="currentColor"/></svg>
                             </button>
@@ -460,12 +470,12 @@ export default function AppLayout() {
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className="text-[13px] font-semibold text-white">{item.label}</p>
-                            <p className="text-[10px] text-[#555] truncate">{item.description}</p>
+                            <p className="text-[10px] text-muted-foreground truncate">{item.description}</p>
                           </div>
                           <button
                             onClick={() => toggleTab(id)}
                             disabled={activeTabs.length <= 2}
-                            className="p-1.5 rounded-full hover:bg-[#FF5500]/10 text-[#555] hover:text-[#FF5500] disabled:opacity-20 transition-all"
+                            className="p-1.5 rounded-full hover:bg-[#FF5500]/10 text-muted-foreground hover:text-[#FF5500] disabled:opacity-20 transition-all"
                             title="Remove from nav"
                           >
                             <Minus size={14} />
@@ -479,7 +489,7 @@ export default function AppLayout() {
                 {/* Available tabs */}
                 {moreMenuItems.length > 0 && (
                   <div className="px-4 py-3">
-                    <p className="text-[10px] uppercase tracking-wider text-[#888] font-semibold mb-2">Available</p>
+                    <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold mb-2">Available</p>
                     <div className="space-y-1">
                       {moreMenuItems.map(item => {
                         const Icon = item.icon;
@@ -491,13 +501,13 @@ export default function AppLayout() {
                               {Icon && <Icon size={16} style={{ color: item.color, opacity: 0.6 }} />}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <p className="text-[13px] font-semibold text-[#888]">{item.label}</p>
+                              <p className="text-[13px] font-semibold text-muted-foreground">{item.label}</p>
                               <p className="text-[10px] text-[#444] truncate">{item.description}</p>
                             </div>
                             <button
                               onClick={() => canAdd && toggleTab(item.id)}
                               disabled={!canAdd}
-                              className="p-1.5 rounded-full hover:bg-[#FF5500]/10 text-[#555] hover:text-[#FF5500] disabled:opacity-20 transition-all"
+                              className="p-1.5 rounded-full hover:bg-[#FF5500]/10 text-muted-foreground hover:text-[#FF5500] disabled:opacity-20 transition-all"
                               title="Add to nav"
                             >
                               <Plus size={14} />
@@ -513,7 +523,7 @@ export default function AppLayout() {
                 <div className="px-4 pb-4">
                   <button
                     onClick={resetTabs}
-                    className="w-full py-2.5 rounded-xl text-[12px] text-[#555] hover:text-[#888] uppercase tracking-wider font-semibold transition-colors"
+                    className="w-full py-2.5 rounded-xl text-[12px] text-muted-foreground hover:text-muted-foreground uppercase tracking-wider font-semibold transition-colors"
                     style={{ border: '1px solid rgba(255,255,255,0.06)' }}
                   >
                     Reset to Default
@@ -544,7 +554,7 @@ export default function AppLayout() {
                       </div>
                       <div className="min-w-0">
                         <p className={`text-[13px] font-semibold truncate ${active ? 'text-[#FF5500]' : 'text-white'}`}>{item.label}</p>
-                        <p className="text-[10px] text-[#666] truncate">{item.description}</p>
+                        <p className="text-[10px] text-muted-foreground truncate">{item.description}</p>
                       </div>
                     </button>
                   );

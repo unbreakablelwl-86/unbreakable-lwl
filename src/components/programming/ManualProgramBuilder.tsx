@@ -286,7 +286,7 @@ export function ManualProgramBuilder({ onBack }: ManualProgramBuilderProps) {
       </div>
 
       {/* Programme Name Card */}
-      <Card className="border-primary/30 overflow-hidden border-gray-800 bg-[#111]">
+      <Card className="border-primary/30 overflow-hidden border-border bg-card">
         <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-transparent p-1" />
         <CardContent className="pt-5 pb-5">
           <label className="text-xs text-primary mb-2 block font-display tracking-widest">
@@ -302,7 +302,7 @@ export function ManualProgramBuilder({ onBack }: ManualProgramBuilderProps) {
       </Card>
 
       {/* Day Selection Card */}
-      <Card className="border-primary/30 overflow-hidden border-gray-800 bg-[#111]">
+      <Card className="border-primary/30 overflow-hidden border-border bg-card">
         <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-transparent p-1" />
         <CardHeader className="pb-3">
           <CardTitle className="font-display text-lg tracking-wider flex items-center gap-2">
@@ -335,7 +335,7 @@ export function ManualProgramBuilder({ onBack }: ManualProgramBuilderProps) {
 
       {/* Day Selection & Exercise Builder */}
       {days.length > 0 && (
-        <Card className="border-primary/30 overflow-hidden border-gray-800 bg-[#111]">
+        <Card className="border-primary/30 overflow-hidden border-border bg-card">
           <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-transparent p-1" />
           <CardContent className="pt-5">
             {/* Day Dropdown Selector */}
@@ -686,7 +686,7 @@ export function ManualProgramBuilder({ onBack }: ManualProgramBuilderProps) {
       )}
 
       {/* Coach Help Section */}
-      <Card className="border-primary/30 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent overflow-hidden border-gray-800 bg-[#111]">
+      <Card className="border-primary/30 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent overflow-hidden border-border bg-card">
         <CardContent className="py-4">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center neon-glow shrink-0">

@@ -84,22 +84,22 @@ export default function Programming() {
             <motion.div key="overview" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-5">
               {/* Quick Stats */}
               <div className="grid grid-cols-3 gap-3">
-                <div className="p-3 rounded-xl border border-gray-800 bg-[#111] text-center">
+                <div className="p-3 rounded-xl border border-border bg-card text-center">
                   <p className="text-[#FF5500] font-display text-xl">{activeProgs.length}</p>
                   <p className="text-gray-500 text-[10px] mt-0.5">ACTIVE PROGS</p>
                 </div>
-                <div className="p-3 rounded-xl border border-gray-800 bg-[#111] text-center">
+                <div className="p-3 rounded-xl border border-border bg-card text-center">
                   <p className="text-[#FF5500] font-display text-xl">{totalProgs}</p>
                   <p className="text-gray-500 text-[10px] mt-0.5">TOTAL PROGS</p>
                 </div>
-                <div className="p-3 rounded-xl border border-gray-800 bg-[#111] text-center">
+                <div className="p-3 rounded-xl border border-border bg-card text-center">
                   <p className="text-[#FF5500] font-display text-xl">{totalSessions}</p>
                   <p className="text-gray-500 text-[10px] mt-0.5">SESSIONS</p>
                 </div>
               </div>
 
               {/* Description */}
-              <div className="p-4 rounded-xl border border-[#FF5500]/15 bg-[#111]">
+              <div className="p-4 rounded-xl border border-[#FF5500]/15 bg-card">
                 <p className="text-gray-400 text-sm leading-relaxed">
                   Your body is your armour. The <span className="text-[#FF5500] font-semibold">Unbreakable Power</span> system
                   combines Unbreakable Coaching, a 1,500-exercise library, and bespoke programme building to create training that's
@@ -121,7 +121,7 @@ export default function Programming() {
                 ].map(card => {
                   const Icon = card.icon;
                   const content = (
-                    <div className="w-full flex items-center gap-3 p-3.5 rounded-xl border border-gray-800 bg-[#111] hover:border-gray-700 hover:bg-[#151515] transition-all text-left">
+                    <div className="w-full flex items-center gap-3 p-3.5 rounded-xl border border-border bg-card hover:border-border hover:bg-[#151515] transition-all text-left">
                       <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 border"
                         style={{ borderColor: '#FF550033', background: '#FF550010' }}>
                         <Icon className="w-5 h-5 text-[#FF5500]" style={{ filter: 'drop-shadow(0 0 4px #FF550066)' }} />
@@ -182,7 +182,7 @@ export default function Programming() {
           {/* ═══ EXERCISES TAB ═══ */}
           {activeTab === 'exercises' && (
             <motion.div key="exercises" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-4">
-              <div className="p-4 rounded-xl border border-[#FF5500]/15 bg-[#111]">
+              <div className="p-4 rounded-xl border border-[#FF5500]/15 bg-card">
                 <h3 className="font-display text-sm text-[#FF5500] mb-1">UNBREAKABLE EXERCISE LIBRARY</h3>
                 <p className="text-gray-400 text-sm leading-relaxed">
                   1,500 exercises with images, coaching breakdowns, and step-by-step instructions. 
@@ -199,7 +199,7 @@ export default function Programming() {
                     <Link
                       key={m}
                       to={`/programming/exercises?muscle=${m}`}
-                      className="px-3 py-1.5 rounded-full text-xs font-display border border-gray-800 bg-[#111] text-gray-400 hover:text-[#FF5500] hover:border-[#FF5500]/30 transition-all"
+                      className="px-3 py-1.5 rounded-full text-xs font-display border border-border bg-card text-gray-400 hover:text-[#FF5500] hover:border-[#FF5500]/30 transition-all"
                     >
                       {m}
                     </Link>
@@ -227,7 +227,7 @@ export default function Programming() {
           {/* ═══ SESSION LOGS TAB ═══ */}
           {activeTab === 'logs' && (
             <motion.div key="logs" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-3">
-              <div className="p-4 rounded-xl border border-[#FF5500]/15 bg-[#111]">
+              <div className="p-4 rounded-xl border border-[#FF5500]/15 bg-card">
                 <h3 className="font-display text-sm text-[#FF5500] mb-1">TRAINING HISTORY</h3>
                 <p className="text-gray-400 text-sm leading-relaxed">
                   Every session logged. Review performance, track volume, and see your <span className="text-[#FF5500]">progress over time</span>.
@@ -241,7 +241,7 @@ export default function Programming() {
               ) : sessions && sessions.length > 0 ? (
                 <div className="space-y-2">
                   {sessions.slice(0, 10).map(session => (
-                    <div key={session.id} className="w-full flex items-center gap-3 p-3.5 rounded-xl border border-gray-800 bg-[#111]">
+                    <div key={session.id} className="w-full flex items-center gap-3 p-3.5 rounded-xl border border-border bg-card">
                       <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 border"
                         style={{ borderColor: '#FF550033', background: '#FF550010' }}>
                         <Activity className="w-5 h-5 text-[#FF5500]" />

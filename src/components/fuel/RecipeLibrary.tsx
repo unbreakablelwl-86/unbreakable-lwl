@@ -323,7 +323,7 @@ export function RecipeLibrary() {
                 CREATE
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto bg-[#0a0a0a] border-gray-800">
+            <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto bg-background border-border">
               <DialogHeader>
                 <DialogTitle className="font-display tracking-wide text-primary">CREATE RECIPE</DialogTitle>
               </DialogHeader>
@@ -474,7 +474,7 @@ export function RecipeLibrary() {
 
       {/* Filters */}
       {showFilters && (
-        <Card className="p-4 border-primary/30 shadow-[0_0_15px_hsl(var(--primary)/0.15)] border-gray-800 bg-[#111] space-y-4">
+        <Card className="p-4 border-primary/30 shadow-[0_0_15px_hsl(var(--primary)/0.15)] border-border bg-card space-y-4">
           <div>
             <p className="text-sm font-display tracking-wider text-primary mb-3">COOKING METHOD</p>
             <div className="flex flex-wrap gap-2">
@@ -534,7 +534,7 @@ export function RecipeLibrary() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
             >
-              <Card className="cursor-pointer hover:border-primary/60 transition-all h-full border-primary/15 overflow-hidden group hover:shadow-[0_0_20px_hsl(var(--primary)/0.2)] border-gray-800 bg-[#111]"
+              <Card className="cursor-pointer hover:border-primary/60 transition-all h-full border-primary/15 overflow-hidden group hover:shadow-[0_0_20px_hsl(var(--primary)/0.2)] border-border bg-card"
                 onClick={() => setViewingRecipe(recipe)}
               >
                 {/* Recipe Image */}
@@ -683,7 +683,7 @@ export function RecipeLibrary() {
 
       {/* Add to Plan Modal */}
       <Dialog open={!!addToPlanRecipe} onOpenChange={(open) => !open && setAddToPlanRecipe(null)}>
-        <DialogContent className="max-w-md bg-[#0a0a0a] border-gray-800">
+        <DialogContent className="max-w-md bg-background border-border">
           <DialogHeader>
             <DialogTitle className="font-display tracking-wide text-primary">ADD TO MEAL PLAN</DialogTitle>
           </DialogHeader>

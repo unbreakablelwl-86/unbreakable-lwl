@@ -43,7 +43,7 @@ export const AlleywayLeaderboard = ({ scores, userBest, onClose, onRefetch }: Al
       </div>
 
       {userBest !== null && (
-        <Card className="bg-primary/10 border-primary/30 p-4 mb-4 text-center border-gray-800 bg-[#111]">
+        <Card className="bg-primary/10 border-primary/30 p-4 mb-4 text-center border-border bg-card">
           <p className="font-display text-xs tracking-wider text-muted-foreground">YOUR BEST</p>
           <p className="font-display text-4xl text-primary">{userBest}</p>
         </Card>
@@ -51,7 +51,7 @@ export const AlleywayLeaderboard = ({ scores, userBest, onClose, onRefetch }: Al
 
       <div className="space-y-2">
         {scores.length === 0 ? (
-          <Card className=" border-border p-8 text-center border-gray-800 bg-[#111]">
+          <Card className=" border-border p-8 text-center border-border bg-card">
             <Trophy className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
             <p className="font-display text-lg text-muted-foreground tracking-wide">NO SCORES YET</p>
             <p className="text-sm text-muted-foreground mt-1">Be the first on the board!</p>
@@ -64,7 +64,7 @@ export const AlleywayLeaderboard = ({ scores, userBest, onClose, onRefetch }: Al
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: index * 0.05 }}
             >
-              <Card className=" border-border hover:border-primary/30 transition-all p-3 border-gray-800 bg-[#111]">
+              <Card className=" border-border hover:border-primary/30 transition-all p-3 border-border bg-card">
                 <div className="flex items-center gap-3">
                   <div className="w-8 flex justify-center">
                     {getRankIcon(index + 1)}

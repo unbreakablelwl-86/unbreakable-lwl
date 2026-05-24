@@ -124,7 +124,7 @@ export default function MyCoaching() {
         {!user ? (
           /* Unauthenticated */
           <div className="space-y-6">
-            <div className="rounded-xl border border-[#FF5500]/15 bg-[#111] p-5 text-center">
+            <div className="rounded-xl border border-[#FF5500]/15 bg-card p-5 text-center">
               <p className="text-gray-400 text-sm leading-relaxed max-w-lg mx-auto">
                 Online hybrid coaching — a real human coach paired with you for personalised programming,
                 weekly check-ins, video review, direct feedback, and bespoke plans across Power, Movement, Fuel and Mindset.
@@ -133,7 +133,7 @@ export default function MyCoaching() {
 
             <div className="grid grid-cols-2 gap-3">
               {features.map(f => (
-                <div key={f.title} className="rounded-xl border border-gray-800 bg-[#111] p-4 text-center space-y-2">
+                <div key={f.title} className="rounded-xl border border-border bg-card p-4 text-center space-y-2">
                   <div className="w-10 h-10 rounded-lg bg-[#FF5500]/10 border border-[#FF5500]/20 flex items-center justify-center mx-auto">
                     <f.icon className="w-5 h-5 text-[#FF5500]" />
                   </div>
@@ -143,7 +143,7 @@ export default function MyCoaching() {
               ))}
             </div>
 
-            <div className="rounded-xl border border-[#FF5500]/20 bg-[#111] p-8 text-center">
+            <div className="rounded-xl border border-[#FF5500]/20 bg-card p-8 text-center">
               <User className="w-12 h-12 text-[#FF5500] mx-auto mb-4" />
               <h2 className="font-display text-xl tracking-wide text-white mb-3">GET STARTED</h2>
               <p className="text-gray-400 text-sm mb-4">Sign in to request your coach.</p>
@@ -155,7 +155,7 @@ export default function MyCoaching() {
         ) : !myCoach ? (
           /* No coach yet */
           <div className="space-y-6">
-            <div className="rounded-xl border border-[#FF5500]/15 bg-[#111] p-5 text-center">
+            <div className="rounded-xl border border-[#FF5500]/15 bg-card p-5 text-center">
               <p className="text-gray-400 text-sm leading-relaxed max-w-lg mx-auto">
                 Online hybrid coaching — a real human coach paired with you for personalised programming,
                 weekly check-ins, video review, direct feedback, and bespoke plans across Power, Movement, Fuel and Mindset.
@@ -164,7 +164,7 @@ export default function MyCoaching() {
 
             <div className="grid grid-cols-2 gap-3">
               {features.map(f => (
-                <div key={f.title} className="rounded-xl border border-gray-800 bg-[#111] p-4 text-center space-y-2">
+                <div key={f.title} className="rounded-xl border border-border bg-card p-4 text-center space-y-2">
                   <div className="w-10 h-10 rounded-lg bg-[#FF5500]/10 border border-[#FF5500]/20 flex items-center justify-center mx-auto">
                     <f.icon className="w-5 h-5 text-[#FF5500]" />
                   </div>
@@ -175,13 +175,13 @@ export default function MyCoaching() {
             </div>
 
             {myPendingRequest ? (
-              <div className="rounded-xl border border-[#FF5500]/20 bg-[#111] p-6 text-center">
+              <div className="rounded-xl border border-[#FF5500]/20 bg-card p-6 text-center">
                 <CheckCircle2 className="w-10 h-10 text-[#FF5500] mx-auto mb-3" />
                 <h2 className="font-display text-lg tracking-wide text-white mb-2">REQUEST SENT</h2>
                 <p className="text-gray-400 text-sm">Your coaching request is being reviewed. We'll match you with the right coach.</p>
               </div>
             ) : !hasActiveSubscription ? (
-              <div className="rounded-xl border border-gray-800 bg-[#111] p-6 text-center">
+              <div className="rounded-xl border border-border bg-card p-6 text-center">
                 <Lock className="w-12 h-12 text-gray-600 mx-auto mb-4" />
                 <h2 className="font-display text-lg tracking-wide text-white mb-2">SUBSCRIPTION REQUIRED</h2>
                 <p className="text-gray-400 text-sm max-w-md mx-auto mb-4">Choose a plan and provide payment details to request a 121 coach.</p>
@@ -192,7 +192,7 @@ export default function MyCoaching() {
                 </Link>
               </div>
             ) : (
-              <div className="rounded-xl border border-gray-800 bg-[#111] p-6 text-center">
+              <div className="rounded-xl border border-border bg-card p-6 text-center">
                 <UserCheck className="w-12 h-12 text-gray-500 mx-auto mb-4" />
                 <h2 className="font-display text-lg tracking-wide text-white mb-2">READY TO START?</h2>
                 <p className="text-gray-400 text-sm max-w-md mx-auto mb-4">Request a coach and we'll pair you with someone who fits your goals.</p>
@@ -269,7 +269,7 @@ export default function MyCoaching() {
                     <CheckInReview checkIn={activeCheckIn} onReview={() => {}} onBack={() => setActiveCheckIn(null)} />
                   )
                 ) : checkIns.length === 0 ? (
-                  <div className="rounded-xl border border-gray-800 bg-[#111] py-10 text-center">
+                  <div className="rounded-xl border border-border bg-card py-10 text-center">
                     <ClipboardCheck className="w-10 h-10 text-gray-600 mx-auto mb-3" />
                     <p className="text-gray-400 text-sm">No check-ins yet</p>
                     <p className="text-xs text-gray-600 mt-1">Your coach will send check-ins for you to complete</p>
@@ -279,8 +279,8 @@ export default function MyCoaching() {
                     <button
                       key={ci.id}
                       onClick={() => setActiveCheckIn(ci)}
-                      className={`w-full text-left rounded-xl border bg-[#111] p-3 hover:border-[#FF5500]/20 transition-colors ${
-                        ci.status === 'pending' ? 'border-l-2 border-l-[#FF5500] border-gray-800' : 'border-gray-800'
+                      className={`w-full text-left rounded-xl border bg-card p-3 hover:border-[#FF5500]/20 transition-colors ${
+                        ci.status === 'pending' ? 'border-l-2 border-l-[#FF5500] border-border' : 'border-border'
                       }`}
                     >
                       <div className="flex items-center justify-between">
@@ -296,7 +296,7 @@ export default function MyCoaching() {
                           ci.status === 'pending' ? 'text-[#FF5500] bg-[#FF5500]/10 border-[#FF5500]/20' :
                           ci.status === 'submitted' ? 'text-[#FF5500] bg-[#FF5500]/10 border-[#FF5500]/20' :
                           ci.status === 'reviewed' ? 'text-[#FF5500] bg-[#FF5500]/10 border-[#FF5500]/20' :
-                          'text-gray-500 bg-gray-800 border-gray-700'
+                          'text-gray-500 bg-gray-800 border-border'
                         }`}>
                           {ci.status.toUpperCase()}
                         </span>
@@ -312,7 +312,7 @@ export default function MyCoaching() {
             {activeTab === 'plans' && (
               <div className="space-y-3">
                 {activeTraining.length === 0 && activeCardio.length === 0 && activeMeals.length === 0 ? (
-                  <div className="rounded-xl border border-gray-800 bg-[#111] py-10 text-center">
+                  <div className="rounded-xl border border-border bg-card py-10 text-center">
                     <Dumbbell className="w-10 h-10 text-gray-600 mx-auto mb-3" />
                     <p className="text-gray-400 text-sm">No active plans yet</p>
                     <p className="text-xs text-gray-600 mt-1">Your coach will assign plans that appear here</p>
@@ -321,7 +321,7 @@ export default function MyCoaching() {
                   <>
                     {activeTraining.map(p => (
                       <Link key={p.id} to="/programming/my-programmes">
-                        <div className="rounded-xl border border-gray-800 bg-[#111] p-3 flex items-center gap-3 hover:border-[#FF5500]/20 transition-colors">
+                        <div className="rounded-xl border border-border bg-card p-3 flex items-center gap-3 hover:border-[#FF5500]/20 transition-colors">
                           <div className="w-9 h-9 rounded-lg bg-[#FF5500]/10 border border-[#FF5500]/20 flex items-center justify-center shrink-0">
                             <Dumbbell className="w-4 h-4 text-[#FF5500]" />
                           </div>
@@ -335,7 +335,7 @@ export default function MyCoaching() {
                     ))}
                     {activeCardio.map(p => (
                       <Link key={p.id} to="/tracker/my-programmes">
-                        <div className="rounded-xl border border-gray-800 bg-[#111] p-3 flex items-center gap-3 hover:border-[#FF5500]/20 transition-colors">
+                        <div className="rounded-xl border border-border bg-card p-3 flex items-center gap-3 hover:border-[#FF5500]/20 transition-colors">
                           <div className="w-9 h-9 rounded-lg bg-[#FF5500]/10 border border-[#FF5500]/20 flex items-center justify-center shrink-0">
                             <Footprints className="w-4 h-4 text-[#FF5500]" />
                           </div>
@@ -349,7 +349,7 @@ export default function MyCoaching() {
                     ))}
                     {activeMeals.map(p => (
                       <Link key={p.id} to="/fuel/planning">
-                        <div className="rounded-xl border border-gray-800 bg-[#111] p-3 flex items-center gap-3 hover:border-[#FF5500]/20 transition-colors">
+                        <div className="rounded-xl border border-border bg-card p-3 flex items-center gap-3 hover:border-[#FF5500]/20 transition-colors">
                           <div className="w-9 h-9 rounded-lg bg-[#FF5500]/10 border border-[#FF5500]/20 flex items-center justify-center shrink-0">
                             <Utensils className="w-4 h-4 text-[#FF5500]" />
                           </div>

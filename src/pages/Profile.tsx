@@ -77,10 +77,10 @@ function FollowListModal({
         style={{ background: '#111', border: '1px solid rgba(255,255,255,0.08)' }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between p-4 border-b border-white/[0.06]">
+        <div className="flex items-center justify-between p-4 border-b border-border">
           <h3 className="font-heading font-bold text-sm tracking-wider text-white uppercase">{title}</h3>
           <button onClick={onClose} className="p-1 hover:bg-white/[0.05] rounded-full transition-colors">
-            <X className="w-5 h-5 text-[#888]" />
+            <X className="w-5 h-5 text-muted-foreground" />
           </button>
         </div>
         <div className="max-h-96 overflow-y-auto">
@@ -89,7 +89,7 @@ function FollowListModal({
               <div className="w-6 h-6 border-2 border-[#FF5500] border-t-transparent rounded-full animate-spin" />
             </div>
           ) : users.length === 0 ? (
-            <div className="py-12 text-center text-[#555] text-sm">No users yet</div>
+            <div className="py-12 text-center text-muted-foreground text-sm">No users yet</div>
           ) : (
             users.map((u) => (
               <button
@@ -99,7 +99,7 @@ function FollowListModal({
               >
                 <Avatar className="w-10 h-10">
                   <AvatarImage src={u.avatar_url || undefined} />
-                  <AvatarFallback className="bg-[#1a1a1a] text-[#888] font-heading text-sm font-bold">
+                  <AvatarFallback className="bg-muted text-muted-foreground font-heading text-sm font-bold">
                     {(u.display_name || u.username || '?')[0].toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
@@ -107,7 +107,7 @@ function FollowListModal({
                   <p className="font-semibold text-sm text-white truncate">
                     {u.display_name || u.username || 'Athlete'}
                   </p>
-                  {u.username && <p className="text-xs text-[#666] truncate">@{u.username}</p>}
+                  {u.username && <p className="text-xs text-muted-foreground truncate">@{u.username}</p>}
                 </div>
               </button>
             ))
@@ -138,7 +138,7 @@ function PostGridItem({ post, onClick }: { post: OwnPost; onClick: () => void })
         <img src={thumbnail} alt="" className="w-full h-full object-cover" />
       ) : (
         <div className="w-full h-full flex items-center justify-center p-3" style={{ background: 'linear-gradient(135deg, #1a1a1a, #111)' }}>
-          <p className="text-xs text-[#666] line-clamp-4 text-center">{post.content?.slice(0, 100)}</p>
+          <p className="text-xs text-muted-foreground line-clamp-4 text-center">{post.content?.slice(0, 100)}</p>
         </div>
       )}
 
@@ -189,23 +189,23 @@ function PostDetailModal({
         style={{ background: '#111', border: '1px solid rgba(255,255,255,0.06)' }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between p-4 border-b border-white/[0.06] shrink-0">
+        <div className="flex items-center justify-between p-4 border-b border-border shrink-0">
           <div className="flex items-center gap-3">
             <Avatar className="w-8 h-8">
               <AvatarImage src={profile.avatar_url || undefined} />
-              <AvatarFallback className="bg-[#1a1a1a] text-[#888] font-heading text-xs font-bold">
+              <AvatarFallback className="bg-muted text-muted-foreground font-heading text-xs font-bold">
                 {displayName[0].toUpperCase()}
               </AvatarFallback>
             </Avatar>
             <div>
               <p className="font-semibold text-sm text-white">{displayName}</p>
-              <p className="text-xs text-[#666]">
+              <p className="text-xs text-muted-foreground">
                 {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
               </p>
             </div>
           </div>
           <button onClick={onClose} className="p-1.5 hover:bg-white/[0.05] rounded-full">
-            <X className="w-5 h-5 text-[#888]" />
+            <X className="w-5 h-5 text-muted-foreground" />
           </button>
         </div>
 
@@ -221,14 +221,14 @@ function PostDetailModal({
 
         <div className="p-4 overflow-y-auto">
           <div className="flex items-center gap-4 mb-3">
-            <span className="flex items-center gap-1.5 text-sm text-[#888]">
+            <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
               <Heart className="w-5 h-5" /> {post.kudos_count}
             </span>
-            <span className="flex items-center gap-1.5 text-sm text-[#888]">
+            <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
               <MessageSquare className="w-5 h-5" /> {post.comments_count}
             </span>
           </div>
-          {post.content && <RichContent text={post.content} className="text-sm text-[#ddd]" />}
+          {post.content && <RichContent text={post.content} className="text-sm text-foreground/80" />}
         </div>
       </motion.div>
     </div>
@@ -302,7 +302,7 @@ export default function Profile() {
       <div className="min-h-screen flex flex-col items-center justify-center px-6" style={{ background: '#080808' }}>
         <img src={shieldLogo} alt="UNBREAKABLE" className="h-20 w-20 shield-pulse mb-6" />
         <h1 className="font-heading font-black text-2xl text-white uppercase tracking-wider mb-2">Your Profile</h1>
-        <p className="text-[#666] text-center mb-6">Sign in to view your profile, track progress, and connect with others.</p>
+        <p className="text-muted-foreground text-center mb-6">Sign in to view your profile, track progress, and connect with others.</p>
         <button
           onClick={() => setShowAuthModal(true)}
           className="px-8 py-3 rounded-xl font-heading font-bold text-sm uppercase tracking-wider text-white"
@@ -321,7 +321,7 @@ export default function Profile() {
   return (
     <div className="min-h-screen" style={{ background: '#080808' }}>
       {/* ━━━ Instagram-style Profile Header ━━━ */}
-      <header className="sticky top-0 z-40 border-b border-white/[0.06]"
+      <header className="sticky top-0 z-40 border-b border-border"
         style={{ background: 'rgba(8,8,8,0.95)', backdropFilter: 'blur(20px)' }}>
         <div className="px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -348,7 +348,7 @@ export default function Profile() {
             <div className="w-full h-full rounded-full border-2 border-[#080808] overflow-hidden" style={{ background: '#1a1a1a' }}>
               <Avatar className="w-full h-full">
                 <AvatarImage src={profile.avatar_url || undefined} />
-                <AvatarFallback className="bg-[#1a1a1a] text-[#888] font-heading text-xl font-bold w-full h-full flex items-center justify-center">
+                <AvatarFallback className="bg-muted text-muted-foreground font-heading text-xl font-bold w-full h-full flex items-center justify-center">
                   {initials}
                 </AvatarFallback>
               </Avatar>
@@ -359,15 +359,15 @@ export default function Profile() {
           <div className="flex-1 flex items-center justify-around">
             <div className="text-center">
               <p className="text-lg font-bold text-white">{postCount}</p>
-              <p className="text-[11px] text-[#888]">Posts</p>
+              <p className="text-[11px] text-muted-foreground">Posts</p>
             </div>
             <button onClick={() => openFollowList('followers')} className="text-center hover:opacity-70 transition-opacity">
               <p className="text-lg font-bold text-white">{followerCount}</p>
-              <p className="text-[11px] text-[#888]">Followers</p>
+              <p className="text-[11px] text-muted-foreground">Followers</p>
             </button>
             <button onClick={() => openFollowList('following')} className="text-center hover:opacity-70 transition-opacity">
               <p className="text-lg font-bold text-white">{followingCount}</p>
-              <p className="text-[11px] text-[#888]">Following</p>
+              <p className="text-[11px] text-muted-foreground">Following</p>
             </button>
           </div>
         </div>
@@ -375,11 +375,11 @@ export default function Profile() {
         {/* Bio */}
         <div className="mt-4 space-y-1">
           <p className="text-sm font-semibold text-white">{displayName}</p>
-          {profile.username && <p className="text-sm text-[#888]">@{profile.username}</p>}
+          {profile.username && <p className="text-sm text-muted-foreground">@{profile.username}</p>}
           {profile.bio && (
-            <p className="text-sm text-[#ddd] whitespace-pre-line leading-relaxed">{profile.bio}</p>
+            <p className="text-sm text-foreground/80 whitespace-pre-line leading-relaxed">{profile.bio}</p>
           )}
-          <div className="flex items-center gap-4 text-[11px] text-[#666] pt-1">
+          <div className="flex items-center gap-4 text-[11px] text-muted-foreground pt-1">
             {profile.location && (
               <span className="flex items-center gap-1"><MapPin size={12} />{profile.location}</span>
             )}
@@ -448,7 +448,7 @@ export default function Profile() {
       </section>
 
       {/* ━━━ Tab Bar ━━━ */}
-      <div className="flex border-b border-white/[0.06] sticky top-[57px] z-30" style={{ background: '#080808' }}>
+      <div className="flex border-b border-border sticky top-[57px] z-30" style={{ background: '#080808' }}>
         {[
           { key: 'posts' as const, icon: Grid3X3 },
           { key: 'saved' as const, icon: Bookmark },
@@ -458,7 +458,7 @@ export default function Profile() {
             key={key}
             onClick={() => setActiveTab(key)}
             className={`flex-1 py-3 flex justify-center transition-colors relative ${
-              activeTab === key ? 'text-white' : 'text-[#555]'
+              activeTab === key ? 'text-white' : 'text-muted-foreground'
             }`}
           >
             <Icon size={20} />
@@ -479,8 +479,8 @@ export default function Profile() {
           ) : posts.length === 0 ? (
             <div className="text-center py-20">
               <ImageIcon className="w-12 h-12 text-[#444] mx-auto mb-3" />
-              <p className="font-heading font-bold text-sm text-[#888] uppercase tracking-wider">No Posts Yet</p>
-              <p className="text-xs text-[#555] mt-1">Share your first post from the feed!</p>
+              <p className="font-heading font-bold text-sm text-muted-foreground uppercase tracking-wider">No Posts Yet</p>
+              <p className="text-xs text-muted-foreground mt-1">Share your first post from the feed!</p>
             </div>
           ) : (
             <div className="grid grid-cols-3 gap-0.5">
@@ -495,16 +495,16 @@ export default function Profile() {
       {activeTab === 'saved' && (
         <div className="text-center py-20">
           <Bookmark className="w-12 h-12 text-[#444] mx-auto mb-3" />
-          <p className="font-heading font-bold text-sm text-[#888] uppercase tracking-wider">Saved Posts</p>
-          <p className="text-xs text-[#555] mt-1">Save posts to view them later</p>
+          <p className="font-heading font-bold text-sm text-muted-foreground uppercase tracking-wider">Saved Posts</p>
+          <p className="text-xs text-muted-foreground mt-1">Save posts to view them later</p>
         </div>
       )}
 
       {activeTab === 'tagged' && (
         <div className="text-center py-20">
           <Tag className="w-12 h-12 text-[#444] mx-auto mb-3" />
-          <p className="font-heading font-bold text-sm text-[#888] uppercase tracking-wider">Tagged Posts</p>
-          <p className="text-xs text-[#555] mt-1">Posts where you've been tagged</p>
+          <p className="font-heading font-bold text-sm text-muted-foreground uppercase tracking-wider">Tagged Posts</p>
+          <p className="text-xs text-muted-foreground mt-1">Posts where you've been tagged</p>
         </div>
       )}
 
