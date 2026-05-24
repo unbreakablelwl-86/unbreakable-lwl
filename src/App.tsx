@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
+import { PlayerContext, usePlayerProvider } from "@/hooks/useUnTunes";
 import { UniversityAdminProvider } from "@/hooks/useUniversityAdmin";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { InstallPrompt } from "@/components/pwa/InstallPrompt";
@@ -63,8 +64,14 @@ import SignIn from "./pages/SignIn";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import Unbreakable86 from "./pages/Unbreakable86";
+import UnTunes from "./pages/UnTunes";
 
 const queryClient = new QueryClient();
+
+function UnTunesPlayerProvider({ children }: { children: React.ReactNode }) {
+  const player = usePlayerProvider();
+  return <PlayerContext.Provider value={player}>{children}</PlayerContext.Provider>;
+}
 
 const App = () => {
   const [splashDone, setSplashDone] = useState(() => {
@@ -79,6 +86,7 @@ const App = () => {
   return (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
+      <UnTunesPlayerProvider>
       <UniversityAdminProvider>
       <TooltipProvider>
         <div className="min-h-screen bg-background">
@@ -238,6 +246,9 @@ const App = () => {
                 <Route path="/unbreakable-86" element={
                   <ProtectedRoute><Unbreakable86 /></ProtectedRoute>
                 } />
+
+                {/* Un-Tunes — Music & Podcasts */}
+                <Route path="/untunes" element={<UnTunes />} />
                 
                 {/* Coach Dashboard - role-protected + subscribed */}
                 <Route path="/coach" element={
@@ -272,6 +283,7 @@ const App = () => {
         </div>
       </TooltipProvider>
       </UniversityAdminProvider>
+      </UnTunesPlayerProvider>
     </AuthProvider>
   </QueryClientProvider>
   );

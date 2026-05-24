@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Home, Calculator, Activity, User, LogOut, Settings, Brain, Sparkles, Flame, Dumbbell, Footprints, Apple, Shield, GraduationCap, UserCheck, ChevronDown, Lock, Calendar, Zap } from 'lucide-react';
+import { Menu, X, Home, Calculator, Activity, User, LogOut, Settings, Brain, Sparkles, Flame, Dumbbell, Footprints, Apple, Shield, GraduationCap, UserCheck, ChevronDown, Lock, Calendar, Zap, Music } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -29,6 +29,7 @@ const paidHubLinks = [
   { to: '/tracker', label: 'MOVEMENT', icon: Footprints, paid: true },
   { to: '/fuel', label: 'FUEL', icon: Apple, paid: true },
   { to: '/mindset', label: 'MINDSET', icon: Brain, paid: true },
+  { to: '/untunes', label: 'UN-TUNES', icon: Music, paid: false },
 ];
 
 const hubLinks = [...freeHubLinks, ...paidHubLinks];

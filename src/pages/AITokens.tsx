@@ -98,8 +98,19 @@ export default function AITokens() {
 
   return (
     <>
-      <div className="min-h-screen bg-background pt-6 pb-28 px-4">
-        <div className="max-w-5xl mx-auto">
+      <div className="min-h-screen bg-background pb-28 px-4">
+        {/* ─── 50% Off Scrolling Banner ─── */}
+        <div className="w-full overflow-hidden bg-primary text-primary-foreground py-2.5 mb-6">
+          <motion.div
+            animate={{ x: ['100%', '-100%'] }}
+            transition={{ duration: 18, repeat: Infinity, ease: 'linear' }}
+            className="whitespace-nowrap font-display tracking-wider text-sm"
+          >
+            🔥 USE CODE <span className="font-bold underline">LAUNCH50</span> — 50% OFF YOUR FIRST MONTH ON ANY PLAN! 🔥 &nbsp;&nbsp;&nbsp; LIMITED TIME OFFER &nbsp;&nbsp;&nbsp; 🔥 USE CODE <span className="font-bold underline">LAUNCH50</span> — 50% OFF YOUR FIRST MONTH ON ANY PLAN! 🔥 &nbsp;&nbsp;&nbsp; LIMITED TIME OFFER &nbsp;&nbsp;&nbsp; 🔥 USE CODE <span className="font-bold underline">LAUNCH50</span> — 50% OFF YOUR FIRST MONTH! 🔥
+          </motion.div>
+        </div>
+
+        <div className="max-w-5xl mx-auto pt-0">
 
           {/* ─── Header ─── */}
           <div className="text-center mb-8">

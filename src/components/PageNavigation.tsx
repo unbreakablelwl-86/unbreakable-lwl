@@ -11,6 +11,7 @@ const NAV_FLOW = [
   { path: '/tracker', label: 'MOVEMENT' },
   { path: '/fuel', label: 'FUEL' },
   { path: '/help', label: 'COACHING' },
+  { path: '/untunes', label: 'UN-TUNES' },
 ];
 
 export function usePageNavigation() {

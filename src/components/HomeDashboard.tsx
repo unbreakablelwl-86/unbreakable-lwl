@@ -7,7 +7,7 @@ import { useTokenBalance } from '@/hooks/useTokenBalance';
 import { useLoginStreak } from '@/hooks/useLoginStreak';
 import { UpgradeNudge } from '@/components/paywall/UpgradeNudge';
 import { 
-  Zap, Flame, Activity, Brain, GraduationCap,
+  Zap, Flame, Activity, Brain, GraduationCap, Music,
   Camera, Footprints, Dumbbell, BookOpen,
   ChevronRight, Settings, Check, Plus, X,
   Sparkles, Calculator, MessageCircle, User,
@@ -50,6 +50,13 @@ const PILLARS = [
     sub: 'Unbreakable University',
     icon: GraduationCap,
     path: '/university',
+  },
+  {
+    id: 'untunes',
+    label: 'UN-TUNES',
+    sub: 'Music & Podcasts',
+    icon: Music,
+    path: '/untunes',
   },
 ];
 

@@ -15,6 +15,7 @@ import { Progress } from '@/components/ui/progress';
 import { validateVideoDuration, uploadMediaFile, type MediaUploadItem } from '@/lib/mediaUpload';
 import { supabase } from '@/integrations/supabase/client';
 
+const DEFAULT_HASHTAGS = '\n\n#Unbreakable #LiveWithoutLimits #KeepShowingUp';
 const MAX_MEDIA = 5;
 const MAX_IMAGE_SIZE = 20 * 1024 * 1024; // 20MB
 const MAX_VIDEO_SIZE = 500 * 1024 * 1024; // 500MB
@@ -208,8 +209,13 @@ export function CreatePostBox({ onPostCreated }: CreatePostBoxProps) {
       const firstImage = uploadedMedia.find((m) => m.type === 'image');
       const firstVideo = uploadedMedia.find((m) => m.type === 'video');
 
+      // Append default hashtags if not already present
+      const trimmed = content.trim();
+      const hasDefaultTags = trimmed.includes('#Unbreakable') && trimmed.includes('#LiveWithoutLimits');
+      const finalContent = trimmed ? (hasDefaultTags ? trimmed : trimmed + DEFAULT_HASHTAGS) : undefined;
+
       const { error, data: postData } = await createPost({
-        content: content.trim() || undefined,
+        content: finalContent,
         image_url: firstImage?.url || undefined,
         video_url: firstVideo?.url || undefined,
         visibility,
