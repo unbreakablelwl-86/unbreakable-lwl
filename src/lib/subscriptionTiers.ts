@@ -51,8 +51,8 @@ export const TIERS: Record<TierKey, TierConfig> = {
     displayName: 'Absolute Base',
     monthlyPrice: 7,
     monthlyTokens: 20,
-    stripePriceId: null, // Will be created in Stripe
-    stripeProductId: null,
+    stripePriceId: 'price_1TaPmmD5KOEmeWH2Le2bNnPh',
+    stripeProductId: 'prod_UZYuMTVREyACOp',
     rank: 1,
     hidden: true, // Only shown on cancel flow
     features: [
@@ -67,8 +67,8 @@ export const TIERS: Record<TierKey, TierConfig> = {
     displayName: 'Base',
     monthlyPrice: 25,
     monthlyTokens: 75,
-    stripePriceId: null, // Will be created in Stripe
-    stripeProductId: null,
+    stripePriceId: 'price_1TaPmmD5KOEmeWH2LeANGH4k',
+    stripeProductId: 'prod_UZYuPRujc7nGZN',
     rank: 2,
     features: [
       '75 tokens/month',
@@ -85,8 +85,8 @@ export const TIERS: Record<TierKey, TierConfig> = {
     displayName: 'Pro',
     monthlyPrice: 50,
     monthlyTokens: 200,
-    stripePriceId: null, // Will be created in Stripe
-    stripeProductId: null,
+    stripePriceId: 'price_1TaPmsD5KOEmeWH2dO7mg9XK',
+    stripeProductId: 'prod_UZYu2DeD4GRXYS',
     rank: 3,
     popular: true,
     features: [
@@ -105,8 +105,8 @@ export const TIERS: Record<TierKey, TierConfig> = {
     displayName: 'Elite',
     monthlyPrice: 100,
     monthlyTokens: 500,
-    stripePriceId: null, // Will be created in Stripe
-    stripeProductId: null,
+    stripePriceId: 'price_1TaPmmD5KOEmeWH2bemvjYM4',
+    stripeProductId: 'prod_UZYuJliRwgNO6J',
     rank: 4,
     features: [
       '500 tokens/month',

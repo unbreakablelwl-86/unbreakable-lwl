@@ -236,7 +236,7 @@ export const TOKEN_TOPUPS: TokenTopUp[] = [
     name: 'Small Top-Up',
     tokens: 50,
     price: 15,
-    stripePriceId: null,
+    stripePriceId: 'price_1TaPmmD5KOEmeWH2lbJWYqDf',
     valuePerToken: '£0.30/token',
   },
   {
@@ -244,7 +244,7 @@ export const TOKEN_TOPUPS: TokenTopUp[] = [
     name: 'Medium Top-Up',
     tokens: 150,
     price: 40,
-    stripePriceId: null,
+    stripePriceId: 'price_1TaPmmD5KOEmeWH2aoxZv7uk',
     valuePerToken: '£0.27/token',
     popular: true,
   },
@@ -253,7 +253,7 @@ export const TOKEN_TOPUPS: TokenTopUp[] = [
     name: 'Large Top-Up',
     tokens: 300,
     price: 75,
-    stripePriceId: null,
+    stripePriceId: 'price_1TaPmsD5KOEmeWH2NmqQQnW1',
     valuePerToken: '£0.25/token',
   },
 ];
