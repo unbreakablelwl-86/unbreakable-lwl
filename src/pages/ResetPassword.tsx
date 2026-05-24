@@ -109,8 +109,7 @@ export default function ResetPassword() {
             /* ── Success state ── */
             <div className="text-center space-y-4">
               <div
-                className="w-16 h-16 mx-auto rounded-full flex items-center justify-center"
-                className="bg-primary/10 border border-primary/20"
+                className="w-16 h-16 mx-auto rounded-full flex items-center justify-center bg-primary/10 border border-primary/20"
               >
                 <CheckCircle className="w-8 h-8 text-primary" />
               </div>

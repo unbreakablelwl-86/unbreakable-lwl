@@ -108,7 +108,7 @@ export default function ProgrammingCreate() {
   }
 
   return (
-    <div className="min-h-screen pb-24" className="bg-background">
+    <div className="min-h-screen pb-24 bg-background">
       {/* ─── Hero ─── */}
       <div className="relative px-4 pt-6 pb-5 overflow-hidden">
         <div className="absolute inset-0 pointer-events-none"

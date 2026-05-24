@@ -30,7 +30,7 @@ export default function Admin() {
 
   return (
     <AdminProtectedRoute>
-      <div className="min-h-screen pb-24" className="bg-background">
+      <div className="min-h-screen pb-24 bg-background">
         {/* Back nav */}
         <div className="px-4 pt-4">
           <button onClick={() => navigate('/')} className="flex items-center gap-1 text-muted-foreground text-sm hover:text-muted-foreground transition-colors">

@@ -125,8 +125,6 @@ export const BREATHING_EXERCISES: BreathingExercise[] = [
     color: "from-[hsl(35,100%,50%)] to-[hsl(25,100%,45%)]",
     isVisible: true,
   },
-];
-
   {
     id: "fire-breath",
     name: "FIRE BREATH",

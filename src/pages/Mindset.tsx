@@ -914,7 +914,7 @@ function HabitsTab({ habits, saveHabits, isToday, user, completedToday, navigate
           <span className="text-xs font-display text-primary">{completedToday}/{totalHabits}</span>
         </div>
         <div className="h-2 bg-card rounded-full overflow-hidden mb-4">
-          <div className="h-full rounded-full transition-all" className="bg-primary shadow-[0_0_8px_hsl(var(--primary)/0.5)]" style={{ width: `${(completedToday / totalHabits) * 100}%` }} />
+          <div className="h-full rounded-full transition-all bg-primary shadow-[0_0_8px_hsl(var(--primary)/0.5)]" style={{ width: `${(completedToday / totalHabits) * 100}%` }} />
         </div>
 
         {/* Habit toggles */}

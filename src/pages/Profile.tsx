@@ -73,8 +73,7 @@ function FollowListModal({
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
-        className="w-full max-w-sm mx-4 overflow-hidden rounded-2xl"
-        className="bg-card border border-border"
+        className="w-full max-w-sm mx-4 overflow-hidden rounded-2xl bg-card border border-border"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between p-4 border-b border-border">
@@ -131,8 +130,7 @@ function PostGridItem({ post, onClick }: { post: OwnPost; onClick: () => void })
   return (
     <button
       onClick={onClick}
-      className="relative aspect-square overflow-hidden group"
-      className="bg-card"
+      className="relative aspect-square overflow-hidden group bg-card"
     >
       {thumbnail ? (
         <img src={thumbnail} alt="" className="w-full h-full object-cover" />
@@ -185,8 +183,7 @@ function PostDetailModal({
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="w-full max-w-2xl mx-4 overflow-hidden max-h-[90vh] flex flex-col rounded-2xl"
-        className="bg-card border border-border"
+        className="w-full max-w-2xl mx-4 overflow-hidden max-h-[90vh] flex flex-col rounded-2xl bg-card border border-border"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between p-4 border-b border-border shrink-0">
@@ -345,7 +342,7 @@ export default function Profile() {
           {/* Avatar with gradient ring */}
           <div className="w-20 h-20 rounded-full p-[3px] flex-shrink-0"
             style={{ background: 'linear-gradient(135deg, #FF5500, #FF8C00, #FFB300)' }}>
-            <div className="w-full h-full rounded-full border-2 border-border overflow-hidden" className="bg-muted">
+            <div className="w-full h-full rounded-full border-2 border-border overflow-hidden bg-muted">
               <Avatar className="w-full h-full">
                 <AvatarImage src={profile.avatar_url || undefined} />
                 <AvatarFallback className="bg-muted text-muted-foreground font-heading text-xl font-bold w-full h-full flex items-center justify-center">
@@ -403,22 +400,19 @@ export default function Profile() {
         <div className="flex gap-2 mt-4">
           <button
             onClick={() => setActiveTab('settings')}
-            className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-foreground transition-colors"
-            className="bg-muted"
+            className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-foreground transition-colors bg-muted"
           >
             Edit Profile
           </button>
           <button
             onClick={() => navigate('/inbox')}
-            className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-foreground transition-colors"
-            className="bg-muted"
+            className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-foreground transition-colors bg-muted"
           >
             Share Profile
           </button>
           <button
             onClick={() => navigate('/admin')}
-            className="py-2.5 px-4 rounded-xl text-sm font-semibold text-foreground transition-colors"
-            className="bg-muted"
+            className="py-2.5 px-4 rounded-xl text-sm font-semibold text-foreground transition-colors bg-muted"
             title="Admin & Content Studio"
           >
             ⚙️

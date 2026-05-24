@@ -142,8 +142,7 @@ export default function SignIn() {
                     placeholder="Your name"
                     value={fullName}
                     onChange={e => setFullName(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 rounded-xl text-sm text-foreground placeholder-[#444] outline-none transition-all focus:ring-1 focus:ring-primary/50"
-                    className="bg-background/50 border border-border"
+                    className="w-full pl-10 pr-4 py-3 rounded-xl text-sm text-foreground placeholder-[#444] outline-none transition-all focus:ring-1 focus:ring-primary/50 bg-background/50 border border-border"
                     required
                   />
                 </div>
@@ -156,8 +155,7 @@ export default function SignIn() {
                     type="date"
                     value={dateOfBirth}
                     onChange={e => setDateOfBirth(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 rounded-xl text-sm text-foreground outline-none transition-all focus:ring-1 focus:ring-primary/50"
-                    className="bg-background/50 border border-border"
+                    className="w-full pl-10 pr-4 py-3 rounded-xl text-sm text-foreground outline-none transition-all focus:ring-1 focus:ring-primary/50 bg-background/50 border border-border"
                     required
                     max={new Date().toISOString().split('T')[0]}
                   />
@@ -175,8 +173,7 @@ export default function SignIn() {
                 placeholder="you@example.com"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 rounded-xl text-sm text-foreground placeholder-[#444] outline-none transition-all focus:ring-1 focus:ring-primary/50"
-                className="bg-background/50 border border-border"
+                className="w-full pl-10 pr-4 py-3 rounded-xl text-sm text-foreground placeholder-[#444] outline-none transition-all focus:ring-1 focus:ring-primary/50 bg-background/50 border border-border"
                 required
               />
             </div>
@@ -198,8 +195,7 @@ export default function SignIn() {
                 placeholder="••••••••"
                 value={password}
                 onChange={e => setPassword(e.target.value)}
-                className="w-full pl-10 pr-11 py-3 rounded-xl text-sm text-foreground placeholder-[#444] outline-none transition-all focus:ring-1 focus:ring-primary/50"
-                className="bg-background/50 border border-border"
+                className="w-full pl-10 pr-11 py-3 rounded-xl text-sm text-foreground placeholder-[#444] outline-none transition-all focus:ring-1 focus:ring-primary/50 bg-background/50 border border-border"
                 required
                 minLength={6}
               />

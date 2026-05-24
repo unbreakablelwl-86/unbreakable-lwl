@@ -76,8 +76,7 @@ export default function ForgotPassword() {
           {sent ? (
             /* ── Success state ── */
             <div className="text-center space-y-4">
-              <div className="w-16 h-16 mx-auto rounded-full flex items-center justify-center"
-                className="bg-primary/10 border border-primary/20">
+              <div className="w-16 h-16 mx-auto rounded-full flex items-center justify-center bg-primary/10 border border-primary/20">
                 <CheckCircle className="w-8 h-8 text-primary" />
               </div>
               <h2 className="font-heading font-bold text-xl tracking-wide text-foreground">Check Your Email</h2>
@@ -124,8 +123,7 @@ export default function ForgotPassword() {
                       placeholder="you@example.com"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="w-full pl-10 pr-4 py-3 rounded-xl text-sm text-foreground placeholder-[#444] outline-none transition-all focus:ring-1 focus:ring-primary/50"
-                      className="bg-background/50 border border-border"
+                      className="w-full pl-10 pr-4 py-3 rounded-xl text-sm text-foreground placeholder-[#444] outline-none transition-all focus:ring-1 focus:ring-primary/50 bg-background/50 border border-border"
                       required
                       autoFocus
                     />
