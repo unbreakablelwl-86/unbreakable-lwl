@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/hooks/useAuth';
 import { useProfile } from '@/hooks/useProfile';
 import { useTokenBalance } from '@/hooks/useTokenBalance';
+import { useLoginStreak } from '@/hooks/useLoginStreak';
 import { UpgradeNudge } from '@/components/paywall/UpgradeNudge';
 import { 
   Zap, Flame, Activity, Brain, GraduationCap,
@@ -97,6 +98,7 @@ export function HomeDashboard() {
   const { user } = useAuth();
   const { profile } = useProfile();
   const tokenState = useTokenBalance();
+  const { streak: loginStreak } = useLoginStreak();
   const [activeActions, setActiveActions] = useState<string[]>(loadSavedActions);
   const [editing, setEditing] = useState(false);
 
@@ -140,7 +142,7 @@ export function HomeDashboard() {
           <div className="flex items-center gap-0">
             {/* Streak */}
             <div className="flex-1 text-center">
-              <p className="text-2xl font-bold text-foreground">0</p>
+              <p className="text-2xl font-bold text-foreground">{loginStreak}</p>
               <p className="text-xs text-muted-foreground flex items-center justify-center gap-1 mt-1">
                 <span className="text-orange-400">🔥</span> Streak
               </p>
