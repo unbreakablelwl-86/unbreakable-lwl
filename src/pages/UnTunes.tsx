@@ -5,7 +5,7 @@ import {
   Play, Heart, MoreHorizontal, Clock, Headphones, Radio,
   Disc3, Podcast, ChevronRight, Sparkles, Crown, Star,
   Share2, Dumbbell, Footprints, Guitar, Flame, Waves, Swords, Drum,
-  Zap, Activity, Brain, ChevronDown,
+  Zap, Activity, Brain, ChevronDown, ExternalLink, LogOut, Loader2, Wifi,
 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -18,6 +18,7 @@ import type { Track } from '@/hooks/useUnTunes';
 import { UnTunesTrackRow } from '@/components/untunes/TrackRow';
 import { UnTunesArtistCard } from '@/components/untunes/ArtistCard';
 import { UnTunesArtistSignup } from '@/components/untunes/ArtistSignup';
+import { useSpotify } from '@/hooks/useSpotify';
 import { UnTunesArtistDashboard } from '@/components/untunes/ArtistDashboard';
 import { UnTunesMiniPlayer } from '@/components/untunes/MiniPlayer';
 import { toast } from 'sonner';
@@ -39,6 +40,7 @@ export default function UnTunes() {
   const [activeTab, setActiveTab] = useState<UnTunesTab>('browse');
   const [selectedGenre, setSelectedGenre] = useState<string | null>(null);
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
+  const spotify = useSpotify();
   const { tracks: featured, loading: featuredLoading } = useFeaturedTracks();
   const { artists, loading: artistsLoading } = useArtists();
   const { playlists } = useMyPlaylists();
@@ -418,24 +420,124 @@ export default function UnTunes() {
                     )}
                   </div>
 
-                  {/* Spotify Connect */}
-                  <Card className="p-4 border-[#1DB954]/30 bg-[#1DB954]/5 relative overflow-hidden">
-                    <div className="absolute -top-4 -right-4 w-16 h-16 bg-[#1DB954]/10 rounded-full blur-xl pointer-events-none" />
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-[#1DB954]/20 flex items-center justify-center">
-                        <svg className="w-5 h-5 text-[#1DB954]" viewBox="0 0 24 24" fill="currentColor">
-                          <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z" />
-                        </svg>
+                  {/* Spotify Connect / Connected */}
+                  {spotify.isConnected && spotify.profile ? (
+                    <>
+                      {/* Connected Profile Card */}
+                      <Card className="p-4 border-[#1DB954]/30 bg-[#1DB954]/5 relative overflow-hidden">
+                        <div className="absolute -top-4 -right-4 w-16 h-16 bg-[#1DB954]/10 rounded-full blur-xl pointer-events-none" />
+                        <div className="flex items-center gap-3 relative">
+                          <div className="w-10 h-10 rounded-full overflow-hidden bg-[#1DB954]/20 flex items-center justify-center">
+                            {spotify.profile.images?.[0]?.url ? (
+                              <img src={spotify.profile.images[0].url} alt="" className="w-full h-full object-cover" />
+                            ) : (
+                              <Wifi className="w-5 h-5 text-[#1DB954]" />
+                            )}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-1.5">
+                              <p className="font-display text-sm tracking-wider text-foreground truncate">{spotify.profile.display_name}</p>
+                              <Badge className="bg-[#1DB954]/20 text-[#1DB954] border-[#1DB954]/30 text-[9px] px-1.5 py-0">LINKED</Badge>
+                            </div>
+                            <p className="text-[10px] text-muted-foreground">Spotify {spotify.profile.product === 'premium' ? 'Premium' : 'Free'}</p>
+                          </div>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={spotify.disconnect}
+                            className="text-muted-foreground hover:text-destructive text-xs h-8 w-8 p-0"
+                          >
+                            <LogOut className="w-3.5 h-3.5" />
+                          </Button>
+                        </div>
+                      </Card>
+
+                      {/* Spotify Playlists */}
+                      {spotify.playlists.length > 0 && (
+                        <div>
+                          <h3 className="font-display text-xs tracking-wider text-[#1DB954]/80 mb-3 flex items-center gap-2">
+                            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
+                              <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z" />
+                            </svg>
+                            SPOTIFY PLAYLISTS
+                          </h3>
+                          <div className="space-y-2">
+                            {spotify.playlists.map(p => (
+                              <Card
+                                key={p.id}
+                                className="p-3 border-border/50 bg-card/30 flex items-center gap-3 hover:bg-card/50 cursor-pointer transition-colors"
+                                onClick={() => window.open(p.external_urls.spotify, '_blank')}
+                              >
+                                <div className="w-12 h-12 rounded-lg overflow-hidden bg-[#1DB954]/10 flex items-center justify-center flex-shrink-0">
+                                  {p.images?.[0]?.url ? (
+                                    <img src={p.images[0].url} alt="" className="w-full h-full object-cover" />
+                                  ) : (
+                                    <Music className="w-5 h-5 text-[#1DB954]/50" />
+                                  )}
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-sm font-medium text-foreground truncate">{p.name}</p>
+                                  <p className="text-[10px] text-muted-foreground">{p.tracks.total} tracks • {p.owner.display_name}</p>
+                                </div>
+                                <ExternalLink className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />
+                              </Card>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Recently Played */}
+                      {spotify.recentTracks.length > 0 && (
+                        <div>
+                          <h3 className="font-display text-xs tracking-wider text-muted-foreground mb-3">RECENTLY PLAYED ON SPOTIFY</h3>
+                          <div className="space-y-1">
+                            {spotify.recentTracks.map((t, i) => (
+                              <div
+                                key={`${t.id}-${i}`}
+                                className="flex items-center gap-3 p-2 rounded-lg hover:bg-card/50 cursor-pointer transition-colors"
+                                onClick={() => window.open(t.external_urls.spotify, '_blank')}
+                              >
+                                <div className="w-10 h-10 rounded overflow-hidden bg-card/50 flex-shrink-0">
+                                  {t.album.images?.[0]?.url ? (
+                                    <img src={t.album.images[0].url} alt="" className="w-full h-full object-cover" />
+                                  ) : (
+                                    <div className="w-full h-full flex items-center justify-center"><Music className="w-4 h-4 text-muted-foreground" /></div>
+                                  )}
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-sm text-foreground truncate">{t.name}</p>
+                                  <p className="text-[10px] text-muted-foreground truncate">{t.artists.map(a => a.name).join(', ')}</p>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <Card className="p-4 border-[#1DB954]/30 bg-[#1DB954]/5 relative overflow-hidden">
+                      <div className="absolute -top-4 -right-4 w-16 h-16 bg-[#1DB954]/10 rounded-full blur-xl pointer-events-none" />
+                      <div className="flex items-center gap-3 relative">
+                        <div className="w-10 h-10 rounded-xl bg-[#1DB954]/20 flex items-center justify-center">
+                          <svg className="w-5 h-5 text-[#1DB954]" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z" />
+                          </svg>
+                        </div>
+                        <div className="flex-1">
+                          <p className="font-display text-sm tracking-wider text-foreground">CONNECT SPOTIFY</p>
+                          <p className="text-[10px] text-muted-foreground">Link your account to see playlists & recently played</p>
+                        </div>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={spotify.connect}
+                          className="border-[#1DB954]/30 text-[#1DB954] hover:bg-[#1DB954]/10 text-xs"
+                        >
+                          {spotify.isLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : 'Connect'}
+                        </Button>
                       </div>
-                      <div className="flex-1">
-                        <p className="font-display text-sm tracking-wider text-foreground">CONNECT SPOTIFY</p>
-                        <p className="text-[10px] text-muted-foreground">Play your Spotify library in-app</p>
-                      </div>
-                      <Button size="sm" variant="outline" className="border-[#1DB954]/30 text-[#1DB954] hover:bg-[#1DB954]/10 text-xs">
-                        Connect
-                      </Button>
-                    </div>
-                  </Card>
+                    </Card>
+                  )}
                 </>
               )}
             </motion.div>
