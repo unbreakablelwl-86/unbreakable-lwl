@@ -23,11 +23,11 @@ function isSportChapter(chapter: Chapter): boolean {
 
 /** Build sport image URL from courseType + chapter number */
 function getSportImageUrl(courseType: string | undefined, chapterNumber: number): string | null {
-  if (!courseType) return null;
-  const sportName = courseType.replace('sport-', '');
-  // Images live at /src/assets/university/sport-{sport}-ch{N}.png — Vite will serve from assets
+  if (!courseType || !courseType.startsWith('sport-')) return null;
+  // courseType is already 'sport-football', 'sport-boxing' etc.
+  // Images at src/assets/university/sport-{sport}-ch{N}.png e.g. sport-football-ch1.png
   try {
-    return new URL(`../../assets/university/sport-${sportName}-ch${chapterNumber}.png`, import.meta.url).href;
+    return new URL(`../../assets/university/${courseType}-ch${chapterNumber}.png`, import.meta.url).href;
   } catch {
     return null;
   }

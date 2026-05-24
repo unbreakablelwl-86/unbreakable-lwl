@@ -276,53 +276,7 @@ export function CertificateView({ userName, courseType, level, completedDate }: 
             {formattedDate}
           </p>
 
-          {/* Unbreakable Stamp — circular seal */}
-          <div
-            className="relative flex items-center justify-center"
-            style={{
-              width: '72px',
-              height: '72px',
-            }}
-          >
-            {/* Outer ring */}
-            <div
-              className="absolute inset-0 rounded-full"
-              style={{
-                border: `2px solid ${tier.stampBorder}`,
-                background: 'rgba(0,0,0,0.25)',
-              }}
-            />
-            {/* Inner ring */}
-            <div
-              className="absolute rounded-full"
-              style={{
-                inset: '3px',
-                border: `1px solid ${tier.stampBorder}`,
-                opacity: 0.5,
-              }}
-            />
-            {/* Inner content */}
-            <div className="relative flex flex-col items-center justify-center text-center px-1">
-              <span
-                className="text-[7px] sm:text-[8px] tracking-[0.15em] uppercase font-bold leading-none"
-                style={{ color: tier.stampText }}
-              >
-                UNBREAKABLE
-              </span>
-              <span
-                className="text-[10px] sm:text-[12px] leading-none mt-0.5"
-                style={{ color: tier.stampText }}
-              >
-                ✦
-              </span>
-              <span
-                className="text-[6px] sm:text-[7px] tracking-[0.12em] uppercase font-bold leading-none"
-                style={{ color: tier.stampText }}
-              >
-                CERTIFIED
-              </span>
-            </div>
-          </div>
+          {/* Stamp removed per request */}
         </div>
       </div>
 
