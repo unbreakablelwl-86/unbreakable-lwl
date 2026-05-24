@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
-import { GoogleMap, useLoadScript, Marker, Polyline } from '@react-google-maps/api';
 import { Button } from '@/components/ui/button';
 import { Play, Pause, Download, RotateCcw } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -26,38 +25,186 @@ interface RunMapProps {
   className?: string;
 }
 
-// Dark theme map styles
-const darkMapStyles = [
-  { elementType: 'geometry', stylers: [{ color: '#1a1a1a' }] },
-  { elementType: 'labels.text.stroke', stylers: [{ color: '#1a1a1a' }] },
-  { elementType: 'labels.text.fill', stylers: [{ color: '#746855' }] },
-  { featureType: 'administrative.locality', elementType: 'labels.text.fill', stylers: [{ color: '#d59563' }] },
-  { featureType: 'poi', elementType: 'labels.text.fill', stylers: [{ color: '#d59563' }] },
-  { featureType: 'poi.park', elementType: 'geometry', stylers: [{ color: '#263c3f' }] },
-  { featureType: 'poi.park', elementType: 'labels.text.fill', stylers: [{ color: '#6b9a76' }] },
-  { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#38414e' }] },
-  { featureType: 'road', elementType: 'geometry.stroke', stylers: [{ color: '#212a37' }] },
-  { featureType: 'road', elementType: 'labels.text.fill', stylers: [{ color: '#9ca5b3' }] },
-  { featureType: 'road.highway', elementType: 'geometry', stylers: [{ color: '#746855' }] },
-  { featureType: 'road.highway', elementType: 'geometry.stroke', stylers: [{ color: '#1f2835' }] },
-  { featureType: 'road.highway', elementType: 'labels.text.fill', stylers: [{ color: '#f3d19c' }] },
-  { featureType: 'transit', elementType: 'geometry', stylers: [{ color: '#2f3948' }] },
-  { featureType: 'transit.station', elementType: 'labels.text.fill', stylers: [{ color: '#d59563' }] },
-  { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#17263c' }] },
-  { featureType: 'water', elementType: 'labels.text.fill', stylers: [{ color: '#515c6d' }] },
-  { featureType: 'water', elementType: 'labels.text.stroke', stylers: [{ color: '#17263c' }] },
-];
+// Lazy-loaded Leaflet map component (avoids SSR issues)
+function LeafletMap({ 
+  positions, 
+  isTracking, 
+  replayPath, 
+  currentPosition 
+}: { 
+  positions: Position[];
+  isTracking: boolean;
+  replayPath: { lat: number; lng: number }[];
+  currentPosition: { lat: number; lng: number } | null;
+}) {
+  const mapContainerRef = useRef<HTMLDivElement>(null);
+  const mapInstanceRef = useRef<any>(null);
+  const polylineRef = useRef<any>(null);
+  const markerRef = useRef<any>(null);
+  const startMarkerRef = useRef<any>(null);
+  const leafletRef = useRef<any>(null);
 
-const mapContainerStyle = {
-  width: '100%',
-  height: '300px',
-};
+  // Initialize Leaflet and map
+  useEffect(() => {
+    let cancelled = false;
 
-const polylineOptions = {
-  strokeColor: '#FF6600',
-  strokeOpacity: 0.9,
-  strokeWeight: 5,
-};
+    async function init() {
+      if (!mapContainerRef.current || mapInstanceRef.current) return;
+
+      // Dynamically import leaflet
+      const L = await import('leaflet');
+      if (cancelled) return;
+      leafletRef.current = L;
+
+      // Fix default icon paths (leaflet asset issue with bundlers)
+      delete (L.Icon.Default.prototype as any)._getIconUrl;
+      L.Icon.Default.mergeOptions({
+        iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+        iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+        shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+      });
+
+      const center: [number, number] = positions.length > 0
+        ? [positions[positions.length - 1].lat, positions[positions.length - 1].lng]
+        : [53.4084, -2.9916]; // Default Liverpool
+
+      const map = L.map(mapContainerRef.current, {
+        center,
+        zoom: 16,
+        zoomControl: true,
+        attributionControl: false,
+      });
+
+      // Dark tile layer (CartoDB Dark Matter — free, no API key)
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        maxZoom: 20,
+        subdomains: 'abcd',
+      }).addTo(map);
+
+      // Small attribution in corner
+      L.control.attribution({ position: 'bottomright', prefix: false })
+        .addAttribution('© <a href="https://www.openstreetmap.org/copyright">OSM</a> © <a href="https://carto.com/">CARTO</a>')
+        .addTo(map);
+
+      mapInstanceRef.current = map;
+
+      // Draw initial polyline if positions exist
+      if (positions.length > 1) {
+        const latlngs = positions.map(p => [p.lat, p.lng] as [number, number]);
+        polylineRef.current = L.polyline(latlngs, {
+          color: '#FF6600',
+          weight: 5,
+          opacity: 0.9,
+          lineCap: 'round',
+          lineJoin: 'round',
+        }).addTo(map);
+
+        map.fitBounds(polylineRef.current.getBounds(), { padding: [30, 30] });
+      }
+
+      // Start marker (green)
+      if (positions.length > 0) {
+        startMarkerRef.current = L.circleMarker(
+          [positions[0].lat, positions[0].lng],
+          {
+            radius: 8,
+            fillColor: '#22C55E',
+            fillOpacity: 1,
+            color: '#FFFFFF',
+            weight: 2,
+          }
+        ).addTo(map);
+      }
+
+      // Current position marker (orange)
+      if (currentPosition) {
+        markerRef.current = L.circleMarker(
+          [currentPosition.lat, currentPosition.lng],
+          {
+            radius: 10,
+            fillColor: '#FF6600',
+            fillOpacity: 1,
+            color: '#FFFFFF',
+            weight: 3,
+          }
+        ).addTo(map);
+      }
+    }
+
+    init();
+    return () => { cancelled = true; };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Update polyline when replayPath or positions change
+  useEffect(() => {
+    const map = mapInstanceRef.current;
+    const L = leafletRef.current;
+    if (!map || !L) return;
+
+    const pathToShow = replayPath.length > 0 ? replayPath : positions;
+    const latlngs = pathToShow.map(p => [p.lat, p.lng] as [number, number]);
+
+    if (polylineRef.current) {
+      polylineRef.current.setLatLngs(latlngs);
+    } else if (latlngs.length > 1) {
+      polylineRef.current = L.polyline(latlngs, {
+        color: '#FF6600',
+        weight: 5,
+        opacity: 0.9,
+        lineCap: 'round',
+        lineJoin: 'round',
+      }).addTo(map);
+    }
+
+    // Pan to latest point if tracking
+    if (isTracking && latlngs.length > 0) {
+      const last = latlngs[latlngs.length - 1];
+      map.panTo(last);
+    }
+  }, [positions, replayPath, isTracking]);
+
+  // Update current position marker
+  useEffect(() => {
+    const map = mapInstanceRef.current;
+    const L = leafletRef.current;
+    if (!map || !L) return;
+
+    if (currentPosition) {
+      if (markerRef.current) {
+        markerRef.current.setLatLng([currentPosition.lat, currentPosition.lng]);
+      } else {
+        markerRef.current = L.circleMarker(
+          [currentPosition.lat, currentPosition.lng],
+          {
+            radius: 10,
+            fillColor: '#FF6600',
+            fillOpacity: 1,
+            color: '#FFFFFF',
+            weight: 3,
+          }
+        ).addTo(map);
+      }
+    }
+  }, [currentPosition]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.remove();
+        mapInstanceRef.current = null;
+      }
+    };
+  }, []);
+
+  return (
+    <div 
+      ref={mapContainerRef} 
+      style={{ width: '100%', height: '300px' }}
+      className="rounded-lg overflow-hidden border border-border"
+    />
+  );
+}
 
 export function RunMap({ 
   positions, 
@@ -67,23 +214,23 @@ export function RunMap({
   showExport = false,
   className = ''
 }: RunMapProps) {
-  const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '',
-  });
-
-  const mapRef = useRef<google.maps.Map | null>(null);
   const [isReplaying, setIsReplaying] = useState(false);
   const [replayIndex, setReplayIndex] = useState(0);
   const replayIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const [leafletCSSLoaded, setLeafletCSSLoaded] = useState(false);
 
-  // Calculate center based on positions
-  const center = useMemo(() => {
-    if (positions.length === 0) {
-      return { lat: 51.505, lng: -0.09 }; // Default to London
+  // Load Leaflet CSS
+  useEffect(() => {
+    if (document.querySelector('link[href*="leaflet"]')) {
+      setLeafletCSSLoaded(true);
+      return;
     }
-    const lastPos = positions[positions.length - 1];
-    return { lat: lastPos.lat, lng: lastPos.lng };
-  }, [positions]);
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+    link.onload = () => setLeafletCSSLoaded(true);
+    document.head.appendChild(link);
+  }, []);
 
   // Get path for polyline
   const path = useMemo(() => {
@@ -92,7 +239,7 @@ export function RunMap({
 
   // Replay path (partial during replay)
   const replayPath = useMemo(() => {
-    if (!isReplaying && replayIndex === 0) return path;
+    if (!isReplaying && replayIndex === 0) return [];
     return path.slice(0, replayIndex + 1);
   }, [path, isReplaying, replayIndex]);
 
@@ -113,29 +260,9 @@ export function RunMap({
     if (!showElevation) return [];
     return positions.map((p, i) => ({
       distance: i,
-      elevation: p.elevation || Math.random() * 50 + 10, // Mock elevation if not available
+      elevation: p.elevation || Math.random() * 50 + 10,
     }));
   }, [positions, showElevation]);
-
-  // Center map on current position
-  useEffect(() => {
-    if (mapRef.current && isTracking && positions.length > 0) {
-      const last = positions[positions.length - 1];
-      mapRef.current.panTo({ lat: last.lat, lng: last.lng });
-    }
-  }, [positions, isTracking]);
-
-  // Handle map load
-  const onMapLoad = useCallback((map: google.maps.Map) => {
-    mapRef.current = map;
-    
-    // Fit bounds if we have multiple positions
-    if (positions.length > 1) {
-      const bounds = new google.maps.LatLngBounds();
-      positions.forEach(p => bounds.extend({ lat: p.lat, lng: p.lng }));
-      map.fitBounds(bounds, 50);
-    }
-  }, [positions]);
 
   // Start replay
   const startReplay = useCallback(() => {
@@ -153,7 +280,7 @@ export function RunMap({
         }
         return prev + 1;
       });
-    }, 200); // 5x speed (1 second = 5 positions)
+    }, 200);
   }, [positions.length]);
 
   // Stop replay
@@ -193,15 +320,7 @@ export function RunMap({
     URL.revokeObjectURL(url);
   }, [positions]);
 
-  if (loadError) {
-    return (
-      <div className={`w-full h-[300px] bg-muted flex items-center justify-center ${className}`}>
-        <p className="text-muted-foreground">Error loading map</p>
-      </div>
-    );
-  }
-
-  if (!isLoaded) {
+  if (!leafletCSSLoaded) {
     return (
       <div className={`w-full h-[300px] bg-muted flex items-center justify-center ${className}`}>
         <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
@@ -212,60 +331,12 @@ export function RunMap({
   return (
     <div className={`w-full ${className}`}>
       {/* Map Container */}
-      <div className="w-full rounded-lg overflow-hidden border border-border">
-        <GoogleMap
-          mapContainerStyle={mapContainerStyle}
-          center={center}
-          zoom={16}
-          onLoad={onMapLoad}
-          options={{
-            styles: darkMapStyles,
-            disableDefaultUI: true,
-            zoomControl: true,
-            mapTypeControl: false,
-            streetViewControl: false,
-            fullscreenControl: false,
-          }}
-        >
-          {/* Route Polyline */}
-          {(isReplaying ? replayPath : path).length > 1 && (
-            <Polyline
-              path={isReplaying ? replayPath : path}
-              options={polylineOptions}
-            />
-          )}
-
-          {/* Current Position Marker */}
-          {currentPosition && (
-            <Marker
-              position={currentPosition}
-              icon={{
-                path: google.maps.SymbolPath.CIRCLE,
-                scale: 10,
-                fillColor: '#FF6600',
-                fillOpacity: 1,
-                strokeColor: '#FFFFFF',
-                strokeWeight: 3,
-              }}
-            />
-          )}
-
-          {/* Start Marker */}
-          {positions.length > 0 && (
-            <Marker
-              position={{ lat: positions[0].lat, lng: positions[0].lng }}
-              icon={{
-                path: google.maps.SymbolPath.CIRCLE,
-                scale: 8,
-                fillColor: '#22C55E',
-                fillOpacity: 1,
-                strokeColor: '#FFFFFF',
-                strokeWeight: 2,
-              }}
-            />
-          )}
-        </GoogleMap>
-      </div>
+      <LeafletMap
+        positions={positions}
+        isTracking={isTracking}
+        replayPath={replayPath}
+        currentPosition={currentPosition}
+      />
 
       {/* Controls */}
       {(showReplay || showExport) && positions.length > 1 && (
@@ -412,7 +483,6 @@ export function positionsToGeoJSON(positions: Position[]): string {
 export function geoJSONToPositions(routeData: string): Position[] {
   if (!routeData) return [];
   
-  // Try to parse as GeoJSON first
   try {
     const data = JSON.parse(routeData);
     if (data.geometry?.type === 'LineString' && data.geometry?.coordinates) {
@@ -424,7 +494,6 @@ export function geoJSONToPositions(routeData: string): Position[] {
       }));
     }
   } catch {
-    // Not JSON, try legacy pipe-separated format: "lat,lng|lat,lng|..."
     const points = routeData.split('|');
     if (points.length > 0 && points[0].includes(',')) {
       return points.map((point, i) => {
