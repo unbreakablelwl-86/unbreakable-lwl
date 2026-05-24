@@ -65,7 +65,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import Unbreakable86 from "./pages/Unbreakable86";
 import UnTunes from "./pages/UnTunes";
-import SpotifyCallback from "./pages/SpotifyCallback";
+// import SpotifyCallback from "./pages/SpotifyCallback"; // parked
 
 const queryClient = new QueryClient();
 
@@ -250,7 +250,7 @@ const App = () => {
 
                 {/* Un-Tunes — Music & Podcasts */}
                 <Route path="/untunes" element={<UnTunes />} />
-                <Route path="/callback/spotify" element={<SpotifyCallback />} />
+                {/* <Route path="/callback/spotify" element={<SpotifyCallback />} /> */}
                 
                 {/* Coach Dashboard - role-protected + subscribed */}
                 <Route path="/coach" element={
