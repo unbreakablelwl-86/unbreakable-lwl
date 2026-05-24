@@ -13,10 +13,17 @@ const logStep = (step: string, details?: any) => {
 
 // Known subscription price IDs (AI tiers + coaching tiers)
 const SUBSCRIPTION_PRICES = new Set([
-  // AI token tiers
-  "price_1TXuIrD5KOEmeWH21kBZYWAP", // Starter £25/mo
-  "price_1TXuIrD5KOEmeWH2SxYc7G14", // Pro £49/mo
-  "price_1TXuIsD5KOEmeWH2JUHUujEy", // Elite £79/mo
+  // Current subscription tiers (subscriptionTiers.ts)
+  "price_1TaPmmD5KOEmeWH2Le2bNnPh", // Absolute Base £7/mo (retention)
+  "price_1TaPmmD5KOEmeWH2LeANGH4k", // Base £25/mo
+  "price_1TaPmsD5KOEmeWH2dO7mg9XK", // Pro £50/mo
+  "price_1TaPmmD5KOEmeWH2bemvjYM4", // Elite £100/mo
+  // Un-Tunes artist subscription
+  "price_1TaknRD5KOEmeWH2yPpxlfNw", // Un-Tunes Artist £5/mo
+  // Legacy AI token tiers (may still be active on existing subs)
+  "price_1TXuIrD5KOEmeWH21kBZYWAP", // Old Starter £25/mo
+  "price_1TXuIrD5KOEmeWH2SxYc7G14", // Old Pro £49/mo
+  "price_1TXuIsD5KOEmeWH2JUHUujEy", // Old Elite £79/mo
   // Legacy coaching tiers
   "price_1TOZ0iD5KOEmeWH2hXvqwBOm", // Tier 1
   "price_1TOZ0jD5KOEmeWH23osCaN4Y", // Tier 2 (121)

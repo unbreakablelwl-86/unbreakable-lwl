@@ -28,6 +28,8 @@ import {
   Activity,
   Users,
   Bot,
+  Music,
+  LogOut,
 } from 'lucide-react';
 import { useState, useEffect, useCallback } from 'react';
 import { useConversations } from '@/hooks/useConversations';
@@ -173,6 +175,15 @@ const ALL_NAV_ITEMS: NavItemDef[] = [
     description: 'Discover content',
   },
   {
+    id: 'untunes',
+    icon: Music,
+    label: 'Un-Tunes',
+    path: '/untunes',
+    activeMatch: ['/untunes'],
+    color: '#FF5500',
+    description: 'Music & podcasts',
+  },
+  {
     id: 'profile',
     icon: User,
     label: 'Profile',
@@ -223,7 +234,7 @@ function loadSavedTabs(): string[] {
 const HIDE_NAV_PATHS = ['/onboarding'];
 
 export default function AppLayout() {
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const [showMore, setShowMore] = useState(false);
@@ -532,33 +543,57 @@ export default function AppLayout() {
               </div>
             ) : (
               /* ─── Normal More Menu ─── */
-              <div className="grid grid-cols-2 gap-1 p-2 overflow-y-auto" style={{ maxHeight: 'calc(70vh - 56px)' }}>
-                {moreMenuItems.map(item => {
-                  const Icon = item.icon;
-                  const active = isActive(item);
-                  return (
+              <div className="overflow-y-auto" style={{ maxHeight: 'calc(70vh - 56px)' }}>
+                <div className="grid grid-cols-2 gap-1 p-2">
+                  {moreMenuItems.map(item => {
+                    const Icon = item.icon;
+                    const active = isActive(item);
+                    return (
+                      <button
+                        key={item.id}
+                        onClick={() => {
+                          setShowMore(false);
+                          navigate(item.path);
+                        }}
+                        className={`flex items-center gap-3 p-3 rounded-xl text-left transition-all ${
+                          active ? 'bg-primary/10' : 'hover:bg-white/[0.03]'
+                        }`}
+                      >
+                        <div className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${
+                          active ? 'bg-primary/20' : 'bg-white/[0.05]'
+                        }`}>
+                          {Icon && <Icon size={18} className={active ? 'text-primary' : ''} style={!active ? { color: item.color } : undefined} />}
+                        </div>
+                        <div className="min-w-0">
+                          <p className={`text-[13px] font-semibold truncate ${active ? 'text-primary' : 'text-foreground'}`}>{item.label}</p>
+                          <p className="text-[10px] text-muted-foreground truncate">{item.description}</p>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Sign Out */}
+                {user && (
+                  <div className="px-2 pb-2 pt-1 border-t border-white/[0.06]">
                     <button
-                      key={item.id}
-                      onClick={() => {
+                      onClick={async () => {
                         setShowMore(false);
-                        navigate(item.path);
+                        await signOut();
+                        navigate('/');
                       }}
-                      className={`flex items-center gap-3 p-3 rounded-xl text-left transition-all ${
-                        active ? 'bg-primary/10' : 'hover:bg-white/[0.03]'
-                      }`}
+                      className="flex items-center gap-3 p-3 rounded-xl text-left transition-all hover:bg-red-500/10 w-full"
                     >
-                      <div className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                        active ? 'bg-primary/20' : 'bg-white/[0.05]'
-                      }`}>
-                        {Icon && <Icon size={18} className={active ? 'text-primary' : ''} style={!active ? { color: item.color } : undefined} />}
+                      <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 bg-red-500/10">
+                        <LogOut size={18} className="text-red-500" />
                       </div>
                       <div className="min-w-0">
-                        <p className={`text-[13px] font-semibold truncate ${active ? 'text-primary' : 'text-foreground'}`}>{item.label}</p>
-                        <p className="text-[10px] text-muted-foreground truncate">{item.description}</p>
+                        <p className="text-[13px] font-semibold truncate text-red-500">Sign Out</p>
+                        <p className="text-[10px] text-muted-foreground truncate">Log out of your account</p>
                       </div>
                     </button>
-                  );
-                })}
+                  </div>
+                )}
               </div>
             )}
           </div>
