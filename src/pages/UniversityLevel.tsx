@@ -328,18 +328,29 @@ export default function UniversityLevel() {
                     </p>
                   )}
 
-                  <Button
-                    onClick={() => navigate(`/university/${ct}/level-${levelNum}/unit-0/assessment`)}
-                    disabled={!allQuizzesPassed}
-                    className="w-full"
-                    variant={allQuizzesPassed ? 'default' : 'outline'}
-                  >
-                    {hasPassedAssessment(levelNum, 0, ct)
-                      ? 'Retake Final Assessment'
-                      : allQuizzesPassed
-                      ? 'Start Final Assessment'
-                      : 'Complete All Chapter Quizzes First'}
-                  </Button>
+                  <div className="flex flex-col gap-2">
+                    <Button
+                      onClick={() => navigate(`/university/${ct}/level-${levelNum}/unit-0/assessment`)}
+                      disabled={!allQuizzesPassed}
+                      className="w-full"
+                      variant={allQuizzesPassed ? 'default' : 'outline'}
+                    >
+                      {hasPassedAssessment(levelNum, 0, ct)
+                        ? 'Retake Final Assessment'
+                        : allQuizzesPassed
+                        ? 'Start Final Assessment'
+                        : 'Complete All Chapter Quizzes First'}
+                    </Button>
+                    {hasPassedAssessment(levelNum, 0, ct) && (
+                      <Button
+                        onClick={() => navigate(`/university/${ct}/level-${levelNum}/certificate`)}
+                        variant="outline"
+                        className="w-full gap-2 border-[#FF5500]/30 text-[#FF5500] hover:bg-[#FF5500]/5"
+                      >
+                        <GraduationCap className="w-4 h-4" /> View Your Certificate
+                      </Button>
+                    )}
+                  </div>
                 </div>
               </Card>
             </motion.div>

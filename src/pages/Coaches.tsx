@@ -3,12 +3,14 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { useCoachDirectory } from '@/hooks/useCoachPublicProfile';
 import { Loader2, UserCheck, Award, PoundSterling, ChevronRight, ArrowLeft } from 'lucide-react';
+import { PaywallGate } from '@/components/paywall';
 
 export default function Coaches() {
   const { coaches, loading } = useCoachDirectory();
   const navigate = useNavigate();
 
   return (
+    <PaywallGate feature="pt_hub">
     <div className="min-h-screen pb-24" style={{ background: '#080808' }}>
       {/* Back nav */}
       <div className="px-4 pt-4">
@@ -106,5 +108,6 @@ export default function Coaches() {
         )}
       </div>
     </div>
+    </PaywallGate>
   );
 }

@@ -11,6 +11,7 @@ import { U86Dashboard } from '@/components/unbreakable86/U86Dashboard';
 import { U86Certificate } from '@/components/unbreakable86/U86Certificate';
 import type { U86QuizAnswers } from '@/lib/unbreakable86Types';
 import { Loader2 } from 'lucide-react';
+import { PaywallGate } from '@/components/paywall';
 
 type U86View = 'landing' | 'onboarding' | 'dashboard' | 'certificate';
 
@@ -58,14 +59,17 @@ export default function Unbreakable86() {
 
     case 'onboarding':
       return (
+        <PaywallGate feature="unbreakable_86">
         <U86Onboarding
           onComplete={handleOnboardingComplete}
           onBack={handleBackToLanding}
         />
+        </PaywallGate>
       );
 
     case 'dashboard':
       return u86.enrolment ? (
+        <PaywallGate feature="unbreakable_86">
         <U86Dashboard
           enrolment={u86.enrolment}
           todayLog={u86.todayLog}
@@ -76,6 +80,7 @@ export default function Unbreakable86() {
           onUpdateJournal={u86.updateJournal}
           onViewProgress={() => {}}
         />
+        </PaywallGate>
       ) : null;
 
     case 'certificate':

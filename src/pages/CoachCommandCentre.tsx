@@ -17,6 +17,7 @@ import {
   Footprints, Utensils, FileText, Image, Video,
 } from 'lucide-react';
 import { ChatMediaUpload, ChatMediaAttachment } from '@/components/inbox/ChatMediaUpload';
+import { PaywallGate } from '@/components/paywall';
 
 /* ─── Types ─── */
 type SidebarSection = 'clients' | 'channels';
@@ -188,6 +189,7 @@ export default function CoachCommandCentre() {
   ];
 
   return (
+    <PaywallGate feature="coach_command">
     <div className="h-screen flex flex-col" style={{ background: '#080808' }}>
       {/* Top bar */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-gray-800 shrink-0">
@@ -534,5 +536,6 @@ export default function CoachCommandCentre() {
         )}
       </div>
     </div>
+    </PaywallGate>
   );
 }

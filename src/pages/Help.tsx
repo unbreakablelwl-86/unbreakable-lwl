@@ -23,6 +23,7 @@ import { AIPlanReviewModal } from '@/components/ai/AIPlanReviewModal';
 import { useAIProgramme } from '@/hooks/useAIProgramme';
 import { useAIMealPlan } from '@/hooks/useAIMealPlan';
 import { useTrainingPrograms } from '@/hooks/useTrainingPrograms';
+import { PaywallGate } from '@/components/paywall';
 import { useMindsetProgrammes } from '@/hooks/useMindsetProgrammes';
 import { useMealPlans } from '@/hooks/useMealPlans';
 import { useUserRole } from '@/hooks/useUserRole';
@@ -575,6 +576,7 @@ export default function Help() {
   };
 
   return (
+    <PaywallGate feature="ai_coach_basic">
     <SwipeNavigationWrapper>
       <div className="min-h-screen flex flex-col" style={{ background: '#080808' }}>
         {/* ─── Header ─── */}
@@ -833,5 +835,6 @@ export default function Help() {
         )}
       </div>
     </SwipeNavigationWrapper>
+    </PaywallGate>
   );
 }

@@ -19,6 +19,7 @@ import {
   Utensils, Loader2, User, Video, Image, Send,
   CheckCircle2, Lock, ClipboardCheck, ArrowLeft
 } from 'lucide-react';
+import { PaywallGate } from '@/components/paywall';
 
 type Tab = 'checkins' | 'updates' | 'plans';
 
@@ -95,6 +96,7 @@ export default function MyCoaching() {
   ];
 
   return (
+    <PaywallGate feature="pt_hub">
     <div className="min-h-screen pb-24" style={{ background: '#080808' }}>
       {/* Back nav */}
       <div className="px-4 pt-4">
@@ -368,5 +370,6 @@ export default function MyCoaching() {
       </div>
       <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
     </div>
+    </PaywallGate>
   );
 }

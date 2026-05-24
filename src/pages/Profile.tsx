@@ -28,6 +28,11 @@ import {
   Tag,
   BadgeCheck,
   MoreHorizontal,
+  Dumbbell,
+  Brain,
+  Utensils,
+  Footprints,
+  GraduationCap,
 } from 'lucide-react';
 import { format, formatDistanceToNow } from 'date-fns';
 import shieldLogo from '@/assets/unbreakable-shield.png';
@@ -421,16 +426,22 @@ export default function Profile() {
         </div>
       </section>
 
-      {/* ━━━ Story Highlights ━━━ */}
+      {/* ━━━ Pillar Quick-Links ━━━ */}
       <section className="px-4 pb-3 overflow-x-auto">
         <div className="flex gap-4 min-w-max">
-          {['Gains', 'Mindset', 'Fuel', 'Journey', 'PRs'].map(label => (
-            <button key={label} className="flex flex-col items-center gap-1.5">
-              <div className="w-16 h-16 rounded-full flex items-center justify-center"
-                style={{ background: '#1a1a1a', border: '1px solid #333' }}>
-                <span className="text-xs text-[#666]">📌</span>
+          {[
+            { label: 'Power', icon: Dumbbell, path: '/power' },
+            { label: 'Movement', icon: Footprints, path: '/movement' },
+            { label: 'Fuel', icon: Utensils, path: '/fuel' },
+            { label: 'Mindset', icon: Brain, path: '/mindset' },
+            { label: 'Education', icon: GraduationCap, path: '/university' },
+          ].map(({ label, icon: Icon, path }) => (
+            <button key={label} onClick={() => navigate(path)} className="flex flex-col items-center gap-1.5 group">
+              <div className="w-16 h-16 rounded-full flex items-center justify-center border border-[#FF5500]/20 group-hover:border-[#FF5500]/50 transition-all"
+                style={{ background: 'rgba(255,85,0,0.06)' }}>
+                <Icon className="w-6 h-6 text-[#FF5500]" style={{ filter: 'drop-shadow(0 0 6px rgba(255,85,0,0.4))' }} />
               </div>
-              <span className="text-[11px] text-[#888]">{label}</span>
+              <span className="text-[11px] text-gray-400 font-display tracking-wider group-hover:text-[#FF5500] transition-colors">{label}</span>
             </button>
           ))}
         </div>

@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { getExerciseGifUrl } from '@/lib/exercise-images';
 import type { Exercise } from '@/lib/exercise-types';
+import { PaywallGate } from '@/components/paywall';
 
 /* ── Filter options ── */
 const MUSCLE_FILTERS = [
@@ -249,6 +250,7 @@ export default function ExerciseLibrary() {
   useEffect(() => { setPage(1); }, [query, selectedMuscle, selectedEquipment, selectedLevel]);
 
   return (
+    <PaywallGate feature="exercise_library">
     <div className="min-h-screen pb-24" style={{ background: '#080808' }}>
       {/* Hero */}
       <section className="pt-24 pb-10 md:pt-28 md:pb-14 border-b border-primary/20">
@@ -501,5 +503,6 @@ export default function ExerciseLibrary() {
         )}
       </AnimatePresence>
     </div>
+    </PaywallGate>
   );
 }
