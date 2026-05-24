@@ -81,6 +81,7 @@ const ALL_QUICK_ACTIONS: QuickAction[] = [
   { id: 'habits', label: 'Habits', icon: Calendar, path: '/habits' },
   { id: 'faq', label: 'Help', icon: HelpCircle, path: '/faq' },
   { id: 'mindset', label: 'Breathe', icon: Heart, path: '/mindset/breathing' },
+  { id: 'untunes', label: 'Un-Tunes', icon: Music, path: '/untunes' },
 ];
 
 const DEFAULT_ACTION_IDS = ['snap', 'run', 'lift', 'journal'];
