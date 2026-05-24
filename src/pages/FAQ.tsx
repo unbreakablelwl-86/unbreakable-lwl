@@ -24,6 +24,7 @@ import {
   Zap,
   MessageCircle,
 } from 'lucide-react';
+import founderPhoto from '@/assets/john-founder.png';
 
 /* ─── FAQ Data ─── */
 interface FAQItem {
@@ -364,8 +365,8 @@ export default function FAQ() {
             className="w-full rounded-xl border border-border bg-card p-5 text-left hover:border-border transition-all"
           >
             <div className="flex items-center gap-4 mb-3">
-              <div className="w-14 h-14 rounded-full flex items-center justify-center text-2xl border border-primary/20" style={{ background: 'rgba(255,85,0,0.1)' }}>
-                🦁
+              <div className="w-14 h-14 rounded-full overflow-hidden border border-primary/20">
+                <img src={founderPhoto} alt="John James — Founder" className="w-full h-full object-cover" />
               </div>
               <div className="flex-1">
                 <p className="font-display text-base text-foreground tracking-wide">JOHN JAMES</p>
