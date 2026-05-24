@@ -166,7 +166,7 @@ export function UnTunesArtistDashboard({ artist }: ArtistDashboardProps) {
             {[
               { label: 'Total Plays', value: artist.total_plays.toLocaleString(), icon: Play, color: 'text-primary' },
               { label: 'Followers', value: artist.follower_count.toLocaleString(), icon: Users, color: 'text-blue-400' },
-              { label: 'Revenue Split', value: '70%', icon: DollarSign, color: 'text-green-400' },
+              { label: 'Revenue Split', value: '80%', icon: DollarSign, color: 'text-green-400' },
               { label: 'Subscription', value: '£5/mo', icon: TrendingUp, color: 'text-amber-400' },
             ].map((stat, i) => (
               <Card key={i} className="p-4 border-border/50 bg-card/30">
@@ -325,7 +325,7 @@ export function UnTunesArtistDashboard({ artist }: ArtistDashboardProps) {
                   min="0.50"
                   className="bg-card/50 border-border/50 w-32"
                 />
-                <span className="text-[10px] text-muted-foreground">You keep 70%</span>
+                <span className="text-[10px] text-muted-foreground">You keep 80%</span>
               </div>
             )}
           </div>
@@ -388,7 +388,7 @@ export function UnTunesArtistDashboard({ artist }: ArtistDashboardProps) {
 
           <Card className="p-4 border-border/50 bg-card/30">
             <h3 className="font-display text-xs tracking-wider text-muted-foreground mb-2">REVENUE</h3>
-            <p className="text-sm text-muted-foreground">70% artist / 30% Unbreakable on all sales</p>
+            <p className="text-sm text-muted-foreground">80% artist / 20% Unbreakable on all sales</p>
           </Card>
         </motion.div>
       )}

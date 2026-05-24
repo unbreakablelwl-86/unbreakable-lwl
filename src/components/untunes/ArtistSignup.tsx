@@ -14,6 +14,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { GENRES, GENRE_CATEGORIES } from '@/hooks/useUnTunes';
 import { toast } from 'sonner';
+import { Link } from 'react-router-dom';
 
 const fadeIn = { initial: { opacity: 0, y: 12 }, animate: { opacity: 1, y: 0 } };
 
@@ -24,18 +25,14 @@ const GENRE_ICONS: Record<string, React.ComponentType<any>> = {
 
 const FEATURES = [
   { icon: Upload, label: 'Upload unlimited tracks & podcasts' },
-  { icon: DollarSign, label: 'Set your own pricing — keep 70% of sales' },
+  { icon: DollarSign, label: 'Set your own pricing — keep 80% of sales' },
   { icon: Users, label: 'Build your fanbase within the Unbreakable community' },
   { icon: TrendingUp, label: 'Track plays, followers, and earnings' },
   { icon: Music, label: 'Create albums, EPs, and podcast series' },
   { icon: Star, label: 'Get featured on the Un-Tunes homepage' },
 ];
 
-interface ArtistSignupProps {
-  isDevOrCoach?: boolean;
-}
-
-export function UnTunesArtistSignup({ isDevOrCoach = false }: ArtistSignupProps) {
+export function UnTunesArtistSignup() {
   const { user } = useAuth();
   const [step, setStep] = useState<'info' | 'form'>('info');
   const [artistName, setArtistName] = useState('');
@@ -58,10 +55,10 @@ export function UnTunesArtistSignup({ isDevOrCoach = false }: ArtistSignupProps)
         artist_name: artistName.trim(),
         bio: bio.trim(),
         genre_tags: selectedGenres,
-        subscription_status: isDevOrCoach ? 'active' : 'active',
+        subscription_status: 'pending',
         follower_count: 0,
         total_plays: 0,
-        is_verified: isDevOrCoach,
+        is_verified: false,
         social_links: {},
       });
 
@@ -88,7 +85,7 @@ export function UnTunesArtistSignup({ isDevOrCoach = false }: ArtistSignupProps)
           </p>
         </motion.div>
 
-        {/* Pricing — different for dev/coach */}
+        {/* Pricing */}
         <motion.div {...fadeIn} transition={{ delay: 0.1 }}>
           <Card className="p-5 border-primary/30 bg-primary/5 relative overflow-hidden">
             <div className="absolute -top-6 -right-6 w-24 h-24 bg-primary/10 rounded-full blur-2xl pointer-events-none" />
@@ -96,25 +93,14 @@ export function UnTunesArtistSignup({ isDevOrCoach = false }: ArtistSignupProps)
               <div>
                 <div className="flex items-center gap-2 mb-1">
                   <Sparkles className="w-4 h-4 text-primary drop-shadow-[0_0_4px_rgba(255,85,0,0.5)]" />
-                  <span className="font-display text-sm tracking-wider text-primary">
-                    {isDevOrCoach ? 'ARTIST ACCESS' : 'ARTIST SUBSCRIPTION'}
-                  </span>
+                  <span className="font-display text-sm tracking-wider text-primary">ARTIST SUBSCRIPTION</span>
                 </div>
-                {isDevOrCoach ? (
-                  <>
-                    <p className="text-2xl font-bold text-foreground">FREE</p>
-                    <p className="text-xs text-muted-foreground mt-1">Included with your dev/coach account</p>
-                  </>
-                ) : (
-                  <>
-                    <p className="text-2xl font-bold text-foreground">£5<span className="text-sm font-normal text-muted-foreground">/month</span></p>
-                    <p className="text-xs text-muted-foreground mt-1">70/30 revenue split in your favour</p>
-                  </>
-                )}
+                <p className="text-2xl font-bold text-foreground">£5<span className="text-sm font-normal text-muted-foreground">/month</span></p>
+                <p className="text-xs text-muted-foreground mt-1">80/20 revenue split — you keep 80%</p>
               </div>
               <div className="text-right">
                 <Badge className="bg-primary text-primary-foreground font-display text-[10px] tracking-wider shadow-[0_0_12px_rgba(255,85,0,0.3)]">
-                  {isDevOrCoach ? 'DEV/COACH PERK' : 'UNLIMITED UPLOADS'}
+                  UNLIMITED UPLOADS
                 </Badge>
               </div>
             </div>
@@ -140,6 +126,11 @@ export function UnTunesArtistSignup({ isDevOrCoach = false }: ArtistSignupProps)
           <Zap className="w-4 h-4" />
           GET STARTED
         </Button>
+
+        <p className="text-center text-[10px] text-muted-foreground">
+          By signing up you agree to our{' '}
+          <Link to="/untunes/terms" className="text-primary hover:underline">Terms &amp; Conditions</Link>
+        </p>
       </div>
     );
   }

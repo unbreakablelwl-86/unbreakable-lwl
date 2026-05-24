@@ -36,7 +36,6 @@ const GENRE_ICONS: Record<string, React.ComponentType<any>> = {
 export default function UnTunes() {
   const { user } = useAuth();
   const { isDev, isCoach } = useUserRole();
-  const isDevOrCoach = isDev || isCoach;
   const [activeTab, setActiveTab] = useState<UnTunesTab>('browse');
   const [selectedGenre, setSelectedGenre] = useState<string | null>(null);
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
@@ -66,7 +65,7 @@ export default function UnTunes() {
     { key: 'browse' as const, label: 'BROWSE', icon: Music },
     { key: 'search' as const, label: 'SEARCH', icon: Search },
     { key: 'library' as const, label: 'LIBRARY', icon: Library },
-    { key: 'artist' as const, label: isDevOrCoach ? 'ARTIST HUB' : (myArtist ? 'ARTIST HUB' : 'BECOME ARTIST'), icon: (myArtist || isDevOrCoach) ? Crown : UserPlus },
+    { key: 'artist' as const, label: myArtist ? 'ARTIST HUB' : 'BECOME ARTIST', icon: myArtist ? Crown : UserPlus },
   ];
 
   return (
@@ -226,7 +225,7 @@ export default function UnTunes() {
                     <Mic2 className="w-10 h-10 text-primary/20 mx-auto mb-3 drop-shadow-[0_0_8px_rgba(255,85,0,0.2)]" />
                     <p className="text-sm text-muted-foreground mb-1">No artists yet</p>
                     <p className="text-xs text-muted-foreground/60 mb-4">
-                      {isDevOrCoach ? 'Set up your artist profile to start uploading' : 'Join as an artist for £5/month and share your music'}
+                      {'Join as an artist for £5/month and share your music — you keep 80%'}
                     </p>
                     <Button
                       size="sm"
@@ -234,7 +233,7 @@ export default function UnTunes() {
                       className="gap-2 shadow-[0_0_16px_rgba(255,85,0,0.3)]"
                     >
                       <UserPlus className="w-4 h-4" />
-                      {isDevOrCoach ? 'Set Up Artist Profile' : 'Become an Artist'}
+                      {'Become an Artist'}
                     </Button>
                   </Card>
                 ) : (
@@ -441,7 +440,7 @@ export default function UnTunes() {
               ) : myArtist ? (
                 <UnTunesArtistDashboard artist={myArtist} />
               ) : (
-                <UnTunesArtistSignup isDevOrCoach={isDevOrCoach} />
+                <UnTunesArtistSignup />
               )}
             </motion.div>
           )}
