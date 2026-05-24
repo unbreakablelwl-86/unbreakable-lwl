@@ -280,8 +280,8 @@ export function CertificateView({ userName, courseType, level, completedDate }: 
           <div
             className="relative flex items-center justify-center"
             style={{
-              width: '56px',
-              height: '56px',
+              width: '72px',
+              height: '72px',
             }}
           >
             {/* Outer ring */}
@@ -292,10 +292,19 @@ export function CertificateView({ userName, courseType, level, completedDate }: 
                 background: 'rgba(0,0,0,0.25)',
               }}
             />
+            {/* Inner ring */}
+            <div
+              className="absolute rounded-full"
+              style={{
+                inset: '3px',
+                border: `1px solid ${tier.stampBorder}`,
+                opacity: 0.5,
+              }}
+            />
             {/* Inner content */}
-            <div className="relative flex flex-col items-center justify-center text-center">
+            <div className="relative flex flex-col items-center justify-center text-center px-1">
               <span
-                className="text-[6px] sm:text-[7px] tracking-[0.2em] uppercase font-bold leading-none"
+                className="text-[7px] sm:text-[8px] tracking-[0.15em] uppercase font-bold leading-none"
                 style={{ color: tier.stampText }}
               >
                 UNBREAKABLE
@@ -307,7 +316,7 @@ export function CertificateView({ userName, courseType, level, completedDate }: 
                 ✦
               </span>
               <span
-                className="text-[5px] sm:text-[6px] tracking-[0.15em] uppercase leading-none"
+                className="text-[6px] sm:text-[7px] tracking-[0.12em] uppercase font-bold leading-none"
                 style={{ color: tier.stampText }}
               >
                 CERTIFIED

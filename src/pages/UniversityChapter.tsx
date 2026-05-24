@@ -150,7 +150,7 @@ export default function UniversityChapter() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
           >
-            <ChapterContent chapter={chapterData} />
+            <ChapterContent chapter={chapterData} courseType={ct} />
           </motion.div>
 
           {/* Bottom Actions */}

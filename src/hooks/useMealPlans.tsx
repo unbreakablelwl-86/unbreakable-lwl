@@ -5,7 +5,7 @@ import { useUserRole } from '@/hooks/useUserRole';
 import { toast } from 'sonner';
 import { MealPlan, MealPlanItem } from '@/lib/fuelTypes';
 
-const MAX_ACTIVE_MEAL_PLANS = 2;
+const MAX_ACTIVE_MEAL_PLANS = 999;
 
 export function useMealPlans() {
   const { user } = useAuth();

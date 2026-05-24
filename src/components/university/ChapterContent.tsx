@@ -8,6 +8,7 @@ import { CheckSquare, Target, ListChecks, Lightbulb, Dumbbell } from 'lucide-rea
 
 interface Props {
   chapter: Chapter;
+  courseType?: string;
 }
 
 const fadeIn = {
@@ -20,15 +21,43 @@ function isSportChapter(chapter: Chapter): boolean {
   return typeof chapter.content === 'string';
 }
 
+/** Build sport image URL from courseType + chapter number */
+function getSportImageUrl(courseType: string | undefined, chapterNumber: number): string | null {
+  if (!courseType) return null;
+  const sportName = courseType.replace('sport-', '');
+  // Images live at /src/assets/university/sport-{sport}-ch{N}.png — Vite will serve from assets
+  try {
+    return new URL(`../../assets/university/sport-${sportName}-ch${chapterNumber}.png`, import.meta.url).href;
+  } catch {
+    return null;
+  }
+}
+
 /** Render sport-format chapter (content as string, keyTakeaways, practicalApplication) */
-function SportChapterContent({ chapter }: Props) {
+function SportChapterContent({ chapter, courseType }: Props) {
   const ch = chapter as Chapter & { keyTakeaways?: string; practicalApplication?: string; description?: string };
   const paragraphs = typeof ch.content === 'string' ? ch.content.split('\n\n').filter(Boolean) : [];
   const takeaways = ch.keyTakeaways?.split('\n').filter(Boolean) || [];
   const practicalApp = ch.practicalApplication || '';
+  const sportImage = getSportImageUrl(courseType, ch.number);
 
   return (
     <div className="space-y-8">
+      {/* Sport Chapter Image */}
+      {sportImage && (
+        <motion.div {...fadeIn} transition={{ delay: 0.05 }}>
+          <div className="rounded-xl overflow-hidden border border-primary/20 shadow-lg shadow-primary/5">
+            <img
+              src={sportImage}
+              alt={ch.title}
+              className="w-full h-auto"
+              loading="lazy"
+              onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+            />
+          </div>
+        </motion.div>
+      )}
+
       {/* Description */}
       {ch.description && (
         <motion.div {...fadeIn} transition={{ delay: 0.1 }}>
@@ -102,10 +131,10 @@ function SportChapterContent({ chapter }: Props) {
   );
 }
 
-export function ChapterContent({ chapter }: Props) {
+export function ChapterContent({ chapter, courseType }: Props) {
   // Route to sport renderer if content is a string
   if (isSportChapter(chapter)) {
-    return <SportChapterContent chapter={chapter} />;
+    return <SportChapterContent chapter={chapter} courseType={courseType} />;
   }
 
   const contentSections = chapter.content as import('@/lib/university/types').ContentSection[];

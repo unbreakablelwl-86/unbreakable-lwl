@@ -39,7 +39,7 @@ function toCardioProgram(row: any): CardioProgram {
   };
 }
 
-const MAX_ACTIVE_PROGRAMS = 2;
+const MAX_ACTIVE_PROGRAMS = 999;
 
 export function useCardioPrograms() {
   const { user } = useAuth();
