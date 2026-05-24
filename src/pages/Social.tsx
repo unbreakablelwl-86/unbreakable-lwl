@@ -25,7 +25,7 @@ export default function Social() {
   usePresence();
 
   return (
-    <div className="min-h-screen" style={{ background: '#080808' }}>
+    <div className="min-h-screen" >
       {/* Instagram-style Header */}
       <SocialHeader
         activeTab={activeTab}

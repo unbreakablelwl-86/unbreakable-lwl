@@ -47,7 +47,7 @@ export function SocialHeader({
             {/* Logo — shield + wordmark */}
             <div className="flex items-center gap-2.5">
               <img src={shieldLogo} alt="UNBREAKABLE" className="h-7 w-7 object-contain" />
-              <span className="font-heading font-black text-lg tracking-[0.12em] text-white uppercase">
+              <span className="font-heading font-black text-lg tracking-[0.12em] text-foreground uppercase">
                 Unbreakable
               </span>
             </div>
@@ -75,9 +75,9 @@ export function SocialHeader({
                 onClick={() => setShowNotifications(true)}
                 className="p-2.5 rounded-full hover:bg-white/[0.05] transition-colors relative"
               >
-                <Heart size={22} className={notifCount > 0 ? 'text-[#FF5500] fill-[#FF5500]' : 'text-foreground/80'} />
+                <Heart size={22} className={notifCount > 0 ? 'text-primary fill-[#FF5500]' : 'text-foreground/80'} />
                 {(notifCount + incomingRequestCount) > 0 && (
-                  <span className="absolute top-1 right-1 w-4 h-4 bg-[#FF5500] rounded-full text-[9px] text-white font-bold flex items-center justify-center"
+                  <span className="absolute top-1 right-1 w-4 h-4 bg-primary rounded-full text-[9px] text-white font-bold flex items-center justify-center"
                     style={{ boxShadow: '0 0 6px rgba(255,85,0,0.5)' }}>
                     {(notifCount + incomingRequestCount) > 9 ? '9+' : notifCount + incomingRequestCount}
                   </span>
@@ -91,7 +91,7 @@ export function SocialHeader({
               >
                 <Send size={20} className="text-foreground/80" />
                 {messageCount > 0 && (
-                  <span className="absolute top-1 right-1 w-4 h-4 bg-[#FF5500] rounded-full text-[9px] text-white font-bold flex items-center justify-center"
+                  <span className="absolute top-1 right-1 w-4 h-4 bg-primary rounded-full text-[9px] text-white font-bold flex items-center justify-center"
                     style={{ boxShadow: '0 0 6px rgba(255,85,0,0.5)' }}>
                     {messageCount > 9 ? '9+' : messageCount}
                   </span>

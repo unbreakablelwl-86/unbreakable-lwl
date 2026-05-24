@@ -213,7 +213,7 @@ export default function TrackerCreate() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: '#080808' }}>
+      <div className="min-h-screen flex items-center justify-center" >
         <div className="w-12 h-12 border-2 border-primary border-t-transparent rounded-full animate-spin" />
       </div>
     );
@@ -222,7 +222,7 @@ export default function TrackerCreate() {
   // Program display view
   if (view === 'program' && generatedProgram) {
     return (
-      <div className="min-h-screen pb-24" style={{ background: '#080808' }}>
+      <div className="min-h-screen pb-24" >
 <main className="container mx-auto px-4 py-24 md:py-28">
           <CardioProgramDisplay
             program={generatedProgram}
@@ -307,33 +307,33 @@ export default function TrackerCreate() {
     };
 
     return (
-      <div className="min-h-screen pb-28" style={{ background: '#080808' }}>
+      <div className="min-h-screen pb-28" >
         <div className="px-4 pt-6 pb-4">
-          <button onClick={handleBackToSelect} className="flex items-center gap-2 text-gray-500 hover:text-gray-300 mb-4">
+          <button onClick={handleBackToSelect} className="flex items-center gap-2 text-muted-foreground hover:text-muted-foreground mb-4">
             <ArrowLeft className="w-4 h-4" /> Back
           </button>
           <h1 className="font-display text-2xl tracking-wide">
-            <span className="text-[#FF5500]" style={{ textShadow: '0 0 20px rgba(255,85,0,0.4)' }}>MANUAL </span>
-            <span className="text-white">PROGRAMME BUILDER</span>
+            <span className="text-primary" style={{ textShadow: '0 0 20px rgba(255,85,0,0.4)' }}>MANUAL </span>
+            <span className="text-foreground">PROGRAMME BUILDER</span>
           </h1>
-          <p className="text-gray-500 text-sm mt-1">Build your own custom cardio plan</p>
+          <p className="text-muted-foreground text-sm mt-1">Build your own custom cardio plan</p>
         </div>
 
         <div className="px-4 space-y-5">
           {/* Programme Name */}
           <div className="space-y-2">
-            <label className="text-xs font-display tracking-wider text-gray-400">PROGRAMME NAME</label>
+            <label className="text-xs font-display tracking-wider text-muted-foreground">PROGRAMME NAME</label>
             <Input
               placeholder="e.g., 5K Race Prep"
               value={manualData.name}
               onChange={e => setManualData(prev => ({ ...prev, name: e.target.value }))}
-              className="bg-card border-border focus:border-[#FF5500]/50"
+              className="bg-card border-border focus:border-primary/50"
             />
           </div>
 
           {/* Activity Type */}
           <div className="space-y-2">
-            <label className="text-xs font-display tracking-wider text-gray-400">ACTIVITY TYPE</label>
+            <label className="text-xs font-display tracking-wider text-muted-foreground">ACTIVITY TYPE</label>
             <div className="flex gap-2 overflow-x-auto pb-1">
               {activityOptions.map(opt => (
                 <button
@@ -341,8 +341,8 @@ export default function TrackerCreate() {
                   onClick={() => setManualData(prev => ({ ...prev, activityType: opt.value }))}
                   className={`flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-medium shrink-0 transition-all border ${
                     manualData.activityType === opt.value
-                      ? 'bg-[#FF5500]/15 text-[#FF5500] border-[#FF5500]/30'
-                      : 'bg-card text-gray-500 border-border'
+                      ? 'bg-primary/15 text-primary border-primary/30'
+                      : 'bg-card text-muted-foreground border-border'
                   }`}
                 >
                   {opt.icon && <span className="[&>svg]:w-3.5 [&>svg]:h-3.5">{opt.icon}</span>}
@@ -355,25 +355,25 @@ export default function TrackerCreate() {
           {/* Duration */}
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-2">
-              <label className="text-xs font-display tracking-wider text-gray-400">WEEKS</label>
+              <label className="text-xs font-display tracking-wider text-muted-foreground">WEEKS</label>
               <div className="flex items-center gap-2">
                 <Slider
                   value={[manualData.weeks]}
                   onValueChange={([v]) => setManualData(prev => ({ ...prev, weeks: v }))}
                   min={1} max={16} step={1}
                 />
-                <span className="text-sm text-[#FF5500] font-display w-8 text-center">{manualData.weeks}</span>
+                <span className="text-sm text-primary font-display w-8 text-center">{manualData.weeks}</span>
               </div>
             </div>
             <div className="space-y-2">
-              <label className="text-xs font-display tracking-wider text-gray-400">SESSIONS/WEEK</label>
+              <label className="text-xs font-display tracking-wider text-muted-foreground">SESSIONS/WEEK</label>
               <div className="flex items-center gap-2">
                 <Slider
                   value={[manualData.sessionsPerWeek]}
                   onValueChange={([v]) => setManualData(prev => ({ ...prev, sessionsPerWeek: v }))}
                   min={1} max={7} step={1}
                 />
-                <span className="text-sm text-[#FF5500] font-display w-8 text-center">{manualData.sessionsPerWeek}</span>
+                <span className="text-sm text-primary font-display w-8 text-center">{manualData.sessionsPerWeek}</span>
               </div>
             </div>
           </div>
@@ -381,11 +381,11 @@ export default function TrackerCreate() {
           {/* Sessions */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <label className="text-xs font-display tracking-wider text-gray-400">WEEKLY SESSIONS</label>
+              <label className="text-xs font-display tracking-wider text-muted-foreground">WEEKLY SESSIONS</label>
               <button
                 onClick={addSession}
                 className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-display 
-                  bg-[#FF5500]/15 text-[#FF5500] border border-[#FF5500]/30 hover:bg-[#FF5500]/25 transition-all"
+                  bg-primary/15 text-primary border border-primary/30 hover:bg-primary/25 transition-all"
               >
                 + ADD SESSION
               </button>
@@ -393,22 +393,22 @@ export default function TrackerCreate() {
 
             {manualData.sessions.length === 0 && (
               <div className="p-6 rounded-xl border border-border bg-card text-center">
-                <Wrench className="w-8 h-8 text-[#FF5500] mx-auto mb-2" style={{ filter: 'drop-shadow(0 0 8px rgba(255,85,0,0.4))' }} />
-                <p className="text-sm text-gray-400">No sessions yet. Tap "Add Session" to build your weekly template.</p>
+                <Wrench className="w-8 h-8 text-primary mx-auto mb-2" style={{ filter: 'drop-shadow(0 0 8px rgba(255,85,0,0.4))' }} />
+                <p className="text-sm text-muted-foreground">No sessions yet. Tap "Add Session" to build your weekly template.</p>
               </div>
             )}
 
             {manualData.sessions.map((session, idx) => (
               <div key={idx} className="p-4 rounded-xl border border-border bg-card space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-display text-[#FF5500]">SESSION {idx + 1}</span>
-                  <button onClick={() => removeSession(idx)} className="text-xs text-[#FF5500] hover:text-[#FF5500]">Remove</button>
+                  <span className="text-xs font-display text-primary">SESSION {idx + 1}</span>
+                  <button onClick={() => removeSession(idx)} className="text-xs text-primary hover:text-primary">Remove</button>
                 </div>
                 <Input
                   placeholder="Session title (e.g., Tempo Run)"
                   value={session.title}
                   onChange={e => updateSession(idx, 'title', e.target.value)}
-                  className="bg-[#0A0A0A] border-border text-sm"
+                  className="bg-background border-border text-sm"
                 />
                 <div className="flex gap-2 overflow-x-auto pb-1">
                   {SESSION_TYPES.map(t => (
@@ -417,8 +417,8 @@ export default function TrackerCreate() {
                       onClick={() => updateSession(idx, 'type', t)}
                       className={`px-2.5 py-1 rounded-full text-[10px] font-medium shrink-0 border transition-all ${
                         session.type === t
-                          ? 'bg-[#FF5500]/15 text-[#FF5500] border-[#FF5500]/30'
-                          : 'bg-transparent text-gray-600 border-border'
+                          ? 'bg-primary/15 text-primary border-primary/30'
+                          : 'bg-transparent text-muted-foreground border-border'
                       }`}
                     >
                       {t}
@@ -430,20 +430,20 @@ export default function TrackerCreate() {
                     placeholder="Distance (km)"
                     value={session.distance || ''}
                     onChange={e => updateSession(idx, 'distance', e.target.value)}
-                    className="bg-[#0A0A0A] border-border text-sm"
+                    className="bg-background border-border text-sm"
                   />
                   <Input
                     placeholder="Duration (min)"
                     value={session.duration || ''}
                     onChange={e => updateSession(idx, 'duration', e.target.value)}
-                    className="bg-[#0A0A0A] border-border text-sm"
+                    className="bg-background border-border text-sm"
                   />
                 </div>
                 <Input
                   placeholder="Notes / description"
                   value={session.description}
                   onChange={e => updateSession(idx, 'description', e.target.value)}
-                  className="bg-[#0A0A0A] border-border text-sm"
+                  className="bg-background border-border text-sm"
                 />
               </div>
             ))}
@@ -454,7 +454,7 @@ export default function TrackerCreate() {
             onClick={handleSaveManual}
             disabled={isSaving || !manualData.name.trim() || manualData.sessions.length === 0}
             className="w-full py-3.5 rounded-xl font-display tracking-wider text-sm 
-              bg-[#FF5500] hover:bg-[#CC4400] text-white disabled:opacity-40 
+              bg-primary hover:bg-primary/80 text-white disabled:opacity-40 
               disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
           >
             {isSaving ? (
@@ -473,7 +473,7 @@ export default function TrackerCreate() {
   // Wizard view (auto programme builder)
   if (view === 'wizard') {
     return (
-      <div className="min-h-screen pb-24" style={{ background: '#080808' }}>
+      <div className="min-h-screen pb-24" >
 <main className="container mx-auto px-4 py-24 md:py-28">
           <Button variant="ghost" onClick={handleBackToSelect} className="mb-6 gap-2">
             <Home className="w-4 h-4" />
@@ -695,17 +695,17 @@ export default function TrackerCreate() {
 
   // Mode selection view (default)
   return (
-    <div className="min-h-screen pb-24" style={{ background: '#080808' }}>
+    <div className="min-h-screen pb-24" >
 {/* Hero */}
       <div className="relative px-4 pt-6 pb-5 overflow-hidden">
         <div className="absolute inset-0 pointer-events-none"
           style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(255,85,0,0.08), transparent 70%)' }} />
         <div className="relative z-10">
           <h1 className="font-display text-2xl tracking-wider text-center">
-            <span className="text-[#FF5500]" style={{ textShadow: '0 0 20px rgba(255,85,0,0.4)' }}>UNBREAKABLE</span>
-            <span className="text-white"> CARDIO</span>
+            <span className="text-primary" style={{ textShadow: '0 0 20px rgba(255,85,0,0.4)' }}>UNBREAKABLE</span>
+            <span className="text-foreground"> CARDIO</span>
           </h1>
-          <p className="text-center text-gray-500 text-sm mt-1 font-display tracking-wide">
+          <p className="text-center text-muted-foreground text-sm mt-1 font-display tracking-wide">
             KEEP SHOWING UP
           </p>
         </div>

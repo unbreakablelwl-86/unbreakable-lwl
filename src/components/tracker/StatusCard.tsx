@@ -148,7 +148,7 @@ export function StatusCard({ post, onKudos, onDelete, onToggleComments, onUpdate
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
     >
-      <div className="overflow-hidden border-b border-white/[0.04]" style={{ background: '#080808' }}>
+      <div className="overflow-hidden border-b border-white/[0.04]" className="bg-background">
         {/* Header — Instagram-style */}
         <div className="px-4 py-3 flex items-center gap-3">
           <ClickableAvatar
@@ -156,7 +156,7 @@ export function StatusCard({ post, onKudos, onDelete, onToggleComments, onUpdate
             displayName={post.profiles?.display_name}
             username={post.profiles?.username}
             avatarUrl={post.profiles?.avatar_url}
-            className="h-9 w-9 ring-2 ring-[#FF5500]/20 ring-offset-1 ring-offset-[#080808]"
+            className="h-9 w-9 ring-2 ring-primary/20 ring-offset-1 ring-offset-[#080808]"
             fallbackClassName="bg-muted text-muted-foreground font-heading text-xs font-bold"
           />
           <div className="flex-1 min-w-0">
@@ -165,7 +165,7 @@ export function StatusCard({ post, onKudos, onDelete, onToggleComments, onUpdate
                 userId={post.user_id}
                 displayName={post.profiles?.display_name}
                 username={post.profiles?.username}
-                className="font-semibold text-sm text-white truncate hover:opacity-70 transition-opacity"
+                className="font-semibold text-sm text-foreground truncate hover:opacity-70 transition-opacity"
               />
               {!isOwner && (
                 <span className="text-muted-foreground text-xs">•</span>
@@ -204,7 +204,7 @@ export function StatusCard({ post, onKudos, onDelete, onToggleComments, onUpdate
                   transition={{ duration: 0.4, ease: 'easeOut' }}
                   className="absolute inset-0 flex items-center justify-center pointer-events-none"
                 >
-                  <Dumbbell className="w-24 h-24 text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.5)]" />
+                  <Dumbbell className="w-24 h-24 text-foreground drop-shadow-[0_0_20px_rgba(255,255,255,0.5)]" />
                 </motion.div>
               )}
             </AnimatePresence>
@@ -228,7 +228,7 @@ export function StatusCard({ post, onKudos, onDelete, onToggleComments, onUpdate
                       transition={{ duration: 0.4, ease: 'easeOut' }}
                       className="absolute inset-0 flex items-center justify-center pointer-events-none"
                     >
-                      <Dumbbell className="w-24 h-24 text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.5)]" />
+                      <Dumbbell className="w-24 h-24 text-foreground drop-shadow-[0_0_20px_rgba(255,255,255,0.5)]" />
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -254,7 +254,7 @@ export function StatusCard({ post, onKudos, onDelete, onToggleComments, onUpdate
                   <Button
                     variant="secondary"
                     size="icon"
-                    className="bg-black/50 hover:bg-black/70 text-white h-14 w-14 rounded-full pointer-events-auto"
+                    className="bg-background/50 hover:bg-background/70 text-foreground h-14 w-14 rounded-full pointer-events-auto"
                     onClick={(e) => { e.stopPropagation(); togglePlayPause(); }}
                   >
                     {isPlaying ? <Pause className="w-7 h-7" /> : <Play className="w-7 h-7 ml-1" />}
@@ -264,7 +264,7 @@ export function StatusCard({ post, onKudos, onDelete, onToggleComments, onUpdate
                   <Button
                     variant="secondary"
                     size="icon"
-                    className="bg-black/50 hover:bg-black/70 text-white h-8 w-8"
+                    className="bg-background/50 hover:bg-background/70 text-foreground h-8 w-8"
                     onClick={(e) => { e.stopPropagation(); setShowFullscreen(true); }}
                   >
                     <Maximize className="w-4 h-4" />
@@ -276,7 +276,7 @@ export function StatusCard({ post, onKudos, onDelete, onToggleComments, onUpdate
                   <Button
                     variant="secondary"
                     size="icon"
-                    className="bg-black/50 hover:bg-black/70 text-white h-8 w-8"
+                    className="bg-background/50 hover:bg-background/70 text-foreground h-8 w-8"
                     onClick={(e) => { e.stopPropagation(); toggleMute(); }}
                   >
                     {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
@@ -291,7 +291,7 @@ export function StatusCard({ post, onKudos, onDelete, onToggleComments, onUpdate
                       transition={{ duration: 0.4, ease: 'easeOut' }}
                       className="absolute inset-0 flex items-center justify-center pointer-events-none"
                     >
-                      <Dumbbell className="w-24 h-24 text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.5)]" />
+                      <Dumbbell className="w-24 h-24 text-foreground drop-shadow-[0_0_20px_rgba(255,255,255,0.5)]" />
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -318,7 +318,7 @@ export function StatusCard({ post, onKudos, onDelete, onToggleComments, onUpdate
               ))}
             </AnimatePresence>
             <button
-              className={`flex items-center gap-1.5 transition-colors active:scale-125 ${post.has_kudos ? 'text-[#FF5500]' : 'text-white hover:text-muted-foreground'}`}
+              className={`flex items-center gap-1.5 transition-colors active:scale-125 ${post.has_kudos ? 'text-primary' : 'text-foreground hover:text-muted-foreground'}`}
               onClick={handleKudos}
               disabled={!user || isLiking}
             >
@@ -330,7 +330,7 @@ export function StatusCard({ post, onKudos, onDelete, onToggleComments, onUpdate
               </motion.div>
             </button>
             <button
-              className={`flex items-center gap-1.5 transition-colors active:scale-110 ${showComments ? 'text-[#FF5500]' : 'text-white hover:text-muted-foreground'}`}
+              className={`flex items-center gap-1.5 transition-colors active:scale-110 ${showComments ? 'text-primary' : 'text-foreground hover:text-muted-foreground'}`}
               onClick={() => setShowComments(!showComments)}
             >
               <MessageCircle className={`w-6 h-6 ${showComments ? 'fill-[#FF5500]/20' : ''}`} />
@@ -341,7 +341,7 @@ export function StatusCard({ post, onKudos, onDelete, onToggleComments, onUpdate
             />
           </div>
           <button
-            className={`transition-colors active:scale-110 ${saved ? 'text-white' : 'text-white hover:text-muted-foreground'}`}
+            className={`transition-colors active:scale-110 ${saved ? 'text-foreground' : 'text-foreground hover:text-muted-foreground'}`}
             onClick={() => setSaved(!saved)}
           >
             <Bookmark className={`w-6 h-6 ${saved ? 'fill-white' : ''}`} />
@@ -351,7 +351,7 @@ export function StatusCard({ post, onKudos, onDelete, onToggleComments, onUpdate
         {/* Likes count */}
         {(post.kudos_count ?? 0) > 0 && (
           <div className="px-4 pb-1">
-            <p className="text-sm font-semibold text-white">
+            <p className="text-sm font-semibold text-foreground">
               {post.kudos_count} {post.kudos_count === 1 ? 'like' : 'likes'}
             </p>
           </div>

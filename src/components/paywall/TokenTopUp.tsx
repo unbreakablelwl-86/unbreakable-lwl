@@ -53,9 +53,9 @@ export function TokenTopUp({ asModal, onClose }: TokenTopUpProps) {
   const content = (
     <div className="space-y-4">
       <div className="text-center mb-6">
-        <div className="inline-flex items-center gap-2 bg-[#FF5500]/10 border border-[#FF5500]/20 rounded-full px-3 py-1 mb-3">
-          <Coins className="w-3.5 h-3.5 text-[#FF5500]" />
-          <span className="text-xs font-display tracking-wider text-[#FF5500]">TOKEN TOP-UPS</span>
+        <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 rounded-full px-3 py-1 mb-3">
+          <Coins className="w-3.5 h-3.5 text-primary" />
+          <span className="text-xs font-display tracking-wider text-primary">TOKEN TOP-UPS</span>
         </div>
         <h3 className="font-display text-lg tracking-wider mb-1">NEED MORE TOKENS?</h3>
         <p className="text-sm text-muted-foreground">
@@ -86,8 +86,8 @@ export function TokenTopUp({ asModal, onClose }: TokenTopUpProps) {
                 BEST VALUE
               </div>
             )}
-            <div className="w-12 h-12 rounded-xl bg-[#FF5500]/10 border border-[#FF5500]/20 flex items-center justify-center">
-              <Plus className="w-6 h-6 text-[#FF5500]" />
+            <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
+              <Plus className="w-6 h-6 text-primary" />
             </div>
             <div className="flex-1">
               <div className="flex items-baseline gap-2 mb-0.5">
@@ -123,7 +123,7 @@ export function TokenTopUp({ asModal, onClose }: TokenTopUpProps) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-background/60 backdrop-blur-sm px-4"
           onClick={(e) => e.target === e.currentTarget && onClose?.()}
         >
           <motion.div

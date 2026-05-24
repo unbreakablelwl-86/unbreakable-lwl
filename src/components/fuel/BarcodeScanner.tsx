@@ -363,7 +363,7 @@ export function BarcodeScanner({ isOpen, onClose, mealType = 'snack' }: BarcodeS
           {/* Camera View */}
           {mode === 'camera' && !scannedItem && (
             <div className="space-y-3">
-              <div className="relative aspect-video bg-black rounded-lg overflow-hidden">
+              <div className="relative aspect-video bg-background rounded-lg overflow-hidden">
                 {cameraState === 'requesting' && (
                   <div className="absolute inset-0 flex items-center justify-center">
                     <Loader2 className="w-8 h-8 text-primary animate-spin" />
@@ -407,7 +407,7 @@ export function BarcodeScanner({ isOpen, onClose, mealType = 'snack' }: BarcodeS
                 )}
 
                 {isSearching && (
-                  <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                  <div className="absolute inset-0 bg-background/50 flex items-center justify-center">
                     <div className="bg-card p-4 rounded-lg flex items-center gap-2">
                       <Loader2 className="w-5 h-5 animate-spin text-primary" />
                       <span className="text-sm">Looking up product...</span>

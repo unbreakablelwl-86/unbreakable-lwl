@@ -46,10 +46,10 @@ const typeLabels: Record<Milestone['milestone_type'], string> = {
 
 const typeColors: Record<Milestone['milestone_type'], string> = {
   streak: 'bg-orange-500/20 text-orange-400',
-  programme_complete: 'bg-[#FF5500]/20 text-[#FF5500]',
-  distance_total: 'bg-[#FF5500]/20 text-[#FF5500]',
-  workout_count: 'bg-[#FF5500]/20 text-[#FF5500]',
-  trophy: 'bg-[#FF5500]/20 text-[#FF5500]',
+  programme_complete: 'bg-primary/20 text-primary',
+  distance_total: 'bg-primary/20 text-primary',
+  workout_count: 'bg-primary/20 text-primary',
+  trophy: 'bg-primary/20 text-primary',
   level_up: 'bg-primary/20 text-primary',
 };
 
@@ -112,7 +112,7 @@ export function MilestoneCard({ milestone, onShare, onUnshare }: MilestoneCardPr
                 onClick={() => milestone.is_shared ? onUnshare?.(milestone.id) : onShare?.(milestone.id)}
               >
                 {milestone.is_shared ? (
-                  <Check className="w-4 h-4 text-[#FF5500]" />
+                  <Check className="w-4 h-4 text-primary" />
                 ) : (
                   <Share2 className="w-4 h-4" />
                 )}

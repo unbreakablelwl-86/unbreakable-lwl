@@ -35,13 +35,13 @@ export function AdminActivityPanel() {
       case 'global_block':
         return 'bg-destructive/10 text-destructive border-destructive/30';
       case 'lift_suspension':
-        return 'bg-[#FF5500]/10 text-[#FF5500] border-[#FF5500]/30';
+        return 'bg-primary/10 text-primary border-primary/30';
       case 'assign_role':
-        return 'bg-[#FF5500]/10 text-[#FF5500] border-[#FF5500]/30';
+        return 'bg-primary/10 text-primary border-primary/30';
       case 'update_report':
-        return 'bg-[#FF5500]/10 text-[#FF5500] border-[#FF5500]/30';
+        return 'bg-primary/10 text-primary border-primary/30';
       case 'update_setting':
-        return 'bg-[#FF5500]/10 text-[#FF5500] border-[#FF5500]/30';
+        return 'bg-primary/10 text-primary border-primary/30';
       default:
         return 'bg-muted text-muted-foreground';
     }

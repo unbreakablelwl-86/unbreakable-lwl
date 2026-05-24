@@ -69,18 +69,18 @@ export default function ResetPassword() {
   return (
     <div
       className="min-h-screen flex flex-col items-center justify-center px-5 py-10 relative overflow-hidden"
-      style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(255,85,0,0.08) 0%, #080808 60%)' }}
+      style={{ background: 'radial-gradient(ellipse at 50% 0%, hsl(var(--primary) / 0.08) 0%, hsl(var(--background)) 60%)' }}
     >
       {/* Subtle top glow */}
       <div
         className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] rounded-full opacity-20 pointer-events-none"
-        style={{ background: 'radial-gradient(ellipse, rgba(255,85,0,0.25) 0%, transparent 70%)' }}
+        style={{ background: 'radial-gradient(ellipse, hsl(var(--primary) / 0.25) 0%, transparent 70%)' }}
       />
 
       {/* Back */}
       <button
         onClick={() => navigate('/signin')}
-        className="absolute top-5 left-5 flex items-center gap-1.5 text-muted-foreground hover:text-white transition-colors text-sm"
+        className="absolute top-5 left-5 flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors text-sm"
       >
         <ArrowLeft size={16} /> Back to sign in
       </button>
@@ -88,7 +88,7 @@ export default function ResetPassword() {
       {/* Logo */}
       <div className="flex flex-col items-center mb-8">
         <img src={shieldLogo} alt="UNBREAKABLE" className="h-20 w-20 object-contain mb-3" />
-        <h1 className="font-heading font-black text-2xl tracking-[0.15em] text-white uppercase">
+        <h1 className="font-heading font-black text-2xl tracking-[0.15em] text-foreground uppercase">
           UNBREAKABLE
         </h1>
         <p className="text-muted-foreground text-xs tracking-[0.2em] uppercase mt-1">Live Without Limits</p>
@@ -98,7 +98,7 @@ export default function ResetPassword() {
       <div
         className="w-full max-w-sm"
         style={{
-          background: 'rgba(14,14,14,0.9)',
+          
           border: '1px solid rgba(255,255,255,0.06)',
           borderRadius: '16px',
           boxShadow: '0 0 40px rgba(0,0,0,0.5)',
@@ -110,29 +110,29 @@ export default function ResetPassword() {
             <div className="text-center space-y-4">
               <div
                 className="w-16 h-16 mx-auto rounded-full flex items-center justify-center"
-                style={{ background: 'rgba(255,85,0,0.1)', border: '1px solid rgba(255,85,0,0.2)' }}
+                className="bg-primary/10 border border-primary/20"
               >
-                <CheckCircle className="w-8 h-8 text-[#FF5500]" />
+                <CheckCircle className="w-8 h-8 text-primary" />
               </div>
-              <h2 className="font-heading font-bold text-xl tracking-wide text-white">Password Updated</h2>
+              <h2 className="font-heading font-bold text-xl tracking-wide text-foreground">Password Updated</h2>
               <p className="text-muted-foreground text-sm leading-relaxed">
                 Your password has been reset. Taking you to the app…
               </p>
-              <div className="w-5 h-5 border-2 border-[#FF5500]/30 border-t-[#FF5500] rounded-full animate-spin mx-auto" />
+              <div className="w-5 h-5 border-2 border-primary/30 border-t-[#FF5500] rounded-full animate-spin mx-auto" />
             </div>
           ) : !isRecoverySession ? (
             /* ── No valid recovery session ── */
             <div className="text-center space-y-4">
-              <h2 className="font-heading font-bold text-xl tracking-wide text-white">Invalid or Expired Link</h2>
+              <h2 className="font-heading font-bold text-xl tracking-wide text-foreground">Invalid or Expired Link</h2>
               <p className="text-muted-foreground text-sm leading-relaxed">
                 This password reset link may have expired or already been used.
                 Request a new one below.
               </p>
               <button
                 onClick={() => navigate('/forgot-password')}
-                className="w-full py-3.5 rounded-xl font-heading font-bold text-sm uppercase tracking-wider text-white transition-all active:scale-[0.98]"
+                className="w-full py-3.5 rounded-xl font-heading font-bold text-sm uppercase tracking-wider text-foreground transition-all active:scale-[0.98]"
                 style={{
-                  background: 'linear-gradient(135deg, #FF5500 0%, #CC4400 100%)',
+                  
                   boxShadow: '0 0 20px rgba(255,85,0,0.35)',
                 }}
               >
@@ -142,7 +142,7 @@ export default function ResetPassword() {
           ) : (
             /* ── Reset form ── */
             <>
-              <h2 className="font-heading font-bold text-xl tracking-wide text-white text-center mb-2">
+              <h2 className="font-heading font-bold text-xl tracking-wide text-foreground text-center mb-2">
                 Choose New Password
               </h2>
               <p className="text-muted-foreground text-sm text-center mb-6">
@@ -161,9 +161,9 @@ export default function ResetPassword() {
                       placeholder="••••••••"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="w-full pl-10 pr-11 py-3 rounded-xl text-sm text-white placeholder-[#444] outline-none transition-all focus:ring-1 focus:ring-[#FF5500]/50"
+                      className="w-full pl-10 pr-11 py-3 rounded-xl text-sm text-foreground placeholder-[#444] outline-none transition-all focus:ring-1 focus:ring-primary/50"
                       style={{
-                        background: 'rgba(255,255,255,0.04)',
+                        
                         border: '1px solid rgba(255,255,255,0.08)',
                       }}
                       required
@@ -191,9 +191,9 @@ export default function ResetPassword() {
                       placeholder="••••••••"
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
-                      className="w-full pl-10 pr-4 py-3 rounded-xl text-sm text-white placeholder-[#444] outline-none transition-all focus:ring-1 focus:ring-[#FF5500]/50"
+                      className="w-full pl-10 pr-4 py-3 rounded-xl text-sm text-foreground placeholder-[#444] outline-none transition-all focus:ring-1 focus:ring-primary/50"
                       style={{
-                        background: 'rgba(255,255,255,0.04)',
+                        
                         border: '1px solid rgba(255,255,255,0.08)',
                       }}
                       required
@@ -238,7 +238,7 @@ export default function ResetPassword() {
                 )}
 
                 {formError && (
-                  <div className="text-sm text-[#FF5500] bg-[#FF5500]/10 border border-[#FF5500]/20 rounded-xl px-4 py-3">
+                  <div className="text-sm text-primary bg-primary/10 border border-primary/20 rounded-xl px-4 py-3">
                     {formError}
                   </div>
                 )}
@@ -246,9 +246,9 @@ export default function ResetPassword() {
                 <button
                   type="submit"
                   disabled={loading || password.length < 6 || password !== confirmPassword}
-                  className="w-full py-3.5 rounded-xl font-heading font-bold text-base uppercase tracking-wider text-white transition-all disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.98]"
+                  className="w-full py-3.5 rounded-xl font-heading font-bold text-base uppercase tracking-wider text-foreground transition-all disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.98]"
                   style={{
-                    background: 'linear-gradient(135deg, #FF5500 0%, #CC4400 100%)',
+                    
                     boxShadow: loading
                       ? 'none'
                       : '0 0 20px rgba(255,85,0,0.35), 0 0 60px rgba(255,85,0,0.12)',

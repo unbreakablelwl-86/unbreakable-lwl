@@ -53,9 +53,9 @@ export function AssessmentQuiz({ assessment, onComplete, bestScore }: Props) {
   if (submitted) {
     return (
       <div className="space-y-6">
-        <Card className={`p-6 text-center border-2 ${passed ? 'border-[#FF5500]/50 bg-[#FF5500]/10' : 'border-destructive/50 bg-destructive/10'}`}>
+        <Card className={`p-6 text-center border-2 ${passed ? 'border-primary/50 bg-primary/10' : 'border-destructive/50 bg-destructive/10'}`}>
           {passed ? (
-            <CheckCircle className="w-12 h-12 text-[#FF5500] mx-auto mb-3" />
+            <CheckCircle className="w-12 h-12 text-primary mx-auto mb-3" />
           ) : (
             <XCircle className="w-12 h-12 text-destructive mx-auto mb-3" />
           )}
@@ -75,10 +75,10 @@ export function AssessmentQuiz({ assessment, onComplete, bestScore }: Props) {
           {assessment.questions.map((q, i) => {
             const isCorrect = answers[i] === q.correctAnswer;
             return (
-              <Card key={i} className={`p-4 border ${isCorrect ? 'border-[#FF5500]/30' : 'border-destructive/30'}`}>
+              <Card key={i} className={`p-4 border ${isCorrect ? 'border-primary/30' : 'border-destructive/30'}`}>
                 <div className="flex items-start gap-2 mb-2">
                   {isCorrect ? (
-                    <CheckCircle className="w-4 h-4 text-[#FF5500] mt-0.5 shrink-0" />
+                    <CheckCircle className="w-4 h-4 text-primary mt-0.5 shrink-0" />
                   ) : (
                     <XCircle className="w-4 h-4 text-destructive mt-0.5 shrink-0" />
                   )}

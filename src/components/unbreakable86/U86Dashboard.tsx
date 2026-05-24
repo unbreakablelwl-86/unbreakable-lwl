@@ -156,7 +156,7 @@ export function U86Dashboard({
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-display tracking-wider shrink-0 transition-all border ${
                   active
-                    ? 'bg-primary/15 text-primary border-primary/30 shadow-[0_0_12px_rgba(255,85,0,0.1)]'
+                    ? 'bg-primary/15 text-primary border-primary/30 shadow-[0_0_12px_hsl(var(--primary)/0.3)]'
                     : 'text-muted-foreground border-transparent hover:text-foreground'
                 }`}
               >

@@ -290,9 +290,9 @@ export function CreatePostBox({ onPostCreated }: CreatePostBoxProps) {
               animate={{ scale: 1 }}
               transition={{ type: 'spring', stiffness: 200 }}
             >
-              <CheckCircle2 className="w-12 h-12 text-[#FF5500]" />
+              <CheckCircle2 className="w-12 h-12 text-primary" />
             </motion.div>
-            <p className="text-white font-heading tracking-wide text-lg">Post is live!</p>
+            <p className="text-foreground font-heading tracking-wide text-lg">Post is live!</p>
           </motion.div>
         )}
       </AnimatePresence>
@@ -337,13 +337,13 @@ export function CreatePostBox({ onPostCreated }: CreatePostBoxProps) {
 
                     {/* Progress overlay */}
                     {item.status === 'uploading' && (
-                      <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                        <Loader2 className="w-5 h-5 text-white animate-spin" />
+                      <div className="absolute inset-0 bg-background/50 flex items-center justify-center">
+                        <Loader2 className="w-5 h-5 text-foreground animate-spin" />
                       </div>
                     )}
                     {item.status === 'done' && (
-                      <div className="absolute inset-0 bg-[#FF5500]/20 flex items-center justify-center">
-                        <CheckCircle2 className="w-5 h-5 text-[#FF5500]" />
+                      <div className="absolute inset-0 bg-primary/20 flex items-center justify-center">
+                        <CheckCircle2 className="w-5 h-5 text-primary" />
                       </div>
                     )}
                     {item.status === 'error' && (

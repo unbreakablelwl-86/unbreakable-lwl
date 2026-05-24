@@ -92,7 +92,7 @@ export function MotivationBanner() {
             className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center mt-0.5"
             style={{ background: 'rgba(255,85,0,0.15)' }}
           >
-            <Flame className="w-4 h-4 text-[#FF5500]" />
+            <Flame className="w-4 h-4 text-primary" />
           </div>
           <motion.p
             key={quoteIndex}

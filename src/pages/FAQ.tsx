@@ -267,7 +267,7 @@ function AccordionItem({ item }: { item: FAQItem }) {
         onClick={() => setOpen(!open)}
         className="w-full flex items-center justify-between py-4 px-4 text-left group"
       >
-        <span className={`text-sm font-display tracking-wide pr-4 transition-colors ${open ? 'text-[#FF5500]' : 'text-white group-hover:text-gray-300'}`}>
+        <span className={`text-sm font-display tracking-wide pr-4 transition-colors ${open ? 'text-primary' : 'text-foreground group-hover:text-muted-foreground'}`}>
           {item.q}
         </span>
         <motion.div
@@ -275,7 +275,7 @@ function AccordionItem({ item }: { item: FAQItem }) {
           transition={{ duration: 0.2 }}
           className="flex-shrink-0"
         >
-          <ChevronDown className={`w-4 h-4 transition-colors ${open ? 'text-[#FF5500]' : 'text-gray-600'}`} />
+          <ChevronDown className={`w-4 h-4 transition-colors ${open ? 'text-primary' : 'text-muted-foreground'}`} />
         </motion.div>
       </button>
       <AnimatePresence initial={false}>
@@ -288,7 +288,7 @@ function AccordionItem({ item }: { item: FAQItem }) {
             transition={{ duration: 0.3, ease: 'easeInOut' }}
             className="overflow-hidden"
           >
-            <p className="text-sm text-gray-400 leading-relaxed px-4 pb-4">{item.a}</p>
+            <p className="text-sm text-muted-foreground leading-relaxed px-4 pb-4">{item.a}</p>
           </motion.div>
         )}
       </AnimatePresence>
@@ -301,7 +301,7 @@ export default function FAQ() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen pb-24" style={{ background: '#080808' }}>
+    <div className="min-h-screen pb-24" >
       {/* Hero */}
       <div className="relative px-4 pt-6 pb-5 overflow-hidden">
         <div
@@ -310,10 +310,10 @@ export default function FAQ() {
         />
         <div className="relative z-10">
           <h1 className="font-display text-2xl tracking-wider text-center">
-            <span className="text-[#FF5500]" style={{ textShadow: '0 0 20px rgba(255,85,0,0.4)' }}>UNBREAKABLE</span>
-            <span className="text-white"> FAQ</span>
+            <span className="text-primary" style={{ textShadow: '0 0 20px rgba(255,85,0,0.4)' }}>UNBREAKABLE</span>
+            <span className="text-foreground"> FAQ</span>
           </h1>
-          <p className="text-center text-gray-500 text-sm font-display tracking-wide mt-2">
+          <p className="text-center text-muted-foreground text-sm font-display tracking-wide mt-2">
             Everything you need to know
           </p>
         </div>
@@ -323,16 +323,16 @@ export default function FAQ() {
         {/* Unbreakable Coach CTA */}
         <button
           onClick={() => navigate('/help')}
-          className="w-full flex items-center gap-3 p-3.5 rounded-xl border border-[#FF5500]/20 bg-[#FF5500]/5 hover:bg-[#FF5500]/10 transition-all text-left"
+          className="w-full flex items-center gap-3 p-3.5 rounded-xl border border-primary/20 bg-primary/5 hover:bg-primary/10 transition-all text-left"
         >
-          <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 border border-[#FF5500]/30" style={{ background: 'rgba(255,85,0,0.1)' }}>
-            <Sparkles className="w-5 h-5 text-[#FF5500]" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.6))' }} />
+          <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 border border-primary/30" style={{ background: 'rgba(255,85,0,0.1)' }}>
+            <Sparkles className="w-5 h-5 text-primary" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.6))' }} />
           </div>
           <div className="flex-1 min-w-0">
-            <h4 className="font-display text-sm text-white tracking-wide">NEED HELP?</h4>
-            <p className="text-gray-500 text-xs mt-0.5">Chat with your Unbreakable Coach for instant answers</p>
+            <h4 className="font-display text-sm text-foreground tracking-wide">NEED HELP?</h4>
+            <p className="text-muted-foreground text-xs mt-0.5">Chat with your Unbreakable Coach for instant answers</p>
           </div>
-          <ArrowRight className="w-4 h-4 text-[#FF5500]" />
+          <ArrowRight className="w-4 h-4 text-primary" />
         </button>
 
         {/* FAQ Sections */}
@@ -341,8 +341,8 @@ export default function FAQ() {
           return (
             <div key={section.title}>
               <div className="flex items-center gap-2 mb-2 px-1">
-                <Icon className="w-4 h-4 text-[#FF5500]" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.5))' }} />
-                <span className="text-xs font-display tracking-wider text-gray-400">{section.title.toUpperCase()}</span>
+                <Icon className="w-4 h-4 text-primary" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.5))' }} />
+                <span className="text-xs font-display tracking-wider text-muted-foreground">{section.title.toUpperCase()}</span>
               </div>
               <div className="rounded-xl border border-border bg-card overflow-hidden">
                 {section.items.map((item, i) => (
@@ -356,35 +356,35 @@ export default function FAQ() {
         {/* Meet the Founder */}
         <div>
           <div className="flex items-center gap-2 mb-2 px-1">
-            <Heart className="w-4 h-4 text-[#FF5500]" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.5))' }} />
-            <span className="text-xs font-display tracking-wider text-gray-400">THE FOUNDER</span>
+            <Heart className="w-4 h-4 text-primary" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.5))' }} />
+            <span className="text-xs font-display tracking-wider text-muted-foreground">THE FOUNDER</span>
           </div>
           <button
             onClick={() => navigate('/founder')}
             className="w-full rounded-xl border border-border bg-card p-5 text-left hover:border-border transition-all"
           >
             <div className="flex items-center gap-4 mb-3">
-              <div className="w-14 h-14 rounded-full flex items-center justify-center text-2xl border border-[#FF5500]/20" style={{ background: 'rgba(255,85,0,0.1)' }}>
+              <div className="w-14 h-14 rounded-full flex items-center justify-center text-2xl border border-primary/20" style={{ background: 'rgba(255,85,0,0.1)' }}>
                 🦁
               </div>
               <div className="flex-1">
-                <p className="font-display text-base text-white tracking-wide">JOHN JAMES</p>
-                <p className="text-[#FF5500] text-xs font-display tracking-wider mt-0.5">FOUNDER & CEO</p>
+                <p className="font-display text-base text-foreground tracking-wide">JOHN JAMES</p>
+                <p className="text-primary text-xs font-display tracking-wider mt-0.5">FOUNDER & CEO</p>
               </div>
-              <ArrowRight className="w-4 h-4 text-gray-600" />
+              <ArrowRight className="w-4 h-4 text-muted-foreground" />
             </div>
-            <p className="text-sm text-gray-400 leading-relaxed">
+            <p className="text-sm text-muted-foreground leading-relaxed">
               Liverpool-born fitness entrepreneur. Founded Live Without Limits LTD to prove that anyone can build an unbreakable body and mind. Keep showing up.
             </p>
-            <p className="text-xs text-[#FF5500] font-display tracking-wider mt-3">TAP TO READ THE FULL STORY →</p>
+            <p className="text-xs text-primary font-display tracking-wider mt-3">TAP TO READ THE FULL STORY →</p>
           </button>
         </div>
 
         {/* Legal Links */}
         <div>
           <div className="flex items-center gap-2 mb-2 px-1">
-            <FileText className="w-4 h-4 text-[#FF5500]" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.5))' }} />
-            <span className="text-xs font-display tracking-wider text-gray-400">LEGAL</span>
+            <FileText className="w-4 h-4 text-primary" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.5))' }} />
+            <span className="text-xs font-display tracking-wider text-muted-foreground">LEGAL</span>
           </div>
           <div className="rounded-xl border border-border bg-card overflow-hidden">
             {[
@@ -394,13 +394,13 @@ export default function FAQ() {
               <button
                 key={item.label}
                 onClick={() => navigate(item.path)}
-                className="w-full flex items-center justify-between p-4 border-b border-border/50 last:border-0 text-left hover:bg-[#151515] transition-all"
+                className="w-full flex items-center justify-between p-4 border-b border-border/50 last:border-0 text-left hover:bg-card transition-all"
               >
                 <div>
-                  <p className="text-sm font-display text-white tracking-wide">{item.label}</p>
-                  <p className="text-xs text-gray-600 mt-0.5">{item.desc}</p>
+                  <p className="text-sm font-display text-foreground tracking-wide">{item.label}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">{item.desc}</p>
                 </div>
-                <ArrowRight className="w-4 h-4 text-gray-600 shrink-0" />
+                <ArrowRight className="w-4 h-4 text-muted-foreground shrink-0" />
               </button>
             ))}
           </div>
@@ -409,16 +409,16 @@ export default function FAQ() {
         {/* Contact */}
         <div>
           <div className="flex items-center gap-2 mb-2 px-1">
-            <Mail className="w-4 h-4 text-[#FF5500]" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.5))' }} />
-            <span className="text-xs font-display tracking-wider text-gray-400">CONTACT US</span>
+            <Mail className="w-4 h-4 text-primary" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.5))' }} />
+            <span className="text-xs font-display tracking-wider text-muted-foreground">CONTACT US</span>
           </div>
           <div className="rounded-xl border border-border bg-card p-4 space-y-3">
-            <p className="text-sm text-gray-500">Live Without Limits LTD — Liverpool, UK</p>
+            <p className="text-sm text-muted-foreground">Live Without Limits LTD — Liverpool, UK</p>
             <div className="space-y-2">
-              <a href="mailto:unbreakable.lwl@gmail.com" className="flex items-center gap-2 text-sm text-[#FF5500] hover:underline">
+              <a href="mailto:unbreakable.lwl@gmail.com" className="flex items-center gap-2 text-sm text-primary hover:underline">
                 <Mail className="w-4 h-4" /> unbreakable.lwl@gmail.com
               </a>
-              <a href="https://instagram.com/unbreakable.lwl" target="_blank" rel="noreferrer" className="flex items-center gap-2 text-sm text-[#FF5500] hover:underline">
+              <a href="https://instagram.com/unbreakable.lwl" target="_blank" rel="noreferrer" className="flex items-center gap-2 text-sm text-primary hover:underline">
                 <Instagram className="w-4 h-4" /> @unbreakable.lwl
               </a>
             </div>
@@ -428,7 +428,7 @@ export default function FAQ() {
         {/* Bottom CTA */}
         <button
           onClick={() => navigate('/help')}
-          className="w-full py-3.5 rounded-xl bg-[#FF5500] text-black font-display tracking-wider text-sm hover:bg-[#FF5500]/90 transition-all"
+          className="w-full py-3.5 rounded-xl bg-primary text-black font-display tracking-wider text-sm hover:bg-primary/90 transition-all"
           style={{ boxShadow: '0 0 20px rgba(255,85,0,0.3)' }}
         >
           CHAT WITH UNBREAKABLE COACH

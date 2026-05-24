@@ -440,10 +440,10 @@ export function SocialCommandCentre() {
                       <Badge variant={post.status === 'scheduled' ? 'default' : 'secondary'}
                         className="font-display text-[9px]">{post.status.toUpperCase()}</Badge>
                       {post.meta_status === 'published' && (
-                        <Badge className="bg-[#FF5500]/20 text-[#FF5500] font-display text-[9px]">✅ PUBLISHED</Badge>
+                        <Badge className="bg-primary/20 text-primary font-display text-[9px]">✅ PUBLISHED</Badge>
                       )}
                       {post.meta_status === 'partial' && (
-                        <Badge className="bg-[#FF5500]/20 text-[#FF5500] font-display text-[9px]">⚠️ PARTIAL</Badge>
+                        <Badge className="bg-primary/20 text-primary font-display text-[9px]">⚠️ PARTIAL</Badge>
                       )}
                     </div>
                   </div>
@@ -466,10 +466,10 @@ export function SocialCommandCentre() {
                   {/* Engagement stats if published */}
                   {post.meta_status === 'published' && (post.likes || post.shares || post.comments_count) ? (
                     <div className="flex gap-3 text-[10px] text-muted-foreground">
-                      <span className="flex items-center gap-1"><Heart className="w-3 h-3 text-[#FF5500]" />{post.likes || 0}</span>
-                      <span className="flex items-center gap-1"><MessageSquare className="w-3 h-3 text-[#FF5500]" />{post.comments_count || 0}</span>
-                      <span className="flex items-center gap-1"><Share2 className="w-3 h-3 text-[#FF5500]" />{post.shares || 0}</span>
-                      <span className="flex items-center gap-1"><Eye className="w-3 h-3 text-[#FF5500]" />{post.reach || 0}</span>
+                      <span className="flex items-center gap-1"><Heart className="w-3 h-3 text-primary" />{post.likes || 0}</span>
+                      <span className="flex items-center gap-1"><MessageSquare className="w-3 h-3 text-primary" />{post.comments_count || 0}</span>
+                      <span className="flex items-center gap-1"><Share2 className="w-3 h-3 text-primary" />{post.shares || 0}</span>
+                      <span className="flex items-center gap-1"><Eye className="w-3 h-3 text-primary" />{post.reach || 0}</span>
                       {post.engagement_rate ? (
                         <Badge variant="outline" className="text-[8px] font-display">{post.engagement_rate}% ER</Badge>
                       ) : null}
@@ -488,14 +488,14 @@ export function SocialCommandCentre() {
                         <Button variant="outline" size="sm"
                           onClick={() => handlePublishToMeta(post, 'facebook')}
                           disabled={publishing === post.id}
-                          className="text-[10px] font-display gap-1 border-[#FF5500]/30 text-[#FF5500] hover:bg-[#FF5500]/10">
+                          className="text-[10px] font-display gap-1 border-primary/30 text-primary hover:bg-primary/10">
                           {publishing === post.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Facebook className="w-3 h-3" />}
                           FB
                         </Button>
                         <Button variant="outline" size="sm"
                           onClick={() => handlePublishToMeta(post, 'instagram')}
                           disabled={publishing === post.id || (!post.image_url && !post.custom_image_url)}
-                          className="text-[10px] font-display gap-1 border-[#FF5500]/30 text-[#FF5500] hover:bg-[#FF5500]/10">
+                          className="text-[10px] font-display gap-1 border-primary/30 text-primary hover:bg-primary/10">
                           {publishing === post.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Instagram className="w-3 h-3" />}
                           IG
                         </Button>
@@ -608,19 +608,19 @@ export function SocialCommandCentre() {
               <p className="text-[10px] text-muted-foreground tracking-wider mt-1">PUBLISHED</p>
             </CardContent></Card>
             <Card><CardContent className="pt-4 text-center">
-              <p className="text-2xl font-black text-[#FF5500]">{totalLikes}</p>
+              <p className="text-2xl font-black text-primary">{totalLikes}</p>
               <p className="text-[10px] text-muted-foreground tracking-wider mt-1">TOTAL LIKES</p>
             </CardContent></Card>
             <Card><CardContent className="pt-4 text-center">
-              <p className="text-2xl font-black text-[#FF5500]">{totalComments}</p>
+              <p className="text-2xl font-black text-primary">{totalComments}</p>
               <p className="text-[10px] text-muted-foreground tracking-wider mt-1">COMMENTS</p>
             </CardContent></Card>
             <Card><CardContent className="pt-4 text-center">
-              <p className="text-2xl font-black text-[#FF5500]">{totalShares}</p>
+              <p className="text-2xl font-black text-primary">{totalShares}</p>
               <p className="text-[10px] text-muted-foreground tracking-wider mt-1">SHARES</p>
             </CardContent></Card>
             <Card><CardContent className="pt-4 text-center">
-              <p className="text-2xl font-black text-[#FF5500]">{totalReach}</p>
+              <p className="text-2xl font-black text-primary">{totalReach}</p>
               <p className="text-[10px] text-muted-foreground tracking-wider mt-1">TOTAL REACH</p>
             </CardContent></Card>
           </div>
@@ -677,10 +677,10 @@ export function SocialCommandCentre() {
                   </div>
                   <p className="text-xs text-muted-foreground line-clamp-2">{post.content}</p>
                   <div className="flex gap-3 text-[10px] text-muted-foreground">
-                    <span className="flex items-center gap-1"><Heart className="w-3 h-3 text-[#FF5500]" />{post.likes || 0}</span>
-                    <span className="flex items-center gap-1"><MessageSquare className="w-3 h-3 text-[#FF5500]" />{post.comments_count || 0}</span>
-                    <span className="flex items-center gap-1"><Share2 className="w-3 h-3 text-[#FF5500]" />{post.shares || 0}</span>
-                    <span className="flex items-center gap-1"><Eye className="w-3 h-3 text-[#FF5500]" />{post.reach || 0}</span>
+                    <span className="flex items-center gap-1"><Heart className="w-3 h-3 text-primary" />{post.likes || 0}</span>
+                    <span className="flex items-center gap-1"><MessageSquare className="w-3 h-3 text-primary" />{post.comments_count || 0}</span>
+                    <span className="flex items-center gap-1"><Share2 className="w-3 h-3 text-primary" />{post.shares || 0}</span>
+                    <span className="flex items-center gap-1"><Eye className="w-3 h-3 text-primary" />{post.reach || 0}</span>
                   </div>
                   {post.coach_name && (
                     <p className="text-[9px] text-muted-foreground font-display tracking-wider">BY {post.coach_name.toUpperCase()}</p>

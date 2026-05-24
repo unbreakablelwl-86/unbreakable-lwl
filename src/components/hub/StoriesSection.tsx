@@ -450,7 +450,7 @@ export function StoriesSection() {
             className="flex flex-col items-center gap-1.5 flex-shrink-0 group"
           >
             <div className="relative">
-              <div className="w-16 h-16 rounded-full border-2 border-dashed border-[#444] group-hover:border-[#FF5500] transition-colors overflow-hidden"
+              <div className="w-16 h-16 rounded-full border-2 border-dashed border-border group-hover:border-primary transition-colors overflow-hidden"
                 style={{ background: 'rgba(20,20,20,0.8)' }}>
                 <Avatar className="w-full h-full">
                   <AvatarImage src={profile?.avatar_url || undefined} />
@@ -459,9 +459,9 @@ export function StoriesSection() {
                   </AvatarFallback>
                 </Avatar>
               </div>
-              <div className="absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full flex items-center justify-center border-2 border-[#080808]"
+              <div className="absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full flex items-center justify-center border-2 border-border"
                 style={{ background: '#FF5500', boxShadow: '0 0 8px rgba(255,85,0,0.4)' }}>
-                <Plus className="w-3 h-3 text-white" />
+                <Plus className="w-3 h-3 text-foreground" />
               </div>
             </div>
             <span className="text-[11px] text-muted-foreground font-heading font-semibold tracking-wide">
@@ -480,10 +480,10 @@ export function StoriesSection() {
             >
               <div className={`p-[2.5px] rounded-full ${
                 isViewed 
-                  ? 'bg-[#333]' 
-                  : 'bg-gradient-to-tr from-[#FF5500] via-orange-400 to-yellow-400'
+                  ? 'bg-muted' 
+                  : 'bg-gradient-to-tr from-primary via-orange-400 to-yellow-400'
               }`}>
-                <div className="w-[60px] h-[60px] rounded-full border-2 border-[#080808] overflow-hidden">
+                <div className="w-[60px] h-[60px] rounded-full border-2 border-border overflow-hidden">
                   <Avatar className="w-full h-full">
                     <AvatarImage src={group.profile?.avatar_url || undefined} />
                     <AvatarFallback className="bg-muted text-muted-foreground font-heading text-sm font-bold">
@@ -522,7 +522,7 @@ export function StoriesSection() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 60 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-50 bg-black overflow-hidden"
+            className="fixed inset-0 z-50 bg-background overflow-hidden"
             style={{ touchAction: 'none' }}
             onClick={handleViewerClick}
             onTouchStart={handleViewerTouchStart}
@@ -570,16 +570,16 @@ export function StoriesSection() {
                 <div className="w-8 h-8 rounded-full overflow-hidden">
                   <Avatar className="w-full h-full">
                     <AvatarImage src={currentUserGroup.profile?.avatar_url || undefined} />
-                    <AvatarFallback className="bg-white/10 text-white text-xs">
+                    <AvatarFallback className="bg-white/10 text-foreground text-xs">
                       {getInitials(currentUserGroup.profile?.display_name)}
                     </AvatarFallback>
                   </Avatar>
                 </div>
                 <div>
-                  <p className="text-white text-sm font-medium leading-none">
+                  <p className="text-foreground text-sm font-medium leading-none">
                     {currentUserGroup.profile?.display_name || 'User'}
                   </p>
-                  <p className="text-white/50 text-[10px]">
+                  <p className="text-foreground/50 text-[10px]">
                     {formatDistanceToNow(new Date(currentStory.created_at), { addSuffix: true })}
                   </p>
                 </div>
@@ -589,7 +589,7 @@ export function StoriesSection() {
                 {/* Like button */}
                 <button
                   className={`w-9 h-9 rounded-full backdrop-blur-sm flex items-center justify-center transition-all ${
-                    storyLiked ? 'bg-primary text-primary-foreground scale-110' : 'bg-black/40 text-white hover:bg-white/20'
+                    storyLiked ? 'bg-primary text-primary-foreground scale-110' : 'bg-background/40 text-white hover:bg-white/20'
                   }`}
                   onClick={(e) => { e.stopPropagation(); handleStoryLike(); }}
                   onTouchEnd={(e) => { e.stopPropagation(); e.preventDefault(); handleStoryLike(); }}
@@ -598,7 +598,7 @@ export function StoriesSection() {
                 </button>
                 {/* Share button */}
                 <button
-                  className="w-9 h-9 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/20 transition-colors"
+                  className="w-9 h-9 rounded-full bg-background/40 backdrop-blur-sm flex items-center justify-center text-foreground hover:bg-white/20 transition-colors"
                   onClick={(e) => { e.stopPropagation(); handleShareStory(); }}
                   title="Share"
                 >
@@ -607,7 +607,7 @@ export function StoriesSection() {
                 {/* Delete button - only own stories */}
                 {isOwnStory && (
                   <button
-                    className="w-9 h-9 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-destructive hover:bg-destructive/30 transition-colors disabled:opacity-50"
+                    className="w-9 h-9 rounded-full bg-background/40 backdrop-blur-sm flex items-center justify-center text-destructive hover:bg-destructive/30 transition-colors disabled:opacity-50"
                     onClick={(e) => { e.stopPropagation(); handleDeleteStory(currentStory.id); }}
                     disabled={deleting}
                     title="Delete"
@@ -617,7 +617,7 @@ export function StoriesSection() {
                 )}
                 {/* Close */}
                 <button
-                  className="w-9 h-9 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/20 transition-colors"
+                  className="w-9 h-9 rounded-full bg-background/40 backdrop-blur-sm flex items-center justify-center text-foreground hover:bg-white/20 transition-colors"
                   onClick={(e) => { e.stopPropagation(); setShowViewer(false); }}
                   data-story-controls
                 >
@@ -662,14 +662,14 @@ export function StoriesSection() {
                          <>
                            <button
                              data-story-controls
-                             className={`absolute left-2 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-white transition-opacity ${activeMediaSlide === 0 ? 'opacity-0 pointer-events-none' : 'opacity-70 hover:opacity-100'}`}
+                             className={`absolute left-2 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full bg-background/40 backdrop-blur-sm flex items-center justify-center text-foreground transition-opacity ${activeMediaSlide === 0 ? 'opacity-0 pointer-events-none' : 'opacity-70 hover:opacity-100'}`}
                              onClick={(e) => { e.stopPropagation(); setActiveMediaSlide(prev => Math.max(0, prev - 1)); }}
                            >
                              <ChevronLeft className="w-5 h-5" />
                            </button>
                            <button
                              data-story-controls
-                             className={`absolute right-2 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-white transition-opacity ${activeMediaSlide === mediaArr.length - 1 ? 'opacity-0 pointer-events-none' : 'opacity-70 hover:opacity-100'}`}
+                             className={`absolute right-2 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full bg-background/40 backdrop-blur-sm flex items-center justify-center text-foreground transition-opacity ${activeMediaSlide === mediaArr.length - 1 ? 'opacity-0 pointer-events-none' : 'opacity-70 hover:opacity-100'}`}
                              onClick={(e) => { e.stopPropagation(); setActiveMediaSlide(prev => Math.min(mediaArr.length - 1, prev + 1)); }}
                            >
                              <ChevronRight className="w-5 h-5" />
@@ -697,7 +697,7 @@ export function StoriesSection() {
                       {currentSlide.type === 'video' && (
                         <div className="absolute bottom-20 right-4 z-10" data-story-controls>
                           <button
-                            className="w-10 h-10 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center text-white"
+                            className="w-10 h-10 rounded-full bg-background/50 backdrop-blur-sm flex items-center justify-center text-foreground"
                             onClick={(e) => {
                               e.stopPropagation();
                               if (storyVideoRef.current) {
@@ -729,7 +729,7 @@ export function StoriesSection() {
                         />
                         <div className="absolute bottom-20 right-4 z-10" data-story-controls>
                           <button
-                            className="w-10 h-10 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center text-white"
+                            className="w-10 h-10 rounded-full bg-background/50 backdrop-blur-sm flex items-center justify-center text-foreground"
                             onClick={(e) => {
                               e.stopPropagation();
                               if (storyVideoRef.current) {
@@ -779,7 +779,7 @@ export function StoriesSection() {
               {/* Legacy text */}
               {currentStory.content && getStoryOverlays(currentStory).length === 0 && (
                 <div className="absolute inset-0 flex items-center justify-center p-6">
-                  <p className="text-white text-xl text-center font-display tracking-wide">
+                  <p className="text-foreground text-xl text-center font-display tracking-wide">
                     {currentStory.content}
                   </p>
                 </div>

@@ -97,7 +97,7 @@ export function FullscreenVideoViewer({ isOpen, onClose, videoUrl }: FullscreenV
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-[95vw] max-h-[95vh] w-auto h-auto p-0 bg-black border-none bg-background border-border"
+      <DialogContent className="max-w-[95vw] max-h-[95vh] w-auto h-auto p-0 bg-background border-none bg-background border-border"
         onInteractOutside={(e) => e.preventDefault()}
       >
         <div 
@@ -123,7 +123,7 @@ export function FullscreenVideoViewer({ isOpen, onClose, videoUrl }: FullscreenV
           <Button
             variant="ghost"
             size="icon"
-            className="absolute top-4 right-4 bg-black/50 hover:bg-black/70 text-white z-10"
+            className="absolute top-4 right-4 bg-background/50 hover:bg-background/70 text-foreground z-10"
             onClick={(e) => {
               e.stopPropagation();
               onClose();
@@ -155,7 +155,7 @@ export function FullscreenVideoViewer({ isOpen, onClose, videoUrl }: FullscreenV
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="text-white hover:bg-white/20"
+                  className="text-foreground hover:bg-white/20"
                   onClick={togglePlayPause}
                 >
                   {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5 ml-0.5" />}
@@ -164,13 +164,13 @@ export function FullscreenVideoViewer({ isOpen, onClose, videoUrl }: FullscreenV
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="text-white hover:bg-white/20"
+                  className="text-foreground hover:bg-white/20"
                   onClick={toggleMute}
                 >
                   {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
                 </Button>
 
-                <span className="text-white text-sm">
+                <span className="text-foreground text-sm">
                   {videoRef.current ? formatTime(videoRef.current.currentTime) : '0:00'} / 
                   {videoRef.current ? formatTime(videoRef.current.duration || 0) : '0:00'}
                 </span>
@@ -184,7 +184,7 @@ export function FullscreenVideoViewer({ isOpen, onClose, videoUrl }: FullscreenV
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="text-white hover:bg-white/20"
+                  className="text-foreground hover:bg-white/20"
                   onClick={toggleFullscreen}
                 >
                   {isFullscreen ? <Minimize2 className="w-5 h-5" /> : <Maximize2 className="w-5 h-5" />}
@@ -196,8 +196,8 @@ export function FullscreenVideoViewer({ isOpen, onClose, videoUrl }: FullscreenV
           {/* Center play button when paused */}
           {!isPlaying && (
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div className="bg-black/50 rounded-full p-4">
-                <Play className="w-12 h-12 text-white ml-1" />
+              <div className="bg-background/50 rounded-full p-4">
+                <Play className="w-12 h-12 text-foreground ml-1" />
               </div>
             </div>
           )}

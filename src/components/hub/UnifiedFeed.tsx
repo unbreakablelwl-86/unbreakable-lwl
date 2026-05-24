@@ -174,7 +174,7 @@ export function UnifiedFeed({ onSignIn, onOpenMessages }: UnifiedFeedProps) {
           <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
             <Activity className="w-10 h-10 text-primary" />
           </div>
-          <h3 className="font-heading text-2xl text-white mb-2 tracking-wide">NO ACTIVITY YET</h3>
+          <h3 className="font-heading text-2xl text-foreground mb-2 tracking-wide">NO ACTIVITY YET</h3>
           <p className="text-muted-foreground mb-4">
             {user
               ? 'Be the first to share something! Post an update, record a run, or complete a workout.'

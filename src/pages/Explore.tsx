@@ -91,7 +91,7 @@ export default function Explore() {
               {query && (
                 <button
                   onClick={() => { setQuery(''); clearResults(); }}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-white"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                 >
                   ×
                 </button>
@@ -128,12 +128,12 @@ export default function Explore() {
                 >
                   <Avatar className="w-11 h-11">
                     <AvatarImage src={result.avatar_url || undefined} />
-                    <AvatarFallback className="bg-primary/10 text-[#FF5500] font-heading text-sm">
+                    <AvatarFallback className="bg-primary/10 text-primary font-heading text-sm">
                       {getInitials(result.display_name)}
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex-1 min-w-0">
-                    <p className="font-heading text-sm tracking-wide text-white truncate">
+                    <p className="font-heading text-sm tracking-wide text-foreground truncate">
                       {result.display_name || result.username || 'Member'}
                     </p>
                     {result.username && (
@@ -180,11 +180,11 @@ export default function Explore() {
                         )}
                         {hasVideo && (
                           <div className="absolute top-2 right-2">
-                            <Play className="w-4 h-4 text-white drop-shadow" />
+                            <Play className="w-4 h-4 text-foreground drop-shadow" />
                           </div>
                         )}
                         {/* Hover overlay with stats */}
-                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4 text-white">
+                        <div className="absolute inset-0 bg-background/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4 text-foreground">
                           <span className="flex items-center gap-1 text-sm font-heading">
                             ❤️ {post.kudos_count || 0}
                           </span>
@@ -199,7 +199,7 @@ export default function Explore() {
               ) : (
                 <div className="text-center py-16">
                   <Grid3X3 className="w-16 h-16 text-muted-foreground/30 mx-auto mb-4" />
-                  <p className="text-white font-heading tracking-wide text-lg">Explore</p>
+                  <p className="text-foreground font-heading tracking-wide text-lg">Explore</p>
                   <p className="text-sm text-muted-foreground mt-1">Photos and videos from the community will appear here</p>
                 </div>
               )}

@@ -116,31 +116,31 @@ export function PostSessionSummary({ distance, elapsedSeconds, positions, activi
       {/* Stats Grid */}
       <div className="grid grid-cols-2 gap-3">
         <Card className="p-4 border-border bg-card text-center">
-          <MapPin className="w-4 h-4 text-[#FF5500] mx-auto mb-1" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.5))' }} />
-          <p className="font-display text-2xl text-white">{distance.toFixed(2)}</p>
-          <p className="text-[10px] text-gray-500 uppercase tracking-wide">Kilometres</p>
+          <MapPin className="w-4 h-4 text-primary mx-auto mb-1" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.5))' }} />
+          <p className="font-display text-2xl text-foreground">{distance.toFixed(2)}</p>
+          <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Kilometres</p>
         </Card>
         <Card className="p-4 border-border bg-card text-center">
-          <Clock className="w-4 h-4 text-[#FF5500] mx-auto mb-1" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.5))' }} />
-          <p className="font-display text-2xl text-white">{formatDuration(elapsedSeconds)}</p>
-          <p className="text-[10px] text-gray-500 uppercase tracking-wide">Duration</p>
+          <Clock className="w-4 h-4 text-primary mx-auto mb-1" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.5))' }} />
+          <p className="font-display text-2xl text-foreground">{formatDuration(elapsedSeconds)}</p>
+          <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Duration</p>
         </Card>
         <Card className="p-4 border-border bg-card text-center">
-          <Timer className="w-4 h-4 text-[#FF5500] mx-auto mb-1" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.5))' }} />
-          <p className="font-display text-2xl text-white">{avgPace > 0 ? formatPace(avgPace) : '--:--'}</p>
-          <p className="text-[10px] text-gray-500 uppercase tracking-wide">Avg Pace /km</p>
+          <Timer className="w-4 h-4 text-primary mx-auto mb-1" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.5))' }} />
+          <p className="font-display text-2xl text-foreground">{avgPace > 0 ? formatPace(avgPace) : '--:--'}</p>
+          <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Avg Pace /km</p>
         </Card>
         <Card className="p-4 border-border bg-card text-center">
-          <Zap className="w-4 h-4 text-[#FF5500] mx-auto mb-1" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.5))' }} />
-          <p className="font-display text-2xl text-white">{avgSpeed.toFixed(1)}</p>
-          <p className="text-[10px] text-gray-500 uppercase tracking-wide">Avg km/h</p>
+          <Zap className="w-4 h-4 text-primary mx-auto mb-1" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.5))' }} />
+          <p className="font-display text-2xl text-foreground">{avgSpeed.toFixed(1)}</p>
+          <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Avg km/h</p>
         </Card>
       </div>
 
       {/* Estimated Calories */}
       {calories > 0 && (
-        <div className="flex items-center justify-center gap-2 text-sm text-gray-400">
-          <TrendingUp className="w-4 h-4 text-[#FF5500]" />
+        <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+          <TrendingUp className="w-4 h-4 text-primary" />
           <span>~{calories} cal burned</span>
         </div>
       )}
@@ -152,10 +152,10 @@ export function PostSessionSummary({ distance, elapsedSeconds, positions, activi
             onClick={() => setShowSplits(!showSplits)}
             className="flex items-center justify-between w-full mb-2"
           >
-            <h4 className="font-display text-xs tracking-widest text-gray-400 uppercase">
+            <h4 className="font-display text-xs tracking-widest text-muted-foreground uppercase">
               Kilometre Splits
             </h4>
-            {showSplits ? <ChevronUp className="w-4 h-4 text-gray-500" /> : <ChevronDown className="w-4 h-4 text-gray-500" />}
+            {showSplits ? <ChevronUp className="w-4 h-4 text-muted-foreground" /> : <ChevronDown className="w-4 h-4 text-muted-foreground" />}
           </button>
           
           {showSplits && (
@@ -165,7 +165,7 @@ export function PostSessionSummary({ distance, elapsedSeconds, positions, activi
               className="space-y-1"
             >
               {/* Header */}
-              <div className="grid grid-cols-3 text-[10px] text-gray-500 uppercase tracking-wider px-3 py-1">
+              <div className="grid grid-cols-3 text-[10px] text-muted-foreground uppercase tracking-wider px-3 py-1">
                 <span>Split</span>
                 <span className="text-center">Pace</span>
                 <span className="text-right">Speed</span>
@@ -178,20 +178,20 @@ export function PostSessionSummary({ distance, elapsedSeconds, positions, activi
                   <div
                     key={split.km}
                     className={`grid grid-cols-3 items-center px-3 py-2 rounded-lg text-sm ${
-                      isFastest ? 'bg-[#FF5500]/10 border border-[#FF5500]/20' : 
-                      isSlowest ? 'bg-[#FF5500]/10 border border-[#FF5500]/20' : 
+                      isFastest ? 'bg-primary/10 border border-primary/20' : 
+                      isSlowest ? 'bg-primary/10 border border-primary/20' : 
                       'bg-card border border-border'
                     }`}
                   >
-                    <span className="text-gray-300">
+                    <span className="text-muted-foreground">
                       {isLast ? `${(distance % 1).toFixed(2)} km` : `Km ${split.km}`}
                     </span>
                     <span className={`text-center font-mono ${
-                      isFastest ? 'text-[#FF5500]' : isSlowest ? 'text-[#FF5500]' : 'text-white'
+                      isFastest ? 'text-primary' : isSlowest ? 'text-primary' : 'text-foreground'
                     }`}>
                       {formatPace(split.paceSeconds)}
                     </span>
-                    <span className="text-right text-gray-400">
+                    <span className="text-right text-muted-foreground">
                       {split.avgSpeed.toFixed(1)} km/h
                     </span>
                   </div>
@@ -200,7 +200,7 @@ export function PostSessionSummary({ distance, elapsedSeconds, positions, activi
               
               {/* Legend */}
               {splits.length > 1 && (
-                <div className="flex justify-center gap-4 pt-1 text-[10px] text-gray-500">
+                <div className="flex justify-center gap-4 pt-1 text-[10px] text-muted-foreground">
                   <span className="flex items-center gap-1">
                     <span className="w-2 h-2 rounded-full bg-green-400" /> Fastest
                   </span>

@@ -163,7 +163,7 @@ function PlannerCard({
 }) {
   const statusColors = {
     pending: isToday ? 'border-primary bg-primary/10' : 'border-border bg-card',
-    completed: 'border-[#FF5500] bg-[#FF5500]/10',
+    completed: 'border-primary bg-primary/10',
     skipped: 'border-muted bg-muted/10',
   };
 
@@ -174,7 +174,7 @@ function PlannerCard({
           <Badge 
             variant="outline" 
             className={`text-[10px] ${
-              planner.status === 'completed' ? 'border-[#FF5500] text-[#FF5500]' :
+              planner.status === 'completed' ? 'border-primary text-primary' :
               planner.status === 'skipped' ? 'border-muted text-muted-foreground' :
               'border-primary text-primary'
             }`}

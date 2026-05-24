@@ -101,11 +101,11 @@ const getSwapSuggestions = (currentType: string, activityType: ActivityType = 'r
 };
 
 const getIntensityColor = (intensity: string) => {
-  if (intensity.includes('1')) return 'bg-[#FF5500]/20 text-[#FF5500] border-[#FF5500]/30';
-  if (intensity.includes('2')) return 'bg-[#FF5500]/20 text-[#FF5500] border-[#FF5500]/30';
-  if (intensity.includes('3') || intensity.includes('4')) return 'bg-[#FF5500]/20 text-[#FF5500] border-[#FF5500]/30';
-  if (intensity.includes('5')) return 'bg-[#FF5500]/20 text-[#FF5500] border-[#FF5500]/30';
-  if (intensity.includes('Mixed')) return 'bg-[#FF5500]/20 text-[#FF5500] border-[#FF5500]/30';
+  if (intensity.includes('1')) return 'bg-primary/20 text-primary border-primary/30';
+  if (intensity.includes('2')) return 'bg-primary/20 text-primary border-primary/30';
+  if (intensity.includes('3') || intensity.includes('4')) return 'bg-primary/20 text-primary border-primary/30';
+  if (intensity.includes('5')) return 'bg-primary/20 text-primary border-primary/30';
+  if (intensity.includes('Mixed')) return 'bg-primary/20 text-primary border-primary/30';
   return 'bg-muted text-muted-foreground border-muted';
 };
 

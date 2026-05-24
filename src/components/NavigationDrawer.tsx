@@ -73,7 +73,7 @@ export function NavigationDrawer({ variant = 'default' }: NavigationDrawerProps)
       isActive(path)
         ? 'bg-primary text-primary-foreground border-primary shadow-[0_0_15px_hsl(24_100%_50%/0.4)]'
         : admin
-          ? 'text-[#FF5500] hover:text-[#FF5500] hover:bg-[#FF5500]/10 border-[#FF5500]/30'
+          ? 'text-primary hover:text-primary hover:bg-primary/10 border-primary/30'
           : highlight
             ? 'text-primary hover:text-primary-foreground hover:bg-primary/80 border-primary/30'
             : 'text-muted-foreground border-primary/20 hover:text-primary hover:bg-primary/10 hover:border-primary/40'
@@ -228,7 +228,7 @@ export function NavigationDrawer({ variant = 'default' }: NavigationDrawerProps)
 
                   {isDev && (
                     <Link to="/admin" onClick={handleNavClick} className={linkClass('/admin', false, true)}>
-                      <Shield className={`w-5 h-5 ${isActive('/admin') ? '' : 'text-[#FF5500]'}`} />
+                      <Shield className={`w-5 h-5 ${isActive('/admin') ? '' : 'text-primary'}`} />
                       DEV
                     </Link>
                   )}

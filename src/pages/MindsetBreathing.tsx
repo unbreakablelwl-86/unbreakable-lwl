@@ -247,10 +247,10 @@ const MindsetBreathing = () => {
   // Selection view
   if (view === "selection") {
     return (
-      <div className="min-h-screen pb-24" style={{ background: '#080808' }}>
+      <div className="min-h-screen pb-24" >
         {/* Back nav */}
         <div className="px-4 pt-4">
-          <button onClick={() => navigate('/mindset')} className="flex items-center gap-1 text-gray-500 text-sm hover:text-gray-300 transition-colors">
+          <button onClick={() => navigate('/mindset')} className="flex items-center gap-1 text-muted-foreground text-sm hover:text-muted-foreground transition-colors">
             <ArrowLeft className="w-4 h-4" /> Mind
           </button>
         </div>
@@ -260,10 +260,10 @@ const MindsetBreathing = () => {
             style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(255,85,0,0.08), transparent 70%)' }} />
           <div className="relative z-10">
             <h1 className="font-display text-2xl tracking-wider text-center">
-              <span className="text-[#FF5500]" style={{ textShadow: '0 0 20px rgba(255,85,0,0.4)' }}>UNBREAKABLE</span>
-              <span className="text-white"> BREATHING</span>
+              <span className="text-primary" style={{ textShadow: '0 0 20px rgba(255,85,0,0.4)' }}>UNBREAKABLE</span>
+              <span className="text-foreground"> BREATHING</span>
             </h1>
-            <p className="text-center text-gray-500 text-sm mt-1 font-display tracking-wide">
+            <p className="text-center text-muted-foreground text-sm mt-1 font-display tracking-wide">
               BREATHE WITH PURPOSE
             </p>
           </div>
@@ -271,26 +271,26 @@ const MindsetBreathing = () => {
 
         <div className="px-4 space-y-4">
           {/* Description Card */}
-          <div className="p-3.5 rounded-xl border border-[#FF5500]/15 bg-card">
-            <p className="text-gray-400 text-sm leading-relaxed">
-              Controlled breathing isn't relaxation — it's <span className="text-[#FF5500] font-semibold">nervous system training</span>.
+          <div className="p-3.5 rounded-xl border border-primary/15 bg-card">
+            <p className="text-muted-foreground text-sm leading-relaxed">
+              Controlled breathing isn't relaxation — it's <span className="text-primary font-semibold">nervous system training</span>.
               Every pattern here is built on proven science. Master your breath, master your mind.
-              Stay calm in chaos, focused under fire, and <span className="text-[#FF5500] font-semibold">UNBREAKABLE</span>.
+              Stay calm in chaos, focused under fire, and <span className="text-primary font-semibold">UNBREAKABLE</span>.
             </p>
-            <p className="text-[#FF5500] font-display text-xs tracking-wider mt-2">KEEP SHOWING UP.</p>
+            <p className="text-primary font-display text-xs tracking-wider mt-2">KEEP SHOWING UP.</p>
           </div>
 
           {/* Voice toggle row */}
           <div className="flex items-center justify-center gap-2 text-xs">
             {voiceEnabled ? (
-              <><Volume2 className="w-3.5 h-3.5 text-[#FF5500]" /><span className="text-gray-500">Voice guidance enabled</span></>
+              <><Volume2 className="w-3.5 h-3.5 text-primary" /><span className="text-muted-foreground">Voice guidance enabled</span></>
             ) : (
-              <><VolumeX className="w-3.5 h-3.5 text-gray-600" /><span className="text-gray-500">Voice guidance disabled</span></>
+              <><VolumeX className="w-3.5 h-3.5 text-muted-foreground" /><span className="text-muted-foreground">Voice guidance disabled</span></>
             )}
           </div>
 
           {/* Section Header */}
-          <p className="text-xs font-display tracking-wider text-gray-400 pt-2">SELECT YOUR SESSION</p>
+          <p className="text-xs font-display tracking-wider text-muted-foreground pt-2">SELECT YOUR SESSION</p>
 
           {/* Session Cards — Mindset compact rows */}
           <div className="space-y-2">
@@ -300,20 +300,20 @@ const MindsetBreathing = () => {
                 <button
                   key={exercise.id}
                   onClick={() => selectExercise(exercise)}
-                  className="w-full p-3.5 rounded-xl border border-border bg-card flex items-center gap-3 hover:border-[#FF5500]/30 transition-all group text-left"
+                  className="w-full p-3.5 rounded-xl border border-border bg-card flex items-center gap-3 hover:border-primary/30 transition-all group text-left"
                 >
-                  <div className="w-10 h-10 rounded-lg border border-[#FF5500]/20 flex items-center justify-center shrink-0" style={{ background: 'rgba(255,85,0,0.1)' }}>
-                    <span className="text-[#FF5500]" style={{ filter: 'drop-shadow(0 0 6px rgba(255,85,0,0.5))' }}>
+                  <div className="w-10 h-10 rounded-lg border border-primary/20 flex items-center justify-center shrink-0" style={{ background: 'rgba(255,85,0,0.1)' }}>
+                    <span className="text-primary" style={{ filter: 'drop-shadow(0 0 6px rgba(255,85,0,0.5))' }}>
                       {getIntensityIcon(exercise.intensity)}
                     </span>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-display text-sm tracking-wider text-white">{exercise.name}</p>
-                    <p className="text-gray-500 text-xs mt-0.5">{exercise.tagline} — {cycleSec}s/cycle</p>
+                    <p className="font-display text-sm tracking-wider text-foreground">{exercise.name}</p>
+                    <p className="text-muted-foreground text-xs mt-0.5">{exercise.tagline} — {cycleSec}s/cycle</p>
                   </div>
                   <div className="text-right shrink-0">
-                    <p className="text-[#FF5500] text-xs font-display capitalize">{exercise.intensity}</p>
-                    <ChevronRight className="w-4 h-4 text-gray-600 group-hover:text-[#FF5500] transition-colors ml-auto mt-0.5" />
+                    <p className="text-primary text-xs font-display capitalize">{exercise.intensity}</p>
+                    <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors ml-auto mt-0.5" />
                   </div>
                 </button>
               );
@@ -321,16 +321,16 @@ const MindsetBreathing = () => {
           </div>
 
           {/* Coach CTA */}
-          <div className="mt-4 p-3.5 rounded-xl border border-[#FF5500]/20 bg-[#FF5500]/5">
+          <div className="mt-4 p-3.5 rounded-xl border border-primary/20 bg-primary/5">
             <Link to="/help" className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg border border-[#FF5500]/20 flex items-center justify-center" style={{ background: 'rgba(255,85,0,0.1)' }}>
-                <Flame className="w-5 h-5 text-[#FF5500]" style={{ filter: 'drop-shadow(0 0 6px rgba(255,85,0,0.5))' }} />
+              <div className="w-10 h-10 rounded-lg border border-primary/20 flex items-center justify-center" style={{ background: 'rgba(255,85,0,0.1)' }}>
+                <Flame className="w-5 h-5 text-primary" style={{ filter: 'drop-shadow(0 0 6px rgba(255,85,0,0.5))' }} />
               </div>
               <div className="flex-1">
-                <p className="font-display text-sm tracking-wider text-white">NEED HELP?</p>
-                <p className="text-gray-500 text-xs mt-0.5">Ask your Unbreakable Coach</p>
+                <p className="font-display text-sm tracking-wider text-foreground">NEED HELP?</p>
+                <p className="text-muted-foreground text-xs mt-0.5">Ask your Unbreakable Coach</p>
               </div>
-              <ChevronRight className="w-4 h-4 text-[#FF5500]" />
+              <ChevronRight className="w-4 h-4 text-primary" />
             </Link>
           </div>
         </div>

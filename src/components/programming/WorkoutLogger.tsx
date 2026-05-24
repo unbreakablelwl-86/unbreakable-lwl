@@ -39,8 +39,8 @@ const equipmentIcons: Record<string, React.ReactNode> = {
 const equipmentColors: Record<string, string> = {
   barbell: 'bg-primary/20 text-primary border-primary/30',
   dumbbell: 'bg-orange-500/20 text-orange-400 border-orange-500/30',
-  bodyweight: 'bg-[#FF5500]/20 text-[#FF5500] border-[#FF5500]/30',
-  running: 'bg-[#FF5500]/20 text-[#FF5500] border-[#FF5500]/30',
+  bodyweight: 'bg-primary/20 text-primary border-primary/30',
+  running: 'bg-primary/20 text-primary border-primary/30',
 };
 
 // Group logs by exercise
@@ -104,8 +104,8 @@ export function WorkoutLogger({ exerciseLogs, onUpdateLog, onStartRest, mode }: 
             }}
           />
         ) : (
-          <Card className="p-8 text-center border-[#FF5500] bg-[#FF5500]/10 border-border bg-card">
-            <Check className="w-12 h-12 text-[#FF5500] mx-auto mb-4" />
+          <Card className="p-8 text-center border-primary bg-primary/10 border-border bg-card">
+            <Check className="w-12 h-12 text-primary mx-auto mb-4" />
             <h3 className="font-display text-xl text-foreground mb-2">All Sets Complete!</h3>
             <p className="text-muted-foreground">Great work on your workout.</p>
           </Card>
@@ -122,7 +122,7 @@ export function WorkoutLogger({ exerciseLogs, onUpdateLog, onStartRest, mode }: 
                 key={exerciseName}
                 className={`flex items-center justify-between p-3 rounded-lg border ${
                   exerciseComplete
-                    ? 'border-[#FF5500]/30 bg-[#FF5500]/5'
+                    ? 'border-primary/30 bg-primary/5'
                     : logs[0] === currentLog
                     ? 'border-primary bg-primary/5'
                     : 'border-border bg-card'
@@ -173,7 +173,7 @@ export function WorkoutLogger({ exerciseLogs, onUpdateLog, onStartRest, mode }: 
           <Card
             key={exerciseName}
             className={`border transition-colors ${
-              exerciseComplete ? 'border-[#FF5500]/30 bg-[#FF5500]/5' : 'border-border bg-card'
+              exerciseComplete ? 'border-primary/30 bg-primary/5' : 'border-border bg-card'
             }`}
           >
             <button

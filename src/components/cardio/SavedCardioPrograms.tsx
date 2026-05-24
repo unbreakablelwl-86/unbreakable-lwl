@@ -33,8 +33,8 @@ interface SavedCardioProgramsProps {
 const statusConfig: Record<CardioProgramStatus, { label: string; className: string }> = {
   not_started: { label: 'Not Started', className: 'bg-muted text-muted-foreground border-muted' },
   active: { label: 'Active', className: 'bg-primary text-primary-foreground border-primary' },
-  completed: { label: 'Completed', className: 'bg-[#FF5500]/20 text-[#FF5500] border-[#FF5500]/30' },
-  paused: { label: 'Paused', className: 'bg-[#FF5500]/20 text-[#FF5500] border-[#FF5500]/30' },
+  completed: { label: 'Completed', className: 'bg-primary/20 text-primary border-primary/30' },
+  paused: { label: 'Paused', className: 'bg-primary/20 text-primary border-primary/30' },
 };
 
 const getActivityIcon = (type: ActivityType) => {
@@ -145,7 +145,7 @@ export function SavedCardioPrograms({ onViewProgram }: SavedCardioProgramsProps)
             Active: <span className="text-foreground font-medium">{activeProgramCount}</span> / {maxActivePrograms}
           </span>
           {!canActivateMore && (
-            <Badge variant="outline" className="border-[#FF5500]/50 text-[#FF5500] shrink-0">
+            <Badge variant="outline" className="border-primary/50 text-primary shrink-0">
               Max Reached
             </Badge>
           )}

@@ -51,8 +51,8 @@ const equipmentIcons: Record<string, React.ReactNode> = {
 const equipmentColors: Record<string, string> = {
   barbell: 'bg-primary/20 text-primary border-primary/30',
   dumbbell: 'bg-orange-500/20 text-orange-400 border-orange-500/30',
-  bodyweight: 'bg-[#FF5500]/20 text-[#FF5500] border-[#FF5500]/30',
-  running: 'bg-[#FF5500]/20 text-[#FF5500] border-[#FF5500]/30',
+  bodyweight: 'bg-primary/20 text-primary border-primary/30',
+  running: 'bg-primary/20 text-primary border-primary/30',
 };
 
 // Equipment priority: compound/barbell first, then machines/cables, then isolation/bodyweight
@@ -262,7 +262,7 @@ export function SessionLoggingView({
               <Card
                 key={exerciseName}
                 className={`border transition-colors ${
-                  exerciseComplete ? 'border-[#FF5500]/30 bg-[#FF5500]/5' : 'border-border bg-card'
+                  exerciseComplete ? 'border-primary/30 bg-primary/5' : 'border-border bg-card'
                 }`}
               >
                 {/* Exercise Header */}
@@ -277,7 +277,7 @@ export function SessionLoggingView({
                     <span className="font-display text-foreground">{exerciseName}</span>
                   </div>
                   <div className="flex items-center gap-3">
-                    {exerciseComplete && <Check className="w-5 h-5 text-[#FF5500]" />}
+                    {exerciseComplete && <Check className="w-5 h-5 text-primary" />}
                     <span className="text-sm text-muted-foreground">
                       {setsComplete}/{logs.length}
                     </span>

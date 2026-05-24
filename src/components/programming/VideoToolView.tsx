@@ -75,9 +75,9 @@ export function VideoToolView({ sessionId, exerciseName, onClose }: VideoToolVie
                         href={video.video_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 hover:opacity-100 transition-opacity"
+                        className="absolute inset-0 flex items-center justify-center bg-background/50 opacity-0 hover:opacity-100 transition-opacity"
                       >
-                        <PlayCircle className="w-10 h-10 text-white" />
+                        <PlayCircle className="w-10 h-10 text-foreground" />
                       </a>
                     </div>
 
@@ -99,10 +99,10 @@ export function VideoToolView({ sessionId, exerciseName, onClose }: VideoToolVie
                           variant="outline"
                           className={
                             video.analysis_status === 'completed'
-                              ? 'border-[#FF5500] text-[#FF5500]'
+                              ? 'border-primary text-primary'
                               : video.analysis_status === 'pending'
-                              ? 'border-[#FF5500] text-[#FF5500]'
-                              : 'border-[#FF5500] text-[#FF5500]'
+                              ? 'border-primary text-primary'
+                              : 'border-primary text-primary'
                           }
                         >
                           {video.analysis_status}

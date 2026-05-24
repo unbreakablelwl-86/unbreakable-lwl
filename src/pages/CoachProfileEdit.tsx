@@ -9,8 +9,8 @@ export default function CoachProfileEdit() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: '#080808' }}>
-        <Loader2 className="w-8 h-8 animate-spin text-[#FF5500]" />
+      <div className="min-h-screen flex items-center justify-center" >
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -18,10 +18,10 @@ export default function CoachProfileEdit() {
   if (!user) return <Navigate to="/" replace />;
 
   return (
-    <div className="min-h-screen pb-24" style={{ background: '#080808' }}>
+    <div className="min-h-screen pb-24" >
       {/* Back nav */}
       <div className="px-4 pt-4">
-        <button onClick={() => navigate('/coach')} className="flex items-center gap-1 text-gray-500 text-sm hover:text-gray-300 transition-colors">
+        <button onClick={() => navigate('/coach')} className="flex items-center gap-1 text-muted-foreground text-sm hover:text-muted-foreground transition-colors">
           <ArrowLeft className="w-4 h-4" /> Coaching
         </button>
       </div>
@@ -32,10 +32,10 @@ export default function CoachProfileEdit() {
           style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(255,85,0,0.08), transparent 70%)' }} />
         <div className="relative z-10">
           <h1 className="font-display text-2xl tracking-wider text-center">
-            <span className="text-[#FF5500]" style={{ textShadow: '0 0 20px rgba(255,85,0,0.4)' }}>COACH</span>
-            <span className="text-white"> PROFILE</span>
+            <span className="text-primary" style={{ textShadow: '0 0 20px rgba(255,85,0,0.4)' }}>COACH</span>
+            <span className="text-foreground"> PROFILE</span>
           </h1>
-          <p className="text-center text-gray-500 text-sm mt-1 font-display tracking-wide">
+          <p className="text-center text-muted-foreground text-sm mt-1 font-display tracking-wide">
             SET UP YOUR PUBLIC PROFILE
           </p>
         </div>

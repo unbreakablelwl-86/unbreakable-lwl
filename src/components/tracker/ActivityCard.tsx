@@ -171,7 +171,7 @@ export function ActivityCard({ run, onKudos, onDelete, onToggleComments, onUpdat
 
         {/* Title & Description */}
         <div className="px-4 pb-3">
-          <h3 className="font-heading text-xl tracking-wide text-white">
+          <h3 className="font-heading text-xl tracking-wide text-foreground">
             {run.title || 'Morning Run'}
           </h3>
           {run.description && (
@@ -188,13 +188,13 @@ export function ActivityCard({ run, onKudos, onDelete, onToggleComments, onUpdat
             <p className="text-xs text-muted-foreground uppercase tracking-wide">km</p>
           </div>
           <div className="text-center border-x border-border">
-            <p className="text-2xl font-heading text-white tracking-wide">
+            <p className="text-2xl font-heading text-foreground tracking-wide">
               {formatDuration(run.duration_seconds)}
             </p>
             <p className="text-xs text-muted-foreground uppercase tracking-wide">time</p>
           </div>
           <div className="text-center">
-            <p className="text-2xl font-heading text-white tracking-wide">
+            <p className="text-2xl font-heading text-foreground tracking-wide">
               {formatPace(run.pace_per_km_seconds)}
             </p>
             <p className="text-xs text-muted-foreground uppercase tracking-wide">/km</p>

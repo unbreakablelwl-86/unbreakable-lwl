@@ -13,10 +13,10 @@ import {
 } from 'lucide-react';
 
 const TYPE_CONFIG: Record<string, { label: string; icon: React.ReactNode; color: string }> = {
-  session_review: { label: 'Session Review', icon: <ClipboardList className="w-3 h-3" />, color: 'bg-[#FF5500]/20 text-[#FF5500] border-[#FF5500]/30' },
-  appraisal: { label: 'Appraisal', icon: <Star className="w-3 h-3" />, color: 'bg-[#FF5500]/20 text-[#FF5500] border-[#FF5500]/30' },
-  goal_setting: { label: 'Goal Setting', icon: <Target className="w-3 h-3" />, color: 'bg-[#FF5500]/20 text-[#FF5500] border-[#FF5500]/30' },
-  plan_update: { label: 'Plan Update', icon: <RefreshCw className="w-3 h-3" />, color: 'bg-[#FF5500]/20 text-[#FF5500] border-[#FF5500]/30' },
+  session_review: { label: 'Session Review', icon: <ClipboardList className="w-3 h-3" />, color: 'bg-primary/20 text-primary border-primary/30' },
+  appraisal: { label: 'Appraisal', icon: <Star className="w-3 h-3" />, color: 'bg-primary/20 text-primary border-primary/30' },
+  goal_setting: { label: 'Goal Setting', icon: <Target className="w-3 h-3" />, color: 'bg-primary/20 text-primary border-primary/30' },
+  plan_update: { label: 'Plan Update', icon: <RefreshCw className="w-3 h-3" />, color: 'bg-primary/20 text-primary border-primary/30' },
   general: { label: 'General', icon: <MessageSquare className="w-3 h-3" />, color: 'bg-muted text-muted-foreground border-border' },
 };
 
@@ -156,7 +156,7 @@ export function CoachUpdatesView() {
                           <span className="ml-1">{typeConf.label}</span>
                         </Badge>
                         {ack && (
-                          <Badge className="text-[10px] bg-[#FF5500]/20 text-[#FF5500] border-[#FF5500]/30">
+                          <Badge className="text-[10px] bg-primary/20 text-primary border-primary/30">
                             <CheckCircle2 className="w-3 h-3 mr-0.5" /> Acknowledged
                           </Badge>
                         )}
@@ -225,7 +225,7 @@ export function CoachUpdatesView() {
                           {fbResponses.map(r => (
                             <div key={r.id} className="flex items-start gap-2 py-1">
                               {r.response_type === 'acknowledged' ? (
-                                <div className="flex items-center gap-1 text-xs text-[#FF5500]">
+                                <div className="flex items-center gap-1 text-xs text-primary">
                                   <CheckCircle2 className="w-3 h-3" />
                                   <span>Acknowledged</span>
                                   <span className="text-muted-foreground ml-1">

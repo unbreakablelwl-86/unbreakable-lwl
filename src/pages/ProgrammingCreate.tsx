@@ -98,29 +98,30 @@ export default function ProgrammingCreate() {
   if (generatedProgram) {
     return (
       <PaywallGate feature="ai_programme">
-      <div className="min-h-screen pb-24" style={{ background: '#080808' }}>
+      <div className="min-h-screen pb-24 bg-background">
         <div className="px-4 pt-6">
           <ProgramDisplay program={generatedProgram} onReset={handleReset} />
         </div>
       </div>
+      </PaywallGate>
     );
   }
 
   return (
-    <div className="min-h-screen pb-24" style={{ background: '#080808' }}>
+    <div className="min-h-screen pb-24" className="bg-background">
       {/* ─── Hero ─── */}
       <div className="relative px-4 pt-6 pb-5 overflow-hidden">
         <div className="absolute inset-0 pointer-events-none"
           style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(255,85,0,0.08), transparent 70%)' }} />
         <div className="relative z-10">
-          <button onClick={() => navigate('/power')} className="flex items-center gap-1 text-gray-500 text-sm mb-4 hover:text-gray-300 transition-colors">
+          <button onClick={() => navigate('/power')} className="flex items-center gap-1 text-muted-foreground text-sm mb-4 hover:text-muted-foreground transition-colors">
             <ArrowLeft className="w-4 h-4" /> Power
           </button>
           <h1 className="font-display text-2xl tracking-wider text-center">
-            <span className="text-[#FF5500]" style={{ textShadow: '0 0 20px rgba(255,85,0,0.4)' }}>UNBREAKABLE</span>
-            <span className="text-white"> BUILDER</span>
+            <span className="text-primary" style={{ textShadow: '0 0 20px rgba(255,85,0,0.4)' }}>UNBREAKABLE</span>
+            <span className="text-foreground"> BUILDER</span>
           </h1>
-          <p className="text-center text-gray-500 text-sm mt-1 font-display tracking-wide">
+          <p className="text-center text-muted-foreground text-sm mt-1 font-display tracking-wide">
             BUILD WITH PURPOSE
           </p>
         </div>
@@ -131,51 +132,51 @@ export default function ProgrammingCreate() {
           {/* ─── Mode Selection ─── */}
           {builderMode === 'select' && (
             <motion.div key="select" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-3">
-              <p className="text-xs font-display tracking-wider text-gray-400 mb-3">CHOOSE YOUR PATH</p>
+              <p className="text-xs font-display tracking-wider text-muted-foreground mb-3">CHOOSE YOUR PATH</p>
 
               <PaywallGate feature="ai_programme" inline>
                 <button
                   onClick={() => handleModeSelect('auto')}
-                  className="w-full p-3.5 rounded-xl border border-border bg-card flex items-center gap-3 hover:border-[#FF5500]/30 transition-all group"
+                  className="w-full p-3.5 rounded-xl border border-border bg-card flex items-center gap-3 hover:border-primary/30 transition-all group"
                 >
-                  <div className="w-10 h-10 rounded-lg border border-[#FF5500]/20 flex items-center justify-center" style={{ background: 'rgba(255,85,0,0.1)' }}>
-                    <MessageSquare className="w-5 h-5 text-[#FF5500]" style={{ filter: 'drop-shadow(0 0 6px rgba(255,85,0,0.5))' }} />
+                  <div className="w-10 h-10 rounded-lg border border-primary/20 flex items-center justify-center" style={{ background: 'rgba(255,85,0,0.1)' }}>
+                    <MessageSquare className="w-5 h-5 text-primary" style={{ filter: 'drop-shadow(0 0 6px rgba(255,85,0,0.5))' }} />
                   </div>
                   <div className="flex-1 text-left">
-                    <p className="font-display text-sm tracking-wider text-white">UNBREAKABLE COACH BUILDER</p>
-                    <p className="text-gray-500 text-xs mt-0.5">Chat with your coach — auto-builds your programme</p>
+                    <p className="font-display text-sm tracking-wider text-foreground">UNBREAKABLE COACH BUILDER</p>
+                    <p className="text-muted-foreground text-xs mt-0.5">Chat with your coach — auto-builds your programme</p>
                   </div>
-                  <ChevronRight className="w-4 h-4 text-gray-600 group-hover:text-[#FF5500] transition-colors" />
+                  <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
                 </button>
               </PaywallGate>
 
               <PaywallGate feature="manual_programme" inline>
                 <button
                   onClick={() => handleModeSelect('manual')}
-                  className="w-full p-3.5 rounded-xl border border-border bg-card flex items-center gap-3 hover:border-[#FF5500]/30 transition-all group"
+                  className="w-full p-3.5 rounded-xl border border-border bg-card flex items-center gap-3 hover:border-primary/30 transition-all group"
                 >
-                  <div className="w-10 h-10 rounded-lg border border-[#FF5500]/20 flex items-center justify-center" style={{ background: 'rgba(255,85,0,0.1)' }}>
-                    <Wrench className="w-5 h-5 text-[#FF5500]" style={{ filter: 'drop-shadow(0 0 6px rgba(255,85,0,0.5))' }} />
+                  <div className="w-10 h-10 rounded-lg border border-primary/20 flex items-center justify-center" style={{ background: 'rgba(255,85,0,0.1)' }}>
+                    <Wrench className="w-5 h-5 text-primary" style={{ filter: 'drop-shadow(0 0 6px rgba(255,85,0,0.5))' }} />
                   </div>
                   <div className="flex-1 text-left">
-                    <p className="font-display text-sm tracking-wider text-white">MANUAL BUILDER</p>
-                    <p className="text-gray-500 text-xs mt-0.5">Full customisation — build it yourself</p>
+                    <p className="font-display text-sm tracking-wider text-foreground">MANUAL BUILDER</p>
+                    <p className="text-muted-foreground text-xs mt-0.5">Full customisation — build it yourself</p>
                   </div>
-                  <ChevronRight className="w-4 h-4 text-gray-600 group-hover:text-[#FF5500] transition-colors" />
+                  <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
                 </button>
               </PaywallGate>
 
               {/* Coach CTA */}
-              <div className="mt-6 p-3.5 rounded-xl border border-[#FF5500]/20 bg-[#FF5500]/5">
+              <div className="mt-6 p-3.5 rounded-xl border border-primary/20 bg-primary/5">
                 <Link to="/help" className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg border border-[#FF5500]/20 flex items-center justify-center" style={{ background: 'rgba(255,85,0,0.1)' }}>
-                    <Flame className="w-5 h-5 text-[#FF5500]" style={{ filter: 'drop-shadow(0 0 6px rgba(255,85,0,0.5))' }} />
+                  <div className="w-10 h-10 rounded-lg border border-primary/20 flex items-center justify-center" style={{ background: 'rgba(255,85,0,0.1)' }}>
+                    <Flame className="w-5 h-5 text-primary" style={{ filter: 'drop-shadow(0 0 6px rgba(255,85,0,0.5))' }} />
                   </div>
                   <div className="flex-1">
-                    <p className="font-display text-sm tracking-wider text-white">NEED HELP?</p>
-                    <p className="text-gray-500 text-xs mt-0.5">Ask your Unbreakable Coach for guidance</p>
+                    <p className="font-display text-sm tracking-wider text-foreground">NEED HELP?</p>
+                    <p className="text-muted-foreground text-xs mt-0.5">Ask your Unbreakable Coach for guidance</p>
                   </div>
-                  <ChevronRight className="w-4 h-4 text-[#FF5500]" />
+                  <ChevronRight className="w-4 h-4 text-primary" />
                 </Link>
               </div>
             </motion.div>

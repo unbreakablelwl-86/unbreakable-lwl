@@ -66,7 +66,7 @@ export function CancelRetention({ currentTier, onClose, onConfirmCancel }: Cance
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4"
+        className="fixed inset-0 z-50 flex items-center justify-center bg-background/60 backdrop-blur-sm px-4"
         onClick={(e) => e.target === e.currentTarget && onClose()}
       >
         <motion.div
@@ -124,7 +124,7 @@ export function CancelRetention({ currentTier, onClose, onConfirmCancel }: Cance
                   className={cn(
                     'flex-1 py-2.5 rounded-xl text-sm font-display tracking-wider transition-all',
                     selectedReason
-                      ? 'bg-[#FF5500]/10 border border-[#FF5500]/30 text-[#FF5500] hover:bg-[#FF5500]/20'
+                      ? 'bg-primary/10 border border-primary/30 text-primary hover:bg-primary/20'
                       : 'bg-muted text-muted-foreground cursor-not-allowed'
                   )}
                 >
@@ -150,11 +150,11 @@ export function CancelRetention({ currentTier, onClose, onConfirmCancel }: Cance
                   <button
                     onClick={() => handleDowngrade(lowerTier.key)}
                     disabled={loading}
-                    className="w-full p-4 rounded-xl border border-[#FF5500]/30 bg-[#FF5500]/5 text-left
-                      hover:bg-[#FF5500]/10 transition-all"
+                    className="w-full p-4 rounded-xl border border-primary/30 bg-primary/5 text-left
+                      hover:bg-primary/10 transition-all"
                   >
                     <div className="flex items-center gap-3 mb-2">
-                      <ArrowDown className="w-5 h-5 text-[#FF5500]" />
+                      <ArrowDown className="w-5 h-5 text-primary" />
                       <span className="font-display text-sm tracking-wider text-foreground">
                         DOWNGRADE TO {lowerTier.displayName.toUpperCase()}
                       </span>
@@ -199,8 +199,8 @@ export function CancelRetention({ currentTier, onClose, onConfirmCancel }: Cance
                   <button
                     onClick={onConfirmCancel}
                     disabled={loading}
-                    className="w-full py-2.5 rounded-xl border border-[#FF5500]/20 text-sm text-[#FF5500]
-                      hover:bg-[#FF5500]/5 transition-all font-display tracking-wider"
+                    className="w-full py-2.5 rounded-xl border border-primary/20 text-sm text-primary
+                      hover:bg-primary/5 transition-all font-display tracking-wider"
                   >
                     NO THANKS, CANCEL MY SUBSCRIPTION
                   </button>
@@ -213,7 +213,7 @@ export function CancelRetention({ currentTier, onClose, onConfirmCancel }: Cance
               <button
                 onClick={onClose}
                 className="w-full py-2.5 rounded-xl bg-primary text-primary-foreground text-sm
-                  font-display tracking-wider hover:shadow-[0_0_16px_rgba(255,85,0,0.3)] transition-all"
+                  font-display tracking-wider hover:shadow-[0_0_12px_hsl(var(--primary)/0.3)] transition-all"
               >
                 <Zap className="w-4 h-4 inline mr-2" />
                 ACTUALLY, KEEP MY CURRENT PLAN

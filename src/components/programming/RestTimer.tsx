@@ -109,7 +109,7 @@ export function RestTimer({ suggestedTime, exerciseType = 'strength', onComplete
 
   return (
     <Card className={`p-4 border-2 transition-all ${
-      isComplete ? 'border-[#FF5500] bg-[#FF5500]/10 neon-border' :
+      isComplete ? 'border-primary bg-primary/10 neon-border' :
       isWarning ? 'border-primary bg-primary/10 neon-border' :
       'border-primary/50 bg-card'
     }`}>
@@ -177,7 +177,7 @@ export function RestTimer({ suggestedTime, exerciseType = 'strength', onComplete
             />
           </svg>
           <div className={`absolute font-display text-3xl ${
-            isComplete ? 'text-[#FF5500] neon-glow' :
+            isComplete ? 'text-primary neon-glow' :
             isWarning ? 'text-primary neon-glow' :
             'text-foreground'
           }`}>

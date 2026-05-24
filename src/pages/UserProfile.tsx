@@ -88,7 +88,7 @@ function FollowListModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/60 backdrop-blur-sm" onClick={onClose}>
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -105,7 +105,7 @@ function FollowListModal({
         <div className="max-h-96 overflow-y-auto">
           {loading ? (
             <div className="flex justify-center py-12">
-              <div className="w-6 h-6 border-2 border-[#FF5500] border-t-transparent rounded-full animate-spin" />
+              <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
             </div>
           ) : users.length === 0 ? (
             <div className="py-12 text-center text-muted-foreground text-sm">
@@ -123,7 +123,7 @@ function FollowListModal({
               >
                 <Avatar className="w-10 h-10">
                   <AvatarImage src={u.avatar_url || undefined} />
-                  <AvatarFallback className="bg-[#FF5500]/20 text-[#FF5500] font-heading text-sm">
+                  <AvatarFallback className="bg-primary/20 text-primary font-heading text-sm">
                     {(u.display_name || u.username || '?')[0].toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
@@ -157,7 +157,7 @@ function PostGridItem({ post, onClick }: { post: UserPost; onClick: () => void }
   return (
     <button
       onClick={onClick}
-      className="relative aspect-square bg-muted/30 rounded-lg overflow-hidden group border border-border/50 hover:border-[#FF5500]/30 transition-all"
+      className="relative aspect-square bg-muted/30 rounded-lg overflow-hidden group border border-border/50 hover:border-primary/30 transition-all"
     >
       {thumbnail ? (
         <img src={thumbnail} alt="" className="w-full h-full object-cover" />
@@ -172,21 +172,21 @@ function PostGridItem({ post, onClick }: { post: UserPost; onClick: () => void }
       {/* Overlay icons */}
       {isVideo && (
         <div className="absolute top-2 right-2">
-          <Play className="w-4 h-4 text-white drop-shadow-lg" fill="white" />
+          <Play className="w-4 h-4 text-foreground drop-shadow-lg" fill="white" />
         </div>
       )}
       {hasMultiple && (
         <div className="absolute top-2 right-2">
-          <Grid3X3 className="w-4 h-4 text-white drop-shadow-lg" />
+          <Grid3X3 className="w-4 h-4 text-foreground drop-shadow-lg" />
         </div>
       )}
 
       {/* Hover overlay with counts */}
-      <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4">
-        <span className="flex items-center gap-1 text-white text-sm font-semibold">
+      <div className="absolute inset-0 bg-background/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4">
+        <span className="flex items-center gap-1 text-foreground text-sm font-semibold">
           <Heart className="w-4 h-4" fill="white" /> {post.kudos_count}
         </span>
-        <span className="flex items-center gap-1 text-white text-sm font-semibold">
+        <span className="flex items-center gap-1 text-foreground text-sm font-semibold">
           <MessageSquare className="w-4 h-4" fill="white" /> {post.comments_count}
         </span>
       </div>
@@ -213,7 +213,7 @@ function PostDetailModal({
   const displayName = profile.display_name || profile.username || 'Athlete';
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/70 backdrop-blur-sm" onClick={onClose}>
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -225,7 +225,7 @@ function PostDetailModal({
           <div className="flex items-center gap-3">
             <Avatar className="w-8 h-8">
               <AvatarImage src={profile.avatar_url || undefined} />
-              <AvatarFallback className="bg-[#FF5500]/20 text-[#FF5500] font-heading text-xs">
+              <AvatarFallback className="bg-primary/20 text-primary font-heading text-xs">
                 {displayName[0].toUpperCase()}
               </AvatarFallback>
             </Avatar>
@@ -245,9 +245,9 @@ function PostDetailModal({
         {mediaUrl && (
           <div className="border-b border-border shrink-0">
             {isVideo ? (
-              <video src={mediaUrl} controls className="w-full max-h-[50vh] object-contain bg-black" />
+              <video src={mediaUrl} controls className="w-full max-h-[50vh] object-contain bg-background" />
             ) : (
-              <img src={mediaUrl} alt="" className="w-full max-h-[50vh] object-contain bg-black" />
+              <img src={mediaUrl} alt="" className="w-full max-h-[50vh] object-contain bg-background" />
             )}
           </div>
         )}
@@ -257,10 +257,10 @@ function PostDetailModal({
           <div className="flex items-center gap-4 mb-3">
             <button
               onClick={() => onToggleKudos(post.id)}
-              className="flex items-center gap-1.5 text-sm transition-colors hover:text-[#FF5500]"
+              className="flex items-center gap-1.5 text-sm transition-colors hover:text-primary"
             >
               <Heart
-                className={`w-5 h-5 ${post.has_kudos ? 'text-[#FF5500] fill-primary' : ''}`}
+                className={`w-5 h-5 ${post.has_kudos ? 'text-primary fill-primary' : ''}`}
               />
               <span className="font-medium">{post.kudos_count}</span>
             </button>
@@ -440,7 +440,7 @@ export default function UserProfile() {
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="w-12 h-12 border-2 border-[#FF5500] border-t-transparent rounded-full animate-spin" />
+        <div className="w-12 h-12 border-2 border-primary border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -482,9 +482,9 @@ export default function UserProfile() {
           >
             {/* Row: Avatar + Stats */}
             <div className="flex items-center gap-6 sm:gap-10">
-              <Avatar className="w-20 h-20 sm:w-24 sm:h-24 border-[3px] border-[#FF5500]/30 shrink-0 ring-2 ring-primary/10 ring-offset-2 ring-offset-background">
+              <Avatar className="w-20 h-20 sm:w-24 sm:h-24 border-[3px] border-primary/30 shrink-0 ring-2 ring-primary/10 ring-offset-2 ring-offset-background">
                 <AvatarImage src={profile.avatar_url || undefined} />
-                <AvatarFallback className="bg-[#FF5500]/20 text-[#FF5500] font-heading text-xl sm:text-2xl">
+                <AvatarFallback className="bg-primary/20 text-primary font-heading text-xl sm:text-2xl">
                   {initials}
                 </AvatarFallback>
               </Avatar>
@@ -492,15 +492,15 @@ export default function UserProfile() {
               {/* Stats row */}
               <div className="flex-1 grid grid-cols-3 gap-2 text-center">
                 <div>
-                  <p className="font-heading text-lg sm:text-xl text-white">{postCount}</p>
+                  <p className="font-heading text-lg sm:text-xl text-foreground">{postCount}</p>
                   <p className="text-[10px] sm:text-xs font-heading tracking-wider text-muted-foreground">POSTS</p>
                 </div>
                 <button onClick={() => openFollowList('followers')} className="hover:opacity-70 transition-opacity">
-                  <p className="font-heading text-lg sm:text-xl text-white">{followerCount}</p>
+                  <p className="font-heading text-lg sm:text-xl text-foreground">{followerCount}</p>
                   <p className="text-[10px] sm:text-xs font-heading tracking-wider text-muted-foreground">FOLLOWERS</p>
                 </button>
                 <button onClick={() => openFollowList('following')} className="hover:opacity-70 transition-opacity">
-                  <p className="font-heading text-lg sm:text-xl text-white">{followingCount}</p>
+                  <p className="font-heading text-lg sm:text-xl text-foreground">{followingCount}</p>
                   <p className="text-[10px] sm:text-xs font-heading tracking-wider text-muted-foreground">FOLLOWING</p>
                 </button>
               </div>
@@ -508,12 +508,12 @@ export default function UserProfile() {
 
             {/* Name + Bio */}
             <div className="space-y-1.5">
-              <h1 className="font-heading text-lg tracking-wide text-white">{displayName}</h1>
+              <h1 className="font-heading text-lg tracking-wide text-foreground">{displayName}</h1>
               {profile.username && (
                 <p className="text-sm text-muted-foreground">@{profile.username}</p>
               )}
               {profile.bio && (
-                <p className="text-sm text-white/80 leading-relaxed whitespace-pre-wrap">{profile.bio}</p>
+                <p className="text-sm text-foreground/80 leading-relaxed whitespace-pre-wrap">{profile.bio}</p>
               )}
               <div className="flex items-center gap-4 text-xs text-muted-foreground pt-1">
                 {profile.location && (
@@ -633,7 +633,7 @@ export default function UserProfile() {
                     <TabsContent value="posts" className="mt-4">
                       {postsLoading ? (
                         <div className="flex justify-center py-12">
-                          <div className="w-6 h-6 border-2 border-[#FF5500] border-t-transparent rounded-full animate-spin" />
+                          <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
                         </div>
                       ) : posts.length === 0 ? (
                         <div className="text-center py-16">

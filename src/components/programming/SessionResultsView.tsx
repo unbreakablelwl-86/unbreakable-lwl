@@ -228,7 +228,7 @@ export function SessionResultsView({ session, onClose, onViewFeedback }: Session
                 <Card 
                   key={exerciseName} 
                   className={`p-4 border transition-colors ${
-                    allCompleted ? 'border-[#FF5500]/30 bg-[#FF5500]/5' : 'border-border bg-card'
+                    allCompleted ? 'border-primary/30 bg-primary/5' : 'border-border bg-card'
                   }`}
                 >
                   <div className="flex items-center justify-between mb-3">
@@ -236,7 +236,7 @@ export function SessionResultsView({ session, onClose, onViewFeedback }: Session
                       <Dumbbell className="w-4 h-4 text-primary" />
                       <span className="font-display text-foreground">{exerciseName}</span>
                     </div>
-                    <Badge variant="outline" className={allCompleted ? 'border-[#FF5500] text-[#FF5500]' : ''}>
+                    <Badge variant="outline" className={allCompleted ? 'border-primary text-primary' : ''}>
                       {completedCount}/{exerciseLogs.length}
                     </Badge>
                   </div>

@@ -166,16 +166,16 @@ export default function UniversityChapterQuiz() {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.4, ease: 'easeOut' }}
             >
-              <Card className={`p-8 text-center border-2 ${passed ? 'border-[#FF5500]/40 bg-[#FF5500]/5' : 'border-destructive/40 bg-destructive/5'}`}>
+              <Card className={`p-8 text-center border-2 ${passed ? 'border-primary/40 bg-primary/5' : 'border-destructive/40 bg-destructive/5'}`}>
                 <motion.div
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
                   className={`w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 ${
-                    passed ? 'bg-[#FF5500]/15' : 'bg-destructive/15'
+                    passed ? 'bg-primary/15' : 'bg-destructive/15'
                   }`}
                 >
-                  {passed ? <CheckCircle className="w-8 h-8 text-[#FF5500]" /> : <XCircle className="w-8 h-8 text-destructive" />}
+                  {passed ? <CheckCircle className="w-8 h-8 text-primary" /> : <XCircle className="w-8 h-8 text-destructive" />}
                 </motion.div>
                 <h3 className="font-display text-2xl tracking-wider text-foreground mb-2">{passed ? 'PASSED' : 'NOT YET'}</h3>
                 <p className="text-muted-foreground text-sm mb-1">
@@ -196,9 +196,9 @@ export default function UniversityChapterQuiz() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3 + i * 0.05 }}
                   >
-                    <Card className={`p-4 border ${isCorrect ? 'border-[#FF5500]/20' : 'border-destructive/20'}`}>
+                    <Card className={`p-4 border ${isCorrect ? 'border-primary/20' : 'border-destructive/20'}`}>
                       <div className="flex items-start gap-2.5 mb-2">
-                        {isCorrect ? <CheckCircle className="w-4 h-4 text-[#FF5500] mt-0.5 shrink-0" /> : <XCircle className="w-4 h-4 text-destructive mt-0.5 shrink-0" />}
+                        {isCorrect ? <CheckCircle className="w-4 h-4 text-primary mt-0.5 shrink-0" /> : <XCircle className="w-4 h-4 text-destructive mt-0.5 shrink-0" />}
                         <p className="text-sm text-foreground font-medium">{q.question}</p>
                       </div>
                       <p className="text-xs text-muted-foreground ml-6.5 pl-[2px]">
@@ -279,7 +279,7 @@ export default function UniversityChapterQuiz() {
                   return (
                     <div key={i} className={`flex items-start gap-3 p-3.5 rounded-xl border transition-all ${
                       isCorrectAnswer
-                        ? 'border-[#FF5500]/50 bg-[#FF5500]/10'
+                        ? 'border-primary/50 bg-primary/10'
                         : isSelected
                         ? `${colors.borderActive} ${colors.bg}`
                         : `border-border hover:${colors.border}`
@@ -287,7 +287,7 @@ export default function UniversityChapterQuiz() {
                       <RadioGroupItem value={i.toString()} id={`q${currentQ}-o${i}`} className="mt-0.5" />
                       <Label htmlFor={`q${currentQ}-o${i}`} className="text-sm text-foreground cursor-pointer leading-relaxed flex-1">
                         {opt}
-                        {isCorrectAnswer && <span className="ml-2 text-[#FF5500] text-xs">✓ correct</span>}
+                        {isCorrectAnswer && <span className="ml-2 text-primary text-xs">✓ correct</span>}
                       </Label>
                     </div>
                   );
@@ -309,7 +309,7 @@ export default function UniversityChapterQuiz() {
           <div className="flex justify-center gap-1.5 flex-wrap">
             {questions.map((_, i) => (
               <button key={i} onClick={() => setCurrentQ(i)} className={`w-7 h-7 rounded-full text-xs font-medium transition-all ${
-                i === currentQ ? `${colors.progressFill} text-white scale-110` : answers[i] !== null ? `${colors.bg} ${colors.text}` : 'bg-muted text-muted-foreground'
+                i === currentQ ? `${colors.progressFill} text-foreground scale-110` : answers[i] !== null ? `${colors.bg} ${colors.text}` : 'bg-muted text-muted-foreground'
               }`}>{i + 1}</button>
             ))}
           </div>

@@ -45,9 +45,9 @@ const mealIcons: Record<MealType, React.ReactNode> = {
 };
 
 const confidenceColors: Record<string, string> = {
-  high: 'bg-[#FF5500]/20 text-[#FF5500] border-[#FF5500]/30',
-  medium: 'bg-[#FF5500]/20 text-[#FF5500] border-[#FF5500]/30',
-  low: 'bg-[#FF5500]/20 text-[#FF5500] border-[#FF5500]/30',
+  high: 'bg-primary/20 text-primary border-primary/30',
+  medium: 'bg-primary/20 text-primary border-primary/30',
+  low: 'bg-primary/20 text-primary border-primary/30',
 };
 
 export function SnapTrack({ isOpen, onClose, defaultMealType = 'lunch' }: SnapTrackProps) {
@@ -301,7 +301,7 @@ export function SnapTrack({ isOpen, onClose, defaultMealType = 'lunch' }: SnapTr
                   exit={{ opacity: 0 }}
                   className="space-y-3"
                 >
-                  <div className="relative aspect-[4/3] bg-black rounded-xl overflow-hidden border-2 border-primary/20">
+                  <div className="relative aspect-[4/3] bg-background rounded-xl overflow-hidden border-2 border-primary/20">
                     {cameraError ? (
                       <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center">
                         <AlertCircle className="w-12 h-12 text-muted-foreground mb-3" />
@@ -459,7 +459,7 @@ export function SnapTrack({ isOpen, onClose, defaultMealType = 'lunch' }: SnapTr
                         alt="Scanning meal"
                         className="w-full h-full object-cover"
                       />
-                      <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center">
+                      <div className="absolute inset-0 bg-background/50 flex flex-col items-center justify-center">
                         <div className="relative">
                           <Loader2 className="w-16 h-16 text-primary animate-spin" />
                           <Flame className="w-6 h-6 text-primary absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
@@ -495,7 +495,7 @@ export function SnapTrack({ isOpen, onClose, defaultMealType = 'lunch' }: SnapTr
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
                       <div className="absolute bottom-2 left-3 right-3">
-                        <p className="font-display text-sm tracking-wide text-white">
+                        <p className="font-display text-sm tracking-wide text-foreground">
                           {result.meal_summary}
                         </p>
                       </div>
@@ -544,7 +544,7 @@ export function SnapTrack({ isOpen, onClose, defaultMealType = 'lunch' }: SnapTr
                         key={index}
                         className={`border transition-all ${
                           loggedItems.has(index)
-                            ? 'border-[#FF5500]/30 bg-[#FF5500]/5'
+                            ? 'border-primary/30 bg-primary/5'
                             : 'border-border hover:border-primary/30'
                         }`}
                       >
@@ -577,7 +577,7 @@ export function SnapTrack({ isOpen, onClose, defaultMealType = 'lunch' }: SnapTr
                               variant={loggedItems.has(index) ? 'ghost' : 'outline'}
                               className={`shrink-0 ${
                                 loggedItems.has(index)
-                                  ? 'text-[#FF5500] cursor-default'
+                                  ? 'text-primary cursor-default'
                                   : 'border-primary/30 hover:bg-primary/10'
                               }`}
                               onClick={() => !loggedItems.has(index) && handleLogItem(item, index)}

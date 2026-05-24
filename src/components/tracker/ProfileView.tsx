@@ -221,7 +221,7 @@ export function ProfileView() {
                   </AvatarFallback>
                 </Avatar>
                 {/* Avatar overlay with upload/remove buttons */}
-                <div className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="absolute inset-0 flex items-center justify-center bg-background/50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
                   <input
                     ref={fileInputRef}
                     type="file"
@@ -232,7 +232,7 @@ export function ProfileView() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8 text-white hover:bg-white/20"
+                    className="h-8 w-8 text-foreground hover:bg-white/20"
                     onClick={handleAvatarClick}
                     disabled={uploading}
                   >
@@ -242,7 +242,7 @@ export function ProfileView() {
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-8 w-8 text-white hover:bg-white/20"
+                      className="h-8 w-8 text-foreground hover:bg-white/20"
                       onClick={handleRemoveAvatar}
                       disabled={uploading}
                     >
@@ -251,7 +251,7 @@ export function ProfileView() {
                   )}
                 </div>
                 {uploading && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full">
+                  <div className="absolute inset-0 flex items-center justify-center bg-background/50 rounded-full">
                     <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
                   </div>
                 )}

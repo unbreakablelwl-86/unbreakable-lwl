@@ -57,7 +57,7 @@ export default function University() {
   const activeTabData = courseTabs.find(t => t.key === activeTab) || courseTabs[0];
 
   return (
-    <div className="min-h-screen pb-24" style={{ background: '#080808' }}>
+    <div className="min-h-screen pb-24" >
 {/* Hero */}
       <section className="pt-24 pb-14 md:pt-28 md:pb-20 border-b border-primary/20 relative overflow-hidden">
         {/* Gradient backdrop */}

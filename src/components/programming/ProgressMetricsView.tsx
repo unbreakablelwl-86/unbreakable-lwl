@@ -23,7 +23,7 @@ export function ProgressMetricsView({ onClose }: ProgressMetricsViewProps) {
   }, {} as Record<string, ProgressionEntry[]>);
 
   const getTrendIcon = (type?: string | null) => {
-    if (type === 'increase') return <TrendingUp className="w-4 h-4 text-[#FF5500]" />;
+    if (type === 'increase') return <TrendingUp className="w-4 h-4 text-primary" />;
     if (type === 'decrease') return <TrendingDown className="w-4 h-4 text-destructive" />;
     return <Minus className="w-4 h-4 text-muted-foreground" />;
   };

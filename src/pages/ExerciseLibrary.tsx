@@ -45,7 +45,7 @@ function ExerciseDetail({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-end sm:items-center justify-center"
+      className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-end sm:items-center justify-center"
       onClick={onClose}
     >
       <motion.div
@@ -53,12 +53,12 @@ function ExerciseDetail({
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: 50, opacity: 0 }}
         transition={{ type: 'spring', damping: 25 }}
-        className="w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-t-2xl sm:rounded-2xl border border-[#FF5500]/20 bg-[#0C0C0C]"
+        className="w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-t-2xl sm:rounded-2xl border border-primary/20 bg-background"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Animated GIF */}
         <div className="relative bg-card border-b border-border">
-          <button onClick={onClose} className="absolute top-3 right-3 z-10 p-2 rounded-full bg-black/60 text-white">
+          <button onClick={onClose} className="absolute top-3 right-3 z-10 p-2 rounded-full bg-background/60 text-foreground">
             <X className="w-4 h-4" />
           </button>
           <div className="flex items-center justify-center p-4 min-h-[280px]">
@@ -70,8 +70,8 @@ function ExerciseDetail({
                 onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
               />
             ) : (
-              <div className="w-24 h-24 rounded-2xl bg-[#FF5500]/10 border border-[#FF5500]/25 flex items-center justify-center">
-                <Dumbbell className="w-10 h-10 text-[#FF5500]/40" />
+              <div className="w-24 h-24 rounded-2xl bg-primary/10 border border-primary/25 flex items-center justify-center">
+                <Dumbbell className="w-10 h-10 text-primary/40" />
               </div>
             )}
           </div>
@@ -80,17 +80,17 @@ function ExerciseDetail({
         {/* Content */}
         <div className="p-5 space-y-5">
           <div>
-            <h2 className="font-display text-xl text-white tracking-wide">{exercise.name}</h2>
+            <h2 className="font-display text-xl text-foreground tracking-wide">{exercise.name}</h2>
             <div className="flex flex-wrap gap-2 mt-2">
-              <span className="px-2 py-0.5 rounded-md text-[10px] font-display tracking-wider border border-[#FF5500]/30 bg-[#FF5500]/10 text-[#FF5500]">
+              <span className="px-2 py-0.5 rounded-md text-[10px] font-display tracking-wider border border-primary/30 bg-primary/10 text-primary">
                 {exercise.level?.toUpperCase() || 'ALL LEVELS'}
               </span>
               {exercise.equipment && (
-                <span className="px-2 py-0.5 rounded-md text-[10px] font-display tracking-wider border border-border bg-card text-gray-400">
+                <span className="px-2 py-0.5 rounded-md text-[10px] font-display tracking-wider border border-border bg-card text-muted-foreground">
                   {exercise.equipment.toUpperCase()}
                 </span>
               )}
-              <span className="px-2 py-0.5 rounded-md text-[10px] font-display tracking-wider border border-border bg-card text-gray-400">
+              <span className="px-2 py-0.5 rounded-md text-[10px] font-display tracking-wider border border-border bg-card text-muted-foreground">
                 {exercise.category.toUpperCase()}
               </span>
             </div>
@@ -98,15 +98,15 @@ function ExerciseDetail({
 
           {/* Muscles */}
           <div>
-            <h3 className="font-display text-xs text-[#FF5500] tracking-wider mb-2">MUSCLES TARGETED</h3>
+            <h3 className="font-display text-xs text-primary tracking-wider mb-2">MUSCLES TARGETED</h3>
             <div className="flex flex-wrap gap-1.5">
               {exercise.primaryMuscles.map(m => (
-                <span key={m} className="px-2.5 py-1 rounded-lg text-xs border border-[#FF5500]/25 bg-[#FF5500]/10 text-[#FF5500]">
+                <span key={m} className="px-2.5 py-1 rounded-lg text-xs border border-primary/25 bg-primary/10 text-primary">
                   {m}
                 </span>
               ))}
               {exercise.secondaryMuscles.map(m => (
-                <span key={m} className="px-2.5 py-1 rounded-lg text-xs border border-border text-gray-500">
+                <span key={m} className="px-2.5 py-1 rounded-lg text-xs border border-border text-muted-foreground">
                   {m}
                 </span>
               ))}
@@ -118,14 +118,14 @@ function ExerciseDetail({
             <div className="flex gap-4">
               {exercise.defaultSets && (
                 <div className="p-3 rounded-xl border border-border bg-card text-center flex-1">
-                  <p className="text-[#FF5500] font-display text-lg">{exercise.defaultSets}</p>
-                  <p className="text-gray-500 text-[10px]">SETS</p>
+                  <p className="text-primary font-display text-lg">{exercise.defaultSets}</p>
+                  <p className="text-muted-foreground text-[10px]">SETS</p>
                 </div>
               )}
               {exercise.defaultReps && (
                 <div className="p-3 rounded-xl border border-border bg-card text-center flex-1">
-                  <p className="text-[#FF5500] font-display text-lg">{exercise.defaultReps}</p>
-                  <p className="text-gray-500 text-[10px]">REPS</p>
+                  <p className="text-primary font-display text-lg">{exercise.defaultReps}</p>
+                  <p className="text-muted-foreground text-[10px]">REPS</p>
                 </div>
               )}
             </div>
@@ -133,12 +133,12 @@ function ExerciseDetail({
 
           {/* Unbreakable coaching description */}
           {exercise.unbreakableDescription && (
-            <div className="p-4 rounded-xl border border-[#FF5500]/15 bg-[#FF5500]/5">
+            <div className="p-4 rounded-xl border border-primary/15 bg-primary/5">
               <div className="flex items-center gap-2 mb-2">
-                <Flame className="w-4 h-4 text-[#FF5500]" />
-                <h3 className="font-display text-xs text-[#FF5500] tracking-wider">UNBREAKABLE COACHING</h3>
+                <Flame className="w-4 h-4 text-primary" />
+                <h3 className="font-display text-xs text-primary tracking-wider">UNBREAKABLE COACHING</h3>
               </div>
-              <p className="text-gray-300 text-sm leading-relaxed">{exercise.unbreakableDescription}</p>
+              <p className="text-muted-foreground text-sm leading-relaxed">{exercise.unbreakableDescription}</p>
             </div>
           )}
 
@@ -146,13 +146,13 @@ function ExerciseDetail({
           {exercise.unbreakableTips && exercise.unbreakableTips.length > 0 && (
             <div className="space-y-2">
               <div className="flex items-center gap-2">
-                <Lightbulb className="w-4 h-4 text-[#FF5500]" />
-                <h3 className="font-display text-xs text-[#FF5500] tracking-wider">COACHING TIPS</h3>
+                <Lightbulb className="w-4 h-4 text-primary" />
+                <h3 className="font-display text-xs text-primary tracking-wider">COACHING TIPS</h3>
               </div>
               <ul className="space-y-1.5">
                 {exercise.unbreakableTips.map((tip, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-gray-400">
-                    <span className="text-[#FF5500] mt-0.5 text-xs">▸</span>
+                  <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
+                    <span className="text-primary mt-0.5 text-xs">▸</span>
                     <span>{tip}</span>
                   </li>
                 ))}
@@ -163,11 +163,11 @@ function ExerciseDetail({
           {/* Standard instructions */}
           {exercise.instructions && exercise.instructions.length > 0 && (
             <div className="space-y-2">
-              <h3 className="font-display text-xs text-gray-400 tracking-wider">STEP-BY-STEP</h3>
+              <h3 className="font-display text-xs text-muted-foreground tracking-wider">STEP-BY-STEP</h3>
               <ol className="space-y-2">
                 {exercise.instructions.map((step, i) => (
-                  <li key={i} className="flex items-start gap-3 text-sm text-gray-400">
-                    <span className="flex-shrink-0 w-5 h-5 rounded-full bg-[#FF5500]/15 border border-[#FF5500]/30 text-[#FF5500] text-[10px] flex items-center justify-center font-display">
+                  <li key={i} className="flex items-start gap-3 text-sm text-muted-foreground">
+                    <span className="flex-shrink-0 w-5 h-5 rounded-full bg-primary/15 border border-primary/30 text-primary text-[10px] flex items-center justify-center font-display">
                       {i + 1}
                     </span>
                     <span className="leading-relaxed">{step}</span>
@@ -178,9 +178,9 @@ function ExerciseDetail({
           )}
 
           {/* Force / Mechanic */}
-          <div className="flex gap-4 text-xs text-gray-500">
-            {exercise.force && <span>Force: <span className="text-gray-400">{exercise.force}</span></span>}
-            {exercise.mechanic && <span>Mechanic: <span className="text-gray-400">{exercise.mechanic}</span></span>}
+          <div className="flex gap-4 text-xs text-muted-foreground">
+            {exercise.force && <span>Force: <span className="text-muted-foreground">{exercise.force}</span></span>}
+            {exercise.mechanic && <span>Mechanic: <span className="text-muted-foreground">{exercise.mechanic}</span></span>}
           </div>
         </div>
       </motion.div>
@@ -251,7 +251,7 @@ export default function ExerciseLibrary() {
 
   return (
     <PaywallGate feature="exercise_library">
-    <div className="min-h-screen pb-24" style={{ background: '#080808' }}>
+    <div className="min-h-screen pb-24" >
       {/* Hero */}
       <section className="pt-24 pb-10 md:pt-28 md:pb-14 border-b border-primary/20">
         <div className="container mx-auto px-4 text-center max-w-4xl">
@@ -277,7 +277,7 @@ export default function ExerciseLibrary() {
       <div className="sticky top-0 z-30 border-b border-border bg-background/95 backdrop-blur-xl">
         <div className="container mx-auto px-4 py-3 max-w-4xl">
           <div className="flex items-center gap-2">
-            <button onClick={() => navigate('/programming')} className="p-2 rounded-lg text-muted-foreground hover:text-white transition-colors">
+            <button onClick={() => navigate('/programming')} className="p-2 rounded-lg text-muted-foreground hover:text-foreground transition-colors">
               <ArrowLeft className="w-5 h-5" />
             </button>
             <div className="flex-1 relative">
@@ -300,7 +300,7 @@ export default function ExerciseLibrary() {
               className={`p-2.5 rounded-xl border transition-all ${
                 showFilters || hasFilters
                   ? 'border-primary/40 bg-primary/10 text-primary'
-                  : 'border-border text-muted-foreground hover:text-white'
+                  : 'border-border text-muted-foreground hover:text-foreground'
               }`}
             >
               <Filter className="w-4 h-4" />
@@ -328,7 +328,7 @@ export default function ExerciseLibrary() {
                           className={`px-2.5 py-1 rounded-lg text-xs transition-all ${
                             selectedMuscle === m
                               ? 'bg-primary/20 border border-primary/40 text-primary'
-                              : 'bg-card border border-border text-muted-foreground hover:text-white'
+                              : 'bg-card border border-border text-muted-foreground hover:text-foreground'
                           }`}
                         >
                           {m}
@@ -347,7 +347,7 @@ export default function ExerciseLibrary() {
                           className={`px-2.5 py-1 rounded-lg text-xs transition-all ${
                             selectedEquipment === e
                               ? 'bg-primary/20 border border-primary/40 text-primary'
-                              : 'bg-card border border-border text-muted-foreground hover:text-white'
+                              : 'bg-card border border-border text-muted-foreground hover:text-foreground'
                           }`}
                         >
                           {e}
@@ -366,7 +366,7 @@ export default function ExerciseLibrary() {
                           className={`px-2.5 py-1 rounded-lg text-xs transition-all ${
                             selectedLevel === l
                               ? 'bg-primary/20 border border-primary/40 text-primary'
-                              : 'bg-card border border-border text-muted-foreground hover:text-white'
+                              : 'bg-card border border-border text-muted-foreground hover:text-foreground'
                           }`}
                         >
                           {l}
@@ -448,7 +448,7 @@ export default function ExerciseLibrary() {
                             }}
                           />
                         ) : (
-                          <Dumbbell className="w-8 h-8 text-[#FF5500]/30" />
+                          <Dumbbell className="w-8 h-8 text-primary/30" />
                         )}
                         {hasCoaching && (
                           <div className="absolute top-1.5 right-1.5">

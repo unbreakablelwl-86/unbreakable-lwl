@@ -167,7 +167,7 @@ const Calculators = () => {
 
   return (
     <SwipeNavigationWrapper>
-      <div className="min-h-screen pb-24" style={{ background: '#080808' }}>
+      <div className="min-h-screen pb-24" >
         {/* Header with Theme Toggle */}
         <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm border-b border-border">
           <div className="container mx-auto px-6 py-4">
@@ -192,7 +192,7 @@ const Calculators = () => {
 
         {/* Back nav */}
         <div className="px-4 pt-4">
-          <button onClick={() => navigate('/power')} className="flex items-center gap-1 text-gray-500 text-sm hover:text-gray-300 transition-colors">
+          <button onClick={() => navigate('/power')} className="flex items-center gap-1 text-muted-foreground text-sm hover:text-muted-foreground transition-colors">
             <ArrowLeft className="w-4 h-4" /> Power
           </button>
         </div>
@@ -202,10 +202,10 @@ const Calculators = () => {
             style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(255,85,0,0.08), transparent 70%)' }} />
           <div className="relative z-10">
             <h1 className="font-display text-2xl tracking-wider text-center">
-              <span className="text-white">{hero.title} </span>
-              <span className="text-[#FF5500]" style={{ textShadow: '0 0 20px rgba(255,85,0,0.4)' }}>{hero.titleAccent}</span>
+              <span className="text-foreground">{hero.title} </span>
+              <span className="text-primary" style={{ textShadow: '0 0 20px rgba(255,85,0,0.4)' }}>{hero.titleAccent}</span>
             </h1>
-            <p className="text-center text-gray-500 text-sm mt-1 font-display tracking-wide">
+            <p className="text-center text-muted-foreground text-sm mt-1 font-display tracking-wide">
               {hero.tagline}
             </p>
           </div>
@@ -220,8 +220,8 @@ const Calculators = () => {
               onClick={() => handleTabChange(tab.key)}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full font-display text-xs tracking-wider whitespace-nowrap transition-all ${
                 activeTab === tab.key
-                  ? 'bg-[#FF5500]/15 text-[#FF5500] border border-[#FF5500]/30'
-                  : 'text-gray-500 border border-transparent hover:text-gray-300'
+                  ? 'bg-primary/15 text-primary border border-primary/30'
+                  : 'text-muted-foreground border border-transparent hover:text-muted-foreground'
               }`}
             >
               {tab.icon}
@@ -235,13 +235,13 @@ const Calculators = () => {
       <main className="container mx-auto px-6 py-8">
         <div className="max-w-6xl mx-auto">
           {/* Description Card */}
-          <div className="p-3.5 rounded-xl border border-[#FF5500]/15 bg-card mb-4">
-            <p className="text-gray-400 text-sm leading-relaxed">
+          <div className="p-3.5 rounded-xl border border-primary/15 bg-card mb-4">
+            <p className="text-muted-foreground text-sm leading-relaxed">
               {hero.intro}{' '}
-              <span className="text-[#FF5500] font-semibold">{hero.emphasis}</span>.{' '}
+              <span className="text-primary font-semibold">{hero.emphasis}</span>.{' '}
               {hero.description}
             </p>
-            <p className="text-[#FF5500] font-display text-xs tracking-wider mt-2">KEEP SHOWING UP.</p>
+            <p className="text-primary font-display text-xs tracking-wider mt-2">KEEP SHOWING UP.</p>
           </div>
 
           {/* Calculator Grid */}

@@ -7,34 +7,34 @@ interface BuilderModeSelectorProps {
 export function BuilderModeSelector({ onSelectMode }: BuilderModeSelectorProps) {
   return (
     <div className="space-y-3">
-      <p className="text-xs font-display tracking-wider text-gray-400 mb-3">CHOOSE YOUR PATH</p>
+      <p className="text-xs font-display tracking-wider text-muted-foreground mb-3">CHOOSE YOUR PATH</p>
 
       <button
         onClick={() => onSelectMode('auto')}
-        className="w-full p-3.5 rounded-xl border border-border bg-card flex items-center gap-3 hover:border-[#FF5500]/30 transition-all group"
+        className="w-full p-3.5 rounded-xl border border-border bg-card flex items-center gap-3 hover:border-primary/30 transition-all group"
       >
-        <div className="w-10 h-10 rounded-lg border border-[#FF5500]/20 flex items-center justify-center" style={{ background: 'rgba(255,85,0,0.1)' }}>
-          <MessageSquare className="w-5 h-5 text-[#FF5500]" style={{ filter: 'drop-shadow(0 0 6px rgba(255,85,0,0.5))' }} />
+        <div className="w-10 h-10 rounded-lg border border-primary/20 flex items-center justify-center" style={{ background: 'rgba(255,85,0,0.1)' }}>
+          <MessageSquare className="w-5 h-5 text-primary" style={{ filter: 'drop-shadow(0 0 6px rgba(255,85,0,0.5))' }} />
         </div>
         <div className="flex-1 text-left">
-          <p className="font-display text-sm tracking-wider text-white">UNBREAKABLE COACH BUILDER</p>
-          <p className="text-gray-500 text-xs mt-0.5">Chat with your coach — auto-builds your programme</p>
+          <p className="font-display text-sm tracking-wider text-foreground">UNBREAKABLE COACH BUILDER</p>
+          <p className="text-muted-foreground text-xs mt-0.5">Chat with your coach — auto-builds your programme</p>
         </div>
-        <ChevronRight className="w-4 h-4 text-gray-600 group-hover:text-[#FF5500] transition-colors" />
+        <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
       </button>
 
       <button
         onClick={() => onSelectMode('manual')}
-        className="w-full p-3.5 rounded-xl border border-border bg-card flex items-center gap-3 hover:border-[#FF5500]/30 transition-all group"
+        className="w-full p-3.5 rounded-xl border border-border bg-card flex items-center gap-3 hover:border-primary/30 transition-all group"
       >
-        <div className="w-10 h-10 rounded-lg border border-[#FF5500]/20 flex items-center justify-center" style={{ background: 'rgba(255,85,0,0.1)' }}>
-          <Wrench className="w-5 h-5 text-[#FF5500]" style={{ filter: 'drop-shadow(0 0 6px rgba(255,85,0,0.5))' }} />
+        <div className="w-10 h-10 rounded-lg border border-primary/20 flex items-center justify-center" style={{ background: 'rgba(255,85,0,0.1)' }}>
+          <Wrench className="w-5 h-5 text-primary" style={{ filter: 'drop-shadow(0 0 6px rgba(255,85,0,0.5))' }} />
         </div>
         <div className="flex-1 text-left">
-          <p className="font-display text-sm tracking-wider text-white">MANUAL BUILDER</p>
-          <p className="text-gray-500 text-xs mt-0.5">Full customisation — build it yourself</p>
+          <p className="font-display text-sm tracking-wider text-foreground">MANUAL BUILDER</p>
+          <p className="text-muted-foreground text-xs mt-0.5">Full customisation — build it yourself</p>
         </div>
-        <ChevronRight className="w-4 h-4 text-gray-600 group-hover:text-[#FF5500] transition-colors" />
+        <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
       </button>
     </div>
   );

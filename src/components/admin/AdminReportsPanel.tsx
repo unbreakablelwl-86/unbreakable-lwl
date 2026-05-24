@@ -41,11 +41,11 @@ export function AdminReportsPanel() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'pending':
-        return <Badge className="bg-[#FF5500]/20 text-[#FF5500] border-[#FF5500]/30"><Clock className="w-3 h-3 mr-1" />Pending</Badge>;
+        return <Badge className="bg-primary/20 text-primary border-primary/30"><Clock className="w-3 h-3 mr-1" />Pending</Badge>;
       case 'reviewed':
-        return <Badge className="bg-[#FF5500]/20 text-[#FF5500] border-[#FF5500]/30"><Eye className="w-3 h-3 mr-1" />Reviewed</Badge>;
+        return <Badge className="bg-primary/20 text-primary border-primary/30"><Eye className="w-3 h-3 mr-1" />Reviewed</Badge>;
       case 'resolved':
-        return <Badge className="bg-[#FF5500]/20 text-[#FF5500] border-[#FF5500]/30"><CheckCircle className="w-3 h-3 mr-1" />Resolved</Badge>;
+        return <Badge className="bg-primary/20 text-primary border-primary/30"><CheckCircle className="w-3 h-3 mr-1" />Resolved</Badge>;
       case 'dismissed':
         return <Badge variant="secondary"><XCircle className="w-3 h-3 mr-1" />Dismissed</Badge>;
       default:

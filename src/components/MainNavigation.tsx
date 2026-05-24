@@ -198,7 +198,7 @@ export function MainNavigation() {
                       'inline-flex h-10 items-center justify-center rounded-md px-4 py-2 text-sm font-display tracking-wide transition-all border',
                       isActive('/admin')
                         ? 'bg-primary text-primary-foreground shadow-[0_0_12px_hsl(24_100%_50%/0.35)]'
-                        : 'text-[#FF5500] border-[#FF5500]/30 hover:bg-[#FF5500]/10'
+                        : 'text-primary border-primary/30 hover:bg-primary/10'
                     )}
                   >
                     DEV

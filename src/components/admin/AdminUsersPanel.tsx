@@ -106,9 +106,9 @@ export function AdminUsersPanel() {
   const getRoleBadge = (role?: AppRole) => {
     switch (role) {
       case 'dev':
-        return <Badge className="bg-[#FF5500]/20 text-[#FF5500] border-[#FF5500]/30"><Crown className="w-3 h-3 mr-1" />Dev</Badge>;
+        return <Badge className="bg-primary/20 text-primary border-primary/30"><Crown className="w-3 h-3 mr-1" />Dev</Badge>;
       case 'coach':
-        return <Badge className="bg-[#FF5500]/20 text-[#FF5500] border-[#FF5500]/30"><ShieldCheck className="w-3 h-3 mr-1" />Coach</Badge>;
+        return <Badge className="bg-primary/20 text-primary border-primary/30"><ShieldCheck className="w-3 h-3 mr-1" />Coach</Badge>;
       default:
         return <Badge variant="secondary"><User className="w-3 h-3 mr-1" />User</Badge>;
     }

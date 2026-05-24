@@ -495,11 +495,11 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
   }, []);
 
   return (
-    <div className="fixed inset-0 z-[60] bg-black flex flex-col" style={{ touchAction: 'none' }}>
+    <div className="fixed inset-0 z-[60] bg-background flex flex-col" style={{ touchAction: 'none' }}>
       {/* Top bar - Instagram style */}
       <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-3 pt-[env(safe-area-inset-top,12px)] py-3 z-30">
         <button
-          className="w-10 h-10 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-white"
+          className="w-10 h-10 rounded-full bg-background/40 backdrop-blur-sm flex items-center justify-center text-foreground"
           onClick={onClose}
         >
           <X className="w-5 h-5" />
@@ -507,14 +507,14 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
         <div className="flex items-center gap-2">
           {undoStack.length > 0 && (
             <button
-              className="w-10 h-10 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-white"
+              className="w-10 h-10 rounded-full bg-background/40 backdrop-blur-sm flex items-center justify-center text-foreground"
               onClick={(e) => { e.stopPropagation(); handleUndo(); }}
             >
               <Undo2 className="w-5 h-5" />
             </button>
           )}
           <button
-            className="w-10 h-10 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-white"
+            className="w-10 h-10 rounded-full bg-background/40 backdrop-blur-sm flex items-center justify-center text-foreground"
             onClick={cycleVisibility}
           >
             {visIcon}
@@ -667,7 +667,7 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
               transition={{ duration: 0.15 }}
               className={`absolute bottom-0 left-0 right-0 z-40 flex flex-col items-center justify-center py-8 transition-colors duration-150 ${
                 isOverDeleteZone
-                  ? 'bg-[#FF5500]/40'
+                  ? 'bg-primary/40'
                   : 'bg-gradient-to-t from-black/60 to-transparent'
               }`}
             >
@@ -675,9 +675,9 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
                 animate={isOverDeleteZone ? { scale: 1.3 } : { scale: 1 }}
                 transition={{ type: 'spring', stiffness: 300 }}
               >
-                <Trash2 className={`w-8 h-8 transition-colors ${isOverDeleteZone ? 'text-[#FF5500]' : 'text-white/60'}`} />
+                <Trash2 className={`w-8 h-8 transition-colors ${isOverDeleteZone ? 'text-primary' : 'text-foreground/60'}`} />
               </motion.div>
-              <span className={`text-xs mt-1 font-display tracking-wider transition-colors ${isOverDeleteZone ? 'text-[#FF5500]' : 'text-white/40'}`}>
+              <span className={`text-xs mt-1 font-display tracking-wider transition-colors ${isOverDeleteZone ? 'text-primary' : 'text-foreground/40'}`}>
                 {isOverDeleteZone ? 'RELEASE TO DELETE' : 'DRAG HERE TO DELETE'}
               </span>
             </motion.div>
@@ -701,13 +701,13 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
                   <img src={item.previewUrl} alt="" className="w-full h-full object-cover" />
                 ) : (
                   <div className="w-full h-full bg-muted/50 flex items-center justify-center">
-                    <Video className="w-4 h-4 text-white/70" />
+                    <Video className="w-4 h-4 text-foreground/70" />
                   </div>
                 )}
 
                 {item.status === 'uploading' && (
-                  <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                    <Loader2 className="w-4 h-4 text-white animate-spin" />
+                  <div className="absolute inset-0 bg-background/50 flex items-center justify-center">
+                    <Loader2 className="w-4 h-4 text-foreground animate-spin" />
                   </div>
                 )}
 
@@ -716,7 +716,7 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
                     className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-red-500 flex items-center justify-center"
                     onClick={(e) => { e.stopPropagation(); removeMediaItem(idx); }}
                   >
-                    <X className="w-3 h-3 text-white" />
+                    <X className="w-3 h-3 text-foreground" />
                   </button>
                 )}
               </div>
@@ -725,7 +725,7 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
             {mediaItems.length < MAX_MEDIA && !publishing && (
               <button
                 onClick={(e) => { e.stopPropagation(); fileInputRef.current?.click(); }}
-                className="w-12 h-12 rounded-lg border-2 border-dashed border-white/30 flex items-center justify-center text-white/50"
+                className="w-12 h-12 rounded-lg border-2 border-dashed border-white/30 flex items-center justify-center text-foreground/50"
               >
                 <Plus className="w-5 h-5" />
               </button>
@@ -738,24 +738,24 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
       {publishing && overallProgress > 0 && (
         <div className="absolute bottom-24 left-4 right-4 z-30 space-y-1">
           <Progress value={overallProgress} className="h-1.5" />
-          <p className="text-center text-white/60 text-[10px]">{uploadProgress || `${overallProgress}%`}</p>
+          <p className="text-center text-foreground/60 text-[10px]">{uploadProgress || `${overallProgress}%`}</p>
         </div>
       )}
 
       {/* Text editing overlay */}
       {editingTextId && (
-        <div className="absolute inset-0 z-40 bg-black/80 flex items-center justify-center p-6">
+        <div className="absolute inset-0 z-40 bg-background/80 flex items-center justify-center p-6">
           <div className="w-full max-w-sm space-y-4">
             <textarea
               value={editText}
               onChange={(e) => setEditText(e.target.value)}
-              className="w-full bg-transparent border-0 text-white text-center text-2xl font-display tracking-wide min-h-32 resize-none outline-none placeholder:text-white/30"
+              className="w-full bg-transparent border-0 text-foreground text-center text-2xl font-display tracking-wide min-h-32 resize-none outline-none placeholder:text-foreground/30"
               placeholder="Type your text..."
               autoFocus
               maxLength={150}
             />
             <div className="flex gap-3 justify-center">
-              <button className="text-white/50 text-sm font-display" onClick={() => setEditingTextId(null)}>Cancel</button>
+              <button className="text-foreground/50 text-sm font-display" onClick={() => setEditingTextId(null)}>Cancel</button>
               <button className="bg-primary text-primary-foreground px-5 py-2 rounded-full text-sm font-display" onClick={commitTextEdit}>Done</button>
             </div>
           </div>
@@ -766,12 +766,12 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
       {showColorPicker && !editingTextId && (
         <div className="absolute bottom-20 left-0 right-0 z-30 px-4 animate-in slide-in-from-bottom-2 duration-150">
           {colorTarget === 'border' && selectedOverlay && (
-            <div className="flex items-center gap-2 bg-black/60 backdrop-blur-sm rounded-full px-3 py-1 mx-auto w-fit mb-1">
-              <button className="text-white/70" onClick={() => { if (!selectedOverlay) return; updateOverlay(selectedOverlay.id, { borderWidth: Math.max(1, (selectedOverlay.borderWidth || 2) - 1) }); }}>
+            <div className="flex items-center gap-2 bg-background/60 backdrop-blur-sm rounded-full px-3 py-1 mx-auto w-fit mb-1">
+              <button className="text-foreground/70" onClick={() => { if (!selectedOverlay) return; updateOverlay(selectedOverlay.id, { borderWidth: Math.max(1, (selectedOverlay.borderWidth || 2) - 1) }); }}>
                 <Minus className="w-3 h-3" />
               </button>
-              <span className="text-white text-[10px] font-display w-4 text-center">{selectedOverlay.borderWidth || 2}</span>
-              <button className="text-white/70" onClick={() => { if (!selectedOverlay) return; updateOverlay(selectedOverlay.id, { borderWidth: Math.min(8, (selectedOverlay.borderWidth || 2) + 1) }); }}>
+              <span className="text-foreground text-[10px] font-display w-4 text-center">{selectedOverlay.borderWidth || 2}</span>
+              <button className="text-foreground/70" onClick={() => { if (!selectedOverlay) return; updateOverlay(selectedOverlay.id, { borderWidth: Math.min(8, (selectedOverlay.borderWidth || 2) + 1) }); }}>
                 <Plus className="w-3 h-3" />
               </button>
             </div>
@@ -812,24 +812,24 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
             className={`absolute left-2 right-2 z-31 space-y-1.5 ${showColorPicker || hasMedia ? 'bottom-40' : 'bottom-20'}`}
           >
             {/* Font size + font family in one row */}
-            <div className="flex items-center gap-2 bg-black/60 backdrop-blur-md rounded-full px-3 py-1.5">
-              <span className="text-white/50 text-[10px] shrink-0">Aa</span>
+            <div className="flex items-center gap-2 bg-background/60 backdrop-blur-md rounded-full px-3 py-1.5">
+              <span className="text-foreground/50 text-[10px] shrink-0">Aa</span>
               <Slider
                 value={[selectedOverlay.fontSize]}
                 onValueChange={([v]) => updateOverlay(selectedOverlay.id, { fontSize: v })}
                 min={12} max={72} step={1}
                 className="flex-1"
               />
-              <span className="text-white text-[10px] font-display w-5 text-center shrink-0">{selectedOverlay.fontSize}</span>
+              <span className="text-foreground text-[10px] font-display w-5 text-center shrink-0">{selectedOverlay.fontSize}</span>
             </div>
             {/* Font family */}
-            <div className="flex items-center gap-1 overflow-x-auto bg-black/60 backdrop-blur-md rounded-full px-2 py-1 scrollbar-hide">
+            <div className="flex items-center gap-1 overflow-x-auto bg-background/60 backdrop-blur-md rounded-full px-2 py-1 scrollbar-hide">
               {FONT_OPTIONS.map(f => (
                 <button
                   key={f.value}
                   className={`shrink-0 px-2 py-0.5 rounded-full text-[10px] transition-colors ${
                     (selectedOverlay.fontFamily || "'Bebas Neue', sans-serif") === f.value
-                      ? 'bg-white/25 text-white' : 'text-white/50'
+                      ? 'bg-white/25 text-foreground' : 'text-foreground/50'
                   }`}
                   style={{ fontFamily: f.value }}
                   onClick={(e) => { e.stopPropagation(); updateOverlay(selectedOverlay.id, { fontFamily: f.value }); }}
@@ -839,52 +839,52 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
               ))}
             </div>
             {/* Formatting + colour controls — single compact row */}
-            <div className="flex items-center gap-0.5 bg-black/60 backdrop-blur-md rounded-full px-1.5 py-1 justify-center">
+            <div className="flex items-center gap-0.5 bg-background/60 backdrop-blur-md rounded-full px-1.5 py-1 justify-center">
               {(['left', 'center', 'right'] as const).map(align => (
                 <button
                   key={align}
-                  className={`w-7 h-7 rounded-full flex items-center justify-center ${selectedOverlay.textAlign === align ? 'bg-white/20' : ''} text-white`}
+                  className={`w-7 h-7 rounded-full flex items-center justify-center ${selectedOverlay.textAlign === align ? 'bg-white/20' : ''} text-foreground`}
                   onClick={(e) => { e.stopPropagation(); updateOverlay(selectedOverlay.id, { textAlign: align }); }}
                 >
                   {align === 'left' ? <AlignLeft className="w-3 h-3" /> : align === 'center' ? <AlignCenter className="w-3 h-3" /> : <AlignRight className="w-3 h-3" />}
                 </button>
               ))}
               <button
-                className={`w-7 h-7 rounded-full flex items-center justify-center ${selectedOverlay.fontWeight === 'bold' ? 'bg-white/20' : ''} text-white`}
+                className={`w-7 h-7 rounded-full flex items-center justify-center ${selectedOverlay.fontWeight === 'bold' ? 'bg-white/20' : ''} text-foreground`}
                 onClick={(e) => { e.stopPropagation(); updateOverlay(selectedOverlay.id, { fontWeight: selectedOverlay.fontWeight === 'bold' ? 'normal' : 'bold' }); }}
               >
                 <Bold className="w-3 h-3" />
               </button>
               <div className="w-px h-5 bg-white/20 mx-0.5" />
               <button
-                className="w-7 h-7 rounded-full flex items-center justify-center text-white"
+                className="w-7 h-7 rounded-full flex items-center justify-center text-foreground"
                 onClick={(e) => { e.stopPropagation(); setColorTarget('text'); setShowColorPicker(true); }}
               >
                 <div className="w-4 h-4 rounded-full border-2 border-white" style={{ backgroundColor: selectedOverlay.color }} />
               </button>
               <button
-                className={`w-7 h-7 rounded-full flex items-center justify-center text-white ${selectedOverlay.backgroundColor ? 'bg-white/20' : ''}`}
+                className={`w-7 h-7 rounded-full flex items-center justify-center text-foreground ${selectedOverlay.backgroundColor ? 'bg-white/20' : ''}`}
                 onClick={(e) => { e.stopPropagation(); toggleOverlayBg(); }}
               >
                 <Square className="w-3 h-3" />
               </button>
               {selectedOverlay.backgroundColor && (
                 <button
-                  className="w-7 h-7 rounded-full flex items-center justify-center text-white"
+                  className="w-7 h-7 rounded-full flex items-center justify-center text-foreground"
                   onClick={(e) => { e.stopPropagation(); setColorTarget('overlay-bg'); setShowColorPicker(true); }}
                 >
                   <div className="w-4 h-4 rounded border border-border0" style={{ backgroundColor: selectedOverlay.backgroundColor }} />
                 </button>
               )}
               <button
-                className={`w-7 h-7 rounded-full flex items-center justify-center text-white ${selectedOverlay.showBorder ? 'bg-white/20' : ''}`}
+                className={`w-7 h-7 rounded-full flex items-center justify-center text-foreground ${selectedOverlay.showBorder ? 'bg-white/20' : ''}`}
                 onClick={(e) => { e.stopPropagation(); toggleBorder(); }}
               >
                 <span className="text-[9px] font-bold border border-white/60 px-0.5 rounded">B</span>
               </button>
               {selectedOverlay.showBorder && (
                 <button
-                  className="w-7 h-7 rounded-full flex items-center justify-center text-white"
+                  className="w-7 h-7 rounded-full flex items-center justify-center text-foreground"
                   onClick={(e) => { e.stopPropagation(); setColorTarget('border'); setShowColorPicker(true); }}
                 >
                   <div className="w-4 h-4 rounded border-2" style={{ borderColor: selectedOverlay.borderColor || '#FFF', backgroundColor: 'transparent' }} />
@@ -892,7 +892,7 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
               )}
               <div className="w-px h-5 bg-white/20 mx-0.5" />
               <button
-                className="w-7 h-7 rounded-full flex items-center justify-center text-white"
+                className="w-7 h-7 rounded-full flex items-center justify-center text-foreground"
                 onClick={(e) => { e.stopPropagation(); setEditingTextId(selectedOverlay.id); setEditText(selectedOverlay.text); }}
               >
                 <Type className="w-3 h-3" />
@@ -905,17 +905,17 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
       {/* Media edit mode toolbar — shows when media is present */}
       {hasMedia && !isDragging && mediaEditMode !== 'none' && (
         <div className="absolute bottom-16 left-0 right-0 z-30 px-4 animate-in slide-in-from-bottom-2">
-          <div className="flex items-center gap-2 bg-black/60 backdrop-blur-md rounded-full px-3 py-2 justify-center">
+          <div className="flex items-center gap-2 bg-background/60 backdrop-blur-md rounded-full px-3 py-2 justify-center">
             {mediaEditMode === 'move' && (
               <>
-                <span className="text-white/50 text-[10px] shrink-0">Scale</span>
+                <span className="text-foreground/50 text-[10px] shrink-0">Scale</span>
                 <Slider
                   value={[getMediaTransform(activeMediaIndex).scale * 100]}
                   onValueChange={([v]) => updateMediaTransform(activeMediaIndex, { scale: v / 100 })}
                   min={30} max={500} step={5}
                   className="flex-1 max-w-[200px]"
                 />
-                <span className="text-white text-[10px] font-display w-8 text-center shrink-0">{Math.round(getMediaTransform(activeMediaIndex).scale * 100)}%</span>
+                <span className="text-foreground text-[10px] font-display w-8 text-center shrink-0">{Math.round(getMediaTransform(activeMediaIndex).scale * 100)}%</span>
               </>
             )}
             <button
@@ -937,20 +937,20 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
             {/* Left side tools */}
             <div className="flex items-center gap-2">
               <button
-                className="w-11 h-11 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center text-white active:scale-90 transition-transform"
+                className="w-11 h-11 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center text-foreground active:scale-90 transition-transform"
                 onClick={(e) => { e.stopPropagation(); addTextOverlay(); }}
               >
                 <Type className="w-5 h-5" />
               </button>
               <button
-                className={`w-11 h-11 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center text-white active:scale-90 transition-transform ${mediaItems.length >= MAX_MEDIA ? 'opacity-30' : ''}`}
+                className={`w-11 h-11 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center text-foreground active:scale-90 transition-transform ${mediaItems.length >= MAX_MEDIA ? 'opacity-30' : ''}`}
                 onClick={(e) => { e.stopPropagation(); fileInputRef.current?.click(); }}
                 disabled={mediaItems.length >= MAX_MEDIA}
               >
                 <Image className="w-5 h-5" />
               </button>
               <button
-                className={`w-11 h-11 rounded-full backdrop-blur-sm flex items-center justify-center text-white active:scale-90 transition-transform ${showColorPicker ? 'bg-white/25' : 'bg-white/10'}`}
+                className={`w-11 h-11 rounded-full backdrop-blur-sm flex items-center justify-center text-foreground active:scale-90 transition-transform ${showColorPicker ? 'bg-white/25' : 'bg-white/10'}`}
                 onClick={(e) => { e.stopPropagation(); setColorTarget('bg'); setShowColorPicker(!showColorPicker); }}
               >
                 <Palette className="w-5 h-5" />
@@ -958,7 +958,7 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
               {/* Move/resize media button */}
               {hasMedia && (
                 <button
-                  className={`w-11 h-11 rounded-full backdrop-blur-sm flex items-center justify-center text-white active:scale-90 transition-transform ${mediaEditMode === 'move' ? 'bg-white/25' : 'bg-white/10'}`}
+                  className={`w-11 h-11 rounded-full backdrop-blur-sm flex items-center justify-center text-foreground active:scale-90 transition-transform ${mediaEditMode === 'move' ? 'bg-white/25' : 'bg-white/10'}`}
                   onClick={(e) => { e.stopPropagation(); setMediaEditMode(mediaEditMode === 'move' ? 'none' : 'move'); }}
                 >
                   <Maximize2 className="w-5 h-5" />

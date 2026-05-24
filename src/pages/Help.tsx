@@ -56,7 +56,7 @@ function MessageBubble({ message }: { message: MessageWithMedia }) {
       return (
         <p key={i} className={i > 0 ? 'mt-2' : ''}>
           {parts.map((part, j) =>
-            j % 2 === 1 ? <strong key={j} className="text-[#FF5500]">{part}</strong> : part
+            j % 2 === 1 ? <strong key={j} className="text-primary">{part}</strong> : part
           )}
         </p>
       );
@@ -67,23 +67,23 @@ function MessageBubble({ message }: { message: MessageWithMedia }) {
     <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-4`}>
       {!isUser && (
         <div className="flex-shrink-0 mr-3 mt-1">
-          <div className="w-8 h-8 rounded-full flex items-center justify-center border border-[#FF5500]/30 bg-[#FF5500]/10"
+          <div className="w-8 h-8 rounded-full flex items-center justify-center border border-primary/30 bg-primary/10"
             style={{ boxShadow: '0 0 12px rgba(255,85,0,0.15)' }}>
-            <Flame className="w-4 h-4 text-[#FF5500]" />
+            <Flame className="w-4 h-4 text-primary" />
           </div>
         </div>
       )}
       <div className={`max-w-[80%]`}>
         <div className={`rounded-2xl px-4 py-3 ${
           isUser
-            ? 'bg-[#FF5500]/15 border border-[#FF5500]/25 rounded-br-md'
-            : 'bg-[#151515] border border-border rounded-bl-md'
+            ? 'bg-primary/15 border border-primary/25 rounded-br-md'
+            : 'bg-card border border-border rounded-bl-md'
         }`}>
-          <div className={`text-sm leading-relaxed ${isUser ? 'text-white' : 'text-gray-300'}`}>
+          <div className={`text-sm leading-relaxed ${isUser ? 'text-foreground' : 'text-muted-foreground'}`}>
             {isUser ? message.content : formatContent(message.content)}
           </div>
         </div>
-        <p className={`text-[10px] text-gray-600 mt-1 px-1 ${isUser ? 'text-right' : ''}`}>
+        <p className={`text-[10px] text-muted-foreground mt-1 px-1 ${isUser ? 'text-right' : ''}`}>
           {new Date(message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
         </p>
       </div>
@@ -112,8 +112,8 @@ function SmartPromptChips({ onSelect, disabled }: { onSelect: (prompt: string) =
           onClick={() => onSelect(sp.prompt)}
           disabled={disabled}
           className="flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-display tracking-wide
-            bg-card border border-border text-gray-400
-            hover:border-[#FF5500]/30 hover:text-[#FF5500] hover:bg-[#FF5500]/5
+            bg-card border border-border text-muted-foreground
+            hover:border-primary/30 hover:text-primary hover:bg-primary/5
             active:scale-95 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
         >
           <span>{sp.icon}</span>
@@ -148,26 +148,26 @@ function BuildConfirmDialog({
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/70 backdrop-blur-sm"
     >
-      <div className="w-full max-w-sm rounded-2xl border border-[#FF5500]/20 bg-card p-6 text-center"
+      <div className="w-full max-w-sm rounded-2xl border border-primary/20 bg-card p-6 text-center"
         style={{ boxShadow: '0 0 40px rgba(255,85,0,0.1)' }}>
-        <div className="w-14 h-14 rounded-full bg-[#FF5500]/15 border border-[#FF5500]/30 flex items-center justify-center mx-auto mb-4"
+        <div className="w-14 h-14 rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center mx-auto mb-4"
           style={{ boxShadow: '0 0 20px rgba(255,85,0,0.2)' }}>
-          <Icon className="w-7 h-7 text-[#FF5500]" />
+          <Icon className="w-7 h-7 text-primary" />
         </div>
-        <h3 className="font-display text-lg text-white tracking-wide mb-2">{config.title}</h3>
-        <p className="text-gray-400 text-sm mb-6">{config.desc}</p>
+        <h3 className="font-display text-lg text-foreground tracking-wide mb-2">{config.title}</h3>
+        <p className="text-muted-foreground text-sm mb-6">{config.desc}</p>
         <div className="flex gap-3">
           <button
             onClick={onCancel}
-            className="flex-1 py-2.5 rounded-xl border border-border text-gray-400 hover:text-white text-sm font-display transition-all"
+            className="flex-1 py-2.5 rounded-xl border border-border text-muted-foreground hover:text-foreground text-sm font-display transition-all"
           >
             CANCEL
           </button>
           <button
             onClick={onConfirm}
-            className="flex-1 py-2.5 rounded-xl bg-[#FF5500] hover:bg-[#CC4400] text-white text-sm font-display transition-all"
+            className="flex-1 py-2.5 rounded-xl bg-primary hover:bg-primary/80 text-white text-sm font-display transition-all"
             style={{ boxShadow: '0 0 15px rgba(255,85,0,0.3)' }}
           >
             BUILD IT
@@ -197,18 +197,18 @@ function ConversationSidebar({
   return (
     <>
       {isMobile && isOpen && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40" onClick={onToggle} />
+        <div className="fixed inset-0 bg-background/60 backdrop-blur-sm z-40" onClick={onToggle} />
       )}
       <aside className={`
         ${isMobile ? 'fixed left-0 top-0 bottom-0 z-50' : 'relative'}
         ${isOpen ? 'w-72' : 'w-0'}
-        bg-[#0A0A0A] border-r border-border
+        bg-background border-r border-border
         transition-all duration-300 overflow-hidden flex flex-col
         ${isMobile && !isOpen ? 'pointer-events-none' : ''}
       `}>
         <div className="p-4 border-b border-border flex items-center justify-between flex-shrink-0">
-          <h2 className="font-display text-xs tracking-wider text-[#FF5500]">CONVERSATIONS</h2>
-          <button onClick={onToggle} className="p-1.5 rounded-lg text-gray-500 hover:text-white transition-colors">
+          <h2 className="font-display text-xs tracking-wider text-primary">CONVERSATIONS</h2>
+          <button onClick={onToggle} className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground transition-colors">
             <PanelLeftClose className="w-4 h-4" />
           </button>
         </div>
@@ -217,8 +217,8 @@ function ConversationSidebar({
           <button
             onClick={onNewConversation}
             className="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl
-              border border-[#FF5500]/30 text-[#FF5500] text-xs font-display tracking-wider
-              hover:bg-[#FF5500]/10 transition-all"
+              border border-primary/30 text-primary text-xs font-display tracking-wider
+              hover:bg-primary/10 transition-all"
           >
             <MessageSquarePlus className="w-4 h-4" />
             NEW CONVERSATION
@@ -227,7 +227,7 @@ function ConversationSidebar({
 
         <ScrollArea className="flex-1 px-2 pb-4">
           {conversations.length === 0 ? (
-            <p className="text-xs text-gray-600 text-center py-6 px-3">No conversations yet.</p>
+            <p className="text-xs text-muted-foreground text-center py-6 px-3">No conversations yet.</p>
           ) : (
             <div className="space-y-1">
               {conversations.map((conv) => (
@@ -235,19 +235,19 @@ function ConversationSidebar({
                   key={conv.id}
                   className={`group flex items-center gap-2 p-3 rounded-xl cursor-pointer transition-all border ${
                     currentConversationId === conv.id
-                      ? 'bg-[#FF5500]/10 border-[#FF5500]/25'
+                      ? 'bg-primary/10 border-primary/25'
                       : 'border-transparent hover:border-border hover:bg-card'
                   }`}
                   onClick={() => onSelect(conv.id)}
                 >
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm text-white truncate">{conv.title || 'Untitled'}</p>
-                    <p className="text-[10px] text-gray-600 mt-0.5">
+                    <p className="text-sm text-foreground truncate">{conv.title || 'Untitled'}</p>
+                    <p className="text-[10px] text-muted-foreground mt-0.5">
                       {new Date(conv.updated_at).toLocaleDateString()}
                     </p>
                   </div>
                   <button
-                    className="h-7 w-7 rounded-lg flex items-center justify-center text-[#FF5500]/50 hover:text-[#FF5500] hover:bg-[#FF5500]/10 transition-all flex-shrink-0 opacity-0 group-hover:opacity-100"
+                    className="h-7 w-7 rounded-lg flex items-center justify-center text-primary/50 hover:text-primary hover:bg-primary/10 transition-all flex-shrink-0 opacity-0 group-hover:opacity-100"
                     onClick={(e) => { e.stopPropagation(); onDelete(conv.id); }}
                   >
                     <Trash2 className="w-3.5 h-3.5" />
@@ -441,7 +441,7 @@ export default function Help() {
           action: (
             <button
               onClick={() => navigate('/programming')}
-              className="px-3 py-1.5 rounded-lg bg-[#FF5500] text-white text-xs font-display"
+              className="px-3 py-1.5 rounded-lg bg-primary text-white text-xs font-display"
             >
               VIEW IN LIBRARY
             </button>
@@ -466,7 +466,7 @@ export default function Help() {
           action: (
             <button
               onClick={() => navigate('/mindset')}
-              className="px-3 py-1.5 rounded-lg bg-[#FF5500] text-white text-xs font-display"
+              className="px-3 py-1.5 rounded-lg bg-primary text-white text-xs font-display"
             >
               VIEW IN LIBRARY
             </button>
@@ -501,7 +501,7 @@ export default function Help() {
           action: (
             <button
               onClick={() => navigate('/fuel')}
-              className="px-3 py-1.5 rounded-lg bg-[#FF5500] text-white text-xs font-display"
+              className="px-3 py-1.5 rounded-lg bg-primary text-white text-xs font-display"
             >
               VIEW IN LIBRARY
             </button>
@@ -578,7 +578,7 @@ export default function Help() {
   return (
     <PaywallGate feature="ai_coach_basic">
     <SwipeNavigationWrapper>
-      <div className="min-h-screen flex flex-col" style={{ background: '#080808' }}>
+      <div className="min-h-screen flex flex-col" >
         {/* ─── Header ─── */}
         <header className="fixed top-0 left-0 right-0 z-50 border-b border-border"
           style={{ background: 'rgba(8,8,8,0.92)', backdropFilter: 'blur(12px)' }}>
@@ -587,7 +587,7 @@ export default function Help() {
               <ThemeToggle />
               <Link to="/" className="flex items-center gap-2">
                 <ThemedLogo />
-                <span className="font-display text-sm tracking-wider text-white hidden sm:block">UNBREAKABLE</span>
+                <span className="font-display text-sm tracking-wider text-foreground hidden sm:block">UNBREAKABLE</span>
               </Link>
             </div>
             <div className="flex items-center gap-2">
@@ -619,17 +619,17 @@ export default function Help() {
             <div className="flex items-center gap-3 px-4 py-3 border-b border-border flex-shrink-0"
               style={{ background: 'rgba(15,15,15,0.8)' }}>
               {user && !sidebarOpen && (
-                <button onClick={() => setSidebarOpen(true)} className="p-1.5 rounded-lg text-gray-500 hover:text-white">
+                <button onClick={() => setSidebarOpen(true)} className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground">
                   <PanelLeftOpen className="w-4 h-4" />
                 </button>
               )}
               <div className="flex items-center gap-2 flex-1 min-w-0">
-                <div className="w-7 h-7 rounded-full bg-[#FF5500]/15 border border-[#FF5500]/30 flex items-center justify-center"
+                <div className="w-7 h-7 rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center"
                   style={{ boxShadow: '0 0 10px rgba(255,85,0,0.15)' }}>
-                  <Flame className="w-3.5 h-3.5 text-[#FF5500]" />
+                  <Flame className="w-3.5 h-3.5 text-primary" />
                 </div>
                 {currentConversationId ? (
-                  <h2 className="font-display text-xs tracking-wider text-white truncate">
+                  <h2 className="font-display text-xs tracking-wider text-foreground truncate">
                     {conversations.find(c => c.id === currentConversationId)?.title || 'CONVERSATION'}
                   </h2>
                 ) : (
@@ -638,7 +638,7 @@ export default function Help() {
               </div>
               {currentConversationId && (
                 <button
-                  className="p-1.5 rounded-lg text-gray-600 hover:text-[#FF5500] transition-colors"
+                  className="p-1.5 rounded-lg text-muted-foreground hover:text-primary transition-colors"
                   onClick={() => { if (currentConversationId) deleteConversation(currentConversationId); }}
                 >
                   <Trash2 className="w-4 h-4" />
@@ -653,15 +653,15 @@ export default function Help() {
                 /* ─── Welcome / Empty State ─── */
                 <div className="flex flex-col items-center justify-center h-full">
                   <div className="text-center mb-8">
-                    <div className="w-16 h-16 rounded-full bg-[#FF5500]/10 border border-[#FF5500]/25 flex items-center justify-center mx-auto mb-5"
+                    <div className="w-16 h-16 rounded-full bg-primary/10 border border-primary/25 flex items-center justify-center mx-auto mb-5"
                       style={{ boxShadow: '0 0 35px rgba(255,85,0,0.15)' }}>
-                      <Flame className="w-8 h-8 text-[#FF5500]" style={{ filter: 'drop-shadow(0 0 8px rgba(255,85,0,0.5))' }} />
+                      <Flame className="w-8 h-8 text-primary" style={{ filter: 'drop-shadow(0 0 8px rgba(255,85,0,0.5))' }} />
                     </div>
                     <CoachNameEditor coachName={coachName} onSave={setCoachName} variant="hero" />
-                    <p className="text-gray-500 max-w-sm mx-auto text-sm leading-relaxed mt-3">
+                    <p className="text-muted-foreground max-w-sm mx-auto text-sm leading-relaxed mt-3">
                       Your personal coach for training, nutrition, mindset, and beyond.
                       Ask anything — become{' '}
-                      <span className="text-[#FF5500] font-semibold">UNBREAKABLE</span>.
+                      <span className="text-primary font-semibold">UNBREAKABLE</span>.
                     </p>
                   </div>
 
@@ -678,13 +678,13 @@ export default function Help() {
                   {/* Loading states */}
                   {isLoading && enrichedMessages[enrichedMessages.length - 1]?.role === 'user' && !isGenerating && (
                     <div className="flex items-center gap-3 mb-4">
-                      <div className="w-8 h-8 rounded-full bg-[#FF5500]/10 border border-[#FF5500]/30 flex items-center justify-center">
-                        <Flame className="w-4 h-4 text-[#FF5500]" />
+                      <div className="w-8 h-8 rounded-full bg-primary/10 border border-primary/30 flex items-center justify-center">
+                        <Flame className="w-4 h-4 text-primary" />
                       </div>
-                      <div className="rounded-2xl rounded-bl-md px-4 py-3 bg-[#151515] border border-border">
+                      <div className="rounded-2xl rounded-bl-md px-4 py-3 bg-card border border-border">
                         <div className="flex items-center gap-2">
-                          <Loader2 className="w-4 h-4 animate-spin text-[#FF5500]" />
-                          <span className="text-sm text-gray-500">{coachName} is thinking...</span>
+                          <Loader2 className="w-4 h-4 animate-spin text-primary" />
+                          <span className="text-sm text-muted-foreground">{coachName} is thinking...</span>
                         </div>
                       </div>
                     </div>
@@ -693,37 +693,37 @@ export default function Help() {
                   {/* Programme generating */}
                   {(isGenerating || programmeGenerating) && (
                     <div className="flex items-center gap-3 mb-4">
-                      <div className="w-8 h-8 rounded-full bg-[#FF5500]/15 border border-[#FF5500]/30 flex items-center justify-center">
-                        <Sparkles className="w-4 h-4 text-[#FF5500] animate-pulse" />
+                      <div className="w-8 h-8 rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center">
+                        <Sparkles className="w-4 h-4 text-primary animate-pulse" />
                       </div>
-                      <div className="rounded-2xl rounded-bl-md px-4 py-3 bg-[#FF5500]/5 border border-[#FF5500]/20"
+                      <div className="rounded-2xl rounded-bl-md px-4 py-3 bg-primary/5 border border-primary/20"
                         style={{ boxShadow: '0 0 20px rgba(255,85,0,0.05)' }}>
-                        <span className="text-sm font-display text-[#FF5500]">Building your programme...</span>
-                        <p className="text-xs text-gray-500 mt-0.5">This takes about 15-20 seconds</p>
+                        <span className="text-sm font-display text-primary">Building your programme...</span>
+                        <p className="text-xs text-muted-foreground mt-0.5">This takes about 15-20 seconds</p>
                       </div>
                     </div>
                   )}
 
                   {mealPlanGenerating && (
                     <div className="flex items-center gap-3 mb-4">
-                      <div className="w-8 h-8 rounded-full bg-[#FF5500]/15 border border-[#FF5500]/30 flex items-center justify-center">
-                        <UtensilsCrossed className="w-4 h-4 text-[#FF5500] animate-pulse" />
+                      <div className="w-8 h-8 rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center">
+                        <UtensilsCrossed className="w-4 h-4 text-primary animate-pulse" />
                       </div>
-                      <div className="rounded-2xl rounded-bl-md px-4 py-3 bg-[#FF5500]/5 border border-[#FF5500]/20">
-                        <span className="text-sm font-display text-[#FF5500]">Building your meal plan...</span>
-                        <p className="text-xs text-gray-500 mt-0.5">This takes about 15-20 seconds</p>
+                      <div className="rounded-2xl rounded-bl-md px-4 py-3 bg-primary/5 border border-primary/20">
+                        <span className="text-sm font-display text-primary">Building your meal plan...</span>
+                        <p className="text-xs text-muted-foreground mt-0.5">This takes about 15-20 seconds</p>
                       </div>
                     </div>
                   )}
 
                   {mindsetGenerating && (
                     <div className="flex items-center gap-3 mb-4">
-                      <div className="w-8 h-8 rounded-full bg-[#FF5500]/15 border border-[#FF5500]/30 flex items-center justify-center">
-                        <Brain className="w-4 h-4 text-[#FF5500] animate-pulse" />
+                      <div className="w-8 h-8 rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center">
+                        <Brain className="w-4 h-4 text-primary animate-pulse" />
                       </div>
-                      <div className="rounded-2xl rounded-bl-md px-4 py-3 bg-[#FF5500]/5 border border-[#FF5500]/20">
-                        <span className="text-sm font-display text-[#FF5500]">Building your mindset programme...</span>
-                        <p className="text-xs text-gray-500 mt-0.5">This takes about 15-20 seconds</p>
+                      <div className="rounded-2xl rounded-bl-md px-4 py-3 bg-primary/5 border border-primary/20">
+                        <span className="text-sm font-display text-primary">Building your mindset programme...</span>
+                        <p className="text-xs text-muted-foreground mt-0.5">This takes about 15-20 seconds</p>
                       </div>
                     </div>
                   )}
@@ -754,8 +754,8 @@ export default function Help() {
             {tokenBalance !== null && tokenBalance <= 2 && (
               <div className={`flex-shrink-0 px-4 py-2 text-center text-xs font-display ${
                 tokenBalance <= 0
-                  ? 'bg-[#FF5500]/10 text-[#FF5500] border-t border-[#FF5500]/20'
-                  : 'bg-[#FF5500]/10 text-[#FF5500] border-t border-[#FF5500]/20'
+                  ? 'bg-primary/10 text-primary border-t border-primary/20'
+                  : 'bg-primary/10 text-primary border-t border-primary/20'
               }`}>
                 {tokenBalance <= 0 ? (
                   <>No tokens remaining — <Link to="/ai-tokens" className="underline font-bold">upgrade for more</Link></>
@@ -783,15 +783,15 @@ export default function Help() {
                       rows={1}
                       disabled={isLoading || isAnyGenerating}
                       className="w-full resize-none rounded-xl border border-border bg-card
-                        px-4 py-3 text-sm text-white placeholder:text-gray-600
-                        focus:outline-none focus:border-[#FF5500]/40 focus:ring-1 focus:ring-[#FF5500]/20
+                        px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground
+                        focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/20
                         disabled:opacity-40 transition-all"
                     />
                   </div>
                   <button
                     type="submit"
                     disabled={isLoading || isAnyGenerating || !input.trim()}
-                    className="h-11 w-11 rounded-xl bg-[#FF5500] hover:bg-[#CC4400] text-white
+                    className="h-11 w-11 rounded-xl bg-primary hover:bg-primary/80 text-white
                       flex items-center justify-center transition-all disabled:opacity-30 disabled:cursor-not-allowed"
                     style={{ boxShadow: input.trim() ? '0 0 15px rgba(255,85,0,0.3)' : 'none' }}
                   >

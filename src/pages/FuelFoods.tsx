@@ -14,24 +14,24 @@ export default function FuelFoods() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: '#080808' }}>
+      <div className="min-h-screen flex items-center justify-center" >
         <div className="w-12 h-12 border-2 border-primary border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen pb-24" style={{ background: '#080808' }}>
+    <div className="min-h-screen pb-24" >
 {/* Hero Section */}
       <div className="relative px-4 pt-6 pb-5 overflow-hidden">
         <div className="absolute inset-0 pointer-events-none"
           style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(255,85,0,0.08), transparent 70%)' }} />
         <div className="relative z-10">
           <h1 className="font-display text-2xl tracking-wider text-center">
-            <span className="text-[#FF5500]" style={{ textShadow: '0 0 20px rgba(255,85,0,0.4)' }}>STORE</span>
-            <span className="text-white"> CUPBOARD</span>
+            <span className="text-primary" style={{ textShadow: '0 0 20px rgba(255,85,0,0.4)' }}>STORE</span>
+            <span className="text-foreground"> CUPBOARD</span>
           </h1>
-          <p className="text-center text-gray-500 text-sm mt-1 font-display tracking-wide">
+          <p className="text-center text-muted-foreground text-sm mt-1 font-display tracking-wide">
             KEEP SHOWING UP
           </p>
         </div>

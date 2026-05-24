@@ -30,8 +30,8 @@ const Index = () => {
 
   if (loading || (user && onboardingLoading)) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: '#080808' }}>
-        <div className="w-10 h-10 border-2 border-[#FF5500] border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen flex items-center justify-center" >
+        <div className="w-10 h-10 border-2 border-primary border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }

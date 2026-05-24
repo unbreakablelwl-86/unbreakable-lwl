@@ -101,7 +101,7 @@ export function PaywallGate({ feature, children, inline, fallback }: PaywallGate
         <button
           onClick={() => navigate('/ai-tokens')}
           className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-display tracking-wider
-            px-6 py-3 rounded-xl hover:shadow-[0_0_20px_rgba(255,85,0,0.3)] transition-all text-sm"
+            px-6 py-3 rounded-xl hover:shadow-[0_0_12px_hsl(var(--primary)/0.3)] transition-all text-sm"
         >
           <Zap className="w-4 h-4" />
           VIEW PLANS

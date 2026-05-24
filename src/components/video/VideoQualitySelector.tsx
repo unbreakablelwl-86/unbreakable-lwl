@@ -41,7 +41,7 @@ export function VideoQualitySelector({
         <Button
           variant="ghost"
           size="sm"
-          className="h-8 w-8 p-0 bg-black/50 hover:bg-black/70 text-white"
+          className="h-8 w-8 p-0 bg-background/50 hover:bg-background/70 text-foreground"
         >
           <Settings className="w-4 h-4" />
         </Button>

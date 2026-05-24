@@ -65,9 +65,9 @@ export function ProgressionTracker({ exerciseName, compact = false }: Progressio
   const getAdjustmentIcon = (type: string | null) => {
     switch (type) {
       case 'increase':
-        return <TrendingUp className="w-4 h-4 text-[#FF5500]" />;
+        return <TrendingUp className="w-4 h-4 text-primary" />;
       case 'decrease':
-        return <TrendingDown className="w-4 h-4 text-[#FF5500]" />;
+        return <TrendingDown className="w-4 h-4 text-primary" />;
       case 'deload':
         return <RefreshCw className="w-4 h-4 text-orange-500" />;
       default:
@@ -77,8 +77,8 @@ export function ProgressionTracker({ exerciseName, compact = false }: Progressio
 
   const getAdjustmentColor = (type: string | null) => {
     switch (type) {
-      case 'increase': return 'text-[#FF5500] border-[#FF5500]';
-      case 'decrease': return 'text-[#FF5500] border-[#FF5500]';
+      case 'increase': return 'text-primary border-primary';
+      case 'decrease': return 'text-primary border-primary';
       case 'deload': return 'text-orange-500 border-orange-500';
       default: return 'text-muted-foreground border-muted';
     }

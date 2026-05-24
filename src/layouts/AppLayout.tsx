@@ -375,13 +375,13 @@ export default function AppLayout() {
               <span className={`text-[10px] ${showMore ? 'font-bold' : 'font-medium'}`}>More</span>
               {/* Unread badge */}
               {unreadCount > 0 && !activeTabs.includes('inbox') && (
-                <span className="absolute -top-0.5 right-0 w-4 h-4 bg-[#FF5500] text-[9px] text-white rounded-full flex items-center justify-center font-bold"
+                <span className="absolute -top-0.5 right-0 w-4 h-4 bg-primary text-[9px] text-white rounded-full flex items-center justify-center font-bold"
                   style={{ boxShadow: '0 0 8px rgba(255,85,0,0.5)' }}>
                   {unreadCount > 9 ? '9+' : unreadCount}
                 </span>
               )}
               {showMore && (
-                <div className="absolute -bottom-0.5 w-1 h-1 rounded-full bg-[#FF5500]"
+                <div className="absolute -bottom-0.5 w-1 h-1 rounded-full bg-primary"
                   style={{ boxShadow: '0 0 6px rgba(255,85,0,0.8)' }} />
               )}
             </button>
@@ -392,7 +392,7 @@ export default function AppLayout() {
       {/* ━━━ More Menu Overlay ━━━ */}
       {showMore && (
         <div className="fixed inset-0 z-[55]" onClick={() => { setShowMore(false); setShowCustomize(false); }}>
-          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+          <div className="absolute inset-0 bg-background/70 backdrop-blur-sm" />
           <div
             className="absolute bottom-20 left-3 right-3 max-w-lg sm:mx-auto overflow-hidden animate-in slide-in-from-bottom-4 duration-200"
             style={{
@@ -408,14 +408,14 @@ export default function AppLayout() {
             <div className="flex items-center justify-between px-4 py-3 border-b border-border">
               <div className="flex items-center gap-2.5">
                 <img src={shieldLogo} alt="UNBREAKABLE" className="h-7 w-7 object-contain shield-pulse" />
-                <span className="text-sm font-black uppercase tracking-[0.15em] text-white font-heading">
+                <span className="text-sm font-black uppercase tracking-[0.15em] text-foreground font-heading">
                   Unbreakable
                 </span>
               </div>
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setShowCustomize(!showCustomize)}
-                  className={`p-1.5 rounded-full transition-colors ${showCustomize ? 'bg-[#FF5500]/20 text-[#FF5500]' : 'hover:bg-white/5 text-muted-foreground'}`}
+                  className={`p-1.5 rounded-full transition-colors ${showCustomize ? 'bg-primary/20 text-primary' : 'hover:bg-white/5 text-muted-foreground'}`}
                   title="Customise navigation"
                 >
                   <Settings size={16} />
@@ -430,7 +430,7 @@ export default function AppLayout() {
               /* ─── Customise View ─── */
               <div className="overflow-y-auto" style={{ maxHeight: 'calc(70vh - 56px)' }}>
                 <div className="px-4 py-3 border-b border-white/[0.04]">
-                  <p className="text-[11px] uppercase tracking-wider text-[#FF5500] font-bold mb-1">Customise Navigation</p>
+                  <p className="text-[11px] uppercase tracking-wider text-primary font-bold mb-1">Customise Navigation</p>
                   <p className="text-[10px] text-muted-foreground">Tap to add/remove from your bottom bar (2-6 tabs). Long-press to reorder.</p>
                 </div>
 
@@ -448,14 +448,14 @@ export default function AppLayout() {
                             <button
                               onClick={() => moveTab(id, -1)}
                               disabled={idx === 0}
-                              className="text-muted-foreground hover:text-white disabled:opacity-20 transition-colors"
+                              className="text-muted-foreground hover:text-foreground disabled:opacity-20 transition-colors"
                             >
                               <svg width="12" height="8" viewBox="0 0 12 8"><path d="M6 0L12 8H0z" fill="currentColor"/></svg>
                             </button>
                             <button
                               onClick={() => moveTab(id, 1)}
                               disabled={idx === activeTabs.length - 1}
-                              className="text-muted-foreground hover:text-white disabled:opacity-20 transition-colors"
+                              className="text-muted-foreground hover:text-foreground disabled:opacity-20 transition-colors"
                             >
                               <svg width="12" height="8" viewBox="0 0 12 8"><path d="M6 8L0 0h12z" fill="currentColor"/></svg>
                             </button>
@@ -469,13 +469,13 @@ export default function AppLayout() {
                             )}
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className="text-[13px] font-semibold text-white">{item.label}</p>
+                            <p className="text-[13px] font-semibold text-foreground">{item.label}</p>
                             <p className="text-[10px] text-muted-foreground truncate">{item.description}</p>
                           </div>
                           <button
                             onClick={() => toggleTab(id)}
                             disabled={activeTabs.length <= 2}
-                            className="p-1.5 rounded-full hover:bg-[#FF5500]/10 text-muted-foreground hover:text-[#FF5500] disabled:opacity-20 transition-all"
+                            className="p-1.5 rounded-full hover:bg-primary/10 text-muted-foreground hover:text-primary disabled:opacity-20 transition-all"
                             title="Remove from nav"
                           >
                             <Minus size={14} />
@@ -502,12 +502,12 @@ export default function AppLayout() {
                             </div>
                             <div className="flex-1 min-w-0">
                               <p className="text-[13px] font-semibold text-muted-foreground">{item.label}</p>
-                              <p className="text-[10px] text-[#444] truncate">{item.description}</p>
+                              <p className="text-[10px] text-muted-foreground truncate">{item.description}</p>
                             </div>
                             <button
                               onClick={() => canAdd && toggleTab(item.id)}
                               disabled={!canAdd}
-                              className="p-1.5 rounded-full hover:bg-[#FF5500]/10 text-muted-foreground hover:text-[#FF5500] disabled:opacity-20 transition-all"
+                              className="p-1.5 rounded-full hover:bg-primary/10 text-muted-foreground hover:text-primary disabled:opacity-20 transition-all"
                               title="Add to nav"
                             >
                               <Plus size={14} />
@@ -544,16 +544,16 @@ export default function AppLayout() {
                         navigate(item.path);
                       }}
                       className={`flex items-center gap-3 p-3 rounded-xl text-left transition-all ${
-                        active ? 'bg-[#FF5500]/10' : 'hover:bg-white/[0.03]'
+                        active ? 'bg-primary/10' : 'hover:bg-white/[0.03]'
                       }`}
                     >
                       <div className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                        active ? 'bg-[#FF5500]/20' : 'bg-white/[0.05]'
+                        active ? 'bg-primary/20' : 'bg-white/[0.05]'
                       }`}>
-                        {Icon && <Icon size={18} className={active ? 'text-[#FF5500]' : ''} style={!active ? { color: item.color } : undefined} />}
+                        {Icon && <Icon size={18} className={active ? 'text-primary' : ''} style={!active ? { color: item.color } : undefined} />}
                       </div>
                       <div className="min-w-0">
-                        <p className={`text-[13px] font-semibold truncate ${active ? 'text-[#FF5500]' : 'text-white'}`}>{item.label}</p>
+                        <p className={`text-[13px] font-semibold truncate ${active ? 'text-primary' : 'text-foreground'}`}>{item.label}</p>
                         <p className="text-[10px] text-muted-foreground truncate">{item.description}</p>
                       </div>
                     </button>

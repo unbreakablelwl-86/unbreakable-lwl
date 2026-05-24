@@ -20,16 +20,16 @@ const MindsetGames = () => {
 
   // Game views
   const GameWrapper = ({ children }: { children: React.ReactNode }) => (
-    <div className="min-h-screen pb-24" style={{ background: '#080808' }}>
+    <div className="min-h-screen pb-24" >
       <div className="px-4 pt-4 mb-4">
-        <button onClick={() => setView("selection")} className="flex items-center gap-1 text-gray-500 text-sm hover:text-gray-300 transition-colors">
+        <button onClick={() => setView("selection")} className="flex items-center gap-1 text-muted-foreground text-sm hover:text-muted-foreground transition-colors">
           <ArrowLeft className="w-4 h-4" /> Back
         </button>
       </div>
       <div className="px-4">
         <Suspense fallback={
           <div className="flex items-center justify-center py-20">
-            <p className="font-display text-[#FF5500] tracking-wide animate-pulse">LOADING...</p>
+            <p className="font-display text-primary tracking-wide animate-pulse">LOADING...</p>
           </div>
         }>
           {children}
@@ -43,10 +43,10 @@ const MindsetGames = () => {
   if (view === "tetris") return <GameWrapper><TetrisGame /></GameWrapper>;
 
   return (
-    <div className="min-h-screen pb-24" style={{ background: '#080808' }}>
+    <div className="min-h-screen pb-24" >
       {/* Back nav */}
       <div className="px-4 pt-4">
-        <button onClick={() => navigate('/mindset')} className="flex items-center gap-1 text-gray-500 text-sm hover:text-gray-300 transition-colors">
+        <button onClick={() => navigate('/mindset')} className="flex items-center gap-1 text-muted-foreground text-sm hover:text-muted-foreground transition-colors">
           <ArrowLeft className="w-4 h-4" /> Mind
         </button>
       </div>
@@ -56,10 +56,10 @@ const MindsetGames = () => {
           style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(255,85,0,0.08), transparent 70%)' }} />
         <div className="relative z-10">
           <h1 className="font-display text-2xl tracking-wider text-center">
-            <span className="text-[#FF5500]" style={{ textShadow: '0 0 20px rgba(255,85,0,0.4)' }}>UNBREAKABLE</span>
-            <span className="text-white"> FOCUS</span>
+            <span className="text-primary" style={{ textShadow: '0 0 20px rgba(255,85,0,0.4)' }}>UNBREAKABLE</span>
+            <span className="text-foreground"> FOCUS</span>
           </h1>
-          <p className="text-center text-gray-500 text-sm mt-1 font-display tracking-wide">
+          <p className="text-center text-muted-foreground text-sm mt-1 font-display tracking-wide">
             SWITCH OFF THE WORLD
           </p>
         </div>
@@ -67,17 +67,17 @@ const MindsetGames = () => {
 
       <div className="px-4 space-y-4">
         {/* Description Card */}
-        <div className="p-3.5 rounded-xl border border-[#FF5500]/15 bg-card">
-          <p className="text-gray-400 text-sm leading-relaxed">
-            Life is loud. These games are your <span className="text-[#FF5500] font-semibold">switch-off</span>.
+        <div className="p-3.5 rounded-xl border border-primary/15 bg-card">
+          <p className="text-muted-foreground text-sm leading-relaxed">
+            Life is loud. These games are your <span className="text-primary font-semibold">switch-off</span>.
             Train sustained, unshakeable focus. Auto-scaling difficulty keeps you at your edge —
-            always growing, never coasting. Be <span className="text-[#FF5500] font-semibold">UNBREAKABLE</span>.
+            always growing, never coasting. Be <span className="text-primary font-semibold">UNBREAKABLE</span>.
           </p>
-          <p className="text-[#FF5500] font-display text-xs tracking-wider mt-2">KEEP SHOWING UP.</p>
+          <p className="text-primary font-display text-xs tracking-wider mt-2">KEEP SHOWING UP.</p>
         </div>
 
         {/* Section Header */}
-        <p className="text-xs font-display tracking-wider text-gray-400 pt-2">SELECT YOUR GAME</p>
+        <p className="text-xs font-display tracking-wider text-muted-foreground pt-2">SELECT YOUR GAME</p>
 
         {/* Game Cards — Mindset compact rows */}
         <div className="space-y-2">
@@ -87,16 +87,16 @@ const MindsetGames = () => {
               <button
                 key={game.id}
                 onClick={() => setView(game.id)}
-                className="w-full p-3.5 rounded-xl border border-border bg-card flex items-center gap-3 hover:border-[#FF5500]/30 transition-all group text-left"
+                className="w-full p-3.5 rounded-xl border border-border bg-card flex items-center gap-3 hover:border-primary/30 transition-all group text-left"
               >
-                <div className="w-10 h-10 rounded-lg border border-[#FF5500]/20 flex items-center justify-center shrink-0" style={{ background: 'rgba(255,85,0,0.1)' }}>
-                  <Icon className="w-5 h-5 text-[#FF5500]" style={{ filter: 'drop-shadow(0 0 6px rgba(255,85,0,0.5))' }} />
+                <div className="w-10 h-10 rounded-lg border border-primary/20 flex items-center justify-center shrink-0" style={{ background: 'rgba(255,85,0,0.1)' }}>
+                  <Icon className="w-5 h-5 text-primary" style={{ filter: 'drop-shadow(0 0 6px rgba(255,85,0,0.5))' }} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-display text-sm tracking-wider text-white">{game.name}</p>
-                  <p className="text-gray-500 text-xs mt-0.5">{game.tagline}</p>
+                  <p className="font-display text-sm tracking-wider text-foreground">{game.name}</p>
+                  <p className="text-muted-foreground text-xs mt-0.5">{game.tagline}</p>
                 </div>
-                <ChevronRight className="w-4 h-4 text-gray-600 group-hover:text-[#FF5500] transition-colors shrink-0" />
+                <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
               </button>
             );
           })}

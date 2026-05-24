@@ -137,7 +137,7 @@ export function U86Onboarding({ onComplete, onBack }: U86OnboardingProps) {
                     onClick={() => setAnswers(a => ({ ...a, experience: opt.value as any }))}
                     className={`w-full rounded-xl border p-4 text-left transition-all ${
                       answers.experience === opt.value
-                        ? 'border-primary/40 bg-primary/10 shadow-[0_0_15px_rgba(255,85,0,0.1)]'
+                        ? 'border-primary/40 bg-primary/10 shadow-[0_0_12px_hsl(var(--primary)/0.3)]'
                         : 'border-border bg-card hover:border-border/80'
                     }`}
                   >
@@ -165,7 +165,7 @@ export function U86Onboarding({ onComplete, onBack }: U86OnboardingProps) {
                       onClick={() => setAnswers(a => ({ ...a, equipment: opt.value as any }))}
                       className={`w-full rounded-xl border p-4 text-left transition-all flex items-start gap-3 ${
                         answers.equipment === opt.value
-                          ? 'border-primary/40 bg-primary/10 shadow-[0_0_15px_rgba(255,85,0,0.1)]'
+                          ? 'border-primary/40 bg-primary/10 shadow-[0_0_12px_hsl(var(--primary)/0.3)]'
                           : 'border-border bg-card hover:border-border/80'
                       }`}
                     >
@@ -192,7 +192,7 @@ export function U86Onboarding({ onComplete, onBack }: U86OnboardingProps) {
                       onClick={() => setAnswers(a => ({ ...a, training_days: d }))}
                       className={`w-16 h-16 rounded-xl border font-display text-2xl transition-all ${
                         answers.training_days === d
-                          ? 'border-primary/40 bg-primary/10 text-primary shadow-[0_0_15px_rgba(255,85,0,0.15)]'
+                          ? 'border-primary/40 bg-primary/10 text-primary shadow-[0_0_12px_hsl(var(--primary)/0.3)]'
                           : 'border-border bg-card text-muted-foreground hover:border-border/80'
                       }`}
                     >

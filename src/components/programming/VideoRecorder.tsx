@@ -361,7 +361,7 @@ export function VideoRecorder({
         </div>
       ) : isRecording ? (
         <div className="space-y-3">
-          <div className="relative aspect-video bg-black rounded-lg overflow-hidden">
+          <div className="relative aspect-video bg-background rounded-lg overflow-hidden">
             {/* Key fix: Ensure video element is always mounted and visible during recording */}
             <video
               ref={videoRef}
@@ -398,7 +398,7 @@ export function VideoRecorder({
         </div>
       ) : previewUrl ? (
         <div className="space-y-3">
-          <div className="relative aspect-video bg-black rounded-lg overflow-hidden">
+          <div className="relative aspect-video bg-background rounded-lg overflow-hidden">
             <video
               src={previewUrl}
               controls

@@ -903,7 +903,7 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
       />
       
       <Dialog open={isOpen && phase !== 'countdown'} onOpenChange={handleClose}>
-        <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto border-[#FF5500]/15 shadow-[0_0_40px_rgba(255,85,0,0.08)] bg-background border-border" style={{ background: '#0A0A0A' }}>
+        <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto border-primary/15 shadow-[0_0_12px_hsl(var(--primary)/0.3)] bg-background border-border" style={{ background: '#0A0A0A' }}>
           <AnimatePresence mode="wait">
             {/* Activity Selection */}
             {phase === 'select' && (
@@ -914,7 +914,7 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
                 exit={{ opacity: 0 }}
               >
                 <DialogHeader>
-                  <DialogTitle className="font-display text-2xl tracking-wide text-center text-[#FF5500]" style={{ textShadow: '0 0 20px rgba(255,85,0,0.4)' }}>
+                  <DialogTitle className="font-display text-2xl tracking-wide text-center text-primary" style={{ textShadow: '0 0 20px rgba(255,85,0,0.4)' }}>
                     CARDIO TRACKER
                   </DialogTitle>
                 </DialogHeader>
@@ -926,8 +926,8 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
                       onClick={() => setEntryMode('live')}
                       className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-xs font-display tracking-wide transition-all ${
                         entryMode === 'live'
-                          ? 'bg-[#FF5500]/20 text-[#FF5500] shadow-[0_0_15px_rgba(255,85,0,0.15)]'
-                          : 'text-gray-500 hover:text-gray-300'
+                          ? 'bg-primary/20 text-primary shadow-[0_0_12px_hsl(var(--primary)/0.3)]'
+                          : 'text-muted-foreground hover:text-muted-foreground'
                       }`}
                     >
                       <Timer className="w-4 h-4" />
@@ -937,8 +937,8 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
                       onClick={() => setEntryMode('manual')}
                       className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-xs font-display tracking-wide transition-all ${
                         entryMode === 'manual'
-                          ? 'bg-[#FF5500]/20 text-[#FF5500] shadow-[0_0_15px_rgba(255,85,0,0.15)]'
-                          : 'text-gray-500 hover:text-gray-300'
+                          ? 'bg-primary/20 text-primary shadow-[0_0_12px_hsl(var(--primary)/0.3)]'
+                          : 'text-muted-foreground hover:text-muted-foreground'
                       }`}
                     >
                       <Edit3 className="w-4 h-4" />
@@ -946,7 +946,7 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
                     </button>
                   </div>
 
-                  <p className="text-center text-gray-500 text-sm">
+                  <p className="text-center text-muted-foreground text-sm">
                     {entryMode === 'live' 
                       ? 'Track with GPS in real-time' 
                       : 'Log a completed session manually'}
@@ -959,8 +959,8 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
                         onClick={() => setVoiceEnabled(!voiceEnabled)}
                         className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-display tracking-wide transition-all border ${
                           voiceEnabled
-                            ? 'bg-[#FF5500]/15 text-[#FF5500] border-[#FF5500]/30'
-                            : 'bg-card text-gray-500 border-border'
+                            ? 'bg-primary/15 text-primary border-primary/30'
+                            : 'bg-card text-muted-foreground border-border'
                         }`}
                       >
                         {voiceEnabled ? '🔊 VOICE ON' : '🔇 VOICE OFF'}
@@ -975,17 +975,17 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
                       return (
                         <button
                           key={type}
-                          className="p-5 cursor-pointer rounded-xl border border-[#FF5500]/20 bg-card 
-                            hover:border-[#FF5500]/50 hover:bg-[#FF5500]/10 hover:shadow-[0_0_20px_rgba(255,85,0,0.15)]
+                          className="p-5 cursor-pointer rounded-xl border border-primary/20 bg-card 
+                            hover:border-primary/50 hover:bg-primary/10 hover:shadow-[0_0_12px_hsl(var(--primary)/0.3)]
                             transition-all duration-200 active:scale-95"
                           onClick={() => selectActivity(type)}
                         >
                           <div className="flex flex-col items-center gap-3">
-                            <div className="w-14 h-14 rounded-full bg-card border border-[#FF5500]/20 flex items-center justify-center"
+                            <div className="w-14 h-14 rounded-full bg-card border border-primary/20 flex items-center justify-center"
                               style={{ boxShadow: '0 0 15px rgba(255,85,0,0.15)' }}>
-                              <Icon className="w-7 h-7 text-[#FF5500]" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.5))' }} />
+                              <Icon className="w-7 h-7 text-primary" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.5))' }} />
                             </div>
-                            <span className="font-display text-sm tracking-wide text-[#FF5500]">
+                            <span className="font-display text-sm tracking-wide text-primary">
                               {cfg.label}
                             </span>
                           </div>
@@ -1177,9 +1177,9 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
                         }`}
                       />
                       <span className={
-                        gpsStatus === 'active' ? 'text-[#FF5500]' : 
-                        gpsStatus === 'weak' ? 'text-[#FF5500]' :
-                        gpsStatus === 'acquiring' ? 'text-[#FF5500]' : 
+                        gpsStatus === 'active' ? 'text-primary' : 
+                        gpsStatus === 'weak' ? 'text-primary' :
+                        gpsStatus === 'acquiring' ? 'text-primary' : 
                         gpsStatus === 'paused' ? 'text-primary' : 'text-destructive'
                       }>
                         {gpsStatus === 'active' ? 'GPS Tracking' : 
@@ -1268,7 +1268,7 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
                   <motion.div
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="absolute inset-0 flex items-center justify-center bg-black/80 backdrop-blur-sm rounded-lg z-20"
+                    className="absolute inset-0 flex items-center justify-center bg-background/80 backdrop-blur-sm rounded-lg z-20"
                   >
                     <div className="text-center space-y-4 p-6">
                       <p className="font-display text-xl text-foreground tracking-wide">END SESSION?</p>

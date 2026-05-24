@@ -83,7 +83,7 @@ export default function UniversityChapter() {
               LEVEL {levelNum} — UNIT {unitNum} — CHAPTER {chapterNum}
             </p>
             {quizPassed && (
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#FF5500]/15 text-[10px] text-[#FF5500] font-display tracking-wider">
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/15 text-[10px] text-primary font-display tracking-wider">
                 <CheckCircle className="w-3 h-3" /> COMPLETE
               </span>
             )}
@@ -114,7 +114,7 @@ export default function UniversityChapter() {
                 transition={{ delay: i * 0.05 }}
                 className={`h-1.5 flex-1 rounded-full transition-colors origin-left ${
                   i + 1 < chapterNum
-                    ? 'bg-[#FF5500]/50'
+                    ? 'bg-primary/50'
                     : i + 1 === chapterNum
                     ? colors.progressFill
                     : 'bg-muted/30'
@@ -173,7 +173,7 @@ export default function UniversityChapter() {
               <Button
                 variant="outline"
                 onClick={() => navigate(`/university/${ct}/level-${levelNum}/unit-${unitNum}/chapter-${chapterNum}/quiz`)}
-                className="w-full gap-2 h-11 text-[#FF5500] border-[#FF5500]/30 hover:bg-[#FF5500]/5"
+                className="w-full gap-2 h-11 text-primary border-primary/30 hover:bg-primary/5"
               >
                 <CheckCircle className="w-4 h-4" />
                 Quiz Passed — Retake for Practice

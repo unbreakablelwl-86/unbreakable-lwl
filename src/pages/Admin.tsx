@@ -30,10 +30,10 @@ export default function Admin() {
 
   return (
     <AdminProtectedRoute>
-      <div className="min-h-screen pb-24" style={{ background: '#080808' }}>
+      <div className="min-h-screen pb-24" className="bg-background">
         {/* Back nav */}
         <div className="px-4 pt-4">
-          <button onClick={() => navigate('/')} className="flex items-center gap-1 text-gray-500 text-sm hover:text-gray-300 transition-colors">
+          <button onClick={() => navigate('/')} className="flex items-center gap-1 text-muted-foreground text-sm hover:text-muted-foreground transition-colors">
             <ArrowLeft className="w-4 h-4" /> Home
           </button>
         </div>
@@ -44,10 +44,10 @@ export default function Admin() {
             style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(255,85,0,0.08), transparent 70%)' }} />
           <div className="relative z-10">
             <h1 className="font-display text-2xl tracking-wider text-center">
-              <span className="text-[#FF5500]" style={{ textShadow: '0 0 20px rgba(255,85,0,0.4)' }}>DEV</span>
-              <span className="text-white"> DASHBOARD</span>
+              <span className="text-primary" style={{ textShadow: '0 0 20px rgba(255,85,0,0.4)' }}>DEV</span>
+              <span className="text-foreground"> DASHBOARD</span>
             </h1>
-            <p className="text-center text-gray-500 text-sm mt-1 font-display tracking-wide">
+            <p className="text-center text-muted-foreground text-sm mt-1 font-display tracking-wide">
               {role?.toUpperCase() || 'ADMIN'} • COMMAND CENTRE
             </p>
           </div>
@@ -62,8 +62,8 @@ export default function Admin() {
                 onClick={() => setActiveTab(t.id)}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-display tracking-wider whitespace-nowrap transition-all ${
                   activeTab === t.id
-                    ? 'bg-[#FF5500] text-white'
-                    : 'border border-[#FF5500]/30 text-gray-400 hover:border-[#FF5500]/60'
+                    ? 'bg-primary text-white'
+                    : 'border border-primary/30 text-muted-foreground hover:border-primary/60'
                 }`}
               >
                 <t.icon className="w-3.5 h-3.5" />

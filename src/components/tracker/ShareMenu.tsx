@@ -158,7 +158,7 @@ export function ShareMenu({ onShareToStory, shareText, shareUrl }: ShareMenuProp
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/50 z-[70]"
+              className="fixed inset-0 bg-background/50 z-[70]"
               onClick={() => setShowSheet(false)}
             />
             {/* Sheet */}
@@ -199,7 +199,7 @@ export function ShareMenu({ onShareToStory, shareText, shareUrl }: ShareMenuProp
                   )}
                   {/* Instagram — opens native share on mobile, hint on desktop */}
                   {canNativeShare && (
-                    <ShareCircle label="Instagram" onClick={handleNativeShare} className="text-[#FF5500]">
+                    <ShareCircle label="Instagram" onClick={handleNativeShare} className="text-primary">
                       <InstagramIcon />
                     </ShareCircle>
                   )}
@@ -214,11 +214,11 @@ export function ShareMenu({ onShareToStory, shareText, shareUrl }: ShareMenuProp
                     <TwitterXIcon />
                   </ShareCircle>
                   {/* Facebook */}
-                  <ShareCircle label="Facebook" onClick={() => openShare('facebook')} className="text-[#FF5500]">
+                  <ShareCircle label="Facebook" onClick={() => openShare('facebook')} className="text-primary">
                     <FacebookIcon />
                   </ShareCircle>
                   {/* WhatsApp */}
-                  <ShareCircle label="WhatsApp" onClick={() => openShare('whatsapp')} className="text-[#FF5500]">
+                  <ShareCircle label="WhatsApp" onClick={() => openShare('whatsapp')} className="text-primary">
                     <WhatsAppIcon />
                   </ShareCircle>
                   {/* Copy link */}

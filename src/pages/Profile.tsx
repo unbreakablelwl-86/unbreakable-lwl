@@ -68,17 +68,17 @@ function FollowListModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/70 backdrop-blur-sm" onClick={onClose}>
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
         className="w-full max-w-sm mx-4 overflow-hidden rounded-2xl"
-        style={{ background: '#111', border: '1px solid rgba(255,255,255,0.08)' }}
+        className="bg-card border border-border"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between p-4 border-b border-border">
-          <h3 className="font-heading font-bold text-sm tracking-wider text-white uppercase">{title}</h3>
+          <h3 className="font-heading font-bold text-sm tracking-wider text-foreground uppercase">{title}</h3>
           <button onClick={onClose} className="p-1 hover:bg-white/[0.05] rounded-full transition-colors">
             <X className="w-5 h-5 text-muted-foreground" />
           </button>
@@ -86,7 +86,7 @@ function FollowListModal({
         <div className="max-h-96 overflow-y-auto">
           {loading ? (
             <div className="flex justify-center py-12">
-              <div className="w-6 h-6 border-2 border-[#FF5500] border-t-transparent rounded-full animate-spin" />
+              <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
             </div>
           ) : users.length === 0 ? (
             <div className="py-12 text-center text-muted-foreground text-sm">No users yet</div>
@@ -104,7 +104,7 @@ function FollowListModal({
                   </AvatarFallback>
                 </Avatar>
                 <div className="min-w-0">
-                  <p className="font-semibold text-sm text-white truncate">
+                  <p className="font-semibold text-sm text-foreground truncate">
                     {u.display_name || u.username || 'Athlete'}
                   </p>
                   {u.username && <p className="text-xs text-muted-foreground truncate">@{u.username}</p>}
@@ -132,7 +132,7 @@ function PostGridItem({ post, onClick }: { post: OwnPost; onClick: () => void })
     <button
       onClick={onClick}
       className="relative aspect-square overflow-hidden group"
-      style={{ background: '#111' }}
+      className="bg-card"
     >
       {thumbnail ? (
         <img src={thumbnail} alt="" className="w-full h-full object-cover" />
@@ -144,20 +144,20 @@ function PostGridItem({ post, onClick }: { post: OwnPost; onClick: () => void })
 
       {isVideo && (
         <div className="absolute top-2 right-2">
-          <Play className="w-4 h-4 text-white drop-shadow-lg" fill="white" />
+          <Play className="w-4 h-4 text-foreground drop-shadow-lg" fill="white" />
         </div>
       )}
       {hasMultiple && (
         <div className="absolute top-2 right-2">
-          <Grid3X3 className="w-4 h-4 text-white drop-shadow-lg" />
+          <Grid3X3 className="w-4 h-4 text-foreground drop-shadow-lg" />
         </div>
       )}
 
-      <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4">
-        <span className="flex items-center gap-1 text-white text-sm font-bold">
+      <div className="absolute inset-0 bg-background/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4">
+        <span className="flex items-center gap-1 text-foreground text-sm font-bold">
           <Heart className="w-4 h-4" fill="white" /> {post.kudos_count}
         </span>
-        <span className="flex items-center gap-1 text-white text-sm font-bold">
+        <span className="flex items-center gap-1 text-foreground text-sm font-bold">
           <MessageSquare className="w-4 h-4" fill="white" /> {post.comments_count}
         </span>
       </div>
@@ -181,12 +181,12 @@ function PostDetailModal({
   const displayName = profile.display_name || profile.username || 'You';
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm" onClick={onClose}>
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         className="w-full max-w-2xl mx-4 overflow-hidden max-h-[90vh] flex flex-col rounded-2xl"
-        style={{ background: '#111', border: '1px solid rgba(255,255,255,0.06)' }}
+        className="bg-card border border-border"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between p-4 border-b border-border shrink-0">
@@ -198,7 +198,7 @@ function PostDetailModal({
               </AvatarFallback>
             </Avatar>
             <div>
-              <p className="font-semibold text-sm text-white">{displayName}</p>
+              <p className="font-semibold text-sm text-foreground">{displayName}</p>
               <p className="text-xs text-muted-foreground">
                 {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
               </p>
@@ -212,9 +212,9 @@ function PostDetailModal({
         {mediaUrl && (
           <div className="border-b border-white/[0.04] shrink-0">
             {isVideo ? (
-              <video src={mediaUrl} controls className="w-full max-h-[50vh] object-contain bg-black" />
+              <video src={mediaUrl} controls className="w-full max-h-[50vh] object-contain bg-background" />
             ) : (
-              <img src={mediaUrl} alt="" className="w-full max-h-[50vh] object-contain bg-black" />
+              <img src={mediaUrl} alt="" className="w-full max-h-[50vh] object-contain bg-background" />
             )}
           </div>
         )}
@@ -291,21 +291,21 @@ export default function Profile() {
 
   if (authLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: '#080808' }}>
-        <div className="w-10 h-10 border-2 border-[#FF5500] border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen flex items-center justify-center" >
+        <div className="w-10 h-10 border-2 border-primary border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
   if (!user || !profile) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center px-6" style={{ background: '#080808' }}>
+      <div className="min-h-screen flex flex-col items-center justify-center px-6" >
         <img src={shieldLogo} alt="UNBREAKABLE" className="h-20 w-20 shield-pulse mb-6" />
-        <h1 className="font-heading font-black text-2xl text-white uppercase tracking-wider mb-2">Your Profile</h1>
+        <h1 className="font-heading font-black text-2xl text-foreground uppercase tracking-wider mb-2">Your Profile</h1>
         <p className="text-muted-foreground text-center mb-6">Sign in to view your profile, track progress, and connect with others.</p>
         <button
           onClick={() => setShowAuthModal(true)}
-          className="px-8 py-3 rounded-xl font-heading font-bold text-sm uppercase tracking-wider text-white"
+          className="px-8 py-3 rounded-xl font-heading font-bold text-sm uppercase tracking-wider text-foreground"
           style={{ background: 'linear-gradient(135deg, #FF5500, #CC4400)', boxShadow: '0 0 20px rgba(255,85,0,0.3)' }}
         >
           SIGN IN
@@ -319,21 +319,21 @@ export default function Profile() {
   const initials = displayName.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
 
   return (
-    <div className="min-h-screen" style={{ background: '#080808' }}>
+    <div className="min-h-screen" >
       {/* ━━━ Instagram-style Profile Header ━━━ */}
       <header className="sticky top-0 z-40 border-b border-border"
         style={{ background: 'rgba(8,8,8,0.95)', backdropFilter: 'blur(20px)' }}>
         <div className="px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <h1 className="text-lg font-semibold text-white">{displayName}</h1>
-            <BadgeCheck size={16} className="text-[#FF5500]" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.4))' }} />
+            <h1 className="text-lg font-semibold text-foreground">{displayName}</h1>
+            <BadgeCheck size={16} className="text-primary" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.4))' }} />
           </div>
           <div className="flex items-center gap-2">
             <button onClick={() => setActiveTab('settings')} className="p-2 rounded-full hover:bg-white/[0.05] transition-colors">
-              <Settings size={22} className="text-white" />
+              <Settings size={22} className="text-foreground" />
             </button>
             <button className="p-2 rounded-full hover:bg-white/[0.05] transition-colors">
-              <MoreHorizontal size={22} className="text-white" />
+              <MoreHorizontal size={22} className="text-foreground" />
             </button>
           </div>
         </div>
@@ -345,7 +345,7 @@ export default function Profile() {
           {/* Avatar with gradient ring */}
           <div className="w-20 h-20 rounded-full p-[3px] flex-shrink-0"
             style={{ background: 'linear-gradient(135deg, #FF5500, #FF8C00, #FFB300)' }}>
-            <div className="w-full h-full rounded-full border-2 border-[#080808] overflow-hidden" style={{ background: '#1a1a1a' }}>
+            <div className="w-full h-full rounded-full border-2 border-border overflow-hidden" className="bg-muted">
               <Avatar className="w-full h-full">
                 <AvatarImage src={profile.avatar_url || undefined} />
                 <AvatarFallback className="bg-muted text-muted-foreground font-heading text-xl font-bold w-full h-full flex items-center justify-center">
@@ -358,15 +358,15 @@ export default function Profile() {
           {/* Stats */}
           <div className="flex-1 flex items-center justify-around">
             <div className="text-center">
-              <p className="text-lg font-bold text-white">{postCount}</p>
+              <p className="text-lg font-bold text-foreground">{postCount}</p>
               <p className="text-[11px] text-muted-foreground">Posts</p>
             </div>
             <button onClick={() => openFollowList('followers')} className="text-center hover:opacity-70 transition-opacity">
-              <p className="text-lg font-bold text-white">{followerCount}</p>
+              <p className="text-lg font-bold text-foreground">{followerCount}</p>
               <p className="text-[11px] text-muted-foreground">Followers</p>
             </button>
             <button onClick={() => openFollowList('following')} className="text-center hover:opacity-70 transition-opacity">
-              <p className="text-lg font-bold text-white">{followingCount}</p>
+              <p className="text-lg font-bold text-foreground">{followingCount}</p>
               <p className="text-[11px] text-muted-foreground">Following</p>
             </button>
           </div>
@@ -374,7 +374,7 @@ export default function Profile() {
 
         {/* Bio */}
         <div className="mt-4 space-y-1">
-          <p className="text-sm font-semibold text-white">{displayName}</p>
+          <p className="text-sm font-semibold text-foreground">{displayName}</p>
           {profile.username && <p className="text-sm text-muted-foreground">@{profile.username}</p>}
           {profile.bio && (
             <p className="text-sm text-foreground/80 whitespace-pre-line leading-relaxed">{profile.bio}</p>
@@ -403,22 +403,22 @@ export default function Profile() {
         <div className="flex gap-2 mt-4">
           <button
             onClick={() => setActiveTab('settings')}
-            className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-white transition-colors"
-            style={{ background: '#222' }}
+            className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-foreground transition-colors"
+            className="bg-muted"
           >
             Edit Profile
           </button>
           <button
             onClick={() => navigate('/inbox')}
-            className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-white transition-colors"
-            style={{ background: '#222' }}
+            className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-foreground transition-colors"
+            className="bg-muted"
           >
             Share Profile
           </button>
           <button
             onClick={() => navigate('/admin')}
-            className="py-2.5 px-4 rounded-xl text-sm font-semibold text-white transition-colors"
-            style={{ background: '#222' }}
+            className="py-2.5 px-4 rounded-xl text-sm font-semibold text-foreground transition-colors"
+            className="bg-muted"
             title="Admin & Content Studio"
           >
             ⚙️
@@ -437,18 +437,18 @@ export default function Profile() {
             { label: 'Education', icon: GraduationCap, path: '/university' },
           ].map(({ label, icon: Icon, path }) => (
             <button key={label} onClick={() => navigate(path)} className="flex flex-col items-center gap-1.5 group">
-              <div className="w-16 h-16 rounded-full flex items-center justify-center border border-[#FF5500]/20 group-hover:border-[#FF5500]/50 transition-all"
+              <div className="w-16 h-16 rounded-full flex items-center justify-center border border-primary/20 group-hover:border-primary/50 transition-all"
                 style={{ background: 'rgba(255,85,0,0.06)' }}>
-                <Icon className="w-6 h-6 text-[#FF5500]" style={{ filter: 'drop-shadow(0 0 6px rgba(255,85,0,0.4))' }} />
+                <Icon className="w-6 h-6 text-primary" style={{ filter: 'drop-shadow(0 0 6px rgba(255,85,0,0.4))' }} />
               </div>
-              <span className="text-[11px] text-gray-400 font-display tracking-wider group-hover:text-[#FF5500] transition-colors">{label}</span>
+              <span className="text-[11px] text-muted-foreground font-display tracking-wider group-hover:text-primary transition-colors">{label}</span>
             </button>
           ))}
         </div>
       </section>
 
       {/* ━━━ Tab Bar ━━━ */}
-      <div className="flex border-b border-border sticky top-[57px] z-30" style={{ background: '#080808' }}>
+      <div className="flex border-b border-border sticky top-[57px] z-30" >
         {[
           { key: 'posts' as const, icon: Grid3X3 },
           { key: 'saved' as const, icon: Bookmark },
@@ -458,7 +458,7 @@ export default function Profile() {
             key={key}
             onClick={() => setActiveTab(key)}
             className={`flex-1 py-3 flex justify-center transition-colors relative ${
-              activeTab === key ? 'text-white' : 'text-muted-foreground'
+              activeTab === key ? 'text-foreground' : 'text-muted-foreground'
             }`}
           >
             <Icon size={20} />
@@ -474,11 +474,11 @@ export default function Profile() {
         <section className="px-0.5">
           {postsLoading ? (
             <div className="flex justify-center py-16">
-              <div className="w-6 h-6 border-2 border-[#FF5500] border-t-transparent rounded-full animate-spin" />
+              <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
             </div>
           ) : posts.length === 0 ? (
             <div className="text-center py-20">
-              <ImageIcon className="w-12 h-12 text-[#444] mx-auto mb-3" />
+              <ImageIcon className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
               <p className="font-heading font-bold text-sm text-muted-foreground uppercase tracking-wider">No Posts Yet</p>
               <p className="text-xs text-muted-foreground mt-1">Share your first post from the feed!</p>
             </div>
@@ -494,7 +494,7 @@ export default function Profile() {
 
       {activeTab === 'saved' && (
         <div className="text-center py-20">
-          <Bookmark className="w-12 h-12 text-[#444] mx-auto mb-3" />
+          <Bookmark className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
           <p className="font-heading font-bold text-sm text-muted-foreground uppercase tracking-wider">Saved Posts</p>
           <p className="text-xs text-muted-foreground mt-1">Save posts to view them later</p>
         </div>
@@ -502,7 +502,7 @@ export default function Profile() {
 
       {activeTab === 'tagged' && (
         <div className="text-center py-20">
-          <Tag className="w-12 h-12 text-[#444] mx-auto mb-3" />
+          <Tag className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
           <p className="font-heading font-bold text-sm text-muted-foreground uppercase tracking-wider">Tagged Posts</p>
           <p className="text-xs text-muted-foreground mt-1">Posts where you've been tagged</p>
         </div>
@@ -511,8 +511,8 @@ export default function Profile() {
       {activeTab === 'settings' && (
         <section className="px-4 py-6 space-y-6 max-w-2xl mx-auto">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="font-heading font-bold text-lg text-white uppercase tracking-wider">Edit Profile</h2>
-            <button onClick={() => setActiveTab('posts')} className="text-sm text-[#FF5500] font-semibold">Done</button>
+            <h2 className="font-heading font-bold text-lg text-foreground uppercase tracking-wider">Edit Profile</h2>
+            <button onClick={() => setActiveTab('posts')} className="text-sm text-primary font-semibold">Done</button>
           </div>
           <AthleteCoachSection />
           <ProfileView />
