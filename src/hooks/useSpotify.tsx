@@ -5,7 +5,8 @@
 import { useState, useEffect, useCallback } from 'react';
 
 const SPOTIFY_CLIENT_ID = '3d28eae161cd4213bc02640e994d7bb0';
-const SPOTIFY_REDIRECT_URI = `${window.location.origin}/callback/spotify`;
+// Must match EXACTLY what's in Spotify Developer Dashboard → Settings → Redirect URIs
+const SPOTIFY_REDIRECT_URI = 'https://www.unbreakable-lwl.com/callback/spotify';
 const SPOTIFY_SCOPES = [
   'user-read-private',
   'user-read-email',
