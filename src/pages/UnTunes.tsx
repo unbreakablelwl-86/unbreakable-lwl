@@ -5,6 +5,7 @@ import {
   Play, Heart, MoreHorizontal, Clock, Headphones, Radio,
   Disc3, Podcast, ChevronRight, Sparkles, Crown, Star,
   Share2, Dumbbell, Footprints, Guitar, Flame, Waves, Swords, Drum,
+  Zap, Activity, Brain, ChevronDown,
 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -12,7 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/hooks/useAuth';
 import { useUserRole } from '@/hooks/useUserRole';
-import { usePlayer, useFeaturedTracks, useArtists, useMyPlaylists, useMyArtistProfile, useSearchTracks, GENRES } from '@/hooks/useUnTunes';
+import { usePlayer, useFeaturedTracks, useArtists, useMyPlaylists, useMyArtistProfile, useSearchTracks, GENRES, GENRE_CATEGORIES } from '@/hooks/useUnTunes';
 import type { Track } from '@/hooks/useUnTunes';
 import { UnTunesTrackRow } from '@/components/untunes/TrackRow';
 import { UnTunesArtistCard } from '@/components/untunes/ArtistCard';
@@ -28,6 +29,7 @@ const fadeIn = { initial: { opacity: 0, y: 12 }, animate: { opacity: 1, y: 0 } }
 /* ── Map genre icon names to Lucide components ── */
 const GENRE_ICONS: Record<string, React.ComponentType<any>> = {
   Dumbbell, Footprints, Mic2, Headphones, Guitar, Flame, Waves, Podcast, Swords, Drum,
+  Zap, Activity, Brain,
 };
 
 export default function UnTunes() {
@@ -36,6 +38,7 @@ export default function UnTunes() {
   const isDevOrCoach = isDev || isCoach;
   const [activeTab, setActiveTab] = useState<UnTunesTab>('browse');
   const [selectedGenre, setSelectedGenre] = useState<string | null>(null);
+  const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
   const { tracks: featured, loading: featuredLoading } = useFeaturedTracks();
   const { artists, loading: artistsLoading } = useArtists();
   const { playlists } = useMyPlaylists();
@@ -105,25 +108,63 @@ export default function UnTunes() {
           {/* ─── Browse Tab ─── */}
           {activeTab === 'browse' && (
             <motion.div key="browse" {...fadeIn} className="space-y-8">
-              {/* Genre Chips — Lucide icons with neon glow */}
-              <div>
-                <h2 className="font-display text-xs tracking-wider text-muted-foreground mb-3">GENRES</h2>
-                <div className="flex flex-wrap gap-2">
-                  {GENRES.map(g => {
-                    const Icon = GENRE_ICONS[g.icon] || Music;
+              {/* Genre Pillars — 3 main categories with dropdown sub-genres */}
+              <div className="space-y-3">
+                <h2 className="font-display text-xs tracking-wider text-muted-foreground">GENRES</h2>
+                <div className="space-y-2">
+                  {GENRE_CATEGORIES.map(cat => {
+                    const CatIcon = GENRE_ICONS[cat.icon] || Music;
+                    const isExpanded = expandedCategory === cat.key;
+                    const hasActiveGenre = cat.subGenres.some(sg => sg.key === selectedGenre);
                     return (
-                      <button
-                        key={g.key}
-                        onClick={() => setSelectedGenre(selectedGenre === g.key ? null : g.key)}
-                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-display tracking-wider border transition-all ${
-                          selectedGenre === g.key
-                            ? 'bg-primary text-primary-foreground border-primary shadow-[0_0_16px_rgba(255,85,0,0.4)]'
-                            : 'border-border/50 text-muted-foreground hover:border-primary/50 hover:text-foreground bg-card/30'
-                        }`}
-                      >
-                        <Icon className={`w-3.5 h-3.5 ${selectedGenre === g.key ? 'drop-shadow-[0_0_4px_rgba(255,85,0,0.8)]' : ''}`} />
-                        {g.label}
-                      </button>
+                      <div key={cat.key}>
+                        {/* Category Header */}
+                        <button
+                          onClick={() => setExpandedCategory(isExpanded ? null : cat.key)}
+                          className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl border transition-all ${
+                            hasActiveGenre
+                              ? 'bg-primary/10 border-primary/30 shadow-[0_0_16px_rgba(255,85,0,0.15)]'
+                              : 'bg-card/30 border-border/50 hover:border-primary/20 hover:bg-card/50'
+                          }`}
+                        >
+                          <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${
+                            hasActiveGenre ? 'bg-primary/20 shadow-[0_0_12px_rgba(255,85,0,0.3)]' : 'bg-primary/10'
+                          }`}>
+                            <CatIcon className={`w-4.5 h-4.5 text-primary ${hasActiveGenre ? 'drop-shadow-[0_0_6px_rgba(255,85,0,0.6)]' : ''}`} />
+                          </div>
+                          <span className="font-display text-sm tracking-wider text-foreground flex-1 text-left">{cat.label}</span>
+                          <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+                        </button>
+
+                        {/* Sub-genres dropdown */}
+                        <AnimatePresence>
+                          {isExpanded && (
+                            <motion.div
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: 'auto', opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              transition={{ duration: 0.2 }}
+                              className="overflow-hidden"
+                            >
+                              <div className="flex flex-wrap gap-2 pt-2 pl-4">
+                                {cat.subGenres.map(sg => (
+                                  <button
+                                    key={sg.key}
+                                    onClick={() => setSelectedGenre(selectedGenre === sg.key ? null : sg.key)}
+                                    className={`px-3 py-1.5 rounded-full text-xs font-display tracking-wider border transition-all ${
+                                      selectedGenre === sg.key
+                                        ? 'bg-primary text-primary-foreground border-primary shadow-[0_0_12px_rgba(255,85,0,0.4)]'
+                                        : 'border-border/50 text-muted-foreground hover:border-primary/50 hover:text-foreground bg-card/30'
+                                    }`}
+                                  >
+                                    {sg.label}
+                                  </button>
+                                ))}
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
                     );
                   })}
                 </div>
@@ -249,29 +290,35 @@ export default function UnTunes() {
               )}
 
               {!searchQuery && (
-                <div>
-                  <h3 className="font-display text-xs tracking-wider text-muted-foreground mb-4">BROWSE BY GENRE</h3>
-                  <div className="grid grid-cols-2 gap-3">
-                    {GENRES.map(g => {
-                      const Icon = GENRE_ICONS[g.icon] || Music;
-                      return (
-                        <button
-                          key={g.key}
-                          onClick={() => {
-                            setSearchQuery(g.label);
-                            search(g.key);
-                          }}
-                          className="relative overflow-hidden rounded-xl border border-border/50 bg-card/30 p-4 text-left transition-all hover:border-primary/30 hover:bg-card/50 group"
-                        >
-                          <div className="absolute inset-0 opacity-10 group-hover:opacity-20 transition-opacity bg-gradient-to-br from-primary/40 to-transparent" />
-                          <div className="w-8 h-8 rounded-lg bg-primary/15 flex items-center justify-center mb-2 group-hover:shadow-[0_0_12px_rgba(255,85,0,0.3)] transition-shadow">
-                            <Icon className="w-4 h-4 text-primary drop-shadow-[0_0_4px_rgba(255,85,0,0.5)]" />
+                <div className="space-y-6">
+                  {GENRE_CATEGORIES.map(cat => {
+                    const CatIcon = GENRE_ICONS[cat.icon] || Music;
+                    return (
+                      <div key={cat.key}>
+                        <div className="flex items-center gap-2 mb-3">
+                          <div className="w-7 h-7 rounded-lg bg-primary/15 flex items-center justify-center">
+                            <CatIcon className="w-3.5 h-3.5 text-primary drop-shadow-[0_0_4px_rgba(255,85,0,0.5)]" />
                           </div>
-                          <p className="font-display text-sm tracking-wider text-foreground">{g.label}</p>
-                        </button>
-                      );
-                    })}
-                  </div>
+                          <h3 className="font-display text-xs tracking-wider text-muted-foreground">{cat.label}</h3>
+                        </div>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                          {cat.subGenres.map(sg => (
+                            <button
+                              key={sg.key}
+                              onClick={() => {
+                                setSearchQuery(sg.label);
+                                search(sg.key);
+                              }}
+                              className="relative overflow-hidden rounded-xl border border-border/50 bg-card/30 px-4 py-3 text-left transition-all hover:border-primary/30 hover:bg-card/50 group"
+                            >
+                              <div className="absolute inset-0 opacity-5 group-hover:opacity-15 transition-opacity bg-gradient-to-br from-primary/40 to-transparent" />
+                              <p className="font-display text-xs tracking-wider text-foreground relative">{sg.label}</p>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               )}
             </motion.div>

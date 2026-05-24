@@ -438,15 +438,74 @@ export function useSearchTracks() {
 }
 
 /* ─── Genre Definitions ─── */
-export const GENRES = [
-  { key: 'workout', label: 'Workout', icon: 'Dumbbell', color: '#FF5500' },
-  { key: 'running', label: 'Running', icon: 'Footprints', color: '#FF5500' },
-  { key: 'hip-hop', label: 'Hip Hop', icon: 'Mic2', color: '#FF5500' },
-  { key: 'electronic', label: 'Electronic', icon: 'Headphones', color: '#FF5500' },
-  { key: 'rock', label: 'Rock', icon: 'Guitar', color: '#FF5500' },
-  { key: 'motivation', label: 'Motivation', icon: 'Flame', color: '#FF5500' },
-  { key: 'chill', label: 'Chill', icon: 'Waves', color: '#FF5500' },
-  { key: 'podcast', label: 'Podcasts', icon: 'Podcast', color: '#FF5500' },
-  { key: 'boxing', label: 'Boxing', icon: 'Swords', color: '#FF5500' },
-  { key: 'drum-and-bass', label: 'Drum & Bass', icon: 'Drum', color: '#FF5500' },
+/* ── Genre Categories: 3 pillars with sub-genres ── */
+export interface GenreCategory {
+  key: string;
+  label: string;
+  icon: string;
+  subGenres: { key: string; label: string }[];
+}
+
+export const GENRE_CATEGORIES: GenreCategory[] = [
+  {
+    key: 'power',
+    label: 'POWER',
+    icon: 'Zap',
+    subGenres: [
+      { key: 'rock', label: 'Rock' },
+      { key: 'hip-hop', label: 'Hip Hop' },
+      { key: 'drum-and-bass', label: 'Drum & Bass' },
+      { key: 'electronic', label: 'Electronic' },
+      { key: 'metal', label: 'Metal' },
+      { key: 'grime', label: 'Grime' },
+      { key: 'pop', label: 'Pop' },
+      { key: 'rap', label: 'Rap' },
+      { key: 'dance', label: 'Dance' },
+      { key: 'garage', label: 'Garage' },
+    ],
+  },
+  {
+    key: 'movement',
+    label: 'MOVEMENT',
+    icon: 'Activity',
+    subGenres: [
+      { key: 'running', label: 'Running' },
+      { key: 'boxing', label: 'Boxing' },
+      { key: 'football', label: 'Football' },
+      { key: 'rugby', label: 'Rugby' },
+      { key: 'mma', label: 'MMA' },
+      { key: 'swimming', label: 'Swimming' },
+      { key: 'cycling', label: 'Cycling' },
+      { key: 'tennis', label: 'Tennis' },
+      { key: 'basketball', label: 'Basketball' },
+      { key: 'athletics', label: 'Athletics' },
+    ],
+  },
+  {
+    key: 'mindset',
+    label: 'MINDSET',
+    icon: 'Brain',
+    subGenres: [
+      { key: 'chill', label: 'Chill' },
+      { key: 'motivation', label: 'Motivation' },
+      { key: 'podcast', label: 'Podcasts' },
+      { key: 'classical', label: 'Classical' },
+      { key: 'lo-fi', label: 'Lo-Fi' },
+      { key: 'ambient', label: 'Ambient' },
+      { key: 'acoustic', label: 'Acoustic' },
+      { key: 'r-and-b', label: 'R&B' },
+    ],
+  },
+];
+
+/* Flat list for backwards compat */
+export const GENRES = GENRE_CATEGORIES.flatMap(cat =>
+  cat.subGenres.map(sg => ({ key: sg.key, label: sg.label, icon: cat.icon, color: '#FF5500' }))
+);
+
+/* Legacy array kept for compatibility — re-export from flat list */
+export const ALL_GENRE_KEYS = GENRES.map(g => g.key);
+
+// Kept for reference (old shape):
+const _LEGACY_GENRES = [
 ];

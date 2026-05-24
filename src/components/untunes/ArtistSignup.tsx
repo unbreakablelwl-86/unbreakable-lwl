@@ -4,6 +4,7 @@ import {
   Mic2, Music, DollarSign, Upload, Users, TrendingUp,
   ChevronRight, Crown, Sparkles, Star, Zap, CheckCircle,
   Dumbbell, Footprints, Headphones, Guitar, Flame, Waves, Podcast, Swords, Drum,
+  Activity, Brain,
 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -11,13 +12,14 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { GENRES } from '@/hooks/useUnTunes';
+import { GENRES, GENRE_CATEGORIES } from '@/hooks/useUnTunes';
 import { toast } from 'sonner';
 
 const fadeIn = { initial: { opacity: 0, y: 12 }, animate: { opacity: 1, y: 0 } };
 
 const GENRE_ICONS: Record<string, React.ComponentType<any>> = {
   Dumbbell, Footprints, Mic2, Headphones, Guitar, Flame, Waves, Podcast, Swords, Drum,
+  Zap, Activity, Brain,
 };
 
 const FEATURES = [
@@ -174,22 +176,31 @@ export function UnTunesArtistSignup({ isDevOrCoach = false }: ArtistSignupProps)
 
         <div>
           <label className="text-xs font-display tracking-wider text-muted-foreground mb-2 block">GENRES (up to 3)</label>
-          <div className="flex flex-wrap gap-2">
-            {GENRES.map(g => {
-              const Icon = GENRE_ICONS[g.icon] || Music;
+          <div className="space-y-3">
+            {GENRE_CATEGORIES.map(cat => {
+              const CatIcon = GENRE_ICONS[cat.icon] || Music;
               return (
-                <button
-                  key={g.key}
-                  onClick={() => toggleGenre(g.key)}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-display tracking-wider border transition-all ${
-                    selectedGenres.includes(g.key)
-                      ? 'bg-primary text-primary-foreground border-primary shadow-[0_0_12px_rgba(255,85,0,0.3)]'
-                      : 'border-border/50 text-muted-foreground hover:border-primary/50'
-                  }`}
-                >
-                  <Icon className="w-3 h-3" />
-                  {g.label}
-                </button>
+                <div key={cat.key}>
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <CatIcon className="w-3.5 h-3.5 text-primary" />
+                    <span className="font-display text-[10px] tracking-wider text-muted-foreground">{cat.label}</span>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {cat.subGenres.map(sg => (
+                      <button
+                        key={sg.key}
+                        onClick={() => toggleGenre(sg.key)}
+                        className={`px-2.5 py-1 rounded-full text-[11px] font-display tracking-wider border transition-all ${
+                          selectedGenres.includes(sg.key)
+                            ? 'bg-primary text-primary-foreground border-primary shadow-[0_0_10px_rgba(255,85,0,0.3)]'
+                            : 'border-border/50 text-muted-foreground hover:border-primary/50'
+                        }`}
+                      >
+                        {sg.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
               );
             })}
           </div>
