@@ -227,12 +227,12 @@ export function FloatingMiniPlayer() {
           >
             {/* Header */}
             <div className="flex items-center justify-between px-4 py-3 border-b border-border/30">
-              <button onClick={() => setExpanded(false)}>
-                <ChevronDown className="w-5 h-5 text-muted-foreground" />
+              <button onClick={() => setExpanded(false)} className="w-10 h-10 flex items-center justify-center rounded-xl bg-primary/15 border border-primary/25 active:scale-90 transition-all">
+                <ChevronDown className="w-6 h-6 text-primary drop-shadow-[0_0_6px_rgba(255,85,0,0.5)]" />
               </button>
               <p className="font-display text-xs tracking-wider text-primary drop-shadow-[0_0_4px_rgba(255,85,0,0.5)]">NOW PLAYING</p>
-              <button>
-                <ListMusic className="w-5 h-5 text-muted-foreground" />
+              <button className="w-10 h-10 flex items-center justify-center rounded-xl bg-muted/10 border border-border/30 active:scale-90 transition-all">
+                <ListMusic className="w-5 h-5 text-foreground" />
               </button>
             </div>
 
