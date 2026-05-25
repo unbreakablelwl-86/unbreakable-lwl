@@ -338,41 +338,7 @@ const MindsetBreathing = () => {
               )}
             </div>
 
-            {/* Visual pattern selector */}
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <Waves className="w-3.5 h-3.5 text-muted-foreground" />
-                <p className="text-xs font-display tracking-wider text-muted-foreground">VISUAL PATTERN</p>
-              </div>
-              <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
-                {BREATH_PATTERNS.map((bp) => (
-                  <button
-                    key={bp.id}
-                    onClick={() => setSelectedPattern(bp.id)}
-                    className={`shrink-0 flex flex-col items-center gap-1.5 px-3 py-2.5 rounded-xl border transition-all ${
-                      selectedPattern === bp.id
-                        ? 'border-primary/40 bg-primary/5 shadow-[0_0_12px_rgba(255,85,0,0.15)]'
-                        : 'border-border/50 bg-card/30 hover:border-primary/20'
-                    }`}
-                  >
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                      selectedPattern === bp.id
-                        ? 'bg-primary text-primary-foreground shadow-lg'
-                        : 'bg-card border border-border text-muted-foreground'
-                    }`}
-                      style={selectedPattern === bp.id ? { boxShadow: `0 0 16px rgba(255,85,0,0.4)` } : {}}
-                    >
-                      {bp.icon}
-                    </div>
-                    <span className={`text-[10px] font-display tracking-wider ${
-                      selectedPattern === bp.id ? 'text-foreground' : 'text-muted-foreground'
-                    }`}>
-                      {bp.name}
-                    </span>
-                  </button>
-                ))}
-              </div>
-            </div>
+            {/* Visual pattern selector — hidden, using orb only */}
           </div>
 
           {/* Section Header */}
@@ -449,15 +415,14 @@ const MindsetBreathing = () => {
             {cycleSec}s per cycle — repeats for your chosen duration
           </p>
 
-          {/* Pattern + voice preview */}
+          {/* Voice preview */}
           <div className="flex items-center justify-center gap-3 mb-6">
             <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-primary-foreground"
               style={{ boxShadow: `0 0 20px rgba(255,85,0,0.4)` }}
             >
-              {BREATH_PATTERNS.find(p => p.id === selectedPattern)?.icon}
+              <Circle className="w-4 h-4" />
             </div>
             <div className="text-left">
-              <p className="text-xs font-display tracking-wider text-primary">{patternLabel} VISUAL</p>
               <p className="text-[10px] text-muted-foreground">
                 {voiceEnabled ? `${voiceGender === 'female' ? 'Female' : 'Male'} voice guidance` : 'Voice off'}
               </p>

@@ -776,6 +776,32 @@ export function StoriesSection() {
                 ));
               })()}
 
+              {/* Music sticker — shown if story has audio track in media_items */}
+              {(() => {
+                const mediaArr = (currentStory as any)?.media_items as Array<any> | undefined;
+                const audioItem = mediaArr?.find((m: any) => m.type === 'audio');
+                if (!audioItem) return null;
+                return (
+                  <div className="absolute bottom-20 left-4 right-4 z-30 pointer-events-none">
+                    <div className="flex items-center gap-2.5 px-3 py-2 rounded-xl bg-black/50 backdrop-blur-md border border-white/10 max-w-[240px]">
+                      <div className="w-9 h-9 rounded-lg overflow-hidden bg-primary/20 shrink-0 shadow-[0_0_6px_rgba(255,85,0,0.3)]">
+                        {audioItem.thumbnail_url ? (
+                          <img src={audioItem.thumbnail_url} alt="" className="w-full h-full object-cover" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 text-primary/60"><path d="M9 18V5l12-2v13" /><circle cx="6" cy="18" r="3" /><circle cx="18" cy="16" r="3" /></svg>
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-semibold text-white truncate">{audioItem.track_title || 'Music'}</p>
+                        <p className="text-[10px] text-white/60 truncate">{audioItem.artist_name || 'Un-Tunes'}</p>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
+
               {/* Legacy text */}
               {currentStory.content && getStoryOverlays(currentStory).length === 0 && (
                 <div className="absolute inset-0 flex items-center justify-center p-6">

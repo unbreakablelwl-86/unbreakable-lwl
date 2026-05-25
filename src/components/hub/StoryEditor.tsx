@@ -4,7 +4,7 @@ import {
   Type, Trash2, X, Check, Image, Video, Palette,
   AlignLeft, AlignCenter, AlignRight, Bold, Loader2,
   Globe, Users, Lock, Undo2, Square, Minus, Plus,
-  Move, Maximize2,
+  Move, Maximize2, Music,
 } from 'lucide-react';
 import { TextOverlayData, DEFAULT_OVERLAY, StoryTextOverlay, FONT_OPTIONS } from './StoryTextOverlay';
 import { Slider } from '@/components/ui/slider';
@@ -13,6 +13,8 @@ import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
 import { Progress } from '@/components/ui/progress';
 import { uploadMediaFile, validateVideoDuration, type MediaUploadItem } from '@/lib/mediaUpload';
+import { TrackPickerSheet } from '@/components/untunes/TrackPickerSheet';
+import type { Track } from '@/hooks/useUnTunes';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface MediaTransform {
@@ -146,6 +148,10 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
   // Per-media transform state (resize/reposition)
   const [mediaTransforms, setMediaTransforms] = useState<Record<number, MediaTransform>>({});
   const [mediaEditMode, setMediaEditMode] = useState<'none' | 'move'>('none');
+
+  // Music overlay state
+  const [showMusicPicker, setShowMusicPicker] = useState(false);
+  const [selectedTrack, setSelectedTrack] = useState<Track | null>(null);
   const mediaDragRef = useRef<{ startX: number; startY: number; startTX: number; startTY: number } | null>(null);
   const mediaPinchRef = useRef<{ dist: number; scale: number } | null>(null);
   
@@ -464,6 +470,19 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
         ovs.map(o => ({ ...o, slideIndex: Number(idx) }))
       );
 
+      // Include music track in media_items if selected
+      const finalMediaItems: StoryMediaItem[] = [...uploadedMedia];
+      if (selectedTrack) {
+        finalMediaItems.push({
+          type: 'audio' as any,
+          url: selectedTrack.audio_url || '',
+          thumbnail_url: selectedTrack.cover_url || null,
+          track_id: selectedTrack.id,
+          track_title: selectedTrack.title,
+          artist_name: selectedTrack.artist_name || 'Un-Tunes',
+        } as any);
+      }
+
       await onPublish({
         content: null,
         image_url: firstImage?.url || null,
@@ -471,7 +490,7 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
         visibility,
         text_overlays: allOverlays,
         background_color: bgColor,
-        media_items: uploadedMedia,
+        media_items: finalMediaItems,
       });
       toast.success('Story published!');
     } catch (err) {
@@ -656,6 +675,33 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
             />
           </div>
         ))}
+
+        {/* Music sticker overlay — shows when a track is selected */}
+        {selectedTrack && (
+          <div className="absolute bottom-36 left-4 right-4 z-30 pointer-events-none">
+            <div className="flex items-center gap-2.5 px-3 py-2 rounded-xl bg-black/50 backdrop-blur-md border border-white/10 max-w-[260px] mx-auto pointer-events-auto">
+              <div className="w-10 h-10 rounded-lg overflow-hidden bg-primary/20 shrink-0 shadow-[0_0_8px_rgba(255,85,0,0.3)]">
+                {selectedTrack.cover_url ? (
+                  <img src={selectedTrack.cover_url} alt="" className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <Music className="w-4 h-4 text-primary/60" />
+                  </div>
+                )}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-semibold text-white truncate">{selectedTrack.title}</p>
+                <p className="text-[10px] text-white/60 truncate">{selectedTrack.artist_name || 'Un-Tunes'}</p>
+              </div>
+              <button
+                className="w-6 h-6 rounded-full bg-white/10 flex items-center justify-center shrink-0 hover:bg-white/20 transition-colors pointer-events-auto"
+                onClick={() => setSelectedTrack(null)}
+              >
+                <X className="w-3 h-3 text-white/80" />
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Drag-to-delete zone — appears at bottom when dragging */}
         <AnimatePresence>
@@ -964,6 +1010,13 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
                   <Maximize2 className="w-5 h-5" />
                 </button>
               )}
+              {/* Music overlay button */}
+              <button
+                className={`w-11 h-11 rounded-full backdrop-blur-sm flex items-center justify-center active:scale-90 transition-transform ${selectedTrack ? 'bg-primary/30 text-primary' : 'bg-white/10 text-foreground'}`}
+                onClick={(e) => { e.stopPropagation(); setShowMusicPicker(true); }}
+              >
+                <Music className="w-5 h-5" />
+              </button>
             </div>
 
             {/* Share button — right side */}
@@ -988,6 +1041,14 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
         className="hidden"
         onChange={handleFilesSelect}
         multiple
+      />
+
+      {/* Music picker sheet */}
+      <TrackPickerSheet
+        open={showMusicPicker}
+        onOpenChange={setShowMusicPicker}
+        onSelect={(track) => setSelectedTrack(track)}
+        selectedTrackId={selectedTrack?.id}
       />
     </div>
   );

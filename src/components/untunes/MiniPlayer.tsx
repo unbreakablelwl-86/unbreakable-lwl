@@ -2,11 +2,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Play, Pause, SkipBack, SkipForward, Volume2, VolumeX,
   Shuffle, Repeat, Repeat1, ChevronDown, Music,
-  Dumbbell, Share2, ListMusic
+  Dumbbell, Share2, ListMusic, MessageSquare
 } from 'lucide-react';
 import { useState } from 'react';
 import { usePlayer, useLikeTrack } from '@/hooks/useUnTunes';
 import { toast } from 'sonner';
+import { ShareTrackSheet } from './ShareTrackSheet';
 
 function formatTime(seconds: number): string {
   if (!seconds || isNaN(seconds)) return '0:00';
@@ -20,6 +21,7 @@ export function UnTunesMiniPlayer() {
   const { isLiked, toggleLike } = useLikeTrack();
   const [expanded, setExpanded] = useState(false);
   const [showVolume, setShowVolume] = useState(false);
+  const [showShareSheet, setShowShareSheet] = useState(false);
 
   if (!state.currentTrack) return null;
 
@@ -42,6 +44,13 @@ export function UnTunesMiniPlayer() {
 
   return (
     <>
+      {/* Share to timeline sheet */}
+      <ShareTrackSheet
+        open={showShareSheet}
+        onOpenChange={setShowShareSheet}
+        track={track}
+      />
+
       <AnimatePresence>
         {/* Expanded Full Player */}
         {expanded && (
@@ -50,7 +59,7 @@ export function UnTunesMiniPlayer() {
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="fixed inset-0 z-50 bg-background/98 backdrop-blur-xl flex flex-col"
+            className="fixed inset-0 z-[70] bg-background/98 backdrop-blur-xl flex flex-col overflow-y-auto"
           >
             {/* Header */}
             <div className="flex items-center justify-between px-4 py-3 border-b border-border/30">
@@ -64,11 +73,11 @@ export function UnTunesMiniPlayer() {
             </div>
 
             {/* Cover Art */}
-            <div className="flex-1 flex items-center justify-center px-8 py-6">
+            <div className="flex-1 min-h-0 flex items-center justify-center px-8 py-4">
               <motion.div
                 animate={{ rotate: state.isPlaying ? 360 : 0 }}
                 transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
-                className="w-64 h-64 sm:w-72 sm:h-72 rounded-2xl overflow-hidden border-2 border-primary/20 shadow-[0_0_40px_rgba(255,85,0,0.2)]"
+                className="w-56 h-56 sm:w-64 sm:h-64 md:w-72 md:h-72 rounded-2xl overflow-hidden border-2 border-primary/20 shadow-[0_0_40px_rgba(255,85,0,0.2)] shrink-0"
               >
                 {track.cover_url ? (
                   <img src={track.cover_url} alt={track.title} className="w-full h-full object-cover" />
@@ -144,7 +153,7 @@ export function UnTunesMiniPlayer() {
             </div>
 
             {/* Actions */}
-            <div className="flex items-center justify-center gap-8 px-6 pb-8">
+            <div className="flex items-center justify-center gap-8 px-6 pb-[calc(env(safe-area-inset-bottom,8px)+2rem)]">
               <button
                 onClick={() => track && toggleLike(track.id)}
                 className={`transition-colors ${
@@ -154,6 +163,13 @@ export function UnTunesMiniPlayer() {
                 }`}
               >
                 <Dumbbell className="w-5 h-5" />
+              </button>
+              <button
+                onClick={() => setShowShareSheet(true)}
+                className="text-muted-foreground hover:text-primary transition-colors"
+                title="Share to Timeline"
+              >
+                <MessageSquare className="w-5 h-5" />
               </button>
               <button onClick={handleShare} className="text-muted-foreground hover:text-primary transition-colors">
                 <Share2 className="w-5 h-5" />
