@@ -28,11 +28,13 @@ const EXERCISE_TYPE_LABELS: Record<string, string> = {
 interface ExerciseCoachingPanelProps {
   coachingData: ExerciseCoachingData;
   exerciseName: string;
+  gifUrl?: string;
 }
 
 export const ExerciseCoachingPanel = memo(function ExerciseCoachingPanel({
   coachingData,
   exerciseName,
+  gifUrl,
 }: ExerciseCoachingPanelProps) {
   return (
     <motion.div
@@ -41,6 +43,15 @@ export const ExerciseCoachingPanel = memo(function ExerciseCoachingPanel({
       exit={{ opacity: 0, height: 0 }}
       className="space-y-4 pt-2"
     >
+      {/* GIF Preview */}
+      {gifUrl && (
+        <div className="flex justify-center">
+          <div className="w-full max-w-[200px] aspect-square rounded-xl overflow-hidden bg-muted border border-border/50">
+            <img src={gifUrl} alt={exerciseName} className="w-full h-full object-cover" loading="lazy" />
+          </div>
+        </div>
+      )}
+
       {/* Exercise Type & Purpose */}
       {(coachingData.exerciseType || coachingData.purpose) && (
         <div className="space-y-2">

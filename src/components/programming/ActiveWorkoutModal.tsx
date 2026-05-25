@@ -44,6 +44,7 @@ import {
   Globe,
   Users,
   Lock,
+  Target,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getExerciseDetails } from '@/lib/exerciseLibrary';
@@ -391,50 +392,121 @@ export function ActiveWorkoutModal({
                                 className="overflow-hidden border-t border-border"
                               >
                                 <div className="p-4 bg-muted/20">
-                                  {/* Premium coaching data takes priority */}
+                                  {/* Premium coaching data takes priority — now with GIF */}
                                   {coachingData ? (
                                     <ExerciseCoachingPanel 
                                       coachingData={coachingData}
                                       exerciseName={exercise.name}
+                                      gifUrl={gifUrl}
                                     />
-                                  ) : details.exercise ? (
-                                    /* Old library details (tips, alternatives) */
-                                    <div className="space-y-3">
-                                      {/* GIF + muscle badges from exercises.json */}
-                                      {dbExercise && (
-                                        <div className="flex items-center gap-1.5 flex-wrap">
-                                          {dbExercise.primaryMuscles?.map(m => (
-                                            <Badge key={m} variant="outline" className="text-[10px]">{m}</Badge>
-                                          ))}
-                                          {dbExercise.equipment && (
-                                            <Badge variant="secondary" className="text-[10px]">{dbExercise.equipment}</Badge>
+                                  ) : (dbExercise || details.exercise) ? (
+                                    /* Coaching-style panel built from exercises.json + old library */
+                                    <div className="space-y-4">
+                                      {/* GIF Preview */}
+                                      {gifUrl && (
+                                        <div className="flex justify-center">
+                                          <div className="w-full max-w-[200px] aspect-square rounded-xl overflow-hidden bg-muted border border-border/50">
+                                            <img src={gifUrl} alt={exercise.name} className="w-full h-full object-cover" loading="lazy" />
+                                          </div>
+                                        </div>
+                                      )}
+
+                                      {/* Description */}
+                                      {details.exercise?.description && (
+                                        <p className="text-xs text-foreground/80 leading-relaxed">{details.exercise.description}</p>
+                                      )}
+
+                                      {/* Muscles Targeted */}
+                                      {(dbExercise?.primaryMuscles?.length || dbExercise?.secondaryMuscles?.length) && (
+                                        <div className="space-y-2">
+                                          <div className="flex items-center gap-2">
+                                            <Dumbbell className="w-4 h-4 text-primary" />
+                                            <span className="text-sm font-display text-primary tracking-wide">MUSCLES TARGETED</span>
+                                          </div>
+                                          <div className="space-y-2">
+                                            {dbExercise?.primaryMuscles && dbExercise.primaryMuscles.length > 0 && (
+                                              <div>
+                                                <span className="text-xs text-muted-foreground block mb-1">Primary</span>
+                                                <div className="flex flex-wrap gap-1">
+                                                  {dbExercise.primaryMuscles.map((m, idx) => (
+                                                    <Badge key={idx} className="bg-primary/20 text-primary border-primary/30 text-xs">{m}</Badge>
+                                                  ))}
+                                                </div>
+                                              </div>
+                                            )}
+                                            {dbExercise?.secondaryMuscles && dbExercise.secondaryMuscles.length > 0 && (
+                                              <div>
+                                                <span className="text-xs text-muted-foreground block mb-1">Secondary</span>
+                                                <div className="flex flex-wrap gap-1">
+                                                  {dbExercise.secondaryMuscles.map((m, idx) => (
+                                                    <Badge key={idx} variant="outline" className="text-xs">{m}</Badge>
+                                                  ))}
+                                                </div>
+                                              </div>
+                                            )}
+                                          </div>
+                                        </div>
+                                      )}
+
+                                      {/* Equipment & Level */}
+                                      {(dbExercise?.equipment || dbExercise?.level || dbExercise?.mechanic) && (
+                                        <div className="flex flex-wrap items-center gap-1.5">
+                                          {dbExercise?.equipment && (
+                                            <Badge variant="secondary" className="text-xs">{dbExercise.equipment}</Badge>
+                                          )}
+                                          {dbExercise?.level && (
+                                            <Badge variant="secondary" className="text-xs">{dbExercise.level}</Badge>
+                                          )}
+                                          {dbExercise?.mechanic && (
+                                            <Badge variant="secondary" className="text-xs">{dbExercise.mechanic}</Badge>
+                                          )}
+                                          {dbExercise?.category && (
+                                            <Badge variant="secondary" className="text-xs">{dbExercise.category}</Badge>
                                           )}
                                         </div>
                                       )}
 
-                                      {details.exercise?.description && (
-                                        <p className="text-sm text-muted-foreground">
-                                          {details.exercise.description}
-                                        </p>
+                                      {/* Instructions / How To (from exercises.json) */}
+                                      {dbExercise?.instructions && dbExercise.instructions.length > 0 && (
+                                        <div className="space-y-3">
+                                          <div className="flex items-center gap-2">
+                                            <Target className="w-4 h-4 text-primary" />
+                                            <span className="text-sm font-display text-primary tracking-wide">HOW TO PERFORM</span>
+                                          </div>
+                                          <div className="space-y-2">
+                                            {dbExercise.instructions.map((step, idx) => (
+                                              <div key={idx} className="rounded-lg bg-muted/40 p-3 border border-border/50">
+                                                <div className="flex items-start gap-2">
+                                                  <span className="flex items-center justify-center w-5 h-5 rounded-full bg-primary/20 text-primary text-xs font-bold shrink-0">
+                                                    {idx + 1}
+                                                  </span>
+                                                  <p className="text-xs text-foreground/80 leading-relaxed">{step}</p>
+                                                </div>
+                                              </div>
+                                            ))}
+                                          </div>
+                                        </div>
                                       )}
 
+                                      {/* Tips from old library */}
                                       {details.exercise?.tips && details.exercise.tips.length > 0 && (
-                                        <div>
-                                          <div className="flex items-center gap-1 mb-2">
-                                            <Lightbulb className="w-3 h-3 text-primary" />
-                                            <span className="text-xs font-display text-primary tracking-wide">TIPS</span>
+                                        <div className="rounded-lg bg-primary/10 border border-primary/30 p-3">
+                                          <div className="flex items-center gap-2 mb-2">
+                                            <Lightbulb className="w-4 h-4 text-primary" />
+                                            <span className="text-sm font-display text-primary tracking-wide">COACHING TIPS</span>
                                           </div>
-                                          <ul className="space-y-1">
+                                          <ul className="space-y-1.5">
                                             {details.exercise.tips.map((tip, idx) => (
-                                              <li key={idx} className="text-xs text-muted-foreground flex gap-2">
-                                                <span className="text-primary">•</span>
-                                                {tip}
+                                              <li key={idx} className="text-xs text-foreground/80 flex items-start gap-2">
+                                                <span className="text-primary mt-0.5">•</span>
+                                                <span>{tip}</span>
                                               </li>
                                             ))}
                                           </ul>
                                         </div>
                                       )}
 
+                                      {/* Alternatives */}
                                       {details.exercise?.alternatives && details.exercise.alternatives.length > 0 && (
                                         <div>
                                           <span className="text-xs font-display text-muted-foreground tracking-wide">
@@ -447,38 +519,6 @@ export function ActiveWorkoutModal({
                                               </Badge>
                                             ))}
                                           </div>
-                                        </div>
-                                      )}
-                                    </div>
-                                  ) : dbExercise ? (
-                                    /* Fallback to exercises.json data (instructions, muscles, GIF) */
-                                    <div className="space-y-3">
-                                      <div className="flex items-center gap-1.5 flex-wrap">
-                                        {dbExercise.primaryMuscles?.map(m => (
-                                          <Badge key={m} variant="outline" className="text-[10px]">{m}</Badge>
-                                        ))}
-                                        {dbExercise.equipment && (
-                                          <Badge variant="secondary" className="text-[10px]">{dbExercise.equipment}</Badge>
-                                        )}
-                                        {dbExercise.level && (
-                                          <Badge variant="secondary" className="text-[10px]">{dbExercise.level}</Badge>
-                                        )}
-                                      </div>
-
-                                      {dbExercise.instructions && dbExercise.instructions.length > 0 && (
-                                        <div>
-                                          <div className="flex items-center gap-1 mb-2">
-                                            <Lightbulb className="w-3 h-3 text-primary" />
-                                            <span className="text-xs font-display text-primary tracking-wide">HOW TO</span>
-                                          </div>
-                                          <ol className="space-y-1.5">
-                                            {dbExercise.instructions.slice(0, 4).map((step, idx) => (
-                                              <li key={idx} className="text-xs text-muted-foreground flex gap-2">
-                                                <span className="text-primary font-display shrink-0">{idx + 1}.</span>
-                                                {step}
-                                              </li>
-                                            ))}
-                                          </ol>
                                         </div>
                                       )}
                                     </div>
