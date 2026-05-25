@@ -113,9 +113,9 @@ const freeFeatures = [
 /* ─── Token tiers ─── */
 const tokenTiers = [
   { name: 'FREE', tokens: 5, price: '£0', fullPrice: null, desc: 'Try the Unbreakable Coach — 5 tokens on signup', highlight: false },
-  { name: 'STARTER', tokens: 50, price: '£25/mo', fullPrice: '£35/mo', desc: 'Programmes, meal plans & form feedback', highlight: false },
-  { name: 'PRO', tokens: 150, price: '£49/mo', fullPrice: '£75/mo', desc: 'Full coaching across all pillars', highlight: true },
-  { name: 'ELITE', tokens: 500, price: '£79/mo', fullPrice: '£110/mo', desc: 'Unlimited feel — perfect for PT students', highlight: false },
+  { name: 'BASE', tokens: 50, price: '£25/mo', fullPrice: '£50/mo', desc: 'Programmes, meal plans & form feedback', highlight: false },
+  { name: 'PRO', tokens: 150, price: '£50/mo', fullPrice: '£100/mo', desc: 'Full coaching across all pillars', highlight: true },
+  { name: 'ELITE', tokens: 500, price: '£100/mo', fullPrice: '£200/mo', desc: 'Unlimited feel — perfect for PT students', highlight: false },
 ];
 
 export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
@@ -441,6 +441,17 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
                 </motion.div>
               ))}
             </div>
+
+            {/* Top-ups & credit info */}
+            <motion.div variants={fadeUp} className="mt-6 text-center space-y-1.5">
+              <p className="text-[#aaa] text-xs">
+                <span className="text-[#FF5500] font-bold">Monthly credits reset</span> each billing cycle &nbsp;·&nbsp;
+                <span className="text-[#FF5500] font-bold">Top-ups carry over</span> — never lose purchased tokens
+              </p>
+              <p className="text-[#666] text-[11px]">
+                Need more? Grab a token top-up anytime — Small (50) · Medium (150) · Large (300)
+              </p>
+            </motion.div>
           </motion.div>
         </div>
       </section>
