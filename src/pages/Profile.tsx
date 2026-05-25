@@ -28,11 +28,6 @@ import {
   Tag,
   BadgeCheck,
   MoreHorizontal,
-  Dumbbell,
-  Brain,
-  Utensils,
-  Footprints,
-  GraduationCap,
 } from 'lucide-react';
 import { format, formatDistanceToNow } from 'date-fns';
 import shieldLogo from '@/assets/unbreakable-shield.png';
@@ -398,46 +393,39 @@ export default function Profile() {
 
         {/* Action Buttons */}
         <div className="flex gap-2 mt-4">
-          <button
+          <motion.button
+            whileTap={{ scale: 0.95 }}
             onClick={() => setActiveTab('settings')}
-            className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-foreground transition-colors bg-muted"
+            className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-foreground bg-muted/80 border border-border/50 active:bg-muted transition-all duration-150"
           >
             Edit Profile
-          </button>
-          <button
-            onClick={() => navigate('/inbox')}
-            className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-foreground transition-colors bg-muted"
+          </motion.button>
+          <motion.button
+            whileTap={{ scale: 0.95 }}
+            onClick={async () => {
+              const url = `${window.location.origin}/user/${user.id}`;
+              if (navigator.share) {
+                try { await navigator.share({ title: displayName, url }); } catch {}
+              } else {
+                await navigator.clipboard.writeText(url);
+                // Simple flash feedback
+                const el = document.getElementById('share-btn');
+                if (el) { el.textContent = 'Copied!'; setTimeout(() => { el.textContent = 'Share Profile'; }, 1500); }
+              }
+            }}
+            id="share-btn"
+            className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-foreground bg-muted/80 border border-border/50 active:bg-muted transition-all duration-150"
           >
             Share Profile
-          </button>
-          <button
+          </motion.button>
+          <motion.button
+            whileTap={{ scale: 0.9 }}
             onClick={() => navigate('/admin')}
-            className="py-2.5 px-4 rounded-xl text-sm font-semibold text-foreground transition-colors bg-muted"
+            className="py-2.5 px-4 rounded-xl text-sm font-semibold text-foreground bg-muted/80 border border-border/50 active:bg-muted transition-all duration-150"
             title="Admin & Content Studio"
           >
-            ⚙️
-          </button>
-        </div>
-      </section>
-
-      {/* ━━━ Pillar Quick-Links ━━━ */}
-      <section className="px-4 pb-3 overflow-x-auto">
-        <div className="flex gap-4 min-w-max">
-          {[
-            { label: 'Power', icon: Dumbbell, path: '/power' },
-            { label: 'Movement', icon: Footprints, path: '/movement' },
-            { label: 'Fuel', icon: Utensils, path: '/fuel' },
-            { label: 'Mindset', icon: Brain, path: '/mindset' },
-            { label: 'Education', icon: GraduationCap, path: '/university' },
-          ].map(({ label, icon: Icon, path }) => (
-            <button key={label} onClick={() => navigate(path)} className="flex flex-col items-center gap-1.5 group">
-              <div className="w-16 h-16 rounded-full flex items-center justify-center border border-primary/20 group-hover:border-primary/50 transition-all"
-                style={{ background: 'rgba(255,85,0,0.06)' }}>
-                <Icon className="w-6 h-6 text-primary" style={{ filter: 'drop-shadow(0 0 6px rgba(255,85,0,0.4))' }} />
-              </div>
-              <span className="text-[11px] text-muted-foreground font-display tracking-wider group-hover:text-primary transition-colors">{label}</span>
-            </button>
-          ))}
+            <Settings size={18} className="text-muted-foreground" />
+          </motion.button>
         </div>
       </section>
 
