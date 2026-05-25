@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ProfileView } from '@/components/tracker/ProfileView';
@@ -159,18 +159,73 @@ function PostGridItem({ post, onClick }: { post: OwnPost; onClick: () => void })
 }
 
 // ─── Post Detail Modal ───────────────────────────────────────────────────────
+function PostMediaCarousel({ post }: { post: OwnPost }) {
+  const allMedia = post.media_items?.length
+    ? post.media_items.map(m => ({ url: m.media_url, type: m.media_type, thumb: m.thumbnail_url }))
+    : post.image_url
+      ? [{ url: post.image_url, type: 'image' as string, thumb: null as string | null }]
+      : post.video_url
+        ? [{ url: post.video_url, type: 'video' as string, thumb: null as string | null }]
+        : [];
+
+  const [activeIdx, setActiveIdx] = useState(0);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  if (allMedia.length === 0) return null;
+
+  const handleScroll = () => {
+    if (!scrollRef.current) return;
+    const el = scrollRef.current;
+    const idx = Math.round(el.scrollLeft / el.clientWidth);
+    setActiveIdx(idx);
+  };
+
+  return (
+    <div className="relative border-b border-white/[0.04] shrink-0">
+      <div
+        ref={scrollRef}
+        onScroll={handleScroll}
+        className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide"
+        style={{ scrollBehavior: 'smooth', WebkitOverflowScrolling: 'touch' }}
+      >
+        {allMedia.map((m, i) => (
+          <div key={i} className="w-full flex-shrink-0 snap-center">
+            {m.type === 'video' ? (
+              <video src={m.url} controls className="w-full max-h-[50vh] object-contain bg-background" />
+            ) : (
+              <img src={m.url} alt="" className="w-full max-h-[50vh] object-contain bg-background" />
+            )}
+          </div>
+        ))}
+      </div>
+      {allMedia.length > 1 && (
+        <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-1.5">
+          {allMedia.map((_, i) => (
+            <div
+              key={i}
+              className={`w-1.5 h-1.5 rounded-full transition-colors ${
+                i === activeIdx ? 'bg-primary' : 'bg-white/30'
+              }`}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function PostDetailModal({
   post,
   profile,
   onClose,
+  onSave,
 }: {
   post: OwnPost | null;
   profile: { display_name: string | null; username: string | null; avatar_url: string | null };
   onClose: () => void;
+  onSave?: (postId: string) => void;
 }) {
   if (!post) return null;
-  const mediaUrl = post.media_items?.[0]?.media_url || post.image_url || post.video_url;
-  const isVideo = post.video_url || post.media_items?.[0]?.media_type === 'video';
   const displayName = profile.display_name || profile.username || 'You';
 
   return (
@@ -201,15 +256,7 @@ function PostDetailModal({
           </button>
         </div>
 
-        {mediaUrl && (
-          <div className="border-b border-white/[0.04] shrink-0">
-            {isVideo ? (
-              <video src={mediaUrl} controls className="w-full max-h-[50vh] object-contain bg-background" />
-            ) : (
-              <img src={mediaUrl} alt="" className="w-full max-h-[50vh] object-contain bg-background" />
-            )}
-          </div>
-        )}
+        <PostMediaCarousel post={post} />
 
         <div className="p-4 overflow-y-auto">
           <div className="flex items-center gap-4 mb-3">
@@ -219,6 +266,15 @@ function PostDetailModal({
             <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
               <MessageSquare className="w-5 h-5" /> {post.comments_count}
             </span>
+            {onSave && (
+              <button
+                onClick={() => onSave(post.id)}
+                className="ml-auto text-muted-foreground hover:text-primary transition-colors"
+                title="Save post"
+              >
+                <Bookmark className="w-5 h-5" />
+              </button>
+            )}
           </div>
           {post.content && <RichContent text={post.content} className="text-sm text-foreground/80" />}
         </div>
@@ -505,7 +561,26 @@ export default function Profile() {
       {/* Modals */}
       <AnimatePresence>
         {selectedPost && profile && (
-          <PostDetailModal post={selectedPost} profile={profile} onClose={() => setSelectedPost(null)} />
+          <PostDetailModal
+            post={selectedPost}
+            profile={profile}
+            onClose={() => setSelectedPost(null)}
+            onSave={async (postId) => {
+              const { error } = await supabase
+                .from('saved_posts')
+                .upsert({ user_id: user.id, post_id: postId }, { onConflict: 'user_id,post_id' });
+              if (!error) {
+                const el = document.activeElement as HTMLElement;
+                el?.blur();
+                // Simple toast-like feedback
+                const toast = document.createElement('div');
+                toast.textContent = '✅ Post saved!';
+                toast.className = 'fixed bottom-24 left-1/2 -translate-x-1/2 bg-card text-foreground text-sm px-4 py-2 rounded-full border border-primary/30 z-[9999] shadow-lg';
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 2000);
+              }
+            }}
+          />
         )}
       </AnimatePresence>
       <AnimatePresence>

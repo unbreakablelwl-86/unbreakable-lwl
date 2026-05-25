@@ -32,6 +32,10 @@ export default function SignIn() {
 
     try {
       if (mode === 'signin') {
+        // Clear any stale session data before signing in
+        try {
+          await supabase.auth.signOut();
+        } catch {}
         const { error } = await signIn(email, password);
         if (error) {
           setFormError(error.message || 'Failed to sign in.');

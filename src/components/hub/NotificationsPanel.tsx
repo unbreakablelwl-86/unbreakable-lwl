@@ -28,6 +28,13 @@ function getNotificationLink(notification: Notification): string | null {
   const t = notification.type;
   const d = notification.data || {};
 
+  // AI session feedback → AI coach inbox
+  if (t === 'ai_session_feedback') return '/coach';
+  if (t === 'session_complete_self') return '/programming/my-programmes';
+
+  // New user signup (dev notification)
+  if (t === 'new_user_signup' && d.new_user_id) return `/user/${d.new_user_id}`;
+
   // Coaching & feedback
   if (t === 'coaching_feedback' || t === 'feedback_response' || t === 'programme_updated') return '/my-coaching';
   if (t === 'coaching_request' || t === 'tier2_signup') return '/coach';
@@ -95,6 +102,12 @@ function getNotificationIcon(type: string) {
     case 'coaching_request':
     case 'feedback_response':
       return <UserPlus className="w-4 h-4" />;
+    case 'ai_session_feedback':
+      return <Brain className="w-4 h-4" />;
+    case 'new_user_signup':
+      return <UserPlus className="w-4 h-4" />;
+    case 'session_complete_self':
+      return <Dumbbell className="w-4 h-4" />;
     case 'mindset_activity_complete':
       return <Brain className="w-4 h-4" />;
     case 'adherence_alert':

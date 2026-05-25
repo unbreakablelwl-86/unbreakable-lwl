@@ -40,6 +40,8 @@ export function AuthModal({ isOpen, onClose, defaultMode = 'signin' }: AuthModal
 
     try {
       if (mode === 'signin') {
+        // Clear any stale session before sign-in
+        try { await supabase.auth.signOut(); } catch {}
         const { error } = await signIn(email, password);
         if (error) {
           console.error('Sign in error:', error);

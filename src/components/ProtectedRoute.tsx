@@ -13,11 +13,12 @@ interface ProtectedRouteProps {
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
   const { user, loading } = useAuth();
   const { needsOnboarding, loading: onboardingLoading } = useOnboardingCheck();
-  const { isMaintenanceMode, maintenanceMessage } = usePlatformSettings();
-  const { isDev, isCoach } = useUserRole();
+  const { isMaintenanceMode, maintenanceMessage, loading: settingsLoading } = usePlatformSettings();
+  const { isDev, isCoach, loading: roleLoading } = useUserRole();
   const location = useLocation();
 
-  if (loading || onboardingLoading) {
+  // Wait for all critical data before rendering
+  if (loading || onboardingLoading || roleLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="w-12 h-12 border-2 border-primary border-t-transparent rounded-full animate-spin" />

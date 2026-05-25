@@ -463,134 +463,16 @@ export function useWorkoutSessions() {
       queryClient.invalidateQueries({ queryKey: ['active-session'] });
       toast({ title: 'Workout Complete!', description: 'Great job finishing your session!' });
 
-      // Notify coaches and devs that a session was completed
+      // Coach/dev notifications are now handled by DB trigger (notify_on_session_complete)
+      // AI coach auto-feedback is handled by the on-session-complete edge function
+      // This is more reliable than doing it all in the frontend callback
       try {
         if (!user) return;
-
-        // Fetch the completed session fresh to guarantee we have data
-        const { data: completedSession } = await supabase
-          .from('workout_sessions')
-          .select('session_type, day_name, program_id')
-          .eq('id', variables.sessionId)
-          .single();
-
-        const sessionLabel = completedSession
-          ? `${completedSession.session_type} (${completedSession.day_name})`
-          : 'a workout session';
-
-        // Fetch athlete display name for notification context
-        const { data: athleteProfile } = await supabase
-          .from('profiles')
-          .select('display_name, username')
-          .eq('user_id', user.id)
-          .maybeSingle();
-
-        const athleteName = athleteProfile?.display_name || athleteProfile?.username || 'An athlete';
-
-        // Notify assigned coaches
-        const { data: coaches } = await supabase
-          .from('coaching_assignments')
-          .select('coach_id')
-          .eq('athlete_id', user.id)
-          .eq('status', 'active');
-
-        const coachNotifs = (coaches || []).map(c => ({
-          user_id: c.coach_id,
-          type: 'athlete_completed_session',
-          title: '🏋️ Session Completed',
-          body: `${athleteName} completed ${sessionLabel}. Tap to review their results.`,
-          data: { session_id: variables.sessionId, athlete_id: user.id, program_id: completedSession?.program_id },
-        }));
-
-        // Notify devs
-        const { data: devRoles } = await supabase
-          .from('user_roles')
-          .select('user_id')
-          .eq('role', 'dev');
-
-        const devNotifs = (devRoles || [])
-          .filter(d => d.user_id !== user.id)
-          .map(d => ({
-            user_id: d.user_id,
-            type: 'athlete_completed_session',
-            title: '🏋️ Session Completed',
-            body: `${athleteName} completed ${sessionLabel}. Tap to review their results.`,
-            data: { session_id: variables.sessionId, athlete_id: user.id, program_id: completedSession?.program_id },
-          }));
-
-        const allNotifs = [...coachNotifs, ...devNotifs];
-        if (allNotifs.length > 0) {
-          await supabase.from('notifications').insert(allNotifs);
-        }
+        await supabase.functions.invoke('on-session-complete', {
+          body: { sessionId: variables.sessionId, userId: user.id },
+        });
       } catch (e) {
-        console.error('Failed to notify coach/dev on session complete:', e);
-      }
-
-      // Auto-trigger AI feedback + coach chat message
-      try {
-        if (!user) return;
-
-        // Fetch exercise logs for the completed session
-        const { data: logs } = await supabase
-          .from('exercise_logs')
-          .select('*')
-          .eq('session_id', variables.sessionId)
-          .order('created_at');
-
-        if (logs && logs.length > 0) {
-          // Build session summary for AI coach
-          const completedSets = logs.filter((l: any) => l.completed).length;
-          const totalWeight = logs.reduce((sum: number, l: any) => l.completed && l.weight_kg && l.actual_reps ? sum + l.weight_kg * l.actual_reps : sum, 0);
-          const exercises = [...new Set(logs.map((l: any) => l.exercise_name))];
-          const painFlags = logs.filter((l: any) => l.pain_flag);
-
-          const summaryText = [
-            `📊 *Session Complete* — ${completedSets}/${logs.length} sets completed`,
-            `🏋️ Exercises: ${exercises.join(', ')}`,
-            totalWeight > 0 ? `💪 Total volume: ${totalWeight.toFixed(0)}kg` : '',
-            painFlags.length > 0 ? `⚠️ Pain flagged on: ${painFlags.map((l: any) => l.exercise_name).join(', ')}` : '',
-          ].filter(Boolean).join('\n');
-
-          // Create AI coach conversation with session feedback
-          const { data: convo } = await supabase
-            .from('help_conversations')
-            .insert({ user_id: user.id, title: `Session Review — ${exercises.slice(0, 3).join(', ')}` })
-            .select()
-            .single();
-
-          if (convo) {
-            // Insert initial system-like message with session data
-            await supabase.from('help_messages').insert({
-              conversation_id: convo.id,
-              user_id: user.id,
-              role: 'user',
-              content: `I just completed a workout session. Here are my results:\n\n${summaryText}\n\nPlease review my performance, give feedback, and ask me how I felt during the session.`,
-            });
-
-            // Trigger AI response via help-chat edge function
-            try {
-              await supabase.functions.invoke('help-chat', {
-                body: {
-                  conversationId: convo.id,
-                  message: `I just completed a workout session. Here are my results:\n\n${summaryText}\n\nPlease review my performance, give feedback, and ask me how I felt during the session.`,
-                },
-              });
-            } catch (chatErr) {
-              console.error('Auto AI chat trigger failed:', chatErr);
-            }
-
-            // Notify user about AI feedback
-            await supabase.from('notifications').insert({
-              user_id: user.id,
-              type: 'ai_session_feedback',
-              title: '🤖 AI Coach Feedback Ready',
-              body: 'Your AI coach has reviewed your session. Tap to see feedback and share how you felt.',
-              data: { session_id: variables.sessionId, conversation_id: convo.id },
-            });
-          }
-        }
-      } catch (e) {
-        console.error('Auto AI feedback failed (non-blocking):', e);
+        console.error('on-session-complete edge function failed (non-blocking):', e);
       }
     },
   });

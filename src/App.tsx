@@ -11,6 +11,7 @@ import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { InstallPrompt } from "@/components/pwa/InstallPrompt";
 import { SplashScreen } from "@/components/SplashScreen";
 import AppLayout from "@/layouts/AppLayout";
+import { FloatingMiniPlayer } from "@/components/untunes/FloatingMiniPlayer";
 import Index from "./pages/Index";
 import Social from "./pages/Social";
 import Calculators from "./pages/Calculators";
@@ -284,6 +285,7 @@ const App = () => {
               </Route>
             </Routes>
           </BrowserRouter>
+          <FloatingMiniPlayer />
         </div>
       </TooltipProvider>
       </UniversityAdminProvider>

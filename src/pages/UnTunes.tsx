@@ -20,7 +20,7 @@ import { UnTunesArtistCard } from '@/components/untunes/ArtistCard';
 import { UnTunesArtistSignup } from '@/components/untunes/ArtistSignup';
 // Spotify integration parked — building own library instead
 import { UnTunesArtistDashboard } from '@/components/untunes/ArtistDashboard';
-import { UnTunesMiniPlayer } from '@/components/untunes/MiniPlayer';
+// MiniPlayer removed — now using FloatingMiniPlayer in App.tsx
 import { AddToPlaylistSheet } from '@/components/untunes/AddToPlaylistSheet';
 import { toast } from 'sonner';
 
@@ -607,8 +607,7 @@ export default function UnTunes() {
         </AnimatePresence>
       </div>
 
-      {/* Mini Player - always visible when a track is playing */}
-      <UnTunesMiniPlayer />
+      {/* Mini Player now rendered globally as FloatingMiniPlayer in App.tsx */}
 
       {/* Add to Playlist bottom sheet */}
       <AddToPlaylistSheet
