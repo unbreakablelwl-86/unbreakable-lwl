@@ -1,4 +1,4 @@
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { createClient } from "npm:@supabase/supabase-js@2.57.2";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -13,8 +13,8 @@ const B = {
   name: "UNBREAKABLE",
   tag: "Live Without Limits",
   url: "https://www.unbreakable-lwl.com",
-  from: "onboarding@resend.dev",
-  fromName: "Unbreakable LWL",
+  from: "noreply@unbreakable-lwl.com",
+  fromName: "UNBREAKABLE",
   o: "#f97316",  // orange
   bg: "#0a0a0a",
   card: "#141414",

@@ -16,7 +16,7 @@
  *   // guard.remaining has the new balance
  */
 
-import { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { SupabaseClient } from "npm:@supabase/supabase-js@2.57.2";
 
 /**
  * Token costs per function:
