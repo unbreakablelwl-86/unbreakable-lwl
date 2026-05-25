@@ -24,7 +24,7 @@ import { UnTunesArtistDashboard } from '@/components/untunes/ArtistDashboard';
 import { AddToPlaylistSheet } from '@/components/untunes/AddToPlaylistSheet';
 import { toast } from 'sonner';
 
-type UnTunesTab = 'browse' | 'search' | 'library' | 'artist';
+type UnTunesTab = 'browse' | 'search' | 'library' | 'podcasts' | 'artist';
 
 const fadeIn = { initial: { opacity: 0, y: 12 }, animate: { opacity: 1, y: 0 } };
 
@@ -98,6 +98,7 @@ export default function UnTunes() {
     { key: 'browse' as const, label: 'BROWSE', icon: Music },
     { key: 'search' as const, label: 'SEARCH', icon: Search },
     { key: 'library' as const, label: 'LIBRARY', icon: Library },
+    { key: 'podcasts' as const, label: 'PODCASTS', icon: Podcast },
     { key: 'artist' as const, label: myArtist ? 'ARTIST HUB' : 'BECOME ARTIST', icon: myArtist ? Crown : UserPlus },
   ];
 
@@ -582,6 +583,55 @@ export default function UnTunes() {
                   </div>
                 </>
               )}
+            </motion.div>
+          )}
+
+          {/* ─── Podcasts Tab — Coming Soon ─── */}
+          {activeTab === 'podcasts' && (
+            <motion.div key="podcasts" {...fadeIn} className="space-y-6">
+              <div className="flex flex-col items-center justify-center py-16 text-center">
+                {/* Animated icon */}
+                <div className="relative mb-6">
+                  <div className="w-24 h-24 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center shadow-[0_0_40px_rgba(255,85,0,0.15)]">
+                    <Podcast className="w-12 h-12 text-primary drop-shadow-[0_0_12px_rgba(255,85,0,0.6)]" />
+                  </div>
+                  <div className="absolute -top-2 -right-2 bg-primary text-primary-foreground text-[9px] font-display tracking-widest px-2.5 py-1 rounded-full shadow-lg shadow-primary/30">
+                    SOON
+                  </div>
+                </div>
+
+                <h2 className="font-display text-2xl tracking-wider text-foreground mb-2">PODCASTS</h2>
+                <p className="text-sm text-muted-foreground max-w-sm mb-1">
+                  Real conversations about fitness, mindset, and the Unbreakable journey.
+                </p>
+                <p className="text-xs text-muted-foreground/60 max-w-sm mb-6">
+                  Raw, unfiltered episodes dropping soon — hosted by John James with guest coaches, athletes, and people who refused to stay down.
+                </p>
+
+                {/* Feature preview cards */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full max-w-lg">
+                  {[
+                    { icon: Mic2, title: 'REAL TALK', desc: 'Raw stories, no filter' },
+                    { icon: Brain, title: 'MINDSET', desc: 'Mental health & growth' },
+                    { icon: Dumbbell, title: 'TRAINING', desc: 'Tips from the trenches' },
+                  ].map((item) => (
+                    <div
+                      key={item.title}
+                      className="p-4 rounded-xl border border-border/50 bg-card/30"
+                    >
+                      <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mx-auto mb-2">
+                        <item.icon className="w-5 h-5 text-primary/60" />
+                      </div>
+                      <p className="font-display text-[10px] tracking-wider text-foreground mb-0.5">{item.title}</p>
+                      <p className="text-[10px] text-muted-foreground">{item.desc}</p>
+                    </div>
+                  ))}
+                </div>
+
+                <p className="text-[10px] text-muted-foreground/40 mt-6 font-display tracking-widest">
+                  KEEP SHOWING UP — WE'RE BUILDING SOMETHING UNBREAKABLE
+                </p>
+              </div>
             </motion.div>
           )}
 

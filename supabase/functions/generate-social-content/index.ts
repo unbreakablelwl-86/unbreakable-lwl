@@ -106,7 +106,7 @@ serve(async (req) => {
       "fuel": "Nutrition, meal prep, high-protein recipes, supplements, hydration, macro tracking. Use ⛽🍳 emojis. Practical, not preachy.",
       "mindset": "Mental resilience, discipline over motivation, consistency, self-belief, overcoming setbacks. Use 🧠💪 emojis. Deep and impactful.",
       "education": "University courses, learning, levelling up knowledge, course highlights, quiz teasers. Use 📚🎓 emojis. Show the value of education in fitness.",
-      "un-tunes": "Training music, playlists, the soundtrack to the grind. Use 🎵🎧 emojis. The vibe is cassette tapes, raw energy, 'YOU CAN'T BREAK ME' aesthetic.",
+      "un-tunes": "Training music, playlists, the soundtrack to the grind. Use 🎵🎧 emojis. The vibe is cassette tapes, raw energy, 'YOU CAN'T BREAK ME' aesthetic. Reference real 00s-era bands & artists across 3 genres: ROCK/METAL (A Day to Remember, Finch, Killswitch Engage, Fall Out Boy, Limp Bizkit, Bullet for My Valentine, Funeral for a Friend, Disturbed, Breaking Benjamin, Three Days Grace, Papa Roach, Linkin Park, System of a Down, Slipknot, Avenged Sevenfold, Underoath, The Used, Senses Fail, Alexisonfire, Atreyu), RAP (MGK, Lil Wayne, Eminem, 50 Cent, DMX, Busta Rhymes, Tech N9ne, Xzibit, Ludacris, Chamillionaire), PUNK/POP-PUNK (Blink-182, Sum 41, Good Charlotte, New Found Glory, The Offspring, Rise Against, Paramore, My Chemical Romance, Green Day). Use these as reference points — draw from the full 00s era, not just these specific names. Scouse energy in how you describe the music — not full accent but our tone. Podcast tab coming soon — hype it where natural.",
       "transformation": "Before/after stories, progress updates, client wins, journey posts. Use 💪⚡ emojis. Real results, real people.",
       "real-talk": "Raw, honest personal stories — struggles, mental health, real life behind the brand. Use 🗣️💯 emojis. Vulnerability builds connection.",
       "community": "Member shoutouts, engagement posts, questions, challenges, community wins. Use 🤝🧡 emojis. Make people feel part of something.",
@@ -186,7 +186,7 @@ For X: use 2-3 total hashtags
 • Guided breathwork sessions (focus, recovery, stress)
 • Habit tracker with streaks and accountability
 • Full University — L1 to L4 courses across all 6 pillars with quizzes & certificates
-• Un-Tunes — curated training playlists connected to Spotify
+• Un-Tunes — curated training playlists + PODCASTS (coming soon!) — real conversations about fitness, mindset, and the Unbreakable journey
 • Social community — Instagram-style feed, follow, share progress
 • Coach profiles and 1-2-1 coaching portal
 • 20+ downloadable PDF guides (training, nutrition, mindset, recovery)

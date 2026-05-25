@@ -6,32 +6,48 @@ const log = (step: string, details?: any) =>
   console.log(`[STRIPE-WEBHOOK] ${step}${details ? ` — ${JSON.stringify(details)}` : ""}`);
 
 // ── Price ID → course key mapping (one-time purchases) ──
+// Updated 2026-05-26 to match current Stripe products
 const PRICE_TO_COURSE: Record<string, string> = {
-  "price_1TXuIsD5KOEmeWH2gw9eXyGi": "gym_l2",
-  "price_1TXuIsD5KOEmeWH2CjrE8w0Q": "gym_l3",
-  "price_1TXuItD5KOEmeWH2zAGVTH3v": "gym_l4",
-  "price_1TXuItD5KOEmeWH2QkP9L3Oz": "nutrition_l2",
-  "price_1TXuIuD5KOEmeWH2fZ1yJPSr": "nutrition_l3",
-  "price_1TXuIuD5KOEmeWH2KLkbYQ6i": "nutrition_l4",
-  "price_1TXuIvD5KOEmeWH2Zq6L2bh5": "mindset_l2",
-  "price_1TXuIvD5KOEmeWH2oDkkinkt": "mindset_l3",
-  "price_1TXuIwD5KOEmeWH2CeLpOTQn": "sport_football",
-  "price_1TXuIwD5KOEmeWH2KcCtfuyl": "sport_rugby",
-  "price_1TXuIxD5KOEmeWH2GjPqk3y6": "sport_cricket",
-  "price_1TXuIxD5KOEmeWH23nTLPsJd": "sport_tennis",
-  "price_1TXuIyD5KOEmeWH2KDRwd1DQ": "sport_swimming",
-  "price_1TXuIyD5KOEmeWH2wHGUWQWw": "sport_boxing",
-  "price_1TXuIzD5KOEmeWH2bWMR1eVn": "sport_athletics",
-  "price_1TXuIzD5KOEmeWH2CSobLFJy": "sport_cycling",
-  "price_1TXuIzD5KOEmeWH2BxUyi1DW": "sport_gymnastics",
-  "price_1TXuJ0D5KOEmeWH25A1MjTMX": "sport_martial_arts",
+  // Power pillar
+  "price_1TaPpuD5KOEmeWH2SgCLX7TY": "gym_l2",       // Power Level 2 £50
+  "price_1TaPptD5KOEmeWH2Sqnp8zbG": "gym_l3",       // Power Level 3 £50
+  "price_1TaPpzD5KOEmeWH2dKbZDJZq": "gym_l4",       // Power Level 4 £50
+  // Fuel pillar
+  "price_1TaPq3D5KOEmeWH2cKqTXZBC": "nutrition_l2", // Fuel Level 2 £50
+  "price_1TaPqAD5KOEmeWH2AfXOGEM0": "nutrition_l3", // Fuel Level 3 £50
+  "price_1TaPqBD5KOEmeWH2tx9eGeCQ": "nutrition_l4", // Fuel Level 4 £50
+  // Mindset pillar
+  "price_1TaPqJD5KOEmeWH2bwG0iwL1": "mindset_l2",   // Mindset Level 2 £50
+  "price_1TaPqID5KOEmeWH2Dc3CNb6w": "mindset_l3",   // Mindset Level 3 £50
+  "price_1TaPqOD5KOEmeWH2aFTrPnKF": "mindset_l4",   // Mindset Level 4 £50
+  // Sport courses
+  "price_1TaPqPD5KOEmeWH2DtBH1LZ5": "sport_football",    // £50
+  "price_1TaPqLD5KOEmeWH2OQFR2rSh": "sport_rugby",       // £50
+  "price_1TaPqJD5KOEmeWH2A6GMlIbO": "sport_cricket",     // £50
+  "price_1TaPqND5KOEmeWH2wegxy9AP": "sport_tennis",      // £50
+  "price_1TaPqQD5KOEmeWH2P2DwUhNB": "sport_swimming",    // £50
+  "price_1TaPqMD5KOEmeWH2CWobt6Tl": "sport_boxing",      // £50
+  "price_1TaPqQD5KOEmeWH2QLZaol8s": "sport_athletics",   // £50
+  "price_1TaPqMD5KOEmeWH2wTi8yOBy": "sport_cycling",     // £50
+  "price_1TaPqMD5KOEmeWH2RtsHUKsO": "sport_gymnastics",  // £50
+  "price_1TaPqQD5KOEmeWH2B5G3ogSW": "sport_martial_arts", // £50
 };
 
 // Bundle price ID → list of course keys
 const PRICE_TO_BUNDLE: Record<string, string[]> = {
-  "price_1TXuJ0D5KOEmeWH2PWtxTQgJ": ["gym_l2", "gym_l3", "gym_l4"],
-  "price_1TXuJ1D5KOEmeWH2oamniYan": ["nutrition_l2", "nutrition_l3", "nutrition_l4"],
-  "price_1TXuJ1D5KOEmeWH2hMG8fGsv": ["mindset_l2", "mindset_l3"],
+  // Power Bundle (L2+L3+L4) £117
+  "price_1TaPqQD5KOEmeWH2XLjqBvgo": ["gym_l2", "gym_l3", "gym_l4"],
+  // Fuel Bundle (L2+L3+L4) £117
+  "price_1TaPqQD5KOEmeWH2eYRVS2Yd": ["nutrition_l2", "nutrition_l3", "nutrition_l4"],
+  // Mindset Bundle (L2+L3+L4) £117
+  "price_1TaPqQD5KOEmeWH2vNGarseX": ["mindset_l2", "mindset_l3", "mindset_l4"],
+  // Mega Bundle (All Courses) £300
+  "price_1TaPqQD5KOEmeWH29Dy4Q3kN": [
+    "gym_l2", "gym_l3", "gym_l4",
+    "nutrition_l2", "nutrition_l3", "nutrition_l4",
+    "mindset_l2", "mindset_l3", "mindset_l4",
+  ],
+  // Legacy All Courses (from old Stripe setup, same content)
   "price_1TXuJ2D5KOEmeWH2u32ngbbo": [
     "gym_l2", "gym_l3", "gym_l4",
     "nutrition_l2", "nutrition_l3", "nutrition_l4",
