@@ -1,3 +1,4 @@
+// v2
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.57.2";
 
@@ -113,6 +114,7 @@ ROCK/METAL: A Day to Remember, Finch, Killswitch Engage, Fall Out Boy, Limp Bizk
 RAP: MGK, Lil Wayne, Eminem, 50 Cent, DMX, Busta Rhymes, Tech N9ne, Xzibit, Ludacris, Chamillionaire
 PUNK/POP-PUNK: Blink-182, Sum 41, Good Charlotte, New Found Glory, The Offspring, Rise Against, Paramore, My Chemical Romance, Green Day
 CHILLSTEP/ELECTRONIC: Michael FK, Orbital (Halcyon), Hybrid, Faithless, Zero 7, Bonobo, Ott, Emancipator, Tycho, Boards of Canada — for recovery, mindset, cool-down and deep focus content
+FOLK/ACOUSTIC/STORYTELLING: Bob Dylan, Johnny Cash, Woody Guthrie, Jeff Buckley, Damien Rice, Iron & Wine, The Lumineers, Mumford & Sons, City and Colour, Gregory Alan Isakov — raw poetry, acoustic grit, campfire intensity. For real-talk posts, reflective mindset content, and stripped-back motivation
 
 === CROSS-PILLAR MUSIC THEMES ===
 Every genre can map to every pillar — rotate song lyrics, moods and themes across:
@@ -291,3 +293,4 @@ Return ONLY valid JSON with "post" and "imagePrompt" keys. No markdown wrapping.
     });
   }
 });
+
