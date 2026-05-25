@@ -26,7 +26,7 @@ export function FullScreenToolView({
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: 50 }}
       transition={{ duration: 0.2 }}
-      className="fixed inset-0 z-50 bg-background flex flex-col"
+      className="fixed inset-0 z-[60] bg-background flex flex-col"
     >
       {/* Header */}
       <header className="flex items-center justify-between p-4 border-b border-border bg-card shrink-0">
