@@ -218,6 +218,16 @@ export function UnTunesMiniPlayer() {
 
             {/* Controls */}
             <div className="flex items-center gap-2 shrink-0" onClick={(e) => e.stopPropagation()}>
+              <button
+                onClick={() => track && toggleLike(track.id)}
+                className={`transition-colors ${
+                  track && isLiked(track.id)
+                    ? 'text-primary drop-shadow-[0_0_6px_rgba(255,85,0,0.5)]'
+                    : 'text-muted-foreground hover:text-primary'
+                }`}
+              >
+                <Dumbbell className="w-4 h-4" />
+              </button>
               <button onClick={prevTrack} className="text-muted-foreground hover:text-foreground">
                 <SkipBack className="w-4 h-4" />
               </button>
