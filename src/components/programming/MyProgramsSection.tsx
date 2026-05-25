@@ -228,10 +228,13 @@ export function MyProgramsSection() {
                 <Calendar className="w-3.5 h-3.5 text-primary/60" />
                 {format(new Date(program.created_at), 'MMM d, yyyy')}
               </span>
-              {program.is_active && program.current_week && (
+              {(program.is_active || program.status === 'paused') && program.current_week && (
                 <span className="flex items-center gap-1.5">
                   <Clock className="w-3.5 h-3.5 text-primary/60" />
                   Week {program.current_week}, Day {program.current_day}
+                  {program.status === 'paused' && (
+                    <span className="text-primary/60">(paused)</span>
+                  )}
                 </span>
               )}
             </div>
@@ -264,6 +267,30 @@ export function MyProgramsSection() {
                     Pause
                   </Button>
                 </>
+              ) : program.status === 'paused' ? (
+                /* Paused programme — Resume button (skip date picker, just reactivate) */
+                <Button
+                  variant="default"
+                  size="sm"
+                  onClick={async (e) => {
+                    e.stopPropagation();
+                    try {
+                      await startProgrammeExecution.mutateAsync(program.id);
+                      setExecutingProgramId(program.id);
+                      setExpandedProgramId(null);
+                    } catch { /* handled by mutation */ }
+                  }}
+                  disabled={startProgrammeExecution.isPending || !canActivateMore}
+                  className="gap-1.5 flex-1"
+                  title={!canActivateMore ? `Maximum ${maxActivePrograms} active programmes` : undefined}
+                >
+                  {startProgrammeExecution.isPending ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Play className="w-4 h-4" />
+                  )}
+                  Resume — Week {program.current_week}, Day {program.current_day}
+                </Button>
               ) : (
                 <Button
                   variant="default"
