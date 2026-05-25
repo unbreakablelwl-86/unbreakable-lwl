@@ -122,6 +122,10 @@ export function AuthModal({ isOpen, onClose, defaultMode = 'signin' }: AuthModal
           } catch (dobErr) {
             console.error('Failed to save DOB:', dobErr);
           }
+          // Meta Pixel — track signup conversion
+          if (typeof window !== 'undefined' && (window as any).fbq) {
+            (window as any).fbq('track', 'CompleteRegistration');
+          }
           toast.success('Account created! Welcome to the movement.');
           onClose();
         }

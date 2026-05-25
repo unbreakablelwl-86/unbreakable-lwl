@@ -76,7 +76,13 @@ export default function AITokens() {
         body: { priceId: tier.stripePriceId },
       });
       if (error) throw error;
-      if (data?.url) window.open(data.url, '_blank');
+      if (data?.url) {
+        // Meta Pixel — track initiate checkout
+        if (typeof window !== 'undefined' && (window as any).fbq) {
+          (window as any).fbq('track', 'InitiateCheckout', { content_name: tier.name, currency: 'GBP', value: tier.price });
+        }
+        window.open(data.url, '_blank');
+      }
     } catch (err) {
       console.error('Checkout error:', err);
       toast.error('Failed to start checkout. Please try again.');

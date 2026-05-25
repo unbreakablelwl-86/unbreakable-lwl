@@ -365,16 +365,16 @@ export default function AppLayout() {
                     navigate(item.path);
                   }}
                   className={`flex flex-col items-center gap-0.5 px-2 py-1.5 rounded-lg transition-all relative ${
-                    active ? '' : 'hover:opacity-100'
+                    active ? '' : 'opacity-80 hover:opacity-100'
                   }`}
-                  style={active ? { color: item.color || '#FF5500' } : { color: '#ffffff' }}
+                  style={active ? { color: item.color || '#FF5500' } : { color: '#e0e0e0' }}
                 >
                   {item.isShield ? (
                     <img
                       src={shieldLogo}
                       alt="Home"
                       className={`w-6 h-6 rounded-sm transition-all ${
-                        active ? 'opacity-100' : 'opacity-90'
+                        active ? 'opacity-100' : 'opacity-60 grayscale'
                       }`}
                       style={active ? { filter: `drop-shadow(0 0 6px ${item.color || '#FF5500'}80)` } : undefined}
                     />
@@ -401,9 +401,9 @@ export default function AppLayout() {
             <button
               onClick={() => { setShowMore(!showMore); setShowCustomize(false); }}
               className={`flex flex-col items-center gap-0.5 px-2 py-1.5 rounded-lg transition-all relative ${
-                showMore ? '' : 'hover:opacity-100'
+                showMore ? '' : 'opacity-80 hover:opacity-100'
               }`}
-              style={{ color: showMore ? '#FF5500' : '#ffffff' }}
+              style={{ color: showMore ? '#FF5500' : '#e0e0e0' }}
             >
               <MoreHorizontal
                 className="w-[22px] h-[22px] transition-all"
