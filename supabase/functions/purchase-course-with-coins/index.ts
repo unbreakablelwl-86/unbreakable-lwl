@@ -15,15 +15,26 @@ const corsHeaders = {
  *   - label: human-readable name for the transaction log
  */
 
-// ── Known pricing (must match frontend coursePricing.ts) ──
+// ── Known pricing (must match frontend coursePricing.ts & guideData.ts) ──
 const COURSE_COIN_COST = 150;
+const GUIDE_COIN_COST = 15;
 
 const BUNDLE_COSTS: Record<string, { courses: string[]; coinCost: number }> = {
   power:   { courses: ["gym_l2", "gym_l3", "gym_l4"], coinCost: 375 },
   fuel:    { courses: ["nutrition_l2", "nutrition_l3", "nutrition_l4"], coinCost: 375 },
   mindset: { courses: ["mindset_l2", "mindset_l3"], coinCost: 250 },
   all:     { courses: ["gym_l2", "gym_l3", "gym_l4", "nutrition_l2", "nutrition_l3", "nutrition_l4", "mindset_l2", "mindset_l3"], coinCost: 900 },
+  guide_bundle_all: {
+    courses: ["guide_01","guide_02","guide_03","guide_04","guide_05","guide_06","guide_07","guide_08","guide_09","guide_10"],
+    coinCost: 100,
+  },
 };
+
+// Guide keys
+const GUIDE_KEYS = new Set([
+  "guide_01","guide_02","guide_03","guide_04","guide_05",
+  "guide_06","guide_07","guide_08","guide_09","guide_10",
+]);
 
 const VALID_COURSE_KEYS = new Set([
   "gym_l2", "gym_l3", "gym_l4",
@@ -32,6 +43,8 @@ const VALID_COURSE_KEYS = new Set([
   "sport_football", "sport_rugby", "sport_cricket", "sport_tennis",
   "sport_swimming", "sport_boxing", "sport_athletics", "sport_cycling",
   "sport_gymnastics", "sport_martial_arts",
+  // Guides
+  ...GUIDE_KEYS,
 ]);
 
 serve(async (req) => {
@@ -101,8 +114,10 @@ serve(async (req) => {
       }
       expectedCost = bundle.coinCost;
     } else {
-      // Individual courses — 25 coins each
-      expectedCost = courseKeys.length * COURSE_COIN_COST;
+      // Calculate cost per item — guides cost GUIDE_COIN_COST, courses cost COURSE_COIN_COST
+      expectedCost = courseKeys.reduce((sum: number, key: string) => {
+        return sum + (GUIDE_KEYS.has(key) ? GUIDE_COIN_COST : COURSE_COIN_COST);
+      }, 0);
     }
 
     if (coinCost !== expectedCost) {

@@ -61,7 +61,7 @@ export interface ChapterQuiz {
   passMarkPercent: number;
 }
 
-export type CourseType = 'gym' | 'nutrition' | 'mindset' | 'sport' | 'sport-football' | 'sport-boxing' | 'sport-rugby' | 'sport-running' | 'sport-swimming' | 'sport-mma' | 'sport-cycling' | 'sport-tennis' | 'sport-basketball' | 'sport-cricket';
+export type CourseType = 'gym' | 'nutrition' | 'mindset' | 'sport' | 'guides' | 'sport-football' | 'sport-boxing' | 'sport-rugby' | 'sport-running' | 'sport-swimming' | 'sport-mma' | 'sport-cycling' | 'sport-tennis' | 'sport-basketball' | 'sport-cricket';
 
 export interface Level {
   level: number;

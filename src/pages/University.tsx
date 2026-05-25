@@ -4,18 +4,20 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { CourseProgressBar } from '@/components/university/CourseProgressBar';
-import { GraduationCap, Lock, ChevronRight, Flame, Dumbbell, Apple, Brain, BookOpen, Award, Zap, Trophy, Clock } from 'lucide-react';
+import { GraduationCap, Lock, ChevronRight, Flame, Dumbbell, Apple, Brain, BookOpen, Award, Zap, Trophy, Clock, FileText } from 'lucide-react';
 import { allCourses, sportCourses, getTotalChapters } from '@/lib/university/courseStructure';
 import { useUniversityProgress } from '@/hooks/useUniversityProgress';
 import { AdminControlPanel } from '@/components/university/AdminControlPanel';
 import { getCourseColors } from '@/lib/university/courseColors';
 import type { CourseType } from '@/lib/university/types';
+import { GuidesSection } from '@/components/university/GuidesSection';
 
 const courseTabs: { key: CourseType; label: string; icon: React.ReactNode; description: string; tagline: string }[] = [
   { key: 'gym', label: 'Power', icon: <Dumbbell className="w-5 h-5" />, description: 'Applied Fitness & Exercise Science', tagline: 'Understand how your body moves, adapts, and grows.' },
   { key: 'nutrition', label: 'Fuel', icon: <Apple className="w-5 h-5" />, description: 'Healthy Eating & Nutritional Science', tagline: 'Master the science of what you eat and why it matters.' },
   { key: 'mindset', label: 'Mindset', icon: <Brain className="w-5 h-5" />, description: 'Mental Performance & Wellbeing', tagline: 'Build the mental resilience to keep showing up.' },
   { key: 'sport', label: 'Sport', icon: <Trophy className="w-5 h-5" />, description: 'Sport-Specific Training', tagline: 'Apply your knowledge to the sport you love.' },
+  { key: 'guides', label: 'Guides', icon: <FileText className="w-5 h-5" />, description: 'Downloadable Training Guides', tagline: 'Professional PDF guides — download, keep forever, train anywhere.' },
 ];
 
 /** Animated number counter */
@@ -99,8 +101,9 @@ export default function University() {
             >
               {[
                 { value: '19', suffix: '', label: 'Courses', icon: <BookOpen className="w-3.5 h-3.5" /> },
+                { value: '10', suffix: '', label: 'Guides', icon: <FileText className="w-3.5 h-3.5" /> },
                 { value: '4400', suffix: '+', label: 'Quiz Questions', icon: <Award className="w-3.5 h-3.5" /> },
-                { value: '4', suffix: '', label: 'Disciplines', icon: <Zap className="w-3.5 h-3.5" /> },
+                { value: '5', suffix: '', label: 'Disciplines', icon: <Zap className="w-3.5 h-3.5" /> },
               ].map((stat) => (
                 <div key={stat.label} className="flex flex-col items-center gap-1">
                   <div className="flex items-center gap-1.5 text-primary">
@@ -123,7 +126,7 @@ export default function University() {
           <p className="font-display text-xs tracking-wider text-muted-foreground text-center mb-4">
             CHOOSE YOUR DISCIPLINE
           </p>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
             {courseTabs.map((tab, i) => {
               const tabColors = getCourseColors(tab.key);
               const isActive = activeTab === tab.key;
@@ -193,6 +196,11 @@ export default function University() {
       <main className="container mx-auto px-4 pb-12 md:pb-20">
         <div className="max-w-3xl mx-auto space-y-5">
 
+          {/* Guides tab */}
+          {activeTab === 'guides' && (
+            <GuidesSection />
+          )}
+
           {/* Sport tab: flat grid of individual sport courses */}
           {activeTab === 'sport' && (() => {
             const sportList: { key: string; label: string; emoji: string }[] = [
@@ -257,7 +265,7 @@ export default function University() {
           })()}
 
           {/* Non-sport tabs: level cards */}
-          {activeTab !== 'sport' && courseData.length === 0 && (
+          {activeTab !== 'sport' && activeTab !== 'guides' && courseData.length === 0 && (
             <Card className={`p-8 ${colors.border} text-center`}>
               <Flame className={`w-10 h-10 ${colors.text} mx-auto mb-4`} />
               <h2 className="font-display text-xl tracking-wider text-foreground mb-2">COMING SOON</h2>
@@ -268,7 +276,7 @@ export default function University() {
           )}
 
           <AnimatePresence mode="wait">
-            {activeTab !== 'sport' && courseData.map((level, i) => {
+            {activeTab !== 'sport' && activeTab !== 'guides' && courseData.map((level, i) => {
               const totalChapters = getTotalChapters(level.level, activeTab);
               const completedChapters = getLevelCompletedChapters(level.level, activeTab);
               const hasContent = level.units.some(u => u.chapters.length > 0);
