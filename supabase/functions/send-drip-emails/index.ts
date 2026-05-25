@@ -13,7 +13,7 @@ const B = {
   name: "UNBREAKABLE",
   tag: "Live Without Limits",
   url: "https://www.unbreakable-lwl.com",
-  from: "noreply@unbreakable-lwl.com",
+  from: "noreply@mail.unbreakable-lwl.com",
   fromName: "UNBREAKABLE",
   o: "#f97316",  // orange
   bg: "#0a0a0a",

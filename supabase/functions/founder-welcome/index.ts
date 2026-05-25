@@ -195,7 +195,7 @@ serve(async (req) => {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              from: "UNBREAKABLE <noreply@unbreakable-lwl.com>",
+              from: "UNBREAKABLE <noreply@mail.unbreakable-lwl.com>",
               to: [userEmail],
               subject: `Welcome to UNBREAKABLE, ${displayName} 🔥`,
               html: welcomeHtml,
@@ -236,7 +236,7 @@ serve(async (req) => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            from: "UNBREAKABLE <noreply@unbreakable-lwl.com>",
+            from: "UNBREAKABLE <noreply@mail.unbreakable-lwl.com>",
             to: ["unbreakable.lwl@gmail.com"],
             subject: `🆕 ${displayName} just joined UNBREAKABLE`,
             html: founderHtml,
