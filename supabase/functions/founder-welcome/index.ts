@@ -30,6 +30,16 @@ serve(async (req) => {
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
+    // Get the new user's profile info for the notification
+    const { data: newUserProfile } = await supabase
+      .from("profiles")
+      .select("display_name, username, avatar_url, city")
+      .eq("id", new_user_id)
+      .maybeSingle();
+
+    const displayName = newUserProfile?.display_name || newUserProfile?.username || "Someone";
+    const city = newUserProfile?.city ? ` from ${newUserProfile.city}` : "";
+
     // 1. Auto-follow: Founder follows the new user
     const { error: followError } = await supabase.from("follows").upsert(
       { follower_id: FOUNDER_ID, following_id: new_user_id },
@@ -85,8 +95,72 @@ serve(async (req) => {
       );
     }
 
+    // 4. Notify ALL dev-role users about the new signup
+    const { data: devRoles } = await supabase
+      .from("user_roles")
+      .select("user_id")
+      .eq("role", "dev");
+
+    if (devRoles && devRoles.length > 0) {
+      const notifications = devRoles.map((r: { user_id: string }) => ({
+        user_id: r.user_id,
+        type: "new_signup",
+        title: "🆕 New member joined!",
+        body: `${displayName}${city} just signed up and completed onboarding.`,
+        data: { new_user_id, display_name: displayName, city: newUserProfile?.city || null },
+        read: false,
+      }));
+
+      const { error: notifError } = await supabase
+        .from("notifications")
+        .insert(notifications);
+
+      if (notifError) console.error("Dev notification error:", notifError);
+    }
+
+    // 5. Send email notification to founder via Resend
+    const resendKey = Deno.env.get("RESEND_API_KEY");
+    if (resendKey) {
+      try {
+        // Get total user count for context
+        const { count: totalUsers } = await supabase
+          .from("profiles")
+          .select("id", { count: "exact", head: true });
+
+        const emailHtml = `
+          <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 480px; margin: 0 auto; padding: 20px;">
+            <div style="background: #FF5500; padding: 16px 20px; border-radius: 8px 8px 0 0;">
+              <h2 style="color: white; margin: 0; font-size: 18px;">🆕 New UNBREAKABLE Member</h2>
+            </div>
+            <div style="background: #1a1a1a; padding: 20px; border-radius: 0 0 8px 8px; color: #e0e0e0;">
+              <p style="font-size: 16px; margin: 0 0 12px;"><strong style="color: #FF5500;">${displayName}</strong>${city} just joined UNBREAKABLE.</p>
+              <p style="font-size: 14px; color: #888; margin: 0;">Total members: <strong style="color: #fff;">${totalUsers || '?'}</strong></p>
+              <hr style="border: none; border-top: 1px solid #333; margin: 16px 0;">
+              <p style="font-size: 13px; color: #666; margin: 0;">They've completed onboarding and are ready to go. You auto-followed them and sent a welcome DM.</p>
+            </div>
+          </div>
+        `;
+
+        await fetch("https://api.resend.com/emails", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${resendKey}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            from: "UNBREAKABLE <noreply@unbreakable-lwl.com>",
+            to: ["unbreakable.lwl@gmail.com"],
+            subject: `🆕 ${displayName} just joined UNBREAKABLE`,
+            html: emailHtml,
+          }),
+        });
+      } catch (emailErr) {
+        console.error("Email notification error (non-critical):", emailErr);
+      }
+    }
+
     return new Response(
-      JSON.stringify({ success: true, followed: !followError, dm_sent: !!convo }),
+      JSON.stringify({ success: true, followed: !followError, dm_sent: !!convo, dev_notified: true }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (err) {
