@@ -126,7 +126,7 @@ export default function University() {
           <p className="font-display text-xs tracking-wider text-muted-foreground text-center mb-4">
             CHOOSE YOUR DISCIPLINE
           </p>
-          <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+          <div className="flex flex-wrap justify-center gap-3">
             {courseTabs.map((tab, i) => {
               const tabColors = getCourseColors(tab.key);
               const isActive = activeTab === tab.key;
@@ -139,7 +139,7 @@ export default function University() {
                   transition={{ delay: i * 0.08 }}
                   whileHover={{ y: -2 }}
                   whileTap={{ scale: 0.97 }}
-                  className={`relative flex flex-col items-center gap-2 p-4 sm:p-5 rounded-xl border transition-all ${
+                  className={`relative flex flex-col items-center gap-2 p-4 sm:p-5 rounded-xl border transition-all w-[calc(50%-6px)] sm:w-[calc(20%-10px)] ${
                     isActive
                       ? `${tabColors.bg} ${tabColors.borderActive} shadow-lg ${tabColors.glow}`
                       : 'bg-card/50 border-border hover:border-primary/20 hover:bg-card'
