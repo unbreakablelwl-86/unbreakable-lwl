@@ -263,8 +263,6 @@ export const BREATHING_EXERCISES: BreathingExercise[] = [
     color: "from-yellow-500 to-primary",
     isVisible: true,
   },
-];
-
   {
     id: "fire-breath",
     name: "FIRE BREATH",
