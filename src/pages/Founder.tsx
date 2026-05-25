@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ThemedLogo } from '@/components/ThemedLogo';
 import { Button } from '@/components/ui/button';
-import { ThemeToggle } from '@/components/hub/ThemeToggle';
+
 import { AuthModal } from '@/components/tracker/AuthModal';
 import { Card } from '@/components/ui/card';
 import {
@@ -75,7 +75,6 @@ const Founder = () => {
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <ThemeToggle />
               <Link to="/" className="flex items-center gap-3">
                 <ThemedLogo />
                 <span className="font-display text-lg tracking-wide text-foreground hidden sm:block">
