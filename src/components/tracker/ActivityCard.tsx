@@ -280,6 +280,15 @@ export function ActivityCard({ run, onKudos, onDelete, onToggleComments, onUpdat
           <ShareMenu 
             onShareToStory={handleShareToStory}
             shareText={`🏃 ${run.title || 'Run'} — ${run.distance_km.toFixed(2)}km 💪 #UNBREAKABLE #KeepShowingUp`}
+            cardOptions={{
+              title: run.title || 'Activity Complete',
+              subtitle: `${run.distance_km.toFixed(2)}km`,
+              label: 'ACTIVITY',
+              stats: [
+                { label: 'Distance', value: `${run.distance_km.toFixed(1)}km` },
+                ...(run.duration_seconds ? [{ label: 'Duration', value: `${Math.floor(run.duration_seconds / 60)}m` }] : []),
+              ],
+            }}
           />
         </div>
 

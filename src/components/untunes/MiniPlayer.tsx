@@ -2,7 +2,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Play, Pause, SkipBack, SkipForward, Volume2, VolumeX,
   Shuffle, Repeat, Repeat1, ChevronDown, Music,
-  Dumbbell, Share2, ListMusic, MessageSquare
+  Dumbbell, Share2, ListMusic, MessageSquare, Download
 } from 'lucide-react';
 import { useState } from 'react';
 import { usePlayer, useLikeTrack } from '@/hooks/useUnTunes';
@@ -30,6 +30,133 @@ export function UnTunesMiniPlayer() {
 
   const track = state.currentTrack;
   const progress = state.duration > 0 ? (state.currentTime / state.duration) * 100 : 0;
+
+  const generateShareCard = async (): Promise<Blob | null> => {
+    const canvas = document.createElement('canvas');
+    canvas.width = 1080;
+    canvas.height = 1920;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return null;
+
+    // Dark gradient background
+    const grad = ctx.createLinearGradient(0, 0, 0, 1920);
+    grad.addColorStop(0, '#0a0a0a');
+    grad.addColorStop(0.5, '#1a0d05');
+    grad.addColorStop(1, '#0a0a0a');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, 1080, 1920);
+
+    // Load and draw cover art
+    if (track.cover_url) {
+      try {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        await new Promise((res, rej) => {
+          img.onload = res;
+          img.onerror = rej;
+          img.src = track.cover_url!;
+        });
+        const size = 600;
+        const x = (1080 - size) / 2;
+        const y = 440;
+        const radius = 24;
+        ctx.save();
+        ctx.beginPath();
+        ctx.roundRect(x, y, size, size, radius);
+        ctx.clip();
+        ctx.drawImage(img, x, y, size, size);
+        ctx.restore();
+        // Orange glow behind cover
+        ctx.shadowColor = 'rgba(255, 85, 0, 0.3)';
+        ctx.shadowBlur = 60;
+        ctx.strokeStyle = 'rgba(255, 85, 0, 0.4)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.roundRect(x, y, size, size, radius);
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+      } catch { /* skip cover on error */ }
+    }
+
+    // "NOW PLAYING ON" label
+    ctx.fillStyle = 'rgba(255, 85, 0, 0.8)';
+    ctx.font = '600 28px system-ui, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.letterSpacing = '6px';
+    ctx.fillText('NOW PLAYING ON', 540, 380);
+
+    // Track title
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 52px system-ui, sans-serif';
+    ctx.letterSpacing = '0px';
+    const titleY = 1140;
+    ctx.fillText(track.title.length > 25 ? track.title.slice(0, 25) + '…' : track.title, 540, titleY);
+
+    // Artist name
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+    ctx.font = '400 36px system-ui, sans-serif';
+    ctx.fillText(track.artist_name || 'Unbreakable', 540, titleY + 55);
+
+    // Genre badge
+    if (track.genre) {
+      ctx.fillStyle = 'rgba(255, 85, 0, 0.15)';
+      const genreText = track.genre.toUpperCase();
+      const gw = ctx.measureText(genreText).width + 40;
+      ctx.beginPath();
+      ctx.roundRect((1080 - gw) / 2, titleY + 80, gw, 44, 22);
+      ctx.fill();
+      ctx.fillStyle = 'rgba(255, 85, 0, 0.9)';
+      ctx.font = '600 22px system-ui, sans-serif';
+      ctx.fillText(genreText, 540, titleY + 108);
+    }
+
+    // UN-TUNES branding
+    ctx.fillStyle = 'rgba(255, 85, 0, 1)';
+    ctx.font = 'bold 44px system-ui, sans-serif';
+    ctx.fillText('UN-TUNES', 540, 1420);
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+    ctx.font = '400 26px system-ui, sans-serif';
+    ctx.fillText('by UNBREAKABLE', 540, 1460);
+
+    // Hashtags
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+    ctx.font = '400 24px system-ui, sans-serif';
+    ctx.fillText('#Unbreakable  #LiveWithoutLimits  #KeepShowingUp', 540, 1560);
+
+    return new Promise(res => canvas.toBlob(res, 'image/png'));
+  };
+
+  const handleShareSocial = async () => {
+    try {
+      toast.loading('Creating share card...');
+      const blob = await generateShareCard();
+      if (!blob) { toast.dismiss(); toast.error('Could not create share card'); return; }
+      
+      const file = new File([blob], `${track.title.replace(/[^a-zA-Z0-9]/g, '_')}_UnTunes.png`, { type: 'image/png' });
+
+      toast.dismiss();
+
+      if (navigator.share && navigator.canShare?.({ files: [file] })) {
+        await navigator.share({
+          text: `🎵 "${track.title}" by ${track.artist_name || 'Unbreakable'} on Un-Tunes\n\n#Unbreakable #LiveWithoutLimits #KeepShowingUp`,
+          files: [file],
+        });
+        toast.success('Shared!');
+      } else {
+        // Fallback: download the image
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = file.name;
+        a.click();
+        URL.revokeObjectURL(url);
+        toast.success('Share card downloaded — post it to Instagram, Snapchat, or any social!');
+      }
+    } catch {
+      toast.dismiss();
+      toast.info('Share cancelled');
+    }
+  };
 
   const handleShare = async () => {
     const text = `🎵 Now listening to "${track.title}" by ${track.artist_name || 'Unknown Artist'} on Un-Tunes\n\n#Unbreakable #LiveWithoutLimits #KeepShowingUp`;
@@ -174,8 +301,11 @@ export function UnTunesMiniPlayer() {
               >
                 <MessageSquare className="w-5 h-5" />
               </button>
-              <button onClick={handleShare} className="text-muted-foreground hover:text-primary transition-colors">
+              <button onClick={handleShare} className="text-muted-foreground hover:text-primary transition-colors" title="Share text">
                 <Share2 className="w-5 h-5" />
+              </button>
+              <button onClick={handleShareSocial} className="text-muted-foreground hover:text-primary transition-colors" title="Share to Instagram / Social">
+                <Download className="w-5 h-5" />
               </button>
               <button
                 onClick={() => setShowVolume(!showVolume)}

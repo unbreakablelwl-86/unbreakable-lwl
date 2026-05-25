@@ -340,6 +340,12 @@ export function StatusCard({ post, onKudos, onDelete, onToggleComments, onUpdate
             <ShareMenu 
               onShareToStory={handleShareToStory}
               shareText={post.content ? `${post.content.slice(0, 200)} 💪 #UNBREAKABLE #KeepShowingUp` : '💪 #UNBREAKABLE #KeepShowingUp'}
+              cardOptions={{
+                title: post.content ? (post.content.length > 80 ? post.content.slice(0, 77) + '...' : post.content) : 'UNBREAKABLE',
+                subtitle: post.profiles?.display_name || post.profiles?.username || undefined,
+                imageUrl: post.image_url || post.media_items?.[0]?.media_url || undefined,
+                label: 'UNBREAKABLE POST',
+              }}
             />
           </div>
           <button

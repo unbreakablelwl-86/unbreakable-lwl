@@ -195,6 +195,14 @@ export function usePlayerProvider() {
       queueIndex: idx >= 0 ? idx : 0,
       isPlaying: true,
     }));
+    // Record play in background
+    supabase.auth.getUser().then(({ data }) => {
+      if (data?.user) {
+        supabase.from('un_tunes_plays').insert({ user_id: data.user.id, track_id: track.id }).then(() => {
+          supabase.rpc('increment_track_plays', { track_id: track.id });
+        });
+      }
+    });
   }, []);
 
   const togglePlay = useCallback(() => {
@@ -556,3 +564,109 @@ export const ALL_GENRE_KEYS = GENRES.map(g => g.key);
 // Kept for reference (old shape):
 const _LEGACY_GENRES = [
 ];
+
+/** Fetch full track objects for user's liked tracks */
+export function useLikedTracks() {
+  const { user } = useAuth();
+  const [tracks, setTracks] = useState<Track[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const refresh = useCallback(async () => {
+    if (!user) { setTracks([]); setLoading(false); return; }
+    setLoading(true);
+    const { data } = await supabase
+      .from('un_tunes_likes')
+      .select('track_id, liked_at, un_tunes_tracks(*, un_tunes_artists(artist_name, avatar_url))')
+      .eq('user_id', user.id)
+      .order('liked_at', { ascending: false });
+
+    if (data) {
+      setTracks(
+        data
+          .filter((r: any) => r.un_tunes_tracks)
+          .map((r: any) => ({
+            ...r.un_tunes_tracks,
+            artist_name: r.un_tunes_tracks.un_tunes_artists?.artist_name || 'Unknown',
+            artist_avatar: r.un_tunes_tracks.un_tunes_artists?.avatar_url || null,
+          }))
+      );
+    }
+    setLoading(false);
+  }, [user]);
+
+  useEffect(() => { refresh(); }, [refresh]);
+
+  return { tracks, loading, refresh };
+}
+
+/** Fetch recently played tracks via un_tunes_plays */
+export function useRecentlyPlayed() {
+  const { user } = useAuth();
+  const [tracks, setTracks] = useState<Track[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const refresh = useCallback(async () => {
+    if (!user) { setTracks([]); setLoading(false); return; }
+    setLoading(true);
+    const { data } = await supabase
+      .from('un_tunes_plays')
+      .select('track_id, played_at, un_tunes_tracks(*, un_tunes_artists(artist_name, avatar_url))')
+      .eq('user_id', user.id)
+      .order('played_at', { ascending: false })
+      .limit(30);
+
+    if (data) {
+      // Deduplicate — keep first (most recent) occurrence of each track
+      const seen = new Set<string>();
+      const unique: Track[] = [];
+      for (const r of data as any[]) {
+        if (!r.un_tunes_tracks || seen.has(r.track_id)) continue;
+        seen.add(r.track_id);
+        unique.push({
+          ...r.un_tunes_tracks,
+          artist_name: r.un_tunes_tracks.un_tunes_artists?.artist_name || 'Unknown',
+          artist_avatar: r.un_tunes_tracks.un_tunes_artists?.avatar_url || null,
+        });
+      }
+      setTracks(unique);
+    }
+    setLoading(false);
+  }, [user]);
+
+  useEffect(() => { refresh(); }, [refresh]);
+
+  return { tracks, loading, refresh };
+}
+
+/** Fetch tracks in a specific playlist */
+export function usePlaylistTracks(playlistId: string | null) {
+  const [tracks, setTracks] = useState<Track[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  const refresh = useCallback(async () => {
+    if (!playlistId) { setTracks([]); return; }
+    setLoading(true);
+    const { data } = await supabase
+      .from('un_tunes_playlist_items')
+      .select('position, un_tunes_tracks(*, un_tunes_artists(artist_name, avatar_url))')
+      .eq('playlist_id', playlistId)
+      .order('position', { ascending: true });
+
+    if (data) {
+      setTracks(
+        data
+          .filter((r: any) => r.un_tunes_tracks)
+          .map((r: any) => ({
+            ...r.un_tunes_tracks,
+            artist_name: r.un_tunes_tracks.un_tunes_artists?.artist_name || 'Unknown',
+            artist_avatar: r.un_tunes_tracks.un_tunes_artists?.avatar_url || null,
+          }))
+      );
+    }
+    setLoading(false);
+  }, [playlistId]);
+
+  useEffect(() => { refresh(); }, [refresh]);
+
+  return { tracks, loading, refresh };
+}

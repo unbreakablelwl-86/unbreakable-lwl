@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Music, Mic2, Search, Library, UserPlus, TrendingUp,
@@ -13,8 +13,8 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/hooks/useAuth';
 import { useUserRole } from '@/hooks/useUserRole';
-import { usePlayer, useFeaturedTracks, useArtists, useMyPlaylists, useMyArtistProfile, useSearchTracks, useLikeTrack, usePlaylistActions, GENRES, GENRE_CATEGORIES } from '@/hooks/useUnTunes';
-import type { Track } from '@/hooks/useUnTunes';
+import { usePlayer, useFeaturedTracks, useArtists, useMyPlaylists, useMyArtistProfile, useSearchTracks, useLikeTrack, usePlaylistActions, useLikedTracks, useRecentlyPlayed, usePlaylistTracks, GENRES, GENRE_CATEGORIES } from '@/hooks/useUnTunes';
+import type { Track, Playlist } from '@/hooks/useUnTunes';
 import { UnTunesTrackRow } from '@/components/untunes/TrackRow';
 import { UnTunesArtistCard } from '@/components/untunes/ArtistCard';
 import { UnTunesArtistSignup } from '@/components/untunes/ArtistSignup';
@@ -49,6 +49,13 @@ export default function UnTunes() {
   const { createPlaylist, addToPlaylist } = usePlaylistActions();
   const [searchQuery, setSearchQuery] = useState('');
   const { playTrack, currentTrack } = usePlayer();
+
+  /* ── Library sub-views ── */
+  const [libraryView, setLibraryView] = useState<'main' | 'liked' | 'recent' | 'playlist'>('main');
+  const [selectedPlaylist, setSelectedPlaylist] = useState<Playlist | null>(null);
+  const { tracks: likedTracks, loading: likedLoading, refresh: refreshLiked } = useLikedTracks();
+  const { tracks: recentTracks, loading: recentLoading } = useRecentlyPlayed();
+  const { tracks: playlistTracks, loading: playlistTracksLoading } = usePlaylistTracks(selectedPlaylist?.id || null);
 
   /* ── Playlist sheet state ── */
   const [playlistSheetTrack, setPlaylistSheetTrack] = useState<Track | null>(null);
@@ -115,7 +122,7 @@ export default function UnTunes() {
             {tabs.map(tab => (
               <button
                 key={tab.key}
-                onClick={() => setActiveTab(tab.key)}
+                onClick={() => { setActiveTab(tab.key); if (tab.key !== 'library') { setLibraryView('main'); setSelectedPlaylist(null); } }}
                 className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-lg text-xs font-display tracking-wider transition-all ${
                   activeTab === tab.key
                     ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/25'
@@ -321,14 +328,134 @@ export default function UnTunes() {
           {/* ─── Library Tab ─── */}
           {activeTab === 'library' && (
             <motion.div key="library" {...fadeIn} className="space-y-6">
-              {/* Un-Tunes Library */}
               {!user ? (
                 <Card className="p-6 text-center border-border/50 bg-card/50">
                   <Headphones className="w-8 h-8 text-primary/20 mx-auto mb-2" />
                   <p className="text-xs text-muted-foreground mb-1">Sign in for your Un-Tunes library</p>
                   <p className="text-[10px] text-muted-foreground/60">Save tracks, create playlists, and more</p>
                 </Card>
+              ) : libraryView === 'liked' ? (
+                /* ── Liked Tracks View ── */
+                <>
+                  <button onClick={() => setLibraryView('main')} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
+                    <ChevronRight className="w-4 h-4 rotate-180" /> Back
+                  </button>
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="w-10 h-10 rounded-lg bg-primary/15 flex items-center justify-center">
+                      <Heart className="w-5 h-5 text-primary" />
+                    </div>
+                    <div>
+                      <h2 className="font-display text-lg tracking-wider text-foreground">LIKED</h2>
+                      <p className="text-xs text-muted-foreground">{likedTracks.length} tracks</p>
+                    </div>
+                  </div>
+                  {likedLoading ? (
+                    <div className="flex justify-center py-12"><Disc3 className="w-6 h-6 text-primary animate-spin" /></div>
+                  ) : likedTracks.length === 0 ? (
+                    <Card className="p-8 text-center border-border/50 bg-card/50">
+                      <Heart className="w-8 h-8 text-primary/20 mx-auto mb-2" />
+                      <p className="text-sm text-muted-foreground">No liked tracks yet</p>
+                      <p className="text-xs text-muted-foreground/60 mt-1">Tap the dumbbell icon on any track to like it</p>
+                    </Card>
+                  ) : (
+                    <div className="space-y-1">
+                      {likedTracks.map((track, i) => (
+                        <UnTunesTrackRow
+                          key={track.id}
+                          track={track}
+                          index={i + 1}
+                          onPlay={() => playTrack(track, likedTracks)}
+                          onShare={() => handleShareToTimeline(track)}
+                          isLiked={isLiked(track.id)}
+                          onToggleLike={() => { toggleLike(track.id); setTimeout(refreshLiked, 300); }}
+                          onAddToPlaylist={() => openPlaylistSheet(track)}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </>
+              ) : libraryView === 'recent' ? (
+                /* ── Recently Played View ── */
+                <>
+                  <button onClick={() => setLibraryView('main')} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
+                    <ChevronRight className="w-4 h-4 rotate-180" /> Back
+                  </button>
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="w-10 h-10 rounded-lg bg-primary/15 flex items-center justify-center">
+                      <Clock className="w-5 h-5 text-primary" />
+                    </div>
+                    <div>
+                      <h2 className="font-display text-lg tracking-wider text-foreground">RECENT</h2>
+                      <p className="text-xs text-muted-foreground">{recentTracks.length} tracks</p>
+                    </div>
+                  </div>
+                  {recentLoading ? (
+                    <div className="flex justify-center py-12"><Disc3 className="w-6 h-6 text-primary animate-spin" /></div>
+                  ) : recentTracks.length === 0 ? (
+                    <Card className="p-8 text-center border-border/50 bg-card/50">
+                      <Clock className="w-8 h-8 text-primary/20 mx-auto mb-2" />
+                      <p className="text-sm text-muted-foreground">No recently played tracks</p>
+                      <p className="text-xs text-muted-foreground/60 mt-1">Start listening to build your history</p>
+                    </Card>
+                  ) : (
+                    <div className="space-y-1">
+                      {recentTracks.map((track, i) => (
+                        <UnTunesTrackRow
+                          key={track.id}
+                          track={track}
+                          index={i + 1}
+                          onPlay={() => playTrack(track, recentTracks)}
+                          onShare={() => handleShareToTimeline(track)}
+                          isLiked={isLiked(track.id)}
+                          onToggleLike={() => toggleLike(track.id)}
+                          onAddToPlaylist={() => openPlaylistSheet(track)}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </>
+              ) : libraryView === 'playlist' && selectedPlaylist ? (
+                /* ── Playlist Detail View ── */
+                <>
+                  <button onClick={() => { setLibraryView('main'); setSelectedPlaylist(null); }} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
+                    <ChevronRight className="w-4 h-4 rotate-180" /> Back
+                  </button>
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center">
+                      <Music className="w-6 h-6 text-primary/50" />
+                    </div>
+                    <div>
+                      <h2 className="font-display text-lg tracking-wider text-foreground">{selectedPlaylist.name}</h2>
+                      <p className="text-xs text-muted-foreground">{selectedPlaylist.track_count} tracks</p>
+                    </div>
+                  </div>
+                  {playlistTracksLoading ? (
+                    <div className="flex justify-center py-12"><Disc3 className="w-6 h-6 text-primary animate-spin" /></div>
+                  ) : playlistTracks.length === 0 ? (
+                    <Card className="p-8 text-center border-border/50 bg-card/50">
+                      <Music className="w-8 h-8 text-primary/20 mx-auto mb-2" />
+                      <p className="text-sm text-muted-foreground">No tracks in this playlist</p>
+                      <p className="text-xs text-muted-foreground/60 mt-1">Add tracks from Browse or Search tabs</p>
+                    </Card>
+                  ) : (
+                    <div className="space-y-1">
+                      {playlistTracks.map((track, i) => (
+                        <UnTunesTrackRow
+                          key={track.id}
+                          track={track}
+                          index={i + 1}
+                          onPlay={() => playTrack(track, playlistTracks)}
+                          onShare={() => handleShareToTimeline(track)}
+                          isLiked={isLiked(track.id)}
+                          onToggleLike={() => toggleLike(track.id)}
+                          onAddToPlaylist={() => openPlaylistSheet(track)}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </>
               ) : (
+                /* ── Library Main View ── */
                 <>
                   {/* Now Playing Share */}
                   {currentTrack && (
@@ -356,27 +483,33 @@ export default function UnTunes() {
                     </Card>
                   )}
 
-                  {/* Quick Actions */}
+                  {/* Quick Actions — Liked / Recent */}
                   <div className="grid grid-cols-2 gap-3">
-                    <Card className="p-4 border-border/50 bg-card/30 hover:bg-card/50 transition-colors cursor-pointer group">
+                    <Card
+                      className="p-4 border-border/50 bg-card/30 hover:bg-card/50 transition-colors cursor-pointer group"
+                      onClick={() => { setLibraryView('liked'); refreshLiked(); }}
+                    >
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-lg bg-primary/15 flex items-center justify-center group-hover:shadow-[0_0_12px_rgba(255,85,0,0.3)] transition-shadow">
                           <Heart className="w-5 h-5 text-primary drop-shadow-[0_0_4px_rgba(255,85,0,0.5)]" />
                         </div>
                         <div>
                           <p className="font-display text-xs tracking-wider text-foreground">LIKED</p>
-                          <p className="text-[10px] text-muted-foreground">Your favourites</p>
+                          <p className="text-[10px] text-muted-foreground">{likedTracks.length} favourites</p>
                         </div>
                       </div>
                     </Card>
-                    <Card className="p-4 border-border/50 bg-card/30 hover:bg-card/50 transition-colors cursor-pointer group">
+                    <Card
+                      className="p-4 border-border/50 bg-card/30 hover:bg-card/50 transition-colors cursor-pointer group"
+                      onClick={() => setLibraryView('recent')}
+                    >
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-lg bg-primary/15 flex items-center justify-center group-hover:shadow-[0_0_12px_rgba(255,85,0,0.3)] transition-shadow">
                           <Clock className="w-5 h-5 text-primary drop-shadow-[0_0_4px_rgba(255,85,0,0.5)]" />
                         </div>
                         <div>
                           <p className="font-display text-xs tracking-wider text-foreground">RECENT</p>
-                          <p className="text-[10px] text-muted-foreground">Recently played</p>
+                          <p className="text-[10px] text-muted-foreground">{recentTracks.length} played</p>
                         </div>
                       </div>
                     </Card>
@@ -395,7 +528,6 @@ export default function UnTunes() {
                         <span className="text-lg leading-none">+</span> New
                       </Button>
                     </div>
-                    {/* Inline new playlist input */}
                     {showNewPlaylistInput && (
                       <div className="flex items-center gap-2 mb-3">
                         <Input
@@ -411,14 +543,7 @@ export default function UnTunes() {
                             if (e.key === 'Escape') setShowNewPlaylistInput(false);
                           }}
                         />
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-9 text-xs text-muted-foreground"
-                          onClick={() => setShowNewPlaylistInput(false)}
-                        >
-                          Cancel
-                        </Button>
+                        <Button variant="ghost" size="sm" className="h-9 text-xs text-muted-foreground" onClick={() => setShowNewPlaylistInput(false)}>Cancel</Button>
                       </div>
                     )}
 
@@ -430,7 +555,11 @@ export default function UnTunes() {
                     ) : (
                       <div className="space-y-2">
                         {playlists.map(p => (
-                          <Card key={p.id} className="p-3 border-border/50 bg-card/30 flex items-center gap-3 hover:bg-card/50 cursor-pointer transition-colors">
+                          <Card
+                            key={p.id}
+                            className="p-3 border-border/50 bg-card/30 flex items-center gap-3 hover:bg-card/50 cursor-pointer transition-colors"
+                            onClick={() => { setSelectedPlaylist(p); setLibraryView('playlist'); }}
+                          >
                             <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
                               <Music className="w-5 h-5 text-primary/50" />
                             </div>
@@ -444,7 +573,6 @@ export default function UnTunes() {
                       </div>
                     )}
                   </div>
-
                 </>
               )}
             </motion.div>

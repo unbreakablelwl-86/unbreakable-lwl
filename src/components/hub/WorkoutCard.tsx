@@ -230,6 +230,16 @@ export function WorkoutCard({ workout, onKudos, onDelete, onToggleComments, onUp
 
           <ShareMenu
             onShareToStory={handleShareToStory}
+            shareText={`💪 ${workout.day_name} - ${workout.session_type} • Week ${workout.week_number}\n⏱️ ${formatDuration(workout.duration_seconds)} • ${workout.sets_completed || 0} sets\n\n#Unbreakable #LiveWithoutLimits #KeepShowingUp`}
+            cardOptions={{
+              title: workout.day_name || workout.session_type,
+              subtitle: `Week ${workout.week_number} • ${workout.session_type}`,
+              label: 'WORKOUT COMPLETE',
+              stats: [
+                { label: 'Duration', value: formatDuration(workout.duration_seconds) || '-' },
+                { label: 'Sets', value: String(workout.sets_completed || 0) },
+              ],
+            }}
           />
         </div>
 

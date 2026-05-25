@@ -1,8 +1,9 @@
 import { useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
-import { BookImage, Check, Share2, Copy, X } from 'lucide-react';
+import { BookImage, Check, Share2, Copy, X, Image as ImageIcon } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
+import { generateSocialShareCard, shareSocialCard } from '@/lib/socialShareCard';
 
 /* ── SVG brand icons (small, inline) ───────────────────────── */
 const InstagramIcon = () => (
@@ -41,11 +42,21 @@ interface ShareMenuProps {
   shareText?: string;
   /** URL to share — defaults to current page */
   shareUrl?: string;
+  /** Options for generating a branded share card image */
+  cardOptions?: {
+    title: string;
+    subtitle?: string;
+    body?: string;
+    imageUrl?: string;
+    label?: string;
+    stats?: Array<{ label: string; value: string }>;
+  };
 }
 
-export function ShareMenu({ onShareToStory, shareText, shareUrl }: ShareMenuProps) {
+export function ShareMenu({ onShareToStory, shareText, shareUrl, cardOptions }: ShareMenuProps) {
   const [shared, setShared] = useState(false);
   const [showSheet, setShowSheet] = useState(false);
+  const [generatingCard, setGeneratingCard] = useState(false);
 
   const url = shareUrl || window.location.href;
   const text = shareText
@@ -108,6 +119,33 @@ export function ShareMenu({ onShareToStory, shareText, shareUrl }: ShareMenuProp
     },
     [text, url]
   );
+
+  /* ── Generate & share branded image card ────────────────────── */
+  const handleShareAsImage = useCallback(async () => {
+    if (!cardOptions) return;
+    setGeneratingCard(true);
+    try {
+      const blob = await generateSocialShareCard({
+        title: cardOptions.title,
+        subtitle: cardOptions.subtitle,
+        body: cardOptions.body,
+        imageUrl: cardOptions.imageUrl,
+        label: cardOptions.label || 'UNBREAKABLE',
+        stats: cardOptions.stats,
+      });
+      if (blob) {
+        await shareSocialCard(blob);
+        setShared(true);
+        setShowSheet(false);
+        setTimeout(() => setShared(false), 2500);
+      }
+    } catch (e) {
+      console.error('Share card error:', e);
+      toast.error('Could not generate share image');
+    } finally {
+      setGeneratingCard(false);
+    }
+  }, [cardOptions]);
 
   const canNativeShare = typeof navigator !== 'undefined' && !!navigator.share;
 
@@ -195,6 +233,12 @@ export function ShareMenu({ onShareToStory, shareText, shareUrl }: ShareMenuProp
                   {onShareToStory && (
                     <ShareCircle label="Story" onClick={handleStoryShare}>
                       <BookImage className="w-6 h-6" />
+                    </ShareCircle>
+                  )}
+                  {/* Share as branded image card */}
+                  {cardOptions && (
+                    <ShareCircle label={generatingCard ? '...' : 'Image Card'} onClick={handleShareAsImage} className="text-primary">
+                      <ImageIcon className="w-6 h-6" />
                     </ShareCircle>
                   )}
                   {/* Instagram — opens native share on mobile, hint on desktop */}

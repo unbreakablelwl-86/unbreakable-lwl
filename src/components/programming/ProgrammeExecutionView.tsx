@@ -138,6 +138,15 @@ export function ProgrammeExecutionView({ program, onClose }: ProgrammeExecutionV
       .sort((a, b) => new Date(b.ended_at || b.started_at).getTime() - new Date(a.ended_at || a.started_at).getTime());
   }, [sessions, program.id]);
 
+  /* Equipment priority for exercise ordering: barbell → dumbbell → cable → bodyweight → other */
+  const EQUIP_PRIORITY: Record<string, number> = {
+    barbell: 0, 'barbell (olympic)': 0, 'olympic barbell': 0,
+    dumbbell: 1, dumbbells: 1, 'dumbbell pair': 1,
+    cable: 2, 'cable machine': 2, cables: 2,
+    bodyweight: 3, 'body weight': 3, none: 3,
+  };
+  const getEquipPriority = (eq: string) => EQUIP_PRIORITY[eq?.toLowerCase().trim()] ?? 2.5;
+
   const handleStartSession = async (planner: SessionPlanner) => {
     if (isStartingSession) return;
     
@@ -152,12 +161,17 @@ export function ProgrammeExecutionView({ program, onClose }: ProgrammeExecutionV
     setIsStartingSession(true);
     
     try {
+      // Sort exercises: barbell → dumbbell → cable → bodyweight
+      const sortedExercises = [...planner.planned_exercises].sort(
+        (a, b) => getEquipPriority(a.equipment) - getEquipPriority(b.equipment)
+      );
+
       await startSession.mutateAsync({
         programId: program.id,
         weekNumber: planner.week_number,
         dayName: `Day ${planner.day_number}`,
         sessionType: planner.session_type,
-        exercises: planner.planned_exercises.map(ex => ({
+        exercises: sortedExercises.map(ex => ({
           name: ex.name,
           equipment: ex.equipment,
           sets: typeof ex.sets === 'number' ? ex.sets : parseInt(String(ex.sets)) || 3,

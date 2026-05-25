@@ -525,6 +525,73 @@ export function useWorkoutSessions() {
       } catch (e) {
         console.error('Failed to notify coach/dev on session complete:', e);
       }
+
+      // Auto-trigger AI feedback + coach chat message
+      try {
+        if (!user) return;
+
+        // Fetch exercise logs for the completed session
+        const { data: logs } = await supabase
+          .from('exercise_logs')
+          .select('*')
+          .eq('session_id', variables.sessionId)
+          .order('created_at');
+
+        if (logs && logs.length > 0) {
+          // Build session summary for AI coach
+          const completedSets = logs.filter((l: any) => l.completed).length;
+          const totalWeight = logs.reduce((sum: number, l: any) => l.completed && l.weight_kg && l.actual_reps ? sum + l.weight_kg * l.actual_reps : sum, 0);
+          const exercises = [...new Set(logs.map((l: any) => l.exercise_name))];
+          const painFlags = logs.filter((l: any) => l.pain_flag);
+
+          const summaryText = [
+            `📊 *Session Complete* — ${completedSets}/${logs.length} sets completed`,
+            `🏋️ Exercises: ${exercises.join(', ')}`,
+            totalWeight > 0 ? `💪 Total volume: ${totalWeight.toFixed(0)}kg` : '',
+            painFlags.length > 0 ? `⚠️ Pain flagged on: ${painFlags.map((l: any) => l.exercise_name).join(', ')}` : '',
+          ].filter(Boolean).join('\n');
+
+          // Create AI coach conversation with session feedback
+          const { data: convo } = await supabase
+            .from('help_conversations')
+            .insert({ user_id: user.id, title: `Session Review — ${exercises.slice(0, 3).join(', ')}` })
+            .select()
+            .single();
+
+          if (convo) {
+            // Insert initial system-like message with session data
+            await supabase.from('help_messages').insert({
+              conversation_id: convo.id,
+              user_id: user.id,
+              role: 'user',
+              content: `I just completed a workout session. Here are my results:\n\n${summaryText}\n\nPlease review my performance, give feedback, and ask me how I felt during the session.`,
+            });
+
+            // Trigger AI response via help-chat edge function
+            try {
+              await supabase.functions.invoke('help-chat', {
+                body: {
+                  conversationId: convo.id,
+                  message: `I just completed a workout session. Here are my results:\n\n${summaryText}\n\nPlease review my performance, give feedback, and ask me how I felt during the session.`,
+                },
+              });
+            } catch (chatErr) {
+              console.error('Auto AI chat trigger failed:', chatErr);
+            }
+
+            // Notify user about AI feedback
+            await supabase.from('notifications').insert({
+              user_id: user.id,
+              type: 'ai_session_feedback',
+              title: '🤖 AI Coach Feedback Ready',
+              body: 'Your AI coach has reviewed your session. Tap to see feedback and share how you felt.',
+              data: { session_id: variables.sessionId, conversation_id: convo.id },
+            });
+          }
+        }
+      } catch (e) {
+        console.error('Auto AI feedback failed (non-blocking):', e);
+      }
     },
   });
 
