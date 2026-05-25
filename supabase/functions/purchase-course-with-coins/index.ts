@@ -25,8 +25,9 @@ const BUNDLE_COSTS: Record<string, { courses: string[]; coinCost: number }> = {
   mindset: { courses: ["mindset_l2", "mindset_l3"], coinCost: 250 },
   all:     { courses: ["gym_l2", "gym_l3", "gym_l4", "nutrition_l2", "nutrition_l3", "nutrition_l4", "mindset_l2", "mindset_l3"], coinCost: 900 },
   guide_bundle_all: {
-    courses: ["guide_01","guide_02","guide_03","guide_04","guide_05","guide_06","guide_07","guide_08","guide_09","guide_10"],
-    coinCost: 100,
+    courses: ["guide_01","guide_02","guide_03","guide_04","guide_05","guide_06","guide_07","guide_08","guide_09","guide_10",
+              "guide_11","guide_12","guide_13","guide_14","guide_15","guide_16","guide_17","guide_18","guide_19","guide_20"],
+    coinCost: 150,
   },
 };
 
@@ -34,6 +35,8 @@ const BUNDLE_COSTS: Record<string, { courses: string[]; coinCost: number }> = {
 const GUIDE_KEYS = new Set([
   "guide_01","guide_02","guide_03","guide_04","guide_05",
   "guide_06","guide_07","guide_08","guide_09","guide_10",
+  "guide_11","guide_12","guide_13","guide_14","guide_15",
+  "guide_16","guide_17","guide_18","guide_19","guide_20",
 ]);
 
 const VALID_COURSE_KEYS = new Set([

@@ -12,7 +12,7 @@ import { useUserRole } from '@/hooks/useUserRole';
 import { useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import { GuideCard } from './GuideCard';
-import { GUIDES, GUIDE_BUNDLE, getGuideDownloadUrl, ALL_GUIDE_KEYS } from '@/lib/university/guideData';
+import { GUIDES, GUIDE_BUNDLE, GUIDE_COIN_COST, getGuideDownloadUrl, ALL_GUIDE_KEYS } from '@/lib/university/guideData';
 
 export function GuidesSection() {
   const [bundleLoading, setBundleLoading] = useState(false);
@@ -39,7 +39,7 @@ export function GuidesSection() {
         body: {
           courseKeys: ALL_GUIDE_KEYS,
           coinCost: GUIDE_BUNDLE.coinCost,
-          label: 'Complete Guide Collection (All 10)',
+          label: `Complete Guide Collection (All ${GUIDES.length})`,
           bundleKey: 'guide_bundle_all',
         },
       });
@@ -77,9 +77,14 @@ export function GuidesSection() {
   const categories = [
     { key: 'beginner', label: 'Getting Started', guides: GUIDES.filter(g => g.category === 'beginner') },
     { key: 'strength', label: 'Strength Training', guides: GUIDES.filter(g => g.category === 'strength') },
+    { key: 'nutrition', label: 'Nutrition & Meal Prep', guides: GUIDES.filter(g => g.category === 'nutrition') },
     { key: 'mindset', label: 'Mindset', guides: GUIDES.filter(g => g.category === 'mindset') },
     { key: 'calisthenics', label: 'Calisthenics', guides: GUIDES.filter(g => g.category === 'calisthenics') },
     { key: 'big-lifts', label: 'Big Lifts Series', guides: GUIDES.filter(g => g.category === 'big-lifts') },
+    { key: 'cardio', label: 'Cardio & Conditioning', guides: GUIDES.filter(g => g.category === 'cardio') },
+    { key: 'recovery', label: 'Recovery', guides: GUIDES.filter(g => g.category === 'recovery') },
+    { key: 'lifestyle', label: 'Lifestyle & Home Training', guides: GUIDES.filter(g => g.category === 'lifestyle') },
+    { key: 'powerlifting', label: 'Powerlifting', guides: GUIDES.filter(g => g.category === 'powerlifting') },
   ];
 
   return (
@@ -102,14 +107,14 @@ export function GuidesSection() {
                   COMPLETE GUIDE COLLECTION
                 </h3>
                 <p className="text-xs text-muted-foreground mt-1">
-                  All 10 guides for {GUIDE_BUNDLE.coinCost} tokens — save {GUIDE_BUNDLE.savings} tokens vs buying individually
+                  All {GUIDES.length} guides for {GUIDE_BUNDLE.coinCost} tokens — save {GUIDE_BUNDLE.savings} tokens vs buying individually
                 </p>
                 <div className="flex items-center gap-2 mt-2 justify-center sm:justify-start">
                   <Badge variant="outline" className="text-[10px] border-primary/30 text-primary">
                     <Sparkles className="w-2.5 h-2.5 mr-0.5" /> BEST VALUE
                   </Badge>
                   <span className="text-[10px] text-muted-foreground line-through">
-                    150 tokens
+                    {GUIDES.length * GUIDE_COIN_COST} tokens
                   </span>
                   <span className="text-xs font-display text-primary tracking-wider">
                     {GUIDE_BUNDLE.coinCost} tokens
@@ -126,7 +131,7 @@ export function GuidesSection() {
                 ) : (
                   <Coins className="w-4 h-4 mr-2" />
                 )}
-                GET ALL 10
+                GET ALL {GUIDES.length}
               </Button>
             </div>
           </Card>

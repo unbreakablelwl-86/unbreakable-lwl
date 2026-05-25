@@ -3,7 +3,13 @@ import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Download, Coins, Lock, CheckCircle, FileText, Sparkles } from 'lucide-react';
+import {
+  Download, Coins, Lock, CheckCircle, FileText, Sparkles,
+  Dumbbell, TrendingUp, Brain, ArrowUp, ArrowUpFromLine,
+  Target, Flame, HandMetal, BookOpen, Trophy, Zap, Heart,
+  Home, RefreshCw, UtensilsCrossed, ChefHat, Footprints,
+  GraduationCap, Timer, type LucideIcon,
+} from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useTokenBalance } from '@/hooks/useTokenBalance';
@@ -11,6 +17,30 @@ import { useUserRole } from '@/hooks/useUserRole';
 import { useNavigate } from 'react-router-dom';
 import type { GuideInfo } from '@/lib/university/guideData';
 import { getGuideDownloadUrl } from '@/lib/university/guideData';
+
+/** Map guide keys to Lucide icons — neon orange, not cartoon emoji */
+const GUIDE_ICONS: Record<string, LucideIcon> = {
+  guide_01: GraduationCap,
+  guide_02: Dumbbell,
+  guide_03: TrendingUp,
+  guide_04: Brain,
+  guide_05: ArrowUpFromLine,
+  guide_06: ArrowUp,
+  guide_07: Target,
+  guide_08: Dumbbell,
+  guide_09: Flame,
+  guide_10: HandMetal,
+  guide_11: UtensilsCrossed,
+  guide_12: ChefHat,
+  guide_13: Flame,
+  guide_14: Footprints,
+  guide_15: Zap,
+  guide_16: Heart,
+  guide_17: RefreshCw,
+  guide_18: Home,
+  guide_19: Trophy,
+  guide_20: Timer,
+};
 
 interface GuideCardProps {
   guide: GuideInfo;
@@ -94,10 +124,13 @@ export function GuideCard({ guide, owned, index, onPurchased }: GuideCardProps) 
           {/* Header */}
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-3">
-              <div className={`w-11 h-11 rounded-xl flex items-center justify-center text-xl ${
+              <div className={`w-11 h-11 rounded-xl flex items-center justify-center ${
                 hasAccess ? 'bg-primary/10' : 'bg-muted/30'
               }`}>
-                {guide.emoji}
+                {(() => {
+                  const Icon = GUIDE_ICONS[guide.key] || BookOpen;
+                  return <Icon className={`w-5 h-5 ${hasAccess ? 'text-primary' : 'text-muted-foreground'}`} />;
+                })()}
               </div>
               <div className="min-w-0">
                 <div className="flex items-center gap-2">

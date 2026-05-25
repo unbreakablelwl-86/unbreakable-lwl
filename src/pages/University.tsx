@@ -101,7 +101,7 @@ export default function University() {
             >
               {[
                 { value: '19', suffix: '', label: 'Courses', icon: <BookOpen className="w-3.5 h-3.5" /> },
-                { value: '10', suffix: '', label: 'Guides', icon: <FileText className="w-3.5 h-3.5" /> },
+                { value: '20', suffix: '', label: 'Guides', icon: <FileText className="w-3.5 h-3.5" /> },
                 { value: '4400', suffix: '+', label: 'Quiz Questions', icon: <Award className="w-3.5 h-3.5" /> },
                 { value: '5', suffix: '', label: 'Disciplines', icon: <Zap className="w-3.5 h-3.5" /> },
               ].map((stat) => (
