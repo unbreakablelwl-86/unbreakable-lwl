@@ -5,7 +5,7 @@ import {
   Play, Heart, MoreHorizontal, Clock, Headphones, Radio,
   Disc3, Podcast, ChevronRight, Sparkles, Crown, Star,
   Share2, Dumbbell, Footprints, Guitar, Flame, Waves, Swords, Drum,
-  Zap, Activity, Brain, ChevronDown, Loader2,
+  Zap, Activity, Brain, Loader2,
 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -39,7 +39,6 @@ export default function UnTunes() {
   const { isDev, isCoach } = useUserRole();
   const [activeTab, setActiveTab] = useState<UnTunesTab>('browse');
   const [selectedGenre, setSelectedGenre] = useState<string | null>(null);
-  const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
   // const spotify = useSpotify(); // parked
   const { tracks: featured, loading: featuredLoading } = useFeaturedTracks();
   const { artists, loading: artistsLoading } = useArtists();
@@ -136,63 +135,30 @@ export default function UnTunes() {
           {/* ─── Browse Tab ─── */}
           {activeTab === 'browse' && (
             <motion.div key="browse" {...fadeIn} className="space-y-8">
-              {/* Genre Pillars — 3 main categories with dropdown sub-genres */}
+              {/* Pillar Tabs — Power / Movement / Mindset */}
               <div className="space-y-3">
-                <h2 className="font-display text-xs tracking-wider text-muted-foreground">GENRES</h2>
-                <div className="space-y-2">
+                <h2 className="font-display text-xs tracking-wider text-muted-foreground">BROWSE BY PILLAR</h2>
+                <div className="flex gap-2">
                   {GENRE_CATEGORIES.map(cat => {
                     const CatIcon = GENRE_ICONS[cat.icon] || Music;
-                    const isExpanded = expandedCategory === cat.key;
-                    const hasActiveGenre = cat.subGenres.some(sg => sg.key === selectedGenre);
+                    const isActive = selectedGenre === cat.key;
                     return (
-                      <div key={cat.key}>
-                        {/* Category Header */}
-                        <button
-                          onClick={() => setExpandedCategory(isExpanded ? null : cat.key)}
-                          className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl border transition-all ${
-                            hasActiveGenre
-                              ? 'bg-primary/10 border-primary/30 shadow-[0_0_16px_rgba(255,85,0,0.15)]'
-                              : 'bg-card/30 border-border/50 hover:border-primary/20 hover:bg-card/50'
-                          }`}
-                        >
-                          <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${
-                            hasActiveGenre ? 'bg-primary/20 shadow-[0_0_12px_rgba(255,85,0,0.3)]' : 'bg-primary/10'
-                          }`}>
-                            <CatIcon className={`w-4.5 h-4.5 text-primary ${hasActiveGenre ? 'drop-shadow-[0_0_6px_rgba(255,85,0,0.6)]' : ''}`} />
-                          </div>
-                          <span className="font-display text-sm tracking-wider text-foreground flex-1 text-left">{cat.label}</span>
-                          <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
-                        </button>
-
-                        {/* Sub-genres dropdown */}
-                        <AnimatePresence>
-                          {isExpanded && (
-                            <motion.div
-                              initial={{ height: 0, opacity: 0 }}
-                              animate={{ height: 'auto', opacity: 1 }}
-                              exit={{ height: 0, opacity: 0 }}
-                              transition={{ duration: 0.2 }}
-                              className="overflow-hidden"
-                            >
-                              <div className="flex flex-wrap gap-2 pt-2 pl-4">
-                                {cat.subGenres.map(sg => (
-                                  <button
-                                    key={sg.key}
-                                    onClick={() => setSelectedGenre(selectedGenre === sg.key ? null : sg.key)}
-                                    className={`px-3 py-1.5 rounded-full text-xs font-display tracking-wider border transition-all ${
-                                      selectedGenre === sg.key
-                                        ? 'bg-primary text-primary-foreground border-primary shadow-[0_0_12px_rgba(255,85,0,0.4)]'
-                                        : 'border-border/50 text-muted-foreground hover:border-primary/50 hover:text-foreground bg-card/30'
-                                    }`}
-                                  >
-                                    {sg.label}
-                                  </button>
-                                ))}
-                              </div>
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
-                      </div>
+                      <button
+                        key={cat.key}
+                        onClick={() => setSelectedGenre(isActive ? null : cat.key)}
+                        className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl border transition-all ${
+                          isActive
+                            ? 'bg-primary/15 border-primary/40 shadow-[0_0_16px_rgba(255,85,0,0.2)]'
+                            : 'bg-card/30 border-border/50 hover:border-primary/20 hover:bg-card/50'
+                        }`}
+                      >
+                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
+                          isActive ? 'bg-primary/20 shadow-[0_0_12px_rgba(255,85,0,0.3)]' : 'bg-primary/10'
+                        }`}>
+                          <CatIcon className={`w-4 h-4 text-primary ${isActive ? 'drop-shadow-[0_0_6px_rgba(255,85,0,0.6)]' : ''}`} />
+                        </div>
+                        <span className={`font-display text-xs tracking-wider ${isActive ? 'text-primary' : 'text-foreground'}`}>{cat.label}</span>
+                      </button>
                     );
                   })}
                 </div>
@@ -324,35 +290,29 @@ export default function UnTunes() {
               )}
 
               {!searchQuery && (
-                <div className="space-y-6">
-                  {GENRE_CATEGORIES.map(cat => {
-                    const CatIcon = GENRE_ICONS[cat.icon] || Music;
-                    return (
-                      <div key={cat.key}>
-                        <div className="flex items-center gap-2 mb-3">
-                          <div className="w-7 h-7 rounded-lg bg-primary/15 flex items-center justify-center">
-                            <CatIcon className="w-3.5 h-3.5 text-primary drop-shadow-[0_0_4px_rgba(255,85,0,0.5)]" />
+                <div className="space-y-4">
+                  <p className="font-display text-xs tracking-wider text-muted-foreground">BROWSE BY PILLAR</p>
+                  <div className="grid grid-cols-3 gap-2">
+                    {GENRE_CATEGORIES.map(cat => {
+                      const CatIcon = GENRE_ICONS[cat.icon] || Music;
+                      return (
+                        <button
+                          key={cat.key}
+                          onClick={() => {
+                            setSearchQuery(cat.label);
+                            search(cat.key);
+                          }}
+                          className="relative overflow-hidden rounded-xl border border-border/50 bg-card/30 px-4 py-5 text-center transition-all hover:border-primary/30 hover:bg-card/50 group"
+                        >
+                          <div className="absolute inset-0 opacity-5 group-hover:opacity-15 transition-opacity bg-gradient-to-br from-primary/40 to-transparent" />
+                          <div className="w-10 h-10 rounded-xl bg-primary/15 flex items-center justify-center mx-auto mb-2">
+                            <CatIcon className="w-5 h-5 text-primary drop-shadow-[0_0_6px_rgba(255,85,0,0.5)]" />
                           </div>
-                          <h3 className="font-display text-xs tracking-wider text-muted-foreground">{cat.label}</h3>
-                        </div>
-                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                          {cat.subGenres.map(sg => (
-                            <button
-                              key={sg.key}
-                              onClick={() => {
-                                setSearchQuery(sg.label);
-                                search(sg.key);
-                              }}
-                              className="relative overflow-hidden rounded-xl border border-border/50 bg-card/30 px-4 py-3 text-left transition-all hover:border-primary/30 hover:bg-card/50 group"
-                            >
-                              <div className="absolute inset-0 opacity-5 group-hover:opacity-15 transition-opacity bg-gradient-to-br from-primary/40 to-transparent" />
-                              <p className="font-display text-xs tracking-wider text-foreground relative">{sg.label}</p>
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    );
-                  })}
+                          <p className="font-display text-xs tracking-wider text-foreground relative">{cat.label}</p>
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
               )}
             </motion.div>

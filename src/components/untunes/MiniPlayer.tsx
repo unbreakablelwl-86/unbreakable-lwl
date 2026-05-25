@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import { usePlayer, useLikeTrack } from '@/hooks/useUnTunes';
+import { useTokenBalance } from '@/hooks/useTokenBalance';
 import { toast } from 'sonner';
 import { ShareTrackSheet } from './ShareTrackSheet';
 
@@ -19,9 +20,11 @@ function formatTime(seconds: number): string {
 export function UnTunesMiniPlayer() {
   const { state, togglePlay, nextTrack, prevTrack, seekTo, setVolume, toggleShuffle, toggleRepeat } = usePlayer();
   const { isLiked, toggleLike } = useLikeTrack();
+  const { currentTier, loading: tierLoading } = useTokenBalance();
   const [expanded, setExpanded] = useState(false);
   const [showVolume, setShowVolume] = useState(false);
   const [showShareSheet, setShowShareSheet] = useState(false);
+  const hasBanner = !tierLoading && (!currentTier || currentTier === 'free');
 
   if (!state.currentTrack) return null;
 
@@ -203,7 +206,7 @@ export function UnTunesMiniPlayer() {
       <motion.div
         initial={{ y: 100 }}
         animate={{ y: 0 }}
-        className="fixed bottom-16 left-0 right-0 z-40 px-2"
+        className={`fixed left-0 right-0 z-[52] px-2 ${hasBanner ? 'bottom-[104px]' : 'bottom-16'}`}
       >
         <div className="bg-card/95 backdrop-blur-xl border border-primary/20 rounded-xl shadow-[0_0_20px_rgba(255,85,0,0.1)] overflow-hidden">
           {/* Progress bar (thin) */}

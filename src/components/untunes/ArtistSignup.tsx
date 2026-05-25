@@ -166,32 +166,23 @@ export function UnTunesArtistSignup() {
         </div>
 
         <div>
-          <label className="text-xs font-display tracking-wider text-muted-foreground mb-2 block">GENRES (up to 3)</label>
-          <div className="space-y-3">
+          <label className="text-xs font-display tracking-wider text-muted-foreground mb-2 block">PILLARS (select up to 3)</label>
+          <div className="flex gap-2">
             {GENRE_CATEGORIES.map(cat => {
               const CatIcon = GENRE_ICONS[cat.icon] || Music;
               return (
-                <div key={cat.key}>
-                  <div className="flex items-center gap-2 mb-1.5">
-                    <CatIcon className="w-3.5 h-3.5 text-primary" />
-                    <span className="font-display text-[10px] tracking-wider text-muted-foreground">{cat.label}</span>
-                  </div>
-                  <div className="flex flex-wrap gap-1.5">
-                    {cat.subGenres.map(sg => (
-                      <button
-                        key={sg.key}
-                        onClick={() => toggleGenre(sg.key)}
-                        className={`px-2.5 py-1 rounded-full text-[11px] font-display tracking-wider border transition-all ${
-                          selectedGenres.includes(sg.key)
-                            ? 'bg-primary text-primary-foreground border-primary shadow-[0_0_10px_rgba(255,85,0,0.3)]'
-                            : 'border-border/50 text-muted-foreground hover:border-primary/50'
-                        }`}
-                      >
-                        {sg.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
+                <button
+                  key={cat.key}
+                  onClick={() => toggleGenre(cat.key)}
+                  className={`flex-1 flex flex-col items-center gap-1.5 px-3 py-3 rounded-xl border transition-all ${
+                    selectedGenres.includes(cat.key)
+                      ? 'bg-primary/15 border-primary/40 shadow-[0_0_12px_rgba(255,85,0,0.3)]'
+                      : 'border-border/50 text-muted-foreground hover:border-primary/50 bg-card/30'
+                  }`}
+                >
+                  <CatIcon className={`w-5 h-5 text-primary ${selectedGenres.includes(cat.key) ? 'drop-shadow-[0_0_6px_rgba(255,85,0,0.6)]' : ''}`} />
+                  <span className="font-display text-[10px] tracking-wider">{cat.label}</span>
+                </button>
               );
             })}
           </div>
