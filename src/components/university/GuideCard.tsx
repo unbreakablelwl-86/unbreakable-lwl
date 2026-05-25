@@ -117,7 +117,7 @@ export function GuideCard({ guide, owned, index, onPurchased }: GuideCardProps) 
             </div>
             <div className="flex items-center gap-1 text-muted-foreground text-xs shrink-0">
               <FileText className="w-3.5 h-3.5" />
-              <span>{guide.pages}p</span>
+              <span>{guide.pages} pages</span>
             </div>
           </div>
 
