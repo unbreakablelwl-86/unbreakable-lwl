@@ -112,10 +112,10 @@ const freeFeatures = [
 
 /* ─── Token tiers ─── */
 const tokenTiers = [
-  { name: 'FREE', tokens: 5, price: '£0', fullPrice: null, desc: 'Try the Unbreakable Coach — 5 tokens on signup', highlight: false },
-  { name: 'BASE', tokens: 50, price: '£25/mo', fullPrice: '£50/mo', desc: 'Programmes, meal plans & form feedback', highlight: false },
-  { name: 'PRO', tokens: 150, price: '£50/mo', fullPrice: '£100/mo', desc: 'Full coaching across all pillars', highlight: true },
-  { name: 'ELITE', tokens: 500, price: '£100/mo', fullPrice: '£200/mo', desc: 'Unlimited feel — perfect for PT students', highlight: false },
+  { name: 'FREE', tokens: 5, price: '£0', desc: 'Try the Unbreakable Coach — 5 tokens on signup', highlight: false },
+  { name: 'BASE', tokens: 75, price: '£25/mo', desc: 'Programmes, meal plans & form feedback', highlight: false },
+  { name: 'PRO', tokens: 200, price: '£50/mo', desc: 'Full coaching across all pillars', highlight: true },
+  { name: 'ELITE', tokens: 500, price: '£100/mo', desc: 'Unlimited feel — perfect for PT students', highlight: false },
 ];
 
 export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
@@ -269,8 +269,8 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
         <div className="container mx-auto px-6">
           <div className="flex flex-wrap justify-center gap-8 md:gap-16 text-center">
             {[
-              { val: '4', label: 'Training Tracks' },
-              { val: '100+', label: 'Programmes' },
+              { val: '6', label: 'Training Pillars' },
+              { val: '20+', label: 'PDF Guides' },
               { val: '24/7', label: 'Unbreakable Coach' },
               { val: '∞', label: 'Potential' },
             ].map(s => (
@@ -434,7 +434,6 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
                   <h3 className="font-heading font-black text-lg text-white uppercase tracking-wider mb-1">{t.name}</h3>
                   <div className="flex items-baseline gap-2 mb-1">
                     <span className="font-heading font-black text-2xl text-[#FF5500]">{t.price}</span>
-                    {t.fullPrice && <span className="text-[#555] line-through text-xs">{t.fullPrice}</span>}
                   </div>
                   <p className="text-[#888] text-xs mb-3">{t.tokens} tokens/month</p>
                   <p className="text-[#666] text-xs leading-relaxed">{t.desc}</p>
