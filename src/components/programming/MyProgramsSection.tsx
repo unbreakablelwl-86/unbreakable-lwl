@@ -2,6 +2,10 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Badge } from '@/components/ui/badge';
 import { useTrainingPrograms, TrainingProgram, ProgramStatus } from '@/hooks/useTrainingPrograms';
 import { useAuth } from '@/hooks/useAuth';
@@ -54,6 +58,7 @@ export function MyProgramsSection() {
   const [executingProgramId, setExecutingProgramId] = useState<string | null>(null);
   const [startDateProgramId, setStartDateProgramId] = useState<string | null>(null);
   const [editingProgramId, setEditingProgramId] = useState<string | null>(null);
+  const [deletingProgramId, setDeletingProgramId] = useState<string | null>(null);
   const startDateProgram = programs?.find(p => p.id === startDateProgramId);
 
   // Find the program being executed
@@ -130,14 +135,19 @@ export function MyProgramsSection() {
 
   const handleDelete = (programId: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    if (confirm('Are you sure you want to delete this programme? This will also delete all scheduled sessions.')) {
-      deleteProgram.mutate(programId);
-      if (expandedProgramId === programId) {
+    setDeletingProgramId(programId);
+  };
+
+  const confirmDelete = () => {
+    if (deletingProgramId) {
+      deleteProgram.mutate(deletingProgramId);
+      if (expandedProgramId === deletingProgramId) {
         setExpandedProgramId(null);
       }
-      if (executingProgramId === programId) {
+      if (executingProgramId === deletingProgramId) {
         setExecutingProgramId(null);
       }
+      setDeletingProgramId(null);
     }
   };
 
@@ -376,6 +386,24 @@ export function MyProgramsSection() {
         isPending={startProgrammeExecution.isPending}
         programName={startDateProgram?.name || ''}
       />
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={!!deletingProgramId} onOpenChange={(open) => { if (!open) setDeletingProgramId(null); }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete programme?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will permanently delete this programme and all scheduled sessions. This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

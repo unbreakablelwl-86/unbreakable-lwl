@@ -903,7 +903,7 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
       />
       
       <Dialog open={isOpen && phase !== 'countdown'} onOpenChange={handleClose}>
-        <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto border-primary/15 shadow-[0_0_12px_hsl(var(--primary)/0.3)] bg-background border-border" style={{ background: '#0A0A0A' }}>
+        <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto border-primary/15 shadow-[0_0_12px_hsl(var(--primary)/0.3)] bg-background border-border">
           <AnimatePresence mode="wait">
             {/* Activity Selection */}
             {phase === 'select' && (

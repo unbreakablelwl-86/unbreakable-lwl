@@ -39,12 +39,16 @@ const PRICE_TO_BUNDLE: Record<string, string[]> = {
   ],
 };
 
+// ── Token top-up price IDs (one-time purchases that provision tokens) ──
+const PRICE_TO_TOPUP: Record<string, { tokens: number; label: string }> = {
+  "price_1TaPmmD5KOEmeWH2lbJWYqDf": { tokens: 50, label: "Small Top-Up (50 tokens)" },
+  "price_1TaPmmD5KOEmeWH2aoxZv7uk": { tokens: 150, label: "Medium Top-Up (150 tokens)" },
+  "price_1TaPmsD5KOEmeWH2NmqQQnW1": { tokens: 300, label: "Large Top-Up (300 tokens)" },
+};
+
 // ── AI Token tier price IDs ──
-const AI_TIER_PRICES = new Set([
-  "price_1TXuIrD5KOEmeWH21kBZYWAP", // Starter £25/mo
-  "price_1TXuIrD5KOEmeWH2SxYc7G14", // Pro £49/mo
-  "price_1TXuIsD5KOEmeWH2JUHUujEy", // Elite £79/mo
-]);
+// Dynamically loaded from ai_tiers table (see lookupTier helper below)
+// Covers both legacy and new subscription tiers automatically.
 
 serve(async (req) => {
   if (req.method !== "POST") {
@@ -80,6 +84,16 @@ serve(async (req) => {
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
     { auth: { persistSession: false } }
   );
+
+  // ── Helper: look up AI tier from DB by stripe_price_id ──
+  async function lookupTier(priceId: string) {
+    const { data: tier } = await serviceClient
+      .from("ai_tiers")
+      .select("name, display_name, monthly_tokens")
+      .eq("stripe_price_id", priceId)
+      .maybeSingle();
+    return tier;
+  }
 
   // ── Helper: resolve Stripe customer email → Supabase user_id ──
   async function resolveUserId(
@@ -190,10 +204,59 @@ serve(async (req) => {
           const priceId = session.metadata?.price_id;
           if (!userId || !priceId) { log("Missing metadata", { userId, priceId }); break; }
 
+          // ── Token top-up ──
+          if (PRICE_TO_TOPUP[priceId]) {
+            const topUp = PRICE_TO_TOPUP[priceId];
+            log("Token top-up purchase", { userId, tokens: topUp.tokens, label: topUp.label });
+
+            const { data: existing } = await serviceClient
+              .from("token_balances")
+              .select("balance, lifetime_earned")
+              .eq("user_id", userId)
+              .maybeSingle();
+
+            const currentBalance = Number(existing?.balance ?? 0);
+            const currentLifetime = Number(existing?.lifetime_earned ?? 0);
+            const newBalance = currentBalance + topUp.tokens;
+
+            await serviceClient
+              .from("token_balances")
+              .upsert(
+                {
+                  user_id: userId,
+                  balance: newBalance,
+                  lifetime_earned: currentLifetime + topUp.tokens,
+                  updated_at: new Date().toISOString(),
+                },
+                { onConflict: "user_id" }
+              );
+
+            await serviceClient.from("token_transactions").insert({
+              user_id: userId,
+              amount: topUp.tokens,
+              balance_after: newBalance,
+              type: "top_up",
+              description: topUp.label,
+              metadata: { price_id: priceId, session_id: session.id },
+            });
+
+            await serviceClient.from("notifications").insert({
+              user_id: userId,
+              type: "token_top_up",
+              title: "Tokens Added! 💰",
+              body: `${topUp.tokens} Unbreakable Tokens have been added to your balance. New balance: ${newBalance}.`,
+              data: { tokens_added: topUp.tokens, new_balance: newBalance },
+            }).catch(() => {});
+
+            log("Top-up processed", { userId, tokensAdded: topUp.tokens, newBalance });
+            break;
+          }
+
+          // ── Course purchase ──
           let courseKeys: string[] = [];
           if (PRICE_TO_COURSE[priceId]) courseKeys = [PRICE_TO_COURSE[priceId]];
           else if (PRICE_TO_BUNDLE[priceId]) courseKeys = PRICE_TO_BUNDLE[priceId];
-          else { log("Unknown price ID", { priceId }); break; }
+          else { log("Unknown payment price ID", { priceId }); break; }
 
           log("Recording course purchase", { userId, courseKeys });
 
@@ -253,19 +316,13 @@ serve(async (req) => {
             ? new Date(subscription.current_period_end * 1000).toISOString()
             : null;
 
-          if (!priceId || !AI_TIER_PRICES.has(priceId)) {
-            log("Not an AI tier subscription", { priceId });
+          // Look up tier from DB by stripe_price_id (covers all tier versions)
+          const tier = priceId ? await lookupTier(priceId) : null;
+
+          if (!tier) {
+            log("Not a known AI tier subscription or tier not found", { priceId });
             break;
           }
-
-          // Look up tier from DB by stripe_price_id
-          const { data: tier } = await serviceClient
-            .from("ai_tiers")
-            .select("name, display_name, monthly_tokens")
-            .eq("stripe_price_id", priceId)
-            .maybeSingle();
-
-          if (!tier) { log("Tier not found for price", { priceId }); break; }
 
           log("AI tier subscription activated", {
             userId,
@@ -335,18 +392,13 @@ serve(async (req) => {
           ? new Date(subscription.current_period_end * 1000).toISOString()
           : null;
 
-        if (!priceId || !AI_TIER_PRICES.has(priceId)) {
-          log("Renewal not for AI tier", { priceId });
+        // Look up tier from DB dynamically (covers all tier versions)
+        const tier = priceId ? await lookupTier(priceId) : null;
+
+        if (!tier) {
+          log("Renewal not for a known AI tier", { priceId });
           break;
         }
-
-        const { data: tier } = await serviceClient
-          .from("ai_tiers")
-          .select("name, display_name, monthly_tokens")
-          .eq("stripe_price_id", priceId)
-          .maybeSingle();
-
-        if (!tier) { log("Tier not found", { priceId }); break; }
 
         log("Monthly renewal", { userId, tier: tier.name, tokens: tier.monthly_tokens });
 
@@ -367,8 +419,11 @@ serve(async (req) => {
         const subscription = event.data.object as Stripe.Subscription;
         const priceId = subscription.items.data[0]?.price?.id;
 
-        if (!priceId || !AI_TIER_PRICES.has(priceId)) {
-          log("Subscription update not for AI tier", { priceId });
+        // Look up tier from DB dynamically
+        const tier = priceId ? await lookupTier(priceId) : null;
+
+        if (!tier) {
+          log("Subscription update not for a known AI tier", { priceId });
           break;
         }
 
@@ -388,15 +443,6 @@ serve(async (req) => {
         }
 
         if (!userId) { log("Cannot resolve user for sub update"); break; }
-
-        // Look up new tier
-        const { data: tier } = await serviceClient
-          .from("ai_tiers")
-          .select("name, display_name, monthly_tokens")
-          .eq("stripe_price_id", priceId)
-          .maybeSingle();
-
-        if (!tier) break;
 
         const periodEnd = subscription.current_period_end
           ? new Date(subscription.current_period_end * 1000).toISOString()

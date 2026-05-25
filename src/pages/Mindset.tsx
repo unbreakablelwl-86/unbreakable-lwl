@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { toast } from 'sonner';
 import {
   Brain, Wind, Gamepad2, Flame, ArrowRight, BookOpen, Snowflake, ThermometerSun,
   Timer, Play, Pause, RotateCcw, ChevronDown, ChevronRight as ChevronRightIcon,
@@ -767,7 +768,7 @@ const Mindset = () => {
                             setShowManualBuilder(false);
                             setManualForm({ name: '', description: '', duration_weeks: 4, daily_minutes: 15, focus_areas: [] });
                           } catch (err: any) {
-                            alert(err.message || 'Failed to save programme');
+                            toast.error(err.message || 'Failed to save programme');
                           }
                         }}
                         disabled={!manualForm.name.trim() || manualForm.focus_areas.length === 0 || saveProgramme.isPending}

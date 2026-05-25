@@ -49,7 +49,7 @@ export function SplashScreen({ onComplete }: { onComplete: () => void }) {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.4 }}
           className="fixed inset-0 z-[9999] flex flex-col items-center justify-center overflow-hidden"
-          style={{ background: '#080808' }}
+          style={{ background: 'hsl(var(--background))' }}
         >
           {/* Subtle radial glow */}
           <div
@@ -99,7 +99,7 @@ export function SplashScreen({ onComplete }: { onComplete: () => void }) {
                 >
                   LIVE WITHOUT LIMITS
                 </p>
-                <p className="text-gray-500 text-sm text-center mb-8">
+                <p className="text-muted-foreground text-sm text-center mb-8">
                   Sign in to unlock your full Unbreakable experience — programmes, tracking, and more.
                 </p>
 
@@ -113,7 +113,7 @@ export function SplashScreen({ onComplete }: { onComplete: () => void }) {
 
                 <button
                   onClick={handleSkip}
-                  className="text-gray-600 text-sm hover:text-gray-400 transition-all py-2"
+                  className="text-muted-foreground text-sm hover:text-foreground transition-all py-2"
                 >
                   Continue as guest
                 </button>
