@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -48,6 +48,8 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { getExerciseDetails } from '@/lib/exerciseLibrary';
 import { findCoachingDataByName } from '@/lib/exerciseCoachingData';
+import type { Exercise } from '@/lib/exercise-types';
+import { getExerciseGifUrl } from '@/lib/exercise-images';
 
 interface ActiveWorkoutModalProps {
   session: WorkoutSession;
@@ -106,6 +108,26 @@ export function ActiveWorkoutModal({
   const [showFinishConfirm, setShowFinishConfirm] = useState(false);
   const [finishVisibility, setFinishVisibility] = useState<'public' | 'friends' | 'private'>('public');
   const [finishNotes, setFinishNotes] = useState('');
+
+  // Full exercise library with GIFs
+  const [exerciseDb, setExerciseDb] = useState<Exercise[]>([]);
+  useEffect(() => {
+    if (open && exerciseDb.length === 0) {
+      fetch('/data/exercises.json')
+        .then(r => r.json())
+        .then((data: Exercise[]) => setExerciseDb(data))
+        .catch(() => {});
+    }
+  }, [open, exerciseDb.length]);
+
+  // Build name → Exercise lookup for GIFs and rich data
+  const exerciseDbMap = useMemo(() => {
+    const map = new Map<string, Exercise>();
+    for (const ex of exerciseDb) {
+      map.set(ex.name.toLowerCase(), ex);
+    }
+    return map;
+  }, [exerciseDb]);
 
   // Live elapsed timer
   const [elapsed, setElapsed] = useState(0);
@@ -311,8 +333,10 @@ export function ActiveWorkoutModal({
                     {Object.values(exerciseGroups).map((exercise) => {
                       const details = getExerciseDetails(exercise.name);
                       const coachingData = findCoachingDataByName(exercise.name);
+                      const dbExercise = exerciseDbMap.get(exercise.name.toLowerCase());
+                      const gifUrl = dbExercise ? getExerciseGifUrl(dbExercise) : '';
                       const isExpanded = expandedExercise === exercise.name;
-                      const hasDetails = details.exercise || coachingData;
+                      const hasDetails = details.exercise || coachingData || dbExercise;
 
                       return (
                         <div key={exercise.name} className="rounded-lg border border-border bg-surface overflow-hidden">
@@ -325,6 +349,11 @@ export function ActiveWorkoutModal({
                               {exercise.completed === exercise.sets && (
                                 <Check className="w-4 h-4 text-primary" />
                               )}
+                              {gifUrl ? (
+                                <div className="w-10 h-10 rounded-lg overflow-hidden bg-muted shrink-0">
+                                  <img src={gifUrl} alt={exercise.name} className="w-full h-full object-cover" loading="lazy" />
+                                </div>
+                              ) : null}
                               <span className="text-sm text-foreground">{exercise.name}</span>
                             </div>
                             <div className="flex items-center gap-2">
@@ -351,7 +380,7 @@ export function ActiveWorkoutModal({
                             </div>
                           </button>
 
-                          {/* Premium Coaching Panel or Basic Tips */}
+                          {/* Expanded Details: Coaching > Old Library Tips > exercises.json instructions */}
                           <AnimatePresence>
                             {isExpanded && hasDetails && (
                               <motion.div
@@ -369,16 +398,26 @@ export function ActiveWorkoutModal({
                                       exerciseName={exercise.name}
                                     />
                                   ) : details.exercise ? (
-                                    /* Fallback to basic details */
+                                    /* Old library details (tips, alternatives) */
                                     <div className="space-y-3">
-                                      {/* Description */}
+                                      {/* GIF + muscle badges from exercises.json */}
+                                      {dbExercise && (
+                                        <div className="flex items-center gap-1.5 flex-wrap">
+                                          {dbExercise.primaryMuscles?.map(m => (
+                                            <Badge key={m} variant="outline" className="text-[10px]">{m}</Badge>
+                                          ))}
+                                          {dbExercise.equipment && (
+                                            <Badge variant="secondary" className="text-[10px]">{dbExercise.equipment}</Badge>
+                                          )}
+                                        </div>
+                                      )}
+
                                       {details.exercise?.description && (
                                         <p className="text-sm text-muted-foreground">
                                           {details.exercise.description}
                                         </p>
                                       )}
 
-                                      {/* Tips */}
                                       {details.exercise?.tips && details.exercise.tips.length > 0 && (
                                         <div>
                                           <div className="flex items-center gap-1 mb-2">
@@ -396,7 +435,6 @@ export function ActiveWorkoutModal({
                                         </div>
                                       )}
 
-                                      {/* Alternatives */}
                                       {details.exercise?.alternatives && details.exercise.alternatives.length > 0 && (
                                         <div>
                                           <span className="text-xs font-display text-muted-foreground tracking-wide">
@@ -409,6 +447,38 @@ export function ActiveWorkoutModal({
                                               </Badge>
                                             ))}
                                           </div>
+                                        </div>
+                                      )}
+                                    </div>
+                                  ) : dbExercise ? (
+                                    /* Fallback to exercises.json data (instructions, muscles, GIF) */
+                                    <div className="space-y-3">
+                                      <div className="flex items-center gap-1.5 flex-wrap">
+                                        {dbExercise.primaryMuscles?.map(m => (
+                                          <Badge key={m} variant="outline" className="text-[10px]">{m}</Badge>
+                                        ))}
+                                        {dbExercise.equipment && (
+                                          <Badge variant="secondary" className="text-[10px]">{dbExercise.equipment}</Badge>
+                                        )}
+                                        {dbExercise.level && (
+                                          <Badge variant="secondary" className="text-[10px]">{dbExercise.level}</Badge>
+                                        )}
+                                      </div>
+
+                                      {dbExercise.instructions && dbExercise.instructions.length > 0 && (
+                                        <div>
+                                          <div className="flex items-center gap-1 mb-2">
+                                            <Lightbulb className="w-3 h-3 text-primary" />
+                                            <span className="text-xs font-display text-primary tracking-wide">HOW TO</span>
+                                          </div>
+                                          <ol className="space-y-1.5">
+                                            {dbExercise.instructions.slice(0, 4).map((step, idx) => (
+                                              <li key={idx} className="text-xs text-muted-foreground flex gap-2">
+                                                <span className="text-primary font-display shrink-0">{idx + 1}.</span>
+                                                {step}
+                                              </li>
+                                            ))}
+                                          </ol>
                                         </div>
                                       )}
                                     </div>
