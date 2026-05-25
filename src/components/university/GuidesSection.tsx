@@ -161,7 +161,7 @@ export function GuidesSection() {
         <div key={cat.key} className="space-y-3">
           <div className="flex items-center gap-2">
             <BookOpen className="w-4 h-4 text-primary" />
-            <h3 className="font-display text-xs tracking-wider text-muted-foreground">
+            <h3 className="font-display text-base sm:text-lg tracking-wider text-foreground">
               {cat.label.toUpperCase()}
             </h3>
             <div className="flex-1 h-px bg-border" />
