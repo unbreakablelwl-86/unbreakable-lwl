@@ -1,132 +1,297 @@
 /**
- * UNBREAKABLE 86 — Completion Certificate
- * Displayed when user completes all 86 days. Shareable.
+ * UNBREAKABLE 86 — Platinum Certificate
+ * Premium certificate displayed when a user completes all 86 days.
+ * Viewable by the completing user, coaches, and devs.
  */
+import { useRef, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { Trophy, Award, Calendar, Flame, Share2, Download } from 'lucide-react';
+import { Trophy, Award, Calendar, Flame, Share2, Download, RotateCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 import { format } from 'date-fns';
 import type { U86Enrolment } from '@/lib/unbreakable86Types';
 
 interface U86CertificateProps {
   enrolment: U86Enrolment;
   userName: string;
+  /** True when a coach/dev is viewing someone else's certificate */
+  isViewerMode?: boolean;
 }
 
-export function U86Certificate({ enrolment, userName }: U86CertificateProps) {
+export function U86Certificate({ enrolment, userName, isViewerMode }: U86CertificateProps) {
+  const certRef = useRef<HTMLDivElement>(null);
   const completedDate = enrolment.completed_at ? format(new Date(enrolment.completed_at), 'dd MMMM yyyy') : '';
   const startDate = format(new Date(enrolment.start_date), 'dd MMMM yyyy');
 
+  /* ── Download as image ─────────────────────────────────── */
+  const handleDownload = useCallback(async () => {
+    if (!certRef.current) return;
+    try {
+      const { default: html2canvas } = await import('html2canvas');
+      const canvas = await html2canvas(certRef.current, {
+        backgroundColor: null,
+        scale: 2,
+        useCORS: true,
+      });
+      const link = document.createElement('a');
+      link.download = `UNBREAKABLE-86-Platinum-Certificate-${userName.replace(/\s+/g, '-')}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+      toast.success('Certificate downloaded');
+    } catch {
+      toast.error('Could not generate image — try a screenshot instead');
+    }
+  }, [userName]);
+
+  /* ── Native share ──────────────────────────────────────── */
+  const handleShare = useCallback(async () => {
+    if (!certRef.current) return;
+    try {
+      const { default: html2canvas } = await import('html2canvas');
+      const canvas = await html2canvas(certRef.current, {
+        backgroundColor: null,
+        scale: 2,
+        useCORS: true,
+      });
+      canvas.toBlob(async (blob) => {
+        if (!blob) return;
+        const file = new File([blob], 'UNBREAKABLE-86-Platinum-Certificate.png', { type: 'image/png' });
+        if (navigator.share && navigator.canShare?.({ files: [file] })) {
+          await navigator.share({
+            title: 'UNBREAKABLE 86 — Platinum Certificate',
+            text: `I completed the UNBREAKABLE 86 challenge! 86 days of Power, Movement, Fuel, Mindset & Education 💪🔥 #Unbreakable #LiveWithoutLimits #KeepShowingUp`,
+            files: [file],
+          });
+        } else {
+          const link = document.createElement('a');
+          link.download = 'UNBREAKABLE-86-Platinum-Certificate.png';
+          link.href = canvas.toDataURL('image/png');
+          link.click();
+        }
+      });
+    } catch {
+      toast.error('Could not share');
+    }
+  }, []);
+
   return (
     <div className="min-h-screen pb-24 bg-background">
+      {/* ─── Viewer badge for coaches/devs ─── */}
+      {isViewerMode && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mx-4 mt-4 px-4 py-2 rounded-xl bg-primary/10 border border-primary/20 text-center"
+        >
+          <p className="text-xs text-primary font-display tracking-wider">
+            👁️ VIEWING {userName.toUpperCase()}'S CERTIFICATE
+          </p>
+        </motion.div>
+      )}
+
       {/* ─── Hero ─── */}
-      <div className="relative px-4 pt-8 pb-6 overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none"
-          style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(255,85,0,0.15), transparent 70%)' }} />
+      <div className="relative px-4 pt-8 pb-4 overflow-hidden">
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(200,210,240,0.12), transparent 70%)' }}
+        />
         <div className="relative z-10 text-center">
           <motion.div
             initial={{ scale: 0, rotate: -180 }}
             animate={{ scale: 1, rotate: 0 }}
             transition={{ type: 'spring', stiffness: 200, delay: 0.2 }}
           >
-            <Trophy className="w-16 h-16 text-primary mx-auto" style={{ filter: 'drop-shadow(0 0 20px rgba(255,85,0,0.6))' }} />
+            <Trophy
+              className="w-14 h-14 mx-auto"
+              style={{ color: '#c8d0e8', filter: 'drop-shadow(0 0 20px rgba(200,210,240,0.6))' }}
+            />
           </motion.div>
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-            className="font-display text-3xl tracking-wider mt-4"
-          >
-            <span className="text-primary" style={{ textShadow: '0 0 30px rgba(255,85,0,0.5)' }}>UNBREAKABLE</span>
-          </motion.h1>
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.7 }}
-            className="text-muted-foreground text-sm font-display tracking-widest mt-1"
+            transition={{ delay: 0.5 }}
+            className="text-xs font-display tracking-[0.4em] mt-3"
+            style={{ color: '#c0c8e0' }}
           >
-            CERTIFICATE OF COMPLETION
+            ✦ PLATINUM TIER ✦
           </motion.p>
         </div>
       </div>
 
-      <div className="px-4 space-y-4">
-        {/* ─── Certificate Card ─── */}
+      <div className="px-4 space-y-6">
+        {/* ─── Certificate Card — matches university tier style ─── */}
         <motion.div
+          ref={certRef}
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.8 }}
-          className="rounded-2xl border-2 border-primary/30 bg-card p-6 text-center relative overflow-hidden"
-          style={{ boxShadow: '0 0 40px rgba(255,85,0,0.1)' }}
+          transition={{ delay: 0.6 }}
+          className="relative w-full max-w-2xl mx-auto overflow-hidden rounded-lg"
+          style={{ aspectRatio: '3 / 2' }}
         >
-          {/* Corner decorations */}
-          <div className="absolute top-0 left-0 w-12 h-12 border-t-2 border-l-2 border-primary/30 rounded-tl-2xl" />
-          <div className="absolute top-0 right-0 w-12 h-12 border-t-2 border-r-2 border-primary/30 rounded-tr-2xl" />
-          <div className="absolute bottom-0 left-0 w-12 h-12 border-b-2 border-l-2 border-primary/30 rounded-bl-2xl" />
-          <div className="absolute bottom-0 right-0 w-12 h-12 border-b-2 border-r-2 border-primary/30 rounded-br-2xl" />
+          {/* Platinum background image */}
+          <img
+            src="/cert-platinum-u86.webp"
+            alt=""
+            aria-hidden
+            className="absolute inset-0 w-full h-full object-cover"
+            crossOrigin="anonymous"
+          />
 
-          <Award className="w-10 h-10 text-primary mx-auto mb-4" style={{ filter: 'drop-shadow(0 0 10px rgba(255,85,0,0.4))' }} />
+          {/* Text overlay */}
+          <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-8 sm:px-16 py-6 sm:py-8">
+            {/* UNBREAKABLE */}
+            <h2
+              className="font-display text-lg sm:text-2xl tracking-[0.25em] drop-shadow-md"
+              style={{ color: '#e0e4f0', textShadow: '0 2px 10px rgba(200,210,240,0.5), 0 2px 6px rgba(0,0,0,0.8)' }}
+            >
+              UNBREAKABLE
+            </h2>
 
-          <p className="text-muted-foreground text-xs font-display tracking-widest mb-1">THIS CERTIFIES THAT</p>
-          <h2 className="font-display text-2xl tracking-wider text-foreground mb-1">{userName.toUpperCase()}</h2>
-          <p className="text-muted-foreground text-xs font-display tracking-wide mb-4">
-            HAS COMPLETED THE
-          </p>
-
-          <div className="py-3 border-y border-primary/15">
-            <h3 className="font-display text-xl tracking-wider text-primary" style={{ textShadow: '0 0 15px rgba(255,85,0,0.3)' }}>
-              UNBREAKABLE 86
-            </h3>
-            <p className="text-muted-foreground text-[10px] font-display tracking-widest mt-1">
-              86-DAY TRANSFORMATION CHALLENGE
+            {/* 86 */}
+            <p
+              className="font-display text-3xl sm:text-5xl tracking-[0.15em] leading-none mb-1"
+              style={{
+                color: '#d0d8f0',
+                textShadow: '0 2px 20px rgba(200,210,240,0.6), 0 2px 8px rgba(0,0,0,0.8)',
+              }}
+            >
+              86
             </p>
-          </div>
 
-          <div className="mt-4 space-y-2">
-            <p className="text-muted-foreground text-xs">
-              Across all 5 pillars: Power · Movement · Fuel · Mindset · Education
-            </p>
-            <div className="flex items-center justify-center gap-4 text-[10px] text-muted-foreground">
-              <div className="flex items-center gap-1">
-                <Calendar className="w-3 h-3" />
-                <span>{startDate} — {completedDate}</span>
-              </div>
+            {/* Tier badge */}
+            <div
+              className="text-[8px] sm:text-[10px] tracking-[0.4em] uppercase mb-2 sm:mb-3 px-3 py-0.5 rounded-full"
+              style={{
+                color: '#c8d0e8',
+                border: '1px solid rgba(200,210,240,0.4)',
+                background: 'rgba(0,0,0,0.35)',
+                textShadow: '0 1px 4px rgba(0,0,0,0.8)',
+              }}
+            >
+              ✦ PLATINUM TIER ✦
             </div>
+
+            {/* "This certificate is presented to" */}
+            <p
+              className="text-[9px] sm:text-[11px] tracking-[0.15em] uppercase mb-1"
+              style={{
+                color: '#a0a8c0',
+                fontVariant: 'small-caps',
+                textShadow: '0 1px 4px rgba(0,0,0,0.8)',
+              }}
+            >
+              This Certificate Is Presented To
+            </p>
+
+            {/* User name — platinum colored */}
+            <h1
+              className="text-2xl sm:text-4xl md:text-5xl mb-1.5 sm:mb-2 drop-shadow-lg"
+              style={{
+                fontFamily: "'Georgia', 'Times New Roman', 'Palatino', cursive, serif",
+                fontStyle: 'italic',
+                fontWeight: 400,
+                color: '#d0d8f0',
+                textShadow: '0 2px 16px rgba(200,210,240,0.5), 0 2px 6px rgba(0,0,0,0.6)',
+              }}
+            >
+              {userName}
+            </h1>
+
+            {/* "For successfully completing" */}
+            <p
+              className="text-[8px] sm:text-[10px] tracking-[0.15em] uppercase mb-1"
+              style={{
+                color: '#9098b0',
+                fontVariant: 'small-caps',
+                textShadow: '0 1px 4px rgba(0,0,0,0.8)',
+              }}
+            >
+              For Successfully Completing The
+            </p>
+
+            {/* Challenge title */}
+            <h3
+              className="font-display text-sm sm:text-lg md:text-xl tracking-wide mb-0.5 drop-shadow-md"
+              style={{
+                color: '#c0c8e0',
+                textShadow: '0 2px 12px rgba(200,210,240,0.4), 0 2px 6px rgba(0,0,0,0.6)',
+              }}
+            >
+              86-DAY TRANSFORMATION CHALLENGE
+            </h3>
+
+            {/* Pillars */}
+            <p
+              className="text-[7px] sm:text-[9px] tracking-[0.12em] mb-1.5"
+              style={{ color: '#8890a8', textShadow: '0 1px 4px rgba(0,0,0,0.8)' }}
+            >
+              POWER · MOVEMENT · FUEL · MINDSET · EDUCATION
+            </p>
+
+            {/* Dates */}
+            <p
+              className="text-[8px] sm:text-[10px] tracking-[0.12em] mb-1"
+              style={{ color: '#808898', textShadow: '0 1px 4px rgba(0,0,0,0.8)' }}
+            >
+              {startDate} — {completedDate}
+            </p>
+
+            {/* Reset count */}
             {enrolment.reset_count > 0 && (
-              <p className="text-primary/60 text-[10px] font-display tracking-wider">
-                RESET {enrolment.reset_count} TIME{enrolment.reset_count > 1 ? 'S' : ''} — STILL FINISHED
+              <p
+                className="text-[7px] sm:text-[8px] tracking-[0.2em] flex items-center justify-center gap-1"
+                style={{ color: '#8890a8' }}
+              >
+                <span>RESET {enrolment.reset_count} TIME{enrolment.reset_count > 1 ? 'S' : ''} — STILL FINISHED</span>
               </p>
             )}
-          </div>
 
-          <div className="mt-6 pt-4 border-t border-border">
-            <Flame className="w-5 h-5 text-primary mx-auto mb-1" style={{ filter: 'drop-shadow(0 0 6px rgba(255,85,0,0.5))' }} />
-            <p className="font-display text-[10px] tracking-widest text-muted-foreground">
-              LIVE WITHOUT LIMITS
-            </p>
+            {/* Bottom stamp line */}
+            <div className="mt-2 pt-1.5 border-t border-white/10 flex items-center justify-center gap-1.5">
+              <Flame
+                className="w-3 h-3"
+                style={{ color: '#c0c8e0', filter: 'drop-shadow(0 0 4px rgba(200,210,240,0.5))' }}
+              />
+              <p
+                className="font-display text-[8px] sm:text-[9px] tracking-[0.3em]"
+                style={{ color: '#a0a8c0', textShadow: '0 1px 3px rgba(0,0,0,0.8)' }}
+              >
+                LIVE WITHOUT LIMITS
+              </p>
+            </div>
           </div>
         </motion.div>
 
-        {/* ─── Actions ─── */}
+        {/* ── Disclaimer ──────────────────────────────────── */}
+        <p className="text-[9px] text-muted-foreground/50 text-center max-w-md mx-auto leading-relaxed">
+          This certificate recognises completion of the UNBREAKABLE 86 transformation challenge.
+        </p>
+
+        {/* ── Action buttons ──────────────────────────────── */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 1.2 }}
-          className="space-y-2"
+          transition={{ delay: 1 }}
+          className="flex gap-3 justify-center max-w-2xl mx-auto"
         >
           <Button
-            className="w-full h-12 rounded-xl font-display tracking-wider bg-primary hover:bg-primary/90 text-white"
-            style={{ boxShadow: '0 0 20px rgba(255,85,0,0.25)' }}
+            onClick={handleDownload}
+            className="gap-2 flex-1 max-w-[200px] h-12 rounded-xl font-display tracking-wider"
+            style={{
+              background: 'linear-gradient(135deg, #8890a8, #c0c8e0)',
+              color: '#1a1a2e',
+              boxShadow: '0 0 20px rgba(200,210,240,0.2)',
+            }}
           >
-            <Share2 className="w-4 h-4 mr-2" />
-            SHARE YOUR ACHIEVEMENT
+            <Download className="w-4 h-4" /> DOWNLOAD
           </Button>
           <Button
+            onClick={handleShare}
             variant="outline"
-            className="w-full h-10 rounded-xl font-display tracking-wider text-xs border-border text-muted-foreground hover:text-foreground"
+            className="gap-2 flex-1 max-w-[200px] h-12 rounded-xl font-display tracking-wider text-xs border-[#c0c8e0]/30 hover:border-[#c0c8e0]/60"
+            style={{ color: '#c0c8e0' }}
           >
-            <Download className="w-3.5 h-3.5 mr-2" />
-            DOWNLOAD CERTIFICATE
+            <Share2 className="w-4 h-4" /> SHARE
           </Button>
         </motion.div>
       </div>
