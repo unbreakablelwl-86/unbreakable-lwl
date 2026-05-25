@@ -2,10 +2,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Play, Pause, SkipBack, SkipForward, Volume2, VolumeX,
   Shuffle, Repeat, Repeat1, ChevronDown, Music,
-  Heart, Share2, ListMusic
+  Dumbbell, Share2, ListMusic
 } from 'lucide-react';
 import { useState } from 'react';
-import { usePlayer } from '@/hooks/useUnTunes';
+import { usePlayer, useLikeTrack } from '@/hooks/useUnTunes';
 import { toast } from 'sonner';
 
 function formatTime(seconds: number): string {
@@ -17,6 +17,7 @@ function formatTime(seconds: number): string {
 
 export function UnTunesMiniPlayer() {
   const { state, togglePlay, nextTrack, prevTrack, seekTo, setVolume, toggleShuffle, toggleRepeat } = usePlayer();
+  const { isLiked, toggleLike } = useLikeTrack();
   const [expanded, setExpanded] = useState(false);
   const [showVolume, setShowVolume] = useState(false);
 
@@ -144,8 +145,15 @@ export function UnTunesMiniPlayer() {
 
             {/* Actions */}
             <div className="flex items-center justify-center gap-8 px-6 pb-8">
-              <button className="text-muted-foreground hover:text-primary transition-colors">
-                <Heart className="w-5 h-5" />
+              <button
+                onClick={() => track && toggleLike(track.id)}
+                className={`transition-colors ${
+                  track && isLiked(track.id)
+                    ? 'text-primary drop-shadow-[0_0_6px_rgba(255,85,0,0.5)]'
+                    : 'text-muted-foreground hover:text-primary'
+                }`}
+              >
+                <Dumbbell className="w-5 h-5" />
               </button>
               <button onClick={handleShare} className="text-muted-foreground hover:text-primary transition-colors">
                 <Share2 className="w-5 h-5" />

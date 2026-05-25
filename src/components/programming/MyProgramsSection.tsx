@@ -14,6 +14,7 @@ import {
   Pause,
   Trash2, 
   ChevronRight,
+  ChevronDown,
   Dumbbell,
   Clock,
   Loader2,
@@ -21,6 +22,7 @@ import {
   AlertCircle,
   Target,
   Sparkles,
+  Eye,
 } from 'lucide-react';
 import { InlineProgramEditor } from './InlineProgramEditor';
 import { StartDatePickerDialog } from '@/components/cardio/StartDatePickerDialog';
@@ -191,10 +193,9 @@ export function MyProgramsSection() {
       {programs.map((program) => (
         <div key={program.id}>
           <Card 
-            className={`p-5 border bg-card cursor-pointer transition-all hover:border-primary/50 ${
+            className={`p-5 border bg-card transition-all ${
               program.is_active ? 'border-primary shadow-[0_0_15px_hsl(var(--primary)/0.15)]' : 'border-border'
             }`}
-            onClick={() => handleExpandProgram(program.id)}
           >
             {/* Top row: name + status badge + expand chevron */}
             <div className="flex items-start justify-between gap-3 mb-3">
@@ -211,9 +212,9 @@ export function MyProgramsSection() {
                   </Badge>
                 </div>
               </div>
-              <ChevronRight className={`w-5 h-5 text-muted-foreground transition-transform shrink-0 mt-1 ${
-                expandedProgramId === program.id ? 'rotate-90' : ''
-              }`} />
+              {program.is_active && (
+                <div className="w-2 h-2 rounded-full bg-primary animate-pulse shrink-0 mt-2" />
+              )}
             </div>
 
             {/* Description */}
@@ -280,6 +281,17 @@ export function MyProgramsSection() {
                   Start Programme
                 </Button>
               )}
+              {/* View Plan dropdown toggle */}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={(e) => { e.stopPropagation(); handleExpandProgram(program.id); }}
+                className={`gap-1.5 ${expandedProgramId === program.id ? 'border-primary/40 bg-primary/5 text-primary' : ''}`}
+              >
+                <Eye className="w-4 h-4" />
+                View Plan
+                <ChevronDown className={`w-3.5 h-3.5 transition-transform ${expandedProgramId === program.id ? 'rotate-180' : ''}`} />
+              </Button>
               <Button
                 variant="ghost"
                 size="icon"

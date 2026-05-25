@@ -409,6 +409,84 @@ export function useRecordPlay() {
   }, [user]);
 }
 
+/** Toggle like on a track (dumbbell button) */
+export function useLikeTrack() {
+  const { user } = useAuth();
+  const [likedIds, setLikedIds] = useState<Set<string>>(new Set());
+  const [loading, setLoading] = useState(true);
+
+  // Load user's liked track IDs
+  useEffect(() => {
+    if (!user) { setLoading(false); return; }
+    (async () => {
+      const { data } = await supabase
+        .from('un_tunes_likes')
+        .select('track_id')
+        .eq('user_id', user.id);
+      if (data) setLikedIds(new Set(data.map((r: any) => r.track_id)));
+      setLoading(false);
+    })();
+  }, [user]);
+
+  const toggleLike = useCallback(async (trackId: string) => {
+    if (!user) return;
+    const isLiked = likedIds.has(trackId);
+    if (isLiked) {
+      setLikedIds(prev => { const s = new Set(prev); s.delete(trackId); return s; });
+      await supabase.from('un_tunes_likes').delete().eq('user_id', user.id).eq('track_id', trackId);
+    } else {
+      setLikedIds(prev => new Set(prev).add(trackId));
+      await supabase.from('un_tunes_likes').insert({ user_id: user.id, track_id: trackId });
+    }
+  }, [user, likedIds]);
+
+  const isLiked = useCallback((trackId: string) => likedIds.has(trackId), [likedIds]);
+
+  return { isLiked, toggleLike, loading };
+}
+
+/** Add track to a playlist */
+export function usePlaylistActions() {
+  const { user } = useAuth();
+
+  const createPlaylist = useCallback(async (name: string, description = '') => {
+    if (!user) return null;
+    const { data, error } = await supabase
+      .from('un_tunes_playlists')
+      .insert({ user_id: user.id, name, description, is_public: false, track_count: 0 })
+      .select()
+      .single();
+    if (error) { console.error('Create playlist error:', error); return null; }
+    return data as Playlist;
+  }, [user]);
+
+  const addToPlaylist = useCallback(async (playlistId: string, trackId: string) => {
+    if (!user) return false;
+    // Get next position
+    const { data: existing } = await supabase
+      .from('un_tunes_playlist_items')
+      .select('position')
+      .eq('playlist_id', playlistId)
+      .order('position', { ascending: false })
+      .limit(1);
+    const nextPos = existing && existing.length > 0 ? (existing[0] as any).position + 1 : 0;
+
+    const { error } = await supabase
+      .from('un_tunes_playlist_items')
+      .insert({ playlist_id: playlistId, track_id: trackId, position: nextPos });
+    if (error) { console.error('Add to playlist error:', error); return false; }
+
+    // Update track count
+    await supabase
+      .from('un_tunes_playlists')
+      .update({ track_count: nextPos + 1 })
+      .eq('id', playlistId);
+    return true;
+  }, [user]);
+
+  return { createPlaylist, addToPlaylist };
+}
+
 /** Search tracks */
 export function useSearchTracks() {
   const [results, setResults] = useState<Track[]>([]);

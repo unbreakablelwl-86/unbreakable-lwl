@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 interface UseBreathingAudioOptions {
   enabled: boolean;
+  voiceGender?: 'male' | 'female';
 }
 
 /**
@@ -12,40 +13,74 @@ interface UseBreathingAudioOptions {
  * 1. Try ElevenLabs TTS edge function first (sounds best, works in background)
  * 2. Fall back to browser SpeechSynthesis if ElevenLabs unavailable
  * 3. Warm-up SpeechSynthesis on first enable to satisfy mobile user-gesture requirement
+ * 4. Respects male/female voice preference
  */
-export function useBreathingAudio({ enabled }: UseBreathingAudioOptions) {
+export function useBreathingAudio({ enabled, voiceGender = 'female' }: UseBreathingAudioOptions) {
   const [voicesReady, setVoicesReady] = useState(false);
   const selectedVoiceRef = useRef<SpeechSynthesisVoice | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const ttsAvailableRef = useRef<boolean | null>(null); // null = untested
   const ttsCacheRef = useRef<Map<string, string>>(new Map());
   const warmedUpRef = useRef(false);
+  const currentGenderRef = useRef(voiceGender);
 
-  /* ── Pick the best female English voice for SpeechSynthesis fallback ── */
+  // Update ref when gender changes
+  useEffect(() => {
+    if (currentGenderRef.current !== voiceGender) {
+      currentGenderRef.current = voiceGender;
+      // Clear TTS cache on gender change
+      ttsCacheRef.current.forEach(url => URL.revokeObjectURL(url));
+      ttsCacheRef.current.clear();
+      ttsAvailableRef.current = null;
+      // Re-pick speech synthesis voice
+      pickVoice();
+    }
+  }, [voiceGender]);
+
+  /* ── Pick the best voice for SpeechSynthesis fallback ── */
   const pickVoice = useCallback(() => {
     if (typeof speechSynthesis === "undefined") return;
     const voices = speechSynthesis.getVoices();
     if (voices.length === 0) return;
 
-    const preferred = [
-      "samantha", "karen", "moira", "tessa", "fiona",
-      "google uk english female", "google us english",
-      "microsoft zira", "microsoft hazel", "microsoft susan",
-    ];
+    const gender = currentGenderRef.current;
 
-    for (const pref of preferred) {
-      const match = voices.find(
-        (v) => v.name.toLowerCase().includes(pref) && v.lang.startsWith("en")
+    if (gender === 'male') {
+      const malePreferred = [
+        "daniel", "alex", "thomas", "james", "oliver",
+        "google uk english male", "microsoft david", "microsoft mark", "microsoft george",
+      ];
+      for (const pref of malePreferred) {
+        const match = voices.find(
+          (v) => v.name.toLowerCase().includes(pref) && v.lang.startsWith("en")
+        );
+        if (match) { selectedVoiceRef.current = match; return; }
+      }
+      const maleHints = ["male", "man", "guy"];
+      const maleVoice = voices.find(
+        (v) => v.lang.startsWith("en") && maleHints.some((h) => v.name.toLowerCase().includes(h))
       );
-      if (match) { selectedVoiceRef.current = match; return; }
+      if (maleVoice) { selectedVoiceRef.current = maleVoice; return; }
+    } else {
+      const femalePreferred = [
+        "samantha", "karen", "moira", "tessa", "fiona",
+        "google uk english female", "google us english",
+        "microsoft zira", "microsoft hazel", "microsoft susan",
+      ];
+      for (const pref of femalePreferred) {
+        const match = voices.find(
+          (v) => v.name.toLowerCase().includes(pref) && v.lang.startsWith("en")
+        );
+        if (match) { selectedVoiceRef.current = match; return; }
+      }
+      const femaleHints = ["female", "woman", "girl"];
+      const femaleVoice = voices.find(
+        (v) => v.lang.startsWith("en") && femaleHints.some((h) => v.name.toLowerCase().includes(h))
+      );
+      if (femaleVoice) { selectedVoiceRef.current = femaleVoice; return; }
     }
 
-    const femaleHints = ["female", "woman", "girl"];
-    const femaleVoice = voices.find(
-      (v) => v.lang.startsWith("en") && femaleHints.some((h) => v.name.toLowerCase().includes(h))
-    );
-    if (femaleVoice) { selectedVoiceRef.current = femaleVoice; return; }
-
+    // Fallback: any English voice
     const anyEnglish = voices.find((v) => v.lang.startsWith("en"));
     selectedVoiceRef.current = anyEnglish || voices[0];
   }, []);
@@ -78,9 +113,10 @@ export function useBreathingAudio({ enabled }: UseBreathingAudioOptions) {
       const accessToken = session?.access_token;
       if (!accessToken) { ttsAvailableRef.current = false; return false; }
 
-      // Check cache
-      if (ttsCacheRef.current.has(text)) {
-        const url = ttsCacheRef.current.get(text)!;
+      // Include gender in cache key
+      const cacheKey = `${currentGenderRef.current}:${text}`;
+      if (ttsCacheRef.current.has(cacheKey)) {
+        const url = ttsCacheRef.current.get(cacheKey)!;
         audioRef.current = new Audio(url);
         audioRef.current.volume = 0.8;
         await audioRef.current.play();
@@ -96,7 +132,7 @@ export function useBreathingAudio({ enabled }: UseBreathingAudioOptions) {
             apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
             Authorization: `Bearer ${accessToken}`,
           },
-          body: JSON.stringify({ text }),
+          body: JSON.stringify({ text, voice_gender: currentGenderRef.current }),
         }
       );
 
@@ -108,7 +144,7 @@ export function useBreathingAudio({ enabled }: UseBreathingAudioOptions) {
 
       const blob = await response.blob();
       const url = URL.createObjectURL(blob);
-      ttsCacheRef.current.set(text, url);
+      ttsCacheRef.current.set(cacheKey, url);
 
       audioRef.current = new Audio(url);
       audioRef.current.volume = 0.8;
@@ -127,8 +163,8 @@ export function useBreathingAudio({ enabled }: UseBreathingAudioOptions) {
     if (typeof speechSynthesis === "undefined") return;
     speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
-    utterance.rate = 0.85;
-    utterance.pitch = 1.05;
+    utterance.rate = currentGenderRef.current === 'male' ? 0.9 : 0.85;
+    utterance.pitch = currentGenderRef.current === 'male' ? 0.85 : 1.05;
     utterance.volume = 0.8;
     if (selectedVoiceRef.current) utterance.voice = selectedVoiceRef.current;
     speechSynthesis.speak(utterance);

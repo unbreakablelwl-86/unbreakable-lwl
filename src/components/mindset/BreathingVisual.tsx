@@ -1,12 +1,14 @@
 import { motion } from "framer-motion";
+import type { SessionTheme } from "@/pages/MindsetBreathing";
 
 type BreathPhase = "idle" | "inhale" | "hold" | "exhale" | "rest" | "complete";
 
 interface BreathingVisualProps {
   phase: BreathPhase;
-  progress: number; // 0-100 overall session progress
-  phaseDuration: number; // Current phase duration in seconds
-  phaseProgress?: number; // 0-100 progress within current phase
+  progress: number;
+  phaseDuration: number;
+  phaseProgress?: number;
+  sessionTheme?: SessionTheme;
 }
 
 export function BreathingVisual({ 
@@ -14,55 +16,44 @@ export function BreathingVisual({
   progress, 
   phaseDuration,
   phaseProgress = 0,
+  sessionTheme,
 }: BreathingVisualProps) {
+  // Determine colors — use theme ring color or primary
+  const ringColor = sessionTheme?.ringColor || 'hsl(var(--primary))';
+  const orbGradientClass = sessionTheme?.orbGradient || 'from-primary via-primary to-[hsl(var(--primary-glow))]';
+
   const getScaleForPhase = () => {
     switch (phase) {
-      case "inhale":
-        return 1.6;
-      case "hold":
-        return 1.6;
-      case "exhale":
-        return 1;
-      case "rest":
-        return 1;
-      default:
-        return 1;
+      case "inhale": return 1.6;
+      case "hold": return 1.6;
+      case "exhale": return 1;
+      case "rest": return 1;
+      default: return 1;
     }
   };
 
   const getGlowIntensity = () => {
+    const color = ringColor;
     switch (phase) {
-      case "inhale":
-        return "0 0 80px 30px hsl(var(--primary) / 0.5)";
-      case "hold":
-        return "0 0 100px 40px hsl(var(--primary) / 0.6)";
-      case "exhale":
-        return "0 0 40px 15px hsl(var(--primary) / 0.3)";
-      case "rest":
-        return "0 0 20px 10px hsl(var(--primary) / 0.2)";
-      default:
-        return "0 0 30px 10px hsl(var(--primary) / 0.3)";
+      case "inhale": return `0 0 80px 30px color-mix(in srgb, ${color} 50%, transparent)`;
+      case "hold": return `0 0 100px 40px color-mix(in srgb, ${color} 60%, transparent)`;
+      case "exhale": return `0 0 40px 15px color-mix(in srgb, ${color} 30%, transparent)`;
+      case "rest": return `0 0 20px 10px color-mix(in srgb, ${color} 20%, transparent)`;
+      default: return `0 0 30px 10px color-mix(in srgb, ${color} 30%, transparent)`;
     }
   };
 
   const getSubtext = () => {
     switch (phase) {
-      case "inhale":
-        return "Breathe In";
-      case "hold":
-        return "Hold";
-      case "exhale":
-        return "Breathe Out";
-      case "rest":
-        return "Rest";
-      case "complete":
-        return "Complete";
-      default:
-        return "";
+      case "inhale": return "Breathe In";
+      case "hold": return "Hold";
+      case "exhale": return "Breathe Out";
+      case "rest": return "Rest";
+      case "complete": return "Complete";
+      default: return "";
     }
   };
 
-  // SVG parameters for progress ring
   const size = 280;
   const strokeWidth = 4;
   const center = size / 2;
@@ -70,13 +61,11 @@ export function BreathingVisual({
   const circumference = 2 * Math.PI * radius;
   const progressOffset = circumference - (progress / 100) * circumference;
 
-  // Calculate dot position on the circle perimeter based on overall progress
-  const dotAngle = (progress / 100) * 360 - 90; // Start from top (-90 degrees)
+  const dotAngle = (progress / 100) * 360 - 90;
   const dotAngleRad = (dotAngle * Math.PI) / 180;
   const dotX = center + radius * Math.cos(dotAngleRad);
   const dotY = center + radius * Math.sin(dotAngleRad);
 
-  // Trail dots (comet effect)
   const trailCount = 5;
   const trailDots = Array.from({ length: trailCount }, (_, i) => {
     const trailProgress = Math.max(0, progress - (i + 1) * 1.5);
@@ -92,7 +81,6 @@ export function BreathingVisual({
 
   return (
     <div className="relative flex flex-col items-center justify-center">
-      {/* Progress Ring with Trailing Dot */}
       <div className="relative">
         <svg
           width={size}
@@ -100,7 +88,6 @@ export function BreathingVisual({
           className="absolute transform -rotate-90"
           style={{ left: 0, top: 0 }}
         >
-          {/* Background ring */}
           <circle
             cx={center}
             cy={center}
@@ -110,13 +97,12 @@ export function BreathingVisual({
             strokeWidth={strokeWidth}
             opacity={0.3}
           />
-          {/* Progress ring */}
           <motion.circle
             cx={center}
             cy={center}
             r={radius}
             fill="none"
-            stroke="hsl(var(--primary))"
+            stroke={ringColor}
             strokeWidth={strokeWidth}
             strokeLinecap="round"
             strokeDasharray={circumference}
@@ -124,12 +110,11 @@ export function BreathingVisual({
             animate={{ strokeDashoffset: progressOffset }}
             transition={{ duration: 0.3, ease: "easeOut" }}
             style={{
-              filter: "drop-shadow(0 0 6px hsl(var(--primary) / 0.6))",
+              filter: `drop-shadow(0 0 6px ${ringColor})`,
             }}
           />
         </svg>
 
-        {/* Trailing dots (comet effect) */}
         <svg
           width={size}
           height={size}
@@ -142,7 +127,7 @@ export function BreathingVisual({
               cx={dot.x}
               cy={dot.y}
               r={dot.size / 2}
-              fill="hsl(var(--primary))"
+              fill={ringColor}
               opacity={dot.opacity}
               initial={false}
               animate={{ cx: dot.x, cy: dot.y }}
@@ -150,24 +135,23 @@ export function BreathingVisual({
             />
           ))}
           
-          {/* Main progress dot */}
           {progress > 0 && (
             <motion.circle
               cx={dotX}
               cy={dotY}
               r={6}
-              fill="hsl(var(--primary))"
+              fill={ringColor}
               initial={false}
               animate={{ cx: dotX, cy: dotY }}
               transition={{ duration: 0.1 }}
               style={{
-                filter: "drop-shadow(0 0 8px hsl(var(--primary)))",
+                filter: `drop-shadow(0 0 8px ${ringColor})`,
               }}
             />
           )}
         </svg>
 
-        {/* Central Breathing Orb */}
+        {/* Central Breathing Orb — uses theme gradient */}
         <div className="flex items-center justify-center" style={{ width: size, height: size }}>
           <motion.div
             animate={{
@@ -178,9 +162,8 @@ export function BreathingVisual({
               duration: phaseDuration,
               ease: "easeInOut",
             }}
-            className="w-28 h-28 md:w-36 md:h-36 rounded-full bg-gradient-to-br from-primary via-primary to-[hsl(var(--primary-glow))] relative z-10"
+            className={`w-28 h-28 md:w-36 md:h-36 rounded-full bg-gradient-to-br ${orbGradientClass} relative z-10`}
           >
-            {/* Inner pulse ring */}
             <motion.div
               animate={{
                 scale: phase === "hold" ? [1, 1.1, 1] : 1,
@@ -196,7 +179,7 @@ export function BreathingVisual({
           </motion.div>
         </div>
 
-        {/* Outer glow ring that expands on inhale */}
+        {/* Outer glow ring — uses theme ring color */}
         <motion.div
           animate={{
             scale: phase === "inhale" ? [1, 1.3] : phase === "hold" ? 1.3 : 1,
@@ -206,14 +189,14 @@ export function BreathingVisual({
             duration: phaseDuration,
             ease: "easeInOut",
           }}
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 md:w-52 md:h-52 rounded-full border border-primary/40"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 md:w-52 md:h-52 rounded-full"
           style={{
-            boxShadow: "inset 0 0 20px hsl(var(--primary) / 0.1)",
+            border: `1px solid color-mix(in srgb, ${ringColor} 40%, transparent)`,
+            boxShadow: `inset 0 0 20px color-mix(in srgb, ${ringColor} 10%, transparent)`,
           }}
         />
       </div>
 
-      {/* Subtext below the visual */}
       {phase !== "idle" && phase !== "complete" && (
         <motion.p
           key={phase}

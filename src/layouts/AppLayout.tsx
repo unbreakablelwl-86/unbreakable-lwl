@@ -1,4 +1,4 @@
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { ThemeToggle } from '@/components/hub/ThemeToggle';
 // pillar theme removed — all neon orange
@@ -33,6 +33,7 @@ import {
 } from 'lucide-react';
 import { useState, useEffect, useCallback } from 'react';
 import { useConversations } from '@/hooks/useConversations';
+import { useTokenBalance } from '@/hooks/useTokenBalance';
 import shieldLogo from '@/assets/unbreakable-shield.png';
 
 /* ─── All available nav items ─── */
@@ -241,6 +242,8 @@ export default function AppLayout() {
   const [showCustomize, setShowCustomize] = useState(false);
   const [activeTabs, setActiveTabs] = useState<string[]>(loadSavedTabs);
   const { unreadCount } = useConversations();
+  const { currentTier, loading: tierLoading } = useTokenBalance();
+  const isFreeUser = !tierLoading && (!currentTier || currentTier === 'free');
   // pillar theme removed — all neon orange
 
   const isHiddenPath = HIDE_NAV_PATHS.some(p => location.pathname.startsWith(p));
@@ -317,9 +320,33 @@ export default function AppLayout() {
         </div>
       )}
 
-      <main className={hideBottomNav ? '' : 'pb-20'}>
+      <main className={hideBottomNav ? '' : isFreeUser ? 'pb-32' : 'pb-20'}>
         <Outlet />
       </main>
+
+      {/* ━━━ Sticky Purchase Banner (free users only) ━━━ */}
+      {!hideBottomNav && isFreeUser && location.pathname !== '/ai-tokens' && location.pathname !== '/plans' && (
+        <Link
+          to="/ai-tokens"
+          className="fixed left-0 right-0 z-[49] flex items-center justify-center gap-2 py-2.5 px-4"
+          style={{
+            bottom: '60px',
+            background: 'linear-gradient(90deg, rgba(255,85,0,0.15) 0%, rgba(251,191,36,0.12) 50%, rgba(103,232,249,0.1) 100%)',
+            borderTop: '1px solid rgba(255,85,0,0.25)',
+            borderBottom: '1px solid rgba(255,85,0,0.15)',
+            backdropFilter: 'blur(16px)',
+            WebkitBackdropFilter: 'blur(16px)',
+          }}
+        >
+          <Sparkles className="w-3.5 h-3.5 text-primary flex-shrink-0" />
+          <span className="text-xs font-display tracking-wider text-foreground">
+            <span className="text-primary font-bold">LAUNCH50</span> — 50% off your first month
+          </span>
+          <span className="text-[10px] font-display tracking-wider text-primary border border-primary/40 rounded-full px-2.5 py-0.5 flex-shrink-0">
+            UPGRADE
+          </span>
+        </Link>
+      )}
 
       {/* ━━━ Bottom Navigation ━━━ */}
       {!hideBottomNav && (

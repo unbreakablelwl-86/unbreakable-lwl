@@ -19,7 +19,7 @@ export function ProfileButton({ className = '' }: ProfileButtonProps) {
   const handleClick = () => {
     // Navigate to the home page which shows profile for logged in users
     // If there's a dedicated profile route, use that instead
-    navigate('/');
+    navigate(-1);
   };
 
   const initials = profile?.display_name

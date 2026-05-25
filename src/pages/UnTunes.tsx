@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/hooks/useAuth';
 import { useUserRole } from '@/hooks/useUserRole';
-import { usePlayer, useFeaturedTracks, useArtists, useMyPlaylists, useMyArtistProfile, useSearchTracks, GENRES, GENRE_CATEGORIES } from '@/hooks/useUnTunes';
+import { usePlayer, useFeaturedTracks, useArtists, useMyPlaylists, useMyArtistProfile, useSearchTracks, useLikeTrack, usePlaylistActions, GENRES, GENRE_CATEGORIES } from '@/hooks/useUnTunes';
 import type { Track } from '@/hooks/useUnTunes';
 import { UnTunesTrackRow } from '@/components/untunes/TrackRow';
 import { UnTunesArtistCard } from '@/components/untunes/ArtistCard';
@@ -45,8 +45,24 @@ export default function UnTunes() {
   const { playlists } = useMyPlaylists();
   const { artist: myArtist, loading: artistLoading } = useMyArtistProfile();
   const { results: searchResults, loading: searchLoading, search } = useSearchTracks();
+  const { isLiked, toggleLike } = useLikeTrack();
+  const { createPlaylist, addToPlaylist } = usePlaylistActions();
   const [searchQuery, setSearchQuery] = useState('');
   const { playTrack, currentTrack } = usePlayer();
+
+  /* ── Add to first playlist (auto-create "My Tracks" if none) ── */
+  const handleAddToPlaylist = async (track: Track) => {
+    if (!user) { toast.error('Sign in to save tracks'); return; }
+    let targetPlaylist = playlists[0];
+    if (!targetPlaylist) {
+      const created = await createPlaylist('My Tracks', 'Auto-created playlist');
+      if (!created) { toast.error('Could not create playlist'); return; }
+      targetPlaylist = created;
+    }
+    const ok = await addToPlaylist(targetPlaylist.id, track.id);
+    if (ok) toast.success(`Added "${track.title}" to ${targetPlaylist.name}`);
+    else toast.error('Could not add to playlist');
+  };
 
   /* ── Share "Now Listening" to timeline ── */
   const handleShareToTimeline = async (track: Track) => {
@@ -204,6 +220,9 @@ export default function UnTunes() {
                           index={i + 1}
                           onPlay={() => playTrack(track, featured)}
                           onShare={() => handleShareToTimeline(track)}
+                          isLiked={isLiked(track.id)}
+                          onToggleLike={() => toggleLike(track.id)}
+                          onAddToPlaylist={() => handleAddToPlaylist(track)}
                         />
                       ))}
                   </div>
@@ -283,6 +302,9 @@ export default function UnTunes() {
                           index={i + 1}
                           onPlay={() => playTrack(track, searchResults)}
                           onShare={() => handleShareToTimeline(track)}
+                          isLiked={isLiked(track.id)}
+                          onToggleLike={() => toggleLike(track.id)}
+                          onAddToPlaylist={() => handleAddToPlaylist(track)}
                         />
                       ))}
                     </div>

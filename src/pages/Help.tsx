@@ -699,7 +699,7 @@ export default function Help() {
                       <div className="rounded-2xl rounded-bl-md px-4 py-3 bg-primary/5 border border-primary/20"
                         style={{ boxShadow: '0 0 20px rgba(255,85,0,0.05)' }}>
                         <span className="text-sm font-display text-primary">Building your programme...</span>
-                        <p className="text-xs text-muted-foreground mt-0.5">This takes about 15-20 seconds</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">Won't be a min 💪</p>
                       </div>
                     </div>
                   )}
@@ -711,7 +711,7 @@ export default function Help() {
                       </div>
                       <div className="rounded-2xl rounded-bl-md px-4 py-3 bg-primary/5 border border-primary/20">
                         <span className="text-sm font-display text-primary">Building your meal plan...</span>
-                        <p className="text-xs text-muted-foreground mt-0.5">This takes about 15-20 seconds</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">Won't be a min 💪</p>
                       </div>
                     </div>
                   )}
@@ -723,7 +723,7 @@ export default function Help() {
                       </div>
                       <div className="rounded-2xl rounded-bl-md px-4 py-3 bg-primary/5 border border-primary/20">
                         <span className="text-sm font-display text-primary">Building your mindset programme...</span>
-                        <p className="text-xs text-muted-foreground mt-0.5">This takes about 15-20 seconds</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">Won't be a min 💪</p>
                       </div>
                     </div>
                   )}

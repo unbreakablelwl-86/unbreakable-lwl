@@ -1,4 +1,5 @@
-import { Play, Pause, Share2, MoreHorizontal } from 'lucide-react';
+import { useState } from 'react';
+import { Play, Pause, Share2, Dumbbell, ListPlus, Check } from 'lucide-react';
 import { usePlayer } from '@/hooks/useUnTunes';
 import type { Track } from '@/hooks/useUnTunes';
 
@@ -7,16 +8,29 @@ interface TrackRowProps {
   index: number;
   onPlay: () => void;
   onShare?: () => void;
+  isLiked?: boolean;
+  onToggleLike?: () => void;
+  onAddToPlaylist?: () => void;
 }
 
-export function UnTunesTrackRow({ track, index, onPlay, onShare }: TrackRowProps) {
+export function UnTunesTrackRow({ track, index, onPlay, onShare, isLiked, onToggleLike, onAddToPlaylist }: TrackRowProps) {
   const { currentTrack, isPlaying } = usePlayer();
   const isActive = currentTrack?.id === track.id;
+  const [justAdded, setJustAdded] = useState(false);
 
   const formatDuration = (secs: number) => {
     const m = Math.floor(secs / 60);
     const s = Math.floor(secs % 60);
     return `${m}:${s.toString().padStart(2, '0')}`;
+  };
+
+  const handleAddToPlaylist = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onAddToPlaylist) {
+      onAddToPlaylist();
+      setJustAdded(true);
+      setTimeout(() => setJustAdded(false), 1500);
+    }
   };
 
   return (
@@ -67,6 +81,36 @@ export function UnTunesTrackRow({ track, index, onPlay, onShare }: TrackRowProps
         </p>
       </div>
 
+      {/* Dumbbell Like button */}
+      {onToggleLike && (
+        <button
+          onClick={(e) => { e.stopPropagation(); onToggleLike(); }}
+          className={`w-7 h-7 rounded-lg flex items-center justify-center transition-all ${
+            isLiked
+              ? 'text-primary drop-shadow-[0_0_6px_rgba(255,85,0,0.5)]'
+              : 'text-muted-foreground/40 opacity-0 group-hover:opacity-100 hover:text-primary/70'
+          }`}
+          title={isLiked ? 'Unlike' : 'Like'}
+        >
+          <Dumbbell className={`w-4 h-4 transition-transform ${isLiked ? 'scale-110' : ''}`} />
+        </button>
+      )}
+
+      {/* Add to playlist button */}
+      {onAddToPlaylist && (
+        <button
+          onClick={handleAddToPlaylist}
+          className={`w-7 h-7 rounded-lg flex items-center justify-center transition-all ${
+            justAdded
+              ? 'text-green-500'
+              : 'text-muted-foreground/40 opacity-0 group-hover:opacity-100 hover:text-primary/70'
+          }`}
+          title="Add to playlist"
+        >
+          {justAdded ? <Check className="w-3.5 h-3.5" /> : <ListPlus className="w-3.5 h-3.5" />}
+        </button>
+      )}
+
       {/* Share button */}
       {onShare && (
         <button
@@ -79,7 +123,7 @@ export function UnTunesTrackRow({ track, index, onPlay, onShare }: TrackRowProps
 
       {/* Duration */}
       <span className="text-[10px] text-muted-foreground shrink-0 tabular-nums">
-        {track.duration ? formatDuration(track.duration) : '--:--'}
+        {track.duration_seconds ? formatDuration(track.duration_seconds) : '--:--'}
       </span>
     </div>
   );
