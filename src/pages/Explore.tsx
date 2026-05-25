@@ -74,7 +74,7 @@ export default function Explore() {
 
   return (
     <div className="min-h-screen bg-background">
-<main className="pt-20 pb-20">
+<main className="pt-6 pb-20">
         <div className="max-w-2xl mx-auto px-4">
           {/* Search Bar */}
           <div className="sticky top-16 z-10 bg-background py-2 -mx-4 px-4">
@@ -167,7 +167,7 @@ export default function Explore() {
                         className="relative aspect-square bg-muted cursor-pointer group overflow-hidden"
                         onClick={() => {
                           // Could open post detail — for now just go to feed
-                          navigate('/');
+                          navigate(-1);
                         }}
                       >
                         {mediaUrl && (

@@ -448,7 +448,7 @@ export default function UserProfile() {
   if (!profile) {
     return (
       <div className="min-h-screen bg-background">
-<div className="pt-24 pb-12 container mx-auto px-4 text-center">
+<div className="pt-6 pb-12 container mx-auto px-4 text-center">
           <User className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
           <h1 className="font-heading text-2xl tracking-wide mb-2">USER NOT FOUND</h1>
           <p className="text-muted-foreground mb-6">This profile doesn't exist or has been removed.</p>
@@ -466,7 +466,7 @@ export default function UserProfile() {
 
   return (
     <div className="min-h-screen bg-background">
-<main className="pt-20 pb-12">
+<main className="pt-6 pb-12">
         <div className="max-w-2xl mx-auto px-4">
           {/* Back button */}
           <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="mb-4 -ml-2">

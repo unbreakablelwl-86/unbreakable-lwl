@@ -148,7 +148,7 @@ export function StatusCard({ post, onKudos, onDelete, onToggleComments, onUpdate
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
     >
-      <div className="overflow-hidden border-b border-white/[0.04]" className="bg-background">
+      <div className="overflow-hidden border-b border-white/[0.04] bg-background">
         {/* Header — Instagram-style */}
         <div className="px-4 py-3 flex items-center gap-3">
           <ClickableAvatar

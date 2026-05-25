@@ -70,7 +70,7 @@ export default function UniversityChapter() {
   return (
     <div className="min-h-screen bg-background">
 {/* Chapter Header */}
-      <div className="pt-24 pb-6 border-b border-primary/20 relative overflow-hidden">
+      <div className="pt-6 pb-6 border-b border-primary/20 relative overflow-hidden">
         <div className={`absolute inset-0 bg-gradient-to-b ${colors.bgGradient} opacity-20 pointer-events-none`} />
         <div className="container mx-auto px-4 max-w-2xl relative z-10">
           <Button variant="ghost" size="sm" onClick={() => navigate(`/university/${ct}/level-${levelNum}`)} className="mb-3 -ml-2 text-muted-foreground hover:text-foreground">

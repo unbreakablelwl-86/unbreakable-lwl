@@ -59,7 +59,7 @@ export default function University() {
   return (
     <div className="min-h-screen pb-24" >
 {/* Hero */}
-      <section className="pt-24 pb-14 md:pt-28 md:pb-20 border-b border-primary/20 relative overflow-hidden">
+      <section className="pt-6 pb-14 md:pt-8 md:pb-20 border-b border-primary/20 relative overflow-hidden">
         {/* Gradient backdrop */}
         <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent pointer-events-none" />
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-primary/5 rounded-full blur-3xl pointer-events-none" />

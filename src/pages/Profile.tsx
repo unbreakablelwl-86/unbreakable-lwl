@@ -135,7 +135,7 @@ function PostGridItem({ post, onClick }: { post: OwnPost; onClick: () => void })
       {thumbnail ? (
         <img src={thumbnail} alt="" className="w-full h-full object-cover" />
       ) : (
-        <div className="w-full h-full flex items-center justify-center p-3" style={{ background: 'linear-gradient(135deg, #1a1a1a, #111)' }}>
+        <div className="w-full h-full flex items-center justify-center p-3 bg-muted">
           <p className="text-xs text-muted-foreground line-clamp-4 text-center">{post.content?.slice(0, 100)}</p>
         </div>
       )}

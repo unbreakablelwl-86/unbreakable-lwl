@@ -3,7 +3,7 @@ import { useSearchParams, Link, useNavigate } from 'react-router-dom';
 import { ThemedLogo } from '@/components/ThemedLogo';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { ThemeToggle } from '@/components/hub/ThemeToggle';
+
 import { PageNavigation, SwipeNavigationWrapper } from '@/components/PageNavigation';
 import { Dumbbell, Flame, Timer, ArrowRight, ArrowLeft } from 'lucide-react';
 
@@ -173,7 +173,6 @@ const Calculators = () => {
           <div className="container mx-auto px-6 py-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <ThemeToggle />
                 <Link to="/" className="flex items-center gap-3">
                   <ThemedLogo />
                   <span className="font-display text-lg tracking-wide text-foreground hidden sm:block">

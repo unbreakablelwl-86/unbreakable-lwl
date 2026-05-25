@@ -42,7 +42,7 @@ export default function UniversityCertificate() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-<section className="pt-24 pb-8 border-b border-primary/20 relative overflow-hidden">
+<section className="pt-6 pb-8 border-b border-primary/20 relative overflow-hidden">
         <div className={`absolute inset-0 bg-gradient-to-b ${colors.bgGradient} opacity-20 pointer-events-none`} />
         <div className="container mx-auto px-4 max-w-3xl relative z-10">
           <Button variant="ghost" size="sm" className="mb-4 gap-1.5" onClick={() => navigate(-1)}>

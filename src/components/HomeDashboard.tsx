@@ -11,7 +11,7 @@ import {
   Camera, Footprints, Dumbbell, BookOpen,
   ChevronRight, Settings, Check, Plus, X,
   Sparkles, Calculator, MessageCircle, User,
-  HelpCircle, Calendar, Search, Heart,
+  HelpCircle, Calendar, Search, Wind,
 } from 'lucide-react';
 
 /* ── Pillar card config ── */
@@ -80,7 +80,7 @@ const ALL_QUICK_ACTIONS: QuickAction[] = [
   { id: 'explore', label: 'Explore', icon: Search, path: '/explore' },
   { id: 'habits', label: 'Habits', icon: Calendar, path: '/habits' },
   { id: 'faq', label: 'Help', icon: HelpCircle, path: '/faq' },
-  { id: 'mindset', label: 'Breathe', icon: Heart, path: '/mindset/breathing' },
+  { id: 'mindset', label: 'Breathe', icon: Wind, path: '/mindset/breathing' },
   { id: 'untunes', label: 'Un-Tunes', icon: Music, path: '/untunes' },
 ];
 
@@ -134,10 +134,10 @@ export function HomeDashboard() {
   }
 
   return (
-    <div className="min-h-screen pb-28" className="bg-background">
+    <div className="min-h-screen pb-28 bg-background">
       {/* ─── Hero Banner ─── */}
       <div className="relative overflow-hidden mx-4 mt-4 rounded-2xl border border-primary/30"
-        style={{ background: 'linear-gradient(135deg, rgba(255,85,0,0.15) 0%, rgba(255,85,0,0.05) 50%, rgba(0,0,0,0.8) 100%)' }}>
+        style={{ background: 'linear-gradient(135deg, rgba(255,85,0,0.15) 0%, rgba(255,85,0,0.05) 50%, hsl(var(--background) / 0.8) 100%)' }}>
         {/* LWL logo watermark */}
         <div className="absolute top-2 right-2 w-24 h-24 opacity-20">
           <img src="/lwl-logo.png" alt="" className="w-full h-full object-contain" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
@@ -190,7 +190,7 @@ export function HomeDashboard() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             className="relative overflow-hidden rounded-xl border border-primary/30 p-4"
-            style={{ background: 'linear-gradient(135deg, rgba(255,85,0,0.12) 0%, rgba(255,85,0,0.03) 50%, rgba(17,17,17,0.95) 100%)' }}
+            style={{ background: 'linear-gradient(135deg, rgba(255,85,0,0.12) 0%, rgba(255,85,0,0.03) 50%, hsl(var(--card)) 100%)' }}
           >
             <div className="absolute top-0 right-0 w-20 h-20 opacity-10">
               <Flame className="w-full h-full text-primary" />
@@ -225,7 +225,7 @@ export function HomeDashboard() {
                 transition={{ delay: i * 0.06, duration: 0.3 }}
                 className="flex items-center gap-4 p-4 rounded-xl border border-border hover:border-primary/40 
                   transition-all duration-300 group"
-                style={{ background: 'linear-gradient(135deg, rgba(26,26,26,0.9) 0%, rgba(17,17,17,0.95) 100%)' }}
+                style={{ background: 'linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--background)) 100%)' }}
               >
                 {/* Icon */}
                 <div className="w-12 h-12 rounded-xl bg-card border border-primary/20 flex items-center justify-center

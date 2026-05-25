@@ -8,7 +8,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { ThemeToggle } from '@/components/hub/ThemeToggle';
+
 import { PageNavigation, SwipeNavigationWrapper } from '@/components/PageNavigation';
 import { AuthModal } from '@/components/tracker/AuthModal';
 import { useAuth } from '@/hooks/useAuth';
@@ -580,11 +580,9 @@ export default function Help() {
     <SwipeNavigationWrapper>
       <div className="min-h-screen flex flex-col" >
         {/* ─── Header ─── */}
-        <header className="fixed top-0 left-0 right-0 z-50 border-b border-border"
-          style={{ background: 'rgba(8,8,8,0.92)', backdropFilter: 'blur(12px)' }}>
+        <header className="fixed top-0 left-0 right-0 z-50 border-b border-border bg-background/95 backdrop-blur-md">
           <div className="container mx-auto px-4 py-3 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <ThemeToggle />
               <Link to="/" className="flex items-center gap-2">
                 <ThemedLogo />
                 <span className="font-display text-sm tracking-wider text-foreground hidden sm:block">UNBREAKABLE</span>

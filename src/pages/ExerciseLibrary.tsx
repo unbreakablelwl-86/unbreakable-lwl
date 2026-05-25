@@ -253,7 +253,7 @@ export default function ExerciseLibrary() {
     <PaywallGate feature="exercise_library">
     <div className="min-h-screen pb-24" >
       {/* Hero */}
-      <section className="pt-24 pb-10 md:pt-28 md:pb-14 border-b border-primary/20">
+      <section className="pt-6 pb-10 md:pt-8 md:pb-14 border-b border-primary/20">
         <div className="container mx-auto px-4 text-center max-w-4xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}

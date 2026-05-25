@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom';
 import { ThemedLogo } from '@/components/ThemedLogo';
-import { ThemeToggle } from '@/components/hub/ThemeToggle';
 import { Button } from '@/components/ui/button';
 
 interface PageHeaderProps {
@@ -29,9 +28,8 @@ export function PageHeader({
     >
       <div className="container mx-auto px-4 sm:px-6 py-4">
         <div className="flex items-center justify-between">
-          {/* Left: Theme Toggle */}
+          {/* Left: Logo */}
           <div className="flex items-center gap-3">
-            <ThemeToggle />
             <Link to="/" className="flex items-center gap-3">
               <ThemedLogo className="h-8 w-8 sm:h-10 sm:w-10" />
               <div className="hidden sm:flex items-center gap-2">
