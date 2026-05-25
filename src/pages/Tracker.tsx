@@ -15,7 +15,7 @@ import { MEDAL_DEFINITIONS } from '@/lib/medalDefinitions';
 import { format, startOfWeek, endOfWeek, isWithinInterval, subWeeks } from 'date-fns';
 import {
   Footprints, Bike, Play, Trophy, Medal, Crown,
-  MapPin, Clock, Flame, TrendingUp, ChevronRight,
+  MapPin, Clock, Flame, TrendingUp, TrendingDown, ChevronRight,
   Timer, Activity, Waves, Droplets, BarChart3, Route,
   Zap, Target, Star, Award, Calendar, Edit3, Layers,
   BookOpen, Wrench, ArrowRight,
@@ -70,12 +70,19 @@ function useWeeklyStats(runs: Run[]) {
     const totalCalories = thisWeek.reduce((s, r) => s + (r.calories_burned || 0), 0);
     const lastDistance = lastWeek.reduce((s, r) => s + r.distance_km, 0);
 
+    const lastActivities = lastWeek.length;
+    const thisActivities = thisWeek.length;
+    // Only show delta when last week had data (avoid divide-by-zero and misleading 0→N jumps)
+    const distDelta = lastDistance > 0 ? ((totalDistance - lastDistance) / lastDistance) * 100 : (totalDistance > 0 ? 100 : 0);
+    const actDelta = lastActivities > 0 ? ((thisActivities - lastActivities) / lastActivities) * 100 : (thisActivities > 0 ? 100 : 0);
+
     return {
       distance: totalDistance,
       time: totalTime,
       calories: totalCalories,
-      activities: thisWeek.length,
-      distanceDelta: lastDistance > 0 ? ((totalDistance - lastDistance) / lastDistance) * 100 : 0,
+      activities: thisActivities,
+      distanceDelta: distDelta,
+      activitiesDelta: actDelta,
     };
   }, [runs]);
 }
@@ -261,9 +268,11 @@ export default function Tracker() {
                 </div>
                 {weekly.distanceDelta !== 0 && (
                   <div className="mt-3 pt-3 border-t border-border flex items-center gap-1 justify-center">
-                    <TrendingUp className={`w-3 h-3 ${weekly.distanceDelta > 0 ? 'text-primary' : 'text-primary'}`} />
-                    <span className={`text-xs ${weekly.distanceDelta > 0 ? 'text-primary' : 'text-primary'}`}>
-                      {weekly.distanceDelta > 0 ? '+' : ''}{weekly.distanceDelta.toFixed(0)}% vs last week
+                    {weekly.distanceDelta >= 0
+                      ? <TrendingUp className="w-3 h-3 text-primary" />
+                      : <TrendingDown className="w-3 h-3 text-muted-foreground" />}
+                    <span className={`text-xs ${weekly.distanceDelta >= 0 ? 'text-primary' : 'text-muted-foreground'}`}>
+                      {weekly.distanceDelta > 0 ? '+' : ''}{weekly.distanceDelta.toFixed(0)}% distance vs last week
                     </span>
                   </div>
                 )}

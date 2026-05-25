@@ -48,8 +48,8 @@ function CardioSubStats({ runs, activityType, onViewRecords }: { runs: any[]; ac
     const fastestPace = Math.min(...filteredRuns.filter(r => r.pace_per_km_seconds).map(r => r.pace_per_km_seconds!));
 
     const last4Weeks = Array.from({ length: 4 }, (_, i) => {
-      const weekStart = startOfWeek(subWeeks(new Date(), 3 - i));
-      const weekEnd = endOfWeek(weekStart);
+      const weekStart = startOfWeek(subWeeks(new Date(), 3 - i), { weekStartsOn: 1 });
+      const weekEnd = endOfWeek(weekStart, { weekStartsOn: 1 });
       const weekRuns = filteredRuns.filter(r => {
         const date = parseISO(r.started_at);
         return date >= weekStart && date <= weekEnd;
@@ -274,9 +274,9 @@ export function CombinedStatsView({ onViewRecords }: CombinedStatsViewProps) {
     }
 
     // This week vs last week sessions
-    const thisWeekStart = startOfWeek(new Date());
-    const lastWeekStart = startOfWeek(subWeeks(new Date(), 1));
-    const lastWeekEnd = endOfWeek(lastWeekStart);
+    const thisWeekStart = startOfWeek(new Date(), { weekStartsOn: 1 });
+    const lastWeekStart = startOfWeek(subWeeks(new Date(), 1), { weekStartsOn: 1 });
+    const lastWeekEnd = endOfWeek(lastWeekStart, { weekStartsOn: 1 });
     const thisWeekSessions = completedWorkouts.filter(w => parseISO(w.started_at) >= thisWeekStart).length;
     const lastWeekSessions = completedWorkouts.filter(w => {
       const d = parseISO(w.started_at);
@@ -286,7 +286,7 @@ export function CombinedStatsView({ onViewRecords }: CombinedStatsViewProps) {
     // Best week ever
     const weekMap = new Map<string, number>();
     completedWorkouts.forEach(w => {
-      const key = format(startOfWeek(parseISO(w.started_at)), 'yyyy-MM-dd');
+      const key = format(startOfWeek(parseISO(w.started_at), { weekStartsOn: 1 }), 'yyyy-MM-dd');
       weekMap.set(key, (weekMap.get(key) || 0) + 1);
     });
     const bestWeek = Math.max(...weekMap.values(), 0);
@@ -314,8 +314,8 @@ export function CombinedStatsView({ onViewRecords }: CombinedStatsViewProps) {
 
     // Weekly frequency bar chart
     const last8Weeks = Array.from({ length: 8 }, (_, i) => {
-      const weekStart = startOfWeek(subWeeks(new Date(), 7 - i));
-      const weekEnd = endOfWeek(weekStart);
+      const weekStart = startOfWeek(subWeeks(new Date(), 7 - i), { weekStartsOn: 1 });
+      const weekEnd = endOfWeek(weekStart, { weekStartsOn: 1 });
       const weekWorkouts = completedWorkouts.filter(w => {
         const date = parseISO(w.started_at);
         return date >= weekStart && date <= weekEnd;
