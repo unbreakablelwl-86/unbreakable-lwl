@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,7 +7,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { Plus, Search, Dumbbell, Loader2 } from 'lucide-react';
-import { EXERCISE_LIBRARY } from '@/lib/exerciseLibrary';
+import type { Exercise } from '@/lib/exercise-types';
+import { getExerciseGifUrl } from '@/lib/exercise-images';
 
 interface AddExerciseSheetProps {
   open: boolean;
@@ -17,28 +18,44 @@ interface AddExerciseSheetProps {
 }
 
 export function AddExerciseSheet({ open, onOpenChange, onAddExercise, isAdding }: AddExerciseSheetProps) {
+  const [exercises, setExercises] = useState<Exercise[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [customName, setCustomName] = useState('');
   const [customSets, setCustomSets] = useState('3');
   const [customReps, setCustomReps] = useState('10');
 
-  const filteredExercises = searchQuery.trim()
-    ? EXERCISE_LIBRARY.filter(e =>
-        e.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        e.bodyPart.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        e.equipment.some(eq => eq.toLowerCase().includes(searchQuery.toLowerCase()))
-      ).slice(0, 30)
-    : [];
+  // Load exercise library from JSON
+  useEffect(() => {
+    if (open && exercises.length === 0) {
+      fetch('/data/exercises.json')
+        .then(r => r.json())
+        .then((data: Exercise[]) => setExercises(data))
+        .catch(() => {});
+    }
+  }, [open, exercises.length]);
+
+  const filteredExercises = useMemo(() => {
+    if (!searchQuery.trim()) return [];
+    const q = searchQuery.toLowerCase();
+    return exercises
+      .filter(e =>
+        e.name.toLowerCase().includes(q) ||
+        (e.primaryMuscles || []).some(m => m.toLowerCase().includes(q)) ||
+        (e.equipment || '').toLowerCase().includes(q) ||
+        (e.category || '').toLowerCase().includes(q)
+      )
+      .slice(0, 30);
+  }, [exercises, searchQuery]);
 
   const [librarySets, setLibrarySets] = useState<Record<string, string>>({});
   const [libraryReps, setLibraryReps] = useState<Record<string, string>>({});
 
-  const handleLibrarySelect = (exercise: typeof EXERCISE_LIBRARY[0]) => {
+  const handleLibrarySelect = (exercise: Exercise) => {
     onAddExercise({
       name: exercise.name,
-      equipment: exercise.equipment[0],
-      sets: parseInt(librarySets[exercise.name]) || 3,
-      reps: libraryReps[exercise.name] || '10',
+      equipment: exercise.equipment || 'bodyweight',
+      sets: parseInt(librarySets[exercise.id]) || 3,
+      reps: libraryReps[exercise.id] || '10',
     });
     setSearchQuery('');
     setLibrarySets({});
@@ -84,7 +101,7 @@ export function AddExerciseSheet({ open, onOpenChange, onAddExercise, isAdding }
             <div className="relative shrink-0">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
-                placeholder="Search 230+ exercises..."
+                placeholder="Search 1500+ exercises..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10"
@@ -100,54 +117,76 @@ export function AddExerciseSheet({ open, onOpenChange, onAddExercise, isAdding }
                   No exercises found. Try the Custom tab.
                 </p>
               ) : (
-                filteredExercises.map((exercise) => (
-                  <Card
-                    key={exercise.name}
-                    className="p-3 border border-border bg-card hover:border-primary/50 transition-colors"
-                  >
-                    <div className="flex items-center justify-between gap-2 mb-2">
-                      <div className="flex items-center gap-2 min-w-0">
-                        <Dumbbell className="w-4 h-4 text-primary shrink-0" />
-                        <span className="text-sm font-display text-foreground truncate">{exercise.name}</span>
-                        <Badge variant="outline" className="text-[10px] shrink-0">{exercise.bodyPart}</Badge>
+                filteredExercises.map((exercise) => {
+                  const gifUrl = getExerciseGifUrl(exercise);
+                  return (
+                    <Card
+                      key={exercise.id}
+                      className="p-3 border border-border bg-card hover:border-primary/50 transition-colors"
+                    >
+                      <div className="flex items-start gap-3 mb-2">
+                        {/* Exercise GIF thumbnail */}
+                        {gifUrl && (
+                          <div className="w-14 h-14 rounded-lg overflow-hidden bg-muted shrink-0">
+                            <img
+                              src={gifUrl}
+                              alt={exercise.name}
+                              className="w-full h-full object-cover"
+                              loading="lazy"
+                            />
+                          </div>
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="text-sm font-display text-foreground">{exercise.name}</span>
+                          </div>
+                          <div className="flex items-center gap-1.5 mt-1 flex-wrap">
+                            {exercise.primaryMuscles?.slice(0, 2).map(m => (
+                              <Badge key={m} variant="outline" className="text-[10px]">{m}</Badge>
+                            ))}
+                            {exercise.equipment && (
+                              <Badge variant="secondary" className="text-[10px]">{exercise.equipment}</Badge>
+                            )}
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="flex-1">
-                        <Input
-                          type="number"
-                          inputMode="numeric"
-                          placeholder="Sets"
-                          value={librarySets[exercise.name] || ''}
-                          onChange={(e) => setLibrarySets(prev => ({ ...prev, [exercise.name]: e.target.value }))}
-                          className="h-8 text-center text-xs"
-                          min="1"
-                          max="10"
-                        />
-                        <span className="text-[10px] text-muted-foreground text-center block">Sets</span>
+                      <div className="flex items-center gap-2">
+                        <div className="flex-1">
+                          <Input
+                            type="number"
+                            inputMode="numeric"
+                            placeholder="Sets"
+                            value={librarySets[exercise.id] || ''}
+                            onChange={(e) => setLibrarySets(prev => ({ ...prev, [exercise.id]: e.target.value }))}
+                            className="h-8 text-center text-xs"
+                            min="1"
+                            max="10"
+                          />
+                          <span className="text-[10px] text-muted-foreground text-center block">Sets</span>
+                        </div>
+                        <div className="flex-1">
+                          <Input
+                            placeholder="Reps"
+                            value={libraryReps[exercise.id] || ''}
+                            onChange={(e) => setLibraryReps(prev => ({ ...prev, [exercise.id]: e.target.value }))}
+                            className="h-8 text-center text-xs"
+                          />
+                          <span className="text-[10px] text-muted-foreground text-center block">Reps</span>
+                        </div>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          disabled={isAdding}
+                          onClick={() => !isAdding && handleLibrarySelect(exercise)}
+                          className="shrink-0 gap-1 text-xs font-display h-8"
+                        >
+                          {isAdding ? <Loader2 className="w-3 h-3 animate-spin" /> : <Plus className="w-3 h-3" />}
+                          ADD
+                        </Button>
                       </div>
-                      <div className="flex-1">
-                        <Input
-                          placeholder="Reps"
-                          value={libraryReps[exercise.name] || ''}
-                          onChange={(e) => setLibraryReps(prev => ({ ...prev, [exercise.name]: e.target.value }))}
-                          className="h-8 text-center text-xs"
-                        />
-                        <span className="text-[10px] text-muted-foreground text-center block">Reps</span>
-                      </div>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        disabled={isAdding}
-                        onClick={() => !isAdding && handleLibrarySelect(exercise)}
-                        className="shrink-0 gap-1 text-xs font-display h-8"
-                      >
-                        {isAdding ? <Loader2 className="w-3 h-3 animate-spin" /> : <Plus className="w-3 h-3" />}
-                        ADD
-                      </Button>
-                    </div>
-                  </Card>
-                ))
+                    </Card>
+                  );
+                })
               )}
             </div>
           </TabsContent>

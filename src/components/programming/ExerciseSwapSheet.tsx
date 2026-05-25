@@ -1,11 +1,12 @@
-import { useState, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Shuffle, Loader2, Search, Dumbbell } from 'lucide-react';
-import { getExerciseDetails, EXERCISE_LIBRARY, findExerciseByName } from '@/lib/exerciseLibrary';
+import type { Exercise } from '@/lib/exercise-types';
+import { getExerciseGifUrl } from '@/lib/exercise-images';
 
 interface ExerciseSwapSheetProps {
   open: boolean;
@@ -17,47 +18,6 @@ interface ExerciseSwapSheetProps {
   isSwapping?: boolean;
 }
 
-function getSmartSuggestions(exerciseName: string): Array<{ name: string; equipment: string; reason: string }> {
-  const details = getExerciseDetails(exerciseName);
-  const found = findExerciseByName(exerciseName);
-  const suggestions: Array<{ name: string; equipment: string; reason: string }> = [];
-  const addedNames = new Set<string>([exerciseName.toLowerCase()]);
-
-  const addSuggestion = (name: string, equipment: string, reason: string) => {
-    if (addedNames.has(name.toLowerCase())) return;
-    addedNames.add(name.toLowerCase());
-    suggestions.push({ name, equipment, reason });
-  };
-
-  if (details.exercise?.alternatives) {
-    details.exercise.alternatives.forEach(alt => {
-      const altEx = findExerciseByName(alt);
-      addSuggestion(alt, altEx?.equipment?.[0] || 'bodyweight', 'Direct alternative — same movement pattern');
-    });
-  }
-
-  if (details.exercise?.machineAlternatives) {
-    details.exercise.machineAlternatives.forEach(alt => {
-      addSuggestion(alt, 'machine', 'Machine alternative — no spotter needed');
-    });
-  }
-
-  if (found) {
-    const samePart = EXERCISE_LIBRARY.filter(e =>
-      e.bodyPart === found.bodyPart &&
-      e.name !== exerciseName &&
-      !addedNames.has(e.name.toLowerCase()) &&
-      (found.movementPattern ? e.movementPattern === found.movementPattern : true)
-    ).slice(0, 4);
-
-    samePart.forEach(e => {
-      addSuggestion(e.name, e.equipment[0], `Same muscle group (${e.bodyPart}) — ${e.equipment[0]}`);
-    });
-  }
-
-  return suggestions;
-}
-
 export function ExerciseSwapSheet({
   open,
   onOpenChange,
@@ -66,41 +26,84 @@ export function ExerciseSwapSheet({
   onSwap,
   isSwapping,
 }: ExerciseSwapSheetProps) {
+  const [exercises, setExercises] = useState<Exercise[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
 
-  const suggestions = useMemo(() => getSmartSuggestions(exerciseName), [exerciseName]);
+  // Load exercise library from JSON
+  useEffect(() => {
+    if (open && exercises.length === 0) {
+      fetch('/data/exercises.json')
+        .then(r => r.json())
+        .then((data: Exercise[]) => setExercises(data))
+        .catch(() => {});
+    }
+  }, [open, exercises.length]);
 
-  const filteredSuggestions = useMemo(() => {
+  // Find the current exercise to determine smart suggestions
+  const currentExercise = useMemo(() => {
+    const nameLower = exerciseName.toLowerCase();
+    return exercises.find(e => e.name.toLowerCase() === nameLower);
+  }, [exercises, exerciseName]);
+
+  // Smart suggestions: same primary muscles, same category, then same equipment
+  const suggestions = useMemo(() => {
+    if (!currentExercise || exercises.length === 0) return [];
+    const nameLower = exerciseName.toLowerCase();
+    const primaryMuscles = new Set((currentExercise.primaryMuscles || []).map(m => m.toLowerCase()));
+
+    const scored = exercises
+      .filter(e => e.name.toLowerCase() !== nameLower)
+      .map(e => {
+        let score = 0;
+        const ePrimary = (e.primaryMuscles || []).map(m => m.toLowerCase());
+        const muscleOverlap = ePrimary.filter(m => primaryMuscles.has(m)).length;
+        score += muscleOverlap * 3;
+        if (e.category === currentExercise.category) score += 2;
+        if (e.equipment === currentExercise.equipment) score += 1;
+        return { exercise: e, score };
+      })
+      .filter(s => s.score > 0)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 15);
+
+    return scored.map(s => ({
+      exercise: s.exercise,
+      reason: `${(s.exercise.primaryMuscles || []).join(', ')} — ${s.exercise.equipment || 'bodyweight'}`,
+    }));
+  }, [exercises, currentExercise, exerciseName]);
+
+  // When searching, filter from full library
+  const filteredResults = useMemo(() => {
     if (!searchQuery.trim()) return suggestions;
     const q = searchQuery.toLowerCase();
-    const libraryMatches = EXERCISE_LIBRARY
+    const nameLower = exerciseName.toLowerCase();
+    const matches = exercises
       .filter(e =>
-        e.name.toLowerCase() !== exerciseName.toLowerCase() &&
-        (e.name.toLowerCase().includes(q) || e.equipment.some(eq => eq.toLowerCase().includes(q)) || e.bodyPart.toLowerCase().includes(q))
+        e.name.toLowerCase() !== nameLower &&
+        (e.name.toLowerCase().includes(q) ||
+         (e.primaryMuscles || []).some(m => m.toLowerCase().includes(q)) ||
+         (e.equipment || '').toLowerCase().includes(q) ||
+         (e.category || '').toLowerCase().includes(q))
       )
-      .map(e => ({ name: e.name, equipment: e.equipment[0], reason: `${e.bodyPart} — ${e.equipment[0]}` }));
-    const suggestionMatches = suggestions.filter(s =>
-      s.name.toLowerCase().includes(q) || s.equipment.toLowerCase().includes(q)
-    );
-    const seen = new Set(suggestionMatches.map(s => s.name.toLowerCase()));
-    const extra = libraryMatches.filter(m => !seen.has(m.name.toLowerCase()));
-    return [...suggestionMatches, ...extra];
-  }, [suggestions, searchQuery, exerciseName]);
+      .slice(0, 20)
+      .map(e => ({
+        exercise: e,
+        reason: `${(e.primaryMuscles || []).join(', ')} — ${e.equipment || 'bodyweight'}`,
+      }));
+    return matches;
+  }, [exercises, searchQuery, suggestions, exerciseName]);
 
-  const handleSwapDirect = (exercise: { name: string; equipment: string }) => {
-    // Keep same set count, blank target reps (user fills in manually)
+  const handleSwapDirect = (exercise: Exercise) => {
     onSwap(exerciseName, {
       name: exercise.name,
-      equipment: exercise.equipment,
+      equipment: exercise.equipment || 'bodyweight',
       sets: currentSets,
       reps: undefined,
     });
   };
 
   const handleClose = (isOpen: boolean) => {
-    if (!isOpen) {
-      setSearchQuery('');
-    }
+    if (!isOpen) setSearchQuery('');
     onOpenChange(isOpen);
   };
 
@@ -120,11 +123,11 @@ export function ExerciseSwapSheet({
               </p>
             </SheetHeader>
 
-            {/* Search - fixed */}
+            {/* Search */}
             <div className="relative mt-4">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
-                placeholder="Search alternatives..."
+                placeholder="Search 1500+ exercises..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10"
@@ -145,42 +148,59 @@ export function ExerciseSwapSheet({
                 </div>
               )}
 
-              {!isSwapping && filteredSuggestions.length === 0 && (
+              {!isSwapping && filteredResults.length === 0 && (
                 <p className="text-sm text-muted-foreground text-center py-4">
-                  No alternatives found. Try a different search.
+                  {exercises.length === 0 ? 'Loading exercises...' : 'No alternatives found. Try a different search.'}
                 </p>
               )}
 
-              {!isSwapping && filteredSuggestions.map((suggestion) => (
-                <Card
-                  key={suggestion.name}
-                  className="p-4 border border-border bg-card hover:border-primary/50 active:bg-primary/5 transition-colors cursor-pointer"
-                  onClick={() => handleSwapDirect({ name: suggestion.name, equipment: suggestion.equipment })}
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1 flex-wrap">
-                        <Dumbbell className="w-4 h-4 text-primary shrink-0" />
-                        <h4 className="font-display text-sm text-foreground">
-                          {suggestion.name}
-                        </h4>
-                        <Badge variant="outline" className="text-xs">
-                          {suggestion.equipment}
-                        </Badge>
+              {!isSwapping && filteredResults.map(({ exercise, reason }) => {
+                const gifUrl = getExerciseGifUrl(exercise);
+                return (
+                  <Card
+                    key={exercise.id}
+                    className="p-3 border border-border bg-card hover:border-primary/50 active:bg-primary/5 transition-colors cursor-pointer"
+                    onClick={() => handleSwapDirect(exercise)}
+                  >
+                    <div className="flex items-start gap-3">
+                      {/* Exercise GIF thumbnail */}
+                      {gifUrl && (
+                        <div className="w-12 h-12 rounded-lg overflow-hidden bg-muted shrink-0">
+                          <img
+                            src={gifUrl}
+                            alt={exercise.name}
+                            className="w-full h-full object-cover"
+                            loading="lazy"
+                          />
+                        </div>
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1 flex-wrap">
+                          <h4 className="font-display text-sm text-foreground">
+                            {exercise.name}
+                          </h4>
+                        </div>
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          {exercise.primaryMuscles?.slice(0, 2).map(m => (
+                            <Badge key={m} variant="outline" className="text-[10px]">{m}</Badge>
+                          ))}
+                          {exercise.equipment && (
+                            <Badge variant="secondary" className="text-[10px]">{exercise.equipment}</Badge>
+                          )}
+                        </div>
                       </div>
-                      <p className="text-xs text-primary italic">{suggestion.reason}</p>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="shrink-0 gap-1 font-display tracking-wide"
+                      >
+                        <Shuffle className="w-3 h-3" />
+                        SWAP
+                      </Button>
                     </div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="shrink-0 gap-1 font-display tracking-wide"
-                    >
-                      <Shuffle className="w-3 h-3" />
-                      SWAP
-                    </Button>
-                  </div>
-                </Card>
-              ))}
+                  </Card>
+                );
+              })}
             </div>
           </div>
         </div>
