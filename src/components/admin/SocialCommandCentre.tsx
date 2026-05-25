@@ -25,26 +25,28 @@ const PLATFORMS = [
   { id: 'x', label: '𝕏 X' },
 ];
 
+/* ── Content types aligned to the 6 Unbreakable pillars + key formats ── */
 const CONTENT_TYPES = [
-  { id: 'motivational', label: '💪 Motivational' },
-  { id: 'workout-tip', label: '🏋️ Workout Tip' },
-  { id: 'nutrition', label: '🍎 Nutrition' },
+  { id: 'power', label: '🧱 Power' },
+  { id: 'movement', label: '🔥 Movement' },
+  { id: 'fuel', label: '⛽ Fuel' },
   { id: 'mindset', label: '🧠 Mindset' },
-  { id: 'course-promo', label: '🎓 Course Promo' },
-  { id: 'community', label: '👥 Community' },
-  { id: 'check-in', label: '📸 Check In' },
-  { id: 'real-talk', label: '🎤 Real Talk' },
-  { id: 'transformation', label: '⚡ Transformation' },
+  { id: 'education', label: '📚 Education' },
+  { id: 'un-tunes', label: '🎵 Un-Tunes' },
+  { id: 'transformation', label: '💪 Transformation' },
+  { id: 'real-talk', label: '🗣️ Real Talk' },
+  { id: 'community', label: '🤝 Community' },
   { id: 'app-feature', label: '📱 App Feature' },
 ];
 
+/* ── Tones — Scouse-first, authentic voices ── */
 const TONES = [
-  { id: 'fired-up', label: '🔥 FIRED UP' },
-  { id: 'real-raw', label: '💯 REAL & RAW' },
-  { id: 'educational', label: '📚 EDUCATIONAL' },
-  { id: 'humorous', label: '😄 HUMOROUS' },
-  { id: 'challenging', label: '⚔️ CHALLENGING' },
-  { id: 'inspiring', label: '✨ INSPIRING' },
+  { id: 'scouse-fire', label: '🔥 SCOUSE FIRE' },
+  { id: 'raw-honest', label: '💯 RAW & HONEST' },
+  { id: 'coach-mode', label: '📋 COACH MODE' },
+  { id: 'challenger', label: '😤 CHALLENGER' },
+  { id: 'uplift', label: '✨ UPLIFT' },
+  { id: 'banter', label: '😂 BANTER' },
 ];
 
 interface SocialPost {

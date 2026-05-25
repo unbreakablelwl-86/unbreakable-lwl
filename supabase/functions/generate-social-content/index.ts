@@ -53,12 +53,12 @@ serve(async (req) => {
     };
 
     const toneGuides: Record<string, string> = {
-      "fired-up": "Intense, high-energy, warrior mentality. Use power words. SHORT punchy sentences.",
-      "real-raw": "Vulnerable, honest, no-BS. Share hard truths. Conversational like talking to a mate.",
-      educational: "Teaching mode. Clear, structured, actionable tips. Use numbered lists or bullet points.",
-      humorous: "Witty, self-deprecating fitness humour. Relatable gym/nutrition struggles.",
-      challenging: "Direct challenge to the reader. Push them. 'Are you really going all in?' energy.",
-      inspiring: "Uplifting, hopeful, 'you've got this' energy. Share possibility and belief.",
+      "scouse-fire": "Full Liverpool energy — fiery, gritty, no-excuses. Like a Scouse PT screaming at you in the best way. SHORT punchy sentences. Power words. Drop in the odd 'la', 'boss', 'sound' naturally — not forced.",
+      "raw-honest": "Stripped back, vulnerable, brutally honest. Share the hard truths nobody else will. Talk like you're sat in the pub with your best mate at 2am — real, unfiltered, zero pretence.",
+      "coach-mode": "Teaching mode. Clear, structured, actionable. Numbered tips or bullet points. Science-backed where possible. The PT session people pay £50/hr for — given free.",
+      "challenger": "Direct challenge to the reader. Call them out. 'You said you'd start Monday — it's Thursday mate.' Push them to act, not just consume. Uncomfortable truths.",
+      "uplift": "Uplifting, hopeful, 'you've actually got this' energy. Not toxic positivity — earned optimism. Celebrate the small wins. Remind them how far they've come.",
+      "banter": "Witty, self-deprecating gym humour. Relatable struggles (meal prep fails, leg day excuses, protein shake disasters). Make them laugh then hit them with a real point.",
     };
 
     const systemPrompt = `You are the social media content creator for UNBREAKABLE — a premium fitness & lifestyle coaching platform by Live Without Limits LTD, founded in Liverpool, UK. The platform is bold, no-nonsense, built for people who refuse to stay average.
