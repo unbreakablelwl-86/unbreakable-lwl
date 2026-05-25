@@ -112,6 +112,15 @@ const ALL_NAV_ITEMS: NavItemDef[] = [
     description: 'Courses & learning',
   },
   {
+    id: 'untunes',
+    icon: Music,
+    label: 'Un-Tunes',
+    path: '/untunes',
+    activeMatch: ['/untunes'],
+    color: '#FF5500',
+    description: 'Music & podcasts',
+  },
+  {
     id: 'habits',
     icon: Calendar,
     label: 'Habits',
@@ -173,15 +182,6 @@ const ALL_NAV_ITEMS: NavItemDef[] = [
     activeMatch: ['/explore'],
     color: '#FF5500',
     description: 'Discover content',
-  },
-  {
-    id: 'untunes',
-    icon: Music,
-    label: 'Un-Tunes',
-    path: '/untunes',
-    activeMatch: ['/untunes'],
-    color: '#FF5500',
-    description: 'Music & podcasts',
   },
   {
     id: 'profile',

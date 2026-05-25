@@ -1,11 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Input } from '@/components/ui/input';
 import { CardioProgramDisplay } from '@/components/cardio/CardioProgramDisplay';
 import { CardioModeSelector } from '@/components/cardio/CardioModeSelector';
@@ -27,7 +23,6 @@ import {
   Heart,
   Flame,
   Loader2,
-  Home,
   Wrench
 } from 'lucide-react';
 import {
@@ -473,221 +468,302 @@ export default function TrackerCreate() {
   // Wizard view (auto programme builder)
   if (view === 'wizard') {
     return (
-      <div className="min-h-screen pb-24" >
-<main className="container mx-auto px-4 py-24 md:py-28">
-          <Button variant="ghost" onClick={handleBackToSelect} className="mb-6 gap-2">
-            <Home className="w-4 h-4" />
-            Back to Selection
-          </Button>
+      <div className="min-h-screen pb-28" >
+        {/* Back nav */}
+        <div className="px-4 pt-4">
+          <button onClick={handleBackToSelect} className="flex items-center gap-1 text-muted-foreground text-sm hover:text-foreground transition-colors">
+            <ArrowLeft className="w-4 h-4" /> Back
+          </button>
+        </div>
 
-          <div className="max-w-3xl mx-auto">
-            {/* Progress Bar */}
-            <div className="mb-8">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm text-muted-foreground">Step {currentStep} of {totalSteps}</span>
-                <span className="text-sm text-primary font-display">{getStepLabel()}</span>
-              </div>
-              <div className="h-2 bg-surface rounded-full overflow-hidden">
-                <motion.div
-                  className="h-full bg-primary"
-                  initial={{ width: 0 }}
-                  animate={{ width: `${(currentStep / totalSteps) * 100}%` }}
-                  transition={{ duration: 0.3 }}
-                />
-              </div>
+        {/* Hero header */}
+        <div className="relative px-4 pt-3 pb-5 overflow-hidden">
+          <div className="absolute inset-0 pointer-events-none"
+            style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(255,85,0,0.08), transparent 70%)' }} />
+          <div className="relative z-10">
+            <h1 className="font-display text-2xl tracking-wider text-center">
+              <span className="text-primary" style={{ textShadow: '0 0 20px rgba(255,85,0,0.4)' }}>PROGRAMME</span>
+              <span className="text-foreground"> BUILDER</span>
+            </h1>
+            <p className="text-center text-muted-foreground text-sm mt-1 font-display tracking-wide">
+              BUILD YOUR PLAN
+            </p>
+          </div>
+        </div>
+
+        <div className="px-4 max-w-3xl mx-auto">
+          {/* Progress Bar */}
+          <div className="mb-6">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs text-muted-foreground font-display tracking-wider">Step {currentStep} of {totalSteps}</span>
+              <span className="text-xs text-primary font-display tracking-wider">{getStepLabel()}</span>
             </div>
+            <div className="h-1.5 bg-card rounded-full overflow-hidden border border-border">
+              <motion.div
+                className="h-full rounded-full"
+                style={{ background: 'linear-gradient(90deg, #FF5500, #FF7733)', boxShadow: '0 0 12px rgba(255,85,0,0.5)' }}
+                initial={{ width: 0 }}
+                animate={{ width: `${(currentStep / totalSteps) * 100}%` }}
+                transition={{ duration: 0.3 }}
+              />
+            </div>
+          </div>
 
-            <AnimatePresence mode="wait">
-              {/* Step 1: Activity Type */}
-              {currentStep === 1 && (
-                <motion.div
-                  key="step1"
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  className="space-y-6"
-                >
-                  <h2 className="font-display text-2xl text-center">
-                    CHOOSE YOUR <span className="text-primary">ACTIVITY</span>
-                  </h2>
-                  <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-4">
-                    {activityOptions.map((option) => (
-                      <Card
+          <AnimatePresence mode="wait">
+            {/* Step 1: Activity Type */}
+            {currentStep === 1 && (
+              <motion.div
+                key="step1"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                className="space-y-4"
+              >
+                <h2 className="font-display text-xl text-center tracking-wide">
+                  CHOOSE YOUR <span className="text-primary" style={{ textShadow: '0 0 10px rgba(255,85,0,0.3)' }}>ACTIVITY</span>
+                </h2>
+                <div className="space-y-2.5">
+                  {activityOptions.map((option) => {
+                    const selected = formData.activityType === option.value;
+                    return (
+                      <button
                         key={option.value}
-                        className={`cursor-pointer transition-all border-2 ${
-                          formData.activityType === option.value
-                            ? 'border-primary bg-primary/10'
-                            : 'border-border hover:border-primary/50'
-                        }`}
                         onClick={() => setFormData({ ...formData, activityType: option.value })}
-                      >
-                        <CardContent className="p-6 text-center">
-                          <div className={`mx-auto mb-3 transition-colors ${formData.activityType === option.value ? 'text-primary drop-shadow-[0_0_8px_hsl(var(--primary)/0.6)]' : 'text-foreground/70'}`}>{option.icon}</div>
-                          <h3 className="font-display text-xl tracking-wide">{option.label}</h3>
-                          <p className="text-sm text-muted-foreground mt-1">{option.description}</p>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
-                </motion.div>
-              )}
-
-              {/* Step 2: Goal */}
-              {currentStep === 2 && (
-                <motion.div
-                  key="step2"
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  className="space-y-6"
-                >
-                  <h2 className="font-display text-2xl text-center">
-                    SELECT YOUR <span className="text-primary">GOAL</span>
-                  </h2>
-                  <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
-                    {goalOptions.map((option) => (
-                      <Card
-                        key={option.value}
-                        className={`cursor-pointer transition-all border-2 ${
-                          formData.goal === option.value
-                            ? 'border-primary bg-primary/10'
-                            : 'border-border hover:border-primary/50'
+                        className={`w-full p-4 rounded-xl border transition-all text-left flex items-center gap-4 ${
+                          selected
+                            ? 'border-primary/40 bg-primary/10'
+                            : 'border-border bg-card hover:border-primary/20'
                         }`}
-                        onClick={() => setFormData({ ...formData, goal: option.value })}
                       >
-                        <CardContent className="p-5 text-center">
-                          <div className="text-primary mx-auto mb-2">{option.icon}</div>
-                          <h3 className="font-display text-lg tracking-wide">{goalLabels[option.value]}</h3>
-                          <p className="text-xs text-muted-foreground mt-1">{goalDescriptions[option.value]}</p>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
-                </motion.div>
-              )}
+                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 border transition-all ${
+                          selected
+                            ? 'border-primary/30 bg-primary/15'
+                            : 'border-border bg-background'
+                        }`}
+                          style={selected ? { boxShadow: '0 0 15px rgba(255,85,0,0.2)' } : undefined}
+                        >
+                          <span className={`transition-colors [&>svg]:w-6 [&>svg]:h-6 ${selected ? 'text-primary' : 'text-muted-foreground'}`}
+                            style={selected ? { filter: 'drop-shadow(0 0 6px rgba(255,85,0,0.5))' } : undefined}
+                          >
+                            {option.icon}
+                          </span>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h3 className={`font-display text-lg tracking-wide ${selected ? 'text-foreground' : 'text-foreground'}`}>{option.label}</h3>
+                          <p className="text-sm text-muted-foreground">{option.description}</p>
+                        </div>
+                        {selected && (
+                          <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center shrink-0"
+                            style={{ boxShadow: '0 0 10px rgba(255,85,0,0.4)' }}>
+                            <svg width="12" height="9" viewBox="0 0 12 9" fill="none"><path d="M1 4L4.5 7.5L11 1" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                          </div>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </motion.div>
+            )}
 
-              {/* Step 3: Level */}
-              {currentStep === 3 && (
-                <motion.div
-                  key="step3"
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  className="space-y-6"
-                >
-                  <h2 className="font-display text-2xl text-center">
-                    YOUR CURRENT <span className="text-primary">LEVEL</span>
-                  </h2>
-                  <RadioGroup
-                    value={formData.currentLevel}
-                    onValueChange={(value) => setFormData({ ...formData, currentLevel: value as CardioLevel })}
-                    className="space-y-3"
-                  >
-                    {(Object.keys(levelLabels) as CardioLevel[]).map((level) => (
-                      <div key={level} className="flex items-start space-x-3">
-                        <RadioGroupItem value={level} id={level} className="mt-1" />
-                        <Label htmlFor={level} className="cursor-pointer flex-1">
-                          <span className="font-display text-lg">{levelLabels[level]}</span>
-                          <p className="text-sm text-muted-foreground">{levelDescriptions[level]}</p>
-                        </Label>
-                      </div>
-                    ))}
-                  </RadioGroup>
-                </motion.div>
-              )}
+            {/* Step 2: Goal */}
+            {currentStep === 2 && (
+              <motion.div
+                key="step2"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                className="space-y-4"
+              >
+                <h2 className="font-display text-xl text-center tracking-wide">
+                  SELECT YOUR <span className="text-primary" style={{ textShadow: '0 0 10px rgba(255,85,0,0.3)' }}>GOAL</span>
+                </h2>
+                <div className="space-y-2.5">
+                  {goalOptions.map((option) => {
+                    const selected = formData.goal === option.value;
+                    return (
+                      <button
+                        key={option.value}
+                        onClick={() => setFormData({ ...formData, goal: option.value })}
+                        className={`w-full p-4 rounded-xl border transition-all text-left flex items-center gap-4 ${
+                          selected
+                            ? 'border-primary/40 bg-primary/10'
+                            : 'border-border bg-card hover:border-primary/20'
+                        }`}
+                      >
+                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 border transition-all ${
+                          selected
+                            ? 'border-primary/30 bg-primary/15'
+                            : 'border-border bg-background'
+                        }`}
+                          style={selected ? { boxShadow: '0 0 12px rgba(255,85,0,0.2)' } : undefined}
+                        >
+                          <span className={`[&>svg]:w-5 [&>svg]:h-5 ${selected ? 'text-primary' : 'text-muted-foreground'}`}
+                            style={selected ? { filter: 'drop-shadow(0 0 6px rgba(255,85,0,0.5))' } : undefined}
+                          >
+                            {option.icon}
+                          </span>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-display text-base tracking-wide text-foreground">{goalLabels[option.value]}</h3>
+                          <p className="text-xs text-muted-foreground mt-0.5">{goalDescriptions[option.value]}</p>
+                        </div>
+                        {selected && (
+                          <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center shrink-0"
+                            style={{ boxShadow: '0 0 10px rgba(255,85,0,0.4)' }}>
+                            <svg width="12" height="9" viewBox="0 0 12 9" fill="none"><path d="M1 4L4.5 7.5L11 1" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                          </div>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </motion.div>
+            )}
 
-              {/* Step 4: Schedule */}
-              {currentStep === 4 && (
-                <motion.div
-                  key="step4"
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  className="space-y-8"
-                >
-                  <h2 className="font-display text-2xl text-center">
-                    SET YOUR <span className="text-primary">SCHEDULE</span>
-                  </h2>
+            {/* Step 3: Level */}
+            {currentStep === 3 && (
+              <motion.div
+                key="step3"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                className="space-y-4"
+              >
+                <h2 className="font-display text-xl text-center tracking-wide">
+                  YOUR CURRENT <span className="text-primary" style={{ textShadow: '0 0 10px rgba(255,85,0,0.3)' }}>LEVEL</span>
+                </h2>
+                <div className="space-y-2.5">
+                  {(Object.keys(levelLabels) as CardioLevel[]).map((level) => {
+                    const selected = formData.currentLevel === level;
+                    return (
+                      <button
+                        key={level}
+                        onClick={() => setFormData({ ...formData, currentLevel: level })}
+                        className={`w-full p-4 rounded-xl border transition-all text-left flex items-center gap-4 ${
+                          selected
+                            ? 'border-primary/40 bg-primary/10'
+                            : 'border-border bg-card hover:border-primary/20'
+                        }`}
+                      >
+                        <div className="flex-1 min-w-0">
+                          <h3 className={`font-display text-base tracking-wide ${selected ? 'text-primary' : 'text-foreground'}`}>{levelLabels[level]}</h3>
+                          <p className="text-xs text-muted-foreground mt-0.5">{levelDescriptions[level]}</p>
+                        </div>
+                        {selected && (
+                          <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center shrink-0"
+                            style={{ boxShadow: '0 0 10px rgba(255,85,0,0.4)' }}>
+                            <svg width="12" height="9" viewBox="0 0 12 9" fill="none"><path d="M1 4L4.5 7.5L11 1" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                          </div>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </motion.div>
+            )}
 
-                  <div className="space-y-6">
-                    <div>
-                      <Label className="text-base mb-4 block">
-                        Sessions per week: <span className="text-primary font-display">{formData.sessionsPerWeek}</span>
-                      </Label>
+            {/* Step 4: Schedule */}
+            {currentStep === 4 && (
+              <motion.div
+                key="step4"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                className="space-y-6"
+              >
+                <h2 className="font-display text-xl text-center tracking-wide">
+                  SET YOUR <span className="text-primary" style={{ textShadow: '0 0 10px rgba(255,85,0,0.3)' }}>SCHEDULE</span>
+                </h2>
+
+                <div className="space-y-5">
+                  <div className="p-4 rounded-xl border border-border bg-card space-y-3">
+                    <label className="text-xs font-display tracking-wider text-muted-foreground">
+                      SESSIONS PER WEEK
+                    </label>
+                    <div className="flex items-center gap-3">
                       <Slider
                         value={[formData.sessionsPerWeek]}
                         onValueChange={([value]) => setFormData({ ...formData, sessionsPerWeek: value })}
                         min={2}
                         max={7}
                         step={1}
-                        className="mt-2"
                       />
+                      <span className="text-lg text-primary font-display w-8 text-center">{formData.sessionsPerWeek}</span>
                     </div>
+                  </div>
 
-                    <div>
-                      <Label className="text-base mb-4 block">
-                        Session length: <span className="text-primary font-display">{formData.sessionLength} min</span>
-                      </Label>
+                  <div className="p-4 rounded-xl border border-border bg-card space-y-3">
+                    <label className="text-xs font-display tracking-wider text-muted-foreground">
+                      SESSION LENGTH
+                    </label>
+                    <div className="flex items-center gap-3">
                       <Slider
                         value={[formData.sessionLength]}
                         onValueChange={([value]) => setFormData({ ...formData, sessionLength: value })}
                         min={15}
                         max={90}
                         step={5}
-                        className="mt-2"
                       />
-                    </div>
-
-                    <div>
-                      <Label className="text-base mb-2 block">Target distance (optional)</Label>
-                      <Input
-                        placeholder="e.g., 5K, 10K, Marathon"
-                        value={formData.targetDistance || ''}
-                        onChange={(e) => setFormData({ ...formData, targetDistance: e.target.value })}
-                      />
+                      <span className="text-lg text-primary font-display w-12 text-center">{formData.sessionLength}<span className="text-xs text-muted-foreground">m</span></span>
                     </div>
                   </div>
-                </motion.div>
+
+                  <div className="p-4 rounded-xl border border-border bg-card space-y-2">
+                    <label className="text-xs font-display tracking-wider text-muted-foreground">
+                      TARGET DISTANCE (OPTIONAL)
+                    </label>
+                    <Input
+                      placeholder="e.g., 5K, 10K, Marathon"
+                      value={formData.targetDistance || ''}
+                      onChange={(e) => setFormData({ ...formData, targetDistance: e.target.value })}
+                      className="bg-background border-border focus:border-primary/50"
+                    />
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Navigation Buttons */}
+          <div className="flex items-center justify-between mt-6 pt-5 border-t border-border">
+            <button
+              onClick={handleBack}
+              disabled={currentStep === 1}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-display tracking-wider 
+                border border-border text-muted-foreground hover:text-foreground hover:border-primary/30
+                disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              BACK
+            </button>
+
+            <button
+              onClick={handleNext}
+              disabled={!canProceed() || isGenerating}
+              className="flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-display tracking-wider 
+                bg-primary hover:bg-primary/80 text-white disabled:opacity-40 
+                disabled:cursor-not-allowed transition-all min-w-[160px] justify-center"
+              style={{ boxShadow: '0 0 20px rgba(255,85,0,0.3)' }}
+            >
+              {isGenerating ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  GENERATING...
+                </>
+              ) : currentStep === totalSteps ? (
+                <>
+                  <Zap className="w-4 h-4" />
+                  GENERATE
+                </>
+              ) : (
+                <>
+                  NEXT
+                  <ArrowRight className="w-4 h-4" />
+                </>
               )}
-            </AnimatePresence>
-
-            {/* Navigation Buttons */}
-            <div className="flex items-center justify-between mt-8 pt-6 border-t border-border">
-              <Button
-                variant="outline"
-                onClick={handleBack}
-                disabled={currentStep === 1}
-                className="gap-2"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                Back
-              </Button>
-
-              <Button
-                onClick={handleNext}
-                disabled={!canProceed() || isGenerating}
-                className="gap-2 min-w-[160px]"
-              >
-                {isGenerating ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    Generating...
-                  </>
-                ) : currentStep === totalSteps ? (
-                  <>
-                    <Zap className="w-4 h-4" />
-                    Generate Programme
-                  </>
-                ) : (
-                  <>
-                    Next
-                    <ArrowRight className="w-4 h-4" />
-                  </>
-                )}
-              </Button>
-            </div>
+            </button>
           </div>
-        </main>
+        </div>
 <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
       </div>
     );

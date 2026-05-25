@@ -1,6 +1,5 @@
-import { useState, useEffect, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Flame, X } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { Flame } from 'lucide-react';
 
 const MOTIVATION_QUOTES = [
   "🦍 Somewhere out there, the old you is watching from the sofa — make them jealous.",
@@ -55,62 +54,68 @@ const MOTIVATION_QUOTES = [
   "🏴 Today is the day the old you dies. The new you is UNBREAKABLE.",
 ];
 
+/* Build a single long string with flame separators for the ticker */
+const SEPARATOR = "   🔥   ";
+const TICKER_TEXT = MOTIVATION_QUOTES.join(SEPARATOR);
+/* Duplicate for seamless infinite scroll */
+const DOUBLE_TICKER = TICKER_TEXT + SEPARATOR + TICKER_TEXT;
+
 export function MotivationBanner() {
-  const [visible, setVisible] = useState(true);
-  const [quoteIndex, setQuoteIndex] = useState(() =>
-    Math.floor(Math.random() * MOTIVATION_QUOTES.length)
-  );
-
-  // Cycle quotes on page refresh (random start) and auto-scroll every 8s
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setQuoteIndex((prev) => (prev + 1) % MOTIVATION_QUOTES.length);
-    }, 8000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const dismiss = useCallback(() => setVisible(false), []);
-
-  if (!visible) return null;
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [paused, setPaused] = useState(false);
 
   return (
-    <AnimatePresence>
-      <motion.div
-        key={quoteIndex}
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -20 }}
-        transition={{ duration: 0.4 }}
-        className="relative mx-3 mt-2 mb-1 rounded-xl overflow-hidden"
-        style={{
-          background: 'linear-gradient(135deg, rgba(255,85,0,0.12) 0%, rgba(255,85,0,0.04) 100%)',
-          border: '1px solid rgba(255,85,0,0.15)',
-        }}
-      >
-        <div className="flex items-start gap-3 px-4 py-3">
-          <div
-            className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center mt-0.5"
-            style={{ background: 'rgba(255,85,0,0.15)' }}
-          >
-            <Flame className="w-4 h-4 text-primary" />
-          </div>
-          <motion.p
-            key={quoteIndex}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6 }}
-            className="flex-1 text-[13px] text-muted-foreground leading-relaxed font-medium"
-          >
-            {MOTIVATION_QUOTES[quoteIndex]}
-          </motion.p>
-          <button
-            onClick={dismiss}
-            className="flex-shrink-0 p-1 rounded-full hover:bg-white/5 transition-colors"
-          >
-            <X size={14} className="text-muted-foreground" />
-          </button>
+    <div
+      className="relative mx-3 mt-2 mb-1 overflow-hidden rounded-xl"
+      style={{
+        background: 'linear-gradient(90deg, rgba(255,85,0,0.12) 0%, rgba(255,85,0,0.03) 50%, rgba(255,85,0,0.12) 100%)',
+        border: '1px solid rgba(255,85,0,0.15)',
+      }}
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+      onTouchStart={() => setPaused(true)}
+      onTouchEnd={() => setPaused(false)}
+    >
+      {/* Left fade */}
+      <div className="absolute left-0 top-0 bottom-0 w-8 z-10 pointer-events-none"
+        style={{ background: 'linear-gradient(90deg, rgba(10,10,10,0.9), transparent)' }} />
+      {/* Right fade */}
+      <div className="absolute right-0 top-0 bottom-0 w-8 z-10 pointer-events-none"
+        style={{ background: 'linear-gradient(270deg, rgba(10,10,10,0.9), transparent)' }} />
+
+      <div className="flex items-center py-2.5 px-2">
+        {/* Fixed brand icon */}
+        <div
+          className="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center mr-2 z-20"
+          style={{ background: 'rgba(255,85,0,0.18)', boxShadow: '0 0 10px rgba(255,85,0,0.25)' }}
+        >
+          <Flame className="w-3.5 h-3.5 text-primary" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.6))' }} />
         </div>
-      </motion.div>
-    </AnimatePresence>
+
+        {/* Scrolling marquee */}
+        <div className="overflow-hidden flex-1">
+          <div
+            ref={scrollRef}
+            className="whitespace-nowrap inline-block"
+            style={{
+              animation: `unbreakableMarquee 320s linear infinite`,
+              animationPlayState: paused ? 'paused' : 'running',
+            }}
+          >
+            <span className="text-[12px] font-display tracking-wider text-muted-foreground">
+              {DOUBLE_TICKER}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Inject keyframes */}
+      <style>{`
+        @keyframes unbreakableMarquee {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+      `}</style>
+    </div>
   );
 }
