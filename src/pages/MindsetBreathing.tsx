@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Wind, Zap, Target, Heart, Volume2, VolumeX, Flame, ArrowRight, Clock, ChevronRight, ArrowLeft, User, UserRound, Palette } from "lucide-react";
+import { Wind, Zap, Target, Heart, Volume2, VolumeX, Flame, ArrowRight, Clock, ChevronRight, ArrowLeft, User, UserRound, Waves, BarChart3, Sparkles, Route, Circle } from "lucide-react";
 import { ThemedLogo } from "@/components/ThemedLogo";
 import { ThemeToggle } from "@/components/hub/ThemeToggle";
 import { CountdownOverlay } from "@/components/CountdownOverlay";
@@ -11,76 +11,18 @@ import { ImmersiveSessionView } from "@/components/mindset/ImmersiveSessionView"
 import { useBreathingAudio } from "@/hooks/useBreathingAudio";
 import { useAIPreferences } from "@/hooks/useAIPreferences";
 import { VoiceSettingsSheet } from "@/components/coaching/VoiceSettingsSheet";
+import type { BreathPattern } from "@/components/mindset/BreathingVisual";
 
 type BreathPhase = "idle" | "inhale" | "hold" | "exhale" | "rest" | "complete";
 type ViewState = "selection" | "duration" | "countdown" | "exercise" | "complete";
 
-/* ── Session themes for visual variety ── */
-export interface SessionTheme {
-  id: string;
-  name: string;
-  orbGradient: string;
-  bgGlow: string;
-  ringColor: string;
-  accentColor: string;
-  description: string;
-}
-
-export const SESSION_THEMES: SessionTheme[] = [
-  {
-    id: 'fire',
-    name: 'FIRE',
-    orbGradient: 'from-primary via-primary to-[hsl(20,100%,45%)]',
-    bgGlow: 'rgba(255,85,0,0.12)',
-    ringColor: 'hsl(var(--primary))',
-    accentColor: 'text-primary',
-    description: 'Default neon orange',
-  },
-  {
-    id: 'ocean',
-    name: 'OCEAN',
-    orbGradient: 'from-blue-400 via-cyan-500 to-blue-600',
-    bgGlow: 'rgba(56,189,248,0.12)',
-    ringColor: 'rgb(56,189,248)',
-    accentColor: 'text-cyan-400',
-    description: 'Calm ocean blue',
-  },
-  {
-    id: 'forest',
-    name: 'FOREST',
-    orbGradient: 'from-emerald-400 via-green-500 to-emerald-600',
-    bgGlow: 'rgba(52,211,153,0.12)',
-    ringColor: 'rgb(52,211,153)',
-    accentColor: 'text-emerald-400',
-    description: 'Grounded forest green',
-  },
-  {
-    id: 'void',
-    name: 'VOID',
-    orbGradient: 'from-purple-400 via-violet-500 to-indigo-600',
-    bgGlow: 'rgba(139,92,246,0.12)',
-    ringColor: 'rgb(139,92,246)',
-    accentColor: 'text-violet-400',
-    description: 'Deep space violet',
-  },
-  {
-    id: 'steel',
-    name: 'STEEL',
-    orbGradient: 'from-slate-300 via-zinc-400 to-slate-500',
-    bgGlow: 'rgba(161,161,170,0.10)',
-    ringColor: 'rgb(161,161,170)',
-    accentColor: 'text-zinc-300',
-    description: 'Minimal steel grey',
-  },
-  {
-    id: 'sunrise',
-    name: 'SUNRISE',
-    orbGradient: 'from-amber-400 via-orange-400 to-rose-500',
-    bgGlow: 'rgba(251,191,36,0.12)',
-    ringColor: 'rgb(251,191,36)',
-    accentColor: 'text-amber-400',
-    description: 'Warm golden sunrise',
-  },
+/* ── Breathing visual pattern options ── */
+const BREATH_PATTERNS: { id: BreathPattern; name: string; icon: React.ReactNode; description: string }[] = [
+  { id: "orb",        name: "ORB",    icon: <Circle className="w-4 h-4" />,     description: "Expanding orb" },
+  { id: "wave",       name: "WAVE",   icon: <Waves className="w-4 h-4" />,      description: "Flowing sine wave" },
+  { id: "bars",       name: "BARS",   icon: <BarChart3 className="w-4 h-4" />,  description: "Equaliser pulse" },
+  { id: "morph",      name: "MORPH",  icon: <Sparkles className="w-4 h-4" />,   description: "Shape shift" },
+  { id: "guidedLine", name: "GUIDE",  icon: <Route className="w-4 h-4" />,      description: "Guided line" },
 ];
 
 const MindsetBreathing = () => {
@@ -93,7 +35,8 @@ const MindsetBreathing = () => {
   const [currentCycle, setCurrentCycle] = useState(0);
   const [progress, setProgress] = useState(0);
   const [remainingSeconds, setRemainingSeconds] = useState(0);
-  const [selectedTheme, setSelectedTheme] = useState<SessionTheme>(SESSION_THEMES[0]);
+  const [selectedPattern, setSelectedPattern] = useState<BreathPattern>("orb");
+  const [phaseProgress, setPhaseProgress] = useState(0);
   
   const { preferences: aiPrefs, updatePreferences } = useAIPreferences();
   const voiceEnabled = aiPrefs?.voice_feedback_enabled ?? true; // Default ON
@@ -115,28 +58,29 @@ const MindsetBreathing = () => {
     return (inhale + hold + exhale + rest) * 1000;
   }, []);
 
-  const getPhaseFromTime = useCallback((elapsed: number, exercise: BreathingExercise, totalDurationMs: number): { phase: BreathPhase; cycle: number } => {
+  const getPhaseFromTime = useCallback((elapsed: number, exercise: BreathingExercise, totalDurationMs: number): { phase: BreathPhase; cycle: number; phaseProgress: number } => {
     if (elapsed >= totalDurationMs) {
-      return { phase: "complete", cycle: 0 };
+      return { phase: "complete", cycle: 0, phaseProgress: 1 };
     }
 
     const cycleDuration = getCycleDuration(exercise);
     const cycleNumber = Math.floor(elapsed / cycleDuration) + 1;
     const timeInCycle = elapsed % cycleDuration;
-    const { inhale, hold, exhale } = exercise.phases;
+    const { inhale, hold, exhale, rest = 0 } = exercise.phases;
 
     const inhaleMs = inhale * 1000;
     const holdMs = hold * 1000;
     const exhaleMs = exhale * 1000;
+    const restMs = rest * 1000;
 
     if (timeInCycle < inhaleMs) {
-      return { phase: "inhale", cycle: cycleNumber };
+      return { phase: "inhale", cycle: cycleNumber, phaseProgress: timeInCycle / inhaleMs };
     } else if (timeInCycle < inhaleMs + holdMs) {
-      return { phase: "hold", cycle: cycleNumber };
+      return { phase: "hold", cycle: cycleNumber, phaseProgress: (timeInCycle - inhaleMs) / holdMs };
     } else if (timeInCycle < inhaleMs + holdMs + exhaleMs) {
-      return { phase: "exhale", cycle: cycleNumber };
+      return { phase: "exhale", cycle: cycleNumber, phaseProgress: (timeInCycle - inhaleMs - holdMs) / exhaleMs };
     } else {
-      return { phase: "rest", cycle: cycleNumber };
+      return { phase: "rest", cycle: cycleNumber, phaseProgress: (timeInCycle - inhaleMs - holdMs - exhaleMs) / restMs };
     }
   }, [getCycleDuration]);
 
@@ -182,6 +126,7 @@ const MindsetBreathing = () => {
     setCurrentCycle(1);
     setPhase("inhale");
     setProgress(0);
+    setPhaseProgress(0);
     setRemainingSeconds(selectedMinutes * 60);
     lastPhaseRef.current = "idle";
     startTimeRef.current = Date.now();
@@ -194,9 +139,10 @@ const MindsetBreathing = () => {
       setProgress(progressPercent);
       setRemainingSeconds(remaining);
 
-      const { phase: currentPhase, cycle } = getPhaseFromTime(elapsed, selectedExercise, totalDurationMs);
+      const { phase: currentPhase, cycle, phaseProgress: pp } = getPhaseFromTime(elapsed, selectedExercise, totalDurationMs);
       setPhase(currentPhase);
       setCurrentCycle(cycle);
+      setPhaseProgress(pp);
 
       if (elapsed >= totalDurationMs) {
         if (intervalRef.current) {
@@ -264,6 +210,7 @@ const MindsetBreathing = () => {
     setPhase("idle");
     setCurrentCycle(0);
     setProgress(0);
+    setPhaseProgress(0);
     setRemainingSeconds(0);
     setView("selection");
     setSelectedExercise(null);
@@ -337,9 +284,9 @@ const MindsetBreathing = () => {
             <p className="text-primary font-display text-xs tracking-wider mt-2">KEEP SHOWING UP.</p>
           </div>
 
-          {/* Voice & Theme Settings */}
+          {/* Voice & Visual Settings */}
           <div className="space-y-3">
-            <p className="text-xs font-display tracking-wider text-muted-foreground">VOICE & THEME</p>
+            <p className="text-xs font-display tracking-wider text-muted-foreground">VOICE & VISUALS</p>
             
             {/* Voice toggle + gender selector */}
             <div className="flex items-center gap-2">
@@ -391,33 +338,36 @@ const MindsetBreathing = () => {
               )}
             </div>
 
-            {/* Session theme selector */}
+            {/* Visual pattern selector */}
             <div className="space-y-2">
               <div className="flex items-center gap-2">
-                <Palette className="w-3.5 h-3.5 text-muted-foreground" />
-                <p className="text-xs font-display tracking-wider text-muted-foreground">SESSION THEME</p>
+                <Waves className="w-3.5 h-3.5 text-muted-foreground" />
+                <p className="text-xs font-display tracking-wider text-muted-foreground">VISUAL PATTERN</p>
               </div>
               <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
-                {SESSION_THEMES.map((theme) => (
+                {BREATH_PATTERNS.map((bp) => (
                   <button
-                    key={theme.id}
-                    onClick={() => setSelectedTheme(theme)}
-                    className={`shrink-0 flex flex-col items-center gap-1.5 px-3 py-2 rounded-xl border transition-all ${
-                      selectedTheme.id === theme.id
+                    key={bp.id}
+                    onClick={() => setSelectedPattern(bp.id)}
+                    className={`shrink-0 flex flex-col items-center gap-1.5 px-3 py-2.5 rounded-xl border transition-all ${
+                      selectedPattern === bp.id
                         ? 'border-primary/40 bg-primary/5 shadow-[0_0_12px_rgba(255,85,0,0.15)]'
                         : 'border-border/50 bg-card/30 hover:border-primary/20'
                     }`}
                   >
-                    <div
-                      className={`w-8 h-8 rounded-full bg-gradient-to-br ${theme.orbGradient} ${
-                        selectedTheme.id === theme.id ? 'shadow-lg' : ''
-                      }`}
-                      style={selectedTheme.id === theme.id ? { boxShadow: `0 0 16px ${theme.bgGlow}` } : {}}
-                    />
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                      selectedPattern === bp.id
+                        ? 'bg-primary text-primary-foreground shadow-lg'
+                        : 'bg-card border border-border text-muted-foreground'
+                    }`}
+                      style={selectedPattern === bp.id ? { boxShadow: `0 0 16px rgba(255,85,0,0.4)` } : {}}
+                    >
+                      {bp.icon}
+                    </div>
                     <span className={`text-[10px] font-display tracking-wider ${
-                      selectedTheme.id === theme.id ? 'text-foreground' : 'text-muted-foreground'
+                      selectedPattern === bp.id ? 'text-foreground' : 'text-muted-foreground'
                     }`}>
-                      {theme.name}
+                      {bp.name}
                     </span>
                   </button>
                 ))}
@@ -470,25 +420,26 @@ const MindsetBreathing = () => {
             </Link>
           </div>
         </div>
-</div>
+      </div>
     );
   }
 
   // Duration picker view
   if (view === "duration" && selectedExercise) {
     const cycleSec = selectedExercise.phases.inhale + selectedExercise.phases.hold + selectedExercise.phases.exhale + (selectedExercise.phases.rest || 0);
+    const patternLabel = BREATH_PATTERNS.find(p => p.id === selectedPattern)?.name || "ORB";
     
     return (
       <div className="fixed inset-0 z-[100] bg-background flex flex-col items-center justify-center overflow-hidden">
         <div 
           className="absolute inset-0 pointer-events-none"
           style={{
-            background: `radial-gradient(circle at center, ${selectedTheme.bgGlow}, transparent 60%)`
+            background: `radial-gradient(circle at center, rgba(255,85,0,0.12), transparent 60%)`
           }}
         />
 
         <div className="relative z-10 text-center px-6 max-w-md w-full">
-          <h2 className={`font-display text-3xl md:text-4xl ${selectedTheme.accentColor} tracking-wide mb-2`}>
+          <h2 className="font-display text-3xl md:text-4xl text-primary tracking-wide mb-2">
             {selectedExercise.name}
           </h2>
           <p className="text-muted-foreground font-display tracking-wide mb-2">
@@ -498,13 +449,15 @@ const MindsetBreathing = () => {
             {cycleSec}s per cycle — repeats for your chosen duration
           </p>
 
-          {/* Theme preview */}
+          {/* Pattern + voice preview */}
           <div className="flex items-center justify-center gap-3 mb-6">
-            <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${selectedTheme.orbGradient}`}
-              style={{ boxShadow: `0 0 20px ${selectedTheme.bgGlow}` }}
-            />
+            <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-primary-foreground"
+              style={{ boxShadow: `0 0 20px rgba(255,85,0,0.4)` }}
+            >
+              {BREATH_PATTERNS.find(p => p.id === selectedPattern)?.icon}
+            </div>
             <div className="text-left">
-              <p className={`text-xs font-display tracking-wider ${selectedTheme.accentColor}`}>{selectedTheme.name} THEME</p>
+              <p className="text-xs font-display tracking-wider text-primary">{patternLabel} VISUAL</p>
               <p className="text-[10px] text-muted-foreground">
                 {voiceEnabled ? `${voiceGender === 'female' ? 'Female' : 'Male'} voice guidance` : 'Voice off'}
               </p>
@@ -512,7 +465,7 @@ const MindsetBreathing = () => {
           </div>
 
           <div className="flex items-center justify-center gap-2 mb-6">
-            <Clock className={`w-5 h-5 ${selectedTheme.accentColor}`} />
+            <Clock className="w-5 h-5 text-primary" />
             <h3 className="font-display text-xl text-foreground tracking-wide">
               SET YOUR TIMER
             </h3>
@@ -567,6 +520,7 @@ const MindsetBreathing = () => {
     <ImmersiveSessionView
       phase={phase}
       progress={progress}
+      phaseProgress={phaseProgress}
       currentCycle={currentCycle}
       remainingSeconds={remainingSeconds}
       phaseDuration={phaseDuration}
@@ -574,7 +528,7 @@ const MindsetBreathing = () => {
       isComplete={view === "complete"}
       closingMessage={selectedExercise?.scripts.closing}
       voiceEnabled={voiceEnabled}
-      sessionTheme={selectedTheme}
+      breathPattern={selectedPattern}
       onToggleVoice={() => {
         if (voiceEnabled) stopAudio();
         setVoiceEnabled(!voiceEnabled);

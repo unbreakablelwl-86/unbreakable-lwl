@@ -2,13 +2,14 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, Pause, Play, RotateCcw, Share2, Volume2, VolumeX } from "lucide-react";
 import { BreathingVisual } from "./BreathingVisual";
-import type { SessionTheme } from "@/pages/MindsetBreathing";
+import type { BreathPattern } from "./BreathingVisual";
 
 type BreathPhase = "idle" | "inhale" | "hold" | "exhale" | "rest" | "complete";
 
 interface ImmersiveSessionViewProps {
   phase: BreathPhase;
   progress: number;
+  phaseProgress?: number;
   currentCycle: number;
   remainingSeconds: number;
   phaseDuration: number;
@@ -16,7 +17,7 @@ interface ImmersiveSessionViewProps {
   isComplete: boolean;
   closingMessage?: string;
   voiceEnabled: boolean;
-  sessionTheme?: SessionTheme;
+  breathPattern?: BreathPattern;
   onToggleVoice: () => void;
   onToggle: () => void;
   onReset: () => void;
@@ -26,6 +27,7 @@ interface ImmersiveSessionViewProps {
 export function ImmersiveSessionView({
   phase,
   progress,
+  phaseProgress = 0,
   currentCycle,
   remainingSeconds,
   phaseDuration,
@@ -33,7 +35,7 @@ export function ImmersiveSessionView({
   isComplete,
   closingMessage,
   voiceEnabled,
-  sessionTheme,
+  breathPattern = "orb",
   onToggleVoice,
   onToggle,
   onReset,
@@ -56,19 +58,15 @@ export function ImmersiveSessionView({
     return `${m}:${s.toString().padStart(2, '0')}`;
   };
 
-  // Use theme colors or fall back to primary
-  const bgGlow = sessionTheme?.bgGlow || 'hsl(var(--primary) / 0.12)';
-  const accentClass = sessionTheme?.accentColor || 'text-primary';
-
   return (
     <div className="fixed inset-0 z-[100] bg-background flex flex-col items-center justify-center overflow-hidden">
-      {/* Ambient background glow — uses session theme */}
+      {/* Ambient background glow — neon orange */}
       <div 
         className={`absolute inset-0 transition-opacity duration-1000 ${
           phase === "inhale" ? "opacity-100" : phase === "hold" ? "opacity-80" : "opacity-30"
         }`}
         style={{
-          background: `radial-gradient(circle at center, ${bgGlow}, transparent 60%)`
+          background: `radial-gradient(circle at center, rgba(255,85,0,0.12), transparent 60%)`
         }}
       />
 
@@ -80,7 +78,7 @@ export function ImmersiveSessionView({
           </p>
         ) : (
           <>
-            <p className={`font-display text-3xl tracking-widest ${accentClass}`}>
+            <p className="font-display text-3xl tracking-widest text-primary">
               {formatTime(remainingSeconds)}
             </p>
             <p className="font-display text-sm text-muted-foreground tracking-widest mt-1">
@@ -97,7 +95,8 @@ export function ImmersiveSessionView({
             phase={phase}
             progress={progress}
             phaseDuration={phaseDuration}
-            sessionTheme={sessionTheme}
+            phaseProgress={phaseProgress}
+            pattern={breathPattern}
           />
         </div>
       </div>

@@ -21,6 +21,7 @@ import { UnTunesArtistSignup } from '@/components/untunes/ArtistSignup';
 // Spotify integration parked — building own library instead
 import { UnTunesArtistDashboard } from '@/components/untunes/ArtistDashboard';
 import { UnTunesMiniPlayer } from '@/components/untunes/MiniPlayer';
+import { AddToPlaylistSheet } from '@/components/untunes/AddToPlaylistSheet';
 import { toast } from 'sonner';
 
 type UnTunesTab = 'browse' | 'search' | 'library' | 'artist';
@@ -50,18 +51,28 @@ export default function UnTunes() {
   const [searchQuery, setSearchQuery] = useState('');
   const { playTrack, currentTrack } = usePlayer();
 
-  /* ── Add to first playlist (auto-create "My Tracks" if none) ── */
-  const handleAddToPlaylist = async (track: Track) => {
+  /* ── Playlist sheet state ── */
+  const [playlistSheetTrack, setPlaylistSheetTrack] = useState<Track | null>(null);
+  const [showNewPlaylistInput, setShowNewPlaylistInput] = useState(false);
+
+  const openPlaylistSheet = (track: Track) => {
     if (!user) { toast.error('Sign in to save tracks'); return; }
-    let targetPlaylist = playlists[0];
-    if (!targetPlaylist) {
-      const created = await createPlaylist('My Tracks', 'Auto-created playlist');
-      if (!created) { toast.error('Could not create playlist'); return; }
-      targetPlaylist = created;
-    }
-    const ok = await addToPlaylist(targetPlaylist.id, track.id);
-    if (ok) toast.success(`Added "${track.title}" to ${targetPlaylist.name}`);
+    setPlaylistSheetTrack(track);
+  };
+
+  const handleAddToPlaylistSelect = async (playlistId: string) => {
+    if (!playlistSheetTrack) return false;
+    const ok = await addToPlaylist(playlistId, playlistSheetTrack.id);
+    if (ok) toast.success(`Added to playlist`);
     else toast.error('Could not add to playlist');
+    return ok;
+  };
+
+  const handleCreatePlaylist = async (name: string) => {
+    const created = await createPlaylist(name, '');
+    if (!created) { toast.error('Could not create playlist'); return null; }
+    toast.success(`Created "${name}"`);
+    return created;
   };
 
   /* ── Share "Now Listening" to timeline ── */
@@ -222,7 +233,7 @@ export default function UnTunes() {
                           onShare={() => handleShareToTimeline(track)}
                           isLiked={isLiked(track.id)}
                           onToggleLike={() => toggleLike(track.id)}
-                          onAddToPlaylist={() => handleAddToPlaylist(track)}
+                          onAddToPlaylist={() => openPlaylistSheet(track)}
                         />
                       ))}
                   </div>
@@ -304,7 +315,7 @@ export default function UnTunes() {
                           onShare={() => handleShareToTimeline(track)}
                           isLiked={isLiked(track.id)}
                           onToggleLike={() => toggleLike(track.id)}
-                          onAddToPlaylist={() => handleAddToPlaylist(track)}
+                          onAddToPlaylist={() => openPlaylistSheet(track)}
                         />
                       ))}
                     </div>
@@ -415,12 +426,44 @@ export default function UnTunes() {
                   <div>
                     <div className="flex items-center justify-between mb-3">
                       <h3 className="font-display text-xs tracking-wider text-muted-foreground">YOUR PLAYLISTS</h3>
-                      <Button variant="ghost" size="sm" className="h-7 text-xs gap-1.5 text-primary">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-7 text-xs gap-1.5 text-primary"
+                        onClick={() => setShowNewPlaylistInput(true)}
+                      >
                         <span className="text-lg leading-none">+</span> New
                       </Button>
                     </div>
-                    {playlists.length === 0 ? (
-                      <Card className="p-6 text-center border-border/50 bg-card/50">
+                    {/* Inline new playlist input */}
+                    {showNewPlaylistInput && (
+                      <div className="flex items-center gap-2 mb-3">
+                        <Input
+                          placeholder="Playlist name..."
+                          autoFocus
+                          className="h-9 text-sm"
+                          onKeyDown={async (e) => {
+                            if (e.key === 'Enter' && (e.target as HTMLInputElement).value.trim()) {
+                              const name = (e.target as HTMLInputElement).value.trim();
+                              await handleCreatePlaylist(name);
+                              setShowNewPlaylistInput(false);
+                            }
+                            if (e.key === 'Escape') setShowNewPlaylistInput(false);
+                          }}
+                        />
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-9 text-xs text-muted-foreground"
+                          onClick={() => setShowNewPlaylistInput(false)}
+                        >
+                          Cancel
+                        </Button>
+                      </div>
+                    )}
+
+                    {playlists.length === 0 && !showNewPlaylistInput ? (
+                      <Card className="p-6 text-center border-border/50 bg-card/50 cursor-pointer hover:bg-card/60 transition-colors" onClick={() => setShowNewPlaylistInput(true)}>
                         <Library className="w-8 h-8 text-primary/20 mx-auto mb-2" />
                         <p className="text-xs text-muted-foreground">Create your first playlist</p>
                       </Card>
@@ -471,6 +514,16 @@ export default function UnTunes() {
 
       {/* Mini Player - always visible when a track is playing */}
       <UnTunesMiniPlayer />
+
+      {/* Add to Playlist bottom sheet */}
+      <AddToPlaylistSheet
+        track={playlistSheetTrack}
+        playlists={playlists}
+        open={!!playlistSheetTrack}
+        onClose={() => setPlaylistSheetTrack(null)}
+        onSelect={handleAddToPlaylistSelect}
+        onCreate={handleCreatePlaylist}
+      />
     </div>
   );
 }

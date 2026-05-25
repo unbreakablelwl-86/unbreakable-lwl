@@ -10,7 +10,7 @@ import {
   MessageCircle, Dumbbell, Apple, Brain, Activity,
   Coins, Plus, Package, BookOpen, ChevronDown,
   Lock, ArrowRight, Flame, Shield,
-  Settings, Tag,
+  Settings, Tag, BadgePercent,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { VISIBLE_TIERS, type TierConfig, type TierKey } from '@/lib/subscriptionTiers';
@@ -22,56 +22,12 @@ import { TokenTopUp } from '@/components/paywall/TokenTopUp';
 import { CancelRetention } from '@/components/paywall/CancelRetention';
 
 /* ─── Tier visual configs ─── */
-const TIER_STYLES: Record<string, {
-  icon: React.ElementType;
-  accent: string;        // tailwind text color
-  border: string;        // tailwind border color
-  bg: string;            // gradient bg
-  glow: string;          // box shadow glow
-  badge: string;         // badge bg
-  badgeText: string;     // badge text
-  metalLabel: string;    // e.g. "SILVER", "GOLD", "DIAMOND"
-}> = {
-  free: {
-    icon: Zap,
-    accent: 'text-zinc-400',
-    border: 'border-zinc-600/40',
-    bg: 'bg-zinc-900/30',
-    glow: '',
-    badge: 'bg-zinc-700',
-    badgeText: 'text-zinc-300',
-    metalLabel: '',
-  },
-  base: {
-    icon: Star,
-    accent: 'text-slate-300',
-    border: 'border-slate-400/40',
-    bg: 'bg-gradient-to-b from-slate-400/10 via-slate-300/5 to-transparent',
-    glow: '0 0 20px rgba(148,163,184,0.15)',
-    badge: 'bg-gradient-to-r from-slate-400 to-slate-300',
-    badgeText: 'text-slate-900',
-    metalLabel: 'SILVER',
-  },
-  pro: {
-    icon: Rocket,
-    accent: 'text-amber-400',
-    border: 'border-amber-400/40',
-    bg: 'bg-gradient-to-b from-amber-400/10 via-yellow-300/5 to-transparent',
-    glow: '0 0 20px rgba(251,191,36,0.2)',
-    badge: 'bg-gradient-to-r from-amber-500 to-yellow-400',
-    badgeText: 'text-amber-950',
-    metalLabel: 'GOLD',
-  },
-  elite: {
-    icon: Crown,
-    accent: 'text-cyan-300',
-    border: 'border-cyan-400/40',
-    bg: 'bg-gradient-to-b from-cyan-400/10 via-sky-300/5 to-transparent',
-    glow: '0 0 25px rgba(103,232,249,0.15)',
-    badge: 'bg-gradient-to-r from-cyan-400 to-sky-300',
-    badgeText: 'text-cyan-950',
-    metalLabel: 'DIAMOND',
-  },
+/* ─── Tier icon map ─── */
+const TIER_ICONS: Record<string, React.ElementType> = {
+  free: Zap,
+  base: Star,
+  pro: Rocket,
+  elite: Crown,
 };
 
 export default function AITokens() {
@@ -247,11 +203,10 @@ export default function AITokens() {
             </motion.div>
           )}
 
-          {/* ─── Tier Cards — Silver / Gold / Diamond ─── */}
+          {/* ─── Tier Cards ─── */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5 mb-16">
             {VISIBLE_TIERS.map((tier, i) => {
-              const style = TIER_STYLES[tier.key] || TIER_STYLES.free;
-              const Icon = style.icon;
+              const Icon = TIER_ICONS[tier.key] || Zap;
               const isCurrent = userTier === tier.key;
               const isPopular = tier.popular;
               const isPaid = tier.monthlyPrice > 0;
@@ -264,53 +219,38 @@ export default function AITokens() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.08 }}
                   className={cn(
-                    'relative flex flex-col rounded-2xl border-2 p-5 transition-all overflow-hidden',
-                    style.border,
-                    style.bg,
+                    'relative flex flex-col rounded-2xl border p-5 transition-all',
+                    isPopular
+                      ? 'border-primary shadow-[0_0_12px_hsl(var(--primary)/0.3)] scale-[1.01]'
+                      : 'border-border hover:border-primary/40',
                     isCurrent && 'ring-2 ring-primary/50'
                   )}
-                  style={style.glow ? { boxShadow: style.glow } : {}}
                 >
-                  {/* Metal badge top center */}
                   {isPopular && (
-                    <div className={cn(
-                      'absolute -top-0 left-1/2 -translate-x-1/2 text-[10px] font-display tracking-widest px-4 py-1 rounded-b-lg',
-                      style.badge, style.badgeText
-                    )}>
-                      ⭐ MOST POPULAR
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-[10px] font-display tracking-widest px-3 py-1 rounded-full">
+                      MOST POPULAR
                     </div>
                   )}
                   {isCurrent && (
-                    <div className="absolute -top-0 right-3 bg-green-600 text-white text-[10px] font-display tracking-widest px-3 py-1 rounded-b-lg">
+                    <div className="absolute -top-3 right-3 bg-green-600 text-white text-[10px] font-display tracking-widest px-3 py-1 rounded-full">
                       CURRENT
-                    </div>
-                  )}
-                  {style.metalLabel && !isPopular && (
-                    <div className={cn(
-                      'absolute -top-0 left-1/2 -translate-x-1/2 text-[10px] font-display tracking-widest px-4 py-1 rounded-b-lg',
-                      style.badge, style.badgeText
-                    )}>
-                      {tier.key === 'elite' ? '💎' : tier.key === 'base' ? '🥈' : ''} {style.metalLabel}
                     </div>
                   )}
 
                   {/* Icon & Name */}
-                  <div className="flex items-center gap-2 mb-3 mt-3">
+                  <div className="flex items-center gap-2 mb-3">
                     <div className={cn(
-                      'rounded-lg p-2 border',
-                      style.border,
-                      isPaid ? 'bg-background/50' : 'bg-muted'
+                      'rounded-lg p-2',
+                      isPopular ? 'bg-primary/20' : 'bg-muted'
                     )}>
-                      <Icon className={cn('w-5 h-5', style.accent)} />
+                      <Icon className={cn('w-5 h-5', isPopular ? 'text-primary' : 'text-foreground')} />
                     </div>
-                    <h3 className={cn('font-display tracking-wider text-lg', isPaid ? style.accent : 'text-foreground')}>
-                      {tier.displayName.toUpperCase()}
-                    </h3>
+                    <h3 className="font-display tracking-wider text-lg">{tier.displayName.toUpperCase()}</h3>
                   </div>
 
                   {/* Price */}
                   <div className="mb-1">
-                    <span className={cn('text-3xl font-display tracking-wider', isPaid ? style.accent : '')}>
+                    <span className="text-3xl font-display tracking-wider">
                       {tier.monthlyPrice === 0 ? 'FREE' : `£${tier.monthlyPrice}`}
                     </span>
                     {tier.monthlyPrice > 0 && (
@@ -320,10 +260,10 @@ export default function AITokens() {
 
                   {/* 50% off promo badge — on each paid tier */}
                   {isPaid && (
-                    <div className="flex items-center gap-1.5 mb-3">
-                      <Tag className="w-3 h-3 text-primary" />
+                    <div className="flex items-center gap-1.5 mb-3 bg-primary/10 rounded-lg px-2 py-1 w-fit">
+                      <BadgePercent className="w-3.5 h-3.5 text-primary" />
                       <span className="text-xs text-primary font-display tracking-wide">
-                        Use <span className="font-bold underline">LAUNCH50</span> → £{halfPrice} first month
+                        <span className="font-bold">LAUNCH50</span> → £{halfPrice} first month
                       </span>
                     </div>
                   )}
@@ -341,7 +281,7 @@ export default function AITokens() {
                   <ul className="flex-1 space-y-2 mb-5">
                     {tier.features.map((feature, j) => (
                       <li key={j} className="flex items-start gap-2 text-sm">
-                        <Check className={cn('w-4 h-4 shrink-0 mt-0.5', isPaid ? style.accent : 'text-primary')} />
+                        <Check className="w-4 h-4 text-primary shrink-0 mt-0.5" />
                         <span className="text-muted-foreground">{feature}</span>
                       </li>
                     ))}
@@ -352,16 +292,12 @@ export default function AITokens() {
                     onClick={() => handleSelectTier(tier)}
                     disabled={isCurrent || checkoutLoading === tier.key}
                     className={cn(
-                      'w-full py-3 rounded-xl font-display tracking-wider text-sm transition-all',
+                      'w-full py-2.5 rounded-xl font-display tracking-wider text-sm transition-all',
                       isCurrent
                         ? 'bg-muted text-muted-foreground cursor-default'
-                        : tier.key === 'pro'
-                          ? 'bg-gradient-to-r from-amber-500 to-yellow-400 text-amber-950 hover:shadow-[0_0_16px_rgba(251,191,36,0.35)]'
-                          : tier.key === 'elite'
-                            ? 'bg-gradient-to-r from-cyan-400 to-sky-300 text-cyan-950 hover:shadow-[0_0_16px_rgba(103,232,249,0.3)]'
-                            : tier.key === 'base'
-                              ? 'bg-gradient-to-r from-slate-400 to-slate-300 text-slate-900 hover:shadow-[0_0_16px_rgba(148,163,184,0.3)]'
-                              : 'border border-primary/30 text-primary hover:bg-primary/10',
+                        : isPopular
+                          ? 'bg-primary text-primary-foreground hover:shadow-[0_0_12px_hsl(var(--primary)/0.3)]'
+                          : 'border border-primary/30 text-primary hover:bg-primary/10',
                       checkoutLoading === tier.key && 'opacity-60'
                     )}
                   >
