@@ -7,6 +7,7 @@ import { useTrainingPrograms, TrainingProgram, ProgramStatus } from '@/hooks/use
 import { useAuth } from '@/hooks/useAuth';
 import { ProgramDisplay } from './ProgramDisplay';
 import { ProgrammeExecutionView } from './ProgrammeExecutionView';
+import { NextSessionPreview } from './NextSessionPreview';
 import { ProgrammeCTA } from '@/components/coaching/ProgrammeCTA';
 import { 
   Calendar, 
@@ -348,6 +349,14 @@ export function MyProgramsSection() {
                 className="overflow-hidden"
               >
                 <div className="pt-4">
+                  {/* Next Session Preview — shown for active & paused programmes */}
+                  {(program.status === 'active' || program.status === 'paused') && (
+                    <NextSessionPreview
+                      programId={program.id}
+                      currentWeek={program.current_week}
+                      currentDay={program.current_day}
+                    />
+                  )}
                   <ProgramDisplay 
                     program={program.program_data} 
                     onReset={() => setExpandedProgramId(null)}
