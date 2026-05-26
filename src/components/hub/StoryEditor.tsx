@@ -933,7 +933,7 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
 
       {/* Horizontal colour slider */}
       {showColorPicker && !editingTextId && (
-        <div className="absolute bottom-20 left-0 right-0 z-30 px-4 animate-in slide-in-from-bottom-2 duration-150">
+        <div className="absolute bottom-28 left-0 right-0 z-30 px-4 animate-in slide-in-from-bottom-2 duration-150">
           {colorTarget === 'border' && selectedOverlay && (
             <div className="flex items-center gap-2 bg-background/60 backdrop-blur-sm rounded-full px-3 py-1 mx-auto w-fit mb-1">
               <button className="text-foreground/70" onClick={() => { if (!selectedOverlay) return; updateOverlay(selectedOverlay.id, { borderWidth: Math.max(1, (selectedOverlay.borderWidth || 2) - 1) }); }}>
@@ -978,7 +978,7 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}
-            className={`absolute left-2 right-2 z-31 space-y-1.5 ${showColorPicker || hasMedia ? 'bottom-40' : 'bottom-20'}`}
+            className={`absolute left-2 right-2 z-31 space-y-1.5 ${showColorPicker ? 'bottom-48' : hasMedia ? 'bottom-36' : 'bottom-24'}`}
           >
             {/* Font size + font family in one row */}
             <div className="flex items-center gap-2 bg-background/60 backdrop-blur-md rounded-full px-3 py-1.5">
@@ -1073,7 +1073,7 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
 
       {/* Media edit mode toolbar — shows when media is present */}
       {hasMedia && !isDragging && mediaEditMode !== 'none' && (
-        <div className="absolute bottom-16 left-0 right-0 z-30 px-4 animate-in slide-in-from-bottom-2">
+        <div className="absolute bottom-28 left-0 right-0 z-30 px-4 animate-in slide-in-from-bottom-2">
           <div className="flex items-center gap-2 bg-background/60 backdrop-blur-md rounded-full px-3 py-2 justify-center">
             {mediaEditMode === 'move' && (
               <>
