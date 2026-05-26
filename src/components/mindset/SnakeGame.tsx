@@ -33,12 +33,12 @@ interface ThemePalette {
 
 // ─── Theme Palettes (cycle every stage) ──────────────────────
 const THEME_PALETTES: ThemePalette[] = [
-  { bg: "#0a0a0a", snake: "#f97316", snakeHead: "#fb923c", food: "#ffffff", grid: "#1a1a1a", border: "#f97316", text: "#f97316", accent: "#ffffff" },
-  { bg: "#0a0a0a", snake: "#ffffff", snakeHead: "#e5e5e5", food: "#f97316", grid: "#1a1a1a", border: "#ffffff", text: "#ffffff", accent: "#f97316" },
-  { bg: "#f97316", snake: "#0a0a0a", snakeHead: "#1a1a1a", food: "#ffffff", grid: "#ea580c", border: "#0a0a0a", text: "#0a0a0a", accent: "#ffffff" },
-  { bg: "#0a0a0a", snake: "#22d3ee", snakeHead: "#67e8f9", food: "#f97316", grid: "#1a1a1a", border: "#22d3ee", text: "#22d3ee", accent: "#f97316" },
-  { bg: "#fafafa", snake: "#f97316", snakeHead: "#ea580c", food: "#0a0a0a", grid: "#f0f0f0", border: "#f97316", text: "#f97316", accent: "#0a0a0a" },
-  { bg: "#ea580c", snake: "#ffffff", snakeHead: "#f5f5f5", food: "#0a0a0a", grid: "#dc2626", border: "#ffffff", text: "#ffffff", accent: "#0a0a0a" },
+  { bg: "#0a0a0a", snake: "#FF5500", snakeHead: "#FF7733", food: "#ffffff", grid: "#1a1a1a", border: "#FF5500", text: "#FF5500", accent: "#ffffff" },
+  { bg: "#0a0a0a", snake: "#ffffff", snakeHead: "#e5e5e5", food: "#FF5500", grid: "#1a1a1a", border: "#ffffff", text: "#ffffff", accent: "#FF5500" },
+  { bg: "#FF5500", snake: "#0a0a0a", snakeHead: "#1a1a1a", food: "#ffffff", grid: "#CC4400", border: "#0a0a0a", text: "#0a0a0a", accent: "#ffffff" },
+  { bg: "#0a0a0a", snake: "#22d3ee", snakeHead: "#67e8f9", food: "#FF5500", grid: "#1a1a1a", border: "#22d3ee", text: "#22d3ee", accent: "#FF5500" },
+  { bg: "#fafafa", snake: "#FF5500", snakeHead: "#CC4400", food: "#0a0a0a", grid: "#f0f0f0", border: "#FF5500", text: "#FF5500", accent: "#0a0a0a" },
+  { bg: "#CC4400", snake: "#ffffff", snakeHead: "#f5f5f5", food: "#0a0a0a", grid: "#dc2626", border: "#ffffff", text: "#ffffff", accent: "#0a0a0a" },
 ];
 
 // ─── Stage Wall Patterns (20x20 grid) ────────────────────────
@@ -235,14 +235,18 @@ const SnakeGame = () => {
     ctx.fillStyle = theme.bg;
     ctx.fillRect(0, 0, canvasSize, canvasSize);
 
-    // Grid dots (subtle)
-    ctx.fillStyle = theme.grid;
-    for (let x = 0; x < GRID; x++) {
-      for (let y = 0; y < GRID; y++) {
-        ctx.beginPath();
-        ctx.arc(x * cellSize + cellSize / 2, y * cellSize + cellSize / 2, 0.8, 0, Math.PI * 2);
-        ctx.fill();
-      }
+    // Pixel grid lines (retro arcade)
+    ctx.strokeStyle = theme.grid;
+    ctx.lineWidth = 0.5;
+    for (let i = 0; i <= GRID; i++) {
+      ctx.beginPath();
+      ctx.moveTo(i * cellSize, 0);
+      ctx.lineTo(i * cellSize, canvasSize);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(0, i * cellSize);
+      ctx.lineTo(canvasSize, i * cellSize);
+      ctx.stroke();
     }
 
     // Walls
@@ -293,24 +297,24 @@ const SnakeGame = () => {
       ctx.restore();
     }
 
-    // Food (pulse animation)
-    const foodPulse = 1 + Math.sin(now / 150) * 0.15;
+    // Food (pixel block with pulse glow)
+    const foodPulse = 0.8 + Math.sin(now / 150) * 0.2;
     const golden = isGoldenRef.current;
     ctx.save();
     ctx.shadowColor = golden ? "#facc15" : theme.food;
-    ctx.shadowBlur = golden ? 16 : 10;
+    ctx.shadowBlur = golden ? 20 : 12;
     ctx.fillStyle = golden ? "#facc15" : theme.food;
-    ctx.beginPath();
-    ctx.arc(food.x * cellSize + cellSize / 2, food.y * cellSize + cellSize / 2, (cellSize / 2.5) * foodPulse, 0, Math.PI * 2);
-    ctx.fill();
+    const fPad = cellSize * (1 - foodPulse * 0.8) / 2;
+    ctx.fillRect(food.x * cellSize + fPad, food.y * cellSize + fPad, cellSize - fPad * 2, cellSize - fPad * 2);
     if (golden) {
-      // Second glow ring for golden
       ctx.strokeStyle = "#facc1580";
-      ctx.lineWidth = 1.5;
-      ctx.beginPath();
-      ctx.arc(food.x * cellSize + cellSize / 2, food.y * cellSize + cellSize / 2, (cellSize / 2) * foodPulse, 0, Math.PI * 2);
-      ctx.stroke();
+      ctx.lineWidth = 2;
+      ctx.strokeRect(food.x * cellSize, food.y * cellSize, cellSize, cellSize);
     }
+    // Inner pixel highlight
+    ctx.fillStyle = golden ? "#fef08a" : theme.accent;
+    ctx.globalAlpha = 0.6;
+    ctx.fillRect(food.x * cellSize + fPad + 2, food.y * cellSize + fPad + 2, (cellSize - fPad * 2) * 0.4, (cellSize - fPad * 2) * 0.4);
     ctx.restore();
 
     // Snake body (gradient from head to tail)
@@ -336,9 +340,7 @@ const SnakeGame = () => {
           ctx.lineWidth = 2;
           ctx.shadowColor = "#22d3ee";
           ctx.shadowBlur = 8;
-          ctx.beginPath();
-          ctx.roundRect(seg.x * cellSize - 2, seg.y * cellSize - 2, cellSize + 4, cellSize + 4, cellSize / 2.5);
-          ctx.stroke();
+          ctx.strokeRect(seg.x * cellSize - 2, seg.y * cellSize - 2, cellSize + 4, cellSize + 4);
           ctx.shadowColor = theme.snake;
           ctx.shadowBlur = 14;
         }
@@ -347,10 +349,13 @@ const SnakeGame = () => {
       }
 
       const pad = isHead ? 0 : 1;
-      const rad = isHead ? cellSize / 3 : cellSize / 4;
-      ctx.beginPath();
-      ctx.roundRect(seg.x * cellSize + pad, seg.y * cellSize + pad, cellSize - pad * 2, cellSize - pad * 2, rad);
-      ctx.fill();
+      // Pixel blocks — squared off, retro arcade style
+      ctx.fillRect(seg.x * cellSize + pad, seg.y * cellSize + pad, cellSize - pad * 2, cellSize - pad * 2);
+      // Inner pixel highlight for 3D depth
+      if (!isHead) {
+        ctx.fillStyle = theme.snake + "40";
+        ctx.fillRect(seg.x * cellSize + pad + 1, seg.y * cellSize + pad + 1, (cellSize - pad * 2) * 0.3, (cellSize - pad * 2) * 0.3);
+      }
       ctx.shadowBlur = 0;
 
       // Eyes on head
@@ -368,9 +373,8 @@ const SnakeGame = () => {
           RIGHT: [[cx + eyeOff * 0.5, cy - eyeOff], [cx + eyeOff * 0.5, cy + eyeOff]],
         };
         positions[dir].forEach(([ex, ey]) => {
-          ctx.beginPath();
-          ctx.arc(ex, ey, eyeR, 0, Math.PI * 2);
-          ctx.fill();
+          // Pixel square eyes
+          ctx.fillRect(ex - eyeR, ey - eyeR, eyeR * 2, eyeR * 2);
         });
       }
 
@@ -395,13 +399,23 @@ const SnakeGame = () => {
       ctx.restore();
     });
 
-    // Neon border
+    // Double neon border — retro arcade bezel
     ctx.save();
     ctx.shadowColor = theme.border + "88";
-    ctx.shadowBlur = 10;
+    ctx.shadowBlur = 12;
     ctx.strokeStyle = theme.border;
     ctx.lineWidth = 2.5;
     ctx.strokeRect(1, 1, canvasSize - 2, canvasSize - 2);
+    ctx.shadowBlur = 0;
+    ctx.strokeStyle = theme.border + "30";
+    ctx.lineWidth = 1;
+    ctx.strokeRect(4, 4, canvasSize - 8, canvasSize - 8);
+    // Corner pixel accents
+    ctx.fillStyle = theme.border;
+    const cp = 3;
+    [[cp, cp], [canvasSize - cp - 3, cp], [cp, canvasSize - cp - 3], [canvasSize - cp - 3, canvasSize - cp - 3]].forEach(([cx, cy]) => {
+      ctx.fillRect(cx, cy, 3, 3);
+    });
     ctx.restore();
   }, [canvasSize, cellSize]);
 
@@ -682,7 +696,7 @@ const SnakeGame = () => {
     return (
       <div className="w-full max-w-lg mx-auto text-center">
         <div className="relative rounded-xl overflow-hidden border-2 border-primary/40 p-8" style={{ background: "#0a0a0a", minHeight: 420 }}>
-          <div className="absolute inset-0 pointer-events-none" style={{ background: "repeating-linear-gradient(0deg, rgba(255,85,0,0.03) 0px, transparent 1px, transparent 3px)" }} />
+          <div className="absolute inset-0 pointer-events-none" style={{ background: "repeating-linear-gradient(0deg, rgba(255,85,0,0.04) 0px, transparent 1px, transparent 2px)" }} />
           <div className="relative z-10">
             <h2 className="font-display text-4xl text-primary tracking-wider mb-2" style={{ textShadow: "0 0 20px rgba(255,85,0,0.5)" }}>
               HUNT
@@ -726,7 +740,7 @@ const SnakeGame = () => {
     return (
       <div className="w-full max-w-lg mx-auto text-center">
         <div className="relative rounded-xl overflow-hidden border-2 border-primary/40 p-8" style={{ background: "#0a0a0a", minHeight: 420 }}>
-          <div className="absolute inset-0 pointer-events-none" style={{ background: "repeating-linear-gradient(0deg, rgba(255,85,0,0.03) 0px, transparent 1px, transparent 3px)" }} />
+          <div className="absolute inset-0 pointer-events-none" style={{ background: "repeating-linear-gradient(0deg, rgba(255,85,0,0.04) 0px, transparent 1px, transparent 2px)" }} />
           <div className="relative z-10">
             <motion.div initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}>
               <h2 className="font-display text-3xl text-primary tracking-wider mb-1" style={{ textShadow: "0 0 20px rgba(255,85,0,0.5)" }}>
@@ -882,7 +896,7 @@ const SnakeGame = () => {
         />
 
         {/* CRT Scanline Overlay */}
-        <div className="absolute inset-0 pointer-events-none rounded-lg" style={{ background: "repeating-linear-gradient(0deg, rgba(255,85,0,0.02) 0px, transparent 1px, transparent 3px)" }} />
+        <div className="absolute inset-0 pointer-events-none rounded-lg" style={{ background: "repeating-linear-gradient(0deg, rgba(255,85,0,0.035) 0px, transparent 1px, transparent 2px)" }} />
 
         {/* Stage Transition Flash */}
         <AnimatePresence>

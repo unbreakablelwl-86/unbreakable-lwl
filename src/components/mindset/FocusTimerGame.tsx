@@ -173,7 +173,7 @@ const FocusTimerGame = () => {
     return (
       <div className="w-full max-w-lg mx-auto">
         <div className="relative rounded-xl overflow-hidden border-2 border-primary/40 p-6" style={{ background: "#0a0a0a", minHeight: 420 }}>
-          <div className="absolute inset-0 pointer-events-none z-30" style={{ background: "repeating-linear-gradient(0deg, rgba(255,85,0,0.03) 0px, transparent 1px, transparent 3px)" }} />
+          <div className="absolute inset-0 pointer-events-none z-30" style={{ background: "repeating-linear-gradient(0deg, rgba(255,85,0,0.04) 0px, transparent 1px, transparent 2px)" }} />
           <div className="relative z-10">
             <h2 className="font-display text-3xl text-primary tracking-wider text-center mb-1" style={{ textShadow: "0 0 20px rgba(255,85,0,0.5)" }}>ZONE</h2>
             <p className="font-display text-sm text-foreground tracking-wider text-center mb-6">FOCUS TIMER</p>
@@ -243,7 +243,7 @@ const FocusTimerGame = () => {
     <div className="w-full max-w-lg mx-auto">
       <div className="relative rounded-xl overflow-hidden border-2 border-primary/40 p-6" style={{ background: "#0a0a0a", minHeight: 500 }}>
         {/* CRT */}
-        <div className="absolute inset-0 pointer-events-none z-30" style={{ background: "repeating-linear-gradient(0deg, rgba(255,85,0,0.02) 0px, transparent 1px, transparent 3px)" }} />
+        <div className="absolute inset-0 pointer-events-none z-30" style={{ background: "repeating-linear-gradient(0deg, rgba(255,85,0,0.035) 0px, transparent 1px, transparent 2px)" }} />
 
         <div className="relative z-10 flex flex-col items-center">
           {/* Header */}

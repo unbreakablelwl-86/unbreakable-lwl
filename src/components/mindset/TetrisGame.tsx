@@ -57,28 +57,28 @@ interface ThemePalette {
 
 const THEME_PALETTES: ThemePalette[] = [
   {
-    bg: "#0a0a0a", grid: "#1a1a1a", border: "#f97316", text: "#f97316", accent: "#ffffff", ghost: "rgba(249,115,22,0.15)",
-    pieces: ["#f97316", "#fb923c", "#ffffff", "#ea580c", "#ff6a00", "#ffb380", "#c2410c"],
+    bg: "#0a0a0a", grid: "#1a1a1a", border: "#FF5500", text: "#FF5500", accent: "#ffffff", ghost: "rgba(255,85,0,0.15)",
+    pieces: ["#FF5500", "#FF7733", "#ffffff", "#CC4400", "#FF5500", "#ffb380", "#993300"],
   },
   {
-    bg: "#f0f0f0", grid: "#d8d8d8", border: "#f97316", text: "#0a0a0a", accent: "#f97316", ghost: "rgba(0,0,0,0.08)",
-    pieces: ["#f97316", "#0a0a0a", "#ea580c", "#1a1a1a", "#ff6a00", "#333333", "#c2410c"],
+    bg: "#f0f0f0", grid: "#d8d8d8", border: "#FF5500", text: "#0a0a0a", accent: "#FF5500", ghost: "rgba(0,0,0,0.08)",
+    pieces: ["#FF5500", "#0a0a0a", "#CC4400", "#1a1a1a", "#FF5500", "#333333", "#993300"],
   },
   {
-    bg: "#0c0a09", grid: "#1c1917", border: "#ea580c", text: "#fb923c", accent: "#ffffff", ghost: "rgba(234,88,12,0.15)",
-    pieces: ["#ea580c", "#fb923c", "#ffffff", "#f97316", "#ff6a00", "#ffd4a8", "#9a3412"],
+    bg: "#0c0a09", grid: "#1c1917", border: "#CC4400", text: "#FF7733", accent: "#ffffff", ghost: "rgba(204,68,0,0.15)",
+    pieces: ["#CC4400", "#FF7733", "#ffffff", "#FF5500", "#FF5500", "#ffd4a8", "#993300"],
   },
   {
-    bg: "#f5f0eb", grid: "#e0dbd5", border: "#0a0a0a", text: "#0a0a0a", accent: "#f97316", ghost: "rgba(0,0,0,0.06)",
-    pieces: ["#f97316", "#0a0a0a", "#c2410c", "#1a1a1a", "#ea580c", "#333333", "#ff6a00"],
+    bg: "#f5f0eb", grid: "#e0dbd5", border: "#0a0a0a", text: "#0a0a0a", accent: "#FF5500", ghost: "rgba(0,0,0,0.06)",
+    pieces: ["#FF5500", "#0a0a0a", "#993300", "#1a1a1a", "#CC4400", "#333333", "#FF5500"],
   },
   {
-    bg: "#0a0a0a", grid: "#1a1a1a", border: "#ffffff", text: "#ffffff", accent: "#f97316", ghost: "rgba(255,255,255,0.1)",
-    pieces: ["#ffffff", "#f97316", "#fb923c", "#e5e5e5", "#ff6a00", "#ea580c", "#d4d4d4"],
+    bg: "#0a0a0a", grid: "#1a1a1a", border: "#ffffff", text: "#ffffff", accent: "#FF5500", ghost: "rgba(255,255,255,0.1)",
+    pieces: ["#ffffff", "#FF5500", "#FF7733", "#e5e5e5", "#FF5500", "#CC4400", "#d4d4d4"],
   },
   {
-    bg: "#f8f8f8", grid: "#e0e0e0", border: "#ff6a00", text: "#ff6a00", accent: "#0a0a0a", ghost: "rgba(255,106,0,0.1)",
-    pieces: ["#ff6a00", "#0a0a0a", "#cc5500", "#1a1a1a", "#f97316", "#333333", "#ea580c"],
+    bg: "#f8f8f8", grid: "#e0e0e0", border: "#FF5500", text: "#FF5500", accent: "#0a0a0a", ghost: "rgba(255,85,0,0.1)",
+    pieces: ["#FF5500", "#0a0a0a", "#CC4400", "#1a1a1a", "#FF5500", "#333333", "#CC4400"],
   },
 ];
 
@@ -416,10 +416,10 @@ useEffect(() => {
         const gy = (ghostY + r) * CELL_SIZE;
         if (ghostY + r < 0) continue;
         ctx.fillStyle = theme.ghost;
-        ctx.beginPath(); ctx.roundRect(gx + 1, gy + 1, CELL_SIZE - 2, CELL_SIZE - 2, 3); ctx.fill();
+        ctx.fillRect(gx + 1, gy + 1, CELL_SIZE - 2, CELL_SIZE - 2);
         ctx.strokeStyle = theme.pieces[piece.id] + "55";
         ctx.lineWidth = 1;
-        ctx.beginPath(); ctx.roundRect(gx + 1, gy + 1, CELL_SIZE - 2, CELL_SIZE - 2, 3); ctx.stroke();
+        ctx.strokeRect(gx + 1, gy + 1, CELL_SIZE - 2, CELL_SIZE - 2);
       }
     }
 
@@ -472,16 +472,16 @@ useEffect(() => {
     grad.addColorStop(0.5, color);
     grad.addColorStop(1, darkenHex(color, 30));
     ctx.fillStyle = grad;
-    ctx.beginPath(); ctx.roundRect(x + 1, y + 1, size - 2, size - 2, 4); ctx.fill();
+    ctx.fillRect(x + 1, y + 1, size - 2, size - 2);
 
     ctx.shadowBlur = 0;
 
     ctx.fillStyle = "rgba(255,255,255,0.15)";
-    ctx.beginPath(); ctx.roundRect(x + 3, y + 2, size - 6, size / 3, 2); ctx.fill();
+    ctx.fillRect(x + 3, y + 2, size - 6, size / 3);
 
     ctx.strokeStyle = "rgba(255,255,255,0.1)";
     ctx.lineWidth = 0.5;
-    ctx.beginPath(); ctx.roundRect(x + 2, y + 2, size - 4, size - 4, 3); ctx.stroke();
+    ctx.strokeRect(x + 2, y + 2, size - 4, size - 4);
   };
 
   const drawNextPiece = useCallback((theme: ThemePalette) => {
@@ -518,7 +518,7 @@ useEffect(() => {
         grad.addColorStop(0, lightenHex(color, 20));
         grad.addColorStop(1, darkenHex(color, 20));
         ctx.fillStyle = grad;
-        ctx.beginPath(); ctx.roundRect(px + 1, py + 1, previewSize - 2, previewSize - 2, 3); ctx.fill();
+        ctx.fillRect(px + 1, py + 1, previewSize - 2, previewSize - 2);
         ctx.shadowBlur = 0;
       }
     }
@@ -718,7 +718,7 @@ useEffect(() => {
         >
           <div
             className="absolute inset-0 pointer-events-none z-30"
-            style={{ background: "repeating-linear-gradient(0deg, rgba(255,85,0,0.03) 0px, transparent 1px, transparent 3px)" }}
+            style={{ background: "repeating-linear-gradient(0deg, rgba(255,85,0,0.04) 0px, transparent 1px, transparent 2px)" }}
           />
           <div className="p-6 relative z-20">
             {bootLines.map((line, i) => (
@@ -761,7 +761,7 @@ useEffect(() => {
         >
           <div
             className="absolute inset-0 pointer-events-none z-30"
-            style={{ background: "repeating-linear-gradient(0deg, rgba(255,85,0,0.03) 0px, transparent 1px, transparent 3px)" }}
+            style={{ background: "repeating-linear-gradient(0deg, rgba(255,85,0,0.04) 0px, transparent 1px, transparent 2px)" }}
           />
           <div className="relative z-10">
             <h2
@@ -909,7 +909,7 @@ useEffect(() => {
         {/* CRT scanline HTML overlay on top of canvas */}
         <div
           className="absolute inset-0 pointer-events-none rounded-lg"
-          style={{ background: "repeating-linear-gradient(0deg, rgba(255,85,0,0.02) 0px, transparent 1px, transparent 3px)" }}
+          style={{ background: "repeating-linear-gradient(0deg, rgba(255,85,0,0.035) 0px, transparent 1px, transparent 2px)" }}
         />
 
         {/* Overlays */}

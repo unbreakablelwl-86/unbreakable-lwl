@@ -137,7 +137,7 @@ const currentConfig = LEVELS[Math.min(level, LEVELS.length - 1)];
     <div
       className="absolute inset-0 pointer-events-none z-30"
       style={{
-        background: "repeating-linear-gradient(0deg, rgba(255,85,0,0.03) 0px, transparent 1px, transparent 3px)",
+        background: "repeating-linear-gradient(0deg, rgba(255,85,0,0.04) 0px, transparent 1px, transparent 2px)",
         mixBlendMode: "multiply",
       }}
     />

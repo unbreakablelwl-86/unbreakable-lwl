@@ -23,56 +23,56 @@ const THEME_PALETTES: ThemePalette[] = [
   // 1: Neon Orange on Black — classic Unbreakable
   {
     bg: "#0a0a0a", bgGradientEnd: "#111111",
-    paddle: "#f97316", paddleGlow: "rgba(249,115,22,0.7)",
+    paddle: "#FF5500", paddleGlow: "rgba(255,85,0,0.7)",
     ball: "#ffffff", ballGlow: "rgba(255,255,255,0.5)",
-    brickFill: "#f97316", brickHighlight: "#fb923c", brickShadow: "#c2410c", brickGlow: "rgba(249,115,22,0.4)",
+    brickFill: "#FF5500", brickHighlight: "#FF7733", brickShadow: "#993300", brickGlow: "rgba(255,85,0,0.4)",
     reinforcedBorder: "#ffffff",
-    grid: "#1a1a1a", border: "#f97316", text: "#f97316", accent: "#ffffff", scoreText: "#f97316",
+    grid: "#1a1a1a", border: "#FF5500", text: "#FF5500", accent: "#ffffff", scoreText: "#FF5500",
   },
   // 2: INVERTED — White bg, dark/orange bricks
   {
     bg: "#f0f0f0", bgGradientEnd: "#e0e0e0",
-    paddle: "#f97316", paddleGlow: "rgba(249,115,22,0.5)",
+    paddle: "#FF5500", paddleGlow: "rgba(255,85,0,0.5)",
     ball: "#0a0a0a", ballGlow: "rgba(0,0,0,0.4)",
     brickFill: "#1a1a1a", brickHighlight: "#333333", brickShadow: "#000000", brickGlow: "rgba(0,0,0,0.15)",
-    reinforcedBorder: "#f97316",
-    grid: "#d8d8d8", border: "#f97316", text: "#0a0a0a", accent: "#f97316", scoreText: "#0a0a0a",
+    reinforcedBorder: "#FF5500",
+    grid: "#d8d8d8", border: "#FF5500", text: "#0a0a0a", accent: "#FF5500", scoreText: "#0a0a0a",
   },
   // 3: Deep orange on dark
   {
     bg: "#0c0a09", bgGradientEnd: "#1c1917",
-    paddle: "#fb923c", paddleGlow: "rgba(251,146,60,0.6)",
+    paddle: "#FF7733", paddleGlow: "rgba(255,119,51,0.6)",
     ball: "#ffffff", ballGlow: "rgba(255,255,255,0.5)",
-    brickFill: "#ea580c", brickHighlight: "#f97316", brickShadow: "#9a3412", brickGlow: "rgba(234,88,12,0.4)",
+    brickFill: "#CC4400", brickHighlight: "#FF5500", brickShadow: "#993300", brickGlow: "rgba(204,68,0,0.4)",
     reinforcedBorder: "#ffffff",
-    grid: "#1c1917", border: "#ea580c", text: "#fb923c", accent: "#ffffff", scoreText: "#fb923c",
+    grid: "#1c1917", border: "#CC4400", text: "#FF7733", accent: "#ffffff", scoreText: "#FF7733",
   },
   // 4: INVERTED — Light bg, orange bricks on cream
   {
     bg: "#f5f0eb", bgGradientEnd: "#ebe5de",
     paddle: "#0a0a0a", paddleGlow: "rgba(0,0,0,0.4)",
-    ball: "#f97316", ballGlow: "rgba(249,115,22,0.6)",
-    brickFill: "#f97316", brickHighlight: "#fb923c", brickShadow: "#c2410c", brickGlow: "rgba(249,115,22,0.3)",
+    ball: "#FF5500", ballGlow: "rgba(255,85,0,0.6)",
+    brickFill: "#FF5500", brickHighlight: "#FF7733", brickShadow: "#993300", brickGlow: "rgba(255,85,0,0.3)",
     reinforcedBorder: "#0a0a0a",
-    grid: "#e0dbd5", border: "#0a0a0a", text: "#0a0a0a", accent: "#f97316", scoreText: "#f97316",
+    grid: "#e0dbd5", border: "#0a0a0a", text: "#0a0a0a", accent: "#FF5500", scoreText: "#FF5500",
   },
   // 5: White bricks on black — high contrast
   {
     bg: "#0a0a0a", bgGradientEnd: "#111111",
-    paddle: "#f97316", paddleGlow: "rgba(249,115,22,0.7)",
-    ball: "#fb923c", ballGlow: "rgba(251,146,60,0.6)",
+    paddle: "#FF5500", paddleGlow: "rgba(255,85,0,0.7)",
+    ball: "#FF7733", ballGlow: "rgba(255,119,51,0.6)",
     brickFill: "#ffffff", brickHighlight: "#fafafa", brickShadow: "#d4d4d4", brickGlow: "rgba(255,255,255,0.2)",
-    reinforcedBorder: "#f97316",
-    grid: "#1a1a1a", border: "#f97316", text: "#ffffff", accent: "#f97316", scoreText: "#ffffff",
+    reinforcedBorder: "#FF5500",
+    grid: "#1a1a1a", border: "#FF5500", text: "#ffffff", accent: "#FF5500", scoreText: "#ffffff",
   },
   // 6: INVERTED — White bg, neon hot orange max glow
   {
     bg: "#f8f8f8", bgGradientEnd: "#eeeeee",
-    paddle: "#ff6a00", paddleGlow: "rgba(255,106,0,0.6)",
+    paddle: "#FF5500", paddleGlow: "rgba(255,85,0,0.6)",
     ball: "#0a0a0a", ballGlow: "rgba(0,0,0,0.4)",
-    brickFill: "#ff6a00", brickHighlight: "#ff8c33", brickShadow: "#cc5500", brickGlow: "rgba(255,106,0,0.4)",
+    brickFill: "#FF5500", brickHighlight: "#FF7733", brickShadow: "#CC4400", brickGlow: "rgba(255,85,0,0.4)",
     reinforcedBorder: "#0a0a0a",
-    grid: "#e0e0e0", border: "#ff6a00", text: "#ff6a00", accent: "#0a0a0a", scoreText: "#ff6a00",
+    grid: "#e0e0e0", border: "#FF5500", text: "#FF5500", accent: "#0a0a0a", scoreText: "#FF5500",
   },
 ];
 
@@ -151,7 +151,7 @@ const getStageName = (score: number): string => {
 };
 
 const POWERUP_COLORS: Record<PowerUpType, { bg: string; label: string }> = {
-  multiball: { bg: "#f97316", label: "MULTI" },
+  multiball: { bg: "#FF5500", label: "MULTI" },
   wide: { bg: "#ffffff", label: "WIDE" },
   fireball: { bg: "#ff4500", label: "FIRE" },
 };
@@ -337,13 +337,13 @@ const AlleywayGame = () => {
     ctx.fillStyle = bgGrad;
     ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
-    // Subtle grid
+    // Pixel grid — retro arcade
     ctx.strokeStyle = theme.grid;
-    ctx.lineWidth = 0.25;
-    for (let x = 0; x < CANVAS_WIDTH; x += 20) {
+    ctx.lineWidth = 0.4;
+    for (let x = 0; x <= CANVAS_WIDTH; x += 16) {
       ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, CANVAS_HEIGHT); ctx.stroke();
     }
-    for (let y = 0; y < CANVAS_HEIGHT; y += 20) {
+    for (let y = 0; y <= CANVAS_HEIGHT; y += 16) {
       ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(CANVAS_WIDTH, y); ctx.stroke();
     }
 
@@ -368,11 +368,11 @@ const AlleywayGame = () => {
         sg.addColorStop(0.5, "#3a3a3a");
         sg.addColorStop(1, "#222222");
         ctx.fillStyle = sg;
-        ctx.beginPath(); ctx.roundRect(brick.x, brick.y, brick.width, brick.height, 3); ctx.fill();
+        ctx.fillRect(brick.x, brick.y, brick.width, brick.height);
 
         ctx.shadowBlur = 0;
         if (hpRatio < 1) {
-          ctx.strokeStyle = `rgba(249,115,22,${0.15 + (1 - hpRatio) * 0.4})`;
+          ctx.strokeStyle = `rgba(255,85,0,${0.15 + (1 - hpRatio) * 0.4})`;
           ctx.lineWidth = 1;
           ctx.beginPath();
           ctx.moveTo(brick.x + 4, brick.y + 4);
@@ -384,9 +384,9 @@ const AlleywayGame = () => {
           ctx.stroke();
         }
 
-        ctx.strokeStyle = `rgba(249,115,22,${0.1 + (1 - hpRatio) * 0.4})`;
+        ctx.strokeStyle = `rgba(255,85,0,${0.1 + (1 - hpRatio) * 0.4})`;
         ctx.lineWidth = 1 + (1 - hpRatio);
-        ctx.beginPath(); ctx.roundRect(brick.x, brick.y, brick.width, brick.height, 3); ctx.stroke();
+        ctx.strokeRect(brick.x, brick.y, brick.width, brick.height);
       } else {
         ctx.shadowColor = theme.brickGlow;
         ctx.shadowBlur = brick.hp > 1 ? 12 : 8;
@@ -396,26 +396,27 @@ const AlleywayGame = () => {
         bg.addColorStop(0.5, theme.brickFill);
         bg.addColorStop(1, theme.brickShadow);
         ctx.fillStyle = bg;
-        ctx.beginPath(); ctx.roundRect(brick.x, brick.y, brick.width, brick.height, 4); ctx.fill();
+        ctx.fillRect(brick.x, brick.y, brick.width, brick.height);
 
         ctx.shadowBlur = 0;
-        ctx.strokeStyle = `${theme.brickHighlight}55`;
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.moveTo(brick.x + 4, brick.y + 1.5);
-        ctx.lineTo(brick.x + brick.width - 4, brick.y + 1.5);
-        ctx.stroke();
+        // Pixel bevel — top/left bright, bottom/right dark (retro 3D)
+        ctx.fillStyle = `${theme.brickHighlight}66`;
+        ctx.fillRect(brick.x, brick.y, brick.width, 2);
+        ctx.fillRect(brick.x, brick.y, 2, brick.height);
+        ctx.fillStyle = `${theme.brickShadow}88`;
+        ctx.fillRect(brick.x, brick.y + brick.height - 2, brick.width, 2);
+        ctx.fillRect(brick.x + brick.width - 2, brick.y, 2, brick.height);
 
         if (brick.hp > 1) {
           ctx.strokeStyle = theme.reinforcedBorder;
           ctx.lineWidth = 2;
           ctx.beginPath();
-          ctx.roundRect(brick.x + 1, brick.y + 1, brick.width - 2, brick.height - 2, 3);
+          ctx.rect(brick.x + 1, brick.y + 1, brick.width - 2, brick.height - 2);
           ctx.stroke();
           ctx.strokeStyle = `${theme.reinforcedBorder}33`;
           ctx.lineWidth = 1;
           ctx.beginPath();
-          ctx.roundRect(brick.x + 3, brick.y + 3, brick.width - 6, brick.height - 6, 2);
+          ctx.rect(brick.x + 3, brick.y + 3, brick.width - 6, brick.height - 6);
           ctx.stroke();
         }
       }
@@ -474,45 +475,51 @@ const AlleywayGame = () => {
     pg.addColorStop(0, theme.paddle);
     pg.addColorStop(1, theme.paddle + "AA");
     ctx.fillStyle = pg;
-    ctx.beginPath(); ctx.roundRect(paddle, paddleY, pw, PADDLE_HEIGHT, 7); ctx.fill();
+    ctx.fillRect(paddle, paddleY, pw, PADDLE_HEIGHT);
 
     ctx.shadowBlur = 0;
     ctx.fillStyle = `${theme.paddle}33`;
     ctx.beginPath();
-    ctx.roundRect(paddle + pw * 0.3, paddleY + 3, pw * 0.4, PADDLE_HEIGHT - 6, 3);
+    ctx.rect(paddle + pw * 0.3, paddleY + 3, pw * 0.4, PADDLE_HEIGHT - 6);
     ctx.fill();
 
-    // ─── Balls ───────────────────────────────────────────────
+    // ─── Balls (pixel squares — retro arcade) ─────────────────
     balls.forEach((ball) => {
+      const br = BALL_RADIUS;
+      // Trail
       for (let i = 4; i >= 1; i--) {
         const tx = ball.x - ball.dx * i * 0.35;
         const ty = ball.y - ball.dy * i * 0.35;
         ctx.globalAlpha = 0.12 - i * 0.025;
         ctx.fillStyle = ball.isFireball ? "#ff4500" : theme.ball;
-        ctx.beginPath(); ctx.arc(tx, ty, BALL_RADIUS - i * 0.4, 0, Math.PI * 2); ctx.fill();
+        ctx.fillRect(tx - br + i * 0.4, ty - br + i * 0.4, (br - i * 0.4) * 2, (br - i * 0.4) * 2);
       }
       ctx.globalAlpha = 1;
-
       ctx.shadowColor = ball.isFireball ? "rgba(255,69,0,0.9)" : theme.ballGlow;
       ctx.shadowBlur = ball.isFireball ? 24 : 16;
       ctx.fillStyle = ball.isFireball ? "#ff4500" : theme.ball;
-      ctx.beginPath(); ctx.arc(ball.x, ball.y, BALL_RADIUS, 0, Math.PI * 2); ctx.fill();
-
+      ctx.fillRect(ball.x - br, ball.y - br, br * 2, br * 2);
+      // Pixel highlight
       ctx.shadowBlur = 0;
-      const bh = ctx.createRadialGradient(ball.x - 2, ball.y - 2, 0, ball.x, ball.y, BALL_RADIUS);
-      bh.addColorStop(0, "rgba(255,255,255,0.8)");
-      bh.addColorStop(1, "rgba(255,255,255,0)");
-      ctx.fillStyle = bh;
-      ctx.beginPath(); ctx.arc(ball.x, ball.y, BALL_RADIUS, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = "rgba(255,255,255,0.5)";
+      ctx.fillRect(ball.x - br + 1, ball.y - br + 1, br * 0.8, br * 0.8);
     });
 
-    // ─── Neon Border ─────────────────────────────────────────
+    // ─── Double Neon Border — retro arcade bezel ─────────────
     ctx.shadowColor = theme.paddleGlow;
-    ctx.shadowBlur = 8;
+    ctx.shadowBlur = 12;
     ctx.strokeStyle = theme.border;
     ctx.lineWidth = 2.5;
     ctx.strokeRect(1, 1, CANVAS_WIDTH - 2, CANVAS_HEIGHT - 2);
     ctx.shadowBlur = 0;
+    ctx.strokeStyle = theme.border + "30";
+    ctx.lineWidth = 1;
+    ctx.strokeRect(4, 4, CANVAS_WIDTH - 8, CANVAS_HEIGHT - 8);
+    // Corner pixel accents
+    ctx.fillStyle = theme.border;
+    [[3, 3], [CANVAS_WIDTH - 6, 3], [3, CANVAS_HEIGHT - 6], [CANVAS_WIDTH - 6, CANVAS_HEIGHT - 6]].forEach(([cx, cy]) => {
+      ctx.fillRect(cx, cy, 3, 3);
+    });
 
     // ─── HUD on canvas ──────────────────────────────────────
     ctx.fillStyle = theme.scoreText;
@@ -529,7 +536,7 @@ const AlleywayGame = () => {
     const currentCombo = comboRef.current;
     if (currentCombo > 2) {
       ctx.textAlign = "center";
-      ctx.fillStyle = "#f97316";
+      ctx.fillStyle = "#FF5500";
       ctx.font = "bold 14px 'Bebas Neue', sans-serif";
       const comboAlpha = Math.min(1, currentCombo / 10);
       ctx.globalAlpha = comboAlpha;
@@ -547,9 +554,9 @@ const AlleywayGame = () => {
         const progress = (expiry - now) / POWERUP_DURATION;
 
         ctx.fillStyle = "#ffffff15";
-        ctx.beginPath(); ctx.roundRect(puX, 32, barWidth, 10, 3); ctx.fill();
+        ctx.fillRect(puX, 32, barWidth, 10);
         ctx.fillStyle = col.bg;
-        ctx.beginPath(); ctx.roundRect(puX, 32, barWidth * progress, 10, 3); ctx.fill();
+        ctx.fillRect(puX, 32, barWidth * progress, 10);
 
         ctx.fillStyle = type === "wide" ? "#0a0a0a" : "#ffffff";
         ctx.font = "bold 7px sans-serif";
@@ -891,7 +898,7 @@ const AlleywayGame = () => {
     return (
       <div className="w-full max-w-lg mx-auto">
         <div className="relative rounded-xl overflow-hidden border-2 border-primary/40" style={{ background: "#0a0a0a", fontFamily: "'Courier New', monospace", minHeight: 420 }}>
-          <div className="absolute inset-0 pointer-events-none z-10" style={{ background: "repeating-linear-gradient(0deg, rgba(255,85,0,0.03) 0px, transparent 1px, transparent 3px)" }} />
+          <div className="absolute inset-0 pointer-events-none z-10" style={{ background: "repeating-linear-gradient(0deg, rgba(255,85,0,0.04) 0px, transparent 1px, transparent 2px)" }} />
           <div className="p-6 relative z-20">
             {bootLines.map((line, i) => (
               <motion.p key={i} initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-primary text-sm mb-1" style={{ textShadow: "0 0 8px rgba(255,85,0,0.6)" }}>
@@ -916,7 +923,7 @@ const AlleywayGame = () => {
     return (
       <div className="w-full max-w-lg mx-auto text-center">
         <div className="relative rounded-xl overflow-hidden border-2 border-primary/40 p-8" style={{ background: "#0a0a0a", minHeight: 420 }}>
-          <div className="absolute inset-0 pointer-events-none" style={{ background: "repeating-linear-gradient(0deg, rgba(255,85,0,0.03) 0px, transparent 1px, transparent 3px)" }} />
+          <div className="absolute inset-0 pointer-events-none" style={{ background: "repeating-linear-gradient(0deg, rgba(255,85,0,0.04) 0px, transparent 1px, transparent 2px)" }} />
           <div className="relative z-10">
             <h2 className="font-display text-4xl text-primary tracking-wider mb-2" style={{ textShadow: "0 0 20px rgba(255,85,0,0.5)" }}>
               SHATTER
@@ -961,7 +968,7 @@ const AlleywayGame = () => {
     return (
       <div className={`w-full max-w-lg mx-auto text-center ${deathShake ? "animate-shake" : ""}`}>
         <div className="relative rounded-xl overflow-hidden border-2 border-primary/40 p-8" style={{ background: "#0a0a0a", minHeight: 420 }}>
-          <div className="absolute inset-0 pointer-events-none" style={{ background: "repeating-linear-gradient(0deg, rgba(255,85,0,0.03) 0px, transparent 1px, transparent 3px)" }} />
+          <div className="absolute inset-0 pointer-events-none" style={{ background: "repeating-linear-gradient(0deg, rgba(255,85,0,0.04) 0px, transparent 1px, transparent 2px)" }} />
           <div className="relative z-10">
             <motion.div initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}>
               <h2 className="font-display text-3xl text-primary tracking-wider mb-1" style={{ textShadow: "0 0 20px rgba(255,85,0,0.5)" }}>
@@ -1096,7 +1103,7 @@ const AlleywayGame = () => {
         />
 
         {/* CRT Scanline Overlay */}
-        <div className="absolute inset-0 pointer-events-none rounded-lg" style={{ background: "repeating-linear-gradient(0deg, rgba(255,85,0,0.02) 0px, transparent 1px, transparent 3px)" }} />
+        <div className="absolute inset-0 pointer-events-none rounded-lg" style={{ background: "repeating-linear-gradient(0deg, rgba(255,85,0,0.035) 0px, transparent 1px, transparent 2px)" }} />
 
         {/* Stage Transition Flash */}
         <AnimatePresence>
@@ -1130,7 +1137,7 @@ const AlleywayGame = () => {
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
               className="absolute inset-0 flex flex-col items-center justify-center bg-black/85 rounded-lg backdrop-blur-sm z-20"
             >
-              <p className="font-display text-4xl text-primary tracking-wider mb-2" style={{ textShadow: "0 0 30px rgba(249,115,22,0.5)" }}>PAUSED</p>
+              <p className="font-display text-4xl text-primary tracking-wider mb-2" style={{ textShadow: "0 0 30px rgba(255,85,0,0.5)" }}>PAUSED</p>
               <p className="font-display text-xs text-muted-foreground tracking-wider mb-6">
                 STAGE {stage} · {getStageName(score)}
               </p>
