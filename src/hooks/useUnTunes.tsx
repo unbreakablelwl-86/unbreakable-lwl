@@ -123,6 +123,10 @@ export function usePlayer() {
 export function usePlayerProvider() {
   const [state, setState] = useState<PlayerState>(defaultPlayerState);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  // Refs for Media Session action handlers (stable references)
+  const nextTrackRef = useRef<() => void>(() => {});
+  const prevTrackRef = useRef<() => void>(() => {});
+  const togglePlayRef = useRef<() => void>(() => {});
 
   useEffect(() => {
     const audio = new Audio();
@@ -141,11 +145,73 @@ export function usePlayerProvider() {
       setState(s => ({ ...s, duration: audio.duration }));
     });
 
+    // ─── Media Session API — lock screen & notification controls ───
+    if ('mediaSession' in navigator) {
+      navigator.mediaSession.setActionHandler('play', () => togglePlayRef.current());
+      navigator.mediaSession.setActionHandler('pause', () => togglePlayRef.current());
+      navigator.mediaSession.setActionHandler('previoustrack', () => prevTrackRef.current());
+      navigator.mediaSession.setActionHandler('nexttrack', () => nextTrackRef.current());
+      navigator.mediaSession.setActionHandler('seekto', (details) => {
+        if (details.seekTime !== undefined && audioRef.current) {
+          audioRef.current.currentTime = details.seekTime;
+          setState(s => ({ ...s, currentTime: details.seekTime! }));
+        }
+      });
+      navigator.mediaSession.setActionHandler('seekbackward', (details) => {
+        if (audioRef.current) {
+          audioRef.current.currentTime = Math.max(0, audioRef.current.currentTime - (details.seekOffset || 10));
+        }
+      });
+      navigator.mediaSession.setActionHandler('seekforward', (details) => {
+        if (audioRef.current) {
+          audioRef.current.currentTime = Math.min(
+            audioRef.current.duration || 0,
+            audioRef.current.currentTime + (details.seekOffset || 10)
+          );
+        }
+      });
+    }
+
     return () => {
       audio.pause();
       audio.src = '';
     };
   }, []);
+
+  // ─── Update Media Session metadata on track change ───
+  useEffect(() => {
+    if (!('mediaSession' in navigator)) return;
+    if (state.currentTrack) {
+      const track = state.currentTrack;
+      const artwork: MediaImage[] = [];
+      if (track.cover_url) {
+        artwork.push({ src: track.cover_url, sizes: '512x512', type: 'image/jpeg' });
+        artwork.push({ src: track.cover_url, sizes: '256x256', type: 'image/jpeg' });
+        artwork.push({ src: track.cover_url, sizes: '128x128', type: 'image/jpeg' });
+      }
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: track.title,
+        artist: track.artist_name || 'Unbreakable',
+        album: track.album_title || 'Un-Tunes',
+        artwork,
+      });
+    }
+    navigator.mediaSession.playbackState = state.isPlaying ? 'playing' : 'paused';
+  }, [state.currentTrack?.id, state.isPlaying]);
+
+  // ─── Update position state for lock screen seek bar ───
+  useEffect(() => {
+    if (!('mediaSession' in navigator) || !('setPositionState' in navigator.mediaSession)) return;
+    if (state.duration > 0 && state.isPlaying) {
+      try {
+        navigator.mediaSession.setPositionState({
+          duration: state.duration,
+          playbackRate: 1,
+          position: Math.min(state.currentTime, state.duration),
+        });
+      } catch { /* ignore position state errors */ }
+    }
+  }, [Math.floor(state.currentTime), state.duration, state.isPlaying]);
 
   const handleTrackEnd = useCallback(() => {
     setState(prev => {
@@ -262,6 +328,11 @@ export function usePlayerProvider() {
   const addToQueue = useCallback((track: Track) => {
     setState(s => ({ ...s, queue: [...s.queue, track] }));
   }, []);
+
+  // Keep Media Session action refs in sync with latest callbacks
+  useEffect(() => { nextTrackRef.current = nextTrack; }, [nextTrack]);
+  useEffect(() => { prevTrackRef.current = prevTrack; }, [prevTrack]);
+  useEffect(() => { togglePlayRef.current = togglePlay; }, [togglePlay]);
 
   return {
     state,
