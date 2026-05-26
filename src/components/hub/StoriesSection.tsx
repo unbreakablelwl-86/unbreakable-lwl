@@ -48,7 +48,9 @@ export function StoriesSection() {
   const [deleting, setDeleting] = useState(false);
   const [isPlaying, setIsPlaying] = useState(true);
   const [isMuted, setIsMuted] = useState(true);
+  const [isMusicMuted, setIsMusicMuted] = useState(false); // Music defaults UNMUTED
   const [isPaused, setIsPaused] = useState(false);
+  const [musicPlaying, setMusicPlaying] = useState(false); // Track if music audio is actually playing
   const storyVideoRef = useRef<HTMLVideoElement>(null);
   const storyAudioRef = useRef<HTMLAudioElement>(null);
   const progressTimerRef = useRef<number | null>(null);
@@ -330,6 +332,7 @@ export function StoriesSection() {
     if (!showViewer) {
       audio.pause();
       audio.src = '';
+      setMusicPlaying(false);
       return;
     }
 
@@ -337,6 +340,7 @@ export function StoriesSection() {
     if (!story) {
       audio.pause();
       audio.src = '';
+      setMusicPlaying(false);
       return;
     }
 
@@ -346,22 +350,36 @@ export function StoriesSection() {
     if (audioItem?.url) {
       audio.src = audioItem.url;
       audio.currentTime = audioItem.clip_start || 0;
-      audio.muted = isMuted;
-      audio.play().catch(() => {});
+      audio.muted = isMusicMuted;
+      audio.volume = 0.8;
+      // Try unmuted first, fall back to muted if autoplay blocked
+      audio.play().then(() => {
+        setMusicPlaying(true);
+      }).catch(() => {
+        // Autoplay blocked — try muted
+        audio.muted = true;
+        setIsMusicMuted(true);
+        audio.play().then(() => {
+          setMusicPlaying(true);
+        }).catch(() => {
+          setMusicPlaying(false);
+        });
+      });
     } else {
       audio.pause();
       audio.src = '';
+      setMusicPlaying(false);
     }
 
     return () => { audio.pause(); };
   }, [showViewer, activeUserIndex, activeStoryIndex, groupedStories]);
 
-  // Keep audio mute state in sync
+  // Keep music audio mute state in sync (separate from video mute)
   useEffect(() => {
     if (storyAudioRef.current) {
-      storyAudioRef.current.muted = isMuted;
+      storyAudioRef.current.muted = isMusicMuted;
     }
-  }, [isMuted]);
+  }, [isMusicMuted]);
 
   // Lock body scroll when story viewer is open
   useEffect(() => {
@@ -824,9 +842,22 @@ export function StoriesSection() {
                 const audioItem = mediaArr?.find((m: any) => m.type === 'audio');
                 if (!audioItem) return null;
                 return (
-                  <div className="absolute bottom-20 left-4 right-4 z-30">
-                    <div className="flex items-center gap-2.5 px-3 py-2 rounded-xl bg-black/50 backdrop-blur-md border border-white/10 max-w-[260px]">
-                      <div className="w-9 h-9 rounded-lg overflow-hidden bg-primary/20 shrink-0 shadow-[0_0_6px_rgba(255,85,0,0.3)]">
+                  <div className="absolute bottom-20 left-4 right-4 z-30" data-story-controls>
+                    <div
+                      className="flex items-center gap-2.5 px-3 py-2 rounded-xl bg-black/50 backdrop-blur-md border border-white/10 max-w-[280px] cursor-pointer"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        // Tap sticker to play/unmute if audio isn't playing
+                        const audio = storyAudioRef.current;
+                        if (audio && audio.paused) {
+                          audio.muted = false;
+                          setIsMusicMuted(false);
+                          audio.play().then(() => setMusicPlaying(true)).catch(() => {});
+                        }
+                      }}
+                    >
+                      {/* Cover art with playing indicator */}
+                      <div className="relative w-9 h-9 rounded-lg overflow-hidden bg-primary/20 shrink-0 shadow-[0_0_6px_rgba(255,85,0,0.3)]">
                         {audioItem.thumbnail_url ? (
                           <img src={audioItem.thumbnail_url} alt="" className="w-full h-full object-cover" />
                         ) : (
@@ -834,21 +865,41 @@ export function StoriesSection() {
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 text-primary/60"><path d="M9 18V5l12-2v13" /><circle cx="6" cy="18" r="3" /><circle cx="18" cy="16" r="3" /></svg>
                           </div>
                         )}
+                        {/* Playing bars animation */}
+                        {musicPlaying && !isMusicMuted && (
+                          <div className="absolute inset-0 flex items-end justify-center gap-[2px] pb-1 bg-black/30">
+                            <span className="w-[3px] bg-primary rounded-full animate-pulse" style={{ height: '40%', animationDelay: '0ms' }} />
+                            <span className="w-[3px] bg-primary rounded-full animate-pulse" style={{ height: '60%', animationDelay: '150ms' }} />
+                            <span className="w-[3px] bg-primary rounded-full animate-pulse" style={{ height: '35%', animationDelay: '300ms' }} />
+                            <span className="w-[3px] bg-primary rounded-full animate-pulse" style={{ height: '55%', animationDelay: '100ms' }} />
+                          </div>
+                        )}
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-xs font-semibold text-white truncate">{audioItem.track_title || 'Music'}</p>
-                        <p className="text-[10px] text-white/60 truncate">{audioItem.artist_name || 'Un-Tunes'}</p>
+                        <p className="text-[10px] text-white/60 truncate">
+                          {audioItem.artist_name || 'Un-Tunes'}
+                          {!musicPlaying && ' · Tap to play'}
+                        </p>
                       </div>
-                      {/* Mute/unmute music */}
+                      {/* Mute/unmute music (separate from video mute) */}
                       <button
                         className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center shrink-0"
                         onClick={(e) => {
                           e.stopPropagation();
-                          if (storyAudioRef.current) storyAudioRef.current.muted = !isMuted;
-                          setIsMuted(!isMuted);
+                          const audio = storyAudioRef.current;
+                          if (audio) {
+                            const newMuted = !isMusicMuted;
+                            audio.muted = newMuted;
+                            setIsMusicMuted(newMuted);
+                            // If unmuting and audio isn't playing, try to play it
+                            if (!newMuted && audio.paused) {
+                              audio.play().then(() => setMusicPlaying(true)).catch(() => {});
+                            }
+                          }
                         }}
                       >
-                        {isMuted ? <VolumeX className="w-3.5 h-3.5 text-white/80" /> : <Volume2 className="w-3.5 h-3.5 text-white/80" />}
+                        {isMusicMuted ? <VolumeX className="w-3.5 h-3.5 text-white/80" /> : <Volume2 className="w-3.5 h-3.5 text-white/80" />}
                       </button>
                     </div>
                   </div>
