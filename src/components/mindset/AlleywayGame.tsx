@@ -6,24 +6,27 @@ import { useAlleywayScores } from "@/hooks/useAlleywayScores";
 import { AlleywayLeaderboard } from "./AlleywayLeaderboard";
 import { useGameAudio } from "@/hooks/useGameAudio";
 
-// --- Theme Palettes (strictly orange / neon orange / black / white) ---
+// ─── Boot Sequence ───────────────────────────────────────────
+const BOOT_LINES = [
+  "> UNBREAKABLE OS v3.2",
+  "> LOADING SHATTER ENGINE...",
+  "> BRICK MATRIX: ARMED",
+  "> PHYSICS CORE: CALIBRATED",
+  "> POWER-UP GRID: ONLINE",
+  "> COMBO SYSTEM: ENABLED",
+  "> STATUS: READY TO BREAK",
+  "",
+  "  BREAK EVERY WALL.",
+];
+
+// ─── Theme Palettes ──────────────────────────────────────────
 interface ThemePalette {
-  bg: string;
-  bgGradientEnd: string;
-  paddle: string;
-  paddleGlow: string;
-  ball: string;
-  ballGlow: string;
-  brickFill: string;
-  brickHighlight: string;
-  brickShadow: string;
-  brickGlow: string;
+  bg: string; bgGradientEnd: string;
+  paddle: string; paddleGlow: string;
+  ball: string; ballGlow: string;
+  brickFill: string; brickHighlight: string; brickShadow: string; brickGlow: string;
   reinforcedBorder: string;
-  grid: string;
-  border: string;
-  text: string;
-  accent: string;
-  scoreText: string;
+  grid: string; border: string; text: string; accent: string; scoreText: string;
 }
 
 const THEME_PALETTES: ThemePalette[] = [
@@ -83,7 +86,25 @@ const THEME_PALETTES: ThemePalette[] = [
   },
 ];
 
-// --- Constants ---
+// ─── Stage Names ─────────────────────────────────────────────
+const STAGE_NAMES = [
+  "FIRST CRACK", "SHATTER ZONE", "BREAKING POINT", "DEMOLITION",
+  "WRECKING BALL", "TOTAL CHAOS", "NO MERCY", "ANNIHILATION",
+  "LEGENDARY", "IMMORTAL",
+];
+
+// ─── Motivational Messages ───────────────────────────────────
+const LEVEL_MESSAGES = [
+  "STAY HUNGRY", "NO LIMITS", "LOCKED IN", "RELENTLESS", "ZERO QUIT",
+  "UNSTOPPABLE", "ELITE FOCUS", "BORN FOR THIS", "NO DAYS OFF", "KEEP RISING",
+  "PURE GRIT", "UNBREAKABLE", "ON FIRE", "NEXT LEVEL", "ALL IN",
+  "NEVER SETTLE", "BEAST MODE", "OWN IT", "DIG DEEPER", "PROVE THEM WRONG",
+];
+
+const getLevelMessage = (shifts: number): string =>
+  shifts > 0 ? LEVEL_MESSAGES[(shifts - 1) % LEVEL_MESSAGES.length] : "";
+
+// ─── Constants ───────────────────────────────────────────────
 const CANVAS_WIDTH = 400;
 const CANVAS_HEIGHT = 550;
 const PADDLE_WIDTH = 80;
@@ -108,10 +129,10 @@ const POWERUP_DROP_CHANCE = 0.06;
 const POWERUP_SPEED = 1.5;
 const POWERUP_SIZE = 18;
 const POWERUP_DURATION = 8000;
-
-
+const THEME_SHIFT_INTERVAL = 15;
 
 type PowerUpType = "multiball" | "wide" | "fireball";
+type GameView = "boot" | "ready" | "playing" | "paused" | "gameover" | "leaderboard";
 
 interface Brick {
   x: number; y: number; width: number; height: number;
@@ -131,35 +152,13 @@ interface Particle {
   life: number; maxLife: number; color: string; size: number;
 }
 
-const THEME_SHIFT_INTERVAL = 15;
 const getTheme = (score: number): ThemePalette => THEME_PALETTES[Math.floor(score / THEME_SHIFT_INTERVAL) % THEME_PALETTES.length];
 const getBallSpeed = (score: number): number => Math.min(MAX_BALL_SPEED, INITIAL_BALL_SPEED + Math.floor(score / THEME_SHIFT_INTERVAL) * SPEED_INCREASE_PER_SHIFT);
-
-const LEVEL_MESSAGES = [
-  "STAY HUNGRY",
-  "NO LIMITS",
-  "LOCKED IN",
-  "RELENTLESS",
-  "ZERO QUIT",
-  "UNSTOPPABLE",
-  "ELITE FOCUS",
-  "BORN FOR THIS",
-  "NO DAYS OFF",
-  "KEEP RISING",
-  "PURE GRIT",
-  "UNBREAKABLE",
-  "ON FIRE",
-  "NEXT LEVEL",
-  "ALL IN",
-  "NEVER SETTLE",
-  "BEAST MODE",
-  "OWN IT",
-  "DIG DEEPER",
-  "PROVE THEM WRONG",
-];
-
-const getLevelMessage = (shifts: number): string =>
-  shifts > 0 ? LEVEL_MESSAGES[(shifts - 1) % LEVEL_MESSAGES.length] : "";
+const getStageNumber = (score: number): number => Math.floor(score / THEME_SHIFT_INTERVAL) + 1;
+const getStageName = (score: number): string => {
+  const idx = Math.floor(score / THEME_SHIFT_INTERVAL);
+  return STAGE_NAMES[Math.min(idx, STAGE_NAMES.length - 1)];
+};
 
 const POWERUP_COLORS: Record<PowerUpType, { bg: string; label: string }> = {
   multiball: { bg: "#f97316", label: "MULTI" },
@@ -167,6 +166,7 @@ const POWERUP_COLORS: Record<PowerUpType, { bg: string; label: string }> = {
   fireball: { bg: "#ff4500", label: "FIRE" },
 };
 
+// ─── Component ───────────────────────────────────────────────
 const AlleywayGame = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animFrameRef = useRef<number>(0);
@@ -183,14 +183,31 @@ const AlleywayGame = () => {
   const screenShakeRef = useRef(0);
   const comboRef = useRef(0);
   const lastHitTimeRef = useRef(0);
+  const gameStartRef = useRef(0);
+  const totalBricksRef = useRef(0);
+  const powerUpsCollectedRef = useRef(0);
+  const maxBallsRef = useRef(1);
+  const steelBricksRef = useRef(0);
 
   const [score, setScore] = useState(0);
   const [highScore, setHighScore] = useState(0);
-  const [gameState, setGameState] = useState<"idle" | "playing" | "paused" | "gameover">("idle");
+  const [view, setView] = useState<GameView>("boot");
   const [showLeaderboard, setShowLeaderboard] = useState(false);
   const [themeShifts, setThemeShifts] = useState(0);
   const [activePowerUpDisplay, setActivePowerUpDisplay] = useState<PowerUpType[]>([]);
   const [combo, setCombo] = useState(0);
+  const [maxCombo, setMaxCombo] = useState(0);
+  const [deathShake, setDeathShake] = useState(false);
+  const [stageFlash, setStageFlash] = useState<string | null>(null);
+  const [timeSurvived, setTimeSurvived] = useState(0);
+  const [totalBricks, setTotalBricks] = useState(0);
+  const [powerUpsUsed, setPowerUpsUsed] = useState(0);
+  const [peakBalls, setPeakBalls] = useState(1);
+  const [steelDestroyed, setSteelDestroyed] = useState(0);
+
+  // Boot
+  const [bootLines, setBootLines] = useState<string[]>([]);
+  const [bootDone, setBootDone] = useState(false);
 
   const { saveScore, topScores, userBest, refetch } = useAlleywayScores();
   const { playHit, playLevelUp, playGameOver, startMusic, stopMusic, toggleMute, isMuted } = useGameAudio("alleyway");
@@ -206,7 +223,20 @@ const AlleywayGame = () => {
   const scaledWidth = CANVAS_WIDTH * scale;
   const scaledHeight = CANVAS_HEIGHT * scale;
 
+  // ─── Boot Sequence ─────────────────────────────────────────
+  useEffect(() => {
+    if (view !== "boot") return;
+    let i = 0;
+    const iv = setInterval(() => {
+      if (i < BOOT_LINES.length) { setBootLines(prev => [...prev, BOOT_LINES[i]]); i++; }
+      else { clearInterval(iv); setTimeout(() => setBootDone(true), 400); }
+    }, 160);
+    return () => clearInterval(iv);
+  }, [view]);
 
+  useEffect(() => { if (bootDone) setTimeout(() => setView("ready"), 600); }, [bootDone]);
+
+  // ─── Helpers ───────────────────────────────────────────────
   const getCurrentPaddleWidth = useCallback(() => {
     const wideExpiry = activePowerUpsRef.current.get("wide");
     return wideExpiry && performance.now() < wideExpiry ? PADDLE_WIDTH_WIDE : PADDLE_WIDTH;
@@ -259,6 +289,8 @@ const AlleywayGame = () => {
   const activatePowerUp = useCallback((type: PowerUpType) => {
     activePowerUpsRef.current.set(type, performance.now() + POWERUP_DURATION);
     screenShakeRef.current = 8;
+    powerUpsCollectedRef.current++;
+    setPowerUpsUsed(powerUpsCollectedRef.current);
 
     if (type === "multiball") {
       const first = ballsRef.current[0];
@@ -268,6 +300,10 @@ const AlleywayGame = () => {
           { x: first.x, y: first.y, dx: -speed * 0.7, dy: -speed * 0.7, isFireball: false },
           { x: first.x, y: first.y, dx: speed * 0.7, dy: -speed * 0.7, isFireball: false }
         );
+        if (ballsRef.current.length > maxBallsRef.current) {
+          maxBallsRef.current = ballsRef.current.length;
+          setPeakBalls(maxBallsRef.current);
+        }
       }
     }
     if (type === "fireball") ballsRef.current.forEach(b => b.isFireball = true);
@@ -304,7 +340,7 @@ const AlleywayGame = () => {
     ];
   }, []);
 
-  // --- DRAW ---
+  // ─── Draw ──────────────────────────────────────────────────
   const draw = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -353,12 +389,11 @@ const AlleywayGame = () => {
     ctx.beginPath(); ctx.moveTo(0, dangerY); ctx.lineTo(CANVAS_WIDTH, dangerY); ctx.stroke();
     ctx.setLineDash([]);
 
-    // --- BRICKS ---
+    // ─── Bricks ──────────────────────────────────────────────
     bricks.forEach((brick) => {
       if (!brick.alive) return;
 
       if (brick.isReinforced && brick.hp > 0) {
-        // Steel brick — dark metallic with HP indicator
         const hpRatio = brick.hp / 5;
         ctx.shadowColor = `rgba(100,100,100,${0.1 + hpRatio * 0.2})`;
         ctx.shadowBlur = 4;
@@ -369,7 +404,6 @@ const AlleywayGame = () => {
         ctx.fillStyle = sg;
         ctx.beginPath(); ctx.roundRect(brick.x, brick.y, brick.width, brick.height, 3); ctx.fill();
 
-        // Crack pattern based on damage
         ctx.shadowBlur = 0;
         if (hpRatio < 1) {
           ctx.strokeStyle = `rgba(249,115,22,${0.15 + (1 - hpRatio) * 0.4})`;
@@ -384,12 +418,10 @@ const AlleywayGame = () => {
           ctx.stroke();
         }
 
-        // Border glow — brighter as damage increases
         ctx.strokeStyle = `rgba(249,115,22,${0.1 + (1 - hpRatio) * 0.4})`;
         ctx.lineWidth = 1 + (1 - hpRatio);
         ctx.beginPath(); ctx.roundRect(brick.x, brick.y, brick.width, brick.height, 3); ctx.stroke();
       } else {
-        // Normal / reinforced brick
         ctx.shadowColor = theme.brickGlow;
         ctx.shadowBlur = brick.hp > 1 ? 12 : 8;
 
@@ -400,7 +432,6 @@ const AlleywayGame = () => {
         ctx.fillStyle = bg;
         ctx.beginPath(); ctx.roundRect(brick.x, brick.y, brick.width, brick.height, 4); ctx.fill();
 
-        // Shine line
         ctx.shadowBlur = 0;
         ctx.strokeStyle = `${theme.brickHighlight}55`;
         ctx.lineWidth = 1;
@@ -409,14 +440,12 @@ const AlleywayGame = () => {
         ctx.lineTo(brick.x + brick.width - 4, brick.y + 1.5);
         ctx.stroke();
 
-        // Reinforced border
         if (brick.hp > 1) {
           ctx.strokeStyle = theme.reinforcedBorder;
           ctx.lineWidth = 2;
           ctx.beginPath();
           ctx.roundRect(brick.x + 1, brick.y + 1, brick.width - 2, brick.height - 2, 3);
           ctx.stroke();
-          // Inner glow
           ctx.strokeStyle = `${theme.reinforcedBorder}33`;
           ctx.lineWidth = 1;
           ctx.beginPath();
@@ -427,18 +456,14 @@ const AlleywayGame = () => {
     });
     ctx.shadowBlur = 0;
 
-    // --- POWER-UPS ---
+    // ─── Power-Ups ───────────────────────────────────────────
     pups.forEach((pu) => {
       if (!pu.alive) return;
       const col = POWERUP_COLORS[pu.type];
-
-      // Pulsing glow
       const pulse = 0.7 + Math.sin(performance.now() / 200) * 0.3;
 
       ctx.shadowColor = col.bg;
       ctx.shadowBlur = 12 * pulse;
-
-      // Diamond shape
       ctx.fillStyle = col.bg;
       ctx.beginPath();
       ctx.moveTo(pu.x, pu.y - POWERUP_SIZE / 2);
@@ -448,7 +473,6 @@ const AlleywayGame = () => {
       ctx.closePath();
       ctx.fill();
 
-      // Inner diamond
       ctx.shadowBlur = 0;
       ctx.strokeStyle = pu.type === "wide" ? "#0a0a0a" : "#ffffff";
       ctx.lineWidth = 1;
@@ -461,7 +485,7 @@ const AlleywayGame = () => {
       ctx.stroke();
     });
 
-    // --- PARTICLES ---
+    // ─── Particles ───────────────────────────────────────────
     parts.forEach((p) => {
       const alpha = p.life / p.maxLife;
       ctx.globalAlpha = alpha;
@@ -475,7 +499,7 @@ const AlleywayGame = () => {
     ctx.globalAlpha = 1;
     ctx.shadowBlur = 0;
 
-    // --- PADDLE ---
+    // ─── Paddle ──────────────────────────────────────────────
     const paddleY = CANVAS_HEIGHT - PADDLE_HEIGHT - 10;
     ctx.shadowColor = theme.paddleGlow;
     ctx.shadowBlur = 18;
@@ -486,16 +510,14 @@ const AlleywayGame = () => {
     ctx.fillStyle = pg;
     ctx.beginPath(); ctx.roundRect(paddle, paddleY, pw, PADDLE_HEIGHT, 7); ctx.fill();
 
-    // Paddle center highlight
     ctx.shadowBlur = 0;
     ctx.fillStyle = `${theme.paddle}33`;
     ctx.beginPath();
     ctx.roundRect(paddle + pw * 0.3, paddleY + 3, pw * 0.4, PADDLE_HEIGHT - 6, 3);
     ctx.fill();
 
-    // --- BALLS ---
+    // ─── Balls ───────────────────────────────────────────────
     balls.forEach((ball) => {
-      // Trail
       for (let i = 4; i >= 1; i--) {
         const tx = ball.x - ball.dx * i * 0.35;
         const ty = ball.y - ball.dy * i * 0.35;
@@ -505,13 +527,11 @@ const AlleywayGame = () => {
       }
       ctx.globalAlpha = 1;
 
-      // Ball glow
       ctx.shadowColor = ball.isFireball ? "rgba(255,69,0,0.9)" : theme.ballGlow;
       ctx.shadowBlur = ball.isFireball ? 24 : 16;
       ctx.fillStyle = ball.isFireball ? "#ff4500" : theme.ball;
       ctx.beginPath(); ctx.arc(ball.x, ball.y, BALL_RADIUS, 0, Math.PI * 2); ctx.fill();
 
-      // Ball highlight
       ctx.shadowBlur = 0;
       const bh = ctx.createRadialGradient(ball.x - 2, ball.y - 2, 0, ball.x, ball.y, BALL_RADIUS);
       bh.addColorStop(0, "rgba(255,255,255,0.8)");
@@ -520,7 +540,7 @@ const AlleywayGame = () => {
       ctx.beginPath(); ctx.arc(ball.x, ball.y, BALL_RADIUS, 0, Math.PI * 2); ctx.fill();
     });
 
-    // --- BORDER with neon glow ---
+    // ─── Neon Border ─────────────────────────────────────────
     ctx.shadowColor = theme.paddleGlow;
     ctx.shadowBlur = 8;
     ctx.strokeStyle = theme.border;
@@ -528,7 +548,7 @@ const AlleywayGame = () => {
     ctx.strokeRect(1, 1, CANVAS_WIDTH - 2, CANVAS_HEIGHT - 2);
     ctx.shadowBlur = 0;
 
-    // --- HUD on canvas ---
+    // ─── HUD on canvas ──────────────────────────────────────
     ctx.fillStyle = theme.scoreText;
     ctx.font = "bold 16px 'Bebas Neue', sans-serif";
     ctx.textAlign = "left";
@@ -556,43 +576,51 @@ const AlleywayGame = () => {
     let puX = 12;
     activePowerUpsRef.current.forEach((expiry, type) => {
       if (now < expiry) {
-        const remaining = Math.ceil((expiry - now) / 1000);
         const col = POWERUP_COLORS[type];
         const barWidth = 48;
         const progress = (expiry - now) / POWERUP_DURATION;
 
-        // Background bar
         ctx.fillStyle = "#ffffff15";
         ctx.beginPath(); ctx.roundRect(puX, 32, barWidth, 10, 3); ctx.fill();
-
-        // Progress fill
         ctx.fillStyle = col.bg;
         ctx.beginPath(); ctx.roundRect(puX, 32, barWidth * progress, 10, 3); ctx.fill();
 
-        // Label
         ctx.fillStyle = type === "wide" ? "#0a0a0a" : "#ffffff";
         ctx.font = "bold 7px sans-serif";
         ctx.textAlign = "left";
+        const remaining = Math.ceil((expiry - now) / 1000);
         ctx.fillText(`${col.label} ${remaining}s`, puX + 3, 40);
 
         puX += barWidth + 4;
       }
     });
 
+    // CRT Scanline overlay (drawn last, on top)
+    for (let y = 0; y < CANVAS_HEIGHT; y += 3) {
+      ctx.fillStyle = "rgba(0,0,0,0.03)";
+      ctx.fillRect(0, y, CANVAS_WIDTH, 1);
+    }
+
     ctx.restore();
   }, [getCurrentPaddleWidth]);
 
+  // ─── Game Over ─────────────────────────────────────────────
   const handleGameOver = useCallback(() => {
     cancelAnimationFrame(animFrameRef.current);
     stopMusic();
     playGameOver();
-    setGameState("gameover");
+    setDeathShake(true);
+    setTimeout(() => setDeathShake(false), 400);
+    setTimeSurvived(Math.floor((performance.now() - gameStartRef.current) / 1000));
+    setTotalBricks(totalBricksRef.current);
+    setSteelDestroyed(steelBricksRef.current);
+    setView("gameover");
     const finalScore = scoreRef.current;
     if (finalScore > highScore) setHighScore(finalScore);
     if (finalScore > 0) saveScore(finalScore, Math.floor(finalScore / THEME_SHIFT_INTERVAL));
   }, [highScore, saveScore, stopMusic, playGameOver]);
 
-  // --- GAME LOOP ---
+  // ─── Game Loop ─────────────────────────────────────────────
   const gameLoop = useCallback(() => {
     const balls = ballsRef.current;
     const speed = getBallSpeed(scoreRef.current);
@@ -656,7 +684,6 @@ const AlleywayGame = () => {
           ball.y - BALL_RADIUS < brick.y + brick.height
         ) {
           if (brick.isReinforced && brick.hp > 1 && !ball.isFireball) {
-            // Steel brick — takes damage but bounces
             brick.hp -= 1;
             playHit();
             const oL = (ball.x + BALL_RADIUS) - brick.x;
@@ -665,7 +692,6 @@ const AlleywayGame = () => {
             const oB = (brick.y + brick.height) - (ball.y - BALL_RADIUS);
             if (Math.min(oL, oR) < Math.min(oT, oB)) ball.dx = -ball.dx;
             else ball.dy = -ball.dy;
-            // Spark particles on steel hit
             spawnParticles(ball.x, ball.y, "#888888", 4);
             return;
           }
@@ -675,12 +701,15 @@ const AlleywayGame = () => {
             brick.alive = false;
             scoreRef.current++;
             setScore(scoreRef.current);
+            totalBricksRef.current++;
+            if (brick.isReinforced) steelBricksRef.current++;
             playHit();
 
             // Combo
             comboRef.current++;
             lastHitTimeRef.current = now;
             setCombo(comboRef.current);
+            if (comboRef.current > maxCombo) setMaxCombo(comboRef.current);
 
             const theme = getTheme(scoreRef.current);
             spawnParticles(brick.x + brick.width / 2, brick.y + brick.height / 2, theme.brickFill, 12);
@@ -692,6 +721,9 @@ const AlleywayGame = () => {
               setThemeShifts(newS);
               screenShakeRef.current = 10;
               playLevelUp();
+              const name = STAGE_NAMES[Math.min(newS, STAGE_NAMES.length - 1)];
+              setStageFlash(`STAGE ${newS + 1}: ${name}`);
+              setTimeout(() => setStageFlash(null), 1800);
             }
           }
 
@@ -758,14 +790,24 @@ const AlleywayGame = () => {
 
     draw();
     animFrameRef.current = requestAnimationFrame(gameLoop);
-  }, [draw, handleGameOver, spawnNewRow, getCurrentPaddleWidth, isFireballActive, spawnParticles, spawnPowerUp, activatePowerUp]);
+  }, [draw, handleGameOver, spawnNewRow, getCurrentPaddleWidth, isFireballActive, spawnParticles, spawnPowerUp, activatePowerUp, maxCombo, playHit, playLevelUp]);
 
+  // ─── Start Game ────────────────────────────────────────────
   const startGame = useCallback(() => {
     scoreRef.current = 0;
     comboRef.current = 0;
-    setScore(0); setCombo(0);
+    totalBricksRef.current = 0;
+    powerUpsCollectedRef.current = 0;
+    maxBallsRef.current = 1;
+    steelBricksRef.current = 0;
+    gameStartRef.current = performance.now();
+    setScore(0); setCombo(0); setMaxCombo(0);
     setThemeShifts(0);
     setActivePowerUpDisplay([]);
+    setStageFlash(null);
+    setPowerUpsUsed(0);
+    setPeakBalls(1);
+    setSteelDestroyed(0);
     activePowerUpsRef.current.clear();
     powerUpsRef.current = [];
     particlesRef.current = [];
@@ -783,27 +825,29 @@ const AlleywayGame = () => {
     lastRegenRef.current = performance.now();
     lastDescentRef.current = performance.now();
 
-    setGameState("playing");
+    setView("playing");
     startMusic();
     draw();
     animFrameRef.current = requestAnimationFrame(gameLoop);
   }, [generateBricks, draw, gameLoop, startMusic]);
 
+  // ─── Pause / Resume ────────────────────────────────────────
   const togglePause = useCallback(() => {
-    if (gameState === "playing") {
+    if (view === "playing") {
       cancelAnimationFrame(animFrameRef.current);
       stopMusic();
-      setGameState("paused");
-    } else if (gameState === "paused") {
+      setView("paused");
+    } else if (view === "paused") {
       const now = performance.now();
       lastRegenRef.current = now;
       lastDescentRef.current = now;
-      setGameState("playing");
+      setView("playing");
       startMusic();
       animFrameRef.current = requestAnimationFrame(gameLoop);
     }
-  }, [gameState, gameLoop, stopMusic, startMusic]);
+  }, [view, gameLoop, stopMusic, startMusic]);
 
+  // ─── Input: Mouse / Touch ─────────────────────────────────
   const movePaddle = useCallback((clientX: number) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -816,21 +860,22 @@ const AlleywayGame = () => {
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const onMouse = (e: MouseEvent) => { if (gameState === "playing") movePaddle(e.clientX); };
-    const onTouch = (e: TouchEvent) => { if (gameState === "playing") { e.preventDefault(); movePaddle(e.touches[0].clientX); } };
+    const onMouse = (e: MouseEvent) => { if (view === "playing") movePaddle(e.clientX); };
+    const onTouch = (e: TouchEvent) => { if (view === "playing") { e.preventDefault(); movePaddle(e.touches[0].clientX); } };
     canvas.addEventListener("mousemove", onMouse);
     canvas.addEventListener("touchmove", onTouch, { passive: false });
     return () => { canvas.removeEventListener("mousemove", onMouse); canvas.removeEventListener("touchmove", onTouch); };
-  }, [gameState, movePaddle]);
+  }, [view, movePaddle]);
 
+  // ─── Input: Keyboard ──────────────────────────────────────
   const keysRef = useRef<Set<string>>(new Set());
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A") { keysRef.current.add("left"); e.preventDefault(); }
       if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") { keysRef.current.add("right"); e.preventDefault(); }
       if (e.key === " " || e.key === "Enter") {
-        if (gameState === "idle" || gameState === "gameover") startGame();
-        else if (gameState === "playing" || gameState === "paused") togglePause();
+        if (view === "ready" || view === "gameover") startGame();
+        else if (view === "playing" || view === "paused") togglePause();
         e.preventDefault();
       }
     };
@@ -841,19 +886,19 @@ const AlleywayGame = () => {
     window.addEventListener("keydown", down);
     window.addEventListener("keyup", up);
     return () => { window.removeEventListener("keydown", down); window.removeEventListener("keyup", up); };
-  }, [gameState, startGame, togglePause]);
+  }, [view, startGame, togglePause]);
 
   useEffect(() => {
-    if (gameState !== "playing") return;
+    if (view !== "playing") return;
     const interval = setInterval(() => {
       const pw = getCurrentPaddleWidth();
       if (keysRef.current.has("left")) paddleXRef.current = Math.max(0, paddleXRef.current - 7);
       if (keysRef.current.has("right")) paddleXRef.current = Math.min(CANVAS_WIDTH - pw, paddleXRef.current + 7);
     }, 16);
     return () => clearInterval(interval);
-  }, [gameState, getCurrentPaddleWidth]);
+  }, [view, getCurrentPaddleWidth]);
 
-  // Initial draw
+  // ─── Initial Draw + Cleanup ────────────────────────────────
   useEffect(() => {
     paddleXRef.current = (CANVAS_WIDTH - PADDLE_WIDTH) / 2;
     ballsRef.current = [{ x: CANVAS_WIDTH / 2, y: CANVAS_HEIGHT - PADDLE_HEIGHT - 10 - BALL_RADIUS - 5, dx: 0, dy: 0, isFireball: false }];
@@ -864,16 +909,170 @@ const AlleywayGame = () => {
   useEffect(() => { return () => cancelAnimationFrame(animFrameRef.current); }, []);
 
   const theme = getTheme(score);
+  const stage = getStageNumber(score);
 
-  const formatTime = (s: number) => `${Math.floor(s / 60)}:${(s % 60).toString().padStart(2, "0")}`;
-
-  if (showLeaderboard) {
-    return <AlleywayLeaderboard scores={topScores} userBest={userBest} onClose={() => setShowLeaderboard(false)} onRefetch={refetch} />;
+  // ═══════════════════════════════════════════════════════════
+  // ─── LEADERBOARD ──────────────────────────────────────────
+  // ═══════════════════════════════════════════════════════════
+  if (view === "leaderboard") {
+    return <AlleywayLeaderboard scores={topScores} userBest={userBest} onClose={() => setView("gameover")} onRefetch={refetch} />;
   }
 
+  // ═══════════════════════════════════════════════════════════
+  // ─── BOOT SCREEN ──────────────────────────────────────────
+  // ═══════════════════════════════════════════════════════════
+  if (view === "boot") {
+    return (
+      <div className="w-full max-w-lg mx-auto">
+        <div className="relative rounded-xl overflow-hidden border-2 border-primary/40" style={{ background: "#0a0a0a", fontFamily: "'Courier New', monospace", minHeight: 420 }}>
+          <div className="absolute inset-0 pointer-events-none z-10" style={{ background: "repeating-linear-gradient(0deg, rgba(255,85,0,0.03) 0px, transparent 1px, transparent 3px)" }} />
+          <div className="p-6 relative z-20">
+            {bootLines.map((line, i) => (
+              <motion.p key={i} initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-primary text-sm mb-1" style={{ textShadow: "0 0 8px rgba(255,85,0,0.6)" }}>
+                {line}
+              </motion.p>
+            ))}
+            {bootDone && (
+              <motion.p initial={{ opacity: 0 }} animate={{ opacity: [0, 1, 0, 1] }} transition={{ duration: 0.8 }} className="text-primary text-sm mt-4">
+                {">"} PRESS START_
+              </motion.p>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ═══════════════════════════════════════════════════════════
+  // ─── READY SCREEN ─────────────────────────────────────────
+  // ═══════════════════════════════════════════════════════════
+  if (view === "ready") {
+    return (
+      <div className="w-full max-w-lg mx-auto text-center">
+        <div className="relative rounded-xl overflow-hidden border-2 border-primary/40 p-8" style={{ background: "#0a0a0a", minHeight: 420 }}>
+          <div className="absolute inset-0 pointer-events-none" style={{ background: "repeating-linear-gradient(0deg, rgba(255,85,0,0.03) 0px, transparent 1px, transparent 3px)" }} />
+          <div className="relative z-10">
+            <h2 className="font-display text-4xl text-primary tracking-wider mb-2" style={{ textShadow: "0 0 20px rgba(255,85,0,0.5)" }}>
+              SHATTER
+            </h2>
+            <h3 className="font-display text-xl text-foreground tracking-wider mb-6" style={{ textShadow: "0 0 10px rgba(255,255,255,0.2)" }}>
+              BREAK EVERY WALL.
+            </h3>
+
+            <div className="space-y-3 text-left max-w-xs mx-auto mb-8">
+              <p className="text-muted-foreground text-sm"><span className="text-primary font-bold">▸</span> Move paddle to deflect the ball</p>
+              <p className="text-muted-foreground text-sm"><span className="text-primary font-bold">▸</span> Smash bricks — new rows keep spawning</p>
+              <p className="text-muted-foreground text-sm"><span className="text-primary font-bold">▸</span> Every 15 bricks = new stage & theme shift</p>
+              <p className="text-muted-foreground text-sm"><span className="text-primary font-bold">▸</span> Catch power-ups: <span className="text-orange-400">Multi-Ball</span> · <span className="text-white">Wide Paddle</span> · <span className="text-red-400">Fireball</span></p>
+              <p className="text-muted-foreground text-sm"><span className="text-primary font-bold">▸</span> Steel bricks take 5 hits — crack them open</p>
+              <p className="text-muted-foreground text-sm"><span className="text-primary font-bold">▸</span> Don't let bricks reach the danger zone</p>
+            </div>
+
+            <Button onClick={startGame} className="font-display text-lg tracking-wider px-8 py-4 bg-primary hover:bg-primary/80" style={{ boxShadow: "0 0 20px rgba(255,85,0,0.4)" }}>
+              <Play className="w-5 h-5 mr-2" /> START SHATTER
+            </Button>
+
+            {userBest !== null && (
+              <p className="text-muted-foreground text-xs mt-4 font-display tracking-wider">
+                PERSONAL BEST: <span className="text-primary">{userBest}</span>
+              </p>
+            )}
+
+            <p className="text-muted-foreground/50 text-[10px] mt-3 font-display tracking-wider">
+              MOUSE / FINGER / ARROWS · SPACE = PAUSE
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ═══════════════════════════════════════════════════════════
+  // ─── GAME OVER ────────────────────────────────────────────
+  // ═══════════════════════════════════════════════════════════
+  if (view === "gameover") {
+    const isNewBest = userBest !== null && score >= userBest;
+    return (
+      <div className={`w-full max-w-lg mx-auto text-center ${deathShake ? "animate-shake" : ""}`}>
+        <div className="relative rounded-xl overflow-hidden border-2 border-primary/40 p-8" style={{ background: "#0a0a0a", minHeight: 420 }}>
+          <div className="absolute inset-0 pointer-events-none" style={{ background: "repeating-linear-gradient(0deg, rgba(255,85,0,0.03) 0px, transparent 1px, transparent 3px)" }} />
+          <div className="relative z-10">
+            <motion.div initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}>
+              <h2 className="font-display text-3xl text-primary tracking-wider mb-1" style={{ textShadow: "0 0 20px rgba(255,85,0,0.5)" }}>
+                SHATTERED
+              </h2>
+              {isNewBest && (
+                <motion.p initial={{ opacity: 0 }} animate={{ opacity: [0, 1, 0.5, 1] }} className="text-primary font-display text-sm tracking-wider mb-2">
+                  ★ NEW PERSONAL BEST ★
+                </motion.p>
+              )}
+            </motion.div>
+
+            <div className="my-4">
+              <p className="font-display text-6xl text-primary" style={{ textShadow: "0 0 30px rgba(255,85,0,0.4)" }}>{score}</p>
+              <p className="text-muted-foreground font-display text-xs tracking-wider mt-1">TOTAL SCORE</p>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-6">
+              <div className="bg-card/50 border border-border rounded-lg p-2.5">
+                <p className="font-display text-lg text-primary">{stage}</p>
+                <p className="text-[9px] text-muted-foreground font-display tracking-wider">STAGE</p>
+              </div>
+              <div className="bg-card/50 border border-border rounded-lg p-2.5">
+                <p className="font-display text-lg text-primary">{maxCombo}</p>
+                <p className="text-[9px] text-muted-foreground font-display tracking-wider">MAX COMBO</p>
+              </div>
+              <div className="bg-card/50 border border-border rounded-lg p-2.5">
+                <p className="font-display text-lg text-primary">{timeSurvived}s</p>
+                <p className="text-[9px] text-muted-foreground font-display tracking-wider">SURVIVED</p>
+              </div>
+              <div className="bg-card/50 border border-border rounded-lg p-2.5">
+                <p className="font-display text-lg text-primary">{totalBricks}</p>
+                <p className="text-[9px] text-muted-foreground font-display tracking-wider">DESTROYED</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-3 gap-2 mb-6">
+              <div className="bg-card/50 border border-border rounded-lg p-2">
+                <p className="font-display text-sm text-primary">{powerUpsUsed}</p>
+                <p className="text-[8px] text-muted-foreground font-display tracking-wider">POWER-UPS</p>
+              </div>
+              <div className="bg-card/50 border border-border rounded-lg p-2">
+                <p className="font-display text-sm text-primary">{peakBalls}</p>
+                <p className="text-[8px] text-muted-foreground font-display tracking-wider">PEAK BALLS</p>
+              </div>
+              <div className="bg-card/50 border border-border rounded-lg p-2">
+                <p className="font-display text-sm text-primary">{steelDestroyed}</p>
+                <p className="text-[8px] text-muted-foreground font-display tracking-wider">STEEL CRUSHED</p>
+              </div>
+            </div>
+
+            <div className="flex gap-3 justify-center">
+              <Button onClick={startGame} className="font-display tracking-wider px-6 bg-primary hover:bg-primary/80 gap-2">
+                <RotateCcw className="w-4 h-4" /> SHATTER AGAIN
+              </Button>
+              <Button onClick={() => { refetch(); setView("leaderboard"); }} variant="outline" className="font-display tracking-wider px-6 gap-2 border-primary/30">
+                <Trophy className="w-4 h-4" /> BOARD
+              </Button>
+            </div>
+
+            {userBest !== null && !isNewBest && (
+              <p className="text-muted-foreground text-xs mt-3 font-display tracking-wider">
+                BEST: <span className="text-primary">{userBest}</span>
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ═══════════════════════════════════════════════════════════
+  // ─── PLAYING / PAUSED ─────────────────────────────────────
+  // ═══════════════════════════════════════════════════════════
   return (
-    <div className="flex flex-col items-center gap-3 w-full max-w-lg mx-auto">
-      {/* Score Header */}
+    <div className={`flex flex-col items-center gap-3 w-full max-w-lg mx-auto ${deathShake ? "animate-shake" : ""}`}>
+      {/* ─── HUD ─── */}
       <div className="flex items-center justify-between w-full px-1">
         <div className="text-left">
           <p className="font-display text-[10px] tracking-widest text-muted-foreground">SCORE</p>
@@ -890,7 +1089,7 @@ const AlleywayGame = () => {
                 exit={{ scale: 0 }}
                 className="px-3 py-1 rounded font-display text-xs tracking-wider bg-primary text-primary-foreground min-w-[80px] text-center"
               >
-                {getLevelMessage(themeShifts) || `LEVEL ${themeShifts + 1}`}
+                {getLevelMessage(themeShifts) || `STAGE ${themeShifts + 1}`}
               </motion.div>
             )}
           </AnimatePresence>
@@ -920,87 +1119,82 @@ const AlleywayGame = () => {
         </div>
       </div>
 
-      {/* Game Canvas */}
+      {/* ─── Game Board ─── */}
       <div className="relative rounded-lg overflow-hidden" style={{ width: scaledWidth, height: scaledHeight }}>
         <canvas
           ref={canvasRef}
           width={CANVAS_WIDTH}
           height={CANVAS_HEIGHT}
           className="rounded-lg"
-          style={{ width: scaledWidth, height: scaledHeight, touchAction: "none", cursor: gameState === "playing" ? "none" : "default" }}
+          style={{ width: scaledWidth, height: scaledHeight, touchAction: "none", cursor: view === "playing" ? "none" : "default" }}
         />
 
+        {/* CRT Scanline Overlay */}
+        <div className="absolute inset-0 pointer-events-none rounded-lg" style={{ background: "repeating-linear-gradient(0deg, rgba(255,85,0,0.02) 0px, transparent 1px, transparent 3px)" }} />
+
+        {/* Stage Transition Flash */}
         <AnimatePresence>
-          {gameState === "idle" && (
+          {stageFlash && (
             <motion.div
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              className="absolute inset-0 flex flex-col items-center justify-center bg-black/85 rounded-lg backdrop-blur-sm"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+              className="absolute inset-0 flex items-center justify-center rounded-lg pointer-events-none z-20"
+              style={{ background: "rgba(0,0,0,0.7)" }}
             >
-              <p className="font-display text-5xl text-primary tracking-wider mb-1" style={{ textShadow: "0 0 30px rgba(249,115,22,0.5)" }}>SHATTER</p>
-              <p className="text-[10px] text-primary/70 font-display tracking-[0.3em] mb-6">BREAK EVERY WALL.</p>
-              <div className="space-y-1.5 text-center mb-8">
-                <p className="text-xs text-white/60">Move paddle · mouse / finger / arrows</p>
-                <p className="text-xs text-white/60">Catch diamond power-ups for abilities</p>
-                <p className="text-xs text-white/60">Don't let bricks reach the bottom</p>
+              <div className="text-center">
+                <motion.p
+                  animate={{ scale: [1, 1.05, 1] }}
+                  transition={{ repeat: Infinity, duration: 0.6 }}
+                  className="font-display text-2xl sm:text-3xl text-primary tracking-wider"
+                  style={{ textShadow: "0 0 20px rgba(255,85,0,0.6)" }}
+                >
+                  {stageFlash}
+                </motion.p>
               </div>
-              <Button onClick={startGame} className="font-display tracking-widest gap-2 bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-3 text-base">
-                <Play className="w-5 h-5" /> START
-              </Button>
             </motion.div>
           )}
+        </AnimatePresence>
 
-          {gameState === "paused" && (
+        {/* Paused Overlay */}
+        <AnimatePresence>
+          {view === "paused" && (
             <motion.div
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              className="absolute inset-0 flex flex-col items-center justify-center bg-black/85 rounded-lg backdrop-blur-sm"
+              className="absolute inset-0 flex flex-col items-center justify-center bg-black/85 rounded-lg backdrop-blur-sm z-20"
             >
-              <p className="font-display text-4xl text-primary tracking-wider mb-6" style={{ textShadow: "0 0 30px rgba(249,115,22,0.5)" }}>PAUSED</p>
+              <p className="font-display text-4xl text-primary tracking-wider mb-2" style={{ textShadow: "0 0 30px rgba(249,115,22,0.5)" }}>PAUSED</p>
+              <p className="font-display text-xs text-muted-foreground tracking-wider mb-6">
+                STAGE {stage} · {getStageName(score)}
+              </p>
               <Button onClick={togglePause} className="font-display tracking-widest gap-2 bg-primary hover:bg-primary/90 text-primary-foreground px-8">
                 <Play className="w-4 h-4" /> RESUME
               </Button>
             </motion.div>
           )}
-
-          {gameState === "gameover" && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }}
-              className="absolute inset-0 flex flex-col items-center justify-center bg-black/90 rounded-lg backdrop-blur-sm"
-            >
-              <p className="font-display text-2xl text-primary tracking-wider mb-2" style={{ textShadow: "0 0 20px rgba(249,115,22,0.5)" }}>GAME OVER</p>
-              <p className="font-display text-6xl tracking-wide text-white mb-1">{score}</p>
-              <p className="text-xs text-white/50 font-display tracking-wide mb-1">LEVEL {themeShifts + 1}{themeShifts > 0 ? ` · ${getLevelMessage(themeShifts)}` : ""}</p>
-              <div className="flex gap-3 mt-4">
-                <Button onClick={startGame} className="font-display tracking-widest gap-2 bg-primary hover:bg-primary/90 text-primary-foreground px-6">
-                  <RotateCcw className="w-4 h-4" /> AGAIN
-                </Button>
-                <Button onClick={() => setShowLeaderboard(true)} variant="outline" className="font-display tracking-widest gap-2 border-primary/50 text-primary hover:bg-primary/10">
-                  <Trophy className="w-4 h-4" /> BOARD
-                </Button>
-              </div>
-            </motion.div>
-          )}
         </AnimatePresence>
       </div>
 
-      {/* Controls */}
+      {/* ─── Controls ─── */}
       <div className="flex gap-2">
-        {gameState === "playing" && (
+        {view === "playing" && (
           <Button onClick={togglePause} variant="outline" size="sm" className="font-display text-xs tracking-wider gap-1 border-primary/30 text-primary">
             <Pause className="w-3 h-3" /> PAUSE
           </Button>
         )}
-        {(gameState === "playing" || gameState === "paused") && (
+        {(view === "playing" || view === "paused") && (
           <Button onClick={startGame} variant="ghost" size="sm" className="font-display text-xs tracking-wider gap-1 text-muted-foreground">
             <RotateCcw className="w-3 h-3" /> RESTART
           </Button>
         )}
-        <Button onClick={() => setShowLeaderboard(true)} variant="ghost" size="sm" className="font-display text-xs tracking-wider gap-1 text-muted-foreground">
+        <Button onClick={() => { refetch(); setView("leaderboard"); }} variant="ghost" size="sm" className="font-display text-xs tracking-wider gap-1 text-muted-foreground">
           <Trophy className="w-3 h-3" /> LEADERBOARD
         </Button>
       </div>
 
       <p className="text-[10px] text-muted-foreground/60 text-center font-display tracking-[0.2em]">
-        SLIDE TO MOVE • CATCH DIAMONDS • STAY UNBREAKABLE
+        SLIDE TO MOVE · CATCH DIAMONDS · BREAK EVERY WALL
       </p>
     </div>
   );
