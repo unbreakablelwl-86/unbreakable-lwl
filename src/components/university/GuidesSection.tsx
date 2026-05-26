@@ -5,9 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
   Download, Coins, Package, Sparkles, BookOpen, CheckCircle,
-  GraduationCap, Dumbbell, UtensilsCrossed, Brain, Zap,
-  ArrowUpFromLine, Target, Flame, Heart, Home, Trophy,
-  type LucideIcon,
+  ChevronDown, Flame,
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -19,26 +17,19 @@ import { useQueryClient } from '@tanstack/react-query';
 import { GuideCard } from './GuideCard';
 import { GUIDES, GUIDE_BUNDLE, GUIDE_COIN_COST, ALL_GUIDE_KEYS } from '@/lib/university/guideData';
 
-interface GuideCategory {
-  key: string;
-  label: string;
-  icon: LucideIcon;
-  description: string;
-}
-
-const guideCategories: GuideCategory[] = [
-  { key: 'all', label: 'All', icon: BookOpen, description: 'Every guide in the collection' },
-  { key: 'beginner', label: 'Start', icon: GraduationCap, description: 'Getting started' },
-  { key: 'strength', label: 'Strength', icon: Dumbbell, description: 'Build your base' },
-  { key: 'big-lifts', label: 'Big Lifts', icon: Target, description: 'Squat · Bench · Dead · OHP' },
-  { key: 'calisthenics', label: 'Cali', icon: ArrowUpFromLine, description: 'Bodyweight mastery' },
-  { key: 'nutrition', label: 'Nutrition', icon: UtensilsCrossed, description: 'Fuel your body' },
-  { key: 'cardio', label: 'Cardio', icon: Zap, description: 'Run · HIIT · Conditioning' },
-  { key: 'mindset', label: 'Mindset', icon: Brain, description: 'Mental strength' },
-  { key: 'recovery', label: 'Recovery', icon: Heart, description: 'Rest & mobility' },
-  { key: 'lifestyle', label: 'Lifestyle', icon: Home, description: 'Habits · Home · Recomp' },
-  { key: 'powerlifting', label: 'PL', icon: Trophy, description: 'Competition prep' },
-];
+const CATEGORIES = [
+  { key: 'all', label: 'All Guides' },
+  { key: 'beginner', label: 'Getting Started' },
+  { key: 'strength', label: 'Strength' },
+  { key: 'big-lifts', label: 'Big Lifts' },
+  { key: 'calisthenics', label: 'Calisthenics' },
+  { key: 'nutrition', label: 'Nutrition' },
+  { key: 'cardio', label: 'Cardio' },
+  { key: 'mindset', label: 'Mindset' },
+  { key: 'recovery', label: 'Recovery' },
+  { key: 'lifestyle', label: 'Lifestyle' },
+  { key: 'powerlifting', label: 'Powerlifting' },
+] as const;
 
 export function GuidesSection() {
   const [activeCategory, setActiveCategory] = useState('all');
@@ -56,7 +47,7 @@ export function GuidesSection() {
     ? GUIDES
     : GUIDES.filter(g => g.category === activeCategory);
 
-  const activeCat = guideCategories.find(c => c.key === activeCategory) || guideCategories[0];
+  const activeCat = CATEGORIES.find(c => c.key === activeCategory) || CATEGORIES[0];
 
   const handleBundlePurchase = async () => {
     if (!allOwned && balance !== null && balance < GUIDE_BUNDLE.coinCost) {
@@ -171,72 +162,31 @@ export function GuidesSection() {
         </motion.div>
       )}
 
-      {/* Category Tabs — matches main University discipline tab style */}
-      <div>
-        <p className="font-display text-xs tracking-wider text-muted-foreground text-center mb-4">
-          BROWSE BY CATEGORY
+      {/* Category Dropdown */}
+      <div className="flex items-center justify-between gap-3">
+        <p className="font-display text-xs tracking-wider text-muted-foreground shrink-0">
+          CATEGORY
         </p>
-        <div className="flex flex-wrap justify-center gap-2">
-          {guideCategories.map((cat, i) => {
-            const isActive = activeCategory === cat.key;
-            const Icon = cat.icon;
-            const count = cat.key === 'all'
-              ? GUIDES.length
-              : GUIDES.filter(g => g.category === cat.key).length;
-
-            return (
-              <motion.button
-                key={cat.key}
-                onClick={() => setActiveCategory(cat.key)}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.04 }}
-                whileHover={{ y: -2 }}
-                whileTap={{ scale: 0.97 }}
-                className={`relative flex flex-col items-center gap-1.5 px-3 py-3 rounded-xl border transition-all min-w-[72px] ${
-                  isActive
-                    ? 'bg-primary/10 border-primary/40 shadow-lg shadow-primary/5'
-                    : 'bg-card/50 border-border hover:border-primary/20 hover:bg-card'
-                }`}
-              >
-                <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${
-                  isActive
-                    ? 'bg-primary/20 text-primary'
-                    : 'bg-muted/50 text-muted-foreground'
-                }`}>
-                  <Icon className="w-4 h-4" />
-                </div>
-                <span className={`font-display text-[10px] tracking-wider leading-tight ${
-                  isActive ? 'text-primary' : 'text-foreground'
-                }`}>
-                  {cat.label.toUpperCase()}
-                </span>
-                <span className="text-[9px] text-muted-foreground">{count}</span>
-                {isActive && (
-                  <motion.div
-                    layoutId="guideActiveDot"
-                    className="absolute -bottom-1 w-1.5 h-1.5 rounded-full bg-primary"
-                  />
-                )}
-              </motion.button>
-            );
-          })}
+        <div className="relative w-full max-w-[220px]">
+          <select
+            value={activeCategory}
+            onChange={(e) => setActiveCategory(e.target.value)}
+            className="w-full appearance-none bg-card border border-border rounded-lg px-4 py-2.5 pr-10 text-sm font-display tracking-wider text-foreground focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-colors cursor-pointer"
+          >
+            {CATEGORIES.map((cat) => {
+              const count = cat.key === 'all'
+                ? GUIDES.length
+                : GUIDES.filter(g => g.category === cat.key).length;
+              return (
+                <option key={cat.key} value={cat.key}>
+                  {cat.label} ({count})
+                </option>
+              );
+            })}
+          </select>
+          <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
         </div>
       </div>
-
-      {/* Active Category Header */}
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={activeCategory}
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -8 }}
-          transition={{ duration: 0.2 }}
-          className="text-center"
-        >
-          <p className="text-sm text-muted-foreground">{activeCat.description}</p>
-        </motion.div>
-      </AnimatePresence>
 
       {/* Guide Cards Grid */}
       <AnimatePresence mode="wait">
