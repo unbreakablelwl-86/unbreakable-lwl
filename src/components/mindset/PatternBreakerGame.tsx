@@ -113,10 +113,195 @@ const PatternBreakerGame = () => {
   const audioCtxRef = useRef<AudioContext | null>(null);
   const timeoutsRef = useRef<NodeJS.Timeout[]>([]);
 
+  const { user } = useAuth();
   const { topScores, userBest, saveScore, refetch } = usePatternBreakerScores();
   const audio = useGameAudio("pattern" as any);
 
   // ─── Boot sequence ─────────────────────────────────────────
+
+  // ─── Play Tone ─────────────────────────────────────────────
+  const playTone = useCallback((freq: number, duration = 200) => {
+    try {
+      if (!audioCtxRef.current || audioCtxRef.current.state === "closed") {
+        audioCtxRef.current = new AudioContext();
+      }
+      const ctx = audioCtxRef.current;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.frequency.value = freq;
+      osc.type = "sine";
+      gain.gain.value = 0.15;
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration / 1000);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + duration / 1000);
+    } catch {}
+  }, []);
+
+  // ─── Play Sequence ─────────────────────────────────────────
+  const playSequence = useCallback((seq: number[], speed: number) => {
+    setGameState("watching");
+    setActivePad(null);
+    setPlayerIndex(0);
+
+    timeoutsRef.current.forEach(clearTimeout);
+    timeoutsRef.current = [];
+
+    seq.forEach((padIdx, i) => {
+      const showTimeout = setTimeout(() => {
+        setActivePad(padIdx);
+        playTone(PADS[padIdx].note, speed * 0.7);
+      }, i * speed);
+
+      const hideTimeout = setTimeout(() => {
+        setActivePad(null);
+      }, i * speed + speed * 0.7);
+
+      timeoutsRef.current.push(showTimeout, hideTimeout);
+    });
+
+    const doneTimeout = setTimeout(() => {
+      setGameState("input");
+      setActivePad(null);
+    }, seq.length * speed + 200);
+    timeoutsRef.current.push(doneTimeout);
+  }, [playTone]);
+
+  // ─── Get Play Speed ────────────────────────────────────────
+  const getPlaySpeed = useCallback((seqLength: number) => {
+    return Math.max(MIN_PLAY_SPEED, INITIAL_PLAY_SPEED - seqLength * SPEED_DECREASE_PER_LEVEL);
+  }, []);
+
+  // ─── Start Game ────────────────────────────────────────────
+  const startGame = useCallback(() => {
+    timeoutsRef.current.forEach(clearTimeout);
+    setScore(0);
+    setSequence([]);
+    setPlayerIndex(0);
+    setActivePad(null);
+    setWrongPad(null);
+    setMessage("");
+    setMaxSequence(0);
+    setRound(0);
+    setTotalCorrectTaps(0);
+    setPerfectRounds(0);
+    setDeathShake(false);
+    setStageFlash(null);
+    setParticles([]);
+    setTimeSurvived(0);
+    setTapTimes([]);
+    setLastTapTime(0);
+    lastStageRef.current = 0;
+    const now = Date.now();
+    setStartTime(now);
+
+    // Start first round with one random pad
+    const firstPad = Math.floor(Math.random() * PADS.length);
+    const newSeq = [firstPad];
+    setSequence(newSeq);
+    setRound(1);
+
+    // Small delay then play
+    setTimeout(() => {
+      playSequence(newSeq, getPlaySpeed(1));
+    }, 800);
+
+    audio.play?.("start");
+  }, [audio, playSequence, getPlaySpeed]);
+
+  // ─── Advance Round ─────────────────────────────────────────
+  const advanceRound = useCallback((currentSeq: number[]) => {
+    const nextPad = Math.floor(Math.random() * PADS.length);
+    const newSeq = [...currentSeq, nextPad];
+    setSequence(newSeq);
+    setPlayerIndex(0);
+    setRound((prev) => prev + 1);
+    setMaxSequence((prev) => Math.max(prev, newSeq.length));
+    setPerfectRounds((prev) => prev + 1);
+
+    // Stage check
+    const newStageIdx = getStageIndex(newSeq.length);
+    if (newStageIdx > lastStageRef.current) {
+      lastStageRef.current = newStageIdx;
+      setStageFlash(STAGES[newStageIdx].name);
+      setTimeout(() => setStageFlash(null), 1200);
+    }
+
+    // Play new sequence after brief pause
+    setTimeout(() => {
+      playSequence(newSeq, getPlaySpeed(newSeq.length));
+    }, 1000);
+  }, [playSequence, getPlaySpeed]);
+
+  // ─── Handle Pad Press ──────────────────────────────────────
+  const handlePadTap = useCallback((padIdx: number) => {
+    if (gameState !== "input") return;
+
+    playTone(PADS[padIdx].note, 150);
+    setActivePad(padIdx);
+    setTimeout(() => setActivePad(null), 200);
+
+    const now = Date.now();
+    setLastTapTime(now);
+    setTapTimes((prev) => [...prev, now]);
+
+    if (padIdx === sequence[playerIndex]) {
+      // Correct!
+      const correctTaps = playerIndex + 1;
+      setTotalCorrectTaps((prev) => prev + 1);
+      setPlayerIndex(correctTaps);
+
+      // Score: points based on sequence length
+      const points = sequence.length * 5 + correctTaps * 2;
+      setScore((prev) => prev + points);
+      
+      audio.play?.("hit");
+      setMessage(SUCCESS_MESSAGES[Math.floor(Math.random() * SUCCESS_MESSAGES.length)]);
+      setTimeout(() => setMessage(""), 500);
+
+      // Spawn particle
+      const pid = ++particleIdRef.current;
+      setParticles((prev) => [...prev, { id: pid, x: 50 + padIdx * 80, y: 100, color: PADS[padIdx].activeColor }]);
+      setTimeout(() => setParticles((prev) => prev.filter((p) => p.id !== pid)), 500);
+
+      if (correctTaps >= sequence.length) {
+        // Round complete! 
+        setGameState("success");
+        audio.play?.("levelUp");
+        setMessage("PERFECT ROUND!");
+        
+        setTimeout(() => {
+          advanceRound(sequence);
+        }, 800);
+      }
+    } else {
+      // Wrong! Game over
+      setWrongPad(padIdx);
+      setDeathShake(true);
+      setGameState("fail");
+      audio.play?.("miss");
+      setMessage(FAIL_MESSAGES[Math.floor(Math.random() * FAIL_MESSAGES.length)]);
+
+      setTimeout(() => {
+        setDeathShake(false);
+        setWrongPad(null);
+        setTimeSurvived(Math.floor((Date.now() - startTime) / 1000));
+        setGameState("gameover");
+        audio.play?.("gameOver");
+        
+        const finalScore = score + sequence.length * 5;
+        if (finalScore > 0) {
+          saveScore(finalScore, {
+            max_sequence: maxSequence,
+            total_correct_taps: totalCorrectTaps,
+            perfect_rounds: perfectRounds,
+          });
+        }
+      }, 1000);
+    }
+  }, [gameState, sequence, playerIndex, score, startTime, maxSequence, totalCorrectTaps, perfectRounds, audio, saveScore, playTone, advanceRound]);
+
 
 // ─── Cleanup ─────────────────────────────────────────────
   useEffect(() => {

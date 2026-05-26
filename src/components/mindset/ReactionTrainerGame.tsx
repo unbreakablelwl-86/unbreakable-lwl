@@ -110,7 +110,187 @@ const ReactionTrainerGame = () => {
 
   // Boot
 
+  const { user } = useAuth();
   const { topScores, userBest, saveScore, refetch } = useReactionScores();
+  // ─── Start Game ────────────────────────────────────────────
+  const startGame = useCallback(() => {
+    targetIdRef.current = 0;
+    gameStartRef.current = Date.now();
+    scoreRef.current = 0;
+    lastStageRef.current = 0;
+    hitsRef.current = 0;
+    missesRef.current = 0;
+    spawnedRef.current = 0;
+    reactionSumRef.current = 0;
+    targetsRef.current = [];
+    if (spawnTimerRef.current) clearTimeout(spawnTimerRef.current);
+    setScore(0);
+    setCombo(0);
+    setBestCombo(0);
+    setTargets([]);
+    setTimeLeft(GAME_DURATION);
+    setBestReactionMs(9999);
+    setAvgReactionMs(0);
+    setLastReactionMs(null);
+    setMessage("");
+    setMissFlash(false);
+    setHitEffect(null);
+    setDeathShake(false);
+    setStageFlash(null);
+    setTotalHits(0);
+    setTotalMisses(0);
+    setTotalSpawned(0);
+    setView("playing");
+    audio.play?.("start");
+  }, [audio]);
+
+  // ─── Spawn Target ──────────────────────────────────────────
+  const spawnTarget = useCallback(() => {
+    if (!canvasRef.current) return;
+    const rect = canvasRef.current.getBoundingClientRect();
+    const size = 40 + Math.random() * 20;
+    const margin = size;
+    const x = margin + Math.random() * (rect.width - margin * 2);
+    const y = margin + Math.random() * (rect.height - margin * 2);
+    const shapes: TargetShape[] = ["circle", "diamond", "square", "cross"];
+    const elapsed = Date.now() - gameStartRef.current;
+    const progress = Math.min(elapsed / GAME_DURATION, 1);
+    const lifetime = INITIAL_TARGET_LIFETIME - progress * (INITIAL_TARGET_LIFETIME - MIN_TARGET_LIFETIME);
+
+    const target: Target = {
+      id: ++targetIdRef.current,
+      x, y, size,
+      shape: shapes[Math.floor(Math.random() * shapes.length)],
+      spawnedAt: Date.now(),
+      lifetime,
+    };
+
+    targetsRef.current = [...targetsRef.current, target].slice(-MAX_CONCURRENT_TARGETS);
+    spawnedRef.current++;
+    setTargets([...targetsRef.current]);
+    setTotalSpawned(spawnedRef.current);
+  }, []);
+
+  // ─── Hit Target ────────────────────────────────────────────
+  const hitTarget = useCallback((target: Target) => {
+    const reactionMs = Math.round(Date.now() - target.spawnedAt);
+    hitsRef.current++;
+    reactionSumRef.current += reactionMs;
+
+    // Score: faster = more points, combo multiplier
+    const baseScore = Math.max(10, Math.round(150 - reactionMs * 0.05));
+    const newCombo = (prev: number) => prev + 1;
+    
+    setCombo((prev) => {
+      const c = prev + 1;
+      const multiplier = 1 + (c - 1) * 0.5;
+      const points = Math.round(baseScore * multiplier);
+      scoreRef.current += points;
+      setScore(scoreRef.current);
+      
+      // Stage check
+      const newStageIdx = getStageIndex(scoreRef.current);
+      if (newStageIdx > lastStageRef.current) {
+        lastStageRef.current = newStageIdx;
+        setStageFlash(STAGES[newStageIdx].name);
+        setTimeout(() => setStageFlash(null), 1200);
+        audio.play?.("levelUp");
+      }
+      
+      if (c > 0) setBestCombo((prev) => Math.max(prev, c));
+      return c;
+    });
+
+    setLastReactionMs(reactionMs);
+    setBestReactionMs((prev) => Math.min(prev, reactionMs));
+    setAvgReactionMs(Math.round(reactionSumRef.current / hitsRef.current));
+    setTotalHits(hitsRef.current);
+    setHitEffect({ x: target.x, y: target.y, id: target.id });
+    setTimeout(() => setHitEffect(null), 300);
+
+    // Remove target
+    targetsRef.current = targetsRef.current.filter((t) => t.id !== target.id);
+    setTargets([...targetsRef.current]);
+
+    // Message
+    setMessage(HIT_MESSAGES[Math.floor(Math.random() * HIT_MESSAGES.length)]);
+    setTimeout(() => setMessage(""), 600);
+
+    audio.play?.("hit");
+  }, [audio]);
+
+  // ─── Game Timer ────────────────────────────────────────────
+  useEffect(() => {
+    if (view !== "playing") return;
+    const interval = setInterval(() => {
+      const elapsed = Date.now() - gameStartRef.current;
+      const remaining = Math.max(0, GAME_DURATION - elapsed);
+      setTimeLeft(remaining);
+
+      if (remaining <= 0) {
+        clearInterval(interval);
+        if (spawnTimerRef.current) clearTimeout(spawnTimerRef.current);
+        setView("gameover");
+        setDeathShake(true);
+        setTimeout(() => setDeathShake(false), 500);
+        audio.play?.("gameOver");
+        // Save score
+        const finalScore = scoreRef.current;
+        if (finalScore > 0) {
+          saveScore(finalScore, {
+            best_combo: 0,
+            total_hits: hitsRef.current,
+            total_misses: missesRef.current,
+            best_reaction_ms: 0,
+            avg_reaction_ms: Math.round(reactionSumRef.current / Math.max(1, hitsRef.current)),
+          });
+        }
+      }
+    }, 50);
+    return () => clearInterval(interval);
+  }, [view, audio, saveScore]);
+
+  // ─── Target Spawner ────────────────────────────────────────
+  useEffect(() => {
+    if (view !== "playing") return;
+    const scheduleSpawn = () => {
+      const elapsed = Date.now() - gameStartRef.current;
+      const progress = Math.min(elapsed / GAME_DURATION, 1);
+      const interval = INITIAL_SPAWN_INTERVAL - progress * (INITIAL_SPAWN_INTERVAL - MIN_SPAWN_INTERVAL);
+      spawnTimerRef.current = setTimeout(() => {
+        spawnTarget();
+        scheduleSpawn();
+      }, interval);
+    };
+    spawnTarget(); // Spawn first immediately
+    scheduleSpawn();
+    return () => {
+      if (spawnTimerRef.current) clearTimeout(spawnTimerRef.current);
+    };
+  }, [view, spawnTarget]);
+
+  // ─── Target Expiry (miss detection) ────────────────────────
+  useEffect(() => {
+    if (view !== "playing") return;
+    const interval = setInterval(() => {
+      const now = Date.now();
+      const expired = targetsRef.current.filter((t) => now - t.spawnedAt > t.lifetime);
+      if (expired.length > 0) {
+        missesRef.current += expired.length;
+        setTotalMisses(missesRef.current);
+        setCombo(0);
+        setMissFlash(true);
+        setTimeout(() => setMissFlash(false), 200);
+        setMessage(MISS_MESSAGES[Math.floor(Math.random() * MISS_MESSAGES.length)]);
+        setTimeout(() => setMessage(""), 600);
+        targetsRef.current = targetsRef.current.filter((t) => now - t.spawnedAt <= t.lifetime);
+        setTargets([...targetsRef.current]);
+        audio.play?.("miss");
+      }
+    }, 100);
+    return () => clearInterval(interval);
+  }, [view, audio]);
+
   const audio = useGameAudio("reaction" as any);
 
   // ─── Boot Sequence ─────────────────────────────────────────

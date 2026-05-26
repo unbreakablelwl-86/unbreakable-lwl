@@ -120,10 +120,160 @@ const MemoryMatrixGame = () => {
   const particleIdRef = useRef(0);
   const gridRef = useRef<HTMLDivElement>(null);
 
+  const { user } = useAuth();
   const { topScores, userBest, saveScore, refetch } = useMemoryMatrixScores();
   const audio = useGameAudio("memory" as any);
 
   // ─── Boot sequence ─────────────────────────────────────────
+
+  // ─── Start Round ───────────────────────────────────────────
+  const startRound = useCallback((lvl: number, _startTime?: number) => {
+    const config = LEVELS[Math.min(lvl, LEVELS.length - 1)];
+    const totalCells = config.gridSize * config.gridSize;
+    
+    // Generate random pattern
+    const cells = new Set<number>();
+    while (cells.size < config.activeCells) {
+      cells.add(Math.floor(Math.random() * totalCells));
+    }
+    
+    setPattern(cells);
+    setSelected(new Set());
+    setRevealed(true);
+    setGameState("flashing");
+    setMessage("");
+    setResultCorrect(false);
+    
+    // Hide pattern after flash duration
+    setTimeout(() => {
+      setRevealed(false);
+      setGameState("input");
+    }, config.flashDurationMs);
+  }, []);
+
+  // ─── Start Game ────────────────────────────────────────────
+  const startGame = useCallback(() => {
+    setLevel(0);
+    setScore(0);
+    setLives(3);
+    setPattern(new Set());
+    setSelected(new Set());
+    setRevealed(false);
+    setResultCorrect(false);
+    setMessage("");
+    setMaxLevel(0);
+    setPerfectRounds(0);
+    setTotalCellsRecalled(0);
+    setTotalCellsTapped(0);
+    setLongestStreak(0);
+    setCurrentStreak(0);
+    setRoundsPlayed(0);
+    setDeathShake(false);
+    setStageFlash(null);
+    setParticles([]);
+    setTimeSurvived(0);
+    lastStageRef.current = 0;
+    const now = Date.now();
+    setStartTime(now);
+    // Start first round
+    startRound(0, now);
+    audio.play?.("start");
+  }, [audio, startRound]);
+
+
+  // ─── Handle Cell Click ─────────────────────────────────────
+  const handleCellClick = useCallback((index: number) => {
+    if (gameState !== "input") return;
+    if (selected.has(index)) return; // Already tapped
+    
+    const newSelected = new Set(selected);
+    newSelected.add(index);
+    setSelected(newSelected);
+    setTotalCellsTapped((prev) => prev + 1);
+    
+    if (pattern.has(index)) {
+      // Correct tap
+      setTotalCellsRecalled((prev) => prev + 1);
+      audio.play?.("hit");
+      
+      // Spawn particle
+      if (gridRef.current) {
+        const rect = gridRef.current.getBoundingClientRect();
+        const config = LEVELS[Math.min(level, LEVELS.length - 1)];
+        const cellSize = rect.width / config.gridSize;
+        const row = Math.floor(index / config.gridSize);
+        const col = index % config.gridSize;
+        const pid = ++particleIdRef.current;
+        setParticles((prev) => [...prev, { id: pid, x: col * cellSize + cellSize / 2, y: row * cellSize + cellSize / 2, color: "#FF5500" }]);
+        setTimeout(() => setParticles((prev) => prev.filter((p) => p.id !== pid)), 500);
+      }
+      
+      // Check if all pattern cells found
+      const correctCount = [...newSelected].filter((i) => pattern.has(i)).length;
+      if (correctCount >= pattern.size) {
+        // Round complete!
+        const isPerfect = newSelected.size === pattern.size;
+        const baseScore = pattern.size * 10 + level * 5;
+        const bonus = isPerfect ? Math.round(baseScore * 0.5) : 0;
+        const roundScore = baseScore + bonus;
+        
+        setScore((prev) => prev + roundScore);
+        setCurrentStreak((prev) => {
+          const newStreak = prev + 1;
+          setLongestStreak((best) => Math.max(best, newStreak));
+          return newStreak;
+        });
+        if (isPerfect) setPerfectRounds((prev) => prev + 1);
+        setRoundsPlayed((prev) => prev + 1);
+        setResultCorrect(true);
+        setGameState("result");
+        setMessage(SUCCESS_MESSAGES[Math.floor(Math.random() * SUCCESS_MESSAGES.length)]);
+        audio.play?.("levelUp");
+        
+        // Stage check
+        const newStageIdx = getStageIndex(level + 1);
+        if (newStageIdx > lastStageRef.current) {
+          lastStageRef.current = newStageIdx;
+          setStageFlash(STAGES[newStageIdx].name);
+          setTimeout(() => setStageFlash(null), 1200);
+        }
+        
+        const nextLevel = level + 1;
+        setLevel(nextLevel);
+        setMaxLevel((prev) => Math.max(prev, nextLevel));
+        
+        // Start next round after delay
+        setTimeout(() => {
+          startRound(nextLevel);
+        }, 1200);
+      }
+    } else {
+      // Wrong tap - lose a life
+      const newLives = lives - 1;
+      setLives(newLives);
+      setCurrentStreak(0);
+      setDeathShake(true);
+      setTimeout(() => setDeathShake(false), 400);
+      audio.play?.("miss");
+      setMessage(FAIL_MESSAGES[Math.floor(Math.random() * FAIL_MESSAGES.length)]);
+      
+      if (newLives <= 0) {
+        // Game over
+        setGameState("gameover");
+        setTimeSurvived(Math.floor((Date.now() - startTime) / 1000));
+        audio.play?.("gameOver");
+        const finalScore = score + pattern.size * 10 + level * 5; // partial credit
+        if (finalScore > 0) {
+          saveScore(finalScore, {
+            max_level: maxLevel,
+            perfect_rounds: perfectRounds,
+            longest_streak: longestStreak,
+          });
+        }
+      }
+    }
+  }, [gameState, selected, pattern, level, lives, startTime, score, maxLevel, perfectRounds, longestStreak, audio, saveScore, startRound]);
+
 
 const currentConfig = LEVELS[Math.min(level, LEVELS.length - 1)];
   const gridSize = currentConfig.gridSize;
