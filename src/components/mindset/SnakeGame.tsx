@@ -10,7 +10,7 @@ import { useGameAudio } from "@/hooks/useGameAudio";
 type Direction = "UP" | "DOWN" | "LEFT" | "RIGHT";
 type Position = { x: number; y: number };
 type PowerUpKind = "shield" | "double" | "slowmo";
-type GameView = "boot" | "ready" | "playing" | "paused" | "gameover" | "leaderboard";
+type GameView = "ready" | "playing" | "paused" | "gameover" | "leaderboard";
 
 interface Particle {
   x: number; y: number; vx: number; vy: number;
@@ -28,17 +28,7 @@ interface ThemePalette {
 }
 
 // ─── Boot Sequence ───────────────────────────────────────────
-const BOOT_LINES = [
-  "> UNBREAKABLE OS v3.1",
-  "> LOADING HUNT ENGINE...",
-  "> PREY DETECTION: ONLINE",
-  "> REFLEX MATRIX: CALIBRATED",
-  "> OBSTACLE GRID: ARMED",
-  "> COMBO SYSTEM: ENABLED",
-  "> STATUS: READY TO HUNT",
-  "",
-  "  CHASE. DEVOUR. NEVER STOP.",
-];
+
 
 // ─── Theme Palettes (cycle every stage) ──────────────────────
 const THEME_PALETTES: ThemePalette[] = [
@@ -146,7 +136,7 @@ const SnakeGame = () => {
   const [score, setScore] = useState(0);
   const scoreRef = useRef(0);
   const [highScore, setHighScore] = useState(0);
-  const [view, setView] = useState<GameView>("boot");
+  const [view, setView] = useState<GameView>("ready");
   const [combo, setCombo] = useState(0);
   const comboRef = useRef(0);
   const [maxCombo, setMaxCombo] = useState(0);
@@ -164,8 +154,7 @@ const SnakeGame = () => {
   const [powerUpsUsed, setPowerUpsUsed] = useState(0);
 
   // Boot
-  const [bootLines, setBootLines] = useState<string[]>([]);
-  const [bootDone, setBootDone] = useState(false);
+
 
   const { saveScore, topScores, userBest, refetch } = useSnakeScores();
   const audio = useGameAudio("snake");
@@ -180,18 +169,7 @@ const SnakeGame = () => {
   }, []);
   const canvasSize = cellSize * GRID;
 
-  // ─── Boot Sequence ─────────────────────────────────────────
-  useEffect(() => {
-    if (view !== "boot") return;
-    let i = 0;
-    const iv = setInterval(() => {
-      if (i < BOOT_LINES.length) { setBootLines(prev => [...prev, BOOT_LINES[i]]); i++; }
-      else { clearInterval(iv); setTimeout(() => setBootDone(true), 400); }
-    }, 160);
-    return () => clearInterval(iv);
-  }, [view]);
 
-  useEffect(() => { if (bootDone) setTimeout(() => setView("ready"), 600); }, [bootDone]);
 
   // ─── Spawn Food / Power-Up ─────────────────────────────────
   const spawnFood = useCallback(() => {
@@ -693,30 +671,7 @@ const SnakeGame = () => {
     return <SnakeLeaderboard scores={topScores} userBest={userBest} onClose={() => setView("gameover")} onRefetch={refetch} />;
   }
 
-  // ═══════════════════════════════════════════════════════════
-  // ─── BOOT SCREEN ──────────────────────────────────────────
-  // ═══════════════════════════════════════════════════════════
-  if (view === "boot") {
-    return (
-      <div className="w-full max-w-lg mx-auto">
-        <div className="relative rounded-xl overflow-hidden border-2 border-primary/40" style={{ background: "#0a0a0a", fontFamily: "'Courier New', monospace", minHeight: 420 }}>
-          <div className="absolute inset-0 pointer-events-none z-10" style={{ background: "repeating-linear-gradient(0deg, rgba(255,85,0,0.03) 0px, transparent 1px, transparent 3px)" }} />
-          <div className="p-6 relative z-20">
-            {bootLines.map((line, i) => (
-              <motion.p key={i} initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-primary text-sm mb-1" style={{ textShadow: "0 0 8px rgba(255,85,0,0.6)" }}>
-                {line}
-              </motion.p>
-            ))}
-            {bootDone && (
-              <motion.p initial={{ opacity: 0 }} animate={{ opacity: [0, 1, 0, 1] }} transition={{ duration: 0.8 }} className="text-primary text-sm mt-4">
-                {">"} PRESS START_
-              </motion.p>
-            )}
-          </div>
-        </div>
-      </div>
-    );
-  }
+
 
   // ═══════════════════════════════════════════════════════════
   // ─── READY SCREEN ─────────────────────────────────────────

@@ -10,17 +10,6 @@ import { useGameAudio } from "@/hooks/useGameAudio";
 // Premium build · UNBREAKABLE · 2026
 // ═══════════════════════════════════════════════════════════════
 
-const BOOT_LINES = [
-  "> UNBREAKABLE OS v3.2",
-  "> LOADING ZONE ENGINE...",
-  "> FOCUS PROTOCOLS: ARMED",
-  "> STREAK TRACKER: ONLINE",
-  "> MISSION SYSTEM: ACTIVE",
-  "> STATUS: READY TO LOCK IN",
-  "",
-  "  GET IN THE ZONE.",
-];
-
 const DURATION_OPTIONS = [
   { label: "5 MIN", value: 5 * 60, desc: "Quick burst" },
   { label: "15 MIN", value: 15 * 60, desc: "Short session" },
@@ -42,7 +31,7 @@ const TOTAL_KEY = "unbreakable_focus_total_mins";
 const LAST_DATE_KEY = "unbreakable_focus_last_date";
 
 const FocusTimerGame = () => {
-  const [gameState, setGameState] = useState<"boot" | "setup" | "focus" | "break" | "done">("boot");
+  const [gameState, setGameState] = useState<"setup" | "focus" | "break" | "done">("setup");
   const [duration, setDuration] = useState(25 * 60);
   const [remaining, setRemaining] = useState(25 * 60);
   const [isRunning, setIsRunning] = useState(false);
@@ -72,24 +61,9 @@ const FocusTimerGame = () => {
   remainingRef.current = remaining;
 
   // Boot
-  const [bootLines, setBootLines] = useState<string[]>([]);
-  const [bootDone, setBootDone] = useState(false);
 
   const { playHit, playLevelUp, playGameOver, startMusic, stopMusic, toggleMute, isMuted } = useGameAudio("focus");
-
-  useEffect(() => {
-    if (gameState !== "boot") return;
-    let i = 0;
-    const iv = setInterval(() => {
-      if (i < BOOT_LINES.length) { setBootLines(p => [...p, BOOT_LINES[i]]); i++; }
-      else { clearInterval(iv); setTimeout(() => setBootDone(true), 400); }
-    }, 160);
-    return () => clearInterval(iv);
-  }, [gameState]);
-
-  useEffect(() => { if (bootDone) setTimeout(() => setGameState("setup"), 600); }, [bootDone]);
-
-  // Timer logic
+// Timer logic
   useEffect(() => {
     if (!isRunning) {
       if (timerRef.current) clearInterval(timerRef.current);
@@ -183,7 +157,7 @@ const FocusTimerGame = () => {
   const strokeDashoffset = circumference * (1 - (gameState === "break" ? (breakDuration - remaining) / breakDuration : progress));
 
   // ─── Boot ───
-  if (gameState === "boot") {
+  if (gameState === "setup") {
     return (
       <div className="w-full max-w-lg mx-auto">
         <div className="relative rounded-xl overflow-hidden border-2 border-primary/40" style={{ background: "#0a0a0a", fontFamily: "'Courier New', monospace", minHeight: 420 }}>

@@ -9,17 +9,6 @@ import { useGameAudio } from "@/hooks/useGameAudio";
 // Mental Maths Blitz · Premium build · UNBREAKABLE · 2026
 // ═══════════════════════════════════════════════════════════════
 
-const BOOT_LINES = [
-  "> UNBREAKABLE OS v3.2",
-  "> LOADING MATH ENGINE...",
-  "> NUMBER GENERATOR: ONLINE",
-  "> TIMER MODULE: ARMED",
-  "> COGNITIVE LOAD: ESCALATING",
-  "> STATUS: LOCKED IN",
-  "",
-  "  SOLVE EVERYTHING.",
-];
-
 const NAMED_STAGES = [
   { threshold: 0, name: "WARM UP", label: "STAGE 1", timePerQ: 8, maxNum: 12, ops: ["+", "-"] as string[] },
   { threshold: 5, name: "MOVING", label: "STAGE 2", timePerQ: 7, maxNum: 20, ops: ["+", "-"] },
@@ -89,7 +78,7 @@ const generateQuestion = (stage: typeof NAMED_STAGES[0]): Question => {
 const PB_KEY = "unbreakable_maths_pb";
 
 const MentalMathsGame = () => {
-  const [gameState, setGameState] = useState<"boot" | "ready" | "playing" | "gameover">("boot");
+  const [gameState, setGameState] = useState<"ready" | "playing" | "gameover">("ready");
   const [question, setQuestion] = useState<Question | null>(null);
   const [solved, setSolved] = useState(0);
   const [wrong, setWrong] = useState(0);
@@ -115,24 +104,9 @@ const MentalMathsGame = () => {
   const timeLeftRef = useRef(0);
 
   // Boot
-  const [bootLines, setBootLines] = useState<string[]>([]);
-  const [bootDone, setBootDone] = useState(false);
 
   const { playHit, playLevelUp, playGameOver, startMusic, stopMusic, toggleMute, isMuted } = useGameAudio("maths");
-
-  useEffect(() => {
-    if (gameState !== "boot") return;
-    let i = 0;
-    const iv = setInterval(() => {
-      if (i < BOOT_LINES.length) { setBootLines(p => [...p, BOOT_LINES[i]]); i++; }
-      else { clearInterval(iv); setTimeout(() => setBootDone(true), 400); }
-    }, 160);
-    return () => clearInterval(iv);
-  }, [gameState]);
-
-  useEffect(() => { if (bootDone) setTimeout(() => setGameState("ready"), 600); }, [bootDone]);
-
-  const nextQuestion = useCallback((solvedCount: number) => {
+const nextQuestion = useCallback((solvedCount: number) => {
     const stage = getStage(solvedCount);
     const q = generateQuestion(stage);
     setQuestion(q);
@@ -264,7 +238,7 @@ const MentalMathsGame = () => {
   const timerPct = totalTime > 0 ? Math.max(0, timeLeft / totalTime) : 1;
 
   // ─── Boot ───
-  if (gameState === "boot") {
+  if (gameState === "ready") {
     return (
       <div className="w-full max-w-lg mx-auto">
         <div className="relative rounded-xl overflow-hidden border-2 border-primary/40" style={{ background: "#0a0a0a", fontFamily: "'Courier New', monospace", minHeight: 420 }}>

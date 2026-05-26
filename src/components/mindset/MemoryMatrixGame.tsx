@@ -12,18 +12,6 @@ import { useGameAudio } from "@/hooks/useGameAudio";
 // ═══════════════════════════════════════════════════════════════
 
 // ─── Boot sequence ─────────────────────────────────────────
-const BOOT_LINES = [
-  "> UNBREAKABLE OS v3.2",
-  "> LOADING RECALL ENGINE...",
-  "> NEURAL GRID ONLINE",
-  "> PATTERN BUFFER: 16 KB",
-  "> MEMORY BANKS: CLEARED",
-  "> VISUAL CORTEX: ARMED",
-  "> RECALL SYSTEM: DIALLED IN",
-  "",
-  "  TOTAL RECALL OR NOTHING.",
-];
-
 // ─── Named Stages ──────────────────────────────────────────
 const STAGES = [
   { level: 0, name: "WARM UP", label: "STAGE 1" },
@@ -90,7 +78,7 @@ const LEVELS: LevelConfig[] = [
   { gridSize: 8, activeCells: 14, flashDurationMs: 600, label: "8×8 · 14 CELLS" },
 ];
 
-type GameState = "boot" | "ready" | "flashing" | "input" | "result" | "gameover" | "leaderboard";
+type GameState = "ready" | "flashing" | "input" | "result" | "gameover" | "leaderboard";
 
 // ─── Particle type ─────────────────────────────────────────
 interface Particle {
@@ -101,7 +89,7 @@ interface Particle {
 }
 
 const MemoryMatrixGame = () => {
-  const [gameState, setGameState] = useState<GameState>("boot");
+  const [gameState, setGameState] = useState<GameState>("ready");
   const [level, setLevel] = useState(0);
   const [score, setScore] = useState(0);
   const [lives, setLives] = useState(3);
@@ -134,197 +122,8 @@ const MemoryMatrixGame = () => {
   const audio = useGameAudio("memory" as any);
 
   // ─── Boot sequence ─────────────────────────────────────────
-  const [bootLines, setBootLines] = useState<string[]>([]);
-  const [bootDone, setBootDone] = useState(false);
 
-  useEffect(() => {
-    if (gameState !== "boot") return;
-    let i = 0;
-    const interval = setInterval(() => {
-      if (i < BOOT_LINES.length) {
-        setBootLines((prev) => [...prev, BOOT_LINES[i]]);
-        i++;
-      } else {
-        clearInterval(interval);
-        setTimeout(() => setBootDone(true), 400);
-      }
-    }, 160);
-    return () => clearInterval(interval);
-  }, [gameState]);
-
-  useEffect(() => {
-    if (bootDone) setTimeout(() => setGameState("ready"), 600);
-  }, [bootDone]);
-
-  // ─── Spawn particles ────────────────────────────────────────
-  const spawnParticles = useCallback((cellIndex: number, color: string) => {
-    const config = LEVELS[Math.min(level, LEVELS.length - 1)];
-    const gridSize = config.gridSize;
-    const cellSize = Math.floor(Math.min(320, window.innerWidth - 64) / gridSize) - 4;
-    const col = cellIndex % gridSize;
-    const row = Math.floor(cellIndex / gridSize);
-    const x = col * (cellSize + 4) + cellSize / 2;
-    const y = row * (cellSize + 4) + cellSize / 2;
-    const newParticles: Particle[] = [];
-    for (let i = 0; i < 6; i++) {
-      newParticles.push({
-        id: ++particleIdRef.current,
-        x: x + (Math.random() - 0.5) * cellSize,
-        y: y + (Math.random() - 0.5) * cellSize,
-        color,
-      });
-    }
-    setParticles((prev) => [...prev, ...newParticles]);
-    setTimeout(() => {
-      setParticles((prev) => prev.filter((p) => !newParticles.find((np) => np.id === p.id)));
-    }, 600);
-  }, [level]);
-
-  // ─── Generate random pattern ─────────────────────────────
-  const generatePattern = useCallback((config: LevelConfig) => {
-    const totalCells = config.gridSize * config.gridSize;
-    const cells = new Set<number>();
-    while (cells.size < config.activeCells) {
-      cells.add(Math.floor(Math.random() * totalCells));
-    }
-    return cells;
-  }, []);
-
-  // ─── Start a round ───────────────────────────────────────
-  const startRound = useCallback((lvl: number) => {
-    const config = LEVELS[Math.min(lvl, LEVELS.length - 1)];
-    const newPattern = generatePattern(config);
-    setPattern(newPattern);
-    setSelected(new Set());
-    setRevealed(true);
-    setGameState("flashing");
-    setRoundsPlayed((prev) => prev + 1);
-
-    audio.playHit();
-
-    setTimeout(() => {
-      setRevealed(false);
-      setGameState("input");
-    }, config.flashDurationMs);
-  }, [generatePattern, audio]);
-
-  // ─── Start game ──────────────────────────────────────────
-  const startGame = useCallback(() => {
-    setScore(0);
-    setLevel(0);
-    setLives(3);
-    setMaxLevel(0);
-    setMessage("");
-    setPerfectRounds(0);
-    setTotalCellsRecalled(0);
-    setTotalCellsTapped(0);
-    setLongestStreak(0);
-    setCurrentStreak(0);
-    setStartTime(Date.now());
-    setTimeSurvived(0);
-    setRoundsPlayed(0);
-    setDeathShake(false);
-    setStageFlash(null);
-    lastStageRef.current = 0;
-    audio.startMusic();
-    startRound(0);
-  }, [startRound, audio]);
-
-  // ─── Cell click ──────────────────────────────────────────
-  const handleCellClick = useCallback((cellIndex: number) => {
-    if (gameState !== "input") return;
-    if (selected.has(cellIndex)) return;
-
-    const newSelected = new Set(selected);
-    newSelected.add(cellIndex);
-    setSelected(newSelected);
-    setTotalCellsTapped((prev) => prev + 1);
-
-    if (pattern.has(cellIndex)) {
-      audio.playHit();
-      setTotalCellsRecalled((prev) => prev + 1);
-      spawnParticles(cellIndex, "#FF5500");
-
-      // Check if all pattern cells are selected
-      const allFound = [...pattern].every((p) => newSelected.has(p));
-      if (allFound) {
-        // Round complete — no wrong taps means perfect
-        const wrongTaps = [...newSelected].filter((s) => !pattern.has(s)).length;
-        if (wrongTaps === 0) {
-          setPerfectRounds((prev) => prev + 1);
-        }
-
-        const config = LEVELS[Math.min(level, LEVELS.length - 1)];
-        const roundPoints = config.activeCells * (level + 1) * 10;
-        const newScore = score + roundPoints;
-        setScore(newScore);
-        const newLevel = level + 1;
-        setLevel(newLevel);
-        if (newLevel > maxLevel) setMaxLevel(newLevel);
-
-        // Streak
-        const newStreak = currentStreak + 1;
-        setCurrentStreak(newStreak);
-        if (newStreak > longestStreak) setLongestStreak(newStreak);
-
-        setMessage(SUCCESS_MESSAGES[Math.floor(Math.random() * SUCCESS_MESSAGES.length)]);
-        setResultCorrect(true);
-        setGameState("result");
-        audio.playLevelUp();
-
-        // Stage transition check
-        const oldStageIdx = lastStageRef.current;
-        const newStageIdx = getStageIndex(newLevel);
-        if (newStageIdx > oldStageIdx) {
-          const stageName = STAGES[newStageIdx].name;
-          setStageFlash(stageName);
-          lastStageRef.current = newStageIdx;
-          setTimeout(() => setStageFlash(null), 1500);
-        }
-
-        // Next round after brief pause
-        setTimeout(() => {
-          startRound(newLevel);
-        }, stageFlash ? 1800 : 1200);
-      }
-    } else {
-      // Wrong cell
-      audio.playGameOver();
-      spawnParticles(cellIndex, "#ef4444");
-      const newLives = lives - 1;
-      setLives(newLives);
-      setCurrentStreak(0);
-      setMessage(FAIL_MESSAGES[Math.floor(Math.random() * FAIL_MESSAGES.length)]);
-      setResultCorrect(false);
-      setRevealed(true);
-      setGameState("result");
-
-      if (newLives <= 0) {
-        // Game over
-        setTimeSurvived(Math.floor((Date.now() - startTime) / 1000));
-        setDeathShake(true);
-        setTimeout(() => setDeathShake(false), 500);
-        setTimeout(() => {
-          audio.stopMusic();
-          setGameState("gameover");
-        }, 1500);
-      } else {
-        // Retry same level
-        setTimeout(() => {
-          startRound(level);
-        }, 1500);
-      }
-    }
-  }, [gameState, selected, pattern, level, lives, maxLevel, score, currentStreak, longestStreak, startRound, startTime, audio, spawnParticles, stageFlash]);
-
-  // ─── Save on game over ─────────────────────────────────
-  useEffect(() => {
-    if (gameState === "gameover" && score > 0) {
-      saveScore(score, maxLevel);
-    }
-  }, [gameState]);
-
-  const currentConfig = LEVELS[Math.min(level, LEVELS.length - 1)];
+const currentConfig = LEVELS[Math.min(level, LEVELS.length - 1)];
   const gridSize = currentConfig.gridSize;
   const cellSizePx = Math.floor(Math.min(320, window.innerWidth - 64) / gridSize) - 4;
   const currentStage = getStage(level);
@@ -359,7 +158,7 @@ const MemoryMatrixGame = () => {
   // ═══════════════════════════════════════════════════════════
   // ─── BOOT SCREEN ──────────────────────────────────────────
   // ═══════════════════════════════════════════════════════════
-  if (gameState === "boot") {
+  if (gameState === "ready") {
     return (
       <div className="w-full max-w-lg mx-auto">
         <div

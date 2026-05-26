@@ -7,18 +7,6 @@ import { AlleywayLeaderboard } from "./AlleywayLeaderboard";
 import { useGameAudio } from "@/hooks/useGameAudio";
 
 // ─── Boot Sequence ───────────────────────────────────────────
-const BOOT_LINES = [
-  "> UNBREAKABLE OS v3.2",
-  "> LOADING SHATTER ENGINE...",
-  "> BRICK MATRIX: ARMED",
-  "> PHYSICS CORE: CALIBRATED",
-  "> POWER-UP GRID: ONLINE",
-  "> COMBO SYSTEM: ENABLED",
-  "> STATUS: READY TO BREAK",
-  "",
-  "  BREAK EVERY WALL.",
-];
-
 // ─── Theme Palettes ──────────────────────────────────────────
 interface ThemePalette {
   bg: string; bgGradientEnd: string;
@@ -132,7 +120,7 @@ const POWERUP_DURATION = 8000;
 const THEME_SHIFT_INTERVAL = 15;
 
 type PowerUpType = "multiball" | "wide" | "fireball";
-type GameView = "boot" | "ready" | "playing" | "paused" | "gameover" | "leaderboard";
+type GameView = "ready" | "playing" | "paused" | "gameover" | "leaderboard";
 
 interface Brick {
   x: number; y: number; width: number; height: number;
@@ -191,7 +179,7 @@ const AlleywayGame = () => {
 
   const [score, setScore] = useState(0);
   const [highScore, setHighScore] = useState(0);
-  const [view, setView] = useState<GameView>("boot");
+  const [view, setView] = useState<GameView>("ready");
   const [showLeaderboard, setShowLeaderboard] = useState(false);
   const [themeShifts, setThemeShifts] = useState(0);
   const [activePowerUpDisplay, setActivePowerUpDisplay] = useState<PowerUpType[]>([]);
@@ -206,37 +194,12 @@ const AlleywayGame = () => {
   const [steelDestroyed, setSteelDestroyed] = useState(0);
 
   // Boot
-  const [bootLines, setBootLines] = useState<string[]>([]);
-  const [bootDone, setBootDone] = useState(false);
 
   const { saveScore, topScores, userBest, refetch } = useAlleywayScores();
   const { playHit, playLevelUp, playGameOver, startMusic, stopMusic, toggleMute, isMuted } = useGameAudio("alleyway");
 
   const [scale, setScale] = useState(1);
-  useEffect(() => {
-    const updateScale = () => setScale(Math.min(window.innerWidth - 32, CANVAS_WIDTH) / CANVAS_WIDTH);
-    updateScale();
-    window.addEventListener("resize", updateScale);
-    return () => window.removeEventListener("resize", updateScale);
-  }, []);
-
-  const scaledWidth = CANVAS_WIDTH * scale;
-  const scaledHeight = CANVAS_HEIGHT * scale;
-
-  // ─── Boot Sequence ─────────────────────────────────────────
-  useEffect(() => {
-    if (view !== "boot") return;
-    let i = 0;
-    const iv = setInterval(() => {
-      if (i < BOOT_LINES.length) { setBootLines(prev => [...prev, BOOT_LINES[i]]); i++; }
-      else { clearInterval(iv); setTimeout(() => setBootDone(true), 400); }
-    }, 160);
-    return () => clearInterval(iv);
-  }, [view]);
-
-  useEffect(() => { if (bootDone) setTimeout(() => setView("ready"), 600); }, [bootDone]);
-
-  // ─── Helpers ───────────────────────────────────────────────
+// ─── Helpers ───────────────────────────────────────────────
   const getCurrentPaddleWidth = useCallback(() => {
     const wideExpiry = activePowerUpsRef.current.get("wide");
     return wideExpiry && performance.now() < wideExpiry ? PADDLE_WIDTH_WIDE : PADDLE_WIDTH;
@@ -921,7 +884,7 @@ const AlleywayGame = () => {
   // ═══════════════════════════════════════════════════════════
   // ─── BOOT SCREEN ──────────────────────────────────────────
   // ═══════════════════════════════════════════════════════════
-  if (view === "boot") {
+  if (view === "ready") {
     return (
       <div className="w-full max-w-lg mx-auto">
         <div className="relative rounded-xl overflow-hidden border-2 border-primary/40" style={{ background: "#0a0a0a", fontFamily: "'Courier New', monospace", minHeight: 420 }}>

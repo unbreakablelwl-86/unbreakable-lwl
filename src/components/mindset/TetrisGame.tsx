@@ -12,18 +12,6 @@ import { useGameAudio } from "@/hooks/useGameAudio";
 // ═══════════════════════════════════════════════════════════════
 
 // ─── Boot sequence ─────────────────────────────────────────
-const BOOT_LINES = [
-  "> UNBREAKABLE OS v3.2",
-  "> LOADING STACK ENGINE...",
-  "> BLOCK PHYSICS: ONLINE",
-  "> GRAVITY MODULE: ARMED",
-  "> COMBO SYSTEM: READY",
-  "> THEME ROTATION: 6 PALETTES",
-  "> STATUS: DIALLED IN",
-  "",
-  "  ORDER FROM CHAOS.",
-];
-
 // ─── Named Stages (by lines cleared) ──────────────────────
 const NAMED_STAGES = [
   { threshold: 0, name: "WARM UP", label: "STAGE 1" },
@@ -222,7 +210,7 @@ const TetrisGame = () => {
   const [linesCleared, setLinesCleared] = useState(0);
   const [level, setLevel] = useState(1);
   const [highScore, setHighScore] = useState(0);
-  const [gameState, setGameState] = useState<"boot" | "ready" | "playing" | "paused" | "gameover">("boot");
+  const [gameState, setGameState] = useState<"ready" | "playing" | "paused" | "gameover">("ready");
   const [showLeaderboard, setShowLeaderboard] = useState(false);
 
   // Premium stats
@@ -241,29 +229,12 @@ const TetrisGame = () => {
   const lastNamedStageRef = useRef(0);
 
   // Boot sequence
-  const [bootLines, setBootLines] = useState<string[]>([]);
-  const [bootDone, setBootDone] = useState(false);
 
   const { saveScore, topScores, userBest, refetch } = useTetrisScores();
   const { playHit, playLevelUp, playGameOver, startMusic, stopMusic, toggleMute, isMuted } = useGameAudio("tetris");
 
   // ─── Boot sequence ─────────────────────────────────────────
-  useEffect(() => {
-    if (gameState !== "boot") return;
-    let i = 0;
-    const interval = setInterval(() => {
-      if (i < BOOT_LINES.length) {
-        setBootLines((prev) => [...prev, BOOT_LINES[i]]);
-        i++;
-      } else {
-        clearInterval(interval);
-        setTimeout(() => setBootDone(true), 400);
-      }
-    }, 160);
-    return () => clearInterval(interval);
-  }, [gameState]);
-
-  useEffect(() => {
+useEffect(() => {
     if (bootDone) setTimeout(() => setGameState("ready"), 600);
   }, [bootDone]);
 
@@ -732,7 +703,7 @@ const TetrisGame = () => {
   // ═══════════════════════════════════════════════════════════
   // ─── BOOT SCREEN ──────────────────────────────────────────
   // ═══════════════════════════════════════════════════════════
-  if (gameState === "boot") {
+  if (gameState === "ready") {
     return (
       <div className="w-full max-w-lg mx-auto">
         <div

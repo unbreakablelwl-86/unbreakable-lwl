@@ -12,18 +12,6 @@ import { useGameAudio } from "@/hooks/useGameAudio";
 // ═══════════════════════════════════════════════════════════════
 
 // ─── Boot sequence ─────────────────────────────────────────
-const BOOT_LINES = [
-  "> UNBREAKABLE OS v3.2",
-  "> LOADING LOCK IN ENGINE...",
-  "> PATTERN RECOGNITION: ONLINE",
-  "> AUDIO SYNC MODULE: READY",
-  "> DIFFICULTY: ESCALATING",
-  "> SEQUENCE BUFFER: ARMED",
-  "> STATUS: LOCKED IN",
-  "",
-  "  ONE WRONG MOVE, IT'S OVER.",
-];
-
 // ─── Named Stages (by sequence length) ────────────────────
 const STAGES = [
   { threshold: 1, name: "WARM UP", label: "STAGE 1" },
@@ -80,7 +68,7 @@ const PADS: PadConfig[] = [
   { color: "#1a1a1a", activeColor: "#FFFFFF", glow: "rgba(255,255,255,0.5)", note: 659.25, label: "■" },
 ];
 
-type GameState = "boot" | "ready" | "watching" | "input" | "success" | "fail" | "gameover" | "leaderboard";
+type GameState = "ready" | "watching" | "input" | "success" | "fail" | "gameover" | "leaderboard";
 
 const INITIAL_PLAY_SPEED = 600;
 const MIN_PLAY_SPEED = 200;
@@ -95,7 +83,7 @@ interface Particle {
 }
 
 const PatternBreakerGame = () => {
-  const [gameState, setGameState] = useState<GameState>("boot");
+  const [gameState, setGameState] = useState<GameState>("ready");
   const [sequence, setSequence] = useState<number[]>([]);
   const [playerIndex, setPlayerIndex] = useState(0);
   const [score, setScore] = useState(0);
@@ -127,223 +115,8 @@ const PatternBreakerGame = () => {
   const audio = useGameAudio("pattern" as any);
 
   // ─── Boot sequence ─────────────────────────────────────────
-  const [bootLines, setBootLines] = useState<string[]>([]);
-  const [bootDone, setBootDone] = useState(false);
 
-  useEffect(() => {
-    if (gameState !== "boot") return;
-    let i = 0;
-    const interval = setInterval(() => {
-      if (i < BOOT_LINES.length) {
-        setBootLines((prev) => [...prev, BOOT_LINES[i]]);
-        i++;
-      } else {
-        clearInterval(interval);
-        setTimeout(() => setBootDone(true), 400);
-      }
-    }, 160);
-    return () => clearInterval(interval);
-  }, [gameState]);
-
-  useEffect(() => {
-    if (bootDone) setTimeout(() => setGameState("ready"), 600);
-  }, [bootDone]);
-
-  // ─── CRT Overlay ─────────────────────────────────────────
-  const CRTOverlay = () => (
-    <div
-      className="absolute inset-0 pointer-events-none z-30"
-      style={{
-        background: "repeating-linear-gradient(0deg, rgba(255,85,0,0.03) 0px, transparent 1px, transparent 3px)",
-        mixBlendMode: "multiply",
-      }}
-    />
-  );
-
-  // ─── Spawn particles ─────────────────────────────────────
-  const spawnParticles = useCallback((padIndex: number, color: string) => {
-    // Approximate pad positions based on 2x2 grid
-    const positions = [
-      { x: 90, y: 80 },   // top-left
-      { x: 250, y: 80 },  // top-right
-      { x: 90, y: 220 },  // bottom-left
-      { x: 250, y: 220 }, // bottom-right
-    ];
-    const pos = positions[padIndex] || positions[0];
-    const newParticles: Particle[] = [];
-    for (let i = 0; i < 8; i++) {
-      newParticles.push({
-        id: ++particleIdRef.current,
-        x: pos.x + (Math.random() - 0.5) * 80,
-        y: pos.y + (Math.random() - 0.5) * 80,
-        color,
-      });
-    }
-    setParticles((prev) => [...prev, ...newParticles]);
-    setTimeout(() => {
-      setParticles((prev) => prev.filter((p) => !newParticles.find((np) => np.id === p.id)));
-    }, 600);
-  }, []);
-
-  // ─── Play a pad tone ─────────────────────────────────────
-  const playPadTone = useCallback((padIndex: number) => {
-    if (audio.isMuted) return;
-    if (!audioCtxRef.current) {
-      audioCtxRef.current = new AudioContext();
-    }
-    const ctx = audioCtxRef.current;
-    if (ctx.state === "suspended") ctx.resume();
-
-    const pad = PADS[padIndex];
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.type = "square";
-    osc.frequency.value = pad.note;
-    gain.gain.setValueAtTime(0.12, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.start(ctx.currentTime);
-    osc.stop(ctx.currentTime + 0.3);
-  }, [audio.isMuted]);
-
-  // ─── Flash a pad ─────────────────────────────────────────
-  const flashPad = useCallback((padIndex: number, duration = 300) => {
-    setActivePad(padIndex);
-    playPadTone(padIndex);
-    setTimeout(() => setActivePad(null), duration);
-  }, [playPadTone]);
-
-  // ─── Play sequence ───────────────────────────────────────
-  const playSequence = useCallback((seq: number[], onComplete: () => void) => {
-    timeoutsRef.current.forEach(clearTimeout);
-    timeoutsRef.current = [];
-
-    const speed = Math.max(MIN_PLAY_SPEED, INITIAL_PLAY_SPEED - (seq.length - 1) * SPEED_DECREASE_PER_LEVEL);
-    const flashDuration = speed * 0.6;
-
-    seq.forEach((padIndex, i) => {
-      const t = setTimeout(() => {
-        flashPad(padIndex, flashDuration);
-      }, i * speed);
-      timeoutsRef.current.push(t);
-    });
-
-    const doneTimeout = setTimeout(onComplete, seq.length * speed + 200);
-    timeoutsRef.current.push(doneTimeout);
-  }, [flashPad]);
-
-  // ─── Start new round ─────────────────────────────────────
-  const startRound = useCallback((currentSeq: number[], roundNum: number) => {
-    const newPad = Math.floor(Math.random() * PADS.length);
-    const newSeq = [...currentSeq, newPad];
-    setSequence(newSeq);
-    setPlayerIndex(0);
-    setRound(roundNum);
-    setGameState("watching");
-
-    playSequence(newSeq, () => {
-      setGameState("input");
-      setLastTapTime(Date.now());
-    });
-  }, [playSequence]);
-
-  // ─── Start game ──────────────────────────────────────────
-  const startGame = useCallback(() => {
-    setScore(0);
-    setMaxSequence(0);
-    setMessage("");
-    setSequence([]);
-    setWrongPad(null);
-    setTotalCorrectTaps(0);
-    setPerfectRounds(0);
-    setStartTime(Date.now());
-    setTimeSurvived(0);
-    setTapTimes([]);
-    setLastTapTime(0);
-    setDeathShake(false);
-    setStageFlash(null);
-    lastStageRef.current = 0;
-    audio.startMusic();
-
-    setTimeout(() => {
-      startRound([], 1);
-    }, 500);
-  }, [startRound, audio]);
-
-  // ─── Player taps a pad ───────────────────────────────────
-  const handlePadTap = useCallback((padIndex: number) => {
-    if (gameState !== "input") return;
-
-    flashPad(padIndex, 200);
-    const now = Date.now();
-    const tapDelta = lastTapTime > 0 ? now - lastTapTime : 0;
-    setLastTapTime(now);
-
-    if (padIndex === sequence[playerIndex]) {
-      // Correct
-      setTotalCorrectTaps((prev) => prev + 1);
-      if (tapDelta > 0) setTapTimes((prev) => [...prev, tapDelta]);
-      spawnParticles(padIndex, PADS[padIndex].activeColor);
-
-      const nextIndex = playerIndex + 1;
-
-      if (nextIndex >= sequence.length) {
-        // Completed the sequence!
-        const roundPoints = sequence.length * 10 + Math.max(0, (sequence.length - 3) * 5);
-        setScore((prev) => prev + roundPoints);
-        if (sequence.length > maxSequence) setMaxSequence(sequence.length);
-        setPerfectRounds((prev) => prev + 1);
-        setMessage(SUCCESS_MESSAGES[Math.floor(Math.random() * SUCCESS_MESSAGES.length)]);
-        setGameState("success");
-        audio.playLevelUp();
-
-        // Stage transition check
-        const newSeqLen = sequence.length + 1; // next round length
-        const oldStageIdx = lastStageRef.current;
-        const newStageIdx = getStageIndex(newSeqLen);
-        if (newStageIdx > oldStageIdx) {
-          const stageName = STAGES[newStageIdx].name;
-          setStageFlash(stageName);
-          lastStageRef.current = newStageIdx;
-          setTimeout(() => setStageFlash(null), 1500);
-        }
-
-        // Next round after pause
-        setTimeout(() => {
-          startRound(sequence, round + 1);
-        }, stageFlash ? 1800 : 1200);
-      } else {
-        setPlayerIndex(nextIndex);
-      }
-    } else {
-      // Wrong!
-      setWrongPad(padIndex);
-      spawnParticles(padIndex, "#ef4444");
-      setMessage(FAIL_MESSAGES[Math.floor(Math.random() * FAIL_MESSAGES.length)]);
-      if (sequence.length > maxSequence) setMaxSequence(sequence.length - 1);
-      setTimeSurvived(Math.floor((Date.now() - startTime) / 1000));
-      setDeathShake(true);
-      setTimeout(() => setDeathShake(false), 500);
-      setGameState("fail");
-      audio.playGameOver();
-
-      setTimeout(() => {
-        setWrongPad(null);
-        audio.stopMusic();
-        setGameState("gameover");
-      }, 1500);
-    }
-  }, [gameState, sequence, playerIndex, maxSequence, round, flashPad, startRound, audio, lastTapTime, startTime, spawnParticles, stageFlash]);
-
-  // ─── Save on game over ─────────────────────────────────
-  useEffect(() => {
-    if (gameState === "gameover" && score > 0) {
-      saveScore(score, maxSequence);
-    }
-  }, [gameState]);
-
-  // ─── Cleanup ─────────────────────────────────────────────
+// ─── Cleanup ─────────────────────────────────────────────
   useEffect(() => {
     return () => {
       timeoutsRef.current.forEach(clearTimeout);
@@ -372,7 +145,7 @@ const PatternBreakerGame = () => {
   // ═══════════════════════════════════════════════════════════
   // ─── BOOT SCREEN ──────────────────────────────────────────
   // ═══════════════════════════════════════════════════════════
-  if (gameState === "boot") {
+  if (gameState === "ready") {
     return (
       <div className="w-full max-w-lg mx-auto">
         <div

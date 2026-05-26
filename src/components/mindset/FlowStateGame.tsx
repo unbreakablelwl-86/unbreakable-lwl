@@ -9,17 +9,6 @@ import { useGameAudio } from "@/hooks/useGameAudio";
 // Endless runner · Premium build · UNBREAKABLE · 2026
 // ═══════════════════════════════════════════════════════════════
 
-const BOOT_LINES = [
-  "> UNBREAKABLE OS v3.2",
-  "> LOADING FLOW ENGINE...",
-  "> OBSTACLE GENERATOR: ARMED",
-  "> GRAVITY PHYSICS: ONLINE",
-  "> ZONE DETECTION: READY",
-  "> STATUS: LOCKED IN",
-  "",
-  "  STAY IN THE ZONE.",
-];
-
 const NAMED_STAGES = [
   { threshold: 0, name: "WARM UP", label: "STAGE 1" },
   { threshold: 500, name: "MOVING", label: "STAGE 2" },
@@ -87,7 +76,7 @@ const FlowStateGame = () => {
   const shakeRef = useRef(0);
   const lastStageRef = useRef(0);
 
-  const [gameState, setGameState] = useState<"boot" | "ready" | "playing" | "gameover">("boot");
+  const [gameState, setGameState] = useState<"ready" | "playing" | "gameover">("ready");
   const [score, setScore] = useState(0);
   const [personalBest, setPersonalBest] = useState(() => {
     const saved = localStorage.getItem(PB_KEY);
@@ -103,8 +92,6 @@ const FlowStateGame = () => {
   const [timeSurvived, setTimeSurvived] = useState(0);
 
   // Boot
-  const [bootLines, setBootLines] = useState<string[]>([]);
-  const [bootDone, setBootDone] = useState(false);
 
   const { playHit, playLevelUp, playGameOver, startMusic, stopMusic, toggleMute, isMuted } = useGameAudio("flow");
 
@@ -113,20 +100,7 @@ const FlowStateGame = () => {
   const maxSpeedRef = useRef(0);
   const jumpCountRef = useRef(0);
   const doubleJumpRef = useRef(0);
-
-  useEffect(() => {
-    if (gameState !== "boot") return;
-    let i = 0;
-    const iv = setInterval(() => {
-      if (i < BOOT_LINES.length) { setBootLines(p => [...p, BOOT_LINES[i]]); i++; }
-      else { clearInterval(iv); setTimeout(() => setBootDone(true), 400); }
-    }, 160);
-    return () => clearInterval(iv);
-  }, [gameState]);
-
-  useEffect(() => { if (bootDone) setTimeout(() => setGameState("ready"), 600); }, [bootDone]);
-
-  // Responsive
+// Responsive
   const [scale, setScale] = useState(1);
   useEffect(() => {
     const upd = () => setScale(Math.min((Math.min(window.innerWidth - 32, 500)) / W, 1.2));
@@ -449,7 +423,7 @@ const FlowStateGame = () => {
   const timeStr = mins > 0 ? `${mins}m ${secs}s` : `${secs}s`;
 
   // ─── Boot ───
-  if (gameState === "boot") {
+  if (gameState === "ready") {
     return (
       <div className="w-full max-w-lg mx-auto">
         <div className="relative rounded-xl overflow-hidden border-2 border-primary/40" style={{ background: "#0a0a0a", fontFamily: "'Courier New', monospace", minHeight: 420 }}>

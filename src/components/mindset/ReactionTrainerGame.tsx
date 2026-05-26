@@ -7,18 +7,6 @@ import { ReactionLeaderboard } from "./ReactionLeaderboard";
 import { useGameAudio } from "@/hooks/useGameAudio";
 
 // ─── Boot Sequence ───────────────────────────────────────────
-const BOOT_LINES = [
-  "> UNBREAKABLE OS v2.4",
-  "> LOADING STRIKE CORE...",
-  "> CALIBRATING NEURAL LINK...",
-  "> REFLEX MODULE: ONLINE",
-  "> TARGET SYSTEM: ARMED",
-  "> COMBO ENGINE: PRIMED",
-  "> STATUS: LOCKED IN",
-  "",
-  "  STRIKE OR DIE.",
-];
-
 // ─── Stage Names (score thresholds) ──────────────────────────
 const STAGES = [
   { threshold: 0, name: "WARM UP", label: "STAGE 1" },
@@ -75,7 +63,7 @@ interface Target {
   lifetime: number;
 }
 
-type GameView = "boot" | "ready" | "playing" | "gameover" | "leaderboard";
+type GameView = "ready" | "playing" | "gameover" | "leaderboard";
 
 // ─── Constants ───────────────────────────────────────────────
 const GAME_DURATION = 30_000;
@@ -89,7 +77,7 @@ const MAX_CONCURRENT_TARGETS = 5;
 const ReactionTrainerGame = () => {
   const canvasRef = useRef<HTMLDivElement>(null);
 
-  const [view, setView] = useState<GameView>("boot");
+  const [view, setView] = useState<GameView>("ready");
   const [score, setScore] = useState(0);
   const [combo, setCombo] = useState(0);
   const [bestCombo, setBestCombo] = useState(0);
@@ -119,201 +107,13 @@ const ReactionTrainerGame = () => {
   const reactionSumRef = useRef(0);
 
   // Boot
-  const [bootLines, setBootLines] = useState<string[]>([]);
-  const [bootDone, setBootDone] = useState(false);
 
   const { topScores, userBest, saveScore, refetch } = useReactionScores();
   const audio = useGameAudio("reaction" as any);
 
   // ─── Boot Sequence ─────────────────────────────────────────
-  useEffect(() => {
-    if (view !== "boot") return;
-    let i = 0;
-    const iv = setInterval(() => {
-      if (i < BOOT_LINES.length) { setBootLines(prev => [...prev, BOOT_LINES[i]]); i++; }
-      else { clearInterval(iv); setTimeout(() => setBootDone(true), 400); }
-    }, 160);
-    return () => clearInterval(iv);
-  }, [view]);
 
-  useEffect(() => { if (bootDone) setTimeout(() => setView("ready"), 600); }, [bootDone]);
-
-  // ─── Difficulty Scaling ────────────────────────────────────
-  const getDifficulty = useCallback((elapsed: number) => {
-    const progress = Math.min(elapsed / GAME_DURATION, 1);
-    return {
-      spawnInterval: INITIAL_SPAWN_INTERVAL - (INITIAL_SPAWN_INTERVAL - MIN_SPAWN_INTERVAL) * progress,
-      lifetime: INITIAL_TARGET_LIFETIME - (INITIAL_TARGET_LIFETIME - MIN_TARGET_LIFETIME) * progress,
-    };
-  }, []);
-
-  // ─── Spawn Target ─────────────────────────────────────────
-  const spawnTarget = useCallback(() => {
-    const elapsed = Date.now() - gameStartRef.current;
-    const { lifetime } = getDifficulty(elapsed);
-    if (targetsRef.current.length >= MAX_CONCURRENT_TARGETS) return;
-
-    const shapes: TargetShape[] = ["circle", "diamond", "square", "cross"];
-    const size = 44 + Math.random() * 20;
-    const padding = size;
-    const maxX = 320 - padding;
-    const maxY = 400 - padding;
-
-    const newTarget: Target = {
-      id: targetIdRef.current++,
-      x: padding + Math.random() * (maxX - padding),
-      y: padding + Math.random() * (maxY - padding),
-      size,
-      shape: shapes[Math.floor(Math.random() * shapes.length)],
-      spawnedAt: Date.now(),
-      lifetime,
-    };
-
-    spawnedRef.current++;
-    setTotalSpawned(spawnedRef.current);
-    targetsRef.current = [...targetsRef.current, newTarget];
-    setTargets([...targetsRef.current]);
-  }, [getDifficulty]);
-
-  // ─── Remove Expired (miss) ────────────────────────────────
-  useEffect(() => {
-    if (view !== "playing") return;
-    const interval = setInterval(() => {
-      const now = Date.now();
-      const expired = targetsRef.current.filter(t => now - t.spawnedAt > t.lifetime);
-      if (expired.length > 0) {
-        setCombo(0);
-        missesRef.current += expired.length;
-        setTotalMisses(missesRef.current);
-        setMissFlash(true);
-        setMessage(MISS_MESSAGES[Math.floor(Math.random() * MISS_MESSAGES.length)]);
-        setTimeout(() => setMissFlash(false), 200);
-        audio.playGameOver();
-        targetsRef.current = targetsRef.current.filter(t => now - t.spawnedAt <= t.lifetime);
-        setTargets([...targetsRef.current]);
-      }
-    }, 50);
-    return () => clearInterval(interval);
-  }, [view, audio]);
-
-  // ─── Game Timer ────────────────────────────────────────────
-  const endGame = useCallback(() => {
-    if (spawnTimerRef.current) clearTimeout(spawnTimerRef.current);
-    audio.stopMusic();
-    audio.playGameOver();
-    setDeathShake(true);
-    setTimeout(() => setDeathShake(false), 400);
-    setView("gameover");
-    setTargets([]);
-    targetsRef.current = [];
-  }, [audio]);
-
-  useEffect(() => {
-    if (view !== "playing") return;
-    const interval = setInterval(() => {
-      const elapsed = Date.now() - gameStartRef.current;
-      const remaining = Math.max(0, GAME_DURATION - elapsed);
-      setTimeLeft(remaining);
-      if (remaining <= 0) endGame();
-    }, 50);
-    return () => clearInterval(interval);
-  }, [view, endGame]);
-
-  // ─── Spawn Loop ────────────────────────────────────────────
-  useEffect(() => {
-    if (view !== "playing") return;
-    const scheduleSpawn = () => {
-      const elapsed = Date.now() - gameStartRef.current;
-      const { spawnInterval } = getDifficulty(elapsed);
-      spawnTimerRef.current = setTimeout(() => {
-        spawnTarget();
-        scheduleSpawn();
-      }, spawnInterval);
-    };
-    spawnTarget();
-    scheduleSpawn();
-    return () => { if (spawnTimerRef.current) clearTimeout(spawnTimerRef.current); };
-  }, [view, spawnTarget, getDifficulty]);
-
-  // ─── Hit Target ────────────────────────────────────────────
-  const hitTarget = useCallback((target: Target) => {
-    const reactionMs = Math.round(Date.now() - target.spawnedAt);
-    const newCombo = combo + 1;
-    const comboMultiplier = 1 + Math.floor(newCombo / 3) * 0.5;
-    const basePoints = Math.max(1, Math.round((target.lifetime - reactionMs) / 50));
-    const points = Math.round(basePoints * comboMultiplier);
-
-    // Update score + check stage
-    const newScore = scoreRef.current + points;
-    scoreRef.current = newScore;
-    setScore(newScore);
-
-    setCombo(newCombo);
-    if (newCombo > bestCombo) setBestCombo(newCombo);
-
-    // Reaction tracking
-    hitsRef.current++;
-    reactionSumRef.current += reactionMs;
-    setTotalHits(hitsRef.current);
-    setAvgReactionMs(Math.round(reactionSumRef.current / hitsRef.current));
-    setLastReactionMs(reactionMs);
-    if (reactionMs < bestReactionMs) setBestReactionMs(reactionMs);
-
-    setMessage(HIT_MESSAGES[Math.floor(Math.random() * HIT_MESSAGES.length)]);
-    setHitEffect({ x: target.x, y: target.y, id: target.id });
-    setTimeout(() => setHitEffect(null), 300);
-
-    targetsRef.current = targetsRef.current.filter(t => t.id !== target.id);
-    setTargets([...targetsRef.current]);
-
-    audio.playHit();
-
-    // Stage transition
-    const oldStage = lastStageRef.current;
-    const newStage = getStageIndex(newScore);
-    if (newStage > oldStage) {
-      lastStageRef.current = newStage;
-      audio.playLevelUp();
-      const s = STAGES[newStage];
-      setStageFlash(`${s.label}: ${s.name}`);
-      setTimeout(() => setStageFlash(null), 1600);
-    } else if (newCombo > 0 && newCombo % 5 === 0) {
-      audio.playLevelUp();
-    }
-  }, [combo, bestCombo, bestReactionMs, audio]);
-
-  // ─── Start Game ────────────────────────────────────────────
-  const startGame = useCallback(() => {
-    scoreRef.current = 0;
-    lastStageRef.current = 0;
-    hitsRef.current = 0;
-    missesRef.current = 0;
-    spawnedRef.current = 0;
-    reactionSumRef.current = 0;
-    targetIdRef.current = 0;
-    gameStartRef.current = Date.now();
-
-    setScore(0); setCombo(0); setBestCombo(0);
-    setTimeLeft(GAME_DURATION);
-    setBestReactionMs(9999); setAvgReactionMs(0);
-    setLastReactionMs(null);
-    setMessage(""); setTargets([]);
-    setTotalHits(0); setTotalMisses(0); setTotalSpawned(0);
-    setStageFlash(null); setDeathShake(false);
-    targetsRef.current = [];
-
-    setView("playing");
-    audio.startMusic();
-  }, [audio]);
-
-  // ─── Save Score on Game Over ───────────────────────────────
-  useEffect(() => {
-    if (view === "gameover" && score > 0) {
-      saveScore(score, bestReactionMs === 9999 ? 0 : bestReactionMs);
-    }
-  }, [view]);
-
-  // ─── Render Target Shape ───────────────────────────────────
+// ─── Render Target Shape ───────────────────────────────────
   const renderTarget = (target: Target) => {
     const age = (Date.now() - target.spawnedAt) / target.lifetime;
     const opacity = age > 0.7 ? 1 - (age - 0.7) / 0.3 : 1;
@@ -387,7 +187,7 @@ const ReactionTrainerGame = () => {
   // ═══════════════════════════════════════════════════════════
   // ─── BOOT SCREEN ──────────────────────────────────────────
   // ═══════════════════════════════════════════════════════════
-  if (view === "boot") {
+  if (view === "ready") {
     return (
       <div className="w-full max-w-lg mx-auto">
         <div className="relative rounded-xl overflow-hidden border-2 border-primary/40" style={{ background: "#0a0a0a", fontFamily: "'Courier New', monospace", minHeight: 420 }}>
