@@ -161,46 +161,6 @@ const currentConfig = LEVELS[Math.min(level, LEVELS.length - 1)];
   }
 
   // ═══════════════════════════════════════════════════════════
-  // ─── BOOT SCREEN ──────────────────────────────────────────
-  // ═══════════════════════════════════════════════════════════
-  if (gameState === "ready") {
-    return (
-      <div className="w-full max-w-lg mx-auto">
-        <div
-          className="relative rounded-xl overflow-hidden border-2 border-primary/40"
-          style={{ background: "#0a0a0a", fontFamily: "'Courier New', monospace", minHeight: 420 }}
-        >
-          <CRTOverlay />
-          <div className="p-6 relative z-20">
-            {bootLines.map((line, i) => (
-              <motion.p
-                key={i}
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.15 }}
-                className="text-primary text-sm mb-1"
-                style={{ textShadow: "0 0 8px rgba(255,85,0,0.6)" }}
-              >
-                {line}
-              </motion.p>
-            ))}
-            {bootDone && (
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: [0, 1, 0, 1] }}
-                transition={{ duration: 0.8 }}
-                className="text-primary text-sm mt-4"
-              >
-                {">"} PRESS START_
-              </motion.p>
-            )}
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // ═══════════════════════════════════════════════════════════
   // ─── READY SCREEN ─────────────────────────────────────────
   // ═══════════════════════════════════════════════════════════
   if (gameState === "ready") {

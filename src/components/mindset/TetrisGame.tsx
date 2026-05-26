@@ -236,10 +236,7 @@ const TetrisGame = () => {
   const { saveScore, topScores, userBest, refetch } = useTetrisScores();
   const { playHit, playLevelUp, playGameOver, startMusic, stopMusic, toggleMute, isMuted } = useGameAudio("tetris");
 
-  // ─── Boot sequence ─────────────────────────────────────────
-useEffect(() => {
-    if (bootDone) setTimeout(() => setGameState("ready"), 600);
-  }, [bootDone]);
+  // (boot sequence removed — skip straight to ready)
 
   // Responsive scaling
   const [scale, setScale] = useState(1);
@@ -708,47 +705,6 @@ useEffect(() => {
 
   // ═══════════════════════════════════════════════════════════
   // ─── BOOT SCREEN ──────────────────────────────────────────
-  // ═══════════════════════════════════════════════════════════
-  if (gameState === "ready") {
-    return (
-      <div className="w-full max-w-lg mx-auto">
-        <div
-          className="relative rounded-xl overflow-hidden border-2 border-primary/40"
-          style={{ background: "#0a0a0a", fontFamily: "'Courier New', monospace", minHeight: 420 }}
-        >
-          <div
-            className="absolute inset-0 pointer-events-none z-30"
-            style={{ background: "repeating-linear-gradient(0deg, rgba(255,85,0,0.04) 0px, transparent 1px, transparent 2px)" }}
-          />
-          <div className="p-6 relative z-20">
-            {bootLines.map((line, i) => (
-              <motion.p
-                key={i}
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.15 }}
-                className="text-primary text-sm mb-1"
-                style={{ textShadow: "0 0 8px rgba(255,85,0,0.6)" }}
-              >
-                {line}
-              </motion.p>
-            ))}
-            {bootDone && (
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: [0, 1, 0, 1] }}
-                transition={{ duration: 0.8 }}
-                className="text-primary text-sm mt-4"
-              >
-                {">"} PRESS START_
-              </motion.p>
-            )}
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   // ═══════════════════════════════════════════════════════════
   // ─── READY SCREEN ─────────────────────────────────────────
   // ═══════════════════════════════════════════════════════════
