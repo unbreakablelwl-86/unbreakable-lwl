@@ -176,6 +176,10 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
   const [musicClipEnd, setMusicClipEnd] = useState(15);     // seconds (default 15s clip)
   const [showClipTrimmer, setShowClipTrimmer] = useState(false);
   const audioPreviewRef = useRef<HTMLAudioElement | null>(null);
+  // Draggable music sticker position (% of canvas)
+  const [musicStickerPos, setMusicStickerPos] = useState({ x: 50, y: 85 });
+  const [isDraggingMusic, setIsDraggingMusic] = useState(false);
+  const musicDragRef = useRef<{ startX: number; startY: number; startPosX: number; startPosY: number } | null>(null);
   const mediaDragRef = useRef<{ startX: number; startY: number; startTX: number; startTY: number } | null>(null);
   const mediaPinchRef = useRef<{ dist: number; scale: number } | null>(null);
   
@@ -702,128 +706,66 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
           </div>
         ))}
 
-        {/* Music sticker overlay — shows when a track is selected */}
-        {selectedTrack && (
-          <div className="absolute bottom-36 left-4 right-4 z-30 pointer-events-none">
-            <div className="max-w-[280px] mx-auto pointer-events-auto">
-              {/* Track info bar */}
-              <div className="flex items-center gap-2.5 px-3 py-2 rounded-t-xl bg-black/60 backdrop-blur-md border border-b-0 border-white/10">
-                <div className="w-10 h-10 rounded-lg overflow-hidden bg-primary/20 shrink-0 shadow-[0_0_8px_rgba(255,85,0,0.3)]">
-                  {selectedTrack.cover_url ? (
-                    <img src={selectedTrack.cover_url} alt="" className="w-full h-full object-cover" />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <Music className="w-4 h-4 text-primary/60" />
-                    </div>
-                  )}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs font-semibold text-white truncate">{selectedTrack.title}</p>
-                  <p className="text-[10px] text-white/60 truncate">{selectedTrack.artist_name || 'Un-Tunes'}</p>
-                </div>
-                <button
-                  className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center shrink-0 hover:bg-white/20 transition-colors"
-                  onClick={() => setShowClipTrimmer(!showClipTrimmer)}
-                  title="Trim clip"
-                >
-                  <Minus className="w-3.5 h-3.5 text-primary" style={{ transform: 'rotate(90deg)' }} />
-                </button>
-                <button
-                  className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center shrink-0 hover:bg-white/20 transition-colors"
-                  onClick={() => { setSelectedTrack(null); setShowClipTrimmer(false); if (audioPreviewRef.current) { audioPreviewRef.current.pause(); } }}
-                >
-                  <X className="w-3 h-3 text-white/80" />
-                </button>
+        {/* Music sticker — draggable compact pill */}
+        {selectedTrack && !isDragging && (
+          <div
+            className="absolute z-30"
+            style={{
+              left: `${musicStickerPos.x}%`,
+              top: `${musicStickerPos.y}%`,
+              transform: 'translate(-50%, -50%)',
+              touchAction: 'none',
+              cursor: isDraggingMusic ? 'grabbing' : 'grab',
+            }}
+            onPointerDown={(e) => {
+              e.stopPropagation();
+              setIsDraggingMusic(true);
+              musicDragRef.current = { startX: e.clientX, startY: e.clientY, startPosX: musicStickerPos.x, startPosY: musicStickerPos.y };
+              (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
+            }}
+            onPointerMove={(e) => {
+              if (!isDraggingMusic || !musicDragRef.current || !canvasRef.current) return;
+              const rect = canvasRef.current.getBoundingClientRect();
+              const dx = ((e.clientX - musicDragRef.current.startX) / rect.width) * 100;
+              const dy = ((e.clientY - musicDragRef.current.startY) / rect.height) * 100;
+              setMusicStickerPos({
+                x: Math.max(15, Math.min(85, musicDragRef.current.startPosX + dx)),
+                y: Math.max(5, Math.min(92, musicDragRef.current.startPosY + dy)),
+              });
+            }}
+            onPointerUp={() => { setIsDraggingMusic(false); musicDragRef.current = null; }}
+          >
+            <div className="flex items-center gap-2 px-2.5 py-1.5 rounded-full bg-black/50 backdrop-blur-md border border-white/10 shadow-lg">
+              <div className="w-7 h-7 rounded-md overflow-hidden bg-primary/20 shrink-0">
+                {selectedTrack.cover_url ? (
+                  <img src={selectedTrack.cover_url} alt="" className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center"><Music className="w-3 h-3 text-primary/60" /></div>
+                )}
               </div>
-
-              {/* Clip trimmer — Instagram-style section selector */}
-              <div className={`overflow-hidden transition-all duration-200 ${showClipTrimmer ? 'max-h-[120px]' : 'max-h-0'}`}>
-                <div className="bg-black/60 backdrop-blur-md border border-t-0 border-white/10 rounded-b-xl px-3 py-3 space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] text-white/50 font-display tracking-wider">CLIP SECTION</span>
-                    <span className="text-[10px] text-primary font-display tracking-wider">
-                      {Math.floor(musicClipStart / 60)}:{String(Math.floor(musicClipStart % 60)).padStart(2, '0')} — {Math.floor(musicClipEnd / 60)}:{String(Math.floor(musicClipEnd % 60)).padStart(2, '0')}
-                    </span>
-                  </div>
-
-                  {/* Visual waveform-style track bar */}
-                  <div className="relative h-10 bg-white/5 rounded-lg overflow-hidden">
-                    {/* Waveform bars (decorative) */}
-                    <div className="absolute inset-0 flex items-center gap-[2px] px-1">
-                      {Array.from({ length: 40 }, (_, i) => {
-                        const h = 20 + Math.sin(i * 0.8) * 40 + Math.cos(i * 1.3) * 20;
-                        const inRange = (i / 40) * (selectedTrack.duration_seconds || 180) >= musicClipStart &&
-                                        (i / 40) * (selectedTrack.duration_seconds || 180) <= musicClipEnd;
-                        return (
-                          <div
-                            key={i}
-                            className={`flex-1 rounded-sm transition-colors ${inRange ? 'bg-primary' : 'bg-white/15'}`}
-                            style={{ height: `${h}%` }}
-                          />
-                        );
-                      })}
-                    </div>
-
-                    {/* Draggable range overlay */}
-                    <input
-                      type="range"
-                      min={0}
-                      max={Math.max((selectedTrack.duration_seconds || 180) - 5, 10)}
-                      value={musicClipStart}
-                      onChange={(e) => {
-                        const start = Number(e.target.value);
-                        setMusicClipStart(start);
-                        setMusicClipEnd(Math.min(start + 15, selectedTrack.duration_seconds || 180));
-                        // Preview audio at this position
-                        if (audioPreviewRef.current) {
-                          audioPreviewRef.current.currentTime = start;
-                          audioPreviewRef.current.play().catch(() => {});
-                        }
-                      }}
-                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                      style={{ touchAction: 'none' }}
-                    />
-                  </div>
-
-                  {/* Duration presets */}
-                  <div className="flex gap-1.5">
-                    {[5, 10, 15, 30].map(dur => (
-                      <button
-                        key={dur}
-                        onClick={() => setMusicClipEnd(Math.min(musicClipStart + dur, selectedTrack.duration_seconds || 180))}
-                        className={`flex-1 py-1 rounded-md text-[10px] font-display tracking-wider transition-colors ${
-                          Math.round(musicClipEnd - musicClipStart) === dur
-                            ? 'bg-primary/20 text-primary border border-primary/30'
-                            : 'bg-white/5 text-white/50 border border-transparent'
-                        }`}
-                      >
-                        {dur}s
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* Hidden but visible sticker when trimmer closed */}
-              {!showClipTrimmer && (
-                <div className="h-px bg-white/10 rounded-b-xl" />
-              )}
+              <p className="text-[11px] font-medium text-white truncate max-w-[100px] select-none">{selectedTrack.title}</p>
+              <button
+                className="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center shrink-0"
+                onClick={(e) => { e.stopPropagation(); setSelectedTrack(null); setShowClipTrimmer(false); if (audioPreviewRef.current) audioPreviewRef.current.pause(); }}
+              >
+                <X className="w-2.5 h-2.5 text-white/70" />
+              </button>
             </div>
-
-            {/* Audio preview element (hidden) */}
-            {selectedTrack.audio_url && (
-              <audio
-                ref={audioPreviewRef}
-                src={selectedTrack.audio_url}
-                preload="metadata"
-                onTimeUpdate={() => {
-                  if (audioPreviewRef.current && audioPreviewRef.current.currentTime >= musicClipEnd) {
-                    audioPreviewRef.current.pause();
-                  }
-                }}
-              />
-            )}
           </div>
+        )}
+
+        {/* Audio preview element (hidden) */}
+        {selectedTrack?.audio_url && (
+          <audio
+            ref={audioPreviewRef}
+            src={selectedTrack.audio_url}
+            preload="metadata"
+            onTimeUpdate={() => {
+              if (audioPreviewRef.current && audioPreviewRef.current.currentTime >= musicClipEnd) {
+                audioPreviewRef.current.pause();
+              }
+            }}
+          />
         )}
 
         {/* Drag-to-delete zone — appears at bottom when dragging */}
@@ -853,55 +795,6 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
           )}
         </AnimatePresence>
       </div>
-
-      {/* Media thumbnails strip */}
-      {mediaItems.length > 0 && !isDragging && (
-        <div className="absolute bottom-28 left-0 right-0 z-30 px-4">
-          <div className="flex items-center gap-2 justify-center">
-            {mediaItems.map((item, idx) => (
-              <div
-                key={idx}
-                className={`relative w-12 h-12 rounded-lg overflow-hidden border-2 transition-all cursor-pointer ${
-                  idx === activeMediaIndex ? 'border-primary scale-110' : 'border-border/60'
-                }`}
-                onClick={(e) => { e.stopPropagation(); setActiveMediaIndex(idx); }}
-              >
-                {item.type === 'image' ? (
-                  <img src={item.previewUrl} alt="" className="w-full h-full object-cover" />
-                ) : (
-                  <div className="w-full h-full bg-muted/50 flex items-center justify-center">
-                    <Video className="w-4 h-4 text-foreground/70" />
-                  </div>
-                )}
-
-                {item.status === 'uploading' && (
-                  <div className="absolute inset-0 bg-background/50 flex items-center justify-center">
-                    <Loader2 className="w-4 h-4 text-foreground animate-spin" />
-                  </div>
-                )}
-
-                {!publishing && (
-                  <button
-                    className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-red-500 flex items-center justify-center"
-                    onClick={(e) => { e.stopPropagation(); removeMediaItem(idx); }}
-                  >
-                    <X className="w-3 h-3 text-foreground" />
-                  </button>
-                )}
-              </div>
-            ))}
-
-            {mediaItems.length < MAX_MEDIA && !publishing && (
-              <button
-                onClick={(e) => { e.stopPropagation(); fileInputRef.current?.click(); }}
-                className="w-12 h-12 rounded-lg border-2 border-dashed border-white/30 flex items-center justify-center text-foreground/50"
-              >
-                <Plus className="w-5 h-5" />
-              </button>
-            )}
-          </div>
-        </div>
-      )}
 
       {/* Upload progress bar */}
       {publishing && overallProgress > 0 && (
@@ -1071,12 +964,14 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
         )}
       </AnimatePresence>
 
-      {/* Media edit mode toolbar — shows when media is present */}
-      {hasMedia && !isDragging && mediaEditMode !== 'none' && (
-        <div className="absolute bottom-28 left-0 right-0 z-30 px-4 animate-in slide-in-from-bottom-2">
-          <div className="flex items-center gap-2 bg-background/60 backdrop-blur-md rounded-full px-3 py-2 justify-center">
-            {mediaEditMode === 'move' && (
-              <>
+      {/* ─── Unified Bottom Tray ─── */}
+      {!isDragging && (
+        <div className="absolute bottom-0 left-0 right-0 z-30 bg-gradient-to-t from-black/70 via-black/40 to-transparent pb-[env(safe-area-inset-bottom,4px)]">
+
+          {/* Media edit mode — scale slider above tools */}
+          {hasMedia && mediaEditMode !== 'none' && (
+            <div className="px-4 pb-1 animate-in slide-in-from-bottom-2">
+              <div className="flex items-center gap-2 bg-card/90 backdrop-blur-md rounded-xl px-3 py-2 justify-center">
                 <span className="text-foreground/50 text-[10px] shrink-0">Scale</span>
                 <Slider
                   value={[getMediaTransform(activeMediaIndex).scale * 100]}
@@ -1085,72 +980,81 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
                   className="flex-1 max-w-[200px]"
                 />
                 <span className="text-foreground text-[10px] font-display w-8 text-center shrink-0">{Math.round(getMediaTransform(activeMediaIndex).scale * 100)}%</span>
-              </>
-            )}
-            <button
-              className="ml-2 px-3 py-1 rounded-full bg-primary text-primary-foreground text-xs font-display"
-              onClick={() => {
-                setMediaEditMode('none');
-              }}
-            >
-              Done
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Bottom toolbar — clean Instagram-style */}
-      {!isDragging && (
-        <div className="absolute bottom-0 left-0 right-0 z-30 pb-[env(safe-area-inset-bottom,8px)]">
-          <div className="flex items-center justify-between px-4 py-3">
-            {/* Left side tools */}
-            <div className="flex items-center gap-2">
-              <button
-                className="w-11 h-11 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center text-foreground active:scale-90 transition-transform"
-                onClick={(e) => { e.stopPropagation(); addTextOverlay(); }}
-              >
-                <Type className="w-5 h-5" />
-              </button>
-              <button
-                className={`w-11 h-11 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center text-foreground active:scale-90 transition-transform ${mediaItems.length >= MAX_MEDIA ? 'opacity-30' : ''}`}
-                onClick={(e) => { e.stopPropagation(); fileInputRef.current?.click(); }}
-                disabled={mediaItems.length >= MAX_MEDIA}
-              >
-                <Image className="w-5 h-5" />
-              </button>
-              <button
-                className={`w-11 h-11 rounded-full backdrop-blur-sm flex items-center justify-center text-foreground active:scale-90 transition-transform ${showColorPicker ? 'bg-white/25' : 'bg-white/10'}`}
-                onClick={(e) => { e.stopPropagation(); setColorTarget('bg'); setShowColorPicker(!showColorPicker); }}
-              >
-                <Palette className="w-5 h-5" />
-              </button>
-              {/* Move/resize media button */}
-              {hasMedia && (
-                <button
-                  className={`w-11 h-11 rounded-full backdrop-blur-sm flex items-center justify-center text-foreground active:scale-90 transition-transform ${mediaEditMode === 'move' ? 'bg-white/25' : 'bg-white/10'}`}
-                  onClick={(e) => { e.stopPropagation(); setMediaEditMode(mediaEditMode === 'move' ? 'none' : 'move'); }}
-                >
-                  <Maximize2 className="w-5 h-5" />
-                </button>
-              )}
-              {/* Music overlay button */}
-              <button
-                className={`w-11 h-11 rounded-full backdrop-blur-sm flex items-center justify-center active:scale-90 transition-transform ${selectedTrack ? 'bg-primary/30 text-primary' : 'bg-white/10 text-foreground'}`}
-                onClick={(e) => { e.stopPropagation(); setShowMusicPicker(true); }}
-              >
-                <Music className="w-5 h-5" />
-              </button>
+                <button className="ml-2 px-3 py-1 rounded-full bg-primary text-primary-foreground text-xs font-display" onClick={() => setMediaEditMode('none')}>Done</button>
+              </div>
             </div>
+          )}
 
-            {/* Share button — right side */}
-            <button
-              className="h-11 px-6 rounded-full bg-primary text-primary-foreground font-display tracking-wider text-sm flex items-center gap-2 disabled:opacity-50 active:scale-95 transition-transform"
-              onClick={handlePublish}
-              disabled={publishing}
-            >
-              {publishing ? (
-                <><Loader2 className="w-4 h-4 animate-spin" /><span className="text-xs">{uploadProgress || 'POSTING'}</span></>
-              ) : 'SHARE'}
+          {/* Clip trimmer — expands above toolbar when music button tapped */}
+          {selectedTrack && showClipTrimmer && (
+            <div className="px-4 pb-1 animate-in slide-in-from-bottom-2">
+              <div className="bg-card/90 backdrop-blur-md rounded-xl border border-white/10 px-3 py-3 space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 rounded overflow-hidden bg-primary/20 shrink-0">
+                      {selectedTrack.cover_url ? <img src={selectedTrack.cover_url} alt="" className="w-full h-full object-cover" /> : <Music className="w-3 h-3 text-primary/60 m-auto" />}
+                    </div>
+                    <p className="text-[10px] text-white/70 truncate max-w-[120px]">{selectedTrack.title}</p>
+                  </div>
+                  <span className="text-[10px] text-primary font-display tracking-wider">
+                    {Math.floor(musicClipStart / 60)}:{String(Math.floor(musicClipStart % 60)).padStart(2, '0')} — {Math.floor(musicClipEnd / 60)}:{String(Math.floor(musicClipEnd % 60)).padStart(2, '0')}
+                  </span>
+                </div>
+                {/* Waveform scrubber */}
+                <div className="relative h-8 bg-white/5 rounded-lg overflow-hidden">
+                  <div className="absolute inset-0 flex items-center gap-[2px] px-1">
+                    {Array.from({ length: 40 }, (_, i) => {
+                      const h = 20 + Math.sin(i * 0.8) * 40 + Math.cos(i * 1.3) * 20;
+                      const inRange = (i / 40) * (selectedTrack.duration_seconds || 180) >= musicClipStart && (i / 40) * (selectedTrack.duration_seconds || 180) <= musicClipEnd;
+                      return <div key={i} className={`flex-1 rounded-sm transition-colors ${inRange ? 'bg-primary' : 'bg-white/15'}`} style={{ height: `${h}%` }} />;
+                    })}
+                  </div>
+                  <input type="range" min={0} max={Math.max((selectedTrack.duration_seconds || 180) - 5, 10)} value={musicClipStart}
+                    onChange={(e) => { const s = Number(e.target.value); setMusicClipStart(s); setMusicClipEnd(Math.min(s + 15, selectedTrack.duration_seconds || 180)); if (audioPreviewRef.current) { audioPreviewRef.current.currentTime = s; audioPreviewRef.current.play().catch(() => {}); } }}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" style={{ touchAction: 'none' }}
+                  />
+                </div>
+                {/* Duration presets */}
+                <div className="flex gap-1.5">
+                  {[5, 10, 15, 30].map(dur => (
+                    <button key={dur} onClick={() => setMusicClipEnd(Math.min(musicClipStart + dur, selectedTrack.duration_seconds || 180))}
+                      className={`flex-1 py-1 rounded-md text-[10px] font-display tracking-wider transition-colors ${Math.round(musicClipEnd - musicClipStart) === dur ? 'bg-primary/20 text-primary border border-primary/30' : 'bg-white/5 text-white/50 border border-transparent'}`}
+                    >{dur}s</button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Slide thumbnails — compact row above tools */}
+          {mediaItems.length > 0 && (
+            <div className="flex items-center gap-1.5 justify-center px-4 py-1.5">
+              {mediaItems.map((item, idx) => (
+                <div key={idx} className={`relative w-10 h-10 rounded-lg overflow-hidden border-2 transition-all cursor-pointer ${idx === activeMediaIndex ? 'border-primary scale-110' : 'border-white/20'}`}
+                  onClick={(e) => { e.stopPropagation(); setActiveMediaIndex(idx); }}>
+                  {item.type === 'image' ? <img src={item.previewUrl} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full bg-muted/50 flex items-center justify-center"><Video className="w-3 h-3 text-foreground/70" /></div>}
+                  {item.status === 'uploading' && <div className="absolute inset-0 bg-background/50 flex items-center justify-center"><Loader2 className="w-3 h-3 text-foreground animate-spin" /></div>}
+                  {!publishing && <button className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-red-500 flex items-center justify-center" onClick={(e) => { e.stopPropagation(); removeMediaItem(idx); }}><X className="w-2 h-2 text-white" /></button>}
+                </div>
+              ))}
+              {mediaItems.length < MAX_MEDIA && !publishing && (
+                <button onClick={(e) => { e.stopPropagation(); fileInputRef.current?.click(); }} className="w-10 h-10 rounded-lg border-2 border-dashed border-white/20 flex items-center justify-center text-foreground/40"><Plus className="w-4 h-4" /></button>
+              )}
+            </div>
+          )}
+
+          {/* Tool row — clean, spaced */}
+          <div className="flex items-center justify-between px-3 py-2">
+            <div className="flex items-center gap-1.5">
+              <button className="w-10 h-10 rounded-xl bg-white/8 backdrop-blur-sm flex items-center justify-center text-foreground active:scale-90 transition-transform" onClick={(e) => { e.stopPropagation(); addTextOverlay(); }}><Type className="w-4.5 h-4.5" /></button>
+              <button className={`w-10 h-10 rounded-xl bg-white/8 backdrop-blur-sm flex items-center justify-center text-foreground active:scale-90 transition-transform ${mediaItems.length >= MAX_MEDIA ? 'opacity-30' : ''}`} onClick={(e) => { e.stopPropagation(); fileInputRef.current?.click(); }} disabled={mediaItems.length >= MAX_MEDIA}><Image className="w-4.5 h-4.5" /></button>
+              <button className={`w-10 h-10 rounded-xl backdrop-blur-sm flex items-center justify-center text-foreground active:scale-90 transition-transform ${showColorPicker ? 'bg-white/20' : 'bg-white/8'}`} onClick={(e) => { e.stopPropagation(); setColorTarget('bg'); setShowColorPicker(!showColorPicker); }}><Palette className="w-4.5 h-4.5" /></button>
+              {hasMedia && <button className={`w-10 h-10 rounded-xl backdrop-blur-sm flex items-center justify-center text-foreground active:scale-90 transition-transform ${mediaEditMode === 'move' ? 'bg-white/20' : 'bg-white/8'}`} onClick={(e) => { e.stopPropagation(); setMediaEditMode(mediaEditMode === 'move' ? 'none' : 'move'); }}><Maximize2 className="w-4.5 h-4.5" /></button>}
+              <button className={`w-10 h-10 rounded-xl backdrop-blur-sm flex items-center justify-center active:scale-90 transition-transform ${selectedTrack ? 'bg-primary/25 text-primary' : 'bg-white/8 text-foreground'}`}
+                onClick={(e) => { e.stopPropagation(); if (selectedTrack) { setShowClipTrimmer(!showClipTrimmer); } else { setShowMusicPicker(true); } }}><Music className="w-4.5 h-4.5" /></button>
+            </div>
+            <button className="h-10 px-5 rounded-xl bg-primary text-primary-foreground font-display tracking-wider text-sm flex items-center gap-2 disabled:opacity-50 active:scale-95 transition-transform" onClick={handlePublish} disabled={publishing}>
+              {publishing ? <><Loader2 className="w-4 h-4 animate-spin" /><span className="text-xs">{uploadProgress || 'POSTING'}</span></> : 'SHARE'}
             </button>
           </div>
         </div>
