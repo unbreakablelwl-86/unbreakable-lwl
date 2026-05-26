@@ -6,6 +6,54 @@ import { useTetrisScores } from "@/hooks/useTetrisScores";
 import { TetrisLeaderboard } from "./TetrisLeaderboard";
 import { useGameAudio } from "@/hooks/useGameAudio";
 
+// ═══════════════════════════════════════════════════════════════
+// STACK — ORDER FROM CHAOS.
+// Premium build · UNBREAKABLE · 2026
+// ═══════════════════════════════════════════════════════════════
+
+// ─── Boot sequence ─────────────────────────────────────────
+const BOOT_LINES = [
+  "> UNBREAKABLE OS v3.2",
+  "> LOADING STACK ENGINE...",
+  "> BLOCK PHYSICS: ONLINE",
+  "> GRAVITY MODULE: ARMED",
+  "> COMBO SYSTEM: READY",
+  "> THEME ROTATION: 6 PALETTES",
+  "> STATUS: DIALLED IN",
+  "",
+  "  ORDER FROM CHAOS.",
+];
+
+// ─── Named Stages (by lines cleared) ──────────────────────
+const NAMED_STAGES = [
+  { threshold: 0, name: "WARM UP", label: "STAGE 1" },
+  { threshold: 10, name: "FIRST BLOOD", label: "STAGE 2" },
+  { threshold: 25, name: "STACKING", label: "STAGE 3" },
+  { threshold: 45, name: "LOCKED IN", label: "STAGE 4" },
+  { threshold: 70, name: "GRAVITY", label: "STAGE 5" },
+  { threshold: 100, name: "WARP SPEED", label: "STAGE 6" },
+  { threshold: 140, name: "UNTOUCHABLE", label: "STAGE 7" },
+  { threshold: 180, name: "GODSPEED", label: "STAGE 8" },
+  { threshold: 230, name: "LEGENDARY", label: "STAGE 9" },
+  { threshold: 300, name: "IMMORTAL", label: "STAGE 10" },
+];
+
+const getNamedStage = (lines: number) => {
+  let current = NAMED_STAGES[0];
+  for (const s of NAMED_STAGES) {
+    if (lines >= s.threshold) current = s;
+  }
+  return current;
+};
+
+const getNamedStageIndex = (lines: number): number => {
+  let idx = 0;
+  for (let i = 0; i < NAMED_STAGES.length; i++) {
+    if (lines >= NAMED_STAGES[i].threshold) idx = i;
+  }
+  return idx;
+};
+
 // ─── Theme palettes (orange / neon / black / white, inverting) ───
 interface ThemePalette {
   bg: string;
@@ -14,36 +62,30 @@ interface ThemePalette {
   text: string;
   accent: string;
   ghost: string;
-  pieces: string[]; // 7 piece colours
+  pieces: string[];
 }
 
 const THEME_PALETTES: ThemePalette[] = [
-  // 1: Dark — classic Unbreakable
   {
     bg: "#0a0a0a", grid: "#1a1a1a", border: "#f97316", text: "#f97316", accent: "#ffffff", ghost: "rgba(249,115,22,0.15)",
     pieces: ["#f97316", "#fb923c", "#ffffff", "#ea580c", "#ff6a00", "#ffb380", "#c2410c"],
   },
-  // 2: Inverted — white bg
   {
     bg: "#f0f0f0", grid: "#d8d8d8", border: "#f97316", text: "#0a0a0a", accent: "#f97316", ghost: "rgba(0,0,0,0.08)",
     pieces: ["#f97316", "#0a0a0a", "#ea580c", "#1a1a1a", "#ff6a00", "#333333", "#c2410c"],
   },
-  // 3: Deep warm dark
   {
     bg: "#0c0a09", grid: "#1c1917", border: "#ea580c", text: "#fb923c", accent: "#ffffff", ghost: "rgba(234,88,12,0.15)",
     pieces: ["#ea580c", "#fb923c", "#ffffff", "#f97316", "#ff6a00", "#ffd4a8", "#9a3412"],
   },
-  // 4: Inverted — cream bg
   {
     bg: "#f5f0eb", grid: "#e0dbd5", border: "#0a0a0a", text: "#0a0a0a", accent: "#f97316", ghost: "rgba(0,0,0,0.06)",
     pieces: ["#f97316", "#0a0a0a", "#c2410c", "#1a1a1a", "#ea580c", "#333333", "#ff6a00"],
   },
-  // 5: High contrast dark
   {
     bg: "#0a0a0a", grid: "#1a1a1a", border: "#ffffff", text: "#ffffff", accent: "#f97316", ghost: "rgba(255,255,255,0.1)",
     pieces: ["#ffffff", "#f97316", "#fb923c", "#e5e5e5", "#ff6a00", "#ea580c", "#d4d4d4"],
   },
-  // 6: Inverted — white bg, hot orange
   {
     bg: "#f8f8f8", grid: "#e0e0e0", border: "#ff6a00", text: "#ff6a00", accent: "#0a0a0a", ghost: "rgba(255,106,0,0.1)",
     pieces: ["#ff6a00", "#0a0a0a", "#cc5500", "#1a1a1a", "#f97316", "#333333", "#ea580c"],
@@ -52,13 +94,13 @@ const THEME_PALETTES: ThemePalette[] = [
 
 // ─── Tetromino definitions ───
 const TETROMINOES = [
-  { shape: [[1,1,1,1]], id: 0 },                          // I
-  { shape: [[1,0,0],[1,1,1]], id: 1 },                    // J
-  { shape: [[0,0,1],[1,1,1]], id: 2 },                    // L
-  { shape: [[1,1],[1,1]], id: 3 },                         // O
-  { shape: [[0,1,1],[1,1,0]], id: 4 },                    // S
-  { shape: [[0,1,0],[1,1,1]], id: 5 },                    // T
-  { shape: [[1,1,0],[0,1,1]], id: 6 },                    // Z
+  { shape: [[1,1,1,1]], id: 0 },
+  { shape: [[1,0,0],[1,1,1]], id: 1 },
+  { shape: [[0,0,1],[1,1,1]], id: 2 },
+  { shape: [[1,1],[1,1]], id: 3 },
+  { shape: [[0,1,1],[1,1,0]], id: 4 },
+  { shape: [[0,1,0],[1,1,1]], id: 5 },
+  { shape: [[1,1,0],[0,1,1]], id: 6 },
 ];
 
 // ─── Constants ───
@@ -67,15 +109,15 @@ const ROWS = 20;
 const CELL_SIZE = 28;
 const CANVAS_WIDTH = COLS * CELL_SIZE;
 const CANVAS_HEIGHT = ROWS * CELL_SIZE;
-const THEME_SHIFT_INTERVAL = 15; // lines cleared
+const THEME_SHIFT_INTERVAL = 15;
 
 const INITIAL_DROP_INTERVAL = 800;
 const MIN_DROP_INTERVAL = 100;
-const SPEED_FACTOR = 40; // ms reduction per level
+const SPEED_FACTOR = 40;
 
 const POINTS = { 1: 1, 2: 3, 3: 5, 4: 8 } as Record<number, number>;
 
-type Cell = number | null; // null = empty, number = piece id
+type Cell = number | null;
 type Board = Cell[][];
 
 interface Piece {
@@ -118,12 +160,10 @@ const getGhostY = (board: Board, piece: Piece): number => {
   return gy;
 };
 
-// 7-bag randomizer: ensures every piece appears once before repeating
 const bagRef = { current: [] as number[] };
 
 const fillBag = () => {
   const indices = [0, 1, 2, 3, 4, 5, 6];
-  // Fisher-Yates shuffle
   for (let i = indices.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [indices[i], indices[j]] = [indices[j], indices[i]];
@@ -146,35 +186,18 @@ const getLevel = (linesCleared: number): number => Math.floor(linesCleared / 10)
 const getDropInterval = (level: number): number =>
   Math.max(MIN_DROP_INTERVAL, INITIAL_DROP_INTERVAL - (level - 1) * SPEED_FACTOR);
 
-
 const LEVEL_MESSAGES = [
-  "STAY HUNGRY",
-  "NO LIMITS",
-  "LOCKED IN",
-  "RELENTLESS",
-  "ZERO QUIT",
-  "UNSTOPPABLE",
-  "ELITE FOCUS",
-  "BORN FOR THIS",
-  "NO DAYS OFF",
-  "KEEP RISING",
-  "PURE GRIT",
-  "UNBREAKABLE",
-  "ON FIRE",
-  "NEXT LEVEL",
-  "ALL IN",
-  "NEVER SETTLE",
-  "BEAST MODE",
-  "OWN IT",
-  "DIG DEEPER",
-  "PROVE THEM WRONG",
+  "STAY HUNGRY", "NO LIMITS", "LOCKED IN", "RELENTLESS",
+  "ZERO QUIT", "UNSTOPPABLE", "ELITE FOCUS", "BORN FOR THIS",
+  "NO DAYS OFF", "KEEP RISING", "PURE GRIT", "UNBREAKABLE",
+  "ON FIRE", "NEXT LEVEL", "ALL IN", "NEVER SETTLE",
+  "BEAST MODE", "OWN IT", "DIG DEEPER", "PROVE THEM WRONG",
 ];
 
 const getLevelMessage = (level: number): string =>
   level > 1 ? LEVEL_MESSAGES[(level - 2) % LEVEL_MESSAGES.length] : "";
 
-// ─── Particles ───
-interface Particle {
+interface ParticleObj {
   x: number; y: number; dx: number; dy: number;
   life: number; maxLife: number; color: string; size: number;
 }
@@ -191,7 +214,7 @@ const TetrisGame = () => {
   const scoreRef = useRef(0);
   const linesClearedRef = useRef(0);
   const levelRef = useRef(1);
-  const particlesRef = useRef<Particle[]>([]);
+  const particlesRef = useRef<ParticleObj[]>([]);
   const screenShakeRef = useRef(0);
   const comboRef = useRef(0);
 
@@ -199,13 +222,52 @@ const TetrisGame = () => {
   const [linesCleared, setLinesCleared] = useState(0);
   const [level, setLevel] = useState(1);
   const [highScore, setHighScore] = useState(0);
-  const [gameState, setGameState] = useState<"idle" | "playing" | "paused" | "gameover">("idle");
+  const [gameState, setGameState] = useState<"boot" | "ready" | "playing" | "paused" | "gameover">("boot");
   const [showLeaderboard, setShowLeaderboard] = useState(false);
+
+  // Premium stats
+  const [totalPiecesPlaced, setTotalPiecesPlaced] = useState(0);
+  const [maxCombo, setMaxCombo] = useState(0);
+  const [tetrisCount, setTetrisCount] = useState(0);
+  const [startTime, setStartTime] = useState(0);
+  const [timeSurvived, setTimeSurvived] = useState(0);
+  const [singleClears, setSingleClears] = useState(0);
+  const [doubleClears, setDoubleClears] = useState(0);
+  const [tripleClears, setTripleClears] = useState(0);
+
+  // Premium effects
+  const [deathShake, setDeathShake] = useState(false);
+  const [stageFlash, setStageFlash] = useState<string | null>(null);
+  const lastNamedStageRef = useRef(0);
+
+  // Boot sequence
+  const [bootLines, setBootLines] = useState<string[]>([]);
+  const [bootDone, setBootDone] = useState(false);
 
   const { saveScore, topScores, userBest, refetch } = useTetrisScores();
   const { playHit, playLevelUp, playGameOver, startMusic, stopMusic, toggleMute, isMuted } = useGameAudio("tetris");
 
-  // Responsive scaling — fill available width
+  // ─── Boot sequence ─────────────────────────────────────────
+  useEffect(() => {
+    if (gameState !== "boot") return;
+    let i = 0;
+    const interval = setInterval(() => {
+      if (i < BOOT_LINES.length) {
+        setBootLines((prev) => [...prev, BOOT_LINES[i]]);
+        i++;
+      } else {
+        clearInterval(interval);
+        setTimeout(() => setBootDone(true), 400);
+      }
+    }, 160);
+    return () => clearInterval(interval);
+  }, [gameState]);
+
+  useEffect(() => {
+    if (bootDone) setTimeout(() => setGameState("ready"), 600);
+  }, [bootDone]);
+
+  // Responsive scaling
   const [scale, setScale] = useState(1);
   useEffect(() => {
     const updateScale = () => {
@@ -216,7 +278,6 @@ const TetrisGame = () => {
     window.addEventListener("resize", updateScale);
     return () => window.removeEventListener("resize", updateScale);
   }, []);
-
 
   const spawnParticles = useCallback((y: number, color: string) => {
     for (let x = 0; x < COLS; x++) {
@@ -241,13 +302,15 @@ const TetrisGame = () => {
     const piece = currentPieceRef.current;
     const theme = getTheme(linesClearedRef.current);
 
-    // Place piece on board
     for (let r = 0; r < piece.shape.length; r++) {
       for (let c = 0; c < piece.shape[r].length; c++) {
         if (!piece.shape[r][c]) continue;
         const ny = piece.y + r;
         const nx = piece.x + c;
         if (ny < 0) {
+          setTimeSurvived(Math.floor((Date.now() - startTime) / 1000));
+          setDeathShake(true);
+          setTimeout(() => setDeathShake(false), 500);
           setGameState("gameover");
           stopMusic();
           playGameOver();
@@ -260,7 +323,8 @@ const TetrisGame = () => {
       }
     }
 
-    // Check for completed lines
+    setTotalPiecesPlaced((prev) => prev + 1);
+
     let cleared = 0;
     for (let r = ROWS - 1; r >= 0; r--) {
       if (board[r].every(c => c !== null)) {
@@ -268,20 +332,29 @@ const TetrisGame = () => {
         board.splice(r, 1);
         board.unshift(Array(COLS).fill(null));
         cleared++;
-        r++; // re-check this row
+        r++;
       }
     }
 
     if (cleared > 0) {
+      const prevLines = linesClearedRef.current;
       linesClearedRef.current += cleared;
       setLinesCleared(linesClearedRef.current);
       playHit();
 
+      // Track clear types
+      if (cleared === 1) setSingleClears((prev) => prev + 1);
+      else if (cleared === 2) setDoubleClears((prev) => prev + 1);
+      else if (cleared === 3) setTripleClears((prev) => prev + 1);
+      else if (cleared >= 4) setTetrisCount((prev) => prev + 1);
+
       const basePts = POINTS[cleared] || cleared;
-      // Back-to-back bonus: consecutive clears get +1 bonus
       const comboBonus = comboRef.current > 0 ? comboRef.current : 0;
       const pts = basePts + comboBonus;
       comboRef.current++;
+      if (comboRef.current > maxCombo) {
+        setMaxCombo(comboRef.current);
+      }
       scoreRef.current += pts;
       setScore(scoreRef.current);
 
@@ -292,17 +365,28 @@ const TetrisGame = () => {
         playLevelUp();
       }
 
+      // Named stage transition
+      const oldStageIdx = lastNamedStageRef.current;
+      const newStageIdx = getNamedStageIndex(linesClearedRef.current);
+      if (newStageIdx > oldStageIdx) {
+        const stageName = NAMED_STAGES[newStageIdx].name;
+        setStageFlash(stageName);
+        lastNamedStageRef.current = newStageIdx;
+        setTimeout(() => setStageFlash(null), 1500);
+      }
+
       screenShakeRef.current = cleared >= 4 ? 12 : cleared >= 2 ? 6 : 3;
     } else {
-      comboRef.current = 0; // Reset combo when no lines cleared
+      comboRef.current = 0;
     }
 
-    // Next piece
     currentPieceRef.current = nextPieceRef.current;
     nextPieceRef.current = randomPiece();
 
-    // Check if new piece is valid
     if (!isValid(board, currentPieceRef.current)) {
+      setTimeSurvived(Math.floor((Date.now() - startTime) / 1000));
+      setDeathShake(true);
+      setTimeout(() => setDeathShake(false), 500);
       setGameState("gameover");
       stopMusic();
       playGameOver();
@@ -310,7 +394,7 @@ const TetrisGame = () => {
       if (fs > highScore) setHighScore(fs);
       if (fs > 0) saveScore(fs, linesClearedRef.current, levelRef.current);
     }
-  }, [highScore, saveScore, spawnParticles, stopMusic, playGameOver, playHit, playLevelUp]);
+  }, [highScore, startTime, saveScore, spawnParticles, stopMusic, playGameOver, playHit, playLevelUp, maxCombo]);
 
   // ─── Draw ───
   const draw = useCallback(() => {
@@ -330,11 +414,9 @@ const TetrisGame = () => {
       screenShakeRef.current = Math.max(0, shake - 0.3);
     }
 
-    // Background
     ctx.fillStyle = theme.bg;
     ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
-    // Grid
     ctx.strokeStyle = theme.grid;
     ctx.lineWidth = 0.5;
     for (let x = 0; x <= COLS; x++) {
@@ -344,16 +426,14 @@ const TetrisGame = () => {
       ctx.beginPath(); ctx.moveTo(0, y * CELL_SIZE); ctx.lineTo(CANVAS_WIDTH, y * CELL_SIZE); ctx.stroke();
     }
 
-    // Placed blocks
     for (let r = 0; r < ROWS; r++) {
       for (let c = 0; c < COLS; c++) {
         if (board[r][c] === null) continue;
         const color = theme.pieces[board[r][c]!];
-        drawBlock(ctx, c * CELL_SIZE, r * CELL_SIZE, CELL_SIZE, color, theme);
+        drawBlock(ctx, c * CELL_SIZE, r * CELL_SIZE, CELL_SIZE, color);
       }
     }
 
-    // Ghost piece
     const ghostY = getGhostY(board, piece);
     for (let r = 0; r < piece.shape.length; r++) {
       for (let c = 0; c < piece.shape[r].length; c++) {
@@ -369,7 +449,6 @@ const TetrisGame = () => {
       }
     }
 
-    // Active piece
     for (let r = 0; r < piece.shape.length; r++) {
       for (let c = 0; c < piece.shape[r].length; c++) {
         if (!piece.shape[r][c]) continue;
@@ -377,11 +456,10 @@ const TetrisGame = () => {
         const py = (piece.y + r) * CELL_SIZE;
         if (piece.y + r < 0) continue;
         const color = theme.pieces[piece.id];
-        drawBlock(ctx, px, py, CELL_SIZE, color, theme);
+        drawBlock(ctx, px, py, CELL_SIZE, color);
       }
     }
 
-    // Particles
     particlesRef.current.forEach((p) => {
       const alpha = p.life / p.maxLife;
       ctx.globalAlpha = alpha;
@@ -393,7 +471,12 @@ const TetrisGame = () => {
     ctx.globalAlpha = 1;
     ctx.shadowBlur = 0;
 
-    // Border neon glow
+    // CRT scanline overlay on canvas
+    for (let y = 0; y < CANVAS_HEIGHT; y += 3) {
+      ctx.fillStyle = "rgba(0,0,0,0.04)";
+      ctx.fillRect(0, y, CANVAS_WIDTH, 1);
+    }
+
     ctx.shadowColor = theme.border + "88";
     ctx.shadowBlur = 10;
     ctx.strokeStyle = theme.border;
@@ -403,11 +486,10 @@ const TetrisGame = () => {
 
     ctx.restore();
 
-    // Draw next piece preview
     drawNextPiece(theme);
   }, []);
 
-  const drawBlock = (ctx: CanvasRenderingContext2D, x: number, y: number, size: number, color: string, theme: ThemePalette) => {
+  const drawBlock = (ctx: CanvasRenderingContext2D, x: number, y: number, size: number, color: string) => {
     ctx.shadowColor = color + "66";
     ctx.shadowBlur = 8;
 
@@ -420,11 +502,9 @@ const TetrisGame = () => {
 
     ctx.shadowBlur = 0;
 
-    // Shine highlight
     ctx.fillStyle = "rgba(255,255,255,0.15)";
     ctx.beginPath(); ctx.roundRect(x + 3, y + 2, size - 6, size / 3, 2); ctx.fill();
 
-    // Inner border
     ctx.strokeStyle = "rgba(255,255,255,0.1)";
     ctx.lineWidth = 0.5;
     ctx.beginPath(); ctx.roundRect(x + 2, y + 2, size - 4, size - 4, 3); ctx.stroke();
@@ -476,7 +556,6 @@ const TetrisGame = () => {
 
     const dropInterval = getDropInterval(levelRef.current);
 
-    // Auto-drop
     if (timestamp - lastDropRef.current >= dropInterval) {
       lastDropRef.current = timestamp;
       const moved = { ...currentPieceRef.current, y: currentPieceRef.current.y + 1 };
@@ -487,7 +566,6 @@ const TetrisGame = () => {
       }
     }
 
-    // Particles
     particlesRef.current.forEach(p => { p.x += p.dx; p.y += p.dy; p.dy += 0.12; p.life--; });
     particlesRef.current = particlesRef.current.filter(p => p.life > 0);
 
@@ -495,7 +573,6 @@ const TetrisGame = () => {
     animFrameRef.current = requestAnimationFrame(gameLoop);
   }, [gameState, draw, lockPiece]);
 
-  // Start / restart loop when state changes to playing
   useEffect(() => {
     if (gameState === "playing") {
       lastDropRef.current = performance.now();
@@ -510,6 +587,11 @@ const TetrisGame = () => {
     nextPieceRef.current = randomPiece();
     scoreRef.current = 0; linesClearedRef.current = 0; levelRef.current = 1; comboRef.current = 0;
     setScore(0); setLinesCleared(0); setLevel(1);
+    setTotalPiecesPlaced(0); setMaxCombo(0); setTetrisCount(0);
+    setSingleClears(0); setDoubleClears(0); setTripleClears(0);
+    setStartTime(Date.now()); setTimeSurvived(0);
+    setDeathShake(false); setStageFlash(null);
+    lastNamedStageRef.current = 0;
     particlesRef.current = []; screenShakeRef.current = 0;
     setGameState("playing");
     startMusic();
@@ -526,7 +608,7 @@ const TetrisGame = () => {
     }
   }, [gameState, stopMusic, startMusic]);
 
-  // ─── Input: move / rotate / drop ───
+  // ─── Input ───
   const moveLeft = useCallback(() => {
     const p = currentPieceRef.current;
     const moved = { ...p, x: p.x - 1 };
@@ -558,7 +640,6 @@ const TetrisGame = () => {
     const p = currentPieceRef.current;
     const rotated = rotate(p.shape);
     const newPiece = { ...p, shape: rotated };
-    // Wall-kick attempts
     const kicks = [0, -1, 1, -2, 2];
     for (const kick of kicks) {
       const kicked = { ...newPiece, x: newPiece.x + kick };
@@ -573,7 +654,7 @@ const TetrisGame = () => {
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
       if (gameState !== "playing") {
-        if ((e.key === " " || e.key === "Enter") && (gameState === "idle" || gameState === "gameover")) {
+        if ((e.key === " " || e.key === "Enter") && (gameState === "ready" || gameState === "gameover")) {
           startGame(); e.preventDefault();
         } else if (e.key === " " && gameState === "paused") {
           togglePause(); e.preventDefault();
@@ -613,7 +694,7 @@ const TetrisGame = () => {
       const elapsed = Date.now() - touchStartRef.current.time;
 
       if (Math.abs(dx) < 15 && Math.abs(dy) < 15 && elapsed < 250) {
-        rotatePiece(); // Tap = rotate
+        rotatePiece();
       } else if (Math.abs(dy) > Math.abs(dx)) {
         if (dy > 40) hardDrop();
         else if (dy < -30) rotatePiece();
@@ -629,11 +710,14 @@ const TetrisGame = () => {
     return () => { canvas.removeEventListener("touchstart", onStart); canvas.removeEventListener("touchend", onEnd); };
   }, [gameState, moveLeft, moveRight, hardDrop, rotatePiece]);
 
-  // Initial draw
   useEffect(() => { draw(); }, [draw]);
 
   const theme = getTheme(linesCleared);
+  const currentNamedStage = getNamedStage(linesCleared);
 
+  // ═══════════════════════════════════════════════════════════
+  // ─── LEADERBOARD ──────────────────────────────────────────
+  // ═══════════════════════════════════════════════════════════
   if (showLeaderboard) {
     return (
       <TetrisLeaderboard
@@ -645,11 +729,138 @@ const TetrisGame = () => {
     );
   }
 
+  // ═══════════════════════════════════════════════════════════
+  // ─── BOOT SCREEN ──────────────────────────────────────────
+  // ═══════════════════════════════════════════════════════════
+  if (gameState === "boot") {
+    return (
+      <div className="w-full max-w-lg mx-auto">
+        <div
+          className="relative rounded-xl overflow-hidden border-2 border-primary/40"
+          style={{ background: "#0a0a0a", fontFamily: "'Courier New', monospace", minHeight: 420 }}
+        >
+          <div
+            className="absolute inset-0 pointer-events-none z-30"
+            style={{ background: "repeating-linear-gradient(0deg, rgba(255,85,0,0.03) 0px, transparent 1px, transparent 3px)" }}
+          />
+          <div className="p-6 relative z-20">
+            {bootLines.map((line, i) => (
+              <motion.p
+                key={i}
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.15 }}
+                className="text-primary text-sm mb-1"
+                style={{ textShadow: "0 0 8px rgba(255,85,0,0.6)" }}
+              >
+                {line}
+              </motion.p>
+            ))}
+            {bootDone && (
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: [0, 1, 0, 1] }}
+                transition={{ duration: 0.8 }}
+                className="text-primary text-sm mt-4"
+              >
+                {">"} PRESS START_
+              </motion.p>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ═══════════════════════════════════════════════════════════
+  // ─── READY SCREEN ─────────────────────────────────────────
+  // ═══════════════════════════════════════════════════════════
+  if (gameState === "ready") {
+    return (
+      <div className="w-full max-w-lg mx-auto text-center">
+        <div
+          className="relative rounded-xl overflow-hidden border-2 border-primary/40 p-8"
+          style={{ background: "#0a0a0a", minHeight: 420 }}
+        >
+          <div
+            className="absolute inset-0 pointer-events-none z-30"
+            style={{ background: "repeating-linear-gradient(0deg, rgba(255,85,0,0.03) 0px, transparent 1px, transparent 3px)" }}
+          />
+          <div className="relative z-10">
+            <h2
+              className="font-display text-4xl text-primary tracking-wider mb-1"
+              style={{ textShadow: "0 0 20px rgba(255,85,0,0.5)" }}
+            >
+              STACK
+            </h2>
+            <h3
+              className="font-display text-xl text-foreground tracking-wider mb-6"
+              style={{ textShadow: "0 0 10px rgba(255,255,255,0.2)" }}
+            >
+              ORDER FROM CHAOS.
+            </h3>
+
+            <div className="space-y-2.5 text-left max-w-xs mx-auto mb-6">
+              <p className="text-muted-foreground text-sm">
+                <span className="text-primary font-bold">▸</span> Stack blocks — clear complete lines
+              </p>
+              <p className="text-muted-foreground text-sm">
+                <span className="text-primary font-bold">▸</span> Clear 4 lines at once = TETRIS (8 pts)
+              </p>
+              <p className="text-muted-foreground text-sm">
+                <span className="text-primary font-bold">▸</span> Consecutive clears = combo bonus
+              </p>
+              <p className="text-muted-foreground text-sm">
+                <span className="text-primary font-bold">▸</span> Theme shifts every 15 lines
+              </p>
+              <p className="text-muted-foreground text-sm">
+                <span className="text-primary font-bold">▸</span> Speed increases each level
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2 mb-6 max-w-xs mx-auto text-left">
+              <div className="bg-card/50 border border-border rounded-lg p-2">
+                <p className="text-[9px] text-muted-foreground font-display tracking-wider">MOBILE</p>
+                <p className="text-[10px] text-foreground/70">Swipe · Tap = Rotate</p>
+              </div>
+              <div className="bg-card/50 border border-border rounded-lg p-2">
+                <p className="text-[9px] text-muted-foreground font-display tracking-wider">KEYBOARD</p>
+                <p className="text-[10px] text-foreground/70">Arrows · Space = Drop</p>
+              </div>
+            </div>
+
+            <Button
+              onClick={startGame}
+              className="font-display text-lg tracking-wider px-8 py-4 bg-primary hover:bg-primary/80"
+              style={{ boxShadow: "0 0 20px rgba(255,85,0,0.4)" }}
+            >
+              START
+            </Button>
+
+            {(userBest ?? 0) > 0 && (
+              <p className="text-muted-foreground text-xs mt-4 font-display tracking-wider">
+                PERSONAL BEST: <span className="text-primary">{userBest}</span>
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ═══════════════════════════════════════════════════════════
+  // ─── PLAYING / PAUSED / GAMEOVER ──────────────────────────
+  // ═══════════════════════════════════════════════════════════
+  const isNewBest = gameState === "gameover" && userBest !== null && score >= userBest && score > 0;
+  const finalTime = timeSurvived || Math.floor((Date.now() - startTime) / 1000);
+  const mins = Math.floor(finalTime / 60);
+  const secs = finalTime % 60;
+  const timeStr = mins > 0 ? `${mins}m ${secs}s` : `${secs}s`;
+
   return (
-    <div className="flex flex-col items-center w-full max-w-xl mx-auto select-none">
-      {/* ─── Top bar: Pause · Score · Next · Level · Lines · Best · Leaderboard ─── */}
+    <div className={`flex flex-col items-center w-full max-w-xl mx-auto select-none ${deathShake ? "animate-shake" : ""}`}>
+      {/* ─── Top bar ─── */}
       <div className="flex items-center justify-between w-full px-2 mb-3 gap-1">
-        {/* Pause / Leaderboard - LEFT of HUD */}
         <div className="flex flex-col gap-1 shrink-0">
           {gameState === "playing" ? (
             <Button onClick={togglePause} variant="outline" size="sm" className="font-display text-[10px] tracking-wide gap-1 h-8 px-3 border-border">
@@ -667,7 +878,6 @@ const TetrisGame = () => {
           </Button>
         </div>
 
-        {/* Stats */}
         <div className="text-center flex-1 min-w-0">
           <p className="font-display text-[10px] tracking-wider text-muted-foreground">SCORE</p>
           <p className="font-display text-xl sm:text-2xl tracking-wide text-primary leading-none">{score}</p>
@@ -689,6 +899,10 @@ const TetrisGame = () => {
               {getLevelMessage(level) || `${level}`}
             </motion.div>
           </AnimatePresence>
+          {/* Stage name under level */}
+          <p className="font-display text-[8px] tracking-wider text-muted-foreground/50 mt-0.5">
+            {currentNamedStage.name}
+          </p>
         </div>
         <div className="text-center flex-1 min-w-0">
           <p className="font-display text-[10px] tracking-wider text-muted-foreground">LINES</p>
@@ -715,33 +929,24 @@ const TetrisGame = () => {
           style={{ touchAction: "none", maxWidth: CANVAS_WIDTH, height: "auto", aspectRatio: `${CANVAS_WIDTH}/${CANVAS_HEIGHT}` }}
         />
 
+        {/* CRT scanline HTML overlay on top of canvas */}
+        <div
+          className="absolute inset-0 pointer-events-none rounded-lg"
+          style={{ background: "repeating-linear-gradient(0deg, rgba(255,85,0,0.02) 0px, transparent 1px, transparent 3px)" }}
+        />
+
         {/* Overlays */}
         <AnimatePresence>
-          {gameState === "idle" && (
-            <motion.div
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              className="absolute inset-0 flex flex-col items-center justify-center rounded-lg"
-              style={{ background: "rgba(0,0,0,0.85)" }}
-            >
-              <p className="font-display text-4xl sm:text-5xl text-primary tracking-wide mb-2">STACK</p>
-              <p className="font-display text-lg text-foreground tracking-wide mb-1">UNBREAKABLE</p>
-              <p className="font-display text-xs text-muted-foreground tracking-wide mb-6">EDITION</p>
-              <Button onClick={startGame} size="lg" className="font-display text-lg tracking-wide gap-2 bg-primary text-primary-foreground hover:bg-primary/90 px-8 py-6">
-                <Play className="w-5 h-5" /> START GAME
-              </Button>
-              <p className="text-xs text-muted-foreground mt-4 font-display tracking-wide">
-                ARROWS / WASD · SPACE = HARD DROP
-              </p>
-            </motion.div>
-          )}
-
           {gameState === "paused" && (
             <motion.div
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
               className="absolute inset-0 flex flex-col items-center justify-center rounded-lg"
               style={{ background: "rgba(0,0,0,0.85)" }}
             >
-              <p className="font-display text-3xl text-primary tracking-wide mb-6">PAUSED</p>
+              <p className="font-display text-3xl text-primary tracking-wide mb-2">PAUSED</p>
+              <p className="font-display text-xs text-muted-foreground/60 tracking-wider mb-6">
+                {currentNamedStage.label}: {currentNamedStage.name}
+              </p>
               <Button onClick={togglePause} size="lg" className="font-display text-lg tracking-wide gap-2 bg-primary text-primary-foreground hover:bg-primary/90 px-8 py-6">
                 <Play className="w-5 h-5" /> RESUME
               </Button>
@@ -751,20 +956,73 @@ const TetrisGame = () => {
           {gameState === "gameover" && (
             <motion.div
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              className="absolute inset-0 flex flex-col items-center justify-center rounded-lg"
-              style={{ background: "rgba(0,0,0,0.9)" }}
+              className="absolute inset-0 flex flex-col items-center justify-center rounded-lg overflow-y-auto py-4"
+              style={{ background: "rgba(0,0,0,0.92)" }}
             >
-              <p className="font-display text-3xl text-primary tracking-wide mb-2">GAME OVER</p>
+              <p className="font-display text-3xl text-primary tracking-wide mb-1">GAME OVER</p>
+              {isNewBest && (
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: [0, 1, 0.5, 1] }}
+                  transition={{ repeat: 2, duration: 0.6 }}
+                  className="text-primary font-display text-sm tracking-wider mb-1"
+                >
+                  ★ NEW PERSONAL BEST ★
+                </motion.p>
+              )}
               <p className="font-display text-5xl text-foreground tracking-wide mb-1">{score}</p>
-              <p className="font-display text-sm text-muted-foreground tracking-wide mb-1">
-                LEVEL {level}{getLevelMessage(level) ? ` · ${getLevelMessage(level)}` : ""} · {linesCleared} LINES
+              <p className="font-display text-xs text-muted-foreground/60 tracking-wider mb-2">
+                {currentNamedStage.label}: {currentNamedStage.name}
               </p>
-              <p className="font-display text-xs text-primary tracking-wide mb-6">
-                BEST: {Math.max(highScore, userBest || 0)}
-              </p>
+
+              {/* Stats grid */}
+              <div className="grid grid-cols-4 gap-1.5 mb-2 px-3 w-full max-w-[280px]">
+                <div className="bg-white/5 rounded p-1.5 text-center">
+                  <p className="font-display text-sm text-primary">{level}</p>
+                  <p className="text-[7px] text-muted-foreground font-display tracking-wider">LEVEL</p>
+                </div>
+                <div className="bg-white/5 rounded p-1.5 text-center">
+                  <p className="font-display text-sm text-primary">{linesCleared}</p>
+                  <p className="text-[7px] text-muted-foreground font-display tracking-wider">LINES</p>
+                </div>
+                <div className="bg-white/5 rounded p-1.5 text-center">
+                  <p className="font-display text-sm text-primary">{totalPiecesPlaced}</p>
+                  <p className="text-[7px] text-muted-foreground font-display tracking-wider">PIECES</p>
+                </div>
+                <div className="bg-white/5 rounded p-1.5 text-center">
+                  <p className="font-display text-sm text-primary">{maxCombo}</p>
+                  <p className="text-[7px] text-muted-foreground font-display tracking-wider">MAX COMBO</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-4 gap-1.5 mb-3 px-3 w-full max-w-[280px]">
+                <div className="bg-white/5 rounded p-1.5 text-center">
+                  <p className="font-display text-sm text-primary">{tetrisCount}</p>
+                  <p className="text-[7px] text-muted-foreground font-display tracking-wider">TETRIS</p>
+                </div>
+                <div className="bg-white/5 rounded p-1.5 text-center">
+                  <p className="font-display text-sm text-primary">{tripleClears}</p>
+                  <p className="text-[7px] text-muted-foreground font-display tracking-wider">TRIPLES</p>
+                </div>
+                <div className="bg-white/5 rounded p-1.5 text-center">
+                  <p className="font-display text-sm text-primary">{doubleClears}</p>
+                  <p className="text-[7px] text-muted-foreground font-display tracking-wider">DOUBLES</p>
+                </div>
+                <div className="bg-white/5 rounded p-1.5 text-center">
+                  <p className="font-display text-sm text-primary">{timeStr}</p>
+                  <p className="text-[7px] text-muted-foreground font-display tracking-wider">TIME</p>
+                </div>
+              </div>
+
+              {!isNewBest && (
+                <p className="font-display text-xs text-primary tracking-wide mb-3">
+                  BEST: {Math.max(highScore, userBest || 0)}
+                </p>
+              )}
+
               <div className="flex gap-3">
                 <Button onClick={startGame} size="lg" className="font-display tracking-wide gap-2 bg-primary text-primary-foreground hover:bg-primary/90 px-6 py-5">
-                  <RotateCcw className="w-5 h-5" /> PLAY AGAIN
+                  <RotateCcw className="w-5 h-5" /> STACK AGAIN
                 </Button>
                 <Button onClick={() => { refetch(); setShowLeaderboard(true); }} variant="outline" size="lg" className="font-display tracking-wide gap-2 px-6 py-5">
                   <Trophy className="w-5 h-5" /> BOARD
@@ -775,10 +1033,44 @@ const TetrisGame = () => {
         </AnimatePresence>
       </div>
 
-      {/* ─── Controls: D-pad left · Action buttons right ─── */}
+      {/* Stage flash overlay */}
+      <AnimatePresence>
+        {stageFlash && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none"
+            style={{ background: "rgba(255,85,0,0.12)" }}
+          >
+            <motion.div
+              initial={{ scale: 0.5, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 1.5, opacity: 0 }}
+              transition={{ duration: 0.5 }}
+              className="text-center"
+            >
+              <p
+                className="font-display text-5xl text-primary tracking-wider"
+                style={{ textShadow: "0 0 40px rgba(255,85,0,0.8)" }}
+              >
+                {stageFlash}
+              </p>
+              <p
+                className="font-display text-lg text-foreground/80 tracking-wider mt-1"
+                style={{ textShadow: "0 0 10px rgba(255,255,255,0.3)" }}
+              >
+                {getNamedStage(linesCleared).label}
+              </p>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ─── Controls ─── */}
       <div className="w-full mt-4 px-1">
         <div className="flex items-center justify-between gap-3">
-          {/* LEFT: D-pad */}
           <div className="grid grid-cols-3 gap-1 shrink-0">
             <div />
             <Button
@@ -806,7 +1098,6 @@ const TetrisGame = () => {
             </Button>
           </div>
 
-          {/* RIGHT: Rotate + Hard Drop */}
           <div className="flex flex-col gap-2 shrink-0">
             <Button
               className="h-[72px] w-32 sm:h-16 sm:w-32 bg-primary text-primary-foreground font-display text-base tracking-wide gap-2 hover:bg-primary/90 active:scale-95 transition-all rounded-xl shadow-md"
@@ -826,7 +1117,6 @@ const TetrisGame = () => {
         </div>
       </div>
 
-      {/* Keyboard hints (desktop) */}
       <div className="hidden sm:flex items-center gap-4 mt-3 text-[10px] text-muted-foreground font-display tracking-wider">
         <span>← → MOVE</span>
         <span>↑ ROTATE</span>
