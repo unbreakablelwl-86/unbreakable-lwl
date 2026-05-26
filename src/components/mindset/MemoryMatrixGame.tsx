@@ -6,19 +6,53 @@ import { useMemoryMatrixScores } from "@/hooks/useMemoryMatrixScores";
 import { MemoryMatrixLeaderboard } from "./MemoryMatrixLeaderboard";
 import { useGameAudio } from "@/hooks/useGameAudio";
 
-// --- Boot sequence ---
+// ═══════════════════════════════════════════════════════════════
+// RECALL — TOTAL RECALL OR NOTHING.
+// Premium build · UNBREAKABLE · 2026
+// ═══════════════════════════════════════════════════════════════
+
+// ─── Boot sequence ─────────────────────────────────────────
 const BOOT_LINES = [
-  "> UNBREAKABLE OS v2.4",
-  "> LOADING RECALL CORE...",
-  "> NEURAL GRID INITIALISED",
-  "> PATTERN BUFFER ONLINE",
-  "> RECALL SYSTEM ARMED",
-  "> STATUS: DIALLED IN",
+  "> UNBREAKABLE OS v3.2",
+  "> LOADING RECALL ENGINE...",
+  "> NEURAL GRID ONLINE",
+  "> PATTERN BUFFER: 16 KB",
+  "> MEMORY BANKS: CLEARED",
+  "> VISUAL CORTEX: ARMED",
+  "> RECALL SYSTEM: DIALLED IN",
   "",
-  "  REMEMBER EVERYTHING",
+  "  TOTAL RECALL OR NOTHING.",
 ];
 
-// --- Motivational messages ---
+// ─── Named Stages ──────────────────────────────────────────
+const STAGES = [
+  { level: 0, name: "WARM UP", label: "STAGE 1" },
+  { level: 2, name: "FIRST FLASH", label: "STAGE 2" },
+  { level: 4, name: "GRID LOCK", label: "STAGE 3" },
+  { level: 6, name: "DEEP SCAN", label: "STAGE 4" },
+  { level: 8, name: "HYPERFOCUS", label: "STAGE 5" },
+  { level: 10, name: "TOTAL RECALL", label: "STAGE 6" },
+  { level: 12, name: "PHOTOGRAPHIC", label: "STAGE 7" },
+  { level: 14, name: "IMMORTAL", label: "STAGE 8" },
+];
+
+const getStage = (level: number) => {
+  let current = STAGES[0];
+  for (const s of STAGES) {
+    if (level >= s.level) current = s;
+  }
+  return current;
+};
+
+const getStageIndex = (level: number): number => {
+  let idx = 0;
+  for (let i = 0; i < STAGES.length; i++) {
+    if (level >= STAGES[i].level) idx = i;
+  }
+  return idx;
+};
+
+// ─── Motivational messages ─────────────────────────────────
 const SUCCESS_MESSAGES = [
   "PERFECT RECALL", "DIALLED IN", "LOCKED IN", "PHOTOGRAPHIC",
   "SHARP MIND", "FLAWLESS", "UNBREAKABLE", "ELITE MEMORY",
@@ -30,7 +64,7 @@ const FAIL_MESSAGES = [
   "RESET AND GO", "NOT DONE YET", "COME BACK STRONGER", "TRY AGAIN",
 ];
 
-// --- Level config ---
+// ─── Level config ──────────────────────────────────────────
 interface LevelConfig {
   gridSize: number;
   activeCells: number;
@@ -58,6 +92,14 @@ const LEVELS: LevelConfig[] = [
 
 type GameState = "boot" | "ready" | "flashing" | "input" | "result" | "gameover" | "leaderboard";
 
+// ─── Particle type ─────────────────────────────────────────
+interface Particle {
+  id: number;
+  x: number;
+  y: number;
+  color: string;
+}
+
 const MemoryMatrixGame = () => {
   const [gameState, setGameState] = useState<GameState>("boot");
   const [level, setLevel] = useState(0);
@@ -70,10 +112,28 @@ const MemoryMatrixGame = () => {
   const [message, setMessage] = useState("");
   const [maxLevel, setMaxLevel] = useState(0);
 
+  // Premium stats
+  const [perfectRounds, setPerfectRounds] = useState(0);
+  const [totalCellsRecalled, setTotalCellsRecalled] = useState(0);
+  const [totalCellsTapped, setTotalCellsTapped] = useState(0);
+  const [longestStreak, setLongestStreak] = useState(0);
+  const [currentStreak, setCurrentStreak] = useState(0);
+  const [startTime, setStartTime] = useState(0);
+  const [timeSurvived, setTimeSurvived] = useState(0);
+  const [roundsPlayed, setRoundsPlayed] = useState(0);
+
+  // Premium effects
+  const [deathShake, setDeathShake] = useState(false);
+  const [stageFlash, setStageFlash] = useState<string | null>(null);
+  const [particles, setParticles] = useState<Particle[]>([]);
+  const lastStageRef = useRef(0);
+  const particleIdRef = useRef(0);
+  const gridRef = useRef<HTMLDivElement>(null);
+
   const { topScores, userBest, saveScore, refetch } = useMemoryMatrixScores();
   const audio = useGameAudio("memory" as any);
 
-  // --- Boot sequence ---
+  // ─── Boot sequence ─────────────────────────────────────────
   const [bootLines, setBootLines] = useState<string[]>([]);
   const [bootDone, setBootDone] = useState(false);
 
@@ -88,7 +148,7 @@ const MemoryMatrixGame = () => {
         clearInterval(interval);
         setTimeout(() => setBootDone(true), 400);
       }
-    }, 180);
+    }, 160);
     return () => clearInterval(interval);
   }, [gameState]);
 
@@ -96,7 +156,31 @@ const MemoryMatrixGame = () => {
     if (bootDone) setTimeout(() => setGameState("ready"), 600);
   }, [bootDone]);
 
-  // --- Generate random pattern ---
+  // ─── Spawn particles ────────────────────────────────────────
+  const spawnParticles = useCallback((cellIndex: number, color: string) => {
+    const config = LEVELS[Math.min(level, LEVELS.length - 1)];
+    const gridSize = config.gridSize;
+    const cellSize = Math.floor(Math.min(320, window.innerWidth - 64) / gridSize) - 4;
+    const col = cellIndex % gridSize;
+    const row = Math.floor(cellIndex / gridSize);
+    const x = col * (cellSize + 4) + cellSize / 2;
+    const y = row * (cellSize + 4) + cellSize / 2;
+    const newParticles: Particle[] = [];
+    for (let i = 0; i < 6; i++) {
+      newParticles.push({
+        id: ++particleIdRef.current,
+        x: x + (Math.random() - 0.5) * cellSize,
+        y: y + (Math.random() - 0.5) * cellSize,
+        color,
+      });
+    }
+    setParticles((prev) => [...prev, ...newParticles]);
+    setTimeout(() => {
+      setParticles((prev) => prev.filter((p) => !newParticles.find((np) => np.id === p.id)));
+    }, 600);
+  }, [level]);
+
+  // ─── Generate random pattern ─────────────────────────────
   const generatePattern = useCallback((config: LevelConfig) => {
     const totalCells = config.gridSize * config.gridSize;
     const cells = new Set<number>();
@@ -106,7 +190,7 @@ const MemoryMatrixGame = () => {
     return cells;
   }, []);
 
-  // --- Start a round ---
+  // ─── Start a round ───────────────────────────────────────
   const startRound = useCallback((lvl: number) => {
     const config = LEVELS[Math.min(lvl, LEVELS.length - 1)];
     const newPattern = generatePattern(config);
@@ -114,28 +198,39 @@ const MemoryMatrixGame = () => {
     setSelected(new Set());
     setRevealed(true);
     setGameState("flashing");
+    setRoundsPlayed((prev) => prev + 1);
 
     audio.playHit();
 
-    // Flash pattern then allow input
     setTimeout(() => {
       setRevealed(false);
       setGameState("input");
     }, config.flashDurationMs);
   }, [generatePattern, audio]);
 
-  // --- Start game ---
+  // ─── Start game ──────────────────────────────────────────
   const startGame = useCallback(() => {
     setScore(0);
     setLevel(0);
     setLives(3);
     setMaxLevel(0);
     setMessage("");
+    setPerfectRounds(0);
+    setTotalCellsRecalled(0);
+    setTotalCellsTapped(0);
+    setLongestStreak(0);
+    setCurrentStreak(0);
+    setStartTime(Date.now());
+    setTimeSurvived(0);
+    setRoundsPlayed(0);
+    setDeathShake(false);
+    setStageFlash(null);
+    lastStageRef.current = 0;
     audio.startMusic();
     startRound(0);
   }, [startRound, audio]);
 
-  // --- Cell click ---
+  // ─── Cell click ──────────────────────────────────────────
   const handleCellClick = useCallback((cellIndex: number) => {
     if (gameState !== "input") return;
     if (selected.has(cellIndex)) return;
@@ -143,34 +238,62 @@ const MemoryMatrixGame = () => {
     const newSelected = new Set(selected);
     newSelected.add(cellIndex);
     setSelected(newSelected);
+    setTotalCellsTapped((prev) => prev + 1);
 
     if (pattern.has(cellIndex)) {
       audio.playHit();
+      setTotalCellsRecalled((prev) => prev + 1);
+      spawnParticles(cellIndex, "#FF5500");
+
       // Check if all pattern cells are selected
       const allFound = [...pattern].every((p) => newSelected.has(p));
       if (allFound) {
-        // Round complete!
+        // Round complete — no wrong taps means perfect
+        const wrongTaps = [...newSelected].filter((s) => !pattern.has(s)).length;
+        if (wrongTaps === 0) {
+          setPerfectRounds((prev) => prev + 1);
+        }
+
         const config = LEVELS[Math.min(level, LEVELS.length - 1)];
         const roundPoints = config.activeCells * (level + 1) * 10;
-        setScore((prev) => prev + roundPoints);
+        const newScore = score + roundPoints;
+        setScore(newScore);
         const newLevel = level + 1;
         setLevel(newLevel);
         if (newLevel > maxLevel) setMaxLevel(newLevel);
+
+        // Streak
+        const newStreak = currentStreak + 1;
+        setCurrentStreak(newStreak);
+        if (newStreak > longestStreak) setLongestStreak(newStreak);
+
         setMessage(SUCCESS_MESSAGES[Math.floor(Math.random() * SUCCESS_MESSAGES.length)]);
         setResultCorrect(true);
         setGameState("result");
         audio.playLevelUp();
 
+        // Stage transition check
+        const oldStageIdx = lastStageRef.current;
+        const newStageIdx = getStageIndex(newLevel);
+        if (newStageIdx > oldStageIdx) {
+          const stageName = STAGES[newStageIdx].name;
+          setStageFlash(stageName);
+          lastStageRef.current = newStageIdx;
+          setTimeout(() => setStageFlash(null), 1500);
+        }
+
         // Next round after brief pause
         setTimeout(() => {
           startRound(newLevel);
-        }, 1200);
+        }, stageFlash ? 1800 : 1200);
       }
     } else {
       // Wrong cell
       audio.playGameOver();
+      spawnParticles(cellIndex, "#ef4444");
       const newLives = lives - 1;
       setLives(newLives);
+      setCurrentStreak(0);
       setMessage(FAIL_MESSAGES[Math.floor(Math.random() * FAIL_MESSAGES.length)]);
       setResultCorrect(false);
       setRevealed(true);
@@ -178,6 +301,9 @@ const MemoryMatrixGame = () => {
 
       if (newLives <= 0) {
         // Game over
+        setTimeSurvived(Math.floor((Date.now() - startTime) / 1000));
+        setDeathShake(true);
+        setTimeout(() => setDeathShake(false), 500);
         setTimeout(() => {
           audio.stopMusic();
           setGameState("gameover");
@@ -189,9 +315,9 @@ const MemoryMatrixGame = () => {
         }, 1500);
       }
     }
-  }, [gameState, selected, pattern, level, lives, maxLevel, startRound, audio]);
+  }, [gameState, selected, pattern, level, lives, maxLevel, score, currentStreak, longestStreak, startRound, startTime, audio, spawnParticles, stageFlash]);
 
-  // --- Save on game over ---
+  // ─── Save on game over ─────────────────────────────────
   useEffect(() => {
     if (gameState === "gameover" && score > 0) {
       saveScore(score, maxLevel);
@@ -201,8 +327,24 @@ const MemoryMatrixGame = () => {
   const currentConfig = LEVELS[Math.min(level, LEVELS.length - 1)];
   const gridSize = currentConfig.gridSize;
   const cellSizePx = Math.floor(Math.min(320, window.innerWidth - 64) / gridSize) - 4;
+  const currentStage = getStage(level);
 
-  // --- Leaderboard ---
+  // ═══════════════════════════════════════════════════════════
+  // ─── CRT Scanline Overlay (shared) ────────────────────────
+  // ═══════════════════════════════════════════════════════════
+  const CRTOverlay = () => (
+    <div
+      className="absolute inset-0 pointer-events-none z-30"
+      style={{
+        background: "repeating-linear-gradient(0deg, rgba(255,85,0,0.03) 0px, transparent 1px, transparent 3px)",
+        mixBlendMode: "multiply",
+      }}
+    />
+  );
+
+  // ═══════════════════════════════════════════════════════════
+  // ─── LEADERBOARD ──────────────────────────────────────────
+  // ═══════════════════════════════════════════════════════════
   if (gameState === "leaderboard") {
     return (
       <MemoryMatrixLeaderboard
@@ -214,7 +356,9 @@ const MemoryMatrixGame = () => {
     );
   }
 
-  // --- Boot ---
+  // ═══════════════════════════════════════════════════════════
+  // ─── BOOT SCREEN ──────────────────────────────────────────
+  // ═══════════════════════════════════════════════════════════
   if (gameState === "boot") {
     return (
       <div className="w-full max-w-lg mx-auto">
@@ -222,18 +366,27 @@ const MemoryMatrixGame = () => {
           className="relative rounded-xl overflow-hidden border-2 border-primary/40"
           style={{ background: "#0a0a0a", fontFamily: "'Courier New', monospace", minHeight: 420 }}
         >
-          <div
-            className="absolute inset-0 pointer-events-none z-10"
-            style={{ background: "repeating-linear-gradient(0deg, rgba(255,85,0,0.03) 0px, transparent 1px, transparent 3px)" }}
-          />
+          <CRTOverlay />
           <div className="p-6 relative z-20">
             {bootLines.map((line, i) => (
-              <motion.p key={i} initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-primary text-sm mb-1" style={{ textShadow: "0 0 8px rgba(255,85,0,0.6)" }}>
+              <motion.p
+                key={i}
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.15 }}
+                className="text-primary text-sm mb-1"
+                style={{ textShadow: "0 0 8px rgba(255,85,0,0.6)" }}
+              >
                 {line}
               </motion.p>
             ))}
             {bootDone && (
-              <motion.p initial={{ opacity: 0 }} animate={{ opacity: [0, 1, 0, 1] }} transition={{ duration: 0.8 }} className="text-primary text-sm mt-4">
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: [0, 1, 0, 1] }}
+                transition={{ duration: 0.8 }}
+                className="text-primary text-sm mt-4"
+              >
                 {">"} PRESS START_
               </motion.p>
             )}
@@ -243,28 +396,77 @@ const MemoryMatrixGame = () => {
     );
   }
 
-  // --- Ready ---
+  // ═══════════════════════════════════════════════════════════
+  // ─── READY SCREEN ─────────────────────────────────────────
+  // ═══════════════════════════════════════════════════════════
   if (gameState === "ready") {
     return (
       <div className="w-full max-w-lg mx-auto text-center">
-        <div className="relative rounded-xl overflow-hidden border-2 border-primary/40 p-8" style={{ background: "#0a0a0a", minHeight: 420 }}>
-          <div className="absolute inset-0 pointer-events-none" style={{ background: "repeating-linear-gradient(0deg, rgba(255,85,0,0.03) 0px, transparent 1px, transparent 3px)" }} />
+        <div
+          className="relative rounded-xl overflow-hidden border-2 border-primary/40 p-8"
+          style={{ background: "#0a0a0a", minHeight: 420 }}
+        >
+          <CRTOverlay />
           <div className="relative z-10">
-            <h2 className="font-display text-4xl text-primary tracking-wider mb-2" style={{ textShadow: "0 0 20px rgba(255,85,0,0.5)" }}>
+            <h2
+              className="font-display text-4xl text-primary tracking-wider mb-1"
+              style={{ textShadow: "0 0 20px rgba(255,85,0,0.5)" }}
+            >
               RECALL
             </h2>
-            <h3 className="font-display text-2xl text-foreground tracking-wider mb-6" style={{ textShadow: "0 0 10px rgba(255,255,255,0.2)" }}>
+            <h3
+              className="font-display text-xl text-foreground tracking-wider mb-6"
+              style={{ textShadow: "0 0 10px rgba(255,255,255,0.2)" }}
+            >
               TOTAL RECALL OR NOTHING.
             </h3>
 
-            <div className="space-y-3 text-left max-w-xs mx-auto mb-8">
-              <p className="text-muted-foreground text-sm"><span className="text-primary font-bold">▸</span> Watch the pattern flash</p>
-              <p className="text-muted-foreground text-sm"><span className="text-primary font-bold">▸</span> Recreate it from memory</p>
-              <p className="text-muted-foreground text-sm"><span className="text-primary font-bold">▸</span> Grids grow — flash time shrinks</p>
-              <p className="text-muted-foreground text-sm"><span className="text-primary font-bold">▸</span> 3 lives — make them count</p>
+            <div className="space-y-2.5 text-left max-w-xs mx-auto mb-6">
+              <p className="text-muted-foreground text-sm">
+                <span className="text-primary font-bold">▸</span> Watch the pattern flash on the grid
+              </p>
+              <p className="text-muted-foreground text-sm">
+                <span className="text-primary font-bold">▸</span> Tap cells to recreate it from memory
+              </p>
+              <p className="text-muted-foreground text-sm">
+                <span className="text-primary font-bold">▸</span> Grids grow larger — flash time shrinks
+              </p>
+              <p className="text-muted-foreground text-sm">
+                <span className="text-primary font-bold">▸</span> 3 lives — wrong cell = life lost
+              </p>
+              <p className="text-muted-foreground text-sm">
+                <span className="text-primary font-bold">▸</span> Perfect rounds = no wrong taps
+              </p>
             </div>
 
-            <Button onClick={startGame} className="font-display text-lg tracking-wider px-8 py-4 bg-primary hover:bg-primary/80" style={{ boxShadow: "0 0 20px rgba(255,85,0,0.4)" }}>
+            <div className="grid grid-cols-4 gap-2 mb-6 max-w-xs mx-auto">
+              <div className="bg-card/50 border border-border rounded-lg p-2 text-center">
+                <div className="w-5 h-5 rounded-sm mx-auto mb-1" style={{ background: "#FF5500", boxShadow: "0 0 6px rgba(255,85,0,0.4)" }} />
+                <p className="text-[9px] text-muted-foreground font-display tracking-wider">PATTERN</p>
+              </div>
+              <div className="bg-card/50 border border-border rounded-lg p-2 text-center">
+                <div className="w-5 h-5 rounded-sm mx-auto mb-1" style={{ background: "#1a1a1a", border: "2px solid #333" }} />
+                <p className="text-[9px] text-muted-foreground font-display tracking-wider">EMPTY</p>
+              </div>
+              <div className="bg-card/50 border border-border rounded-lg p-2 text-center">
+                <div className="w-5 h-5 rounded-sm mx-auto mb-1" style={{ background: "#ef4444", boxShadow: "0 0 6px rgba(239,68,68,0.4)" }} />
+                <p className="text-[9px] text-muted-foreground font-display tracking-wider">WRONG</p>
+              </div>
+              <div className="bg-card/50 border border-border rounded-lg p-2 text-center">
+                <div className="flex gap-0.5 mx-auto mb-1 justify-center">
+                  {[0, 1, 2].map((i) => (
+                    <div key={i} className="w-2.5 h-2.5 rounded-sm" style={{ background: "#FF5500", boxShadow: "0 0 4px rgba(255,85,0,0.3)" }} />
+                  ))}
+                </div>
+                <p className="text-[9px] text-muted-foreground font-display tracking-wider">3 LIVES</p>
+              </div>
+            </div>
+
+            <Button
+              onClick={startGame}
+              className="font-display text-lg tracking-wider px-8 py-4 bg-primary hover:bg-primary/80"
+              style={{ boxShadow: "0 0 20px rgba(255,85,0,0.4)" }}
+            >
               START
             </Button>
 
@@ -279,74 +481,165 @@ const MemoryMatrixGame = () => {
     );
   }
 
-  // --- Game Over ---
+  // ═══════════════════════════════════════════════════════════
+  // ─── GAME OVER ────────────────────────────────────────────
+  // ═══════════════════════════════════════════════════════════
   if (gameState === "gameover") {
     const isNewBest = userBest !== null && score >= userBest;
+    const accuracy = totalCellsTapped > 0 ? Math.round((totalCellsRecalled / totalCellsTapped) * 100) : 0;
+    const finalTime = timeSurvived || Math.floor((Date.now() - startTime) / 1000);
+    const mins = Math.floor(finalTime / 60);
+    const secs = finalTime % 60;
+    const timeStr = mins > 0 ? `${mins}m ${secs}s` : `${secs}s`;
+
     return (
-      <div className="w-full max-w-lg mx-auto text-center">
-        <div className="relative rounded-xl overflow-hidden border-2 border-primary/40 p-8" style={{ background: "#0a0a0a", minHeight: 420 }}>
-          <div className="absolute inset-0 pointer-events-none" style={{ background: "repeating-linear-gradient(0deg, rgba(255,85,0,0.03) 0px, transparent 1px, transparent 3px)" }} />
+      <div className={`w-full max-w-lg mx-auto text-center ${deathShake ? "animate-shake" : ""}`}>
+        <div
+          className="relative rounded-xl overflow-hidden border-2 border-primary/40 p-6"
+          style={{ background: "#0a0a0a", minHeight: 420 }}
+        >
+          <CRTOverlay />
           <div className="relative z-10">
             <motion.div initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}>
-              <h2 className="font-display text-3xl text-primary tracking-wider mb-1" style={{ textShadow: "0 0 20px rgba(255,85,0,0.5)" }}>
+              <h2
+                className="font-display text-3xl text-primary tracking-wider mb-1"
+                style={{ textShadow: "0 0 20px rgba(255,85,0,0.5)" }}
+              >
                 RECALL FAILED
               </h2>
               {isNewBest && (
-                <motion.p initial={{ opacity: 0 }} animate={{ opacity: [0, 1, 0.5, 1] }} className="text-primary font-display text-sm tracking-wider mb-4">
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: [0, 1, 0.5, 1] }}
+                  transition={{ repeat: 2, duration: 0.6 }}
+                  className="text-primary font-display text-sm tracking-wider mb-1"
+                >
                   ★ NEW PERSONAL BEST ★
                 </motion.p>
               )}
+              <p className="text-muted-foreground/60 font-display text-xs tracking-wider mb-2">
+                {currentStage.label}: {currentStage.name}
+              </p>
             </motion.div>
 
-            <div className="my-6">
-              <p className="font-display text-6xl text-primary" style={{ textShadow: "0 0 30px rgba(255,85,0,0.4)" }}>{score}</p>
-              <p className="text-muted-foreground font-display text-xs tracking-wider mt-1">SCORE</p>
+            <div className="my-4">
+              <p
+                className="font-display text-6xl text-primary"
+                style={{ textShadow: "0 0 30px rgba(255,85,0,0.4)" }}
+              >
+                {score}
+              </p>
+              <p className="text-muted-foreground font-display text-xs tracking-wider mt-1">
+                TOTAL SCORE
+              </p>
             </div>
 
-            <div className="grid grid-cols-2 gap-3 mb-6">
-              <div className="bg-card/50 border border-border rounded-lg p-3">
-                <p className="font-display text-xl text-primary">{maxLevel}</p>
-                <p className="text-[10px] text-muted-foreground font-display tracking-wider">MAX LEVEL</p>
+            {/* Primary stats row */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
+              <div className="bg-card/50 border border-border rounded-lg p-2.5">
+                <p className="font-display text-lg text-primary">{maxLevel}</p>
+                <p className="text-[9px] text-muted-foreground font-display tracking-wider">MAX LEVEL</p>
               </div>
-              <div className="bg-card/50 border border-border rounded-lg p-3">
-                <p className="font-display text-xl text-primary">{userBest ?? "—"}</p>
-                <p className="text-[10px] text-muted-foreground font-display tracking-wider">ALL-TIME</p>
+              <div className="bg-card/50 border border-border rounded-lg p-2.5">
+                <p className="font-display text-lg text-primary">{perfectRounds}</p>
+                <p className="text-[9px] text-muted-foreground font-display tracking-wider">PERFECT</p>
+              </div>
+              <div className="bg-card/50 border border-border rounded-lg p-2.5">
+                <p className="font-display text-lg text-primary">{accuracy}%</p>
+                <p className="text-[9px] text-muted-foreground font-display tracking-wider">ACCURACY</p>
+              </div>
+              <div className="bg-card/50 border border-border rounded-lg p-2.5">
+                <p className="font-display text-lg text-primary">{longestStreak}</p>
+                <p className="text-[9px] text-muted-foreground font-display tracking-wider">BEST STREAK</p>
+              </div>
+            </div>
+
+            {/* Secondary stats row */}
+            <div className="grid grid-cols-3 gap-2 mb-5">
+              <div className="bg-card/50 border border-border rounded-lg p-2">
+                <p className="font-display text-sm text-primary">{totalCellsRecalled}</p>
+                <p className="text-[8px] text-muted-foreground font-display tracking-wider">CELLS RECALLED</p>
+              </div>
+              <div className="bg-card/50 border border-border rounded-lg p-2">
+                <p className="font-display text-sm text-primary">{roundsPlayed}</p>
+                <p className="text-[8px] text-muted-foreground font-display tracking-wider">ROUNDS</p>
+              </div>
+              <div className="bg-card/50 border border-border rounded-lg p-2">
+                <p className="font-display text-sm text-primary">{timeStr}</p>
+                <p className="text-[8px] text-muted-foreground font-display tracking-wider">TIME</p>
               </div>
             </div>
 
             <div className="flex gap-3 justify-center">
-              <Button onClick={startGame} className="font-display tracking-wider px-6 bg-primary hover:bg-primary/80 gap-2">
-                <RotateCcw className="w-4 h-4" /> AGAIN
+              <Button
+                onClick={startGame}
+                className="font-display tracking-wider px-6 bg-primary hover:bg-primary/80 gap-2"
+              >
+                <RotateCcw className="w-4 h-4" /> RECALL AGAIN
               </Button>
-              <Button onClick={() => { refetch(); setGameState("leaderboard"); }} variant="outline" className="font-display tracking-wider px-6 gap-2 border-primary/30">
+              <Button
+                onClick={() => {
+                  refetch();
+                  setGameState("leaderboard");
+                }}
+                variant="outline"
+                className="font-display tracking-wider px-6 gap-2 border-primary/30"
+              >
                 <Trophy className="w-4 h-4" /> BOARD
               </Button>
             </div>
+
+            {userBest !== null && !isNewBest && (
+              <p className="text-muted-foreground text-xs mt-3 font-display tracking-wider">
+                BEST: <span className="text-primary">{userBest}</span>
+              </p>
+            )}
           </div>
         </div>
       </div>
     );
   }
 
-  // --- Playing (flashing / input / result) ---
+  // ═══════════════════════════════════════════════════════════
+  // ─── PLAYING (flashing / input / result) ──────────────────
+  // ═══════════════════════════════════════════════════════════
   return (
-    <div className="w-full max-w-lg mx-auto">
+    <div className={`w-full max-w-lg mx-auto ${deathShake ? "animate-shake" : ""}`}>
       {/* HUD */}
       <div className="flex items-center justify-between mb-3 px-1">
         <div className="flex items-center gap-3">
-          <p className="font-display text-2xl text-primary" style={{ textShadow: "0 0 10px rgba(255,85,0,0.4)" }}>
+          <p
+            className="font-display text-2xl text-primary"
+            style={{ textShadow: "0 0 10px rgba(255,85,0,0.4)" }}
+          >
             {score}
           </p>
           <div className="bg-card/60 border border-border rounded px-2 py-0.5">
-            <p className="font-display text-xs text-muted-foreground tracking-wider">LVL {level + 1}</p>
+            <p className="font-display text-xs text-muted-foreground tracking-wider">
+              LVL {level + 1}
+            </p>
           </div>
         </div>
         <div className="flex items-center gap-3">
+          {/* Streak indicator */}
+          {currentStreak >= 2 && (
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              className="bg-primary/20 border border-primary/40 rounded px-2 py-0.5"
+            >
+              <p className="font-display text-[10px] text-primary tracking-wider">
+                🔥 {currentStreak}
+              </p>
+            </motion.div>
+          )}
           {/* Lives */}
           <div className="flex gap-1">
             {Array.from({ length: 3 }, (_, i) => (
-              <div
+              <motion.div
                 key={i}
+                animate={i === lives && lives < 3 ? { scale: [1, 0.5, 0], opacity: [1, 0.5, 0] } : {}}
+                transition={{ duration: 0.3 }}
                 className="w-3 h-3 rounded-sm"
                 style={{
                   background: i < lives ? "#FF5500" : "#333",
@@ -361,11 +654,20 @@ const MemoryMatrixGame = () => {
         </div>
       </div>
 
-      {/* Level label */}
+      {/* Stage + Level label */}
       <div className="text-center mb-2">
-        <p className="font-display text-xs tracking-wider text-muted-foreground">{currentConfig.label}</p>
+        <p className="font-display text-[10px] tracking-wider text-muted-foreground/60">
+          {currentStage.label}: {currentStage.name}
+        </p>
+        <p className="font-display text-xs tracking-wider text-muted-foreground">
+          {currentConfig.label}
+        </p>
         {gameState === "flashing" && (
-          <motion.p initial={{ opacity: 0 }} animate={{ opacity: [0, 1, 0.5, 1] }} className="font-display text-xs tracking-wider text-primary mt-1">
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: [0, 1, 0.5, 1] }}
+            className="font-display text-xs tracking-wider text-primary mt-1"
+          >
             MEMORISE
           </motion.p>
         )}
@@ -376,16 +678,58 @@ const MemoryMatrixGame = () => {
 
       {/* Grid */}
       <div
+        ref={gridRef}
         className="relative rounded-xl overflow-hidden border-2 p-4 mx-auto"
         style={{
           background: "#0a0a0a",
-          borderColor: gameState === "result" ? (resultCorrect ? "rgba(255,85,0,0.5)" : "rgba(239,68,68,0.5)") : "rgba(255,85,0,0.3)",
+          borderColor:
+            gameState === "result"
+              ? resultCorrect
+                ? "rgba(255,85,0,0.5)"
+                : "rgba(239,68,68,0.5)"
+              : "rgba(255,85,0,0.3)",
           maxWidth: gridSize * (cellSizePx + 4) + 32,
           transition: "border-color 0.2s",
         }}
       >
         {/* Scanlines */}
-        <div className="absolute inset-0 pointer-events-none z-10" style={{ background: "repeating-linear-gradient(0deg, rgba(255,85,0,0.02) 0px, transparent 1px, transparent 3px)" }} />
+        <CRTOverlay />
+
+        {/* Grid dots background */}
+        <div
+          className="absolute inset-0 pointer-events-none z-0"
+          style={{
+            backgroundImage: "radial-gradient(circle, rgba(255,85,0,0.06) 1px, transparent 1px)",
+            backgroundSize: `${cellSizePx + 4}px ${cellSizePx + 4}px`,
+          }}
+        />
+
+        {/* Particles */}
+        <AnimatePresence>
+          {particles.map((p) => (
+            <motion.div
+              key={p.id}
+              initial={{ opacity: 1, scale: 1 }}
+              animate={{
+                opacity: 0,
+                scale: 0,
+                x: (Math.random() - 0.5) * 60,
+                y: (Math.random() - 0.5) * 60,
+              }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.5 }}
+              className="absolute z-40 pointer-events-none rounded-full"
+              style={{
+                left: p.x + 12,
+                top: p.y + 12,
+                width: 4,
+                height: 4,
+                background: p.color,
+                boxShadow: `0 0 6px ${p.color}`,
+              }}
+            />
+          ))}
+        </AnimatePresence>
 
         <div
           className="relative z-20 grid gap-1 mx-auto"
@@ -399,7 +743,8 @@ const MemoryMatrixGame = () => {
             const isSelected = selected.has(i);
             const showActive = (revealed && isPattern) || (isSelected && isPattern);
             const showWrong = isSelected && !isPattern;
-            const showMissed = revealed && isPattern && !isSelected && gameState === "result" && !resultCorrect;
+            const showMissed =
+              revealed && isPattern && !isSelected && gameState === "result" && !resultCorrect;
 
             let bg = "#1a1a1a";
             let border = "#333";
@@ -441,9 +786,44 @@ const MemoryMatrixGame = () => {
         </div>
       </div>
 
+      {/* Stage flash overlay */}
+      <AnimatePresence>
+        {stageFlash && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none"
+            style={{ background: "rgba(255,85,0,0.12)" }}
+          >
+            <motion.div
+              initial={{ scale: 0.5, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 1.5, opacity: 0 }}
+              transition={{ duration: 0.5 }}
+              className="text-center"
+            >
+              <p
+                className="font-display text-5xl text-primary tracking-wider"
+                style={{ textShadow: "0 0 40px rgba(255,85,0,0.8)" }}
+              >
+                {stageFlash}
+              </p>
+              <p
+                className="font-display text-lg text-foreground/80 tracking-wider mt-1"
+                style={{ textShadow: "0 0 10px rgba(255,255,255,0.3)" }}
+              >
+                {getStage(level).label}
+              </p>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Message */}
       <AnimatePresence mode="wait">
-        {message && gameState === "result" && (
+        {message && gameState === "result" && !stageFlash && (
           <motion.div
             key={message}
             initial={{ opacity: 0, y: 10 }}
@@ -455,7 +835,9 @@ const MemoryMatrixGame = () => {
               className="font-display text-sm tracking-wider"
               style={{
                 color: resultCorrect ? "#FF5500" : "#ef4444",
-                textShadow: `0 0 8px ${resultCorrect ? "rgba(255,85,0,0.5)" : "rgba(239,68,68,0.5)"}`,
+                textShadow: `0 0 8px ${
+                  resultCorrect ? "rgba(255,85,0,0.5)" : "rgba(239,68,68,0.5)"
+                }`,
               }}
             >
               {message}
