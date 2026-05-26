@@ -122,7 +122,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
   const navigate = useNavigate();
 
   const goSignIn = () => navigate('/signin');
-  const goSignUp = () => navigate('/signin');
+  const goSignUp = () => navigate('/signin?mode=signup');
 
   return (
     <div className="min-h-screen" style={{ background: '#080808' }}>

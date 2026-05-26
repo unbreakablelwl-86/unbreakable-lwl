@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
-import { Mail, Lock, User, Cake, ArrowLeft, Eye, EyeOff } from 'lucide-react';
+import { Mail, Lock, User, Cake, ArrowLeft, Eye, EyeOff, Tag } from 'lucide-react';
 import { toast } from 'sonner';
 import shieldLogo from '@/assets/unbreakable-shield.png';
 import lwlFilmstrip from '@/assets/lwl-filmstrip-web.png';
@@ -10,12 +10,17 @@ import lwlFilmstrip from '@/assets/lwl-filmstrip-web.png';
 export default function SignIn() {
   const { user, signIn, signUp } = useAuth();
   const navigate = useNavigate();
-  const [mode, setMode] = useState<'signin' | 'signup'>('signin');
+  const [searchParams] = useSearchParams();
+
+  // Default to signup mode if ?mode=signup in URL (e.g. from "JOIN FREE" on landing)
+  const initialMode = searchParams.get('mode') === 'signup' ? 'signup' : 'signin';
+  const [mode, setMode] = useState<'signin' | 'signup'>(initialMode);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [fullName, setFullName] = useState('');
   const [dateOfBirth, setDateOfBirth] = useState('');
+  const [promoCode, setPromoCode] = useState('');
   const [loading, setLoading] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
@@ -62,6 +67,24 @@ export default function SignIn() {
             if (newUser && dateOfBirth) {
               await supabase.from('profiles').update({ date_of_birth: dateOfBirth }).eq('user_id', newUser.id);
             }
+
+            // Redeem promo code if provided
+            if (newUser && promoCode.trim()) {
+              try {
+                const { data: promoResult, error: promoError } = await supabase.functions.invoke('redeem-promo-code', {
+                  body: { code: promoCode.trim() },
+                });
+                if (promoError) {
+                  console.error('Promo code error:', promoError);
+                } else if (promoResult?.success) {
+                  toast.success(`🎉 Promo code applied! ${promoResult.tokens_credited} coins credited — ${promoResult.tier} tier for ${promoResult.duration_months} months`);
+                } else {
+                  toast.error(promoResult?.error || 'Invalid promo code');
+                }
+              } catch (promoErr) {
+                console.error('Failed to redeem promo code:', promoErr);
+              }
+            }
           } catch {}
           toast.success('Account created! Welcome to the movement. 🔥');
           navigate('/');
@@ -101,7 +124,6 @@ export default function SignIn() {
 
       {/* Auth Card */}
       <div className="w-full max-w-sm" style={{
-        
         border: '1px solid rgba(255,255,255,0.06)',
         borderRadius: '16px',
         boxShadow: '0 0 40px rgba(0,0,0,0.5)',
@@ -210,6 +232,25 @@ export default function SignIn() {
             </div>
           </div>
 
+          {/* Promo code — signup only */}
+          {mode === 'signup' && (
+            <div className="space-y-1.5">
+              <label className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
+                Promo Code <span className="normal-case opacity-70">(optional)</span>
+              </label>
+              <div className="relative">
+                <Tag className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <input
+                  type="text"
+                  placeholder="Enter code"
+                  value={promoCode}
+                  onChange={e => setPromoCode(e.target.value.toUpperCase())}
+                  className="w-full pl-10 pr-4 py-3 rounded-xl text-sm text-foreground placeholder-[#444] outline-none transition-all focus:ring-1 focus:ring-primary/50 bg-background/50 border border-border uppercase tracking-wider"
+                />
+              </div>
+            </div>
+          )}
+
           {formError && (
             <div className="text-sm text-primary bg-primary/10 border border-primary/20 rounded-xl px-4 py-3">
               {formError}
@@ -238,7 +279,6 @@ export default function SignIn() {
             disabled={loading || (mode === 'signup' && !acceptedTerms)}
             className="w-full py-3.5 rounded-xl font-heading font-bold text-base uppercase tracking-wider text-foreground transition-all disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.98]"
             style={{
-              
               boxShadow: loading ? 'none' : '0 0 20px rgba(255,85,0,0.35), 0 0 60px rgba(255,85,0,0.12)',
             }}
           >
