@@ -1,15 +1,18 @@
 import { useState, useEffect, lazy, Suspense } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Gamepad2, Zap, Blocks, Crosshair, Grid3X3, Shapes, ChevronRight, ArrowLeft } from "lucide-react";
+import { Gamepad2, Zap, Blocks, Crosshair, Grid3X3, Shapes, Wind, Calculator, Timer, ChevronRight, ArrowLeft } from "lucide-react";
 const SnakeGame = lazy(() => import("@/components/mindset/SnakeGame"));
 const AlleywayGame = lazy(() => import("@/components/mindset/AlleywayGame"));
 const TetrisGame = lazy(() => import("@/components/mindset/TetrisGame"));
 const ReactionTrainerGame = lazy(() => import("@/components/mindset/ReactionTrainerGame"));
 const MemoryMatrixGame = lazy(() => import("@/components/mindset/MemoryMatrixGame"));
 const PatternBreakerGame = lazy(() => import("@/components/mindset/PatternBreakerGame"));
+const FlowStateGame = lazy(() => import("@/components/mindset/FlowStateGame"));
+const MentalMathsGame = lazy(() => import("@/components/mindset/MentalMathsGame"));
+const FocusTimerGame = lazy(() => import("@/components/mindset/FocusTimerGame"));
 
-type ViewState = "selection" | "snake" | "alleyway" | "tetris" | "reaction" | "memory" | "pattern";
+type ViewState = "selection" | "snake" | "alleyway" | "tetris" | "reaction" | "memory" | "pattern" | "flow" | "maths" | "focus";
 
 const games = [
   { id: "snake" as const, name: "HUNT", icon: Gamepad2, tagline: "Chase. Devour. Never Stop.", desc: "Split-second decisions — react too slow and it's over. Reflexes become razor-sharp." },
@@ -18,6 +21,9 @@ const games = [
   { id: "reaction" as const, name: "STRIKE", icon: Crosshair, tagline: "Hit Before It Vanishes.", desc: "Targets appear — hit them before they disappear. Pure reflex. Zero hesitation.", isNew: true },
   { id: "memory" as const, name: "RECALL", icon: Grid3X3, tagline: "Total Recall Or Nothing.", desc: "Flash. Memorise. Recreate. Grids grow, flash time shrinks — one wrong tile and it's over.", isNew: true },
   { id: "pattern" as const, name: "LOCK IN", icon: Shapes, tagline: "One Wrong Move, It's Over.", desc: "Watch. Listen. Repeat. Each round adds one more — break focus and you're done.", isNew: true },
+  { id: "flow" as const, name: "FLOW", icon: Wind, tagline: "Stay In The Zone.", desc: "Endless runner — dodge obstacles at increasing speed. Double-jump your way to immortality.", isNew: true },
+  { id: "maths" as const, name: "SOLVE", icon: Calculator, tagline: "Rapid Fire. Zero Hesitation.", desc: "Mental maths blitz — solve under countdown. Numbers grow, timer shrinks. 3 lives.", isNew: true },
+  { id: "focus" as const, name: "ZONE", icon: Timer, tagline: "Get In The Zone.", desc: "Focus timer with streaks & missions. 5–90 minute sessions. Track your discipline.", isNew: true },
 ];
 
 const MindsetGames = () => {
@@ -61,6 +67,9 @@ const MindsetGames = () => {
   if (view === "reaction") return <GameWrapper><ReactionTrainerGame /></GameWrapper>;
   if (view === "memory") return <GameWrapper><MemoryMatrixGame /></GameWrapper>;
   if (view === "pattern") return <GameWrapper><PatternBreakerGame /></GameWrapper>;
+  if (view === "flow") return <GameWrapper><FlowStateGame /></GameWrapper>;
+  if (view === "maths") return <GameWrapper><MentalMathsGame /></GameWrapper>;
+  if (view === "focus") return <GameWrapper><FocusTimerGame /></GameWrapper>;
 
   return (
     <div className="min-h-screen pb-24" >

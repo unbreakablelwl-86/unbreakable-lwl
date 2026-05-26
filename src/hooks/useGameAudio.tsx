@@ -1,6 +1,6 @@
 import { useRef, useCallback, useEffect, useState } from "react";
 
-type GameType = "snake" | "alleyway" | "tetris" | "reaction" | "memory" | "pattern";
+type GameType = "snake" | "alleyway" | "tetris" | "reaction" | "memory" | "pattern" | "flow" | "maths" | "focus";
 
 // Note frequencies for 8-bit melodies
 const NOTES: Record<string, number> = {
@@ -63,6 +63,33 @@ const MELODIES: Record<GameType, { notes: string[]; tempo: number }> = {
       "B4", "D5", "G5", "D5", "B4", "G4", "A4", "C5",
       "E5", "A5", "E5", "C5", "A4", "G4", "E4", "G4",
       "A4", "C5", "D5", "E5", "D5", "C5", "A4", "E4",
+    ],
+  },
+  flow: {
+    tempo: 155,
+    notes: [
+      "A4", "C5", "D5", "E5", "G5", "E5", "D5", "C5",
+      "A4", "G4", "A4", "C5", "E5", "G5", "A5", "G5",
+      "E5", "D5", "C5", "D5", "E5", "C5", "A4", "G4",
+      "A4", "C5", "E5", "D5", "C5", "A4", "G4", "A4",
+    ],
+  },
+  maths: {
+    tempo: 180,
+    notes: [
+      "E5", "E5", "G5", "E5", "C5", "D5", "E5", "D5",
+      "C5", "A4", "C5", "E5", "A5", "G5", "E5", "C5",
+      "D5", "E5", "G5", "A5", "G5", "E5", "D5", "C5",
+      "E5", "C5", "A4", "C5", "D5", "E5", "G5", "E5",
+    ],
+  },
+  focus: {
+    tempo: 90,
+    notes: [
+      "C4", "E4", "G4", "C5", "E5", "C5", "G4", "E4",
+      "F4", "A4", "C5", "F5", "C5", "A4", "F4", "E4",
+      "G4", "B4", "D5", "G5", "D5", "B4", "G4", "C4",
+      "E4", "G4", "C5", "G4", "E4", "C4", "E4", "G4",
     ],
   },
 };
