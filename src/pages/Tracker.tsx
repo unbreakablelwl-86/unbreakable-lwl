@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Card } from '@/components/ui/card';
@@ -96,6 +96,13 @@ export default function Tracker() {
   const [activeTab, setActiveTab] = useState<TabId>('overview');
   const [activityFilter, setActivityFilter] = useState<ActivityFilter>('all');
   const [showTracker, setShowTracker] = useState(false);
+
+  // Listen for floating tracker expand event
+  useEffect(() => {
+    const handler = () => setShowTracker(true);
+    window.addEventListener('open-cardio-session', handler);
+    return () => window.removeEventListener('open-cardio-session', handler);
+  }, []);
   const [showAuth, setShowAuth] = useState(false);
   const navigate = useNavigate();
 

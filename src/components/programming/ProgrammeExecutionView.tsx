@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -98,6 +98,15 @@ export function ProgrammeExecutionView({ program, onClose }: ProgrammeExecutionV
   
   const [showWorkoutModal, setShowWorkoutModal] = useState(false);
   const [isStartingSession, setIsStartingSession] = useState(false);
+
+  // Listen for floating tracker expand event
+  useEffect(() => {
+    const handler = () => {
+      if (activeSession) setShowWorkoutModal(true);
+    };
+    window.addEventListener('open-gym-session', handler);
+    return () => window.removeEventListener('open-gym-session', handler);
+  }, [activeSession]);
   const [viewingResultSession, setViewingResultSession] = useState<WorkoutSession | null>(null);
   const [showEditor, setShowEditor] = useState(false);
   const [isSkipping, setIsSkipping] = useState(false);
