@@ -1,17 +1,23 @@
 import { useState, lazy, Suspense } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Gamepad2, Zap, Blocks, ChevronRight, ArrowLeft } from "lucide-react";
+import { Gamepad2, Zap, Blocks, Crosshair, Grid3X3, Shapes, ChevronRight, ArrowLeft } from "lucide-react";
 const SnakeGame = lazy(() => import("@/components/mindset/SnakeGame"));
 const AlleywayGame = lazy(() => import("@/components/mindset/AlleywayGame"));
 const TetrisGame = lazy(() => import("@/components/mindset/TetrisGame"));
+const ReactionTrainerGame = lazy(() => import("@/components/mindset/ReactionTrainerGame"));
+const MemoryMatrixGame = lazy(() => import("@/components/mindset/MemoryMatrixGame"));
+const PatternBreakerGame = lazy(() => import("@/components/mindset/PatternBreakerGame"));
 
-type ViewState = "selection" | "snake" | "alleyway" | "tetris";
+type ViewState = "selection" | "snake" | "alleyway" | "tetris" | "reaction" | "memory" | "pattern";
 
 const games = [
   { id: "snake" as const, name: "FUEL", icon: Gamepad2, tagline: "Hunt. Adapt. Survive.", desc: "Split-second decisions — react too slow and it's over. Reflexes become razor-sharp." },
   { id: "alleyway" as const, name: "UNBREAKABLE", icon: Zap, tagline: "Destroy what's in your way.", desc: "Smash barriers, build momentum. Precision, timing, and relentless aggression." },
   { id: "tetris" as const, name: "LIMITLESS", icon: Blocks, tagline: "Order from chaos.", desc: "Find clarity in the chaos — stay composed when everything accelerates." },
+  { id: "reaction" as const, name: "REACT", icon: Crosshair, tagline: "Strike before it vanishes.", desc: "Targets appear — hit them before they disappear. Pure reflex. Zero hesitation.", isNew: true },
+  { id: "memory" as const, name: "RECALL", icon: Grid3X3, tagline: "Remember everything.", desc: "Flash. Memorise. Recreate. Grids grow, flash time shrinks — total recall or nothing.", isNew: true },
+  { id: "pattern" as const, name: "SEQUENCE", icon: Shapes, tagline: "Break the pattern.", desc: "Watch. Listen. Repeat. Each round adds one more — one mistake and it's over.", isNew: true },
 ];
 
 const MindsetGames = () => {
@@ -41,6 +47,9 @@ const MindsetGames = () => {
   if (view === "snake") return <GameWrapper><SnakeGame /></GameWrapper>;
   if (view === "alleyway") return <GameWrapper><AlleywayGame /></GameWrapper>;
   if (view === "tetris") return <GameWrapper><TetrisGame /></GameWrapper>;
+  if (view === "reaction") return <GameWrapper><ReactionTrainerGame /></GameWrapper>;
+  if (view === "memory") return <GameWrapper><MemoryMatrixGame /></GameWrapper>;
+  if (view === "pattern") return <GameWrapper><PatternBreakerGame /></GameWrapper>;
 
   return (
     <div className="min-h-screen pb-24" >
@@ -93,7 +102,14 @@ const MindsetGames = () => {
                   <Icon className="w-5 h-5 text-primary" style={{ filter: 'drop-shadow(0 0 6px rgba(255,85,0,0.5))' }} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-display text-sm tracking-wider text-foreground">{game.name}</p>
+                  <div className="flex items-center gap-2">
+                    <p className="font-display text-sm tracking-wider text-foreground">{game.name}</p>
+                    {"isNew" in game && game.isNew && (
+                      <span className="text-[9px] font-display tracking-wider bg-primary/20 text-primary px-1.5 py-0.5 rounded" style={{ textShadow: '0 0 4px rgba(255,85,0,0.4)' }}>
+                        NEW
+                      </span>
+                    )}
+                  </div>
                   <p className="text-muted-foreground text-xs mt-0.5">{game.tagline}</p>
                 </div>
                 <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
