@@ -17,7 +17,7 @@ const courseTabs: { key: CourseType; label: string; icon: React.ReactNode; descr
   { key: 'nutrition', label: 'Fuel', icon: <Apple className="w-5 h-5" />, description: 'Healthy Eating & Nutritional Science', tagline: 'Master the science of what you eat and why it matters.' },
   { key: 'mindset', label: 'Mindset', icon: <Brain className="w-5 h-5" />, description: 'Mental Performance & Wellbeing', tagline: 'Build the mental resilience to keep showing up.' },
   { key: 'sport', label: 'Sport', icon: <Trophy className="w-5 h-5" />, description: 'Sport-Specific Training', tagline: 'Apply your knowledge to the sport you love.' },
-  { key: 'guides', label: 'Guides', icon: <FileText className="w-5 h-5" />, description: 'Downloadable Training Guides', tagline: 'Professional PDF guides — download, keep forever, train anywhere.' },
+  // { key: 'guides', label: 'Guides', icon: <FileText className="w-5 h-5" />, description: 'Downloadable Training Guides', tagline: 'Professional PDF guides — download, keep forever, train anywhere.' },
 ];
 
 /** Animated number counter */
@@ -101,7 +101,7 @@ export default function University() {
             >
               {[
                 { value: '19', suffix: '', label: 'Courses', icon: <BookOpen className="w-3.5 h-3.5" /> },
-                { value: '20', suffix: '', label: 'Guides', icon: <FileText className="w-3.5 h-3.5" /> },
+                // { value: '20', suffix: '', label: 'Guides', icon: <FileText className="w-3.5 h-3.5" /> },
                 { value: '4400', suffix: '+', label: 'Quiz Questions', icon: <Award className="w-3.5 h-3.5" /> },
                 { value: '5', suffix: '', label: 'Disciplines', icon: <Zap className="w-3.5 h-3.5" /> },
               ].map((stat) => (
