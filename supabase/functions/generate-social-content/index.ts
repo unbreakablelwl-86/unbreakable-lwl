@@ -155,7 +155,7 @@ Scouse energy in how you describe the music — not full accent but our tone. Po
 🧠 Pillar: MINDSET — Mental resilience, discipline, psychology
 📚 Pillar: EDUCATION — University courses L1-L4 across all pillars
 🎵 Pillar: UN-TUNES — Training music, playlists, focus tracks
-🧡 Brand colour: Neon orange (#ff6b00)
+🧡 Brand colour: Neon orange (#FF5500)
 🏙️ Location: Liverpool, UK — born and built here
 💬 Tagline: "Keep Showing Up"
 
@@ -197,6 +197,7 @@ For X: use 2-3 total hashtags
 6. @drjohnrusin — Clean numbered list posts, credibility-driven, actionable
 7. @simplifyinai — Tech/announcement posts, dark bg, neon accents, bold headlines
 8. Cassette tape aesthetic — "YOU CAN'T BREAK ME" retro cassette on brick wall, neon orange UNBREAKABLE text (for Un-Tunes content)
+9. @growthbyvisuals — PRIMARY content inspiration for Unbreakable. Bold visual storytelling, cinematic fitness content, high-impact reels and carousels. This is the benchmark for our content creation style.
 
 === APP FEATURES (for app-feature posts) ===
 • Personalised training programmes with progressive overload tracking

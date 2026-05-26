@@ -36,9 +36,9 @@
     --popover: 30 8% 99%;
     --popover-foreground: 20 10% 10%;
 
-    --primary: 24 100% 50%;
+    --primary: 20 100% 50%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 30 100% 58%;
+    --primary-glow: 20 100% 58%;
 
     --secondary: 20 8% 90%;
     --secondary-foreground: 20 10% 15%;
@@ -46,7 +46,7 @@
     --muted: 20 8% 92%;
     --muted-foreground: 20 8% 45%;
 
-    --accent: 24 100% 50%;
+    --accent: 20 100% 50%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
@@ -54,7 +54,7 @@
 
     --border: 20 8% 88%;
     --input: 20 8% 94%;
-    --ring: 24 100% 50%;
+    --ring: 20 100% 50%;
 
     --radius: 0.5rem;
 
@@ -64,12 +64,12 @@
 
     --sidebar-background: 30 8% 97%;
     --sidebar-foreground: 20 10% 25%;
-    --sidebar-primary: 24 100% 50%;
+    --sidebar-primary: 20 100% 50%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 24 15% 94%;
     --sidebar-accent-foreground: 20 10% 15%;
     --sidebar-border: 20 8% 88%;
-    --sidebar-ring: 24 100% 50%;
+    --sidebar-ring: 20 100% 50%;
 
     /* Brick texture opacity */
     --brick-opacity: 0.035;
@@ -87,9 +87,9 @@
     --popover: 0 0% 6%;
     --popover-foreground: 0 0% 98%;
 
-    --primary: 22 100% 50%;
+    --primary: 20 100% 50%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 22 100% 58%;
+    --primary-glow: 20 100% 58%;
 
     --secondary: 0 0% 13%;
     --secondary-foreground: 0 0% 98%;
@@ -113,12 +113,12 @@
 
     --sidebar-background: 0 0% 4%;
     --sidebar-foreground: 0 0% 90%;
-    --sidebar-primary: 24 100% 52%;
+    --sidebar-primary: 20 100% 52%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 0 0% 14%;
     --sidebar-accent-foreground: 0 0% 98%;
     --sidebar-border: 0 0% 20%;
-    --sidebar-ring: 24 100% 52%;
+    --sidebar-ring: 20 100% 52%;
 
     /* Brick texture opacity */
     --brick-opacity: 0.05;

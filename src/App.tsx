@@ -8,6 +8,7 @@ import { AuthProvider } from "@/hooks/useAuth";
 import { PlayerContext, usePlayerProvider } from "@/hooks/useUnTunes";
 import { UniversityAdminProvider } from "@/hooks/useUniversityAdmin";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { InstallPrompt } from "@/components/pwa/InstallPrompt";
 import { SplashScreen } from "@/components/SplashScreen";
 import AppLayout from "@/layouts/AppLayout";
@@ -88,6 +89,7 @@ const App = () => {
   }, []);
 
   return (
+  <ErrorBoundary>
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
       <UnTunesPlayerProvider>
@@ -294,6 +296,7 @@ const App = () => {
       </UnTunesPlayerProvider>
     </AuthProvider>
   </QueryClientProvider>
+  </ErrorBoundary>
   );
 };
 
