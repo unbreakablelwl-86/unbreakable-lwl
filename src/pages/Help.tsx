@@ -3,7 +3,7 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import {
   Send, MessageSquarePlus, Trash2, Loader2, Flame, Sparkles, UtensilsCrossed,
   PanelLeftClose, PanelLeftOpen, Dumbbell, TrendingUp, Brain, Zap, MessageCircle,
-  ArrowRight, Check, X, Eye, BookOpen, Target, Activity
+  ArrowRight, Check, X, Eye, BookOpen, Target, Activity, Mic, MicOff, Volume2, VolumeX
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
@@ -46,7 +46,7 @@ interface GeneratedPlanInfo {
 /* ═══════════════════════════════════════════════════════════════════
    Neon Message Bubble
    ═══════════════════════════════════════════════════════════════════ */
-function MessageBubble({ message }: { message: MessageWithMedia }) {
+function MessageBubble({ message, onSpeak }: { message: MessageWithMedia; onSpeak?: (text: string) => void }) {
   const isUser = message.role === 'user';
 
   const formatContent = (content: string) => {
@@ -83,9 +83,20 @@ function MessageBubble({ message }: { message: MessageWithMedia }) {
             {isUser ? message.content : formatContent(message.content)}
           </div>
         </div>
-        <p className={`text-[10px] text-muted-foreground mt-1 px-1 ${isUser ? 'text-right' : ''}`}>
-          {new Date(message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-        </p>
+        <div className={`flex items-center gap-2 mt-1 px-1 ${isUser ? 'justify-end' : ''}`}>
+          <p className="text-[10px] text-muted-foreground">
+            {new Date(message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+          </p>
+          {!isUser && onSpeak && (
+            <button
+              onClick={() => onSpeak(message.content)}
+              className="text-muted-foreground hover:text-primary transition-colors p-0.5"
+              title="Listen to this response"
+            >
+              <Volume2 className="w-3 h-3" />
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -272,6 +283,12 @@ export default function Help() {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [input, setInput] = useState('');
   const [sidebarOpen, setSidebarOpen] = useState(!isMobile);
+
+  /* ── Voice Chat State ── */
+  const [isListening, setIsListening] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [voiceEnabled, setVoiceEnabled] = useState(false);
+  const recognitionRef = useRef<any>(null);
 
   const [programmeGenerating, setProgrammeGenerating] = useState(false);
   const [mealPlanGenerating, setMealPlanGenerating] = useState(false);
@@ -568,6 +585,124 @@ export default function Help() {
 
   const hasMessages = enrichedMessages.length > 0;
 
+  /* ── Voice Input (Speech-to-Text) ── */
+  const startListening = useCallback(() => {
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      toast({ title: 'Voice not supported', description: 'Your browser doesn\'t support speech recognition. Try Chrome or Safari.', variant: 'destructive' });
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'en-GB';
+    recognition.interimResults = true;
+    recognition.continuous = true;
+    recognition.maxAlternatives = 1;
+
+    let finalTranscript = input;
+
+    recognition.onresult = (event: any) => {
+      let interim = '';
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const transcript = event.results[i][0].transcript;
+        if (event.results[i].isFinal) {
+          finalTranscript += (finalTranscript ? ' ' : '') + transcript;
+        } else {
+          interim = transcript;
+        }
+      }
+      setInput(finalTranscript + (interim ? ' ' + interim : ''));
+    };
+
+    recognition.onend = () => {
+      setIsListening(false);
+      recognitionRef.current = null;
+    };
+
+    recognition.onerror = (event: any) => {
+      console.error('Speech recognition error:', event.error);
+      setIsListening(false);
+      recognitionRef.current = null;
+      if (event.error !== 'aborted') {
+        toast({ title: 'Voice error', description: `Mic error: ${event.error}. Try again.`, variant: 'destructive' });
+      }
+    };
+
+    recognitionRef.current = recognition;
+    recognition.start();
+    setIsListening(true);
+  }, [input]);
+
+  const stopListening = useCallback(() => {
+    if (recognitionRef.current) {
+      recognitionRef.current.stop();
+      recognitionRef.current = null;
+    }
+    setIsListening(false);
+  }, []);
+
+  const toggleListening = useCallback(() => {
+    if (isListening) stopListening();
+    else startListening();
+  }, [isListening, startListening, stopListening]);
+
+  /* ── Voice Output (Text-to-Speech) ── */
+  const speakText = useCallback((text: string) => {
+    if (!('speechSynthesis' in window)) {
+      toast({ title: 'Speech not supported', description: 'Your browser doesn\'t support text-to-speech.', variant: 'destructive' });
+      return;
+    }
+    window.speechSynthesis.cancel();
+
+    // Clean text for reading (remove emojis, markdown, etc.)
+    const cleanText = text
+      .replace(/[#*_~`>]/g, '')
+      .replace(/\[.*?\]\(.*?\)/g, '')
+      .replace(/[\u{1F600}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{1FA00}-\u{1FAFF}]/gu, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    const utterance = new SpeechSynthesisUtterance(cleanText);
+    utterance.lang = 'en-GB';
+    utterance.rate = 1.0;
+    utterance.pitch = 1.0;
+
+    // Try to use a good English voice
+    const voices = window.speechSynthesis.getVoices();
+    const preferred = voices.find(v =>
+      v.lang.startsWith('en-GB') && v.name.toLowerCase().includes('male')
+    ) || voices.find(v => v.lang.startsWith('en-GB')) || voices.find(v => v.lang.startsWith('en'));
+    if (preferred) utterance.voice = preferred;
+
+    utterance.onstart = () => setIsSpeaking(true);
+    utterance.onend = () => setIsSpeaking(false);
+    utterance.onerror = () => setIsSpeaking(false);
+
+    window.speechSynthesis.speak(utterance);
+  }, []);
+
+  const stopSpeaking = useCallback(() => {
+    window.speechSynthesis.cancel();
+    setIsSpeaking(false);
+  }, []);
+
+  /* Auto-speak new assistant messages when voice mode is on */
+  useEffect(() => {
+    if (!voiceEnabled || messages.length === 0) return;
+    const lastMsg = messages[messages.length - 1];
+    if (lastMsg.role === 'assistant' && lastMsg.content && !isLoading) {
+      speakText(lastMsg.content);
+    }
+  }, [messages.length, isLoading, voiceEnabled]);
+
+  /* Cleanup on unmount */
+  useEffect(() => {
+    return () => {
+      if (recognitionRef.current) recognitionRef.current.stop();
+      window.speechSynthesis?.cancel();
+    };
+  }, []);
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -671,7 +806,7 @@ export default function Help() {
                 /* ─── Chat Messages ─── */
                 <div className="max-w-3xl mx-auto">
                   {enrichedMessages.map((msg) => (
-                    <MessageBubble key={msg.id} message={msg} />
+                    <MessageBubble key={msg.id} message={msg} onSpeak={speakText} />
                   ))}
 
                   {/* Loading states */}
@@ -768,6 +903,23 @@ export default function Help() {
             <div className="flex-shrink-0 border-t border-border p-4" style={{ background: 'rgba(15,15,15,0.8)' }}>
               <form onSubmit={handleSubmit} className="max-w-3xl mx-auto">
                 <div className="flex items-end gap-2">
+                  {/* Voice mode toggle */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setVoiceEnabled(!voiceEnabled);
+                      if (isSpeaking) stopSpeaking();
+                    }}
+                    className={`h-11 w-11 rounded-xl flex items-center justify-center transition-all ${
+                      voiceEnabled
+                        ? 'bg-primary/20 border border-primary text-primary'
+                        : 'border border-border text-muted-foreground hover:border-primary/40 hover:text-foreground'
+                    }`}
+                    title={voiceEnabled ? 'Voice mode ON — tap to disable' : 'Enable voice mode'}
+                  >
+                    {voiceEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
+                  </button>
+
                   <div className="flex-1 relative">
                     <textarea
                       ref={inputRef}
@@ -778,15 +930,34 @@ export default function Help() {
                         e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px';
                       }}
                       onKeyDown={handleKeyDown}
-                      placeholder="Ask your coach anything..."
+                      placeholder={isListening ? '🎙️ Listening... speak now' : 'Ask your coach anything...'}
                       rows={1}
                       disabled={isLoading || isAnyGenerating}
-                      className="w-full resize-none rounded-xl border border-border bg-card
+                      className={`w-full resize-none rounded-xl border bg-card
                         px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground
                         focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/20
-                        disabled:opacity-40 transition-all"
+                        disabled:opacity-40 transition-all ${
+                          isListening ? 'border-primary/60 ring-1 ring-primary/30' : 'border-border'
+                        }`}
                     />
                   </div>
+
+                  {/* Mic button */}
+                  <button
+                    type="button"
+                    onClick={toggleListening}
+                    disabled={isLoading || isAnyGenerating}
+                    className={`h-11 w-11 rounded-xl flex items-center justify-center transition-all ${
+                      isListening
+                        ? 'bg-red-500/20 border border-red-500 text-red-400 animate-pulse'
+                        : 'border border-border text-muted-foreground hover:border-primary/40 hover:text-foreground disabled:opacity-30'
+                    }`}
+                    title={isListening ? 'Stop listening' : 'Voice input'}
+                  >
+                    {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+                  </button>
+
+                  {/* Send button */}
                   <button
                     type="submit"
                     disabled={isLoading || isAnyGenerating || !input.trim()}
