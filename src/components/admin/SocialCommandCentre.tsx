@@ -15,8 +15,19 @@ import { SocialMediaUpload } from './SocialMediaUpload';
 import {
   Zap, Save, Calendar, BarChart3, Copy, Trash2, RefreshCw, Loader2,
   Image, Send, Facebook, Instagram, Key, TrendingUp, Trophy, Heart,
-  MessageSquare, Share2, Eye, FileText,
+  MessageSquare, Share2, Eye, FileText, Music, Check,
 } from 'lucide-react';
+
+/* ── Music Library Track Type ── */
+interface MusicTrack {
+  id: string;
+  title: string;
+  genre: string;
+  duration_seconds: number;
+  cover_url: string | null;
+  audio_url: string;
+  artist_name?: string;
+}
 
 const PLATFORMS = [
   { id: 'instagram', label: '📸 INSTA' },
@@ -104,9 +115,16 @@ export function SocialCommandCentre() {
   const [loading, setLoading] = useState(false);
   const [publishing, setPublishing] = useState<string | null>(null);
 
+  /* ── Music Library State ── */
+  const [musicTracks, setMusicTracks] = useState<MusicTrack[]>([]);
+  const [selectedTrack, setSelectedTrack] = useState<MusicTrack | null>(null);
+  const [showMusicPicker, setShowMusicPicker] = useState(false);
+  const [musicFilter, setMusicFilter] = useState('');
+
   useEffect(() => {
     fetchSavedPosts();
     fetchAllPosts();
+    fetchMusicTracks();
   }, [user]);
 
   const fetchSavedPosts = async () => {
@@ -129,6 +147,20 @@ export function SocialCommandCentre() {
     if (data) setAllPosts(data as SocialPost[]);
   };
 
+  const fetchMusicTracks = async () => {
+    const { data } = await supabase
+      .from('un_tunes_tracks')
+      .select('id, title, genre, duration_seconds, cover_url, audio_url, artist_id, un_tunes_artists!inner(artist_name)')
+      .order('play_count', { ascending: false })
+      .limit(100);
+    if (data) {
+      setMusicTracks(data.map((t: any) => ({
+        ...t,
+        artist_name: t.un_tunes_artists?.artist_name || 'Unknown',
+      })));
+    }
+  };
+
   const handleGenerate = async () => {
     if (!platform || !contentType) {
       toast({ title: 'Select platform and content type', variant: 'destructive' });
@@ -141,7 +173,17 @@ export function SocialCommandCentre() {
 
     try {
       const { data, error } = await supabase.functions.invoke('generate-social-content', {
-        body: { platform, contentType, tone, context, inspiration },
+        body: {
+          platform, contentType, tone, context, inspiration,
+          ...(selectedTrack ? {
+            featuredTrack: {
+              title: selectedTrack.title,
+              genre: selectedTrack.genre,
+              artist: selectedTrack.artist_name,
+              duration: selectedTrack.duration_seconds,
+            },
+          } : {}),
+        },
       });
       if (error) throw error;
       setGeneratedPost(data.post || '');
@@ -374,6 +416,92 @@ export function SocialCommandCentre() {
               onClearImage={() => setCustomImageUrl('')}
               onClearVideo={() => setCustomVideoUrl('')}
             />
+          </CardContent></Card>
+
+          {/* 🎵 Music Library Picker */}
+          <Card><CardContent className="pt-5 space-y-3">
+            <div className="flex items-center justify-between">
+              <p className="text-[10px] text-primary font-display tracking-widest flex items-center gap-1.5">
+                <Music className="w-3.5 h-3.5" /> UN-TUNES LIBRARY
+              </p>
+              <Button variant="ghost" size="sm" className="text-[9px] font-display h-6 px-2"
+                onClick={() => setShowMusicPicker(!showMusicPicker)}>
+                {showMusicPicker ? 'HIDE' : `BROWSE (${musicTracks.length} TRACKS)`}
+              </Button>
+            </div>
+
+            {selectedTrack && (
+              <div className="flex items-center gap-3 p-2 rounded-lg border border-primary/30 bg-primary/5">
+                {selectedTrack.cover_url && (
+                  <img src={selectedTrack.cover_url} alt="" className="w-10 h-10 rounded object-cover" />
+                )}
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-display text-foreground truncate">{selectedTrack.title}</p>
+                  <p className="text-[9px] text-muted-foreground">{selectedTrack.artist_name} • {selectedTrack.genre}</p>
+                </div>
+                <Badge className="text-[8px] font-display bg-primary/20 text-primary border-0">
+                  <Check className="w-2.5 h-2.5 mr-0.5" /> SELECTED
+                </Badge>
+                <Button variant="ghost" size="sm" className="h-6 w-6 p-0" onClick={() => setSelectedTrack(null)}>
+                  <Trash2 className="w-3 h-3 text-muted-foreground" />
+                </Button>
+              </div>
+            )}
+
+            {showMusicPicker && (
+              <div className="space-y-2">
+                <Input
+                  placeholder="Search tracks by title or genre..."
+                  value={musicFilter}
+                  onChange={e => setMusicFilter(e.target.value)}
+                  className="text-xs h-8"
+                />
+                <div className="max-h-[200px] overflow-y-auto space-y-1 scrollbar-thin">
+                  {musicTracks
+                    .filter(t =>
+                      !musicFilter ||
+                      t.title.toLowerCase().includes(musicFilter.toLowerCase()) ||
+                      t.genre.toLowerCase().includes(musicFilter.toLowerCase()) ||
+                      (t.artist_name || '').toLowerCase().includes(musicFilter.toLowerCase())
+                    )
+                    .map(track => (
+                      <button
+                        key={track.id}
+                        onClick={() => { setSelectedTrack(track); setShowMusicPicker(false); }}
+                        className={`w-full flex items-center gap-2 p-2 rounded-lg text-left transition-all ${
+                          selectedTrack?.id === track.id
+                            ? 'border border-primary bg-primary/10'
+                            : 'border border-border hover:border-primary/30 hover:bg-primary/5'
+                        }`}
+                      >
+                        {track.cover_url ? (
+                          <img src={track.cover_url} alt="" className="w-8 h-8 rounded object-cover flex-shrink-0" />
+                        ) : (
+                          <div className="w-8 h-8 rounded bg-primary/10 flex items-center justify-center flex-shrink-0">
+                            <Music className="w-3.5 h-3.5 text-primary" />
+                          </div>
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <p className="text-[11px] font-display text-foreground truncate">{track.title}</p>
+                          <p className="text-[9px] text-muted-foreground">{track.artist_name || 'Unbreakable'} • {track.genre}</p>
+                        </div>
+                        <span className="text-[9px] text-muted-foreground flex-shrink-0">
+                          {Math.floor(track.duration_seconds / 60)}:{String(track.duration_seconds % 60).padStart(2, '0')}
+                        </span>
+                      </button>
+                    ))}
+                </div>
+                <p className="text-[8px] text-muted-foreground text-center">
+                  Select a track to feature in your social content. AI will reference it in the generated post.
+                </p>
+              </div>
+            )}
+
+            {!selectedTrack && !showMusicPicker && (
+              <p className="text-[9px] text-muted-foreground">
+                Feature a track from your Un-Tunes library in your post. Great for engagement.
+              </p>
+            )}
           </CardContent></Card>
 
           <Button className="w-full font-display tracking-widest text-xs py-6" onClick={handleGenerate}

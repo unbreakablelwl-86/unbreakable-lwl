@@ -37,7 +37,7 @@ serve(async (req) => {
       return new Response(JSON.stringify({ error: "Admin access required" }), { status: 403, headers: corsHeaders });
     }
 
-    const { platform, contentType, tone, context, inspiration } = await req.json();
+    const { platform, contentType, tone, context, inspiration, featuredTrack } = await req.json();
 
     if (!platform || !contentType) {
       return new Response(JSON.stringify({ error: "Platform and content type are required" }), { status: 400, headers: corsHeaders });
@@ -226,7 +226,7 @@ Content type: ${contentTypeGuides[contentType] || contentType}
 Tone: ${toneGuides[tone] || tone || "motivational"}
 ${context ? `Topic/context: ${context}` : ""}
 ${inspiration ? `Style inspiration / reference:\n${inspiration}` : ""}
-
+${featuredTrack ? `\n🎵 FEATURED TRACK FROM UN-TUNES LIBRARY:\nTitle: "${featuredTrack.title}" by ${featuredTrack.artist || 'Unbreakable'}\nGenre: ${featuredTrack.genre}\nDuration: ${Math.floor((featuredTrack.duration || 0) / 60)}:${String((featuredTrack.duration || 0) % 60).padStart(2, '0')}\n\nWeave this track naturally into the post — mention it as the featured training track, workout anthem, or session soundtrack. Reference it by name. This is from our own Un-Tunes music library inside the Unbreakable app.\n` : ""}
 Requirements:
 - Match the brand voice EXACTLY. Sound like a real Scouse coach, not a marketer.
 - Use brand emojis naturally: 🧱💪🧡🧠🏃⛽🔥⚡ (at least 2-4 per post)

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Users, Flag, Settings, Activity, Shield, UserCheck, Megaphone, ArrowLeft } from 'lucide-react';
+import { Users, Flag, Settings, Activity, Shield, UserCheck, Megaphone, ArrowLeft, Calendar, Bot } from 'lucide-react';
 import { AdminProtectedRoute } from '@/components/admin/AdminProtectedRoute';
 import { useNavigate } from 'react-router-dom';
 import { AdminUsersPanel } from '@/components/admin/AdminUsersPanel';
@@ -7,10 +7,12 @@ import { AdminReportsPanel } from '@/components/admin/AdminReportsPanel';
 import { AdminSettingsPanel } from '@/components/admin/AdminSettingsPanel';
 import { AdminActivityPanel } from '@/components/admin/AdminActivityPanel';
 import { SocialCommandCentre } from '@/components/admin/SocialCommandCentre';
+import { DevCalendar } from '@/components/admin/DevCalendar';
+import { DevAIChat } from '@/components/admin/DevAIChat';
 import { useUserRole } from '@/hooks/useUserRole';
 import CoachDashboard from '@/pages/CoachDashboard';
 
-type Tab = 'coaching' | 'users' | 'reports' | 'settings' | 'activity' | 'social';
+type Tab = 'coaching' | 'users' | 'reports' | 'settings' | 'activity' | 'social' | 'calendar' | 'ai';
 
 const tabs: { id: Tab; label: string; icon: any; ownerOnly?: boolean }[] = [
   { id: 'coaching', label: 'COACHING', icon: UserCheck },
@@ -19,6 +21,8 @@ const tabs: { id: Tab; label: string; icon: any; ownerOnly?: boolean }[] = [
   { id: 'settings', label: 'SETTINGS', icon: Settings, ownerOnly: true },
   { id: 'activity', label: 'LOGS', icon: Activity },
   { id: 'social', label: 'SOCIAL', icon: Megaphone },
+  { id: 'calendar', label: 'CALENDAR', icon: Calendar },
+  { id: 'ai', label: 'AI', icon: Bot },
 ];
 
 export default function Admin() {
@@ -81,6 +85,8 @@ export default function Admin() {
           {activeTab === 'settings' && isOwner && <AdminSettingsPanel />}
           {activeTab === 'activity' && <AdminActivityPanel />}
           {activeTab === 'social' && <SocialCommandCentre />}
+          {activeTab === 'calendar' && <DevCalendar onCreatePost={() => setActiveTab('social')} />}
+          {activeTab === 'ai' && <DevAIChat />}
         </div>
       </div>
     </AdminProtectedRoute>
