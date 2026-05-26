@@ -1,8 +1,11 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
-import { RotateCcw, Play, Volume2, VolumeX } from "lucide-react";
+import { RotateCcw, Play, Volume2, VolumeX, Trophy } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useGameAudio } from "@/hooks/useGameAudio";
+import { useAuth } from "@/hooks/useAuth";
+import { useFlowScores } from "@/hooks/useFlowScores";
+import { GameLeaderboard } from "./GameLeaderboard";
 
 // ═══════════════════════════════════════════════════════════════
 // FLOW — STAY IN THE ZONE.
@@ -76,7 +79,7 @@ const FlowStateGame = () => {
   const shakeRef = useRef(0);
   const lastStageRef = useRef(0);
 
-  const [gameState, setGameState] = useState<"ready" | "playing" | "gameover">("ready");
+  const [gameState, setGameState] = useState<"ready" | "playing" | "gameover" | "leaderboard">("ready");
   const [score, setScore] = useState(0);
   const [personalBest, setPersonalBest] = useState(() => {
     const saved = localStorage.getItem(PB_KEY);
@@ -91,7 +94,8 @@ const FlowStateGame = () => {
   const [startTime, setStartTime] = useState(0);
   const [timeSurvived, setTimeSurvived] = useState(0);
 
-  // Boot
+  const { user } = useAuth();
+  const { saveScore: saveDbScore, topScores, userBest, refetch } = useFlowScores();
 
   const { playHit, playLevelUp, playGameOver, startMusic, stopMusic, toggleMute, isMuted } = useGameAudio("flow");
 
@@ -169,7 +173,8 @@ const FlowStateGame = () => {
       setPersonalBest(finalScore);
       localStorage.setItem(PB_KEY, String(finalScore));
     }
-  }, [startTime, personalBest, stopMusic, playGameOver, spawnDeathParticles]);
+    if (finalScore > 0) saveDbScore(finalScore, maxSpeedRef.current);
+  }, [startTime, personalBest, stopMusic, playGameOver, spawnDeathParticles, saveDbScore]);
 
   // Game loop
   const loop = useCallback((ts: number) => {
@@ -422,23 +427,10 @@ const FlowStateGame = () => {
   const secs = finalTime % 60;
   const timeStr = mins > 0 ? `${mins}m ${secs}s` : `${secs}s`;
 
-  // ─── Boot ───
-  if (gameState === "ready") {
-    return (
-      <div className="w-full max-w-lg mx-auto">
-        <div className="relative rounded-xl overflow-hidden border-2 border-primary/40" style={{ background: "#0a0a0a", fontFamily: "'Courier New', monospace", minHeight: 420 }}>
-          <div className="absolute inset-0 pointer-events-none z-30" style={{ background: "repeating-linear-gradient(0deg, rgba(255,85,0,0.03) 0px, transparent 1px, transparent 3px)" }} />
-          <div className="p-6 relative z-20">
-            {bootLines.map((line, i) => (
-              <motion.p key={i} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.15 }} className="text-primary text-sm mb-1" style={{ textShadow: "0 0 8px rgba(255,85,0,0.6)" }}>{line}</motion.p>
-            ))}
-            {bootDone && (
-              <motion.p initial={{ opacity: 0 }} animate={{ opacity: [0, 1, 0, 1] }} transition={{ duration: 0.8 }} className="text-primary text-sm mt-4">{"> PRESS START_"}</motion.p>
-            )}
-          </div>
-        </div>
-      </div>
-    );
+
+  // ─── Leaderboard ───
+  if (gameState === "leaderboard") {
+    return <GameLeaderboard scores={topScores} userBest={userBest} currentUserId={user?.id} gameName="FLOW" onClose={() => setGameState("gameover")} onRefetch={refetch} getSubLabel={(e) => e.max_speed ? `${Math.round(e.max_speed * 10) / 10}x speed` : ""} />;
   }
 
   // ─── Ready ───
@@ -548,9 +540,14 @@ const FlowStateGame = () => {
                 <p className="font-display text-xs text-primary tracking-wide mb-3">BEST: {personalBest}</p>
               )}
 
-              <Button onClick={startGame} size="lg" className="font-display tracking-wide gap-2 bg-primary text-primary-foreground hover:bg-primary/90 px-6 py-5">
-                <RotateCcw className="w-5 h-5" /> RUN AGAIN
-              </Button>
+              <div className="flex gap-2">
+                <Button onClick={startGame} size="lg" className="font-display tracking-wide gap-2 bg-primary text-primary-foreground hover:bg-primary/90 px-6 py-5">
+                  <RotateCcw className="w-5 h-5" /> RUN AGAIN
+                </Button>
+                <Button onClick={() => { refetch(); setGameState("leaderboard"); }} variant="outline" className="font-display tracking-wide gap-2 border-primary/30 px-4 py-5">
+                  <Trophy className="w-4 h-4" /> TOP 50
+                </Button>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>

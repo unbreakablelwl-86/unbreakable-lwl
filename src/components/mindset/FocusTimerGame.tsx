@@ -3,6 +3,9 @@ import { Button } from "@/components/ui/button";
 import { Play, Pause, RotateCcw, Volume2, VolumeX, Flame, Trophy, Target, Clock } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useGameAudio } from "@/hooks/useGameAudio";
+import { useAuth } from "@/hooks/useAuth";
+import { useFocusTimerScores } from "@/hooks/useFocusTimerScores";
+import { GameLeaderboard } from "./GameLeaderboard";
 
 // ═══════════════════════════════════════════════════════════════
 // ZONE — FOCUS TIMER · POMODORO+
@@ -31,7 +34,7 @@ const TOTAL_KEY = "unbreakable_focus_total_mins";
 const LAST_DATE_KEY = "unbreakable_focus_last_date";
 
 const FocusTimerGame = () => {
-  const [gameState, setGameState] = useState<"setup" | "focus" | "break" | "done">("setup");
+  const [gameState, setGameState] = useState<"setup" | "focus" | "break" | "done" | "leaderboard">("setup");
   const [duration, setDuration] = useState(25 * 60);
   const [remaining, setRemaining] = useState(25 * 60);
   const [isRunning, setIsRunning] = useState(false);
@@ -62,6 +65,8 @@ const FocusTimerGame = () => {
 
   // Boot
 
+  const { user } = useAuth();
+  const { saveScore: saveDbScore, topScores, userBest, refetch } = useFocusTimerScores();
   const { playHit, playLevelUp, playGameOver, startMusic, stopMusic, toggleMute, isMuted } = useGameAudio("focus");
 // Timer logic
   useEffect(() => {
@@ -97,6 +102,8 @@ const FocusTimerGame = () => {
             }
             setShowBreakPicker(true);
             setGameState("done");
+            // Save to leaderboard: score = total minutes focused × total sessions
+            saveDbScore(newMins * newTotal, newMins, newTotal);
           } else if (gameState === "break") {
             playHit();
             setGameState("done");
@@ -156,23 +163,9 @@ const FocusTimerGame = () => {
   const circumference = 2 * Math.PI * 140;
   const strokeDashoffset = circumference * (1 - (gameState === "break" ? (breakDuration - remaining) / breakDuration : progress));
 
-  // ─── Boot ───
-  if (gameState === "setup") {
-    return (
-      <div className="w-full max-w-lg mx-auto">
-        <div className="relative rounded-xl overflow-hidden border-2 border-primary/40" style={{ background: "#0a0a0a", fontFamily: "'Courier New', monospace", minHeight: 420 }}>
-          <div className="absolute inset-0 pointer-events-none z-30" style={{ background: "repeating-linear-gradient(0deg, rgba(255,85,0,0.03) 0px, transparent 1px, transparent 3px)" }} />
-          <div className="p-6 relative z-20">
-            {bootLines.map((line, i) => (
-              <motion.p key={i} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.15 }} className="text-primary text-sm mb-1" style={{ textShadow: "0 0 8px rgba(255,85,0,0.6)" }}>{line}</motion.p>
-            ))}
-            {bootDone && (
-              <motion.p initial={{ opacity: 0 }} animate={{ opacity: [0, 1, 0, 1] }} transition={{ duration: 0.8 }} className="text-primary text-sm mt-4">{"> PRESS START_"}</motion.p>
-            )}
-          </div>
-        </div>
-      </div>
-    );
+  // ─── Leaderboard ───
+  if (gameState === "leaderboard") {
+    return <GameLeaderboard scores={topScores} userBest={userBest} currentUserId={user?.id} gameName="ZONE" onClose={() => setGameState("done")} onRefetch={refetch} getSubLabel={(e) => `${e.total_minutes}min · ${e.sessions_completed} sessions`} />;
   }
 
   // ─── Setup ───
@@ -406,9 +399,14 @@ const FocusTimerGame = () => {
                       <p className="text-[8px] text-muted-foreground font-display tracking-wider">TOTAL MINS</p>
                     </div>
                   </div>
-                  <Button onClick={startFocus} size="lg" className="font-display tracking-wide gap-2 bg-primary text-primary-foreground hover:bg-primary/90 px-6 py-5">
-                    <Target className="w-5 h-5" /> ANOTHER SESSION
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button onClick={startFocus} size="lg" className="font-display tracking-wide gap-2 bg-primary text-primary-foreground hover:bg-primary/90 px-6 py-5">
+                      <Target className="w-5 h-5" /> ANOTHER SESSION
+                    </Button>
+                    <Button onClick={() => { refetch(); setGameState("leaderboard"); }} variant="outline" className="font-display tracking-wide gap-2 border-primary/30 px-4 py-5">
+                      <Trophy className="w-4 h-4" /> TOP 50
+                    </Button>
+                  </div>
                   <button onClick={resetTimer} className="text-xs font-display tracking-wider text-muted-foreground hover:text-foreground">
                     CHANGE DURATION →
                   </button>

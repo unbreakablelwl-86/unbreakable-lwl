@@ -2,8 +2,10 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { RotateCcw, Play, Pause, Trophy, Volume2, VolumeX } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { GameLeaderboard } from "./GameLeaderboard";
+import { useAuth } from "@/hooks/useAuth";
 import { useAlleywayScores } from "@/hooks/useAlleywayScores";
-import { AlleywayLeaderboard } from "./AlleywayLeaderboard";
+
 import { useGameAudio } from "@/hooks/useGameAudio";
 
 // ─── Boot Sequence ───────────────────────────────────────────
@@ -195,6 +197,7 @@ const AlleywayGame = () => {
 
   // Boot
 
+  const { user } = useAuth();
   const { saveScore, topScores, userBest, refetch } = useAlleywayScores();
   const { playHit, playLevelUp, playGameOver, startMusic, stopMusic, toggleMute, isMuted } = useGameAudio("alleyway");
 
@@ -878,7 +881,7 @@ const AlleywayGame = () => {
   // ─── LEADERBOARD ──────────────────────────────────────────
   // ═══════════════════════════════════════════════════════════
   if (view === "leaderboard") {
-    return <AlleywayLeaderboard scores={topScores} userBest={userBest} onClose={() => setView("gameover")} onRefetch={refetch} />;
+    return <GameLeaderboard scores={topScores} userBest={userBest} currentUserId={user?.id} gameName="SHATTER" onClose={() => setView("gameover")} onRefetch={refetch} getSubLabel={(e) => e.theme_shifts > 0 ? `Stage ${e.theme_shifts}` : ""} />;
   }
 
   // ═══════════════════════════════════════════════════════════

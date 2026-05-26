@@ -2,8 +2,10 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { RotateCcw, Play, Pause, Trophy, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, Volume2, VolumeX } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { GameLeaderboard } from "./GameLeaderboard";
+import { useAuth } from "@/hooks/useAuth";
 import { useTetrisScores } from "@/hooks/useTetrisScores";
-import { TetrisLeaderboard } from "./TetrisLeaderboard";
+
 import { useGameAudio } from "@/hooks/useGameAudio";
 
 // ═══════════════════════════════════════════════════════════════
@@ -230,6 +232,7 @@ const TetrisGame = () => {
 
   // Boot sequence
 
+  const { user } = useAuth();
   const { saveScore, topScores, userBest, refetch } = useTetrisScores();
   const { playHit, playLevelUp, playGameOver, startMusic, stopMusic, toggleMute, isMuted } = useGameAudio("tetris");
 
@@ -691,11 +694,14 @@ useEffect(() => {
   // ═══════════════════════════════════════════════════════════
   if (showLeaderboard) {
     return (
-      <TetrisLeaderboard
+      <GameLeaderboard
         scores={topScores}
         userBest={userBest}
+        currentUserId={user?.id}
+        gameName="STACK"
         onClose={() => setShowLeaderboard(false)}
         onRefetch={refetch}
+        getSubLabel={(e) => `${e.lines_cleared} lines`}
       />
     );
   }

@@ -26,7 +26,7 @@ export const useReactionScores = () => {
         .from("reaction_scores" as any)
         .select("*")
         .order("score", { ascending: false })
-        .limit(20);
+        .limit(50);
 
       if (error) throw error;
 

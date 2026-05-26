@@ -2,8 +2,10 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { RotateCcw, Play, Trophy, Volume2, VolumeX } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { GameLeaderboard } from "./GameLeaderboard";
+import { useAuth } from "@/hooks/useAuth";
 import { useReactionScores } from "@/hooks/useReactionScores";
-import { ReactionLeaderboard } from "./ReactionLeaderboard";
+
 import { useGameAudio } from "@/hooks/useGameAudio";
 
 // ─── Boot Sequence ───────────────────────────────────────────
@@ -181,7 +183,7 @@ const ReactionTrainerGame = () => {
   // ─── LEADERBOARD ──────────────────────────────────────────
   // ═══════════════════════════════════════════════════════════
   if (view === "leaderboard") {
-    return <ReactionLeaderboard scores={topScores} userBest={userBest} onClose={() => setView("gameover")} onRefetch={refetch} />;
+    return <GameLeaderboard scores={topScores} userBest={userBest} currentUserId={user?.id} gameName="STRIKE" onClose={() => setView("gameover")} onRefetch={refetch} getSubLabel={(e) => e.best_reaction_ms ? `${e.best_reaction_ms}ms best` : ""} />;
   }
 
   // ═══════════════════════════════════════════════════════════

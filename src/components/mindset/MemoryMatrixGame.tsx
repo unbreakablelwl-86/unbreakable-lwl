@@ -2,8 +2,10 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { RotateCcw, Trophy, Volume2, VolumeX } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { GameLeaderboard } from "./GameLeaderboard";
+import { useAuth } from "@/hooks/useAuth";
 import { useMemoryMatrixScores } from "@/hooks/useMemoryMatrixScores";
-import { MemoryMatrixLeaderboard } from "./MemoryMatrixLeaderboard";
+
 import { useGameAudio } from "@/hooks/useGameAudio";
 
 // ═══════════════════════════════════════════════════════════════
@@ -146,11 +148,14 @@ const currentConfig = LEVELS[Math.min(level, LEVELS.length - 1)];
   // ═══════════════════════════════════════════════════════════
   if (gameState === "leaderboard") {
     return (
-      <MemoryMatrixLeaderboard
+      <GameLeaderboard
         scores={topScores}
         userBest={userBest}
+        currentUserId={user?.id}
+        gameName="RECALL"
         onClose={() => setGameState("gameover")}
         onRefetch={refetch}
+        getSubLabel={(e) => e.max_level ? `Level ${e.max_level}` : ""}
       />
     );
   }

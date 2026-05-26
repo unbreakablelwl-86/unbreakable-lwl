@@ -7,13 +7,13 @@ interface ScoreEntry {
   id: string;
   user_id: string;
   score: number;
-  theme_shifts: number;
+  max_speed: number;
   created_at: string;
   display_name?: string;
   avatar_url?: string;
 }
 
-export const useSnakeScores = () => {
+export const useFlowScores = () => {
   const { user } = useAuth();
   const [topScores, setTopScores] = useState<ScoreEntry[]>([]);
   const [userBest, setUserBest] = useState<number | null>(null);
@@ -22,18 +22,16 @@ export const useSnakeScores = () => {
   const fetchScores = useCallback(async () => {
     setLoading(true);
     try {
-      // Top 20 scores with profile info
       const { data: scores, error } = await supabase
-        .from("snake_scores")
+        .from("flow_scores" as any)
         .select("*")
         .order("score", { ascending: false })
         .limit(50);
 
       if (error) throw error;
 
-      // Fetch profile info for the scores
       if (scores && scores.length > 0) {
-        const userIds = [...new Set(scores.map((s) => s.user_id))];
+        const userIds = [...new Set((scores as any[]).map((s) => s.user_id))];
         const { data: profiles } = await supabase
           .from("profiles")
           .select("user_id, display_name, avatar_url")
@@ -43,7 +41,7 @@ export const useSnakeScores = () => {
           (profiles || []).map((p) => [p.user_id, p])
         );
 
-        const enriched = scores.map((s) => {
+        const enriched = (scores as any[]).map((s) => {
           const profile = profileMap.get(s.user_id);
           return {
             ...s,
@@ -57,44 +55,42 @@ export const useSnakeScores = () => {
         setTopScores([]);
       }
 
-      // User's best score
       if (user) {
         const { data: best } = await supabase
-          .from("snake_scores")
+          .from("flow_scores" as any)
           .select("score")
           .eq("user_id", user.id)
           .order("score", { ascending: false })
           .limit(1)
           .maybeSingle();
 
-        setUserBest(best?.score ?? null);
+        setUserBest((best as any)?.score ?? null);
       }
     } catch (err) {
-      console.error("Failed to fetch scores:", err);
+      console.error("Failed to fetch flow scores:", err);
     } finally {
       setLoading(false);
     }
   }, [user]);
 
   const saveScore = useCallback(
-    async (score: number, themeShifts: number) => {
+    async (score: number, maxSpeed: number) => {
       if (!user) return;
 
       try {
-        const { error } = await supabase.from("snake_scores").insert({
+        const { error } = await supabase.from("flow_scores" as any).insert({
           user_id: user.id,
           score,
-          theme_shifts: themeShifts,
-        });
+          max_speed: maxSpeed,
+        } as any);
 
         if (error) throw error;
 
-        // Update local best
         if (userBest === null || score > userBest) {
           setUserBest(score);
         }
       } catch (err) {
-        console.error("Failed to save score:", err);
+        console.error("Failed to save flow score:", err);
         toast.error("Failed to save score");
       }
     },
@@ -105,11 +101,5 @@ export const useSnakeScores = () => {
     fetchScores();
   }, [fetchScores]);
 
-  return {
-    topScores,
-    userBest,
-    loading,
-    saveScore,
-    refetch: fetchScores,
-  };
+  return { topScores, userBest, loading, saveScore, refetch: fetchScores };
 };

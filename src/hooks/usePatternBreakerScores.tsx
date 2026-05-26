@@ -26,7 +26,7 @@ export const usePatternBreakerScores = () => {
         .from("pattern_breaker_scores" as any)
         .select("*")
         .order("score", { ascending: false })
-        .limit(20);
+        .limit(50);
 
       if (error) throw error;
 

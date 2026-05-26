@@ -2,8 +2,9 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { RotateCcw, Play, Pause, Trophy, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, Volume2, VolumeX, Shield, Zap, Timer } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useAuth } from "@/hooks/useAuth";
 import { useSnakeScores } from "@/hooks/useSnakeScores";
-import { SnakeLeaderboard } from "./SnakeLeaderboard";
+import { GameLeaderboard } from "./GameLeaderboard";
 import { useGameAudio } from "@/hooks/useGameAudio";
 
 // ─── Types ───────────────────────────────────────────────────
@@ -156,6 +157,7 @@ const SnakeGame = () => {
   // Boot
 
 
+  const { user } = useAuth();
   const { saveScore, topScores, userBest, refetch } = useSnakeScores();
   const audio = useGameAudio("snake");
 
@@ -668,7 +670,7 @@ const SnakeGame = () => {
   // ─── LEADERBOARD VIEW ─────────────────────────────────────
   // ═══════════════════════════════════════════════════════════
   if (view === "leaderboard") {
-    return <SnakeLeaderboard scores={topScores} userBest={userBest} onClose={() => setView("gameover")} onRefetch={refetch} />;
+    return <GameLeaderboard scores={topScores} userBest={userBest} currentUserId={user?.id} gameName="HUNT" onClose={() => setView("gameover")} onRefetch={refetch} getSubLabel={(e) => e.theme_shifts > 0 ? `Stage ${e.theme_shifts}` : ""} />;
   }
 
 

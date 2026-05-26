@@ -26,7 +26,7 @@ export const useAlleywayScores = () => {
         .from("alleyway_scores")
         .select("*")
         .order("score", { ascending: false })
-        .limit(20);
+        .limit(50);
 
       if (error) throw error;
 

@@ -2,8 +2,10 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { RotateCcw, Trophy, Volume2, VolumeX } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { GameLeaderboard } from "./GameLeaderboard";
+import { useAuth } from "@/hooks/useAuth";
 import { usePatternBreakerScores } from "@/hooks/usePatternBreakerScores";
-import { PatternBreakerLeaderboard } from "./PatternBreakerLeaderboard";
+
 import { useGameAudio } from "@/hooks/useGameAudio";
 
 // ═══════════════════════════════════════════════════════════════
@@ -133,11 +135,14 @@ const PatternBreakerGame = () => {
   // ═══════════════════════════════════════════════════════════
   if (gameState === "leaderboard") {
     return (
-      <PatternBreakerLeaderboard
+      <GameLeaderboard
         scores={topScores}
         userBest={userBest}
+        currentUserId={user?.id}
+        gameName="LOCK IN"
         onClose={() => setGameState("gameover")}
         onRefetch={refetch}
+        getSubLabel={(e) => e.max_sequence ? `Seq ${e.max_sequence}` : ""}
       />
     );
   }
