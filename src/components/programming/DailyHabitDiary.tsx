@@ -48,7 +48,7 @@ const HABITS = [
   { key: 'coldShower' as const, label: 'COLD SHOWER', description: 'Cold exposure session', icon: Snowflake },
 ];
 
-const MIN_WORDS = 150;
+const MIN_WORDS = 30;
 
 function countWords(text: string): number {
   return text.trim().split(/\s+/).filter(Boolean).length;
@@ -141,7 +141,7 @@ export function DailyHabitDiary({ habits, onChange, compact = false, readOnly = 
               </div>
 
               <Textarea
-                placeholder="Write freely — reflect on your day, your training, your mindset, anything on your mind. Minimum 150 words."
+                placeholder="Write freely — reflect on your day, your training, your mindset, anything on your mind. Minimum 30 words."
                 value={habits.journal}
                 onChange={(e) => !readOnly && onChange({ ...habits, journal: e.target.value })}
                 className="min-h-[200px] text-sm bg-muted/20 border-border resize-none"
