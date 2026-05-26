@@ -202,6 +202,17 @@ const AlleywayGame = () => {
   const { playHit, playLevelUp, playGameOver, startMusic, stopMusic, toggleMute, isMuted } = useGameAudio("alleyway");
 
   const [scale, setScale] = useState(1);
+  useEffect(() => {
+    const updateScale = () => {
+      const maxW = Math.min(window.innerWidth - 32, 500);
+      setScale(Math.min(maxW / CANVAS_WIDTH, 1.2));
+    };
+    updateScale();
+    window.addEventListener("resize", updateScale);
+    return () => window.removeEventListener("resize", updateScale);
+  }, []);
+  const scaledWidth = CANVAS_WIDTH * scale;
+  const scaledHeight = CANVAS_HEIGHT * scale;
 // ─── Helpers ───────────────────────────────────────────────
   const getCurrentPaddleWidth = useCallback(() => {
     const wideExpiry = activePowerUpsRef.current.get("wide");
