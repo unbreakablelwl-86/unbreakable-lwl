@@ -26,6 +26,40 @@ const games = [
   { id: "focus" as const, name: "ZONE", icon: Timer, tagline: "Get In The Zone.", desc: "Focus timer with streaks & missions. 5–90 minute sessions. Track your discipline.", isNew: true },
 ];
 
+// GameWrapper must be OUTSIDE the main component — if defined inside,
+// React re-creates it on every render which unmounts/remounts children,
+// breaking Suspense lazy-loading and causing infinite reload loops (black screen).
+const GameWrapper = ({ children, onBack }: { children: React.ReactNode; onBack: () => void }) => (
+  <div className="min-h-screen pb-24 bg-background">
+    <div className="px-4 pt-4 mb-4">
+      <button onClick={onBack} className="flex items-center gap-1 text-muted-foreground text-sm hover:text-foreground transition-colors">
+        <ArrowLeft className="w-4 h-4" /> Back
+      </button>
+    </div>
+    <div className="px-4">
+      <Suspense fallback={
+        <div className="flex items-center justify-center py-20">
+          <p className="font-display text-primary tracking-wide animate-pulse">LOADING...</p>
+        </div>
+      }>
+        {children}
+      </Suspense>
+    </div>
+  </div>
+);
+
+const GAME_COMPONENTS: Record<string, React.LazyExoticComponent<React.ComponentType>> = {
+  snake: SnakeGame,
+  alleyway: AlleywayGame,
+  tetris: TetrisGame,
+  reaction: ReactionTrainerGame,
+  memory: MemoryMatrixGame,
+  pattern: PatternBreakerGame,
+  flow: FlowStateGame,
+  maths: MentalMathsGame,
+  focus: FocusTimerGame,
+};
+
 const MindsetGames = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -41,35 +75,19 @@ const MindsetGames = () => {
     }
   }, []);
 
-  // Game views
-  const GameWrapper = ({ children }: { children: React.ReactNode }) => (
-    <div className="min-h-screen pb-24" >
-      <div className="px-4 pt-4 mb-4">
-        <button onClick={() => setView("selection")} className="flex items-center gap-1 text-muted-foreground text-sm hover:text-muted-foreground transition-colors">
-          <ArrowLeft className="w-4 h-4" /> Back
-        </button>
-      </div>
-      <div className="px-4">
-        <Suspense fallback={
-          <div className="flex items-center justify-center py-20">
-            <p className="font-display text-primary tracking-wide animate-pulse">LOADING...</p>
-          </div>
-        }>
-          {children}
-        </Suspense>
-      </div>
-    </div>
-  );
+  const handleBack = () => setView("selection");
 
-  if (view === "snake") return <GameWrapper><SnakeGame /></GameWrapper>;
-  if (view === "alleyway") return <GameWrapper><AlleywayGame /></GameWrapper>;
-  if (view === "tetris") return <GameWrapper><TetrisGame /></GameWrapper>;
-  if (view === "reaction") return <GameWrapper><ReactionTrainerGame /></GameWrapper>;
-  if (view === "memory") return <GameWrapper><MemoryMatrixGame /></GameWrapper>;
-  if (view === "pattern") return <GameWrapper><PatternBreakerGame /></GameWrapper>;
-  if (view === "flow") return <GameWrapper><FlowStateGame /></GameWrapper>;
-  if (view === "maths") return <GameWrapper><MentalMathsGame /></GameWrapper>;
-  if (view === "focus") return <GameWrapper><FocusTimerGame /></GameWrapper>;
+  // Render game if selected
+  if (view !== "selection") {
+    const GameComponent = GAME_COMPONENTS[view];
+    if (GameComponent) {
+      return (
+        <GameWrapper onBack={handleBack}>
+          <GameComponent />
+        </GameWrapper>
+      );
+    }
+  }
 
   return (
     <div className="min-h-screen pb-24" >

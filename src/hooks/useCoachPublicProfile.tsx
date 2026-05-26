@@ -17,6 +17,16 @@ export interface CoachPublicProfile {
   max_clients: number;
   accepting_clients: boolean;
   monthly_price_gbp: number | null;
+  // 1-to-1 pricing
+  session_rate_30min: number | null;
+  session_rate_60min: number | null;
+  online_monthly_rate: number | null;
+  block_4_price: number | null;
+  block_8_price: number | null;
+  block_12_price: number | null;
+  block_session_length: string;
+  free_consultation: boolean;
+  consultation_length: string;
   currency: string;
   instagram_handle: string | null;
   website_url: string | null;
