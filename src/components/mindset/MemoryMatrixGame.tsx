@@ -9,10 +9,10 @@ import { useGameAudio } from "@/hooks/useGameAudio";
 // --- Boot sequence ---
 const BOOT_LINES = [
   "> UNBREAKABLE OS v2.4",
-  "> LOADING MEMORY CORE...",
+  "> LOADING RECALL CORE...",
   "> NEURAL GRID INITIALISED",
   "> PATTERN BUFFER ONLINE",
-  "> RECALL ENGINE ARMED",
+  "> RECALL SYSTEM ARMED",
   "> STATUS: DIALLED IN",
   "",
   "  REMEMBER EVERYTHING",
@@ -251,10 +251,10 @@ const MemoryMatrixGame = () => {
           <div className="absolute inset-0 pointer-events-none" style={{ background: "repeating-linear-gradient(0deg, rgba(255,85,0,0.03) 0px, transparent 1px, transparent 3px)" }} />
           <div className="relative z-10">
             <h2 className="font-display text-4xl text-primary tracking-wider mb-2" style={{ textShadow: "0 0 20px rgba(255,85,0,0.5)" }}>
-              MEMORY
+              RECALL
             </h2>
             <h3 className="font-display text-2xl text-foreground tracking-wider mb-6" style={{ textShadow: "0 0 10px rgba(255,255,255,0.2)" }}>
-              MATRIX
+              TOTAL RECALL OR NOTHING.
             </h3>
 
             <div className="space-y-3 text-left max-w-xs mx-auto mb-8">
@@ -289,7 +289,7 @@ const MemoryMatrixGame = () => {
           <div className="relative z-10">
             <motion.div initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}>
               <h2 className="font-display text-3xl text-primary tracking-wider mb-1" style={{ textShadow: "0 0 20px rgba(255,85,0,0.5)" }}>
-                MEMORY FAILED
+                RECALL FAILED
               </h2>
               {isNewBest && (
                 <motion.p initial={{ opacity: 0 }} animate={{ opacity: [0, 1, 0.5, 1] }} className="text-primary font-display text-sm tracking-wider mb-4">

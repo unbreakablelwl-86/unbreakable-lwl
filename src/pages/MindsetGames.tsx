@@ -1,5 +1,5 @@
-import { useState, lazy, Suspense } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useState, useEffect, lazy, Suspense } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Gamepad2, Zap, Blocks, Crosshair, Grid3X3, Shapes, ChevronRight, ArrowLeft } from "lucide-react";
 const SnakeGame = lazy(() => import("@/components/mindset/SnakeGame"));
@@ -12,17 +12,28 @@ const PatternBreakerGame = lazy(() => import("@/components/mindset/PatternBreake
 type ViewState = "selection" | "snake" | "alleyway" | "tetris" | "reaction" | "memory" | "pattern";
 
 const games = [
-  { id: "snake" as const, name: "FUEL", icon: Gamepad2, tagline: "Hunt. Adapt. Survive.", desc: "Split-second decisions — react too slow and it's over. Reflexes become razor-sharp." },
-  { id: "alleyway" as const, name: "UNBREAKABLE", icon: Zap, tagline: "Destroy what's in your way.", desc: "Smash barriers, build momentum. Precision, timing, and relentless aggression." },
-  { id: "tetris" as const, name: "LIMITLESS", icon: Blocks, tagline: "Order from chaos.", desc: "Find clarity in the chaos — stay composed when everything accelerates." },
-  { id: "reaction" as const, name: "REACT", icon: Crosshair, tagline: "Strike before it vanishes.", desc: "Targets appear — hit them before they disappear. Pure reflex. Zero hesitation.", isNew: true },
-  { id: "memory" as const, name: "RECALL", icon: Grid3X3, tagline: "Remember everything.", desc: "Flash. Memorise. Recreate. Grids grow, flash time shrinks — total recall or nothing.", isNew: true },
-  { id: "pattern" as const, name: "SEQUENCE", icon: Shapes, tagline: "Break the pattern.", desc: "Watch. Listen. Repeat. Each round adds one more — one mistake and it's over.", isNew: true },
+  { id: "snake" as const, name: "HUNT", icon: Gamepad2, tagline: "Chase. Devour. Never Stop.", desc: "Split-second decisions — react too slow and it's over. Reflexes become razor-sharp." },
+  { id: "alleyway" as const, name: "SHATTER", icon: Zap, tagline: "Break Every Wall.", desc: "Walls go up, you smash them down. Precision, timing, and relentless aggression." },
+  { id: "tetris" as const, name: "STACK", icon: Blocks, tagline: "Order From Chaos.", desc: "Pieces fall faster. Find clarity in the chaos — stack clean, think ahead, stay composed." },
+  { id: "reaction" as const, name: "STRIKE", icon: Crosshair, tagline: "Hit Before It Vanishes.", desc: "Targets appear — hit them before they disappear. Pure reflex. Zero hesitation.", isNew: true },
+  { id: "memory" as const, name: "RECALL", icon: Grid3X3, tagline: "Total Recall Or Nothing.", desc: "Flash. Memorise. Recreate. Grids grow, flash time shrinks — one wrong tile and it's over.", isNew: true },
+  { id: "pattern" as const, name: "LOCK IN", icon: Shapes, tagline: "One Wrong Move, It's Over.", desc: "Watch. Listen. Repeat. Each round adds one more — break focus and you're done.", isNew: true },
 ];
 
 const MindsetGames = () => {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [view, setView] = useState<ViewState>("selection");
+
+  // Auto-launch game from URL param (?game=snake)
+  useEffect(() => {
+    const gameParam = searchParams.get("game") as ViewState | null;
+    if (gameParam && games.some(g => g.id === gameParam)) {
+      setView(gameParam);
+      // Clear the param so back button returns to selector
+      setSearchParams({}, { replace: true });
+    }
+  }, []);
 
   // Game views
   const GameWrapper = ({ children }: { children: React.ReactNode }) => (

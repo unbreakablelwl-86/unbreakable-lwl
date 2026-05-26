@@ -9,13 +9,13 @@ import { useGameAudio } from "@/hooks/useGameAudio";
 // --- Boot sequence lines ---
 const BOOT_LINES = [
   "> UNBREAKABLE OS v2.4",
-  "> LOADING REACTION CORE...",
+  "> LOADING STRIKE CORE...",
   "> CALIBRATING NEURAL LINK...",
   "> REFLEX MODULE ONLINE",
   "> TARGET SYSTEM ARMED",
   "> STATUS: LOCKED IN",
   "",
-  "  REACT OR DIE",
+  "  STRIKE OR DIE",
 ];
 
 // --- Motivational messages ---
@@ -408,13 +408,13 @@ const ReactionTrainerGame = () => {
               className="font-display text-4xl text-primary tracking-wider mb-2"
               style={{ textShadow: "0 0 20px rgba(255,85,0,0.5)" }}
             >
-              REACTION
+              STRIKE
             </h2>
             <h3
               className="font-display text-2xl text-foreground tracking-wider mb-6"
               style={{ textShadow: "0 0 10px rgba(255,255,255,0.2)" }}
             >
-              TRAINER
+              HIT BEFORE IT VANISHES.
             </h3>
 
             <div className="space-y-3 text-left max-w-xs mx-auto mb-8">

@@ -936,8 +936,8 @@ const AlleywayGame = () => {
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
               className="absolute inset-0 flex flex-col items-center justify-center bg-black/85 rounded-lg backdrop-blur-sm"
             >
-              <p className="font-display text-5xl text-primary tracking-wider mb-1" style={{ textShadow: "0 0 30px rgba(249,115,22,0.5)" }}>UNBREAKABLE</p>
-              <p className="text-[10px] text-primary/70 font-display tracking-[0.3em] mb-6">UNBREAKABLE EDITION</p>
+              <p className="font-display text-5xl text-primary tracking-wider mb-1" style={{ textShadow: "0 0 30px rgba(249,115,22,0.5)" }}>SHATTER</p>
+              <p className="text-[10px] text-primary/70 font-display tracking-[0.3em] mb-6">BREAK EVERY WALL.</p>
               <div className="space-y-1.5 text-center mb-8">
                 <p className="text-xs text-white/60">Move paddle · mouse / finger / arrows</p>
                 <p className="text-xs text-white/60">Catch diamond power-ups for abilities</p>

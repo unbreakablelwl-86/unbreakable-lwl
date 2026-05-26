@@ -9,7 +9,7 @@ import { useGameAudio } from "@/hooks/useGameAudio";
 // --- Boot sequence ---
 const BOOT_LINES = [
   "> UNBREAKABLE OS v2.4",
-  "> LOADING SEQUENCE ENGINE...",
+  "> LOADING LOCK IN ENGINE...",
   "> PATTERN RECOGNITION: ONLINE",
   "> AUDIO SYNC MODULE READY",
   "> DIFFICULTY: ESCALATING",
@@ -21,12 +21,12 @@ const BOOT_LINES = [
 // --- Messages ---
 const SUCCESS_MESSAGES = [
   "PERFECT", "LOCKED IN", "ELITE", "UNSTOPPABLE",
-  "SEQUENCE MASTER", "NO ERRORS", "DIALLED IN", "UNBREAKABLE",
+  "LOCKED IN", "NO ERRORS", "DIALLED IN", "UNBREAKABLE",
   "CLINICAL", "PURE FOCUS", "RELENTLESS", "MACHINE",
 ];
 
 const FAIL_MESSAGES = [
-  "WRONG NOTE", "SEQUENCE LOST", "FOCUS UP", "SO CLOSE",
+  "WRONG NOTE", "FOCUS LOST", "FOCUS UP", "SO CLOSE",
   "PATTERN BROKEN", "TRY AGAIN", "DIG DEEPER", "NOT YET",
 ];
 
@@ -275,10 +275,10 @@ const PatternBreakerGame = () => {
           <div className="absolute inset-0 pointer-events-none" style={{ background: "repeating-linear-gradient(0deg, rgba(255,85,0,0.03) 0px, transparent 1px, transparent 3px)" }} />
           <div className="relative z-10">
             <h2 className="font-display text-4xl text-primary tracking-wider mb-2" style={{ textShadow: "0 0 20px rgba(255,85,0,0.5)" }}>
-              PATTERN
+              LOCK IN
             </h2>
             <h3 className="font-display text-2xl text-foreground tracking-wider mb-6" style={{ textShadow: "0 0 10px rgba(255,255,255,0.2)" }}>
-              BREAKER
+              ONE WRONG MOVE, IT'S OVER.
             </h3>
 
             <div className="space-y-3 text-left max-w-xs mx-auto mb-8">
@@ -313,7 +313,7 @@ const PatternBreakerGame = () => {
           <div className="relative z-10">
             <motion.div initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}>
               <h2 className="font-display text-3xl text-primary tracking-wider mb-1" style={{ textShadow: "0 0 20px rgba(255,85,0,0.5)" }}>
-                SEQUENCE LOST
+                FOCUS LOST
               </h2>
               {isNewBest && (
                 <motion.p initial={{ opacity: 0 }} animate={{ opacity: [0, 1, 0.5, 1] }} className="text-primary font-display text-sm tracking-wider mb-4">

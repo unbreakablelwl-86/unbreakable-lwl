@@ -571,16 +571,16 @@ const Mindset = () => {
 
               {/* Game cards */}
               {[
-                { name: 'FUEL', subtitle: 'HUNT. ADAPT. SURVIVE.', desc: 'Split-second reactions. Colours shift, speed climbs. Only relentless focus keeps you alive.', icon: Gamepad2 },
-                { name: 'UNBREAKABLE', subtitle: "DESTROY WHAT'S IN YOUR WAY", desc: 'Walls go up, you smash them down. Precision, timing, and relentless aggression.', icon: Zap },
-                { name: 'LIMITLESS', subtitle: 'ORDER FROM CHAOS', desc: 'Pieces fall faster. Find clarity in the chaos — stack clean, think ahead, stay composed.', icon: Trophy },
-                { name: 'REACT', subtitle: 'STRIKE BEFORE IT VANISHES.', desc: 'Targets appear — hit them before they disappear. Pure reflex. Zero hesitation.', icon: Crosshair, isNew: true },
-                { name: 'RECALL', subtitle: 'REMEMBER EVERYTHING.', desc: 'Flash. Memorise. Recreate. Grids grow, flash time shrinks — total recall or nothing.', icon: Grid3X3, isNew: true },
-                { name: 'SEQUENCE', subtitle: 'BREAK THE PATTERN.', desc: 'Watch. Listen. Repeat. Each round adds one more — one mistake and it\'s over.', icon: Shapes, isNew: true },
+                { id: 'snake', name: 'HUNT', subtitle: 'CHASE. DEVOUR. NEVER STOP.', desc: 'Split-second reactions. Colours shift, speed climbs. Only relentless focus keeps you alive.', icon: Gamepad2 },
+                { id: 'alleyway', name: 'SHATTER', subtitle: 'BREAK EVERY WALL.', desc: 'Walls go up, you smash them down. Precision, timing, and relentless aggression.', icon: Zap },
+                { id: 'tetris', name: 'STACK', subtitle: 'ORDER FROM CHAOS.', desc: 'Pieces fall faster. Find clarity in the chaos — stack clean, think ahead, stay composed.', icon: Trophy },
+                { id: 'reaction', name: 'STRIKE', subtitle: 'HIT BEFORE IT VANISHES.', desc: 'Targets appear — hit them before they disappear. Pure reflex. Zero hesitation.', icon: Crosshair, isNew: true },
+                { id: 'memory', name: 'RECALL', subtitle: 'TOTAL RECALL OR NOTHING.', desc: 'Flash. Memorise. Recreate. Grids grow, flash time shrinks — one wrong tile and it\'s over.', icon: Grid3X3, isNew: true },
+                { id: 'pattern', name: 'LOCK IN', subtitle: 'ONE WRONG MOVE, IT\'S OVER.', desc: 'Watch. Listen. Repeat. Each round adds one more — break focus and you\'re done.', icon: Shapes, isNew: true },
               ].map((game, i) => (
                 <button
                   key={game.name}
-                  onClick={() => navigate('/mindset/games')}
+                  onClick={() => navigate(`/mindset/games?game=${game.id}`)}
                   className="w-full text-left p-4 rounded-xl border border-border bg-card hover:border-border hover:bg-card transition-all"
                 >
                   <div className="flex items-start gap-3">
