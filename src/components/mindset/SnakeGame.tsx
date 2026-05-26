@@ -36,9 +36,9 @@ const THEME_PALETTES: ThemePalette[] = [
   { bg: "#0a0a0a", snake: "#FF5500", snakeHead: "#FF7733", food: "#ffffff", grid: "#1a1a1a", border: "#FF5500", text: "#FF5500", accent: "#ffffff" },
   { bg: "#0a0a0a", snake: "#ffffff", snakeHead: "#e5e5e5", food: "#FF5500", grid: "#1a1a1a", border: "#ffffff", text: "#ffffff", accent: "#FF5500" },
   { bg: "#FF5500", snake: "#0a0a0a", snakeHead: "#1a1a1a", food: "#ffffff", grid: "#CC4400", border: "#0a0a0a", text: "#0a0a0a", accent: "#ffffff" },
-  { bg: "#0a0a0a", snake: "#22d3ee", snakeHead: "#67e8f9", food: "#FF5500", grid: "#1a1a1a", border: "#22d3ee", text: "#22d3ee", accent: "#FF5500" },
+  { bg: "#0a0a0a", snake: "#FF7733", snakeHead: "#FF5500", food: "#ffffff", grid: "#1a1a1a", border: "#FF7733", text: "#FF7733", accent: "#ffffff" },
   { bg: "#fafafa", snake: "#FF5500", snakeHead: "#CC4400", food: "#0a0a0a", grid: "#f0f0f0", border: "#FF5500", text: "#FF5500", accent: "#0a0a0a" },
-  { bg: "#CC4400", snake: "#ffffff", snakeHead: "#f5f5f5", food: "#0a0a0a", grid: "#dc2626", border: "#ffffff", text: "#ffffff", accent: "#0a0a0a" },
+  { bg: "#CC4400", snake: "#ffffff", snakeHead: "#f5f5f5", food: "#0a0a0a", grid: "#993300", border: "#ffffff", text: "#ffffff", accent: "#0a0a0a" },
 ];
 
 // ─── Stage Wall Patterns (20x20 grid) ────────────────────────
@@ -272,7 +272,7 @@ const SnakeGame = () => {
       const pulse = 0.8 + Math.sin(now / 200) * 0.2;
       ctx.save();
       ctx.globalAlpha = pulse;
-      const puColors: Record<PowerUpKind, string> = { shield: "#22d3ee", double: "#facc15", slowmo: "#a78bfa" };
+      const puColors: Record<PowerUpKind, string> = { shield: "#ffffff", double: "#FF7733", slowmo: "#CC4400" };
       ctx.fillStyle = puColors[pu.kind];
       ctx.shadowColor = puColors[pu.kind];
       ctx.shadowBlur = 12;
@@ -301,18 +301,18 @@ const SnakeGame = () => {
     const foodPulse = 0.8 + Math.sin(now / 150) * 0.2;
     const golden = isGoldenRef.current;
     ctx.save();
-    ctx.shadowColor = golden ? "#facc15" : theme.food;
+    ctx.shadowColor = golden ? "#FF7733" : theme.food;
     ctx.shadowBlur = golden ? 20 : 12;
-    ctx.fillStyle = golden ? "#facc15" : theme.food;
+    ctx.fillStyle = golden ? "#FF7733" : theme.food;
     const fPad = cellSize * (1 - foodPulse * 0.8) / 2;
     ctx.fillRect(food.x * cellSize + fPad, food.y * cellSize + fPad, cellSize - fPad * 2, cellSize - fPad * 2);
     if (golden) {
-      ctx.strokeStyle = "#facc1580";
+      ctx.strokeStyle = "#FF773380";
       ctx.lineWidth = 2;
       ctx.strokeRect(food.x * cellSize, food.y * cellSize, cellSize, cellSize);
     }
     // Inner pixel highlight
-    ctx.fillStyle = golden ? "#fef08a" : theme.accent;
+    ctx.fillStyle = golden ? "#FF5500" : theme.accent;
     ctx.globalAlpha = 0.6;
     ctx.fillRect(food.x * cellSize + fPad + 2, food.y * cellSize + fPad + 2, (cellSize - fPad * 2) * 0.4, (cellSize - fPad * 2) * 0.4);
     ctx.restore();
@@ -336,9 +336,9 @@ const SnakeGame = () => {
 
         // Shield indicator
         if (hasShieldRef.current) {
-          ctx.strokeStyle = "#22d3ee";
+          ctx.strokeStyle = "#ffffff";
           ctx.lineWidth = 2;
-          ctx.shadowColor = "#22d3ee";
+          ctx.shadowColor = "#ffffff";
           ctx.shadowBlur = 8;
           ctx.strokeRect(seg.x * cellSize - 2, seg.y * cellSize - 2, cellSize + 4, cellSize + 4);
           ctx.shadowColor = theme.snake;
@@ -512,7 +512,7 @@ const SnakeGame = () => {
       if (pu.kind === "shield") { hasShieldRef.current = true; setHasShield(true); }
       setPowerUpsUsed(prev => prev + 1);
       audio.playLevelUp();
-      const puColors: Record<PowerUpKind, string> = { shield: "#22d3ee", double: "#facc15", slowmo: "#a78bfa" };
+      const puColors: Record<PowerUpKind, string> = { shield: "#ffffff", double: "#FF7733", slowmo: "#CC4400" };
       spawnParticles(head.x, head.y, puColors[pu.kind], 14);
     }
 
@@ -546,7 +546,7 @@ const SnakeGame = () => {
       setTotalEaten(prev => prev + 1);
 
       audio.playHit();
-      spawnParticles(head.x, head.y, golden ? "#facc15" : getTheme(newScore).food, golden ? 14 : 10);
+      spawnParticles(head.x, head.y, golden ? "#FF7733" : getTheme(newScore).food, golden ? 14 : 10);
 
       // Stage transition
       if (newStage > oldStage) {

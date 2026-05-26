@@ -13,7 +13,7 @@ interface BreathingVisualProps {
 }
 
 /* ── Neon orange constants ── */
-const NEON = "hsl(24, 100%, 50%)";        // #FF6600-ish
+const NEON = "#FF5500";                   // Unbreakable brand orange
 const NEON_GLOW = "rgba(255, 100, 0, 0.6)";
 const NEON_SOFT = "rgba(255, 100, 0, 0.25)";
 const NEON_DIM = "rgba(255, 100, 0, 0.1)";

@@ -253,7 +253,7 @@ const currentConfig = LEVELS[Math.min(level, LEVELS.length - 1)];
                 <p className="text-[9px] text-muted-foreground font-display tracking-wider">EMPTY</p>
               </div>
               <div className="bg-card/50 border border-border rounded-lg p-2 text-center">
-                <div className="w-5 h-5 rounded-sm mx-auto mb-1" style={{ background: "#ef4444", boxShadow: "0 0 6px rgba(239,68,68,0.4)" }} />
+                <div className="w-5 h-5 rounded-sm mx-auto mb-1" style={{ background: "#CC4400", boxShadow: "0 0 6px rgba(204,68,0,0.4)" }} />
                 <p className="text-[9px] text-muted-foreground font-display tracking-wider">WRONG</p>
               </div>
               <div className="bg-card/50 border border-border rounded-lg p-2 text-center">
@@ -559,9 +559,9 @@ const currentConfig = LEVELS[Math.min(level, LEVELS.length - 1)];
               border = "#FF5500";
               shadow = "0 0 10px rgba(255,85,0,0.5)";
             } else if (showWrong) {
-              bg = "#ef4444";
-              border = "#ef4444";
-              shadow = "0 0 8px rgba(239,68,68,0.4)";
+              bg = "#CC4400";
+              border = "#CC4400";
+              shadow = "0 0 8px rgba(204,68,0,0.4)";
             } else if (showMissed) {
               bg = "transparent";
               border = "#FF5500";
@@ -638,7 +638,7 @@ const currentConfig = LEVELS[Math.min(level, LEVELS.length - 1)];
             <span
               className="font-display text-sm tracking-wider"
               style={{
-                color: resultCorrect ? "#FF5500" : "#ef4444",
+                color: resultCorrect ? "#FF5500" : "#CC4400",
                 textShadow: `0 0 8px ${
                   resultCorrect ? "rgba(255,85,0,0.5)" : "rgba(239,68,68,0.5)"
                 }`,

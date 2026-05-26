@@ -278,7 +278,7 @@ const FocusTimerGame = () => {
               <circle
                 cx="150" cy="150" r="140"
                 fill="none"
-                stroke={gameState === "break" ? "#22C55E" : "#FF5500"}
+                stroke={gameState === "break" ? "#FF7733" : "#FF5500"}
                 strokeWidth="6"
                 strokeLinecap="round"
                 strokeDasharray={circumference}

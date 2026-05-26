@@ -395,7 +395,7 @@ const ReactionTrainerGame = () => {
           className="h-full rounded-full"
           style={{
             width: `${timePercent * 100}%`,
-            background: timePercent > 0.3 ? "#FF5500" : "#ef4444",
+            background: timePercent > 0.3 ? "#FF5500" : "#CC4400",
             boxShadow: `0 0 8px ${timePercent > 0.3 ? "rgba(255,85,0,0.5)" : "rgba(239,68,68,0.5)"}`,
           }}
         />
@@ -411,7 +411,7 @@ const ReactionTrainerGame = () => {
           maxWidth: 400,
           height: 450,
           margin: "0 auto",
-          borderColor: missFlash ? "#ef4444" : "rgba(255,85,0,0.3)",
+          borderColor: missFlash ? "#CC4400" : "rgba(255,85,0,0.3)",
           transition: "border-color 0.15s",
         }}
       >
@@ -501,7 +501,7 @@ const ReactionTrainerGame = () => {
               <span
                 className="font-display text-xs tracking-wider px-3 py-1 rounded"
                 style={{
-                  color: missFlash ? "#ef4444" : "#FF5500",
+                  color: missFlash ? "#CC4400" : "#FF5500",
                   textShadow: `0 0 8px ${missFlash ? "rgba(239,68,68,0.5)" : "rgba(255,85,0,0.5)"}`,
                 }}
               >

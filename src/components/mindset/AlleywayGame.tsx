@@ -153,7 +153,7 @@ const getStageName = (score: number): string => {
 const POWERUP_COLORS: Record<PowerUpType, { bg: string; label: string }> = {
   multiball: { bg: "#FF5500", label: "MULTI" },
   wide: { bg: "#ffffff", label: "WIDE" },
-  fireball: { bg: "#ff4500", label: "FIRE" },
+  fireball: { bg: "#FF5500", label: "FIRE" },
 };
 
 // ─── Component ───────────────────────────────────────────────
@@ -349,7 +349,7 @@ const AlleywayGame = () => {
 
     // Danger zone
     const dangerY = CANVAS_HEIGHT - PADDLE_HEIGHT - 35;
-    ctx.strokeStyle = "#ef444422";
+    ctx.strokeStyle = "#CC440022";
     ctx.lineWidth = 1;
     ctx.setLineDash([5, 5]);
     ctx.beginPath(); ctx.moveTo(0, dangerY); ctx.lineTo(CANVAS_WIDTH, dangerY); ctx.stroke();
@@ -491,13 +491,13 @@ const AlleywayGame = () => {
         const tx = ball.x - ball.dx * i * 0.35;
         const ty = ball.y - ball.dy * i * 0.35;
         ctx.globalAlpha = 0.12 - i * 0.025;
-        ctx.fillStyle = ball.isFireball ? "#ff4500" : theme.ball;
+        ctx.fillStyle = ball.isFireball ? "#FF5500" : theme.ball;
         ctx.fillRect(tx - br + i * 0.4, ty - br + i * 0.4, (br - i * 0.4) * 2, (br - i * 0.4) * 2);
       }
       ctx.globalAlpha = 1;
       ctx.shadowColor = ball.isFireball ? "rgba(255,69,0,0.9)" : theme.ballGlow;
       ctx.shadowBlur = ball.isFireball ? 24 : 16;
-      ctx.fillStyle = ball.isFireball ? "#ff4500" : theme.ball;
+      ctx.fillStyle = ball.isFireball ? "#FF5500" : theme.ball;
       ctx.fillRect(ball.x - br, ball.y - br, br * 2, br * 2);
       // Pixel highlight
       ctx.shadowBlur = 0;

@@ -58,7 +58,7 @@ interface ThemePalette {
 const THEME_PALETTES: ThemePalette[] = [
   {
     bg: "#0a0a0a", grid: "#1a1a1a", border: "#FF5500", text: "#FF5500", accent: "#ffffff", ghost: "rgba(255,85,0,0.15)",
-    pieces: ["#FF5500", "#FF7733", "#ffffff", "#CC4400", "#FF5500", "#ffb380", "#993300"],
+    pieces: ["#FF5500", "#FF7733", "#ffffff", "#CC4400", "#FF5500", "#FF7733", "#993300"],
   },
   {
     bg: "#f0f0f0", grid: "#d8d8d8", border: "#FF5500", text: "#0a0a0a", accent: "#FF5500", ghost: "rgba(0,0,0,0.08)",
@@ -66,7 +66,7 @@ const THEME_PALETTES: ThemePalette[] = [
   },
   {
     bg: "#0c0a09", grid: "#1c1917", border: "#CC4400", text: "#FF7733", accent: "#ffffff", ghost: "rgba(204,68,0,0.15)",
-    pieces: ["#CC4400", "#FF7733", "#ffffff", "#FF5500", "#FF5500", "#ffd4a8", "#993300"],
+    pieces: ["#CC4400", "#FF7733", "#ffffff", "#FF5500", "#FF5500", "#FF7733", "#993300"],
   },
   {
     bg: "#f5f0eb", grid: "#e0dbd5", border: "#0a0a0a", text: "#0a0a0a", accent: "#FF5500", ghost: "rgba(0,0,0,0.06)",

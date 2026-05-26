@@ -514,7 +514,7 @@ const PatternBreakerGame = () => {
           {PADS.map((pad, i) => {
             const isActive = activePad === i;
             const isWrong = wrongPad === i;
-            const bg = isWrong ? "#ef4444" : isActive ? pad.activeColor : pad.color;
+            const bg = isWrong ? "#CC4400" : isActive ? pad.activeColor : pad.color;
             const shadow = isWrong
               ? "0 0 20px rgba(239,68,68,0.6), inset 0 0 20px rgba(239,68,68,0.2)"
               : isActive

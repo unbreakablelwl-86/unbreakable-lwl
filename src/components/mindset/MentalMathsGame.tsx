@@ -314,7 +314,7 @@ const nextQuestion = useCallback((solvedCount: number) => {
                 className="h-full rounded-full"
                 style={{
                   width: `${timerPct * 100}%`,
-                  backgroundColor: timerPct > 0.5 ? "#FF5500" : timerPct > 0.25 ? "#FF8800" : "#FF0000",
+                  backgroundColor: timerPct > 0.5 ? "#FF5500" : timerPct > 0.25 ? "#CC4400" : "#993300",
                   boxShadow: timerPct < 0.25 ? "0 0 10px rgba(255,0,0,0.5)" : "none",
                 }}
                 transition={{ duration: 0.05 }}
