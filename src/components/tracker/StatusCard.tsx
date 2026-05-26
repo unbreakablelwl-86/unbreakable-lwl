@@ -131,11 +131,23 @@ export function StatusCard({ post, onKudos, onDelete, onToggleComments, onUpdate
 
   const handleShareToStory = () => {
     if (onOpenStoryEditor) {
+      // Pass ALL media items so each image/video becomes its own story slide
+      const allMedia = (post.media_items && post.media_items.length > 0)
+        ? post.media_items
+            .sort((a, b) => a.sort_order - b.sort_order)
+            .map(m => ({ type: m.media_type, url: m.media_url, thumbnail_url: m.thumbnail_url }))
+        : post.image_url
+          ? [{ type: 'image' as const, url: post.image_url }]
+          : post.video_url
+            ? [{ type: 'video' as const, url: post.video_url }]
+            : undefined;
+
       onOpenStoryEditor({
         content: post.content || undefined,
         image_url: post.image_url || undefined,
         video_url: post.video_url || undefined,
         background_color: '#1C1C1E',
+        media_items: allMedia,
       });
     }
   };

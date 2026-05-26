@@ -50,6 +50,7 @@ export function StoriesSection() {
   const [isMuted, setIsMuted] = useState(true);
   const [isPaused, setIsPaused] = useState(false);
   const storyVideoRef = useRef<HTMLVideoElement>(null);
+  const storyAudioRef = useRef<HTMLAudioElement>(null);
   const progressTimerRef = useRef<number | null>(null);
   const suppressClickRef = useRef(false);
   const suppressClickTimerRef = useRef<number | null>(null);
@@ -320,6 +321,47 @@ export function StoriesSection() {
       setViewedUsers(prev => new Set([...prev, groupedStories[activeUserIndex].userId]));
     }
   }, [showViewer, activeUserIndex, groupedStories]);
+
+  // Play/pause music audio track when story changes or viewer opens/closes
+  useEffect(() => {
+    const audio = storyAudioRef.current;
+    if (!audio) return;
+
+    if (!showViewer) {
+      audio.pause();
+      audio.src = '';
+      return;
+    }
+
+    const story = groupedStories[activeUserIndex]?.stories[activeStoryIndex];
+    if (!story) {
+      audio.pause();
+      audio.src = '';
+      return;
+    }
+
+    const mediaArr = (story as any)?.media_items as Array<any> | undefined;
+    const audioItem = mediaArr?.find((m: any) => m.type === 'audio');
+
+    if (audioItem?.url) {
+      audio.src = audioItem.url;
+      audio.currentTime = audioItem.clip_start || 0;
+      audio.muted = isMuted;
+      audio.play().catch(() => {});
+    } else {
+      audio.pause();
+      audio.src = '';
+    }
+
+    return () => { audio.pause(); };
+  }, [showViewer, activeUserIndex, activeStoryIndex, groupedStories]);
+
+  // Keep audio mute state in sync
+  useEffect(() => {
+    if (storyAudioRef.current) {
+      storyAudioRef.current.muted = isMuted;
+    }
+  }, [isMuted]);
 
   // Lock body scroll when story viewer is open
   useEffect(() => {
@@ -782,8 +824,8 @@ export function StoriesSection() {
                 const audioItem = mediaArr?.find((m: any) => m.type === 'audio');
                 if (!audioItem) return null;
                 return (
-                  <div className="absolute bottom-20 left-4 right-4 z-30 pointer-events-none">
-                    <div className="flex items-center gap-2.5 px-3 py-2 rounded-xl bg-black/50 backdrop-blur-md border border-white/10 max-w-[240px]">
+                  <div className="absolute bottom-20 left-4 right-4 z-30">
+                    <div className="flex items-center gap-2.5 px-3 py-2 rounded-xl bg-black/50 backdrop-blur-md border border-white/10 max-w-[260px]">
                       <div className="w-9 h-9 rounded-lg overflow-hidden bg-primary/20 shrink-0 shadow-[0_0_6px_rgba(255,85,0,0.3)]">
                         {audioItem.thumbnail_url ? (
                           <img src={audioItem.thumbnail_url} alt="" className="w-full h-full object-cover" />
@@ -797,6 +839,17 @@ export function StoriesSection() {
                         <p className="text-xs font-semibold text-white truncate">{audioItem.track_title || 'Music'}</p>
                         <p className="text-[10px] text-white/60 truncate">{audioItem.artist_name || 'Un-Tunes'}</p>
                       </div>
+                      {/* Mute/unmute music */}
+                      <button
+                        className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center shrink-0"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (storyAudioRef.current) storyAudioRef.current.muted = !isMuted;
+                          setIsMuted(!isMuted);
+                        }}
+                      >
+                        {isMuted ? <VolumeX className="w-3.5 h-3.5 text-white/80" /> : <Volume2 className="w-3.5 h-3.5 text-white/80" />}
+                      </button>
                     </div>
                   </div>
                 );
@@ -818,6 +871,25 @@ export function StoriesSection() {
                 <FloatingDumbbell key={d.id} id={d.id} x={d.x} y={d.y} color={d.color} onDone={removeDumbbell} />
               ))}
             </AnimatePresence>
+
+            {/* Hidden audio element for music track playback */}
+            <audio
+              ref={storyAudioRef}
+              preload="metadata"
+              loop={false}
+              onTimeUpdate={() => {
+                const audio = storyAudioRef.current;
+                if (!audio) return;
+                const story = groupedStories[activeUserIndex]?.stories[activeStoryIndex];
+                const mediaArr = (story as any)?.media_items as Array<any> | undefined;
+                const audioItem = mediaArr?.find((m: any) => m.type === 'audio');
+                const clipEnd = audioItem?.clip_end;
+                if (clipEnd && audio.currentTime >= clipEnd) {
+                  audio.currentTime = audioItem?.clip_start || 0;
+                  audio.play().catch(() => {});
+                }
+              }}
+            />
           </motion.div>
         )}
       </AnimatePresence>

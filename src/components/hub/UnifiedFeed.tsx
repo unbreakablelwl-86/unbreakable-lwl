@@ -23,6 +23,8 @@ export interface StoryPreFill {
   image_url?: string;
   video_url?: string;
   background_color?: string;
+  /** Pass all media items from a multi-image post so each becomes a story slide */
+  media_items?: Array<{ type: 'image' | 'video'; url: string; thumbnail_url?: string | null }>;
 }
 
 interface UnifiedFeedProps {

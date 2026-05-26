@@ -57,6 +57,8 @@ interface StoryEditorProps {
     image_url?: string;
     video_url?: string;
     background_color?: string;
+    /** All media items from a multi-image post — each becomes its own story slide */
+    media_items?: Array<{ type: 'image' | 'video'; url: string; thumbnail_url?: string | null }>;
   };
 }
 
@@ -68,26 +70,44 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
   // Media items state (up to 5)
   const [mediaItems, setMediaItems] = useState<MediaUploadItem[]>(() => {
     const items: MediaUploadItem[] = [];
-    if (preFill?.image_url) {
-      items.push({
-        file: new File([], 'prefill.jpg'),
-        type: 'image',
-        previewUrl: preFill.image_url,
-        progress: 100,
-        status: 'done',
-        uploadedUrl: preFill.image_url,
+
+    // Multi-image share: load ALL media items from the post
+    if (preFill?.media_items && preFill.media_items.length > 0) {
+      preFill.media_items.forEach((m, idx) => {
+        items.push({
+          file: new File([], `prefill_${idx}.${m.type === 'image' ? 'jpg' : 'mp4'}`),
+          type: m.type,
+          previewUrl: m.url,
+          progress: 100,
+          status: 'done',
+          uploadedUrl: m.url,
+          thumbnailUrl: m.thumbnail_url || undefined,
+        });
       });
+    } else {
+      // Legacy single-image/video prefill
+      if (preFill?.image_url) {
+        items.push({
+          file: new File([], 'prefill.jpg'),
+          type: 'image',
+          previewUrl: preFill.image_url,
+          progress: 100,
+          status: 'done',
+          uploadedUrl: preFill.image_url,
+        });
+      }
+      if (preFill?.video_url) {
+        items.push({
+          file: new File([], 'prefill.mp4'),
+          type: 'video',
+          previewUrl: preFill.video_url,
+          progress: 100,
+          status: 'done',
+          uploadedUrl: preFill.video_url,
+        });
+      }
     }
-    if (preFill?.video_url) {
-      items.push({
-        file: new File([], 'prefill.mp4'),
-        type: 'video',
-        previewUrl: preFill.video_url,
-        progress: 100,
-        status: 'done',
-        uploadedUrl: preFill.video_url,
-      });
-    }
+
     return items;
   });
   const [activeMediaIndex, setActiveMediaIndexRaw] = useState(0);
@@ -152,6 +172,10 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
   // Music overlay state
   const [showMusicPicker, setShowMusicPicker] = useState(false);
   const [selectedTrack, setSelectedTrack] = useState<Track | null>(null);
+  const [musicClipStart, setMusicClipStart] = useState(0); // seconds
+  const [musicClipEnd, setMusicClipEnd] = useState(15);     // seconds (default 15s clip)
+  const [showClipTrimmer, setShowClipTrimmer] = useState(false);
+  const audioPreviewRef = useRef<HTMLAudioElement | null>(null);
   const mediaDragRef = useRef<{ startX: number; startY: number; startTX: number; startTY: number } | null>(null);
   const mediaPinchRef = useRef<{ dist: number; scale: number } | null>(null);
   
@@ -470,7 +494,7 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
         ovs.map(o => ({ ...o, slideIndex: Number(idx) }))
       );
 
-      // Include music track in media_items if selected
+      // Include music track in media_items if selected (with clip times)
       const finalMediaItems: StoryMediaItem[] = [...uploadedMedia];
       if (selectedTrack) {
         finalMediaItems.push({
@@ -480,6 +504,8 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
           track_id: selectedTrack.id,
           track_title: selectedTrack.title,
           artist_name: selectedTrack.artist_name || 'Un-Tunes',
+          clip_start: musicClipStart,
+          clip_end: musicClipEnd,
         } as any);
       }
 
@@ -679,27 +705,124 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
         {/* Music sticker overlay — shows when a track is selected */}
         {selectedTrack && (
           <div className="absolute bottom-36 left-4 right-4 z-30 pointer-events-none">
-            <div className="flex items-center gap-2.5 px-3 py-2 rounded-xl bg-black/50 backdrop-blur-md border border-white/10 max-w-[260px] mx-auto pointer-events-auto">
-              <div className="w-10 h-10 rounded-lg overflow-hidden bg-primary/20 shrink-0 shadow-[0_0_8px_rgba(255,85,0,0.3)]">
-                {selectedTrack.cover_url ? (
-                  <img src={selectedTrack.cover_url} alt="" className="w-full h-full object-cover" />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <Music className="w-4 h-4 text-primary/60" />
+            <div className="max-w-[280px] mx-auto pointer-events-auto">
+              {/* Track info bar */}
+              <div className="flex items-center gap-2.5 px-3 py-2 rounded-t-xl bg-black/60 backdrop-blur-md border border-b-0 border-white/10">
+                <div className="w-10 h-10 rounded-lg overflow-hidden bg-primary/20 shrink-0 shadow-[0_0_8px_rgba(255,85,0,0.3)]">
+                  {selectedTrack.cover_url ? (
+                    <img src={selectedTrack.cover_url} alt="" className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <Music className="w-4 h-4 text-primary/60" />
+                    </div>
+                  )}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-semibold text-white truncate">{selectedTrack.title}</p>
+                  <p className="text-[10px] text-white/60 truncate">{selectedTrack.artist_name || 'Un-Tunes'}</p>
+                </div>
+                <button
+                  className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center shrink-0 hover:bg-white/20 transition-colors"
+                  onClick={() => setShowClipTrimmer(!showClipTrimmer)}
+                  title="Trim clip"
+                >
+                  <Minus className="w-3.5 h-3.5 text-primary" style={{ transform: 'rotate(90deg)' }} />
+                </button>
+                <button
+                  className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center shrink-0 hover:bg-white/20 transition-colors"
+                  onClick={() => { setSelectedTrack(null); setShowClipTrimmer(false); if (audioPreviewRef.current) { audioPreviewRef.current.pause(); } }}
+                >
+                  <X className="w-3 h-3 text-white/80" />
+                </button>
+              </div>
+
+              {/* Clip trimmer — Instagram-style section selector */}
+              <div className={`overflow-hidden transition-all duration-200 ${showClipTrimmer ? 'max-h-[120px]' : 'max-h-0'}`}>
+                <div className="bg-black/60 backdrop-blur-md border border-t-0 border-white/10 rounded-b-xl px-3 py-3 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] text-white/50 font-display tracking-wider">CLIP SECTION</span>
+                    <span className="text-[10px] text-primary font-display tracking-wider">
+                      {Math.floor(musicClipStart / 60)}:{String(Math.floor(musicClipStart % 60)).padStart(2, '0')} — {Math.floor(musicClipEnd / 60)}:{String(Math.floor(musicClipEnd % 60)).padStart(2, '0')}
+                    </span>
                   </div>
-                )}
+
+                  {/* Visual waveform-style track bar */}
+                  <div className="relative h-10 bg-white/5 rounded-lg overflow-hidden">
+                    {/* Waveform bars (decorative) */}
+                    <div className="absolute inset-0 flex items-center gap-[2px] px-1">
+                      {Array.from({ length: 40 }, (_, i) => {
+                        const h = 20 + Math.sin(i * 0.8) * 40 + Math.cos(i * 1.3) * 20;
+                        const inRange = (i / 40) * (selectedTrack.duration_seconds || 180) >= musicClipStart &&
+                                        (i / 40) * (selectedTrack.duration_seconds || 180) <= musicClipEnd;
+                        return (
+                          <div
+                            key={i}
+                            className={`flex-1 rounded-sm transition-colors ${inRange ? 'bg-primary' : 'bg-white/15'}`}
+                            style={{ height: `${h}%` }}
+                          />
+                        );
+                      })}
+                    </div>
+
+                    {/* Draggable range overlay */}
+                    <input
+                      type="range"
+                      min={0}
+                      max={Math.max((selectedTrack.duration_seconds || 180) - 5, 10)}
+                      value={musicClipStart}
+                      onChange={(e) => {
+                        const start = Number(e.target.value);
+                        setMusicClipStart(start);
+                        setMusicClipEnd(Math.min(start + 15, selectedTrack.duration_seconds || 180));
+                        // Preview audio at this position
+                        if (audioPreviewRef.current) {
+                          audioPreviewRef.current.currentTime = start;
+                          audioPreviewRef.current.play().catch(() => {});
+                        }
+                      }}
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                      style={{ touchAction: 'none' }}
+                    />
+                  </div>
+
+                  {/* Duration presets */}
+                  <div className="flex gap-1.5">
+                    {[5, 10, 15, 30].map(dur => (
+                      <button
+                        key={dur}
+                        onClick={() => setMusicClipEnd(Math.min(musicClipStart + dur, selectedTrack.duration_seconds || 180))}
+                        className={`flex-1 py-1 rounded-md text-[10px] font-display tracking-wider transition-colors ${
+                          Math.round(musicClipEnd - musicClipStart) === dur
+                            ? 'bg-primary/20 text-primary border border-primary/30'
+                            : 'bg-white/5 text-white/50 border border-transparent'
+                        }`}
+                      >
+                        {dur}s
+                      </button>
+                    ))}
+                  </div>
+                </div>
               </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-xs font-semibold text-white truncate">{selectedTrack.title}</p>
-                <p className="text-[10px] text-white/60 truncate">{selectedTrack.artist_name || 'Un-Tunes'}</p>
-              </div>
-              <button
-                className="w-6 h-6 rounded-full bg-white/10 flex items-center justify-center shrink-0 hover:bg-white/20 transition-colors pointer-events-auto"
-                onClick={() => setSelectedTrack(null)}
-              >
-                <X className="w-3 h-3 text-white/80" />
-              </button>
+
+              {/* Hidden but visible sticker when trimmer closed */}
+              {!showClipTrimmer && (
+                <div className="h-px bg-white/10 rounded-b-xl" />
+              )}
             </div>
+
+            {/* Audio preview element (hidden) */}
+            {selectedTrack.audio_url && (
+              <audio
+                ref={audioPreviewRef}
+                src={selectedTrack.audio_url}
+                preload="metadata"
+                onTimeUpdate={() => {
+                  if (audioPreviewRef.current && audioPreviewRef.current.currentTime >= musicClipEnd) {
+                    audioPreviewRef.current.pause();
+                  }
+                }}
+              />
+            )}
           </div>
         )}
 
