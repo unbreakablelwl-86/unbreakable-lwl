@@ -63,21 +63,21 @@ interface LevelConfig {
 }
 
 const LEVELS: LevelConfig[] = [
-  { gridSize: 3, activeCells: 3, flashDurationMs: 1500, label: "3×3 · 3 CELLS" },
-  { gridSize: 3, activeCells: 4, flashDurationMs: 1400, label: "3×3 · 4 CELLS" },
-  { gridSize: 4, activeCells: 4, flashDurationMs: 1300, label: "4×4 · 4 CELLS" },
-  { gridSize: 4, activeCells: 5, flashDurationMs: 1200, label: "4×4 · 5 CELLS" },
-  { gridSize: 4, activeCells: 6, flashDurationMs: 1100, label: "4×4 · 6 CELLS" },
-  { gridSize: 5, activeCells: 6, flashDurationMs: 1100, label: "5×5 · 6 CELLS" },
-  { gridSize: 5, activeCells: 7, flashDurationMs: 1000, label: "5×5 · 7 CELLS" },
-  { gridSize: 5, activeCells: 8, flashDurationMs: 900, label: "5×5 · 8 CELLS" },
-  { gridSize: 6, activeCells: 8, flashDurationMs: 900, label: "6×6 · 8 CELLS" },
-  { gridSize: 6, activeCells: 9, flashDurationMs: 850, label: "6×6 · 9 CELLS" },
-  { gridSize: 6, activeCells: 10, flashDurationMs: 800, label: "6×6 · 10 CELLS" },
-  { gridSize: 7, activeCells: 10, flashDurationMs: 750, label: "7×7 · 10 CELLS" },
-  { gridSize: 7, activeCells: 12, flashDurationMs: 700, label: "7×7 · 12 CELLS" },
-  { gridSize: 7, activeCells: 14, flashDurationMs: 650, label: "7×7 · 14 CELLS" },
-  { gridSize: 8, activeCells: 14, flashDurationMs: 600, label: "8×8 · 14 CELLS" },
+  { gridSize: 3, activeCells: 3, flashDurationMs: 3000, label: "3×3 · 3 CELLS" },
+  { gridSize: 3, activeCells: 4, flashDurationMs: 2800, label: "3×3 · 4 CELLS" },
+  { gridSize: 4, activeCells: 4, flashDurationMs: 2600, label: "4×4 · 4 CELLS" },
+  { gridSize: 4, activeCells: 5, flashDurationMs: 2400, label: "4×4 · 5 CELLS" },
+  { gridSize: 4, activeCells: 6, flashDurationMs: 2200, label: "4×4 · 6 CELLS" },
+  { gridSize: 5, activeCells: 6, flashDurationMs: 2200, label: "5×5 · 6 CELLS" },
+  { gridSize: 5, activeCells: 7, flashDurationMs: 2000, label: "5×5 · 7 CELLS" },
+  { gridSize: 5, activeCells: 8, flashDurationMs: 1800, label: "5×5 · 8 CELLS" },
+  { gridSize: 6, activeCells: 8, flashDurationMs: 1800, label: "6×6 · 8 CELLS" },
+  { gridSize: 6, activeCells: 9, flashDurationMs: 1600, label: "6×6 · 9 CELLS" },
+  { gridSize: 6, activeCells: 10, flashDurationMs: 1500, label: "6×6 · 10 CELLS" },
+  { gridSize: 7, activeCells: 10, flashDurationMs: 1400, label: "7×7 · 10 CELLS" },
+  { gridSize: 7, activeCells: 12, flashDurationMs: 1300, label: "7×7 · 12 CELLS" },
+  { gridSize: 7, activeCells: 14, flashDurationMs: 1200, label: "7×7 · 14 CELLS" },
+  { gridSize: 8, activeCells: 14, flashDurationMs: 1100, label: "8×8 · 14 CELLS" },
 ];
 
 type GameState = "ready" | "flashing" | "input" | "result" | "gameover" | "leaderboard";
