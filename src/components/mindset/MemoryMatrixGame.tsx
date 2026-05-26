@@ -122,7 +122,7 @@ const MemoryMatrixGame = () => {
 
   const { user } = useAuth();
   const { topScores, userBest, saveScore, refetch } = useMemoryMatrixScores();
-  const audio = useGameAudio("memory" as any);
+  const { playHit, playLevelUp, playGameOver, startMusic, stopMusic, toggleMute, isMuted } = useGameAudio("memory");
 
   // ─── Boot sequence ─────────────────────────────────────────
 
@@ -177,8 +177,8 @@ const MemoryMatrixGame = () => {
     setStartTime(now);
     // Start first round
     startRound(0, now);
-    audio.play?.("start");
-  }, [audio, startRound]);
+    startMusic();
+  }, [startMusic, startRound]);
 
 
   // ─── Handle Cell Click ─────────────────────────────────────
@@ -194,7 +194,7 @@ const MemoryMatrixGame = () => {
     if (pattern.has(index)) {
       // Correct tap
       setTotalCellsRecalled((prev) => prev + 1);
-      audio.play?.("hit");
+      playHit();
       
       // Spawn particle
       if (gridRef.current) {
@@ -228,7 +228,7 @@ const MemoryMatrixGame = () => {
         setResultCorrect(true);
         setGameState("result");
         setMessage(SUCCESS_MESSAGES[Math.floor(Math.random() * SUCCESS_MESSAGES.length)]);
-        audio.play?.("levelUp");
+        playLevelUp();
         
         // Stage check
         const newStageIdx = getStageIndex(level + 1);
@@ -254,14 +254,14 @@ const MemoryMatrixGame = () => {
       setCurrentStreak(0);
       setDeathShake(true);
       setTimeout(() => setDeathShake(false), 400);
-      audio.play?.("miss");
+      playHit();
       setMessage(FAIL_MESSAGES[Math.floor(Math.random() * FAIL_MESSAGES.length)]);
       
       if (newLives <= 0) {
         // Game over
         setGameState("gameover");
         setTimeSurvived(Math.floor((Date.now() - startTime) / 1000));
-        audio.play?.("gameOver");
+        playGameOver();
         const finalScore = score + pattern.size * 10 + level * 5; // partial credit
         if (finalScore > 0) {
           saveScore(finalScore, {
@@ -272,7 +272,7 @@ const MemoryMatrixGame = () => {
         }
       }
     }
-  }, [gameState, selected, pattern, level, lives, startTime, score, maxLevel, perfectRounds, longestStreak, audio, saveScore, startRound]);
+  }, [gameState, selected, pattern, level, lives, startTime, score, maxLevel, perfectRounds, longestStreak, playHit, playLevelUp, playGameOver, saveScore, startRound]);
 
 
 const currentConfig = LEVELS[Math.min(level, LEVELS.length - 1)];
@@ -562,8 +562,8 @@ const currentConfig = LEVELS[Math.min(level, LEVELS.length - 1)];
               />
             ))}
           </div>
-          <button onClick={audio.toggleMute} className="text-muted-foreground hover:text-foreground">
-            {audio.isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+          <button onClick={toggleMute} className="text-muted-foreground hover:text-foreground">
+            {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
           </button>
         </div>
       </div>

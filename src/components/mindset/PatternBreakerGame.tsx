@@ -115,7 +115,7 @@ const PatternBreakerGame = () => {
 
   const { user } = useAuth();
   const { topScores, userBest, saveScore, refetch } = usePatternBreakerScores();
-  const audio = useGameAudio("pattern" as any);
+  const { playHit, playLevelUp, playGameOver, startMusic, stopMusic, toggleMute, isMuted } = useGameAudio("pattern");
 
   // ─── Boot sequence ─────────────────────────────────────────
 
@@ -207,8 +207,8 @@ const PatternBreakerGame = () => {
       playSequence(newSeq, getPlaySpeed(1));
     }, 800);
 
-    audio.play?.("start");
-  }, [audio, playSequence, getPlaySpeed]);
+    startMusic();
+  }, [startMusic, playSequence, getPlaySpeed]);
 
   // ─── Advance Round ─────────────────────────────────────────
   const advanceRound = useCallback((currentSeq: number[]) => {
@@ -256,7 +256,7 @@ const PatternBreakerGame = () => {
       const points = sequence.length * 5 + correctTaps * 2;
       setScore((prev) => prev + points);
       
-      audio.play?.("hit");
+      playHit();
       setMessage(SUCCESS_MESSAGES[Math.floor(Math.random() * SUCCESS_MESSAGES.length)]);
       setTimeout(() => setMessage(""), 500);
 
@@ -268,7 +268,7 @@ const PatternBreakerGame = () => {
       if (correctTaps >= sequence.length) {
         // Round complete! 
         setGameState("success");
-        audio.play?.("levelUp");
+        playLevelUp();
         setMessage("PERFECT ROUND!");
         
         setTimeout(() => {
@@ -280,7 +280,7 @@ const PatternBreakerGame = () => {
       setWrongPad(padIdx);
       setDeathShake(true);
       setGameState("fail");
-      audio.play?.("miss");
+      playHit();
       setMessage(FAIL_MESSAGES[Math.floor(Math.random() * FAIL_MESSAGES.length)]);
 
       setTimeout(() => {
@@ -288,7 +288,7 @@ const PatternBreakerGame = () => {
         setWrongPad(null);
         setTimeSurvived(Math.floor((Date.now() - startTime) / 1000));
         setGameState("gameover");
-        audio.play?.("gameOver");
+        playGameOver();
         
         const finalScore = score + sequence.length * 5;
         if (finalScore > 0) {
@@ -300,7 +300,7 @@ const PatternBreakerGame = () => {
         }
       }, 1000);
     }
-  }, [gameState, sequence, playerIndex, score, startTime, maxSequence, totalCorrectTaps, perfectRounds, audio, saveScore, playTone, advanceRound]);
+  }, [gameState, sequence, playerIndex, score, startTime, maxSequence, totalCorrectTaps, perfectRounds, playHit, playLevelUp, playGameOver, saveScore, playTone, advanceRound]);
 
 
 // ─── Cleanup ─────────────────────────────────────────────
@@ -567,8 +567,8 @@ const PatternBreakerGame = () => {
           <div className="bg-card/60 border border-border rounded px-2 py-0.5">
             <p className="font-display text-xs text-primary tracking-wider">SEQ {sequence.length}</p>
           </div>
-          <button onClick={audio.toggleMute} className="text-muted-foreground hover:text-foreground">
-            {audio.isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+          <button onClick={toggleMute} className="text-muted-foreground hover:text-foreground">
+            {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
           </button>
         </div>
       </div>

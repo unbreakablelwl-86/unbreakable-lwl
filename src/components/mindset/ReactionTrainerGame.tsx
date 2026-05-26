@@ -112,6 +112,7 @@ const ReactionTrainerGame = () => {
 
   const { user } = useAuth();
   const { topScores, userBest, saveScore, refetch } = useReactionScores();
+  const { playHit, playLevelUp, playGameOver, startMusic, stopMusic, toggleMute, isMuted } = useGameAudio("reaction");
   // ─── Start Game ────────────────────────────────────────────
   const startGame = useCallback(() => {
     targetIdRef.current = 0;
@@ -141,8 +142,8 @@ const ReactionTrainerGame = () => {
     setTotalMisses(0);
     setTotalSpawned(0);
     setView("playing");
-    audio.play?.("start");
-  }, [audio]);
+    startMusic();
+  }, [startMusic]);
 
   // ─── Spawn Target ──────────────────────────────────────────
   const spawnTarget = useCallback(() => {
@@ -194,7 +195,7 @@ const ReactionTrainerGame = () => {
         lastStageRef.current = newStageIdx;
         setStageFlash(STAGES[newStageIdx].name);
         setTimeout(() => setStageFlash(null), 1200);
-        audio.play?.("levelUp");
+        playLevelUp();
       }
       
       if (c > 0) setBestCombo((prev) => Math.max(prev, c));
@@ -216,8 +217,8 @@ const ReactionTrainerGame = () => {
     setMessage(HIT_MESSAGES[Math.floor(Math.random() * HIT_MESSAGES.length)]);
     setTimeout(() => setMessage(""), 600);
 
-    audio.play?.("hit");
-  }, [audio]);
+    playHit();
+  }, [playHit]);
 
   // ─── Game Timer ────────────────────────────────────────────
   useEffect(() => {
@@ -233,7 +234,7 @@ const ReactionTrainerGame = () => {
         setView("gameover");
         setDeathShake(true);
         setTimeout(() => setDeathShake(false), 500);
-        audio.play?.("gameOver");
+        playGameOver();
         // Save score
         const finalScore = scoreRef.current;
         if (finalScore > 0) {
@@ -248,7 +249,7 @@ const ReactionTrainerGame = () => {
       }
     }, 50);
     return () => clearInterval(interval);
-  }, [view, audio, saveScore]);
+  }, [view, saveScore]);
 
   // ─── Target Spawner ────────────────────────────────────────
   useEffect(() => {
@@ -285,13 +286,13 @@ const ReactionTrainerGame = () => {
         setTimeout(() => setMessage(""), 600);
         targetsRef.current = targetsRef.current.filter((t) => now - t.spawnedAt <= t.lifetime);
         setTargets([...targetsRef.current]);
-        audio.play?.("miss");
+        playHit();
       }
     }, 100);
     return () => clearInterval(interval);
-  }, [view, audio]);
+  }, [view]);
 
-  const audio = useGameAudio("reaction" as any);
+  // audio hook moved to top with other hooks
 
   // ─── Boot Sequence ─────────────────────────────────────────
 
@@ -538,8 +539,8 @@ const ReactionTrainerGame = () => {
           >
             {timeSeconds}s
           </p>
-          <button onClick={audio.toggleMute} className="text-muted-foreground hover:text-foreground">
-            {audio.isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+          <button onClick={toggleMute} className="text-muted-foreground hover:text-foreground">
+            {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
           </button>
         </div>
       </div>
