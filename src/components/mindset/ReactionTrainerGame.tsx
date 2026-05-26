@@ -1,24 +1,55 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
-import { RotateCcw, Trophy, Volume2, VolumeX } from "lucide-react";
+import { RotateCcw, Play, Trophy, Volume2, VolumeX } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useReactionScores } from "@/hooks/useReactionScores";
 import { ReactionLeaderboard } from "./ReactionLeaderboard";
 import { useGameAudio } from "@/hooks/useGameAudio";
 
-// --- Boot sequence lines ---
+// ─── Boot Sequence ───────────────────────────────────────────
 const BOOT_LINES = [
   "> UNBREAKABLE OS v2.4",
   "> LOADING STRIKE CORE...",
   "> CALIBRATING NEURAL LINK...",
-  "> REFLEX MODULE ONLINE",
-  "> TARGET SYSTEM ARMED",
+  "> REFLEX MODULE: ONLINE",
+  "> TARGET SYSTEM: ARMED",
+  "> COMBO ENGINE: PRIMED",
   "> STATUS: LOCKED IN",
   "",
-  "  STRIKE OR DIE",
+  "  STRIKE OR DIE.",
 ];
 
-// --- Motivational messages ---
+// ─── Stage Names (score thresholds) ──────────────────────────
+const STAGES = [
+  { threshold: 0, name: "WARM UP", label: "STAGE 1" },
+  { threshold: 50, name: "FIRST STRIKE", label: "STAGE 2" },
+  { threshold: 120, name: "RAPID FIRE", label: "STAGE 3" },
+  { threshold: 200, name: "LOCKED IN", label: "STAGE 4" },
+  { threshold: 300, name: "HYPERFOCUS", label: "STAGE 5" },
+  { threshold: 420, name: "WIRED", label: "STAGE 6" },
+  { threshold: 560, name: "UNTOUCHABLE", label: "STAGE 7" },
+  { threshold: 720, name: "GODSPEED", label: "STAGE 8" },
+  { threshold: 900, name: "LEGENDARY", label: "STAGE 9" },
+  { threshold: 1100, name: "IMMORTAL", label: "STAGE 10" },
+];
+
+const getStage = (score: number) => {
+  let current = STAGES[0];
+  for (const s of STAGES) {
+    if (score >= s.threshold) current = s;
+  }
+  return current;
+};
+
+const getStageIndex = (score: number): number => {
+  let idx = 0;
+  for (let i = 0; i < STAGES.length; i++) {
+    if (score >= STAGES[i].threshold) idx = i;
+  }
+  return idx;
+};
+
+// ─── Motivational Messages ───────────────────────────────────
 const HIT_MESSAGES = [
   "LOCKED IN", "SHARP", "REFLEXES ON POINT", "NO HESITATION",
   "DIALLED IN", "LIGHTNING", "RAZOR SHARP", "ELITE",
@@ -31,7 +62,7 @@ const MISS_MESSAGES = [
   "NOT GOOD ENOUGH", "FASTER", "COME ON", "DIG IN",
 ];
 
-// --- Target shapes ---
+// ─── Target Types ────────────────────────────────────────────
 type TargetShape = "circle" | "diamond" | "square" | "cross";
 
 interface Target {
@@ -41,82 +72,85 @@ interface Target {
   size: number;
   shape: TargetShape;
   spawnedAt: number;
-  lifetime: number; // ms before it disappears
+  lifetime: number;
 }
 
-// --- Game states ---
-type GameState = "boot" | "ready" | "playing" | "gameover" | "leaderboard";
+type GameView = "boot" | "ready" | "playing" | "gameover" | "leaderboard";
 
-const GAME_DURATION = 30_000; // 30 seconds
+// ─── Constants ───────────────────────────────────────────────
+const GAME_DURATION = 30_000;
 const INITIAL_SPAWN_INTERVAL = 1200;
 const MIN_SPAWN_INTERVAL = 400;
 const INITIAL_TARGET_LIFETIME = 2000;
 const MIN_TARGET_LIFETIME = 600;
 const MAX_CONCURRENT_TARGETS = 5;
 
+// ─── Component ───────────────────────────────────────────────
 const ReactionTrainerGame = () => {
   const canvasRef = useRef<HTMLDivElement>(null);
-  const [gameState, setGameState] = useState<GameState>("boot");
+
+  const [view, setView] = useState<GameView>("boot");
   const [score, setScore] = useState(0);
   const [combo, setCombo] = useState(0);
   const [bestCombo, setBestCombo] = useState(0);
   const [targets, setTargets] = useState<Target[]>([]);
   const [timeLeft, setTimeLeft] = useState(GAME_DURATION);
   const [bestReactionMs, setBestReactionMs] = useState(9999);
+  const [avgReactionMs, setAvgReactionMs] = useState(0);
   const [lastReactionMs, setLastReactionMs] = useState<number | null>(null);
   const [message, setMessage] = useState("");
   const [missFlash, setMissFlash] = useState(false);
   const [hitEffect, setHitEffect] = useState<{ x: number; y: number; id: number } | null>(null);
+  const [deathShake, setDeathShake] = useState(false);
+  const [stageFlash, setStageFlash] = useState<string | null>(null);
+  const [totalHits, setTotalHits] = useState(0);
+  const [totalMisses, setTotalMisses] = useState(0);
+  const [totalSpawned, setTotalSpawned] = useState(0);
 
   const targetIdRef = useRef(0);
   const gameStartRef = useRef(0);
-  const spawnTimerRef = useRef<NodeJS.Timeout | null>(null);
-  const gameTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const spawnTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const targetsRef = useRef<Target[]>([]);
+  const scoreRef = useRef(0);
+  const lastStageRef = useRef(0);
+  const hitsRef = useRef(0);
+  const missesRef = useRef(0);
+  const spawnedRef = useRef(0);
+  const reactionSumRef = useRef(0);
+
+  // Boot
+  const [bootLines, setBootLines] = useState<string[]>([]);
+  const [bootDone, setBootDone] = useState(false);
 
   const { topScores, userBest, saveScore, refetch } = useReactionScores();
   const audio = useGameAudio("reaction" as any);
 
-  // --- Boot sequence ---
-  const [bootLines, setBootLines] = useState<string[]>([]);
-  const [bootDone, setBootDone] = useState(false);
-
+  // ─── Boot Sequence ─────────────────────────────────────────
   useEffect(() => {
-    if (gameState !== "boot") return;
+    if (view !== "boot") return;
     let i = 0;
-    const interval = setInterval(() => {
-      if (i < BOOT_LINES.length) {
-        setBootLines((prev) => [...prev, BOOT_LINES[i]]);
-        i++;
-      } else {
-        clearInterval(interval);
-        setTimeout(() => setBootDone(true), 400);
-      }
-    }, 180);
-    return () => clearInterval(interval);
-  }, [gameState]);
+    const iv = setInterval(() => {
+      if (i < BOOT_LINES.length) { setBootLines(prev => [...prev, BOOT_LINES[i]]); i++; }
+      else { clearInterval(iv); setTimeout(() => setBootDone(true), 400); }
+    }, 160);
+    return () => clearInterval(iv);
+  }, [view]);
 
-  useEffect(() => {
-    if (bootDone) {
-      setTimeout(() => {
-        setGameState("ready");
-      }, 600);
-    }
-  }, [bootDone]);
+  useEffect(() => { if (bootDone) setTimeout(() => setView("ready"), 600); }, [bootDone]);
 
-  // --- Difficulty scaling ---
+  // ─── Difficulty Scaling ────────────────────────────────────
   const getDifficulty = useCallback((elapsed: number) => {
     const progress = Math.min(elapsed / GAME_DURATION, 1);
-    const spawnInterval = INITIAL_SPAWN_INTERVAL - (INITIAL_SPAWN_INTERVAL - MIN_SPAWN_INTERVAL) * progress;
-    const lifetime = INITIAL_TARGET_LIFETIME - (INITIAL_TARGET_LIFETIME - MIN_TARGET_LIFETIME) * progress;
-    return { spawnInterval, lifetime };
+    return {
+      spawnInterval: INITIAL_SPAWN_INTERVAL - (INITIAL_SPAWN_INTERVAL - MIN_SPAWN_INTERVAL) * progress,
+      lifetime: INITIAL_TARGET_LIFETIME - (INITIAL_TARGET_LIFETIME - MIN_TARGET_LIFETIME) * progress,
+    };
   }, []);
 
-  // --- Spawn target ---
+  // ─── Spawn Target ─────────────────────────────────────────
   const spawnTarget = useCallback(() => {
     const elapsed = Date.now() - gameStartRef.current;
     const { lifetime } = getDifficulty(elapsed);
-
     if (targetsRef.current.length >= MAX_CONCURRENT_TARGETS) return;
 
     const shapes: TargetShape[] = ["circle", "diamond", "square", "cross"];
@@ -135,49 +169,59 @@ const ReactionTrainerGame = () => {
       lifetime,
     };
 
+    spawnedRef.current++;
+    setTotalSpawned(spawnedRef.current);
     targetsRef.current = [...targetsRef.current, newTarget];
     setTargets([...targetsRef.current]);
   }, [getDifficulty]);
 
-  // --- Remove expired targets (miss) ---
+  // ─── Remove Expired (miss) ────────────────────────────────
   useEffect(() => {
-    if (gameState !== "playing") return;
+    if (view !== "playing") return;
     const interval = setInterval(() => {
       const now = Date.now();
-      const expired = targetsRef.current.filter((t) => now - t.spawnedAt > t.lifetime);
+      const expired = targetsRef.current.filter(t => now - t.spawnedAt > t.lifetime);
       if (expired.length > 0) {
-        // Miss penalty
         setCombo(0);
+        missesRef.current += expired.length;
+        setTotalMisses(missesRef.current);
         setMissFlash(true);
         setMessage(MISS_MESSAGES[Math.floor(Math.random() * MISS_MESSAGES.length)]);
         setTimeout(() => setMissFlash(false), 200);
         audio.playGameOver();
-
-        targetsRef.current = targetsRef.current.filter((t) => now - t.spawnedAt <= t.lifetime);
+        targetsRef.current = targetsRef.current.filter(t => now - t.spawnedAt <= t.lifetime);
         setTargets([...targetsRef.current]);
       }
     }, 50);
     return () => clearInterval(interval);
-  }, [gameState, audio]);
+  }, [view, audio]);
 
-  // --- Game timer ---
+  // ─── Game Timer ────────────────────────────────────────────
+  const endGame = useCallback(() => {
+    if (spawnTimerRef.current) clearTimeout(spawnTimerRef.current);
+    audio.stopMusic();
+    audio.playGameOver();
+    setDeathShake(true);
+    setTimeout(() => setDeathShake(false), 400);
+    setView("gameover");
+    setTargets([]);
+    targetsRef.current = [];
+  }, [audio]);
+
   useEffect(() => {
-    if (gameState !== "playing") return;
+    if (view !== "playing") return;
     const interval = setInterval(() => {
       const elapsed = Date.now() - gameStartRef.current;
       const remaining = Math.max(0, GAME_DURATION - elapsed);
       setTimeLeft(remaining);
-      if (remaining <= 0) {
-        endGame();
-      }
+      if (remaining <= 0) endGame();
     }, 50);
     return () => clearInterval(interval);
-  }, [gameState]);
+  }, [view, endGame]);
 
-  // --- Spawn loop ---
+  // ─── Spawn Loop ────────────────────────────────────────────
   useEffect(() => {
-    if (gameState !== "playing") return;
-
+    if (view !== "playing") return;
     const scheduleSpawn = () => {
       const elapsed = Date.now() - gameStartRef.current;
       const { spawnInterval } = getDifficulty(elapsed);
@@ -186,16 +230,12 @@ const ReactionTrainerGame = () => {
         scheduleSpawn();
       }, spawnInterval);
     };
-
-    spawnTarget(); // immediate first
+    spawnTarget();
     scheduleSpawn();
+    return () => { if (spawnTimerRef.current) clearTimeout(spawnTimerRef.current); };
+  }, [view, spawnTarget, getDifficulty]);
 
-    return () => {
-      if (spawnTimerRef.current) clearTimeout(spawnTimerRef.current);
-    };
-  }, [gameState, spawnTarget, getDifficulty]);
-
-  // --- Hit target ---
+  // ─── Hit Target ────────────────────────────────────────────
   const hitTarget = useCallback((target: Target) => {
     const reactionMs = Math.round(Date.now() - target.spawnedAt);
     const newCombo = combo + 1;
@@ -203,58 +243,77 @@ const ReactionTrainerGame = () => {
     const basePoints = Math.max(1, Math.round((target.lifetime - reactionMs) / 50));
     const points = Math.round(basePoints * comboMultiplier);
 
-    setScore((prev) => prev + points);
+    // Update score + check stage
+    const newScore = scoreRef.current + points;
+    scoreRef.current = newScore;
+    setScore(newScore);
+
     setCombo(newCombo);
     if (newCombo > bestCombo) setBestCombo(newCombo);
+
+    // Reaction tracking
+    hitsRef.current++;
+    reactionSumRef.current += reactionMs;
+    setTotalHits(hitsRef.current);
+    setAvgReactionMs(Math.round(reactionSumRef.current / hitsRef.current));
     setLastReactionMs(reactionMs);
     if (reactionMs < bestReactionMs) setBestReactionMs(reactionMs);
-    setMessage(HIT_MESSAGES[Math.floor(Math.random() * HIT_MESSAGES.length)]);
 
+    setMessage(HIT_MESSAGES[Math.floor(Math.random() * HIT_MESSAGES.length)]);
     setHitEffect({ x: target.x, y: target.y, id: target.id });
     setTimeout(() => setHitEffect(null), 300);
 
-    targetsRef.current = targetsRef.current.filter((t) => t.id !== target.id);
+    targetsRef.current = targetsRef.current.filter(t => t.id !== target.id);
     setTargets([...targetsRef.current]);
 
     audio.playHit();
-    if (newCombo > 0 && newCombo % 5 === 0) audio.playLevelUp();
+
+    // Stage transition
+    const oldStage = lastStageRef.current;
+    const newStage = getStageIndex(newScore);
+    if (newStage > oldStage) {
+      lastStageRef.current = newStage;
+      audio.playLevelUp();
+      const s = STAGES[newStage];
+      setStageFlash(`${s.label}: ${s.name}`);
+      setTimeout(() => setStageFlash(null), 1600);
+    } else if (newCombo > 0 && newCombo % 5 === 0) {
+      audio.playLevelUp();
+    }
   }, [combo, bestCombo, bestReactionMs, audio]);
 
-  // --- Start game ---
+  // ─── Start Game ────────────────────────────────────────────
   const startGame = useCallback(() => {
-    setScore(0);
-    setCombo(0);
-    setBestCombo(0);
-    setTimeLeft(GAME_DURATION);
-    setBestReactionMs(9999);
-    setLastReactionMs(null);
-    setMessage("");
-    setTargets([]);
-    targetsRef.current = [];
+    scoreRef.current = 0;
+    lastStageRef.current = 0;
+    hitsRef.current = 0;
+    missesRef.current = 0;
+    spawnedRef.current = 0;
+    reactionSumRef.current = 0;
     targetIdRef.current = 0;
     gameStartRef.current = Date.now();
-    setGameState("playing");
+
+    setScore(0); setCombo(0); setBestCombo(0);
+    setTimeLeft(GAME_DURATION);
+    setBestReactionMs(9999); setAvgReactionMs(0);
+    setLastReactionMs(null);
+    setMessage(""); setTargets([]);
+    setTotalHits(0); setTotalMisses(0); setTotalSpawned(0);
+    setStageFlash(null); setDeathShake(false);
+    targetsRef.current = [];
+
+    setView("playing");
     audio.startMusic();
   }, [audio]);
 
-  // --- End game ---
-  const endGame = useCallback(() => {
-    if (spawnTimerRef.current) clearTimeout(spawnTimerRef.current);
-    audio.stopMusic();
-    audio.playGameOver();
-    setGameState("gameover");
-    setTargets([]);
-    targetsRef.current = [];
-  }, [audio]);
-
-  // --- Save score on game over ---
+  // ─── Save Score on Game Over ───────────────────────────────
   useEffect(() => {
-    if (gameState === "gameover" && score > 0) {
+    if (view === "gameover" && score > 0) {
       saveScore(score, bestReactionMs === 9999 ? 0 : bestReactionMs);
     }
-  }, [gameState]);
+  }, [view]);
 
-  // --- Render target shape ---
+  // ─── Render Target Shape ───────────────────────────────────
   const renderTarget = (target: Target) => {
     const age = (Date.now() - target.spawnedAt) / target.lifetime;
     const opacity = age > 0.7 ? 1 - (age - 0.7) / 0.3 : 1;
@@ -286,34 +345,21 @@ const ReactionTrainerGame = () => {
       >
         <svg width={target.size} height={target.size} viewBox={`0 0 ${target.size} ${target.size}`}>
           {target.shape === "circle" && (
-            <circle
-              cx={center}
-              cy={center}
-              r={innerSize / 2}
-              fill="none"
-              stroke="#FF5500"
-              strokeWidth={3}
-            >
+            <circle cx={center} cy={center} r={innerSize / 2} fill="none" stroke="#FF5500" strokeWidth={3}>
               <animate attributeName="r" values={`${innerSize / 2};${innerSize / 2 - 2};${innerSize / 2}`} dur="0.6s" repeatCount="indefinite" />
             </circle>
           )}
           {target.shape === "diamond" && (
             <polygon
               points={`${center},${center - innerSize / 2} ${center + innerSize / 2},${center} ${center},${center + innerSize / 2} ${center - innerSize / 2},${center}`}
-              fill="none"
-              stroke="#FF5500"
-              strokeWidth={3}
+              fill="none" stroke="#FF5500" strokeWidth={3}
             />
           )}
           {target.shape === "square" && (
             <rect
-              x={(target.size - innerSize) / 2}
-              y={(target.size - innerSize) / 2}
-              width={innerSize}
-              height={innerSize}
-              fill="none"
-              stroke="#FF5500"
-              strokeWidth={3}
+              x={(target.size - innerSize) / 2} y={(target.size - innerSize) / 2}
+              width={innerSize} height={innerSize}
+              fill="none" stroke="#FF5500" strokeWidth={3}
             />
           )}
           {target.shape === "cross" && (
@@ -322,63 +368,38 @@ const ReactionTrainerGame = () => {
               <line x1={center + innerSize / 3} y1={center - innerSize / 3} x2={center - innerSize / 3} y2={center + innerSize / 3} />
             </g>
           )}
-          {/* Crosshair center dot */}
           <circle cx={center} cy={center} r={3} fill="#FF5500" />
         </svg>
       </div>
     );
   };
 
-  // --- Leaderboard view ---
-  if (gameState === "leaderboard") {
-    return (
-      <ReactionLeaderboard
-        scores={topScores}
-        userBest={userBest}
-        onClose={() => setGameState("gameover")}
-        onRefetch={refetch}
-      />
-    );
+  const currentStage = getStage(score);
+  const accuracy = totalHits + totalMisses > 0 ? Math.round((totalHits / (totalHits + totalMisses)) * 100) : 0;
+
+  // ═══════════════════════════════════════════════════════════
+  // ─── LEADERBOARD ──────────────────────────────────────────
+  // ═══════════════════════════════════════════════════════════
+  if (view === "leaderboard") {
+    return <ReactionLeaderboard scores={topScores} userBest={userBest} onClose={() => setView("gameover")} onRefetch={refetch} />;
   }
 
-  // --- Boot screen ---
-  if (gameState === "boot") {
+  // ═══════════════════════════════════════════════════════════
+  // ─── BOOT SCREEN ──────────────────────────────────────────
+  // ═══════════════════════════════════════════════════════════
+  if (view === "boot") {
     return (
       <div className="w-full max-w-lg mx-auto">
-        <div
-          className="relative rounded-xl overflow-hidden border-2 border-primary/40"
-          style={{
-            background: "#0a0a0a",
-            fontFamily: "'Courier New', monospace",
-            minHeight: 420,
-          }}
-        >
-          {/* Scanlines */}
-          <div
-            className="absolute inset-0 pointer-events-none z-10"
-            style={{
-              background: "repeating-linear-gradient(0deg, rgba(255,85,0,0.03) 0px, transparent 1px, transparent 3px)",
-            }}
-          />
+        <div className="relative rounded-xl overflow-hidden border-2 border-primary/40" style={{ background: "#0a0a0a", fontFamily: "'Courier New', monospace", minHeight: 420 }}>
+          <div className="absolute inset-0 pointer-events-none z-10" style={{ background: "repeating-linear-gradient(0deg, rgba(255,85,0,0.03) 0px, transparent 1px, transparent 3px)" }} />
           <div className="p-6 relative z-20">
             {bootLines.map((line, i) => (
-              <motion.p
-                key={i}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="text-primary text-sm mb-1"
-                style={{ textShadow: "0 0 8px rgba(255,85,0,0.6)" }}
-              >
+              <motion.p key={i} initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-primary text-sm mb-1" style={{ textShadow: "0 0 8px rgba(255,85,0,0.6)" }}>
                 {line}
               </motion.p>
             ))}
             {bootDone && (
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: [0, 1, 0, 1] }}
-                transition={{ duration: 0.8 }}
-                className="text-primary text-sm mt-4"
-              >
+              <motion.p initial={{ opacity: 0 }} animate={{ opacity: [0, 1, 0, 1] }} transition={{ duration: 0.8 }} className="text-primary text-sm mt-4">
                 {">"} PRESS START_
               </motion.p>
             )}
@@ -388,61 +409,124 @@ const ReactionTrainerGame = () => {
     );
   }
 
-  // --- Ready screen ---
-  if (gameState === "ready") {
+  // ═══════════════════════════════════════════════════════════
+  // ─── READY SCREEN ─────────────────────────────────────────
+  // ═══════════════════════════════════════════════════════════
+  if (view === "ready") {
     return (
       <div className="w-full max-w-lg mx-auto text-center">
-        <div
-          className="relative rounded-xl overflow-hidden border-2 border-primary/40 p-8"
-          style={{ background: "#0a0a0a", minHeight: 420 }}
-        >
-          {/* Scanlines */}
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              background: "repeating-linear-gradient(0deg, rgba(255,85,0,0.03) 0px, transparent 1px, transparent 3px)",
-            }}
-          />
+        <div className="relative rounded-xl overflow-hidden border-2 border-primary/40 p-8" style={{ background: "#0a0a0a", minHeight: 420 }}>
+          <div className="absolute inset-0 pointer-events-none" style={{ background: "repeating-linear-gradient(0deg, rgba(255,85,0,0.03) 0px, transparent 1px, transparent 3px)" }} />
           <div className="relative z-10">
-            <h2
-              className="font-display text-4xl text-primary tracking-wider mb-2"
-              style={{ textShadow: "0 0 20px rgba(255,85,0,0.5)" }}
-            >
+            <h2 className="font-display text-4xl text-primary tracking-wider mb-2" style={{ textShadow: "0 0 20px rgba(255,85,0,0.5)" }}>
               STRIKE
             </h2>
-            <h3
-              className="font-display text-2xl text-foreground tracking-wider mb-6"
-              style={{ textShadow: "0 0 10px rgba(255,255,255,0.2)" }}
-            >
+            <h3 className="font-display text-xl text-foreground tracking-wider mb-6" style={{ textShadow: "0 0 10px rgba(255,255,255,0.2)" }}>
               HIT BEFORE IT VANISHES.
             </h3>
 
             <div className="space-y-3 text-left max-w-xs mx-auto mb-8">
-              <p className="text-muted-foreground text-sm">
-                <span className="text-primary font-bold">▸</span> Tap targets before they vanish
-              </p>
-              <p className="text-muted-foreground text-sm">
-                <span className="text-primary font-bold">▸</span> Faster reactions = more points
-              </p>
-              <p className="text-muted-foreground text-sm">
-                <span className="text-primary font-bold">▸</span> Build combos for multipliers
-              </p>
-              <p className="text-muted-foreground text-sm">
-                <span className="text-primary font-bold">▸</span> 30 seconds — every ms counts
-              </p>
+              <p className="text-muted-foreground text-sm"><span className="text-primary font-bold">▸</span> Tap targets before they disappear</p>
+              <p className="text-muted-foreground text-sm"><span className="text-primary font-bold">▸</span> Faster reactions = more points</p>
+              <p className="text-muted-foreground text-sm"><span className="text-primary font-bold">▸</span> Build combos for score multipliers (×1.5, ×2, ×2.5…)</p>
+              <p className="text-muted-foreground text-sm"><span className="text-primary font-bold">▸</span> Targets speed up — stay locked in</p>
+              <p className="text-muted-foreground text-sm"><span className="text-primary font-bold">▸</span> 30 seconds — every millisecond counts</p>
             </div>
 
-            <Button
-              onClick={startGame}
-              className="font-display text-lg tracking-wider px-8 py-4 bg-primary hover:bg-primary/80"
-              style={{ boxShadow: "0 0 20px rgba(255,85,0,0.4)" }}
-            >
-              START
+            <Button onClick={startGame} className="font-display text-lg tracking-wider px-8 py-4 bg-primary hover:bg-primary/80" style={{ boxShadow: "0 0 20px rgba(255,85,0,0.4)" }}>
+              <Play className="w-5 h-5 mr-2" /> START STRIKE
             </Button>
 
             {userBest !== null && (
               <p className="text-muted-foreground text-xs mt-4 font-display tracking-wider">
                 PERSONAL BEST: <span className="text-primary">{userBest}</span>
+              </p>
+            )}
+
+            <p className="text-muted-foreground/50 text-[10px] mt-3 font-display tracking-wider">
+              TAP / CLICK TARGETS · 30 SECOND ROUND
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ═══════════════════════════════════════════════════════════
+  // ─── GAME OVER ────────────────────────────────────────────
+  // ═══════════════════════════════════════════════════════════
+  if (view === "gameover") {
+    const isNewBest = userBest !== null && score >= userBest;
+    return (
+      <div className={`w-full max-w-lg mx-auto text-center ${deathShake ? "animate-shake" : ""}`}>
+        <div className="relative rounded-xl overflow-hidden border-2 border-primary/40 p-8" style={{ background: "#0a0a0a", minHeight: 420 }}>
+          <div className="absolute inset-0 pointer-events-none" style={{ background: "repeating-linear-gradient(0deg, rgba(255,85,0,0.03) 0px, transparent 1px, transparent 3px)" }} />
+          <div className="relative z-10">
+            <motion.div initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}>
+              <h2 className="font-display text-3xl text-primary tracking-wider mb-1" style={{ textShadow: "0 0 20px rgba(255,85,0,0.5)" }}>
+                TIME'S UP
+              </h2>
+              {isNewBest && (
+                <motion.p initial={{ opacity: 0 }} animate={{ opacity: [0, 1, 0.5, 1] }} className="text-primary font-display text-sm tracking-wider mb-2">
+                  ★ NEW PERSONAL BEST ★
+                </motion.p>
+              )}
+              <p className="text-muted-foreground/60 font-display text-xs tracking-wider mb-2">
+                {currentStage.label}: {currentStage.name}
+              </p>
+            </motion.div>
+
+            <div className="my-4">
+              <p className="font-display text-6xl text-primary" style={{ textShadow: "0 0 30px rgba(255,85,0,0.4)" }}>{score}</p>
+              <p className="text-muted-foreground font-display text-xs tracking-wider mt-1">TOTAL SCORE</p>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
+              <div className="bg-card/50 border border-border rounded-lg p-2.5">
+                <p className="font-display text-lg text-primary">{totalHits}</p>
+                <p className="text-[9px] text-muted-foreground font-display tracking-wider">HITS</p>
+              </div>
+              <div className="bg-card/50 border border-border rounded-lg p-2.5">
+                <p className="font-display text-lg text-primary">{totalMisses}</p>
+                <p className="text-[9px] text-muted-foreground font-display tracking-wider">MISSED</p>
+              </div>
+              <div className="bg-card/50 border border-border rounded-lg p-2.5">
+                <p className="font-display text-lg text-primary">{accuracy}%</p>
+                <p className="text-[9px] text-muted-foreground font-display tracking-wider">ACCURACY</p>
+              </div>
+              <div className="bg-card/50 border border-border rounded-lg p-2.5">
+                <p className="font-display text-lg text-primary">{bestCombo}</p>
+                <p className="text-[9px] text-muted-foreground font-display tracking-wider">MAX COMBO</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-3 gap-2 mb-6">
+              <div className="bg-card/50 border border-border rounded-lg p-2">
+                <p className="font-display text-sm text-primary">{bestReactionMs === 9999 ? "—" : `${bestReactionMs}ms`}</p>
+                <p className="text-[8px] text-muted-foreground font-display tracking-wider">FASTEST</p>
+              </div>
+              <div className="bg-card/50 border border-border rounded-lg p-2">
+                <p className="font-display text-sm text-primary">{avgReactionMs > 0 ? `${avgReactionMs}ms` : "—"}</p>
+                <p className="text-[8px] text-muted-foreground font-display tracking-wider">AVG REACT</p>
+              </div>
+              <div className="bg-card/50 border border-border rounded-lg p-2">
+                <p className="font-display text-sm text-primary">{totalSpawned}</p>
+                <p className="text-[8px] text-muted-foreground font-display tracking-wider">SPAWNED</p>
+              </div>
+            </div>
+
+            <div className="flex gap-3 justify-center">
+              <Button onClick={startGame} className="font-display tracking-wider px-6 bg-primary hover:bg-primary/80 gap-2">
+                <RotateCcw className="w-4 h-4" /> STRIKE AGAIN
+              </Button>
+              <Button onClick={() => { refetch(); setView("leaderboard"); }} variant="outline" className="font-display tracking-wider px-6 gap-2 border-primary/30">
+                <Trophy className="w-4 h-4" /> BOARD
+              </Button>
+            </div>
+
+            {userBest !== null && !isNewBest && (
+              <p className="text-muted-foreground text-xs mt-3 font-display tracking-wider">
+                BEST: <span className="text-primary">{userBest}</span>
               </p>
             )}
           </div>
@@ -451,110 +535,42 @@ const ReactionTrainerGame = () => {
     );
   }
 
-  // --- Game Over screen ---
-  if (gameState === "gameover") {
-    const isNewBest = userBest !== null && score >= userBest;
-    return (
-      <div className="w-full max-w-lg mx-auto text-center">
-        <div
-          className="relative rounded-xl overflow-hidden border-2 border-primary/40 p-8"
-          style={{ background: "#0a0a0a", minHeight: 420 }}
-        >
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              background: "repeating-linear-gradient(0deg, rgba(255,85,0,0.03) 0px, transparent 1px, transparent 3px)",
-            }}
-          />
-          <div className="relative z-10">
-            <motion.div initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}>
-              <h2
-                className="font-display text-3xl text-primary tracking-wider mb-1"
-                style={{ textShadow: "0 0 20px rgba(255,85,0,0.5)" }}
-              >
-                TIME'S UP
-              </h2>
-              {isNewBest && (
-                <motion.p
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: [0, 1, 0.5, 1] }}
-                  className="text-primary font-display text-sm tracking-wider mb-4"
-                >
-                  ★ NEW PERSONAL BEST ★
-                </motion.p>
-              )}
-            </motion.div>
-
-            <div className="my-6">
-              <p className="font-display text-6xl text-primary" style={{ textShadow: "0 0 30px rgba(255,85,0,0.4)" }}>
-                {score}
-              </p>
-              <p className="text-muted-foreground font-display text-xs tracking-wider mt-1">SCORE</p>
-            </div>
-
-            <div className="grid grid-cols-3 gap-3 mb-6">
-              <div className="bg-card/50 border border-border rounded-lg p-3">
-                <p className="font-display text-xl text-primary">{bestCombo}</p>
-                <p className="text-[10px] text-muted-foreground font-display tracking-wider">BEST COMBO</p>
-              </div>
-              <div className="bg-card/50 border border-border rounded-lg p-3">
-                <p className="font-display text-xl text-primary">
-                  {bestReactionMs === 9999 ? "—" : `${bestReactionMs}`}
-                </p>
-                <p className="text-[10px] text-muted-foreground font-display tracking-wider">FASTEST MS</p>
-              </div>
-              <div className="bg-card/50 border border-border rounded-lg p-3">
-                <p className="font-display text-xl text-primary">{userBest ?? "—"}</p>
-                <p className="text-[10px] text-muted-foreground font-display tracking-wider">ALL-TIME</p>
-              </div>
-            </div>
-
-            <div className="flex gap-3 justify-center">
-              <Button
-                onClick={startGame}
-                className="font-display tracking-wider px-6 bg-primary hover:bg-primary/80 gap-2"
-              >
-                <RotateCcw className="w-4 h-4" /> AGAIN
-              </Button>
-              <Button
-                onClick={() => { refetch(); setGameState("leaderboard"); }}
-                variant="outline"
-                className="font-display tracking-wider px-6 gap-2 border-primary/30"
-              >
-                <Trophy className="w-4 h-4" /> BOARD
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // --- Playing ---
+  // ═══════════════════════════════════════════════════════════
+  // ─── PLAYING ──────────────────────────────────────────────
+  // ═══════════════════════════════════════════════════════════
   const timePercent = timeLeft / GAME_DURATION;
   const timeSeconds = Math.ceil(timeLeft / 1000);
 
   return (
-    <div className="w-full max-w-lg mx-auto">
-      {/* HUD */}
+    <div className={`w-full max-w-lg mx-auto ${deathShake ? "animate-shake" : ""}`}>
+      {/* ─── HUD ─── */}
       <div className="flex items-center justify-between mb-3 px-1">
         <div className="flex items-center gap-3">
           <div>
+            <p className="font-display text-[10px] tracking-widest text-muted-foreground">SCORE</p>
             <p className="font-display text-2xl text-primary" style={{ textShadow: "0 0 10px rgba(255,85,0,0.4)" }}>
               {score}
             </p>
           </div>
-          {combo > 1 && (
-            <motion.div
-              key={combo}
-              initial={{ scale: 1.3 }}
-              animate={{ scale: 1 }}
-              className="bg-primary/20 border border-primary/40 rounded px-2 py-0.5"
-            >
-              <p className="font-display text-xs text-primary tracking-wider">x{combo} COMBO</p>
-            </motion.div>
-          )}
+          <AnimatePresence>
+            {combo > 1 && (
+              <motion.div
+                key={`combo-${combo}`}
+                initial={{ scale: 1.3 }}
+                animate={{ scale: 1 }}
+                exit={{ scale: 0 }}
+                className="bg-primary/20 border border-primary/40 rounded px-2 py-0.5"
+              >
+                <p className="font-display text-xs text-primary tracking-wider">×{combo}</p>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
+
+        <div className="text-center">
+          <p className="font-display text-[9px] tracking-widest text-muted-foreground/60">{currentStage.name}</p>
+        </div>
+
         <div className="flex items-center gap-3">
           {lastReactionMs !== null && (
             <p className="font-display text-xs text-muted-foreground">{lastReactionMs}ms</p>
@@ -571,7 +587,7 @@ const ReactionTrainerGame = () => {
         </div>
       </div>
 
-      {/* Timer bar */}
+      {/* ─── Timer Bar ─── */}
       <div className="h-1 bg-card rounded-full mb-3 overflow-hidden">
         <motion.div
           className="h-full rounded-full"
@@ -583,7 +599,7 @@ const ReactionTrainerGame = () => {
         />
       </div>
 
-      {/* Game area */}
+      {/* ─── Game Area ─── */}
       <div
         ref={canvasRef}
         className="relative rounded-xl overflow-hidden border-2 select-none"
@@ -597,15 +613,10 @@ const ReactionTrainerGame = () => {
           transition: "border-color 0.15s",
         }}
       >
-        {/* Scanlines */}
-        <div
-          className="absolute inset-0 pointer-events-none z-30"
-          style={{
-            background: "repeating-linear-gradient(0deg, rgba(255,85,0,0.02) 0px, transparent 1px, transparent 3px)",
-          }}
-        />
+        {/* CRT Scanlines */}
+        <div className="absolute inset-0 pointer-events-none z-30" style={{ background: "repeating-linear-gradient(0deg, rgba(255,85,0,0.02) 0px, transparent 1px, transparent 3px)" }} />
 
-        {/* Grid lines */}
+        {/* Grid Lines */}
         <svg className="absolute inset-0 w-full h-full pointer-events-none z-0" style={{ opacity: 0.05 }}>
           {Array.from({ length: 9 }, (_, i) => (
             <line key={`v${i}`} x1={`${(i + 1) * 10}%`} y1="0" x2={`${(i + 1) * 10}%`} y2="100%" stroke="#FF5500" />
@@ -633,7 +644,7 @@ const ReactionTrainerGame = () => {
           ))}
         </AnimatePresence>
 
-        {/* Hit effect */}
+        {/* Hit Effect */}
         {hitEffect && (
           <motion.div
             key={hitEffect.id}
@@ -642,21 +653,41 @@ const ReactionTrainerGame = () => {
             transition={{ duration: 0.3 }}
             style={{
               position: "absolute",
-              left: hitEffect.x - 20,
-              top: hitEffect.y - 20,
-              width: 40,
-              height: 40,
+              left: hitEffect.x - 20, top: hitEffect.y - 20,
+              width: 40, height: 40,
               borderRadius: "50%",
               border: "2px solid #FF5500",
-              pointerEvents: "none",
-              zIndex: 20,
+              pointerEvents: "none", zIndex: 20,
             }}
           />
         )}
 
+        {/* Stage Transition Flash */}
+        <AnimatePresence>
+          {stageFlash && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+              className="absolute inset-0 flex items-center justify-center rounded-xl pointer-events-none z-40"
+              style={{ background: "rgba(0,0,0,0.7)" }}
+            >
+              <motion.p
+                animate={{ scale: [1, 1.05, 1] }}
+                transition={{ repeat: Infinity, duration: 0.6 }}
+                className="font-display text-2xl sm:text-3xl text-primary tracking-wider"
+                style={{ textShadow: "0 0 20px rgba(255,85,0,0.6)" }}
+              >
+                {stageFlash}
+              </motion.p>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         {/* Message */}
         <AnimatePresence mode="wait">
-          {message && (
+          {message && !stageFlash && (
             <motion.div
               key={message}
               initial={{ opacity: 0, y: -10 }}
@@ -678,6 +709,11 @@ const ReactionTrainerGame = () => {
           )}
         </AnimatePresence>
       </div>
+
+      {/* ─── Footer ─── */}
+      <p className="text-[10px] text-muted-foreground/60 text-center font-display tracking-[0.2em] mt-3">
+        TAP TARGETS · BUILD COMBOS · EVERY MS COUNTS
+      </p>
     </div>
   );
 };
