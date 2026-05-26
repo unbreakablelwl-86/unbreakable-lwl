@@ -247,8 +247,8 @@ function ConversationSidebar({
                     </p>
                   </div>
                   <button
-                    className="h-7 w-7 rounded-lg flex items-center justify-center text-primary/50 hover:text-primary hover:bg-primary/10 transition-all flex-shrink-0 opacity-0 group-hover:opacity-100"
-                    onClick={(e) => { e.stopPropagation(); onDelete(conv.id); }}
+                    className="h-7 w-7 rounded-lg flex items-center justify-center text-primary/50 hover:text-primary hover:bg-primary/10 transition-all flex-shrink-0 opacity-100 sm:opacity-0 sm:group-hover:opacity-100"
+                    onClick={(e) => { e.stopPropagation(); if (window.confirm('Delete this conversation?')) onDelete(conv.id); }}
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>
@@ -636,10 +636,11 @@ export default function Help() {
               </div>
               {currentConversationId && (
                 <button
-                  className="p-1.5 rounded-lg text-muted-foreground hover:text-primary transition-colors"
-                  onClick={() => { if (currentConversationId) deleteConversation(currentConversationId); }}
+                  className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-red-400/70 hover:text-red-400 hover:bg-red-500/10 transition-all text-[10px] font-display tracking-wider"
+                  onClick={() => { if (window.confirm('Delete this conversation?')) deleteConversation(currentConversationId); }}
                 >
-                  <Trash2 className="w-4 h-4" />
+                  <Trash2 className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">DELETE</span>
                 </button>
               )}
               <ProfileButton />

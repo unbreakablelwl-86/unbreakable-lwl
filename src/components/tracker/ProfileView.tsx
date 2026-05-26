@@ -608,7 +608,9 @@ export function ProfileView() {
           <MembershipTab />
         </TabsContent>
 
-        <TabsContent value="settings" className="mt-6">
+        <TabsContent value="settings" className="mt-6 space-y-6">
+          {/* Coach Bio / About You — editable profile info */}
+          <CoachingBioForm />
           <SettingsPanel />
         </TabsContent>
       </Tabs>
