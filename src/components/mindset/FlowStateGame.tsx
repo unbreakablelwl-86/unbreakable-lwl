@@ -11,13 +11,13 @@ import { useGameAudio } from "@/hooks/useGameAudio";
 
 const NAMED_STAGES = [
   { threshold: 0, name: "WARM UP", label: "STAGE 1" },
-  { threshold: 500, name: "MOVING", label: "STAGE 2" },
-  { threshold: 1200, name: "RHYTHM", label: "STAGE 3" },
-  { threshold: 2500, name: "LOCKED IN", label: "STAGE 4" },
-  { threshold: 4000, name: "FLOW STATE", label: "STAGE 5" },
-  { threshold: 6000, name: "UNTOUCHABLE", label: "STAGE 6" },
-  { threshold: 9000, name: "GODSPEED", label: "STAGE 7" },
-  { threshold: 13000, name: "IMMORTAL", label: "STAGE 8" },
+  { threshold: 1500, name: "MOVING", label: "STAGE 2" },
+  { threshold: 4000, name: "RHYTHM", label: "STAGE 3" },
+  { threshold: 8000, name: "LOCKED IN", label: "STAGE 4" },
+  { threshold: 14000, name: "FLOW STATE", label: "STAGE 5" },
+  { threshold: 22000, name: "UNTOUCHABLE", label: "STAGE 6" },
+  { threshold: 32000, name: "GODSPEED", label: "STAGE 7" },
+  { threshold: 45000, name: "IMMORTAL", label: "STAGE 8" },
 ];
 
 const getStage = (score: number) => {
@@ -197,7 +197,7 @@ const FlowStateGame = () => {
     if (frameRef.current % 3 === 0) setScore(scoreRef.current);
 
     // Speed up
-    speedRef.current = Math.min(MAX_SPEED, INITIAL_SPEED + scoreRef.current * 0.0004);
+    speedRef.current = Math.min(MAX_SPEED, INITIAL_SPEED + scoreRef.current * 0.00015);
     if (speedRef.current > maxSpeedRef.current) maxSpeedRef.current = speedRef.current;
 
     // Stage check

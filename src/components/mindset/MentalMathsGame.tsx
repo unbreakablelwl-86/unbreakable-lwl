@@ -10,14 +10,14 @@ import { useGameAudio } from "@/hooks/useGameAudio";
 // ═══════════════════════════════════════════════════════════════
 
 const NAMED_STAGES = [
-  { threshold: 0, name: "WARM UP", label: "STAGE 1", timePerQ: 8, maxNum: 12, ops: ["+", "-"] as string[] },
-  { threshold: 5, name: "MOVING", label: "STAGE 2", timePerQ: 7, maxNum: 20, ops: ["+", "-"] },
-  { threshold: 12, name: "SHARPER", label: "STAGE 3", timePerQ: 6, maxNum: 30, ops: ["+", "-", "×"] },
-  { threshold: 22, name: "LOCKED IN", label: "STAGE 4", timePerQ: 5.5, maxNum: 50, ops: ["+", "-", "×"] },
-  { threshold: 35, name: "ON FIRE", label: "STAGE 5", timePerQ: 5, maxNum: 75, ops: ["+", "-", "×", "÷"] },
-  { threshold: 50, name: "UNTOUCHABLE", label: "STAGE 6", timePerQ: 4.5, maxNum: 100, ops: ["+", "-", "×", "÷"] },
-  { threshold: 70, name: "GODSPEED", label: "STAGE 7", timePerQ: 4, maxNum: 150, ops: ["+", "-", "×", "÷"] },
-  { threshold: 100, name: "IMMORTAL", label: "STAGE 8", timePerQ: 3.5, maxNum: 200, ops: ["+", "-", "×", "÷"] },
+  { threshold: 0, name: "WARM UP", label: "STAGE 1", timePerQ: 10, maxNum: 12, ops: ["+", "-"] as string[] },
+  { threshold: 15, name: "MOVING", label: "STAGE 2", timePerQ: 9, maxNum: 20, ops: ["+", "-"] },
+  { threshold: 35, name: "SHARPER", label: "STAGE 3", timePerQ: 8, maxNum: 30, ops: ["+", "-", "×"] },
+  { threshold: 60, name: "LOCKED IN", label: "STAGE 4", timePerQ: 7, maxNum: 50, ops: ["+", "-", "×"] },
+  { threshold: 100, name: "ON FIRE", label: "STAGE 5", timePerQ: 6, maxNum: 75, ops: ["+", "-", "×", "÷"] },
+  { threshold: 150, name: "UNTOUCHABLE", label: "STAGE 6", timePerQ: 5.5, maxNum: 100, ops: ["+", "-", "×", "÷"] },
+  { threshold: 210, name: "GODSPEED", label: "STAGE 7", timePerQ: 5, maxNum: 150, ops: ["+", "-", "×", "÷"] },
+  { threshold: 300, name: "IMMORTAL", label: "STAGE 8", timePerQ: 4.5, maxNum: 200, ops: ["+", "-", "×", "÷"] },
 ];
 
 const getStage = (solved: number) => {

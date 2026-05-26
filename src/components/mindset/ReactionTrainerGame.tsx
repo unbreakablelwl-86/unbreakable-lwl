@@ -10,15 +10,15 @@ import { useGameAudio } from "@/hooks/useGameAudio";
 // ─── Stage Names (score thresholds) ──────────────────────────
 const STAGES = [
   { threshold: 0, name: "WARM UP", label: "STAGE 1" },
-  { threshold: 50, name: "FIRST STRIKE", label: "STAGE 2" },
-  { threshold: 120, name: "RAPID FIRE", label: "STAGE 3" },
-  { threshold: 200, name: "LOCKED IN", label: "STAGE 4" },
-  { threshold: 300, name: "HYPERFOCUS", label: "STAGE 5" },
-  { threshold: 420, name: "WIRED", label: "STAGE 6" },
-  { threshold: 560, name: "UNTOUCHABLE", label: "STAGE 7" },
-  { threshold: 720, name: "GODSPEED", label: "STAGE 8" },
-  { threshold: 900, name: "LEGENDARY", label: "STAGE 9" },
-  { threshold: 1100, name: "IMMORTAL", label: "STAGE 10" },
+  { threshold: 150, name: "FIRST STRIKE", label: "STAGE 2" },
+  { threshold: 350, name: "RAPID FIRE", label: "STAGE 3" },
+  { threshold: 600, name: "LOCKED IN", label: "STAGE 4" },
+  { threshold: 900, name: "HYPERFOCUS", label: "STAGE 5" },
+  { threshold: 1300, name: "WIRED", label: "STAGE 6" },
+  { threshold: 1800, name: "UNTOUCHABLE", label: "STAGE 7" },
+  { threshold: 2400, name: "GODSPEED", label: "STAGE 8" },
+  { threshold: 3200, name: "LEGENDARY", label: "STAGE 9" },
+  { threshold: 4200, name: "IMMORTAL", label: "STAGE 10" },
 ];
 
 const getStage = (score: number) => {

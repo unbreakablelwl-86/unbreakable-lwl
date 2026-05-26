@@ -15,13 +15,13 @@ import { useGameAudio } from "@/hooks/useGameAudio";
 // ─── Named Stages ──────────────────────────────────────────
 const STAGES = [
   { level: 0, name: "WARM UP", label: "STAGE 1" },
-  { level: 2, name: "FIRST FLASH", label: "STAGE 2" },
-  { level: 4, name: "GRID LOCK", label: "STAGE 3" },
-  { level: 6, name: "DEEP SCAN", label: "STAGE 4" },
-  { level: 8, name: "HYPERFOCUS", label: "STAGE 5" },
-  { level: 10, name: "TOTAL RECALL", label: "STAGE 6" },
-  { level: 12, name: "PHOTOGRAPHIC", label: "STAGE 7" },
-  { level: 14, name: "IMMORTAL", label: "STAGE 8" },
+  { level: 5, name: "FIRST FLASH", label: "STAGE 2" },
+  { level: 12, name: "GRID LOCK", label: "STAGE 3" },
+  { level: 20, name: "DEEP SCAN", label: "STAGE 4" },
+  { level: 30, name: "HYPERFOCUS", label: "STAGE 5" },
+  { level: 42, name: "TOTAL RECALL", label: "STAGE 6" },
+  { level: 56, name: "PHOTOGRAPHIC", label: "STAGE 7" },
+  { level: 72, name: "IMMORTAL", label: "STAGE 8" },
 ];
 
 const getStage = (level: number) => {

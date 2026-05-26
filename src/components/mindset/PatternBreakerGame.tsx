@@ -15,13 +15,13 @@ import { useGameAudio } from "@/hooks/useGameAudio";
 // ─── Named Stages (by sequence length) ────────────────────
 const STAGES = [
   { threshold: 1, name: "WARM UP", label: "STAGE 1" },
-  { threshold: 4, name: "FIRST NOTE", label: "STAGE 2" },
-  { threshold: 7, name: "BUILDING", label: "STAGE 3" },
-  { threshold: 10, name: "LOCKED IN", label: "STAGE 4" },
-  { threshold: 14, name: "DEEP FOCUS", label: "STAGE 5" },
-  { threshold: 18, name: "UNTOUCHABLE", label: "STAGE 6" },
-  { threshold: 23, name: "GODSPEED", label: "STAGE 7" },
-  { threshold: 28, name: "IMMORTAL", label: "STAGE 8" },
+  { threshold: 6, name: "FIRST NOTE", label: "STAGE 2" },
+  { threshold: 12, name: "BUILDING", label: "STAGE 3" },
+  { threshold: 20, name: "LOCKED IN", label: "STAGE 4" },
+  { threshold: 30, name: "DEEP FOCUS", label: "STAGE 5" },
+  { threshold: 42, name: "UNTOUCHABLE", label: "STAGE 6" },
+  { threshold: 56, name: "GODSPEED", label: "STAGE 7" },
+  { threshold: 72, name: "IMMORTAL", label: "STAGE 8" },
 ];
 
 const getStage = (seqLen: number) => {

@@ -107,7 +107,7 @@ const BRICK_TOP_OFFSET = 50;
 
 const INITIAL_BALL_SPEED = 3.6;
 const MAX_BALL_SPEED = 4.6;
-const SPEED_INCREASE_PER_SHIFT = 0.08;
+const SPEED_INCREASE_PER_SHIFT = 0.06;
 
 const ROW_REGEN_INTERVAL = 9000;
 const BRICK_DESCENT_INTERVAL = 12000;
@@ -117,7 +117,7 @@ const POWERUP_DROP_CHANCE = 0.06;
 const POWERUP_SPEED = 1.5;
 const POWERUP_SIZE = 18;
 const POWERUP_DURATION = 8000;
-const THEME_SHIFT_INTERVAL = 15;
+const THEME_SHIFT_INTERVAL = 40;
 
 type PowerUpType = "multiball" | "wide" | "fireball";
 type GameView = "ready" | "playing" | "paused" | "gameover" | "leaderboard";

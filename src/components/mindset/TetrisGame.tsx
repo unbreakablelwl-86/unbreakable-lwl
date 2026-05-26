@@ -15,15 +15,15 @@ import { useGameAudio } from "@/hooks/useGameAudio";
 // ─── Named Stages (by lines cleared) ──────────────────────
 const NAMED_STAGES = [
   { threshold: 0, name: "WARM UP", label: "STAGE 1" },
-  { threshold: 10, name: "FIRST BLOOD", label: "STAGE 2" },
-  { threshold: 25, name: "STACKING", label: "STAGE 3" },
-  { threshold: 45, name: "LOCKED IN", label: "STAGE 4" },
-  { threshold: 70, name: "GRAVITY", label: "STAGE 5" },
-  { threshold: 100, name: "WARP SPEED", label: "STAGE 6" },
-  { threshold: 140, name: "UNTOUCHABLE", label: "STAGE 7" },
-  { threshold: 180, name: "GODSPEED", label: "STAGE 8" },
-  { threshold: 230, name: "LEGENDARY", label: "STAGE 9" },
-  { threshold: 300, name: "IMMORTAL", label: "STAGE 10" },
+  { threshold: 30, name: "FIRST BLOOD", label: "STAGE 2" },
+  { threshold: 70, name: "STACKING", label: "STAGE 3" },
+  { threshold: 120, name: "LOCKED IN", label: "STAGE 4" },
+  { threshold: 180, name: "GRAVITY", label: "STAGE 5" },
+  { threshold: 260, name: "WARP SPEED", label: "STAGE 6" },
+  { threshold: 360, name: "UNTOUCHABLE", label: "STAGE 7" },
+  { threshold: 480, name: "GODSPEED", label: "STAGE 8" },
+  { threshold: 620, name: "LEGENDARY", label: "STAGE 9" },
+  { threshold: 800, name: "IMMORTAL", label: "STAGE 10" },
 ];
 
 const getNamedStage = (lines: number) => {
@@ -101,7 +101,7 @@ const THEME_SHIFT_INTERVAL = 15;
 
 const INITIAL_DROP_INTERVAL = 800;
 const MIN_DROP_INTERVAL = 100;
-const SPEED_FACTOR = 40;
+const SPEED_FACTOR = 18;
 
 const POINTS = { 1: 1, 2: 3, 3: 5, 4: 8 } as Record<number, number>;
 

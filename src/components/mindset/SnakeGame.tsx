@@ -93,11 +93,11 @@ const POWER_UP_DURATION: Record<PowerUpKind, number> = {
   slowmo: 8000,
 };
 
-const getStage = (score: number): number => Math.min(Math.floor(score / 10), STAGE_WALLS.length - 1);
-const getStageNumber = (score: number): number => Math.floor(score / 10) + 1;
+const getStage = (score: number): number => Math.min(Math.floor(score / 30), STAGE_WALLS.length - 1);
+const getStageNumber = (score: number): number => Math.floor(score / 30) + 1;
 const getTheme = (score: number): ThemePalette => THEME_PALETTES[getStage(score) % THEME_PALETTES.length];
 const getSpeed = (score: number, slowmo: boolean): number => {
-  const base = Math.max(MIN_SPEED, INITIAL_SPEED - score * 1.2);
+  const base = Math.max(MIN_SPEED, INITIAL_SPEED - score * 0.4);
   return slowmo ? base * 1.8 : base;
 };
 const getWalls = (score: number): Position[] => {
