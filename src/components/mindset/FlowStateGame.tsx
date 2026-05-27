@@ -113,32 +113,34 @@ const FlowStateGame = () => {
 
   const spawnTrailParticles = useCallback(() => {
     const p = playerRef.current;
+    const cx = 30 + PLAYER_W / 2;
     for (let i = 0; i < 2; i++) {
       particlesRef.current.push({
-        x: 40 - PLAYER_W / 2 + Math.random() * 4,
-        y: p.y + PLAYER_H - 2 + Math.random() * 4,
-        dx: -(1 + Math.random() * 2),
-        dy: (Math.random() - 0.5) * 1.5,
-        life: 12 + Math.random() * 8,
-        maxLife: 20,
-        color: "#FF5500",
-        size: 2 + Math.random() * 2,
+        x: cx - 4 + Math.random() * 8,
+        y: p.y + PLAYER_H - 1 + Math.random() * 3,
+        dx: -(1.5 + Math.random() * 2),
+        dy: (Math.random() - 0.5) * 1.2,
+        life: 14 + Math.random() * 8,
+        maxLife: 22,
+        color: Math.random() > 0.7 ? "#FFFFFF" : "#FF5500",
+        size: 1.5 + Math.random() * 2,
       });
     }
   }, []);
 
   const spawnDeathParticles = useCallback(() => {
     const p = playerRef.current;
-    for (let i = 0; i < 20; i++) {
+    const cx = 30 + PLAYER_W / 2;
+    for (let i = 0; i < 24; i++) {
       const angle = Math.random() * Math.PI * 2;
-      const spd = 2 + Math.random() * 5;
+      const spd = 2 + Math.random() * 6;
       particlesRef.current.push({
-        x: 40, y: p.y + PLAYER_H / 2,
+        x: cx, y: p.y + PLAYER_H / 2,
         dx: Math.cos(angle) * spd, dy: Math.sin(angle) * spd,
         life: 25 + Math.random() * 15,
         maxLife: 40,
-        color: Math.random() > 0.5 ? "#FF5500" : "#FFFFFF",
-        size: 3 + Math.random() * 4,
+        color: i % 3 === 0 ? "#FFFFFF" : i % 3 === 1 ? "#FF5500" : "#FF880044",
+        size: 2.5 + Math.random() * 4,
       });
     }
   }, []);
@@ -316,27 +318,126 @@ const FlowStateGame = () => {
       ctx.fillRect(ob.x + 2, ob.y + 1, ob.w - 4, 3);
     }
 
-    // Player
+    // ─── Player: Unbreakable Bot ───
     const px = 30;
     const py = p.y;
+    const cx = px + PLAYER_W / 2;          // centre x
+    const isAirborne = p.y < GROUND_Y - PLAYER_H - 1;
+    const run = isAirborne ? 0 : Math.sin(frameRef.current * 0.35);
+    const armSwing = isAirborne ? -0.6 : run * 0.75;
+
+    // Outer glow
     ctx.shadowColor = "#FF550088";
-    ctx.shadowBlur = 15;
+    ctx.shadowBlur = 18;
+
+    // ── HEAD (helmet) ──
     ctx.fillStyle = "#FFFFFF";
     ctx.beginPath();
-    ctx.roundRect(px, py, PLAYER_W, PLAYER_H, 5);
+    ctx.roundRect(cx - 7, py, 14, 12, 5);
     ctx.fill();
     ctx.shadowBlur = 0;
 
-    // Player inner detail
+    // Visor slit (glowing orange)
     ctx.fillStyle = "#FF5500";
-    ctx.fillRect(px + 4, py + 4, PLAYER_W - 8, 3);
-    ctx.fillRect(px + 6, py + PLAYER_H - 8, PLAYER_W - 12, 3);
-
-    // Eye
-    ctx.fillStyle = "#0a0a0a";
+    ctx.shadowColor = "#FF5500";
+    ctx.shadowBlur = 6;
     ctx.beginPath();
-    ctx.arc(px + PLAYER_W - 8, py + 12, 3, 0, Math.PI * 2);
+    ctx.roundRect(cx - 4, py + 5, 10, 3, 1.5);
     ctx.fill();
+    ctx.shadowBlur = 0;
+
+    // Helmet top ridge
+    ctx.strokeStyle = "#FF550080";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(cx - 3, py + 1);
+    ctx.lineTo(cx + 3, py + 1);
+    ctx.stroke();
+
+    // ── TORSO ──
+    const torsoY = py + 13;
+    ctx.fillStyle = "#FFFFFF";
+    ctx.beginPath();
+    ctx.roundRect(cx - 8, torsoY, 16, 10, 3);
+    ctx.fill();
+
+    // Chest core (glowing reactor)
+    ctx.fillStyle = "#FF5500";
+    ctx.shadowColor = "#FF5500";
+    ctx.shadowBlur = 8;
+    ctx.beginPath();
+    ctx.arc(cx, torsoY + 5, 2.5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+
+    // Shoulder plates
+    ctx.fillStyle = "rgba(255,85,0,0.3)";
+    ctx.fillRect(cx - 9, torsoY + 1, 2, 4);
+    ctx.fillRect(cx + 7, torsoY + 1, 2, 4);
+
+    // ── ARMS ──
+    ctx.strokeStyle = "#FFFFFF";
+    ctx.lineWidth = 2.5;
+    ctx.lineCap = "round";
+    // Left arm
+    ctx.beginPath();
+    ctx.moveTo(cx - 8, torsoY + 3);
+    ctx.lineTo(cx - 12, torsoY + 9 + armSwing * 5);
+    ctx.stroke();
+    // Right arm
+    ctx.beginPath();
+    ctx.moveTo(cx + 8, torsoY + 3);
+    ctx.lineTo(cx + 12, torsoY + 9 - armSwing * 5);
+    ctx.stroke();
+    // Gloves (orange)
+    ctx.fillStyle = "#FF5500";
+    ctx.beginPath();
+    ctx.arc(cx - 12, torsoY + 9 + armSwing * 5, 1.8, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(cx + 12, torsoY + 9 - armSwing * 5, 1.8, 0, Math.PI * 2);
+    ctx.fill();
+
+    // ── LEGS ──
+    const legTop = torsoY + 10;
+    ctx.strokeStyle = "#EEEEEE";
+    ctx.lineWidth = 3;
+
+    if (isAirborne) {
+      // Tucked pose in air
+      ctx.beginPath();
+      ctx.moveTo(cx - 3, legTop);
+      ctx.lineTo(cx - 6, legTop + 8);
+      ctx.lineTo(cx - 3, legTop + 12);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(cx + 3, legTop);
+      ctx.lineTo(cx + 6, legTop + 8);
+      ctx.lineTo(cx + 3, legTop + 12);
+      ctx.stroke();
+    } else {
+      // Running stride
+      const stride = run * 6;
+      ctx.beginPath();
+      ctx.moveTo(cx - 3, legTop);
+      ctx.lineTo(cx - 3 + stride, legTop + 12);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(cx + 3, legTop);
+      ctx.lineTo(cx + 3 - stride, legTop + 12);
+      ctx.stroke();
+    }
+
+    // Shoes (orange)
+    ctx.fillStyle = "#FF5500";
+    if (isAirborne) {
+      ctx.beginPath(); ctx.arc(cx - 3, legTop + 12, 2.2, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(cx + 3, legTop + 12, 2.2, 0, Math.PI * 2); ctx.fill();
+    } else {
+      const stride = run * 6;
+      ctx.beginPath(); ctx.arc(cx - 3 + stride, legTop + 12, 2.2, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(cx + 3 - stride, legTop + 12, 2.2, 0, Math.PI * 2); ctx.fill();
+    }
 
     // Particles
     for (const pt of particlesRef.current) {
