@@ -141,6 +141,11 @@ serve(async (req) => {
     // Filter to new items only (re-purchases still roll for rare variants!)
     // Actually, allow re-purchase — you can collect multiple rarities
 
+    // ── Check if user is dev/coach (bypass token deduction) ──
+    const { data: isDevRole } = await supabase.rpc('has_role', { _user_id: user.id, _role: 'dev' });
+    const { data: isCoachRole } = await supabase.rpc('has_role', { _user_id: user.id, _role: 'coach' });
+    const hasFullAccess = isDevRole || isCoachRole;
+
     // ── Check token balance ──
     const { data: balanceRow } = await supabase
       .from("token_balances")
@@ -155,7 +160,9 @@ serve(async (req) => {
     }
 
     const currentBalance = Number(balanceRow.balance);
-    if (currentBalance < cost) {
+
+    // Dev/coach accounts bypass balance check
+    if (!hasFullAccess && currentBalance < cost) {
       return new Response(JSON.stringify({
         error: "Not enough tokens",
         balance: currentBalance,
@@ -165,27 +172,30 @@ serve(async (req) => {
       });
     }
 
-    // ── Deduct tokens ──
-    const newBalance = currentBalance - cost;
-    const { error: updateError } = await supabase
-      .from("token_balances")
-      .update({ balance: newBalance, updated_at: new Date().toISOString() })
-      .eq("user_id", user.id);
+    // ── Deduct tokens (skip for dev/coach) ──
+    let newBalance = currentBalance;
+    if (!hasFullAccess) {
+      newBalance = currentBalance - cost;
+      const { error: updateError } = await supabase
+        .from("token_balances")
+        .update({ balance: newBalance, updated_at: new Date().toISOString() })
+        .eq("user_id", user.id);
 
-    if (updateError) {
-      return new Response(JSON.stringify({ error: "Failed to deduct tokens" }), {
-        status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      if (updateError) {
+        return new Response(JSON.stringify({ error: "Failed to deduct tokens" }), {
+          status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      // Log transaction
+      await supabase.from("token_transactions").insert({
+        user_id: user.id,
+        amount: -cost,
+        balance_after: newBalance,
+        action: "untunes_purchase",
+        description: `Un-Tunes ${type} purchase`,
       });
     }
-
-    // Log transaction
-    await supabase.from("token_transactions").insert({
-      user_id: user.id,
-      amount: -cost,
-      balance_after: newBalance,
-      action: "untunes_purchase",
-      description: `Un-Tunes ${type} purchase`,
-    });
 
     // ── Create purchase record ──
     const { data: purchase, error: purchaseError } = await supabase

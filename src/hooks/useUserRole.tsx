@@ -34,6 +34,9 @@ export function useUserRole() {
       return;
     }
 
+    // Set loading true BEFORE starting async role fetch
+    // This prevents a gap where isDev=false and loading=false
+    setState(prev => ({ ...prev, loading: true }));
     fetchUserRole();
   }, [user]);
 

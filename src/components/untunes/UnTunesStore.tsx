@@ -14,6 +14,7 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { useUserRole } from '@/hooks/useUserRole';
 import { useTokenBalance } from '@/hooks/useTokenBalance';
 import { useAlbums, useAllTracks } from '@/hooks/useUnTunes';
 import type { Track, Album } from '@/hooks/useUnTunes';
@@ -32,6 +33,8 @@ interface UnTunesStoreProps {
 
 export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
   const { user } = useAuth();
+  const { isDev, isCoach } = useUserRole();
+  const hasFullAccess = isDev || isCoach;
   const { balance, refresh: refreshBalance } = useTokenBalance();
   const { albums, loading: albumsLoading } = useAlbums();
   const { tracks, loading: tracksLoading } = useAllTracks();
@@ -95,7 +98,8 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
     }
 
     const cost = type === 'single' ? SINGLE_COST : type === 'album' ? ALBUM_COST : BUNDLE_COST;
-    if (balance < cost) {
+    // Dev/coach accounts bypass token balance check
+    if (!hasFullAccess && balance < cost) {
       toast.error(`Not enough tokens. You need ${cost} but have ${balance}.`);
       return;
     }
@@ -154,7 +158,7 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
         <div className="flex items-center justify-between bg-zinc-900/50 border border-border rounded-xl px-4 py-3">
           <div className="flex items-center gap-2">
             <Coins className="w-4 h-4 text-primary" />
-            <span className="text-sm font-display tracking-wider text-white">{balance}</span>
+            <span className="text-sm font-display tracking-wider text-white">{hasFullAccess ? '∞' : balance}</span>
             <span className="text-xs text-muted-foreground">tokens</span>
           </div>
           {onViewCollection && (
@@ -261,7 +265,7 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
                     </div>
                     <Button
                       className="bg-gradient-to-r from-primary to-orange-600 text-white font-display tracking-wider"
-                      disabled={!!purchasing || balance < BUNDLE_COST}
+                      disabled={!!purchasing || (!hasFullAccess && balance < BUNDLE_COST)}
                       onClick={() => handlePurchase('bundle')}
                     >
                       {purchasing === 'bundle-bundle' ? (
@@ -314,7 +318,7 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
                           size="sm"
                           variant="outline"
                           className="text-[10px] font-display tracking-wider border-primary/30 text-primary hover:bg-primary/10"
-                          disabled={!!purchasing || balance < ALBUM_COST}
+                          disabled={!!purchasing || (!hasFullAccess && balance < ALBUM_COST)}
                           onClick={() => handlePurchase('album', undefined, album.id)}
                         >
                           {purchasing === `album-${album.id}` ? (
@@ -408,7 +412,7 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
                         size="sm"
                         variant="outline"
                         className="text-[10px] font-display tracking-wider border-primary/30 text-primary hover:bg-primary/10 ml-1"
-                        disabled={!!purchasing || balance < SINGLE_COST}
+                        disabled={!!purchasing || (!hasFullAccess && balance < SINGLE_COST)}
                         onClick={() => handlePurchase('single', track.id)}
                       >
                         {purchasing === `single-${track.id}` ? (
