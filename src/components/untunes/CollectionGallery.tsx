@@ -228,16 +228,24 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
     if (!user) { setLoading(false); return; }
     (async () => {
       try {
-        const { data, error } = await (supabase as any)
-          .from('un_tunes_user_cards')
-          .select('id, track_id, album_id, rarity, edition_number, is_opened, created_at, card_type, brand_card_id, lyric_card_id')
-          .eq('user_id', user.id);
-
-        if (error) {
-          console.error('[CollectionGallery] Card fetch error:', error);
+        // Use SECURITY DEFINER RPC to bypass any RLS timing issues
+        let cardData: any[] | null = null;
+        const { data: rpcData, error: rpcError } = await (supabase as any).rpc('get_my_cards');
+        if (rpcData && !rpcError) {
+          cardData = rpcData;
+        } else {
+          // Fallback: direct table query
+          const { data, error } = await (supabase as any)
+            .from('un_tunes_user_cards')
+            .select('id, track_id, album_id, rarity, edition_number, is_opened, created_at, card_type, brand_card_id, lyric_card_id')
+            .eq('user_id', user.id);
+          if (error) {
+            console.error('[CollectionGallery] Card fetch error:', error);
+          }
+          cardData = data;
         }
-        if (data) {
-          setOwnedCards(data as OwnedCard[]);
+        if (cardData) {
+          setOwnedCards(cardData as OwnedCard[]);
         }
         // Also fetch brand card definitions
         const { data: bcData } = await (supabase as any)

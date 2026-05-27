@@ -140,13 +140,24 @@ function useOwnedTracks() {
   useEffect(() => {
     if (!user) { setOwnedIds(new Set()); return; }
     (async () => {
-      const { data } = await supabase
-        .from('un_tunes_user_cards')
-        .select('track_id')
-        .eq('user_id', user.id)
-        .not('track_id', 'is', null);
-      if (data) {
-        setOwnedIds(new Set(data.map((r: any) => r.track_id)));
+      try {
+        // Use SECURITY DEFINER RPC to bypass any RLS timing issues
+        const { data, error } = await (supabase as any).rpc('get_my_owned_track_ids');
+        if (data && !error) {
+          setOwnedIds(new Set(data.map((r: any) => r.track_id)));
+          return;
+        }
+        // Fallback: direct table query
+        const { data: fallback } = await (supabase as any)
+          .from('un_tunes_user_cards')
+          .select('track_id')
+          .eq('user_id', user.id)
+          .not('track_id', 'is', null);
+        if (fallback) {
+          setOwnedIds(new Set(fallback.map((r: any) => r.track_id)));
+        }
+      } catch (err) {
+        console.error('[useOwnedTracks] Error:', err);
       }
     })();
   }, [user]);

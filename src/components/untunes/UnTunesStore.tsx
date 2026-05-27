@@ -51,14 +51,25 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
     if (!user) return;
     setPendingLoading(true);
     try {
-      const { data, error } = await (supabase as any)
-        .from('un_tunes_user_cards')
-        .select('id, track_id, album_id, rarity, card_type, brand_card_id, edition_number, created_at')
-        .eq('user_id', user.id)
-        .eq('is_opened', false)
-        .order('created_at', { ascending: true });
-      if (error) console.error('[UnTunesStore] Pending packs error:', error);
-      setPendingPacks(data || []);
+      // Use RPC first for reliability, then filter unopened
+      let packData: any[] | null = null;
+      const { data: rpcData, error: rpcError } = await (supabase as any).rpc('get_my_cards');
+      if (rpcData && !rpcError) {
+        packData = rpcData
+          .filter((c: any) => !c.is_opened)
+          .sort((a: any, b: any) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+      } else {
+        // Fallback: direct query
+        const { data, error } = await (supabase as any)
+          .from('un_tunes_user_cards')
+          .select('id, track_id, album_id, rarity, card_type, brand_card_id, edition_number, created_at')
+          .eq('user_id', user.id)
+          .eq('is_opened', false)
+          .order('created_at', { ascending: true });
+        if (error) console.error('[UnTunesStore] Pending packs error:', error);
+        packData = data;
+      }
+      setPendingPacks(packData || []);
     } catch (err) {
       console.error('[UnTunesStore] Pending packs exception:', err);
     }
