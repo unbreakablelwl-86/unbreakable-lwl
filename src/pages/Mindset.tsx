@@ -436,49 +436,56 @@ const Mindset = () => {
                 <h3 className="font-display text-sm text-primary mb-1">BREATHE WITH PURPOSE</h3>
                 <p className="text-muted-foreground text-sm leading-relaxed">
                   Controlled breathing isn't relaxation — it's <span className="text-primary">nervous system training</span>. 
-                  The 4-7-8 activates parasympathetic response. Box Breathing is used by Navy SEALs. 
+                  Box Breathing is used by Navy SEALs. The 4-7-8 activates parasympathetic response. 
                   Choose your weapon.
                 </p>
               </div>
 
-              {/* Link to full breathing page */}
-              <button
-                onClick={() => navigate('/mindset/breathing')}
-                className="w-full p-5 rounded-xl border border-primary/20 bg-card hover:border-primary/40 transition-all text-left"
-              >
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-12 h-12 rounded-xl bg-card border border-primary/20 flex items-center justify-center"
-                    style={{ boxShadow: '0 0 15px rgba(255,85,0,0.15)' }}>
-                    <Wind className="w-6 h-6 text-primary" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.5))' }} />
+              {/* Breathing technique cards — same style as games tab */}
+              {[
+                { id: 'power-breath', name: 'POWER BREATH', subtitle: 'CONTROL YOUR NERVOUS SYSTEM.', desc: 'The 4-7-8 technique. Inhale 4, hold 7, exhale 8. Proven to activate deep parasympathetic response.', pattern: '4-7-8', intensity: 'high' as const },
+                { id: 'box-breathing', name: 'BOX BREATHING', subtitle: 'NAVY SEAL CALM UNDER FIRE.', desc: 'Equal 4-4-4-4 phases. Total nervous system balance and razor-sharp focus under pressure.', pattern: '4-4-4-4', intensity: 'medium' as const },
+                { id: 'tactical-calm', name: 'TACTICAL CALM', subtitle: 'RAPID STRESS RESET.', desc: 'Short inhale, brief hold, extended exhale. When you need calm NOW — fast parasympathetic activation.', pattern: '4-2-6', intensity: 'high' as const },
+                { id: 'deep-reset', name: 'DEEP RESET', subtitle: 'TOTAL RESTORATION.', desc: 'Slow, deep breathing for recovery. Extended exhale with rest phase for complete stress release.', pattern: '4-4-6-2', intensity: 'calm' as const },
+                { id: 'fire-breath', name: 'FIRE BREATH', subtitle: 'IGNITE YOUR ENERGY.', desc: 'Fast-paced rapid breathing. Short, sharp cycles with no holds — fire up before training or competition.', pattern: '2-0-2-0', intensity: 'high' as const },
+                { id: 'warrior-breath', name: 'WARRIOR BREATH', subtitle: 'THE BREATH BEFORE BATTLE.', desc: 'Double-length exhale forces deep activation while strong inhale keeps you alert and ready.', pattern: '4-4-8', intensity: 'high' as const },
+                { id: 'ocean-breath', name: 'OCEAN BREATH', subtitle: 'FLOW LIKE THE TIDE.', desc: 'Continuous flowing breath inspired by Ujjayi pranayama. No pauses — meditative rhythm for focus.', pattern: '5-0-5-0', intensity: 'calm' as const },
+                { id: 'resilience-breath', name: 'RESILIENCE BREATH', subtitle: 'MENTAL STEEL.', desc: 'Extended hold training. Builds CO2 tolerance and the composure to stay calm when everything screams quit.', pattern: '4-7-4-7', intensity: 'high' as const },
+                { id: 'sleep-breath', name: 'SLEEP MODE', subtitle: 'SWITCH OFF.', desc: 'Gentle 4-7-8 variant designed for winding down. Signals your brain it\'s time to rest.', pattern: '4-7-8', intensity: 'calm' as const },
+                { id: 'energise-breath', name: 'ENERGISE', subtitle: 'WAKE UP. QUICK BOX.', desc: 'Faster box breathing — more cycles per minute for a quick energy boost before any challenge.', pattern: '3-3-3-3', intensity: 'medium' as const },
+              ].map((technique) => (
+                <button
+                  key={technique.id}
+                  onClick={() => navigate(`/mindset/breathing?exercise=${technique.id}`)}
+                  className="w-full text-left p-4 rounded-xl border border-border bg-card hover:border-border hover:bg-card transition-all"
+                >
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
+                      <Wind className="w-5 h-5 text-primary" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.5))' }} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <h4 className="font-display text-sm text-foreground">{technique.name}</h4>
+                        <span className={`text-[9px] font-display tracking-wider px-1.5 py-0.5 rounded border ${
+                          technique.intensity === 'high' ? 'bg-red-500/15 text-red-400 border-red-500/25' :
+                          technique.intensity === 'calm' ? 'bg-blue-500/15 text-blue-400 border-blue-500/25' :
+                          'bg-primary/15 text-primary border-primary/25'
+                        }`}>{technique.intensity === 'high' ? 'HIGH' : technique.intensity === 'calm' ? 'CALM' : 'MED'}</span>
+                      </div>
+                      <p className="text-primary text-[10px] font-display">{technique.subtitle}</p>
+                      <p className="text-muted-foreground text-xs mt-1">{technique.desc}</p>
+                      <div className="flex items-center gap-2 mt-2 text-[10px] text-muted-foreground">
+                        <span>{technique.pattern} pattern</span>
+                        <span>•</span>
+                        <span>Voice-guided</span>
+                        <span>•</span>
+                        <span>2–20 min</span>
+                      </div>
+                    </div>
+                    <ArrowRight className="w-4 h-4 text-muted-foreground mt-1 shrink-0" />
                   </div>
-                  <div>
-                    <h4 className="font-display text-lg text-foreground">BREATHING SESSIONS</h4>
-                    <p className="text-muted-foreground text-xs">Voice-guided • Timed • Multiple techniques</p>
-                  </div>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {['Power Breath', 'Box Breathing', 'Tactical Calm', 'Deep Reset'].map(name => (
-                    <span key={name} className="px-2.5 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-display border border-primary/20">
-                      {name.toUpperCase()}
-                    </span>
-                  ))}
-                </div>
-                <div className="flex items-center gap-1 mt-3 text-primary text-xs font-display">
-                  <span>START SESSION</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </div>
-              </button>
-
-              <div className="p-3 rounded-xl border border-border bg-card">
-                <div className="flex items-center gap-2 mb-2">
-                  <Volume2 className="w-4 h-4 text-muted-foreground" />
-                  <span className="text-xs text-muted-foreground">Voice guidance available for all breathing sessions</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-muted-foreground" />
-                  <span className="text-xs text-muted-foreground">Sessions: 2, 3, 5, 10, 15 or 20 minutes</span>
-                </div>
-              </div>
+                </button>
+              ))}
             </motion.div>
           )}
 
