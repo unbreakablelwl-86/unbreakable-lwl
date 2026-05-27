@@ -17,7 +17,7 @@ export function UnifiedFooter({ className = '' }: UnifiedFooterProps) {
               className="h-8 object-contain logo-neon-glow"
             />
             <p className="text-sm text-muted-foreground text-center">
-              © 2025 <span className="text-primary font-display tracking-wide">UNBREAKABLE</span>. Live Without Limits LTD. All rights reserved.
+              © 2025–2026 <span className="text-primary font-display tracking-wide">UNBREAKABLE</span>. Live Without Limits LTD. All rights reserved.
             </p>
           </div>
           <div className="flex items-center gap-4 text-xs text-muted-foreground">

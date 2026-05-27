@@ -313,36 +313,7 @@ serve(async (req) => {
       console.error("Brand card roll error (non-fatal):", e);
     }
 
-    // ── Lyric card drops (bonus card chance per pack) ──
-    try {
-      // 15% chance to get a random lyric card per purchase
-      if (Math.random() < 0.15) {
-        const { data: lyricCards } = await supabase
-          .from("un_tunes_lyric_cards")
-          .select("id, track_id");
-
-        if (lyricCards && lyricCards.length > 0) {
-          const randomLyric = lyricCards[Math.floor(Math.random() * lyricCards.length)];
-          const lyricRarity = rollRarity(type as any);
-
-          cards.push({
-            user_id: user.id,
-            track_id: null,
-            album_id: null,
-            brand_card_id: null,
-            lyric_card_id: randomLyric.id,
-            card_type: "lyric",
-            rarity: lyricRarity,
-            edition_number: 0,
-            purchase_id: purchase.id,
-          });
-        }
-      }
-    } catch (e) {
-      console.error("Lyric card roll error (non-fatal):", e);
-    }
-
-    // Insert all cards (track + album + brand + lyric)
+    // Insert all cards (track + album + brand)
     const { data: insertedCards, error: cardError } = await supabase
       .from("un_tunes_user_cards")
       .insert(cards)

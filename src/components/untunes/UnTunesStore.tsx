@@ -3,7 +3,7 @@
  * Includes buy buttons, token pricing, and triggers pack opening animation.
  */
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Coins, Music, Disc3, Package, ShoppingBag, Sparkles,
@@ -39,25 +39,6 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
   const [packCards, setPackCards] = useState<PackCard[] | null>(null);
   const [packType, setPackType] = useState<'single' | 'album' | 'bundle'>('single');
   const [storeView, setStoreView] = useState<'main' | 'singles'>('main');
-  const [unopenedCards, setUnopenedCards] = useState<PackCard[]>([]);
-  const [loadingPacks, setLoadingPacks] = useState(false);
-
-  // Fetch unopened packs
-  useEffect(() => {
-    if (!user) return;
-    (async () => {
-      setLoadingPacks(true);
-      try {
-        const { data } = await (supabase as any)
-          .from('un_tunes_user_cards')
-          .select('id, track_id, album_id, rarity, edition_number, un_tunes_tracks(title, cover_url), un_tunes_albums(title, cover_url)')
-          .eq('user_id', user.id)
-          .eq('is_opened', false);
-        if (data) setUnopenedCards(data as PackCard[]);
-      } catch {}
-      setLoadingPacks(false);
-    })();
-  }, [user, packCards]); // re-fetch after opening a pack
 
   const handlePurchase = useCallback(async (
     type: 'single' | 'album' | 'bundle',
@@ -145,36 +126,6 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
 
         {storeView === 'main' ? (
           <>
-            {/* ═══ UNOPENED PACKS ═══ */}
-            {unopenedCards.length > 0 && (
-              <motion.div whileTap={{ scale: 0.98 }}>
-                <Card className="relative overflow-hidden border-violet-500/30 bg-gradient-to-br from-violet-950/40 via-zinc-900 to-zinc-900">
-                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_30%,rgba(139,92,246,0.15),transparent_60%)]" />
-                  <div className="relative p-5">
-                    <div className="flex items-center gap-2 mb-3">
-                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center">
-                        <Sparkles className="w-5 h-5 text-white" />
-                      </div>
-                      <div>
-                        <p className="font-display text-sm tracking-wider text-white">UNOPENED PACKS</p>
-                        <p className="text-[10px] text-muted-foreground">{unopenedCards.length} card{unopenedCards.length !== 1 ? 's' : ''} waiting to be revealed</p>
-                      </div>
-                    </div>
-                    <Button
-                      className="w-full bg-gradient-to-r from-violet-600 to-purple-600 text-white font-display tracking-wider"
-                      onClick={() => {
-                        setPackType('album');
-                        setPackCards(unopenedCards);
-                      }}
-                    >
-                      <Sparkles className="w-4 h-4 mr-2" />
-                      OPEN {unopenedCards.length} CARD{unopenedCards.length !== 1 ? 'S' : ''}
-                    </Button>
-                  </div>
-                </Card>
-              </motion.div>
-            )}
-
             {/* ═══ BUNDLE DEAL — Hero card ═══ */}
             <motion.div whileTap={{ scale: 0.98 }}>
               <Card className="relative overflow-hidden border-primary/30 bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900">
@@ -384,6 +335,15 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
             </div>
           </>
         )}
+        {/* Legal attribution */}
+        <div className="text-center py-4 border-t border-border/30 mt-6">
+          <p className="text-[10px] text-muted-foreground/60 font-display tracking-wider">
+            All music © {new Date().getFullYear()} Live Without Limits LTD. UNBREAKABLE™ is a trademark of Live Without Limits LTD.
+          </p>
+          <p className="text-[9px] text-muted-foreground/40 mt-1">
+            All tracks are original compositions. Unauthorised reproduction or distribution is prohibited.
+          </p>
+        </div>
       </div>
 
       {/* Pack opening overlay */}
