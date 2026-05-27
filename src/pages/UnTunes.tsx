@@ -6,7 +6,7 @@ import {
   Disc3, Podcast, ChevronRight, Sparkles, Crown, Star,
   Share2, Dumbbell, Footprints, Guitar, Flame, Waves, Swords, Drum,
   Zap, Activity, Brain, Loader2,
-  Coins, Diamond, ShoppingBag, LayoutGrid,
+  Coins, Diamond, ShoppingBag, LayoutGrid, Gavel,
 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -27,8 +27,9 @@ import { toast } from 'sonner';
 
 import { UnTunesStore } from '@/components/untunes/UnTunesStore';
 import { CollectionGallery } from '@/components/untunes/CollectionGallery';
+import { AuctionHouse } from '@/components/untunes/AuctionHouse';
 
-type UnTunesTab = 'browse' | 'search' | 'library' | 'store' | 'collection' | 'podcasts' | 'artist';
+type UnTunesTab = 'browse' | 'search' | 'library' | 'store' | 'collection' | 'auction' | 'podcasts' | 'artist';
 
 const fadeIn = { initial: { opacity: 0, y: 12 }, animate: { opacity: 1, y: 0 } };
 
@@ -106,7 +107,8 @@ export default function UnTunes() {
     { key: 'library' as const, label: 'LIBRARY', icon: Library },
     { key: 'store' as const, label: 'STORE', icon: ShoppingBag },
     { key: 'collection' as const, label: 'CARDS', icon: LayoutGrid },
-    { key: 'podcasts' as const, label: 'PODCASTS', icon: Podcast },
+    { key: 'auction' as const, label: 'TRADE', icon: Gavel },
+    { key: 'podcasts' as const, label: 'PODS', icon: Podcast },
     { key: 'artist' as const, label: myArtist ? 'ARTIST HUB' : 'BECOME ARTIST', icon: myArtist ? Crown : UserPlus },
   ];
 
@@ -756,6 +758,13 @@ export default function UnTunes() {
           {activeTab === 'collection' && (
             <motion.div key="collection" {...fadeIn}>
               <CollectionGallery onBack={() => setActiveTab('store')} />
+            </motion.div>
+          )}
+
+          {/* ─── Auction / Trade Tab ─── */}
+          {activeTab === 'auction' && (
+            <motion.div key="auction" {...fadeIn}>
+              <AuctionHouse onBack={() => setActiveTab('store')} />
             </motion.div>
           )}
 
