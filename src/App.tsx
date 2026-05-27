@@ -21,6 +21,7 @@ import Tracker from "./pages/Tracker";
 import Mindset from "./pages/Mindset";
 import MindsetBreathing from "./pages/MindsetBreathing";
 import MindsetGames from "./pages/MindsetGames";
+import Zone from "./pages/Zone";
 import Programming from "./pages/Programming";
 import Fuel from "./pages/Fuel";
 import Help from "./pages/Help";
@@ -217,6 +218,9 @@ const App = () => {
                 } />
                 <Route path="/mindset/games" element={
                   <ProtectedRoute><MindsetGames /></ProtectedRoute>
+                } />
+                <Route path="/zone" element={
+                  <ProtectedRoute><Zone /></ProtectedRoute>
                 } />
                 
                 {/* Coaching (Help) — uses Unbreakable token system, not subscription */}

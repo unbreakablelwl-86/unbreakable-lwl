@@ -35,11 +35,12 @@ import { useState, useEffect, useCallback } from 'react';
 import { useConversations } from '@/hooks/useConversations';
 import { useTokenBalance } from '@/hooks/useTokenBalance';
 import shieldLogo from '@/assets/unbreakable-shield.png';
+import CasioZoneIcon from '@/components/icons/CasioZoneIcon';
 
 /* ─── All available nav items ─── */
 interface NavItemDef {
   id: string;
-  icon?: typeof Dumbbell;
+  icon?: React.ComponentType<React.SVGProps<SVGSVGElement> & { strokeWidth?: number }>;
   label: string;
   path: string;
   isShield?: boolean;
@@ -102,6 +103,15 @@ const ALL_NAV_ITEMS: NavItemDef[] = [
     activeMatch: ['/mindset'],
     color: '#FF5500',
     description: 'Mental resilience',
+  },
+  {
+    id: 'zone',
+    icon: CasioZoneIcon,
+    label: 'Zone',
+    path: '/zone',
+    activeMatch: ['/zone'],
+    color: '#FF5500',
+    description: 'Switch off — focus timer',
   },
   {
     id: 'university',

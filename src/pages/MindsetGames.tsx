@@ -1,33 +1,23 @@
 import { useState, useEffect, lazy, Suspense } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Gamepad2, Zap, Blocks, Crosshair, Grid3X3, Shapes, Wind, Calculator, Timer, Type, ChevronRight, ArrowLeft } from "lucide-react";
+import { Gamepad2, Zap, Blocks, Shapes, Wind, Calculator, ChevronRight, ArrowLeft } from "lucide-react";
 const SnakeGame = lazy(() => import("@/components/mindset/SnakeGame"));
 const AlleywayGame = lazy(() => import("@/components/mindset/AlleywayGame"));
 const TetrisGame = lazy(() => import("@/components/mindset/TetrisGame"));
-const ReactionTrainerGame = lazy(() => import("@/components/mindset/ReactionTrainerGame"));
-const MemoryMatrixGame = lazy(() => import("@/components/mindset/MemoryMatrixGame"));
 const PatternBreakerGame = lazy(() => import("@/components/mindset/PatternBreakerGame"));
 const FlowStateGame = lazy(() => import("@/components/mindset/FlowStateGame"));
 const MentalMathsGame = lazy(() => import("@/components/mindset/MentalMathsGame"));
-const FocusTimerGame = lazy(() => import("@/components/mindset/FocusTimerGame"));
-const WordChainGame = lazy(() => import("@/components/mindset/WordChainGame"));
-// FlappyGame removed
 
-type ViewState = "selection" | "snake" | "alleyway" | "tetris" | "reaction" | "memory" | "pattern" | "flow" | "maths" | "focus" | "wordchain";
+type ViewState = "selection" | "snake" | "alleyway" | "tetris" | "pattern" | "flow" | "maths";
 
 const games = [
   { id: "snake" as const, name: "HUNT", icon: Gamepad2, tagline: "Chase. Devour. Never Stop.", desc: "Split-second decisions — react too slow and it's over. Reflexes become razor-sharp." },
   { id: "alleyway" as const, name: "SHATTER", icon: Zap, tagline: "Break Every Wall.", desc: "Walls go up, you smash them down. Precision, timing, and relentless aggression." },
   { id: "tetris" as const, name: "STACK", icon: Blocks, tagline: "Order From Chaos.", desc: "Pieces fall faster. Find clarity in the chaos — stack clean, think ahead, stay composed." },
-  { id: "reaction" as const, name: "STRIKE", icon: Crosshair, tagline: "Hit Before It Vanishes.", desc: "Targets appear — hit them before they disappear. Pure reflex. Zero hesitation." },
-  { id: "memory" as const, name: "RECALL", icon: Grid3X3, tagline: "Total Recall Or Nothing.", desc: "Flash. Memorise. Recreate. Grids grow, flash time shrinks — one wrong tile and it's over." },
   { id: "pattern" as const, name: "LOCK IN", icon: Shapes, tagline: "One Wrong Move, It's Over.", desc: "Watch. Listen. Repeat. Each round adds one more — break focus and you're done." },
   { id: "flow" as const, name: "FLOW", icon: Wind, tagline: "Stay In The Zone.", desc: "Endless runner — dodge obstacles at increasing speed. Double-jump your way to immortality." },
   { id: "maths" as const, name: "SOLVE", icon: Calculator, tagline: "Rapid Fire. Zero Hesitation.", desc: "Mental maths blitz — solve under countdown. Numbers grow, timer shrinks. 3 lives." },
-  { id: "focus" as const, name: "ZONE", icon: Timer, tagline: "Get In The Zone.", desc: "Focus timer with streaks & missions. 5–90 minute sessions. Track your discipline." },
-  { id: "wordchain" as const, name: "WORDSMITH", icon: Type, tagline: "Chain Words. Never Break.", desc: "Each word starts with the last letter of the previous. Timer shrinks, min length grows — infinite chain." },
-
 ];
 
 // GameWrapper must be OUTSIDE the main component — if defined inside,
@@ -56,13 +46,9 @@ const GAME_COMPONENTS: Record<string, React.LazyExoticComponent<React.ComponentT
   snake: SnakeGame,
   alleyway: AlleywayGame,
   tetris: TetrisGame,
-  reaction: ReactionTrainerGame,
-  memory: MemoryMatrixGame,
   pattern: PatternBreakerGame,
   flow: FlowStateGame,
   maths: MentalMathsGame,
-  focus: FocusTimerGame,
-  wordchain: WordChainGame,
 };
 
 const MindsetGames = () => {
@@ -147,7 +133,6 @@ const MindsetGames = () => {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     <p className="font-display text-sm tracking-wider text-foreground">{game.name}</p>
-
                   </div>
                   <p className="text-muted-foreground text-xs mt-0.5">{game.tagline}</p>
                 </div>
