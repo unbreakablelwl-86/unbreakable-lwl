@@ -1,6 +1,7 @@
-import { useState, useEffect, useCallback, useRef, createContext, useContext } from 'react';
+import { useState, useEffect, useCallback, useRef, createContext, useContext, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { useUserRole } from '@/hooks/useUserRole';
 
 /* ─── Types ─── */
 export interface Artist {
@@ -102,6 +103,12 @@ interface PlayerContextType {
   toggleRepeat: () => void;
   addToQueue: (track: Track) => void;
   stop: () => void;
+  /** Whether current track is preview-only (30s cap) */
+  isPreview: boolean;
+  /** Set of owned track IDs (purchased or dev account) */
+  ownedTrackIds: Set<string>;
+  /** Full access (dev account) */
+  hasFullAccess: boolean;
 }
 
 export const PlayerContext = createContext<PlayerContextType>({
@@ -116,19 +123,60 @@ export const PlayerContext = createContext<PlayerContextType>({
   toggleRepeat: () => {},
   addToQueue: () => {},
   stop: () => {},
+  isPreview: false,
+  ownedTrackIds: new Set(),
+  hasFullAccess: false,
 });
 
 export function usePlayer() {
   return useContext(PlayerContext);
 }
 
+/** Hook: load set of track IDs the user owns (purchased cards) */
+function useOwnedTracks() {
+  const { user } = useAuth();
+  const [ownedIds, setOwnedIds] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    if (!user) { setOwnedIds(new Set()); return; }
+    (async () => {
+      const { data } = await supabase
+        .from('un_tunes_user_cards')
+        .select('track_id')
+        .eq('user_id', user.id)
+        .not('track_id', 'is', null);
+      if (data) {
+        setOwnedIds(new Set(data.map((r: any) => r.track_id)));
+      }
+    })();
+  }, [user]);
+
+  return ownedIds;
+}
+
+const PREVIEW_DURATION = 30; // seconds
+
 export function usePlayerProvider() {
+  const { user } = useAuth();
+  const { isDev } = useUserRole();
+  const ownedTrackIds = useOwnedTracks();
   const [state, setState] = useState<PlayerState>(defaultPlayerState);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const previewFadingRef = useRef(false);
   // Refs for Media Session action handlers (stable references)
   const nextTrackRef = useRef<() => void>(() => {});
   const prevTrackRef = useRef<() => void>(() => {});
   const togglePlayRef = useRef<() => void>(() => {});
+
+  // Full access = dev account
+  const hasFullAccess = isDev;
+
+  // Is current track a preview?
+  const isPreview = useMemo(() => {
+    if (hasFullAccess) return false;
+    if (!state.currentTrack) return false;
+    return !ownedTrackIds.has(state.currentTrack.id);
+  }, [hasFullAccess, state.currentTrack?.id, ownedTrackIds]);
 
   useEffect(() => {
     const audio = new Audio();
@@ -138,6 +186,8 @@ export function usePlayerProvider() {
     audio.addEventListener('timeupdate', () => {
       setState(s => ({ ...s, currentTime: audio.currentTime, duration: audio.duration || 0 }));
     });
+
+    // 30s preview enforcement handled in a separate effect below
 
     audio.addEventListener('ended', () => {
       handleTrackEnd();
@@ -214,6 +264,42 @@ export function usePlayerProvider() {
       } catch { /* ignore position state errors */ }
     }
   }, [Math.floor(state.currentTime), state.duration, state.isPlaying]);
+
+  // ─── 30s preview enforcement ───
+  useEffect(() => {
+    if (!isPreview || !audioRef.current) return;
+    const audio = audioRef.current;
+    
+    const checkPreview = () => {
+      if (audio.currentTime >= PREVIEW_DURATION && !previewFadingRef.current) {
+        previewFadingRef.current = true;
+        // Fade out over 2 seconds
+        const startVol = audio.volume;
+        const fadeSteps = 20;
+        const fadeInterval = 100; // 2s total
+        let step = 0;
+        const fade = setInterval(() => {
+          step++;
+          audio.volume = Math.max(0, startVol * (1 - step / fadeSteps));
+          if (step >= fadeSteps) {
+            clearInterval(fade);
+            audio.pause();
+            audio.volume = startVol; // restore for next track
+            previewFadingRef.current = false;
+            setState(s => ({ ...s, isPlaying: false }));
+          }
+        }, fadeInterval);
+      }
+    };
+
+    audio.addEventListener('timeupdate', checkPreview);
+    return () => audio.removeEventListener('timeupdate', checkPreview);
+  }, [isPreview]);
+
+  // Reset preview fade flag on track change
+  useEffect(() => {
+    previewFadingRef.current = false;
+  }, [state.currentTrack?.id]);
 
   const handleTrackEnd = useCallback(() => {
     setState(prev => {
@@ -305,11 +391,13 @@ export function usePlayerProvider() {
   }, []);
 
   const seekTo = useCallback((time: number) => {
+    // Clamp to preview limit if not owned
+    const clampedTime = isPreview ? Math.min(time, PREVIEW_DURATION) : time;
     if (audioRef.current) {
-      audioRef.current.currentTime = time;
+      audioRef.current.currentTime = clampedTime;
     }
-    setState(s => ({ ...s, currentTime: time }));
-  }, []);
+    setState(s => ({ ...s, currentTime: clampedTime }));
+  }, [isPreview]);
 
   const setVolume = useCallback((vol: number) => {
     if (audioRef.current) audioRef.current.volume = vol;
@@ -356,6 +444,9 @@ export function usePlayerProvider() {
     toggleRepeat,
     addToQueue,
     stop,
+    isPreview,
+    ownedTrackIds,
+    hasFullAccess,
   };
 }
 

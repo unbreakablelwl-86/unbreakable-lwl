@@ -1,5 +1,5 @@
 /**
- * PackOpening — FIFA-style pack opening animation for Un-Tunes collectible cards.
+ * PackOpening — Collectible pack opening animation for Un-Tunes cards.
  *
  * Shows a sealed pack → tap to open → cards fly out one by one with rarity reveals.
  * Standard = clean white glow, Gold = gold shimmer, Diamond = rainbow fireworks + edition number.
@@ -302,7 +302,7 @@ export function PackOpening({ cards, purchaseType, onClose, onMarkOpened }: Pack
   const [currentIndex, setCurrentIndex] = useState(0);
   const [revealedCards, setRevealedCards] = useState<PackCard[]>([]);
 
-  // Sort cards: diamonds first, then gold, then standard (best reveals last would be more exciting, but FIFA does best first)
+  // Sort cards: diamonds first, then gold, then standard (best reveals first for maximum hype)
   const sortedCards = [...cards].sort((a, b) => {
     const order = { diamond: 0, gold: 1, standard: 2 };
     return (order[a.rarity] ?? 2) - (order[b.rarity] ?? 2);

@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { LandingFooter } from '@/components/landing/LandingFooter';
+import { SamplePlayer } from '@/components/untunes/SamplePlayer';
 import {
   Flame,
   Dumbbell,
@@ -745,6 +746,9 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
 
       {/* ━━━ Footer ━━━ */}
       <LandingFooter />
+
+      {/* ━━━ Un-Tunes 30s Sample Player (non-users) ━━━ */}
+      <SamplePlayer onSignUp={goSignUp} />
     </div>
   );
 }

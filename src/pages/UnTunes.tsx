@@ -145,7 +145,7 @@ export default function UnTunes() {
             </div>
             <div className="flex-1 min-w-0">
               <p className="font-display text-xs tracking-wider text-white">OWN YOUR TUNES • COLLECT RARE CARDS</p>
-              <p className="text-[10px] text-muted-foreground">Buy singles, albums & bundles → open FIFA-style packs → collect diamond editions</p>
+              <p className="text-[10px] text-muted-foreground">Buy singles, albums & bundles → open packs → collect rare & diamond editions</p>
             </div>
             <div className="flex items-center gap-1 text-primary">
               <Coins className="w-3.5 h-3.5" />
