@@ -130,27 +130,43 @@ export default function CoachProfile() {
         )}
 
         {/* Quick Stats */}
-        <div className="grid grid-cols-3 gap-2">
-          {profile.years_experience && (
-            <div className="rounded-xl border border-primary/15 bg-card p-3 text-center">
-              <Award className="w-5 h-5 text-primary mx-auto mb-1" />
-              <p className="font-display text-lg text-foreground">{profile.years_experience}</p>
-              <p className="text-[9px] font-display tracking-wider text-muted-foreground">YEARS</p>
+        {(() => {
+          const sessionStart = Math.min(
+            ...[profile.session_rate_30min, profile.session_rate_60min].filter(Boolean).map(Number),
+            Infinity
+          );
+          return (
+            <div className="grid grid-cols-3 gap-2">
+              {profile.years_experience && (
+                <div className="rounded-xl border border-primary/15 bg-card p-3 text-center">
+                  <Award className="w-5 h-5 text-primary mx-auto mb-1" />
+                  <p className="font-display text-lg text-foreground">{profile.years_experience}</p>
+                  <p className="text-[9px] font-display tracking-wider text-muted-foreground">YEARS</p>
+                </div>
+              )}
+              {sessionStart !== Infinity ? (
+                <div className="rounded-xl border border-primary/15 bg-card p-3 text-center">
+                  <PoundSterling className="w-5 h-5 text-primary mx-auto mb-1" />
+                  <p className="font-display text-lg text-foreground">£{sessionStart}</p>
+                  <p className="text-[9px] font-display tracking-wider text-muted-foreground">1-2-1 FROM</p>
+                </div>
+              ) : (
+                <div className="rounded-xl border border-primary/15 bg-card p-3 text-center">
+                  <Clock className="w-5 h-5 text-primary mx-auto mb-1" />
+                  <p className="font-display text-sm text-foreground">{freqLabel}</p>
+                  <p className="text-[9px] font-display tracking-wider text-muted-foreground">CHECK-INS</p>
+                </div>
+              )}
+              {profile.online_monthly_rate && (
+                <div className="rounded-xl border border-primary/15 bg-card p-3 text-center">
+                  <PoundSterling className="w-5 h-5 text-primary mx-auto mb-1" />
+                  <p className="font-display text-lg text-foreground">£{profile.online_monthly_rate}</p>
+                  <p className="text-[9px] font-display tracking-wider text-muted-foreground">ONLINE /MO</p>
+                </div>
+              )}
             </div>
-          )}
-          <div className="rounded-xl border border-primary/15 bg-card p-3 text-center">
-            <Clock className="w-5 h-5 text-primary mx-auto mb-1" />
-            <p className="font-display text-sm text-foreground">{freqLabel}</p>
-            <p className="text-[9px] font-display tracking-wider text-muted-foreground">CHECK-INS</p>
-          </div>
-          {profile.online_monthly_rate && (
-            <div className="rounded-xl border border-primary/15 bg-card p-3 text-center">
-              <PoundSterling className="w-5 h-5 text-primary mx-auto mb-1" />
-              <p className="font-display text-lg text-foreground">£{profile.online_monthly_rate}</p>
-              <p className="text-[9px] font-display tracking-wider text-muted-foreground">/MONTH</p>
-            </div>
-          )}
-        </div>
+          );
+        })()}
 
         {/* Specializations */}
         {profile.specializations.length > 0 && (
@@ -180,6 +196,69 @@ export default function CoachProfile() {
                   {c}
                 </Badge>
               ))}
+            </div>
+          </div>
+        )}
+
+        {/* ═══════════ 1-2-1 SESSION PRICING ═══════════ */}
+        {(profile.session_rate_30min || profile.session_rate_60min || profile.block_4_price) && (
+          <div className="rounded-xl border border-primary/20 bg-card overflow-hidden">
+            <div className="bg-primary/10 border-b border-primary/20 px-4 py-2">
+              <p className="font-display text-xs tracking-wider text-primary flex items-center gap-2">
+                <PoundSterling className="w-4 h-4" /> 1-2-1 SESSION PRICING
+              </p>
+            </div>
+            <div className="p-4 space-y-4">
+              {/* Per-session rates */}
+              {(profile.session_rate_30min || profile.session_rate_60min) && (
+                <div className="grid grid-cols-2 gap-3">
+                  {profile.session_rate_30min && (
+                    <div className="rounded-lg border border-border bg-muted/20 p-3 text-center">
+                      <p className="text-[10px] font-display tracking-wider text-muted-foreground mb-1">30 MIN SESSION</p>
+                      <p className="font-display text-xl text-foreground">£{profile.session_rate_30min}</p>
+                    </div>
+                  )}
+                  {profile.session_rate_60min && (
+                    <div className="rounded-lg border border-border bg-muted/20 p-3 text-center">
+                      <p className="text-[10px] font-display tracking-wider text-muted-foreground mb-1">60 MIN SESSION</p>
+                      <p className="font-display text-xl text-foreground">£{profile.session_rate_60min}</p>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Block packages */}
+              {(profile.block_4_price || profile.block_8_price || profile.block_12_price) && (
+                <div>
+                  <p className="text-[10px] font-display tracking-wider text-muted-foreground mb-2">
+                    SESSION BLOCKS ({profile.block_session_length || '60min'} each)
+                  </p>
+                  <div className="grid grid-cols-3 gap-2">
+                    {profile.block_4_price && (
+                      <div className="rounded-lg border border-border bg-muted/20 p-2.5 text-center">
+                        <p className="text-[9px] font-display tracking-wider text-muted-foreground">4 SESSIONS</p>
+                        <p className="font-display text-lg text-foreground">£{profile.block_4_price}</p>
+                        <p className="text-[9px] text-primary">£{(Number(profile.block_4_price) / 4).toFixed(2)}/ea</p>
+                      </div>
+                    )}
+                    {profile.block_8_price && (
+                      <div className="rounded-lg border border-primary/30 bg-primary/5 p-2.5 text-center relative">
+                        <span className="absolute -top-2 left-1/2 -translate-x-1/2 text-[8px] font-display tracking-wider bg-primary text-white px-2 py-0.5 rounded-full">POPULAR</span>
+                        <p className="text-[9px] font-display tracking-wider text-muted-foreground mt-1">8 SESSIONS</p>
+                        <p className="font-display text-lg text-primary">£{profile.block_8_price}</p>
+                        <p className="text-[9px] text-primary">£{(Number(profile.block_8_price) / 8).toFixed(2)}/ea</p>
+                      </div>
+                    )}
+                    {profile.block_12_price && (
+                      <div className="rounded-lg border border-border bg-muted/20 p-2.5 text-center">
+                        <p className="text-[9px] font-display tracking-wider text-muted-foreground">12 SESSIONS</p>
+                        <p className="font-display text-lg text-foreground">£{profile.block_12_price}</p>
+                        <p className="text-[9px] text-primary">£{(Number(profile.block_12_price) / 12).toFixed(2)}/ea</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         )}

@@ -93,6 +93,11 @@ export default function Coaches() {
                             <Award className="w-3 h-3 mr-0.5" /> {coach.years_experience}yr
                           </Badge>
                         )}
+                        {(coach.session_rate_30min || coach.session_rate_60min) && (
+                          <Badge variant="outline" className="text-[9px] font-display tracking-wide border-primary/20 text-primary">
+                            <PoundSterling className="w-3 h-3 mr-0.5" /> 1-2-1 from £{Math.min(...[coach.session_rate_30min, coach.session_rate_60min].filter(Boolean).map(Number))}
+                          </Badge>
+                        )}
                         {(coach.online_monthly_rate || coach.monthly_price_gbp) && (
                           <Badge variant="outline" className="text-[9px] font-display tracking-wide border-border text-muted-foreground">
                             <PoundSterling className="w-3 h-3 mr-0.5" /> £{coach.online_monthly_rate || coach.monthly_price_gbp}/mo

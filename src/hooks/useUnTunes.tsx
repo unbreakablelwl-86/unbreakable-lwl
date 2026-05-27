@@ -377,6 +377,33 @@ export function useFeaturedTracks() {
   return { tracks, loading };
 }
 
+/** Fetch ALL tracks (full library) */
+export function useAllTracks() {
+  const [tracks, setTracks] = useState<Track[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      const { data } = await supabase
+        .from('un_tunes_tracks')
+        .select('*, un_tunes_artists!inner(artist_name, avatar_url)')
+        .not('audio_url', 'is', null)
+        .order('title', { ascending: true });
+
+      if (data) {
+        setTracks(data.map((t: any) => ({
+          ...t,
+          artist_name: t.un_tunes_artists?.artist_name,
+          artist_avatar: t.un_tunes_artists?.avatar_url,
+        })));
+      }
+      setLoading(false);
+    })();
+  }, []);
+
+  return { tracks, loading };
+}
+
 /** Fetch tracks by genre */
 export function useTracksByGenre(genre: string) {
   const [tracks, setTracks] = useState<Track[]>([]);

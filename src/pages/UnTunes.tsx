@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/hooks/useAuth';
 import { useUserRole } from '@/hooks/useUserRole';
-import { usePlayer, useFeaturedTracks, useArtists, useMyPlaylists, useMyArtistProfile, useSearchTracks, useLikeTrack, usePlaylistActions, useLikedTracks, useRecentlyPlayed, usePlaylistTracks } from '@/hooks/useUnTunes';
+import { usePlayer, useFeaturedTracks, useAllTracks, useArtists, useMyPlaylists, useMyArtistProfile, useSearchTracks, useLikeTrack, usePlaylistActions, useLikedTracks, useRecentlyPlayed, usePlaylistTracks } from '@/hooks/useUnTunes';
 import type { Track, Playlist } from '@/hooks/useUnTunes';
 import { UnTunesTrackRow } from '@/components/untunes/TrackRow';
 import { UnTunesArtistCard } from '@/components/untunes/ArtistCard';
@@ -37,7 +37,9 @@ export default function UnTunes() {
   
   // const spotify = useSpotify(); // parked
   const { tracks: featured, loading: featuredLoading } = useFeaturedTracks();
+  const { tracks: allTracks, loading: allTracksLoading } = useAllTracks();
   const { artists, loading: artistsLoading } = useArtists();
+  const [showFullLibrary, setShowFullLibrary] = useState(false);
   const { playlists } = useMyPlaylists();
   const { artist: myArtist, loading: artistLoading } = useMyArtistProfile();
   const { results: searchResults, loading: searchLoading, search } = useSearchTracks();
@@ -139,46 +141,103 @@ export default function UnTunes() {
           {/* ─── Browse Tab ─── */}
           {activeTab === 'browse' && (
             <motion.div key="browse" {...fadeIn} className="space-y-8">
-              {/* All Tracks Header */}
 
-              {/* Trending Tracks */}
+              {/* Browse sub-tabs: Trending / All Tracks */}
+              <div className="flex gap-2">
+                <Button
+                  variant={!showFullLibrary ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setShowFullLibrary(false)}
+                  className="text-[10px] font-display tracking-wider"
+                >
+                  <TrendingUp className="w-3 h-3 mr-1" /> TRENDING
+                </Button>
+                <Button
+                  variant={showFullLibrary ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setShowFullLibrary(true)}
+                  className="text-[10px] font-display tracking-wider"
+                >
+                  <Library className="w-3 h-3 mr-1" /> ALL TRACKS ({allTracks.length})
+                </Button>
+              </div>
+
+              {/* Track listing */}
               <div>
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-2">
-                    <TrendingUp className="w-4 h-4 text-primary drop-shadow-[0_0_6px_rgba(255,85,0,0.5)]" />
-                    <h2 className="font-display text-sm tracking-wider text-foreground">TRENDING NOW</h2>
-                  </div>
-                  <Badge variant="outline" className="text-[10px] font-display tracking-wider border-primary/30 text-primary">
-                    <Sparkles className="w-3 h-3 mr-1" /> TOP 20
-                  </Badge>
-                </div>
-
-                {featuredLoading ? (
-                  <div className="flex items-center justify-center py-12">
-                    <Disc3 className="w-8 h-8 text-primary animate-spin drop-shadow-[0_0_12px_rgba(255,85,0,0.5)]" />
-                  </div>
-                ) : featured.length === 0 ? (
-                  <Card className="p-8 text-center border-border/50 bg-card/50">
-                    <Music className="w-10 h-10 text-primary/20 mx-auto mb-3 drop-shadow-[0_0_8px_rgba(255,85,0,0.2)]" />
-                    <p className="text-sm text-muted-foreground mb-1">No tracks yet</p>
-                    <p className="text-xs text-muted-foreground/60">Be the first artist to upload!</p>
-                  </Card>
+                {!showFullLibrary ? (
+                  <>
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-2">
+                        <TrendingUp className="w-4 h-4 text-primary drop-shadow-[0_0_6px_rgba(255,85,0,0.5)]" />
+                        <h2 className="font-display text-sm tracking-wider text-foreground">TRENDING NOW</h2>
+                      </div>
+                      <Badge variant="outline" className="text-[10px] font-display tracking-wider border-primary/30 text-primary">
+                        <Sparkles className="w-3 h-3 mr-1" /> TOP {featured.length}
+                      </Badge>
+                    </div>
+                    {featuredLoading ? (
+                      <div className="flex items-center justify-center py-12">
+                        <Disc3 className="w-8 h-8 text-primary animate-spin drop-shadow-[0_0_12px_rgba(255,85,0,0.5)]" />
+                      </div>
+                    ) : featured.length === 0 ? (
+                      <Card className="p-8 text-center border-border/50 bg-card/50">
+                        <Music className="w-10 h-10 text-primary/20 mx-auto mb-3" />
+                        <p className="text-sm text-muted-foreground mb-1">No tracks yet</p>
+                      </Card>
+                    ) : (
+                      <div className="space-y-1">
+                        {featured.map((track, i) => (
+                          <UnTunesTrackRow
+                            key={track.id}
+                            track={track}
+                            index={i + 1}
+                            onPlay={() => playTrack(track, featured)}
+                            onShare={() => handleShareToTimeline(track)}
+                            isLiked={isLiked(track.id)}
+                            onToggleLike={() => toggleLike(track.id)}
+                            onAddToPlaylist={() => openPlaylistSheet(track)}
+                          />
+                        ))}
+                      </div>
+                    )}
+                  </>
                 ) : (
-                  <div className="space-y-1">
-                    {featured
-                      .map((track, i) => (
-                        <UnTunesTrackRow
-                          key={track.id}
-                          track={track}
-                          index={i + 1}
-                          onPlay={() => playTrack(track, featured)}
-                          onShare={() => handleShareToTimeline(track)}
-                          isLiked={isLiked(track.id)}
-                          onToggleLike={() => toggleLike(track.id)}
-                          onAddToPlaylist={() => openPlaylistSheet(track)}
-                        />
-                      ))}
-                  </div>
+                  <>
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-2">
+                        <Library className="w-4 h-4 text-primary drop-shadow-[0_0_6px_rgba(255,85,0,0.5)]" />
+                        <h2 className="font-display text-sm tracking-wider text-foreground">FULL LIBRARY</h2>
+                      </div>
+                      <Badge variant="outline" className="text-[10px] font-display tracking-wider border-primary/30 text-primary">
+                        {allTracks.length} TRACKS
+                      </Badge>
+                    </div>
+                    {allTracksLoading ? (
+                      <div className="flex items-center justify-center py-12">
+                        <Disc3 className="w-8 h-8 text-primary animate-spin drop-shadow-[0_0_12px_rgba(255,85,0,0.5)]" />
+                      </div>
+                    ) : allTracks.length === 0 ? (
+                      <Card className="p-8 text-center border-border/50 bg-card/50">
+                        <Music className="w-10 h-10 text-primary/20 mx-auto mb-3" />
+                        <p className="text-sm text-muted-foreground">No tracks in the library yet</p>
+                      </Card>
+                    ) : (
+                      <div className="space-y-1">
+                        {allTracks.map((track, i) => (
+                          <UnTunesTrackRow
+                            key={track.id}
+                            track={track}
+                            index={i + 1}
+                            onPlay={() => playTrack(track, allTracks)}
+                            onShare={() => handleShareToTimeline(track)}
+                            isLiked={isLiked(track.id)}
+                            onToggleLike={() => toggleLike(track.id)}
+                            onAddToPlaylist={() => openPlaylistSheet(track)}
+                          />
+                        ))}
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
 
