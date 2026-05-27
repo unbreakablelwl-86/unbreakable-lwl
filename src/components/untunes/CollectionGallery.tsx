@@ -7,10 +7,11 @@
 
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { motion, AnimatePresence, PanInfo } from 'framer-motion';
-import { Diamond, Crown, Music, Disc3, X, Download, ArrowLeft, ChevronLeft, ChevronRight, Lock } from 'lucide-react';
+import { Diamond, Crown, Music, Disc3, X, Download, ArrowLeft, ChevronLeft, ChevronRight, Lock, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
 import { useAllTracks, useAlbums } from '@/hooks/useUnTunes';
 import { cn } from '@/lib/utils';
@@ -289,15 +290,19 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
     return map;
   }, [tracks, albums, brandCards, ownedCards]);
 
-  // Stats
+  // Stats — count unique SLOTS (item × rarity) not raw card count (avoids duplicate inflation)
   const totalPossible = (tracks.length + albums.length + brandCards.length) * 3;
-  const totalOwned = ownedCards.length;
-  const diamondOwned = ownedCards.filter(c => c.rarity === 'diamond').length;
-  const goldOwned = ownedCards.filter(c => c.rarity === 'gold').length;
-  const standardOwned = ownedCards.filter(c => c.rarity === 'standard').length;
+  const totalOwned = Object.values(ownershipMap).reduce(
+    (sum, m) => sum + RARITIES.filter(r => m[r]).length, 0
+  );
+  const diamondOwned = Object.values(ownershipMap).filter(m => m.diamond).length;
+  const goldOwned = Object.values(ownershipMap).filter(m => m.gold).length;
+  const standardOwned = Object.values(ownershipMap).filter(m => m.standard).length;
   const completeItems = Object.values(ownershipMap).filter(
     m => m.standard && m.gold && m.diamond
   ).length;
+  // Count duplicates (more than one card per item+rarity slot)
+  const duplicateCount = ownedCards.length - totalOwned;
 
   // Filter items
   const allItems = [
@@ -383,6 +388,38 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
     link.click();
   };
 
+  // ── Discard duplicate card ──
+  const handleDiscardCard = async (cardId: string) => {
+    if (!user) return;
+    try {
+      const { data, error } = await (supabase as any).rpc('discard_card', {
+        _card_id: cardId,
+        _uid: user.id,
+      });
+      if (error) throw error;
+      if (data?.error) {
+        toast.error(data.error);
+        return;
+      }
+      // Remove from local state
+      setOwnedCards(prev => prev.filter(c => c.id !== cardId));
+      toast.success('Card discarded');
+    } catch (err) {
+      console.error('Discard error:', err);
+      toast.error('Failed to discard card');
+    }
+  };
+
+  // Check if a specific card is a duplicate (more than one card for same item+rarity)
+  const isDuplicateCard = (card: OwnedCard): boolean => {
+    const itemId = card.track_id || card.album_id || card.brand_card_id;
+    const dupeCount = ownedCards.filter(c => {
+      const cItemId = c.track_id || c.album_id || c.brand_card_id;
+      return cItemId === itemId && c.rarity === card.rarity;
+    }).length;
+    return dupeCount > 1;
+  };
+
   return (
     <div className="space-y-4">
       {/* Header */}
@@ -394,7 +431,10 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
         )}
         <div className="flex-1">
           <h2 className="font-display text-lg tracking-wider">MY COLLECTION</h2>
-          <p className="text-xs text-muted-foreground">{totalOwned} / {totalPossible} cards collected</p>
+          <p className="text-xs text-muted-foreground">
+            {totalOwned} / {totalPossible} cards collected
+            {duplicateCount > 0 && <span className="text-yellow-500/70 ml-1">({duplicateCount} duplicate{duplicateCount !== 1 ? 's' : ''})</span>}
+          </p>
         </div>
       </div>
 
@@ -630,6 +670,22 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
                         >
                           <Download className="w-3 h-3 mr-1" />
                           DOWNLOAD
+                        </Button>
+                      )}
+                      {owned && isDuplicateCard(owned) && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-xs font-display tracking-wider text-red-400 hover:text-red-300 hover:bg-red-500/10"
+                          onClick={() => {
+                            if (confirm('Discard this duplicate card?')) {
+                              handleDiscardCard(owned.id);
+                              setFullViewItem(null);
+                            }
+                          }}
+                        >
+                          <Trash2 className="w-3 h-3 mr-1" />
+                          DISCARD
                         </Button>
                       )}
                     </div>

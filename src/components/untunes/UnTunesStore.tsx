@@ -147,9 +147,26 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
         return;
       }
 
-      // Success — show pack opening
+      // Success — map purchase cards with cover art then show pack opening
       setPackType(type);
-      setPackCards(data.cards || []);
+      const rawCards = data.cards || [];
+      const mapped: PackCard[] = rawCards.map((c: any) => {
+        const track = tracks.find(t => t.id === c.track_id);
+        const album = albums.find(a => a.id === c.album_id);
+        const coverUrl = track?.cover_url || album?.cover_url || '';
+        const title = track?.title || album?.title || '';
+        return {
+          id: c.id,
+          rarity: c.rarity || 'standard',
+          track_id: c.track_id || null,
+          album_id: c.album_id || null,
+          brand_card_id: c.brand_card_id || null,
+          edition_number: c.edition || c.edition_number || 0,
+          un_tunes_tracks: c.track_id ? { title, cover_url: coverUrl } : null,
+          un_tunes_albums: c.album_id && !c.track_id ? { title, cover_url: coverUrl } : null,
+        };
+      });
+      setPackCards(mapped);
       refreshBalance();
       toast.success(`${data.tokensSpent || 0} tokens spent`);
     } catch (err) {
@@ -470,6 +487,12 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
             purchaseType={packType}
             onClose={handlePackClose}
             onMarkOpened={handleMarkOpened}
+            onDiscardCard={async (cardId: string) => {
+              try {
+                await (supabase as any).rpc('discard_card', { _card_id: cardId, _uid: user?.id });
+                toast.success('Duplicate discarded');
+              } catch { /* silent */ }
+            }}
           />
         )}
       </AnimatePresence>
