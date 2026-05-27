@@ -7,7 +7,7 @@ import {
   Users, UserCheck, Clock, Eye, MessageSquare,
   Check, X, Loader2, UserPlus, UserCog,
   Dumbbell, Footprints, Utensils, Brain, MoreHorizontal,
-  UserMinus, RotateCcw, Trash2, ArrowLeft, ChevronRight
+  UserMinus, RotateCcw, Trash2, ArrowLeft, ChevronRight, Flame, Sparkles
 } from 'lucide-react';
 import {
   AlertDialog,
@@ -34,6 +34,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
+import { motion, AnimatePresence } from 'framer-motion';
 
 type Tab = 'athletes' | 'checkins' | 'clients' | 'requests';
 
@@ -94,256 +95,343 @@ const CoachDashboard = ({ embedded = false }: { embedded?: boolean }) => {
 
   const content = (
     <>
-      {/* Quick Stats */}
-      <div className="grid grid-cols-3 gap-2 mb-4">
-        <div className="rounded-xl border border-primary/15 bg-card p-3 text-center">
-          <p className="font-display text-2xl text-primary">{myAthletes.length}</p>
+      {/* Quick Stats — glowing cards */}
+      <div className="grid grid-cols-3 gap-2 mb-5">
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0 }}
+          className="rounded-xl border border-primary/20 bg-gradient-to-b from-primary/5 to-card p-3.5 text-center"
+          style={{ boxShadow: '0 0 20px rgba(255,85,0,0.06)' }}
+        >
+          <p className="font-display text-2xl text-primary" style={{ textShadow: '0 0 12px rgba(255,85,0,0.3)' }}>{myAthletes.length}</p>
           <p className="text-[10px] font-display tracking-wider text-muted-foreground mt-0.5">ATHLETES</p>
-        </div>
-        <div className="rounded-xl border border-primary/15 bg-card p-3 text-center">
-          <p className="font-display text-2xl text-primary">{pendingRequests.length}</p>
+        </motion.div>
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.05 }}
+          className="rounded-xl border border-primary/20 bg-gradient-to-b from-primary/5 to-card p-3.5 text-center"
+          style={{ boxShadow: '0 0 20px rgba(255,85,0,0.06)' }}
+        >
+          <p className="font-display text-2xl text-primary" style={{ textShadow: '0 0 12px rgba(255,85,0,0.3)' }}>{pendingRequests.length}</p>
           <p className="text-[10px] font-display tracking-wider text-muted-foreground mt-0.5">PENDING</p>
-        </div>
-        <Link to="/coach-profile-edit" className="rounded-xl border border-primary/15 bg-card p-3 text-center hover:border-primary/40 transition-colors">
-          <UserCog className="w-6 h-6 text-primary mx-auto" />
-          <p className="text-[10px] font-display tracking-wider text-muted-foreground mt-0.5">MY PROFILE</p>
-        </Link>
+        </motion.div>
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+        >
+          <Link to="/coach-profile-edit" className="block rounded-xl border border-primary/20 bg-gradient-to-b from-primary/5 to-card p-3.5 text-center hover:border-primary/40 transition-all" style={{ boxShadow: '0 0 20px rgba(255,85,0,0.06)' }}>
+            <UserCog className="w-6 h-6 text-primary mx-auto" />
+            <p className="text-[10px] font-display tracking-wider text-muted-foreground mt-0.5">MY PROFILE</p>
+          </Link>
+        </motion.div>
       </div>
 
-      {/* Command Centre CTA */}
-      <Link to="/command-centre" className="block mb-4">
-        <div className="rounded-xl border border-primary/20 bg-primary/5 p-3 flex items-center justify-between hover:border-primary/40 transition-colors">
-          <div className="flex items-center gap-3">
-            <MessageSquare className="w-5 h-5 text-primary" />
-            <div>
-              <p className="font-display text-xs tracking-wider text-foreground">COMMAND CENTRE</p>
-              <p className="text-[10px] text-muted-foreground">Discord-style client messaging hub</p>
+      {/* Command Centre + Build Programme — side by side */}
+      <div className="grid grid-cols-2 gap-2 mb-5">
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.12 }}>
+          <Link to="/command-centre" className="block">
+            <div className="rounded-xl border border-primary/20 bg-card p-3.5 hover:border-primary/40 hover:bg-primary/5 transition-all group">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">
+                  <MessageSquare className="w-4 h-4 text-primary" />
+                </div>
+                <div className="min-w-0">
+                  <p className="font-display text-[11px] tracking-wider text-foreground">COMMAND</p>
+                  <p className="font-display text-[11px] tracking-wider text-foreground">CENTRE</p>
+                </div>
+              </div>
+              <p className="text-[9px] text-muted-foreground mt-2 leading-relaxed">Discord-style client messaging</p>
             </div>
-          </div>
-          <ChevronRight className="w-4 h-4 text-primary" />
-        </div>
-      </Link>
-
-      {/* Build Plan Dropdown */}
-      <div className="flex justify-center mb-4">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <button className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-primary/20 bg-primary/5 text-primary font-display text-xs tracking-wider hover:border-primary/40 transition-all">
-              <Dumbbell className="w-4 h-4" />
-              BUILD PROGRAMME
-              <ChevronRight className="w-3.5 h-3.5" />
-            </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="center" className="bg-card border-border">
-            {buildPlanOptions.map(opt => (
-              <DropdownMenuItem key={opt.path} onClick={() => navigate(opt.path)} className="text-muted-foreground hover:text-white focus:bg-primary/10">
-                <opt.icon className="w-4 h-4 mr-2 text-primary" />
-                {opt.label}
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
+          </Link>
+        </motion.div>
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="w-full text-left rounded-xl border border-primary/20 bg-card p-3.5 hover:border-primary/40 hover:bg-primary/5 transition-all group">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">
+                    <Dumbbell className="w-4 h-4 text-primary" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="font-display text-[11px] tracking-wider text-foreground">BUILD</p>
+                    <p className="font-display text-[11px] tracking-wider text-foreground">PROGRAMME</p>
+                  </div>
+                </div>
+                <p className="text-[9px] text-muted-foreground mt-2 leading-relaxed">Power · Movement · Fuel · Mind</p>
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="center" className="bg-card border-border">
+              {buildPlanOptions.map(opt => (
+                <DropdownMenuItem key={opt.path} onClick={() => navigate(opt.path)} className="text-muted-foreground hover:text-white focus:bg-primary/10">
+                  <opt.icon className="w-4 h-4 mr-2 text-primary" />
+                  {opt.label}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </motion.div>
       </div>
 
-      {/* Tab bar */}
-      <div className="flex gap-1 overflow-x-auto pb-1 mb-4 scrollbar-hide">
-        {tabItems.map(t => (
-          <button
-            key={t.id}
-            onClick={() => setActiveTab(t.id)}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-display tracking-wider whitespace-nowrap transition-all ${
-              activeTab === t.id
-                ? 'bg-primary text-white'
-                : 'border border-primary/30 text-muted-foreground hover:border-primary/60'
-            }`}
-          >
-            <t.icon className="w-3.5 h-3.5" />
-            {t.label}
-            {t.badge && t.badge > 0 ? (
-              <span className="ml-1 bg-red-600 text-white text-[9px] rounded-full w-4 h-4 flex items-center justify-center">
-                {t.badge}
-              </span>
-            ) : null}
-          </button>
-        ))}
+      {/* Tab bar — animated pills */}
+      <div className="flex gap-1.5 overflow-x-auto pb-1 mb-4 scrollbar-hide">
+        {tabItems.map((t, i) => {
+          const isActive = activeTab === t.id;
+          return (
+            <motion.button
+              key={t.id}
+              onClick={() => setActiveTab(t.id)}
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.18 + i * 0.04 }}
+              whileTap={{ scale: 0.96 }}
+              className={`relative flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-[11px] font-display tracking-wider whitespace-nowrap transition-all ${
+                isActive
+                  ? 'bg-primary/15 border border-primary/40 text-primary'
+                  : 'border border-border bg-card/50 text-muted-foreground hover:border-primary/20'
+              }`}
+              style={isActive ? { boxShadow: '0 0 12px rgba(255,85,0,0.12)' } : undefined}
+            >
+              <t.icon className="w-3.5 h-3.5" />
+              {t.label}
+              {t.badge && t.badge > 0 ? (
+                <span className="ml-0.5 bg-red-600 text-white text-[9px] rounded-full w-4 h-4 flex items-center justify-center animate-pulse">
+                  {t.badge}
+                </span>
+              ) : null}
+              {isActive && (
+                <motion.div
+                  layoutId="coachTabDot"
+                  className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-primary"
+                />
+              )}
+            </motion.button>
+          );
+        })}
       </div>
 
-      {/* Tab Content */}
-      {activeTab === 'athletes' && (
-        <div className="space-y-2">
-          {loading ? (
-            <div className="flex justify-center py-12">
-              <Loader2 className="w-6 h-6 animate-spin text-primary" />
-            </div>
-          ) : myAthletes.length === 0 && !showDeactivated ? (
-            <div className="rounded-xl border border-border bg-card py-12 text-center">
-              <Users className="w-10 h-10 mx-auto text-muted-foreground mb-3" />
-              <p className="text-muted-foreground text-sm">No athletes assigned yet</p>
-              <p className="text-xs text-muted-foreground mt-1">Use the USERS tab to search and add athletes</p>
-            </div>
-          ) : (
-            <>
-              {myAthletes.map(a => (
-                <div key={a.id} className="rounded-xl border border-border bg-card p-3 flex items-center justify-between hover:border-primary/20 transition-colors">
+      {/* Tab Content — animated transitions */}
+      <AnimatePresence mode="wait">
+        {activeTab === 'athletes' && (
+          <motion.div key="athletes" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-2">
+            {loading ? (
+              <div className="flex justify-center py-12">
+                <Loader2 className="w-6 h-6 animate-spin text-primary" />
+              </div>
+            ) : myAthletes.length === 0 && !showDeactivated ? (
+              <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="rounded-xl border border-border bg-card py-12 text-center"
+              >
+                <div className="w-14 h-14 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto mb-3">
+                  <Users className="w-7 h-7 text-primary" />
+                </div>
+                <p className="text-muted-foreground text-sm font-display tracking-wide">NO ATHLETES YET</p>
+                <p className="text-xs text-muted-foreground mt-1">Use the USERS tab to search and add athletes</p>
+              </motion.div>
+            ) : (
+              <>
+                {myAthletes.map((a, idx) => (
+                  <motion.div
+                    key={a.id}
+                    initial={{ opacity: 0, x: -8 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: idx * 0.04 }}
+                    className="rounded-xl border border-border bg-card p-3 flex items-center justify-between hover:border-primary/20 transition-all group"
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <Avatar className="h-10 w-10 shrink-0 border border-primary/20 group-hover:border-primary/40 transition-colors">
+                        <AvatarImage src={a.athlete_profile?.avatar_url || undefined} />
+                        <AvatarFallback className="font-display text-sm bg-primary/10 text-primary">
+                          {(a.athlete_profile?.display_name || '?')[0].toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="min-w-0">
+                        <p className="font-display text-sm tracking-wide text-foreground truncate">
+                          {a.athlete_profile?.display_name || 'Unknown'}
+                        </p>
+                        <p className="text-[11px] text-muted-foreground truncate">
+                          @{a.athlete_profile?.username || 'unknown'}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1 shrink-0">
+                      <button
+                        className="p-2 rounded-lg hover:bg-primary/10 text-muted-foreground hover:text-primary transition-colors"
+                        onClick={() => setSelectedAthleteId(a.athlete_id)}
+                        title="View athlete data"
+                      >
+                        <Eye className="w-4 h-4" />
+                      </button>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <button className="p-2 rounded-lg hover:bg-white/5 text-muted-foreground hover:text-foreground transition-colors">
+                            <MoreHorizontal className="w-4 h-4" />
+                          </button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="bg-card border-border">
+                          <DropdownMenuItem onClick={() => navigate(`/inbox?compose=1&to=${a.athlete_id}`)} className="text-muted-foreground focus:bg-primary/10">
+                            <MessageSquare className="w-4 h-4 mr-2 text-primary" /> Message
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => navigate(`/user/${a.athlete_id}`)} className="text-muted-foreground focus:bg-primary/10">
+                            <Eye className="w-4 h-4 mr-2 text-primary" /> View Profile
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator className="bg-card" />
+                          <DropdownMenuItem onClick={() => updateStatus(a.id, 'ended')} className="text-muted-foreground focus:bg-primary/10">
+                            <UserMinus className="w-4 h-4 mr-2" /> Deactivate
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => setConfirmRemoveId(a.id)} className="text-primary focus:bg-primary/10">
+                            <Trash2 className="w-4 h-4 mr-2" /> Remove
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                  </motion.div>
+                ))}
+
+                {endedAthletes.length > 0 && (
+                  <div className="flex items-center justify-between pt-2">
+                    <span className="text-xs text-muted-foreground font-display tracking-wide">SHOW DEACTIVATED ({endedAthletes.length})</span>
+                    <Switch checked={showDeactivated} onCheckedChange={setShowDeactivated} />
+                  </div>
+                )}
+
+                {showDeactivated && endedAthletes.map(a => (
+                  <div key={a.id} className="rounded-xl border border-border bg-card p-3 flex items-center justify-between opacity-50">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <Avatar className="h-10 w-10 shrink-0">
+                        <AvatarImage src={a.athlete_profile?.avatar_url || undefined} />
+                        <AvatarFallback className="font-display text-sm">{(a.athlete_profile?.display_name || '?')[0].toUpperCase()}</AvatarFallback>
+                      </Avatar>
+                      <div className="min-w-0">
+                        <p className="font-display text-sm tracking-wide text-foreground truncate">{a.athlete_profile?.display_name || 'Unknown'}</p>
+                        <span className="text-[9px] font-display tracking-wider text-muted-foreground border border-border rounded px-1.5 py-0.5">DEACTIVATED</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1 shrink-0">
+                      <button onClick={() => updateStatus(a.id, 'active')} className="flex items-center gap-1 px-2 py-1 rounded text-xs text-muted-foreground hover:text-foreground hover:bg-white/5 transition-colors">
+                        <RotateCcw className="w-3 h-3" /> Reactivate
+                      </button>
+                      <button onClick={() => setConfirmRemoveId(a.id)} className="p-1.5 rounded hover:bg-primary/10 text-primary transition-colors">
+                        <Trash2 className="w-3 h-3" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </>
+            )}
+          </motion.div>
+        )}
+
+        {activeTab === 'checkins' && (
+          <motion.div key="checkins" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            <CheckInsTab />
+          </motion.div>
+        )}
+        {activeTab === 'clients' && (
+          <motion.div key="clients" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            <ClientSearchPanel />
+          </motion.div>
+        )}
+
+        {activeTab === 'requests' && (
+          <motion.div key="requests" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-2">
+            {loading ? (
+              <div className="flex justify-center py-12">
+                <Loader2 className="w-6 h-6 animate-spin text-primary" />
+              </div>
+            ) : pendingRequests.length === 0 ? (
+              <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="rounded-xl border border-border bg-card py-12 text-center"
+              >
+                <div className="w-14 h-14 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto mb-3">
+                  <Clock className="w-7 h-7 text-primary" />
+                </div>
+                <p className="text-muted-foreground text-sm font-display tracking-wide">NO PENDING REQUESTS</p>
+                <p className="text-xs text-muted-foreground mt-1">New requests will appear here</p>
+              </motion.div>
+            ) : (
+              pendingRequests.map((r, idx) => (
+                <motion.div
+                  key={r.id}
+                  initial={{ opacity: 0, x: -8 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: idx * 0.05 }}
+                  className="rounded-xl border border-primary/20 bg-card p-3.5 flex items-center justify-between"
+                  style={{ boxShadow: '0 0 15px rgba(255,85,0,0.06)' }}
+                >
                   <div className="flex items-center gap-3 min-w-0">
                     <Avatar className="h-10 w-10 shrink-0 border border-primary/20">
-                      <AvatarImage src={a.athlete_profile?.avatar_url || undefined} />
+                      <AvatarImage src={r.athlete_profile?.avatar_url || undefined} />
                       <AvatarFallback className="font-display text-sm bg-primary/10 text-primary">
-                        {(a.athlete_profile?.display_name || '?')[0].toUpperCase()}
+                        {(r.athlete_profile?.display_name || '?')[0].toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
                     <div className="min-w-0">
-                      <p className="font-display text-sm tracking-wide text-foreground truncate">
-                        {a.athlete_profile?.display_name || 'Unknown'}
-                      </p>
-                      <p className="text-[11px] text-muted-foreground truncate">
-                        @{a.athlete_profile?.username || 'unknown'}
+                      <p className="font-display text-sm tracking-wide text-foreground truncate">{r.athlete_profile?.display_name || 'Unknown'}</p>
+                      <p className="text-[11px] text-muted-foreground flex items-center gap-1">
+                        <Sparkles className="w-3 h-3 text-primary" /> Coaching request
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-1 shrink-0">
+                  <div className="flex items-center gap-2 shrink-0">
                     <button
-                      className="p-2 rounded-lg hover:bg-white/5 text-muted-foreground hover:text-foreground transition-colors"
-                      onClick={() => setSelectedAthleteId(a.athlete_id)}
-                      title="View athlete data"
+                      onClick={() => updateStatus(r.id, 'active')}
+                      className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-primary text-white font-display text-[11px] tracking-wider hover:bg-primary/80 transition-colors"
+                      style={{ boxShadow: '0 0 10px rgba(255,85,0,0.2)' }}
                     >
-                      <Eye className="w-4 h-4" />
+                      <Check className="w-3.5 h-3.5" /> ACCEPT
                     </button>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <button className="p-2 rounded-lg hover:bg-white/5 text-muted-foreground hover:text-foreground transition-colors">
-                          <MoreHorizontal className="w-4 h-4" />
-                        </button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="bg-card border-border">
-                        <DropdownMenuItem onClick={() => navigate(`/inbox?compose=1&to=${a.athlete_id}`)} className="text-muted-foreground focus:bg-primary/10">
-                          <MessageSquare className="w-4 h-4 mr-2 text-primary" /> Message
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => navigate(`/user/${a.athlete_id}`)} className="text-muted-foreground focus:bg-primary/10">
-                          <Eye className="w-4 h-4 mr-2 text-primary" /> View Profile
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator className="bg-card" />
-                        <DropdownMenuItem onClick={() => updateStatus(a.id, 'ended')} className="text-muted-foreground focus:bg-primary/10">
-                          <UserMinus className="w-4 h-4 mr-2" /> Deactivate
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => setConfirmRemoveId(a.id)} className="text-primary focus:bg-primary/10">
-                          <Trash2 className="w-4 h-4 mr-2" /> Remove
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
-                </div>
-              ))}
-
-              {endedAthletes.length > 0 && (
-                <div className="flex items-center justify-between pt-2">
-                  <span className="text-xs text-muted-foreground font-display tracking-wide">SHOW DEACTIVATED ({endedAthletes.length})</span>
-                  <Switch checked={showDeactivated} onCheckedChange={setShowDeactivated} />
-                </div>
-              )}
-
-              {showDeactivated && endedAthletes.map(a => (
-                <div key={a.id} className="rounded-xl border border-border bg-card p-3 flex items-center justify-between opacity-50">
-                  <div className="flex items-center gap-3 min-w-0">
-                    <Avatar className="h-10 w-10 shrink-0">
-                      <AvatarImage src={a.athlete_profile?.avatar_url || undefined} />
-                      <AvatarFallback className="font-display text-sm">{(a.athlete_profile?.display_name || '?')[0].toUpperCase()}</AvatarFallback>
-                    </Avatar>
-                    <div className="min-w-0">
-                      <p className="font-display text-sm tracking-wide text-foreground truncate">{a.athlete_profile?.display_name || 'Unknown'}</p>
-                      <span className="text-[9px] font-display tracking-wider text-muted-foreground border border-border rounded px-1.5 py-0.5">DEACTIVATED</span>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-1 shrink-0">
-                    <button onClick={() => updateStatus(a.id, 'active')} className="flex items-center gap-1 px-2 py-1 rounded text-xs text-muted-foreground hover:text-foreground hover:bg-white/5 transition-colors">
-                      <RotateCcw className="w-3 h-3" /> Reactivate
-                    </button>
-                    <button onClick={() => setConfirmRemoveId(a.id)} className="p-1.5 rounded hover:bg-primary/10 text-primary transition-colors">
-                      <Trash2 className="w-3 h-3" />
+                    <button
+                      onClick={() => updateStatus(r.id, 'declined')}
+                      className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-border text-muted-foreground font-display text-[11px] tracking-wider hover:border-gray-500 transition-colors"
+                    >
+                      <X className="w-3.5 h-3.5" /> DECLINE
                     </button>
                   </div>
-                </div>
-              ))}
-            </>
-          )}
-        </div>
-      )}
-
-      {activeTab === 'checkins' && <CheckInsTab />}
-      {activeTab === 'clients' && <ClientSearchPanel />}
-
-      {activeTab === 'requests' && (
-        <div className="space-y-2">
-          {loading ? (
-            <div className="flex justify-center py-12">
-              <Loader2 className="w-6 h-6 animate-spin text-primary" />
-            </div>
-          ) : pendingRequests.length === 0 ? (
-            <div className="rounded-xl border border-border bg-card py-12 text-center">
-              <Clock className="w-10 h-10 mx-auto text-muted-foreground mb-3" />
-              <p className="text-muted-foreground text-sm">No pending requests</p>
-            </div>
-          ) : (
-            pendingRequests.map(r => (
-              <div key={r.id} className="rounded-xl border border-border bg-card p-3 flex items-center justify-between">
-                <div className="flex items-center gap-3 min-w-0">
-                  <Avatar className="h-10 w-10 shrink-0 border border-primary/20">
-                    <AvatarImage src={r.athlete_profile?.avatar_url || undefined} />
-                    <AvatarFallback className="font-display text-sm bg-primary/10 text-primary">
-                      {(r.athlete_profile?.display_name || '?')[0].toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="min-w-0">
-                    <p className="font-display text-sm tracking-wide text-foreground truncate">{r.athlete_profile?.display_name || 'Unknown'}</p>
-                    <p className="text-[11px] text-muted-foreground">Coaching request</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2 shrink-0">
-                  <button
-                    onClick={() => updateStatus(r.id, 'active')}
-                    className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-primary text-white font-display text-[11px] tracking-wider hover:bg-primary/80 transition-colors"
-                  >
-                    <Check className="w-3.5 h-3.5" /> ACCEPT
-                  </button>
-                  <button
-                    onClick={() => updateStatus(r.id, 'declined')}
-                    className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-border text-muted-foreground font-display text-[11px] tracking-wider hover:border-gray-500 transition-colors"
-                  >
-                    <X className="w-3.5 h-3.5" /> DECLINE
-                  </button>
-                </div>
-              </div>
-            ))
-          )}
-        </div>
-      )}
+                </motion.div>
+              ))
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 
   if (embedded) return <>{content}{confirmDialog}</>;
 
   return (
-    <div className="min-h-screen pb-24" >
+    <div className="min-h-screen pb-24">
       {/* Back nav */}
       <div className="px-4 pt-4">
-        <button onClick={() => navigate(-1)} className="flex items-center gap-1 text-muted-foreground text-sm hover:text-muted-foreground transition-colors">
+        <button onClick={() => navigate(-1)} className="flex items-center gap-1 text-muted-foreground text-sm hover:text-foreground transition-colors">
           <ArrowLeft className="w-4 h-4" /> Home
         </button>
       </div>
 
-      {/* Compact Hero */}
-      <div className="relative px-4 pt-3 pb-5 overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none"
-          style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(255,85,0,0.08), transparent 70%)' }} />
-        <div className="relative z-10">
-          <h1 className="font-display text-2xl tracking-wider text-center">
+      {/* Hero */}
+      <div className="relative px-4 pt-5 pb-6 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent pointer-events-none" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-[250px] bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+        <motion.div
+          className="relative z-10"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <h1 className="font-display text-3xl tracking-wider text-center">
             <span className="text-primary" style={{ textShadow: '0 0 20px rgba(255,85,0,0.4)' }}>121</span>
             <span className="text-foreground"> COACHING</span>
           </h1>
-          <p className="text-center text-muted-foreground text-sm mt-1 font-display tracking-wide">
-            MANAGE ATHLETES & BUILD PROGRAMMES
+          <p className="text-center text-muted-foreground text-sm mt-1.5 font-display tracking-wide">
+            MANAGE ATHLETES · BUILD PROGRAMMES
           </p>
-        </div>
+        </motion.div>
       </div>
 
       <div className="px-4">

@@ -35,7 +35,7 @@ export default function UniversityCertificate() {
     (a: any) => a.level === levelNum && a.is_final && a.passed && (a.course_type || 'gym') === ct
   );
 
-  if (!user) return <Navigate to="/auth" replace />;
+  if (!user) return <Navigate to="/signin" replace />;
 
   const userName = profile?.display_name || profile?.username || 'Student';
   const completedDate = passedAssessment?.attempted_at || new Date().toISOString();

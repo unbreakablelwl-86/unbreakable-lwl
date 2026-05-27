@@ -247,7 +247,7 @@ type GameState = "idle" | "playing" | "gameover" | "leaderboard";
 const WordChainGame = () => {
   const { user } = useAuth();
   const { topScores, userBest, saveScore, refetch } = useWordChainScores();
-  const { muted, toggleMute, playTick, playSuccess, playFail, playGameOver, playLevelUp } = useGameAudio("maths");
+  const { isMuted, toggleMute, playHit, playLevelUp, playGameOver, startMusic, stopMusic } = useGameAudio("wordchain");
 
   const [gameState, setGameState] = useState<GameState>("idle");
   const [score, setScore] = useState(0);
@@ -298,7 +298,7 @@ const WordChainGame = () => {
           clearInterval(timerRef.current!);
           return 0;
         }
-        if (prev <= 4) playTick();
+        if (prev <= 4) playHit();
         return prev - 1;
       });
     }, 1000);
@@ -330,35 +330,35 @@ const WordChainGame = () => {
 
     if (word.length < stage.minLen) {
       setFeedback({ text: `Min ${stage.minLen} letters!`, ok: false });
-      playFail();
+      playGameOver();
       setChain(0);
       return;
     }
 
     if (word[0] !== lastLetter) {
       setFeedback({ text: `Must start with "${lastLetter.toUpperCase()}"`, ok: false });
-      playFail();
+      playGameOver();
       setChain(0);
       return;
     }
 
     if (usedWords.has(word)) {
       setFeedback({ text: "Already used!", ok: false });
-      playFail();
+      playGameOver();
       setChain(0);
       return;
     }
 
     if (!VALID_WORDS.has(word)) {
       setFeedback({ text: "Not a valid word!", ok: false });
-      playFail();
+      playGameOver();
       setChain(0);
       return;
     }
 
     // Valid word!
     const wordScore = word.length * 10 + (chain * 5);
-    playSuccess();
+    playLevelUp();
     setScore(prev => prev + wordScore);
     setWordsFound(prev => prev + 1);
     setChain(prev => {
@@ -488,7 +488,7 @@ const WordChainGame = () => {
           <div className="flex items-center gap-3">
             <span className="font-display text-lg text-primary" style={{ textShadow: "0 0 10px rgba(255,85,0,0.4)" }}>{score}</span>
             <button onClick={toggleMute} className="text-muted-foreground hover:text-foreground">
-              {muted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+              {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
             </button>
           </div>
         </div>

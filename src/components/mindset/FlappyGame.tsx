@@ -31,7 +31,7 @@ type GameState = "idle" | "playing" | "gameover" | "leaderboard";
 const FlappyGame = () => {
   const { user } = useAuth();
   const { topScores, userBest, saveScore, refetch } = useFlappyScores();
-  const { muted, toggleMute, playTick, playSuccess, playFail, playGameOver, playLevelUp } = useGameAudio("flow");
+  const { isMuted, toggleMute, playHit, playLevelUp, playGameOver, startMusic, stopMusic } = useGameAudio("flappy");
 
   const [gameState, setGameState] = useState<GameState>("idle");
   const [score, setScore] = useState(0);
@@ -206,8 +206,8 @@ const FlappyGame = () => {
     const s = stateRef.current;
     if (!s.alive) return;
     s.birdVy = FLAP_FORCE;
-    playTick();
-  }, [playTick]);
+    playHit();
+  }, [playHit]);
 
   const spawnPipe = (): Pipe => {
     const minTop = 60;
@@ -252,7 +252,7 @@ const FlappyGame = () => {
         p.scored = true;
         s.score++;
         setScore(s.score);
-        playSuccess();
+        playHit();
         if (s.score > 0 && s.score % 10 === 0) playLevelUp();
       }
     }
@@ -296,7 +296,7 @@ const FlappyGame = () => {
     }
 
     rafRef.current = requestAnimationFrame(gameLoop);
-  }, [playSuccess, playGameOver, playLevelUp, user, saveScore]);
+  }, [playHit, playGameOver, playLevelUp, user, saveScore]);
 
   const startGame = useCallback(() => {
     const s = stateRef.current;
@@ -448,7 +448,7 @@ const FlappyGame = () => {
         <div className="flex items-center justify-between w-full px-2 mb-1">
           <span className="font-display text-xs tracking-wider text-muted-foreground">RISE UP</span>
           <button onClick={toggleMute} className="text-muted-foreground hover:text-foreground">
-            {muted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+            {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
           </button>
         </div>
         <canvas
