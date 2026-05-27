@@ -24,7 +24,7 @@ function formatTime(seconds: number): string {
  * Tapping opens the expanded full-screen player.
  */
 export function FloatingMiniPlayer() {
-  const { state, togglePlay, nextTrack, prevTrack, seekTo, setVolume, toggleShuffle, toggleRepeat, stop } = usePlayer();
+  const { state, togglePlay, nextTrack, prevTrack, seekTo, setVolume, toggleShuffle, toggleRepeat, stop, hasFullAccess, ownedTrackIds } = usePlayer();
   const { isLiked, toggleLike } = useLikeTrack();
   const [expanded, setExpanded] = useState(false);
   const [showVolume, setShowVolume] = useState(false);

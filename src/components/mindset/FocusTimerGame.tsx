@@ -448,6 +448,13 @@ const FocusTimerGame = () => {
                 SESSION IN PROGRESS • DON'T BREAK THE CHAIN
               </p>
             </motion.div>
+            {/* Mute toggle on lock screen */}
+            <button
+              onClick={(e) => { e.stopPropagation(); toggleMute(); }}
+              className="mt-8 h-12 w-12 rounded-full border border-white/10 flex items-center justify-center text-muted-foreground hover:text-primary transition-colors"
+            >
+              {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+            </button>
           </motion.div>
         )}
       </AnimatePresence>

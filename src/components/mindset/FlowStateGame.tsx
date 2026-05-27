@@ -36,8 +36,8 @@ const getStageIdx = (score: number) => {
 };
 
 // Canvas
-const W = 360;
-const H = 500;
+const W = 420;
+const H = 600;
 const GROUND_Y = H - 60;
 const PLAYER_W = 28;
 const PLAYER_H = 36;
@@ -108,7 +108,7 @@ const FlowStateGame = () => {
 // Responsive
   const [scale, setScale] = useState(1);
   useEffect(() => {
-    const upd = () => setScale(Math.min((Math.min(window.innerWidth - 32, 500)) / W, 1.2));
+    const upd = () => setScale(Math.min((Math.min(window.innerWidth - 24, 560)) / W, 1.3));
     upd(); window.addEventListener("resize", upd); return () => window.removeEventListener("resize", upd);
   }, []);
 
