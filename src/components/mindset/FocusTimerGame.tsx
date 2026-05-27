@@ -6,6 +6,7 @@ import { useGameAudio } from "@/hooks/useGameAudio";
 import { useAuth } from "@/hooks/useAuth";
 import { useFocusTimerScores } from "@/hooks/useFocusTimerScores";
 import { GameLeaderboard } from "./GameLeaderboard";
+import { GameAudioControls } from "./GameAudioControls";
 
 // ═══════════════════════════════════════════════════════════════
 // ZONE — FOCUS TIMER · POMODORO+
@@ -67,7 +68,7 @@ const FocusTimerGame = () => {
 
   const { user } = useAuth();
   const { saveScore: saveDbScore, topScores, userBest, refetch } = useFocusTimerScores();
-  const { playHit, playLevelUp, playGameOver, startMusic, stopMusic, toggleMute, isMuted } = useGameAudio("focus");
+  const { playHit, playLevelUp, playGameOver, startMusic, stopMusic, toggleMute, isMuted, sfxMuted, musicMuted, toggleSfx, toggleMusic } = useGameAudio("focus");
 // Timer logic
   useEffect(() => {
     if (!isRunning) {
@@ -263,9 +264,7 @@ const FocusTimerGame = () => {
                   <p className="font-display text-xs text-primary">{streak}</p>
                 </div>
               )}
-              <Button variant="ghost" size="sm" onClick={toggleMute} className="h-8 w-8 p-0 text-muted-foreground hover:text-primary">
-                {isMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
-              </Button>
+              <GameAudioControls sfxMuted={sfxMuted} musicMuted={musicMuted} toggleSfx={toggleSfx} toggleMusic={toggleMusic} />
             </div>
           </div>
 

@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { RotateCcw, Play, Trophy, Volume2, VolumeX } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { GameLeaderboard } from "./GameLeaderboard";
+import { GameAudioControls } from "./GameAudioControls";
 import { useAuth } from "@/hooks/useAuth";
 import { useReactionScores } from "@/hooks/useReactionScores";
 
@@ -112,7 +113,7 @@ const ReactionTrainerGame = () => {
 
   const { user } = useAuth();
   const { topScores, userBest, saveScore, refetch } = useReactionScores();
-  const { playHit, playLevelUp, playGameOver, startMusic, stopMusic, toggleMute, isMuted } = useGameAudio("reaction");
+  const { playHit, playLevelUp, playGameOver, startMusic, stopMusic, toggleMute, isMuted, sfxMuted, musicMuted, toggleSfx, toggleMusic } = useGameAudio("reaction");
   // ─── Start Game ────────────────────────────────────────────
   const startGame = useCallback(() => {
     targetIdRef.current = 0;

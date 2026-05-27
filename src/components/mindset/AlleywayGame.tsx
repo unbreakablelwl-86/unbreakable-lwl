@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { RotateCcw, Play, Pause, Trophy, Volume2, VolumeX } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { GameLeaderboard } from "./GameLeaderboard";
+import { GameAudioControls } from "./GameAudioControls";
 import { useAuth } from "@/hooks/useAuth";
 import { useAlleywayScores } from "@/hooks/useAlleywayScores";
 
@@ -199,7 +200,7 @@ const AlleywayGame = () => {
 
   const { user } = useAuth();
   const { saveScore, topScores, userBest, refetch } = useAlleywayScores();
-  const { playHit, playLevelUp, playGameOver, startMusic, stopMusic, toggleMute, isMuted } = useGameAudio("alleyway");
+  const { playHit, playLevelUp, playGameOver, startMusic, stopMusic, toggleMute, isMuted, sfxMuted, musicMuted, toggleSfx, toggleMusic } = useGameAudio("alleyway");
 
   const [scale, setScale] = useState(1);
   useEffect(() => {
@@ -1072,9 +1073,7 @@ const AlleywayGame = () => {
             <p className="font-display text-[10px] tracking-widest text-muted-foreground">BEST</p>
             <p className="font-display text-xl tracking-wide text-primary">{Math.max(highScore, userBest || 0)}</p>
           </div>
-          <Button variant="ghost" size="sm" onClick={toggleMute} className="h-8 w-8 p-0 text-muted-foreground hover:text-primary">
-            {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
-          </Button>
+          <GameAudioControls sfxMuted={sfxMuted} musicMuted={musicMuted} toggleSfx={toggleSfx} toggleMusic={toggleMusic} />
         </div>
       </div>
 

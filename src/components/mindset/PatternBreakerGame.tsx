@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { RotateCcw, Trophy, Volume2, VolumeX } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { GameLeaderboard } from "./GameLeaderboard";
+import { GameAudioControls } from "./GameAudioControls";
 import { useAuth } from "@/hooks/useAuth";
 import { usePatternBreakerScores } from "@/hooks/usePatternBreakerScores";
 
@@ -115,7 +116,7 @@ const PatternBreakerGame = () => {
 
   const { user } = useAuth();
   const { topScores, userBest, saveScore, refetch } = usePatternBreakerScores();
-  const { playHit, playLevelUp, playGameOver, startMusic, stopMusic, toggleMute, isMuted } = useGameAudio("pattern");
+  const { playHit, playLevelUp, playGameOver, startMusic, stopMusic, toggleMute, isMuted, sfxMuted, musicMuted, toggleSfx, toggleMusic } = useGameAudio("pattern");
 
   // ─── Boot sequence ─────────────────────────────────────────
 

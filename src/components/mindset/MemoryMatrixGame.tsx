@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { RotateCcw, Trophy, Volume2, VolumeX } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { GameLeaderboard } from "./GameLeaderboard";
+import { GameAudioControls } from "./GameAudioControls";
 import { useAuth } from "@/hooks/useAuth";
 import { useMemoryMatrixScores } from "@/hooks/useMemoryMatrixScores";
 
@@ -122,7 +123,7 @@ const MemoryMatrixGame = () => {
 
   const { user } = useAuth();
   const { topScores, userBest, saveScore, refetch } = useMemoryMatrixScores();
-  const { playHit, playLevelUp, playGameOver, startMusic, stopMusic, toggleMute, isMuted } = useGameAudio("memory");
+  const { playHit, playLevelUp, playGameOver, startMusic, stopMusic, toggleMute, isMuted, sfxMuted, musicMuted, toggleSfx, toggleMusic } = useGameAudio("memory");
 
   // ─── Boot sequence ─────────────────────────────────────────
 

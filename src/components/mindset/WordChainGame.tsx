@@ -6,6 +6,7 @@ import { useGameAudio } from "@/hooks/useGameAudio";
 import { useAuth } from "@/hooks/useAuth";
 import { useWordChainScores } from "@/hooks/useWordChainScores";
 import { GameLeaderboard } from "./GameLeaderboard";
+import { GameAudioControls } from "./GameAudioControls";
 
 // ═══════════════════════════════════════════════════════════════
 // WORDSMITH — INFINITE WORD CHAIN. PROGRESSIVE DIFFICULTY.
@@ -247,7 +248,7 @@ type GameState = "idle" | "playing" | "gameover" | "leaderboard";
 const WordChainGame = () => {
   const { user } = useAuth();
   const { topScores, userBest, saveScore, refetch } = useWordChainScores();
-  const { isMuted, toggleMute, playHit, playLevelUp, playGameOver, startMusic, stopMusic } = useGameAudio("wordchain");
+  const { isMuted, toggleMute, playHit, playLevelUp, playGameOver, startMusic, stopMusic, sfxMuted, musicMuted, toggleSfx, toggleMusic } = useGameAudio("wordchain");
 
   const [gameState, setGameState] = useState<GameState>("idle");
   const [score, setScore] = useState(0);

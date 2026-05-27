@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/hooks/useAuth";
 import { useSnakeScores } from "@/hooks/useSnakeScores";
 import { GameLeaderboard } from "./GameLeaderboard";
+import { GameAudioControls } from "./GameAudioControls";
 import { useGameAudio } from "@/hooks/useGameAudio";
 
 // ─── Types ───────────────────────────────────────────────────
@@ -879,9 +880,7 @@ const SnakeGame = () => {
             <p className="font-display text-[10px] tracking-wider text-muted-foreground">BEST</p>
             <p className="font-display text-base sm:text-lg tracking-wide text-primary leading-none">{Math.max(highScore, userBest || 0)}</p>
           </div>
-          <Button variant="ghost" size="sm" onClick={audio.toggleMute} className="h-8 w-8 p-0 text-muted-foreground hover:text-primary">
-            {audio.isMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
-          </Button>
+          <GameAudioControls sfxMuted={audio.sfxMuted} musicMuted={audio.musicMuted} toggleSfx={audio.toggleSfx} toggleMusic={audio.toggleMusic} />
         </div>
       </div>
 

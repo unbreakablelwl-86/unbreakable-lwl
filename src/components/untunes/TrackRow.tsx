@@ -76,7 +76,7 @@ export function UnTunesTrackRow({ track, index, onPlay, onShare, isLiked, onTogg
         <p className={`text-sm truncate ${isActive ? 'text-primary font-medium' : 'text-foreground'}`}>
           {track.title}
         </p>
-        <p className="text-[10px] text-muted-foreground truncate">
+        <p className="text-[10px] text-white/70 truncate">
           {track.artist_name || 'Unknown Artist'}
         </p>
       </div>
@@ -88,7 +88,7 @@ export function UnTunesTrackRow({ track, index, onPlay, onShare, isLiked, onTogg
           className={`w-7 h-7 rounded-lg flex items-center justify-center transition-all ${
             isLiked
               ? 'text-primary drop-shadow-[0_0_6px_rgba(255,85,0,0.5)]'
-              : 'text-muted-foreground/40 opacity-0 group-hover:opacity-100 hover:text-primary/70'
+              : 'text-white/60 opacity-0 group-hover:opacity-100 hover:text-primary'
           }`}
           title={isLiked ? 'Unlike' : 'Like'}
         >
@@ -103,7 +103,7 @@ export function UnTunesTrackRow({ track, index, onPlay, onShare, isLiked, onTogg
           className={`w-7 h-7 rounded-lg flex items-center justify-center transition-all ${
             justAdded
               ? 'text-green-500'
-              : 'text-muted-foreground/40 opacity-0 group-hover:opacity-100 hover:text-primary/70'
+              : 'text-white/60 opacity-0 group-hover:opacity-100 hover:text-primary'
           }`}
           title="Add to playlist"
         >
@@ -122,7 +122,7 @@ export function UnTunesTrackRow({ track, index, onPlay, onShare, isLiked, onTogg
       )}
 
       {/* Duration */}
-      <span className="text-[10px] text-muted-foreground shrink-0 tabular-nums">
+      <span className="text-[10px] text-white/60 shrink-0 tabular-nums">
         {track.duration_seconds ? formatDuration(track.duration_seconds) : '--:--'}
       </span>
     </div>

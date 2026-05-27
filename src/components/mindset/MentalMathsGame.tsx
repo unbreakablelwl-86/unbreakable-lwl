@@ -6,6 +6,7 @@ import { useGameAudio } from "@/hooks/useGameAudio";
 import { useAuth } from "@/hooks/useAuth";
 import { useMentalMathsScores } from "@/hooks/useMentalMathsScores";
 import { GameLeaderboard } from "./GameLeaderboard";
+import { GameAudioControls } from "./GameAudioControls";
 
 // ═══════════════════════════════════════════════════════════════
 // SOLVE — RAPID FIRE MATHS. ZERO HESITATION.
@@ -110,7 +111,7 @@ const MentalMathsGame = () => {
 
   const { user } = useAuth();
   const { saveScore: saveDbScore, topScores, userBest, refetch } = useMentalMathsScores();
-  const { playHit, playLevelUp, playGameOver, startMusic, stopMusic, toggleMute, isMuted } = useGameAudio("maths");
+  const { playHit, playLevelUp, playGameOver, startMusic, stopMusic, toggleMute, isMuted, sfxMuted, musicMuted, toggleSfx, toggleMusic } = useGameAudio("maths");
 const nextQuestion = useCallback((solvedCount: number) => {
     const stage = getStage(solvedCount);
     const q = generateQuestion(stage);
@@ -302,9 +303,7 @@ const nextQuestion = useCallback((solvedCount: number) => {
                     <div key={i} className={`w-2.5 h-2.5 rounded-full ${i < lives ? "bg-primary shadow-[0_0_6px_rgba(255,85,0,0.5)]" : "bg-white/10"}`} />
                   ))}
                 </div>
-                <Button variant="ghost" size="sm" onClick={toggleMute} className="h-8 w-8 p-0 text-muted-foreground hover:text-primary">
-                  {isMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
-                </Button>
+                <GameAudioControls sfxMuted={sfxMuted} musicMuted={musicMuted} toggleSfx={toggleSfx} toggleMusic={toggleMusic} />
               </div>
             </div>
 

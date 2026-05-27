@@ -305,7 +305,7 @@ export function FloatingMiniPlayer() {
             {/* Track Info */}
             <div className="px-6 text-center mb-4">
               <h3 className="text-lg font-bold text-foreground truncate">{track.title}</h3>
-              <p className="text-sm text-muted-foreground">{track.artist_name || 'Unknown Artist'}</p>
+              <p className="text-sm text-white/80">{track.artist_name || 'Unknown Artist'}</p>
             </div>
 
             {/* Progress */}
@@ -324,8 +324,8 @@ export function FloatingMiniPlayer() {
                 />
               </div>
               <div className="flex justify-between mt-1.5">
-                <span className="text-[10px] text-muted-foreground tabular-nums">{formatTime(state.currentTime)}</span>
-                <span className="text-[10px] text-muted-foreground tabular-nums">{formatTime(state.duration)}</span>
+                <span className="text-[10px] text-white/70 tabular-nums">{formatTime(state.currentTime)}</span>
+                <span className="text-[10px] text-white/70 tabular-nums">{formatTime(state.duration)}</span>
               </div>
             </div>
 
@@ -333,7 +333,7 @@ export function FloatingMiniPlayer() {
             <div className="flex items-center justify-center gap-6 px-6 mb-4">
               <button
                 onClick={toggleShuffle}
-                className={`transition-colors ${state.shuffle ? 'text-primary drop-shadow-[0_0_6px_rgba(255,85,0,0.5)]' : 'text-muted-foreground hover:text-foreground'}`}
+                className={`transition-colors ${state.shuffle ? 'text-primary drop-shadow-[0_0_6px_rgba(255,85,0,0.5)]' : 'text-white hover:text-primary'}`}
               >
                 <Shuffle className="w-4 h-4" />
               </button>
@@ -355,7 +355,7 @@ export function FloatingMiniPlayer() {
               </button>
               <button
                 onClick={toggleRepeat}
-                className={`transition-colors ${state.repeat !== 'off' ? 'text-primary drop-shadow-[0_0_6px_rgba(255,85,0,0.5)]' : 'text-muted-foreground hover:text-foreground'}`}
+                className={`transition-colors ${state.repeat !== 'off' ? 'text-primary drop-shadow-[0_0_6px_rgba(255,85,0,0.5)]' : 'text-white hover:text-primary'}`}
               >
                 {state.repeat === 'one' ? <Repeat1 className="w-4 h-4" /> : <Repeat className="w-4 h-4" />}
               </button>
@@ -366,21 +366,34 @@ export function FloatingMiniPlayer() {
               <button
                 onClick={() => track && toggleLike(track.id)}
                 className={`transition-colors ${
-                  track && isLiked(track.id) ? 'text-primary drop-shadow-[0_0_6px_rgba(255,85,0,0.5)]' : 'text-muted-foreground hover:text-primary'
+                  track && isLiked(track.id) ? 'text-primary drop-shadow-[0_0_6px_rgba(255,85,0,0.5)]' : 'text-white hover:text-primary'
                 }`}
               >
                 <Dumbbell className="w-5 h-5" />
               </button>
-              <button onClick={() => setShowShareSheet(true)} className="text-muted-foreground hover:text-primary transition-colors">
+              <button onClick={() => setShowShareSheet(true)} className="text-white hover:text-primary transition-colors">
                 <MessageSquare className="w-5 h-5" />
               </button>
-              <button onClick={handleShare} className="text-muted-foreground hover:text-primary transition-colors">
+              <button onClick={handleShare} className="text-white hover:text-primary transition-colors">
                 <Share2 className="w-5 h-5" />
               </button>
-              <button onClick={handleShareSocial} className="text-muted-foreground hover:text-primary transition-colors">
+              <button
+                onClick={() => {
+                  if (hasFullAccess || ownedTrackIds.has(track.id)) {
+                    handleShareSocial();
+                  } else {
+                    toast.error('Purchase this track to download');
+                  }
+                }}
+                className={`transition-colors ${
+                  hasFullAccess || ownedTrackIds.has(track.id)
+                    ? 'text-white hover:text-primary'
+                    : 'text-white/30 hover:text-white/50'
+                }`}
+              >
                 <Download className="w-5 h-5" />
               </button>
-              <button onClick={() => setShowVolume(!showVolume)} className="text-muted-foreground hover:text-primary transition-colors">
+              <button onClick={() => setShowVolume(!showVolume)} className="text-white hover:text-primary transition-colors">
                 {state.volume === 0 ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
               </button>
             </div>

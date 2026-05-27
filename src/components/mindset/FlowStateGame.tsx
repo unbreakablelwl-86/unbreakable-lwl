@@ -6,6 +6,7 @@ import { useGameAudio } from "@/hooks/useGameAudio";
 import { useAuth } from "@/hooks/useAuth";
 import { useFlowScores } from "@/hooks/useFlowScores";
 import { GameLeaderboard } from "./GameLeaderboard";
+import { GameAudioControls } from "./GameAudioControls";
 
 // ═══════════════════════════════════════════════════════════════
 // FLOW — STAY IN THE ZONE.
@@ -97,7 +98,7 @@ const FlowStateGame = () => {
   const { user } = useAuth();
   const { saveScore: saveDbScore, topScores, userBest, refetch } = useFlowScores();
 
-  const { playHit, playLevelUp, playGameOver, startMusic, stopMusic, toggleMute, isMuted } = useGameAudio("flow");
+  const { playHit, playLevelUp, playGameOver, startMusic, stopMusic, toggleMute, isMuted, sfxMuted, musicMuted, toggleSfx, toggleMusic } = useGameAudio("flow");
 
   // Stat refs
   const obstDodgedRef = useRef(0);
@@ -577,9 +578,7 @@ const FlowStateGame = () => {
             <p className="font-display text-[10px] tracking-wider text-muted-foreground">BEST</p>
             <p className="font-display text-lg tracking-wide text-primary leading-none">{Math.max(personalBest, score)}</p>
           </div>
-          <Button variant="ghost" size="sm" onClick={toggleMute} className="h-8 w-8 p-0 text-muted-foreground hover:text-primary">
-            {isMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
-          </Button>
+          <GameAudioControls sfxMuted={sfxMuted} musicMuted={musicMuted} toggleSfx={toggleSfx} toggleMusic={toggleMusic} />
         </div>
       </div>
 
