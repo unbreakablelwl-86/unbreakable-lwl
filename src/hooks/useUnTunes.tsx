@@ -168,8 +168,9 @@ export function usePlayerProvider() {
   const prevTrackRef = useRef<() => void>(() => {});
   const togglePlayRef = useRef<() => void>(() => {});
 
-  // Full access = dev account
-  const hasFullAccess = isDev;
+  // Full access = dev role OR known dev user IDs (hardcoded fallback)
+  const DEV_USER_IDS = ['3a61bd9e-785b-4512-abab-e61b87496c54'];
+  const hasFullAccess = isDev || (user?.id ? DEV_USER_IDS.includes(user.id) : false);
 
   // Is current track a preview?
   const isPreview = useMemo(() => {
