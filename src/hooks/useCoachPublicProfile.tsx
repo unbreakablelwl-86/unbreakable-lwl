@@ -15,6 +15,7 @@ export interface CoachPublicProfile {
   ideal_client: string | null;
   check_in_frequency: string;
   max_clients: number;
+  current_clients: number;
   accepting_clients: boolean;
   monthly_price_gbp: number | null;
   // 1-to-1 pricing

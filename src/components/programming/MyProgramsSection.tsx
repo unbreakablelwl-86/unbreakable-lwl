@@ -250,102 +250,115 @@ export function MyProgramsSection() {
               )}
             </div>
 
-            {/* Actions row — full width buttons */}
-            <div className="flex items-center gap-2 pt-3 border-t border-border/50">
-              {program.is_active ? (
-                <>
+            {/* Actions — two rows for clean mobile layout */}
+            <div className="space-y-2 pt-3 border-t border-border/50">
+              {/* Row 1: Primary action + Pause/Resume */}
+              <div className="flex items-center gap-2">
+                {program.is_active ? (
+                  <>
+                    <Button
+                      variant="default"
+                      size="sm"
+                      onClick={(e) => handleResumeProgramme(program.id, e)}
+                      className="gap-1.5 flex-1"
+                    >
+                      <Target className="w-4 h-4" />
+                      Track Session
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={(e) => handleDeactivate(program.id, e)}
+                      disabled={deactivateProgram.isPending}
+                      className="gap-1.5"
+                    >
+                      {deactivateProgram.isPending ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <Pause className="w-4 h-4" />
+                      )}
+                      Pause
+                    </Button>
+                  </>
+                ) : program.status === 'paused' ? (
                   <Button
                     variant="default"
                     size="sm"
-                    onClick={(e) => handleResumeProgramme(program.id, e)}
+                    onClick={async (e) => {
+                      e.stopPropagation();
+                      try {
+                        await startProgrammeExecution.mutateAsync(program.id);
+                        setExecutingProgramId(program.id);
+                        setExpandedProgramId(null);
+                      } catch { /* handled by mutation */ }
+                    }}
+                    disabled={startProgrammeExecution.isPending || !canActivateMore}
                     className="gap-1.5 flex-1"
+                    title={!canActivateMore ? `Maximum ${maxActivePrograms} active programmes` : undefined}
                   >
-                    <Target className="w-4 h-4" />
-                    Track Session
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={(e) => handleDeactivate(program.id, e)}
-                    disabled={deactivateProgram.isPending}
-                    className="gap-1.5"
-                  >
-                    {deactivateProgram.isPending ? (
+                    {startProgrammeExecution.isPending ? (
                       <Loader2 className="w-4 h-4 animate-spin" />
                     ) : (
-                      <Pause className="w-4 h-4" />
+                      <Play className="w-4 h-4" />
                     )}
-                    Pause
+                    Resume — Week {program.current_week}, Day {program.current_day}
                   </Button>
-                </>
-              ) : program.status === 'paused' ? (
-                /* Paused programme — Resume button (skip date picker, just reactivate) */
+                ) : (
+                  <Button
+                    variant="default"
+                    size="sm"
+                    onClick={(e) => handleStartProgramme(program.id, e)}
+                    disabled={startProgrammeExecution.isPending || !canActivateMore}
+                    className="gap-1.5 flex-1"
+                    title={!canActivateMore ? `Maximum ${maxActivePrograms} active programmes` : undefined}
+                  >
+                    {startProgrammeExecution.isPending ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Play className="w-4 h-4" />
+                    )}
+                    Start Programme
+                  </Button>
+                )}
+              </div>
+              {/* Row 2: View Plan + Session Logs + Edit + Delete */}
+              <div className="flex items-center gap-2">
                 <Button
-                  variant="default"
+                  variant="outline"
                   size="sm"
-                  onClick={async (e) => {
-                    e.stopPropagation();
-                    try {
-                      await startProgrammeExecution.mutateAsync(program.id);
-                      setExecutingProgramId(program.id);
-                      setExpandedProgramId(null);
-                    } catch { /* handled by mutation */ }
-                  }}
-                  disabled={startProgrammeExecution.isPending || !canActivateMore}
-                  className="gap-1.5 flex-1"
-                  title={!canActivateMore ? `Maximum ${maxActivePrograms} active programmes` : undefined}
+                  onClick={(e) => { e.stopPropagation(); handleExpandProgram(program.id); }}
+                  className={`gap-1.5 flex-1 ${expandedProgramId === program.id ? 'border-primary/40 bg-primary/5 text-primary' : ''}`}
                 >
-                  {startProgrammeExecution.isPending ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    <Play className="w-4 h-4" />
-                  )}
-                  Resume — Week {program.current_week}, Day {program.current_day}
+                  <Eye className="w-4 h-4" />
+                  View Plan
+                  <ChevronDown className={`w-3.5 h-3.5 transition-transform ${expandedProgramId === program.id ? 'rotate-180' : ''}`} />
                 </Button>
-              ) : (
+                {(program.is_active || program.status === 'paused' || program.status === 'completed') && (
+                  <Link to="/programming/logs" onClick={(e) => e.stopPropagation()}>
+                    <Button variant="outline" size="sm" className="gap-1.5">
+                      <Clock className="w-4 h-4" />
+                      Logs
+                    </Button>
+                  </Link>
+                )}
                 <Button
-                  variant="default"
-                  size="sm"
-                  onClick={(e) => handleStartProgramme(program.id, e)}
-                  disabled={startProgrammeExecution.isPending || !canActivateMore}
-                  className="gap-1.5 flex-1"
-                  title={!canActivateMore ? `Maximum ${maxActivePrograms} active programmes` : undefined}
+                  variant="ghost"
+                  size="icon"
+                  onClick={(e) => { e.stopPropagation(); setEditingProgramId(program.id); }}
+                  title="Edit programme"
+                  className="shrink-0"
                 >
-                  {startProgrammeExecution.isPending ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    <Play className="w-4 h-4" />
-                  )}
-                  Start Programme
+                  <Edit className="w-4 h-4" />
                 </Button>
-              )}
-              {/* View Plan dropdown toggle */}
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={(e) => { e.stopPropagation(); handleExpandProgram(program.id); }}
-                className={`gap-1.5 ${expandedProgramId === program.id ? 'border-primary/40 bg-primary/5 text-primary' : ''}`}
-              >
-                <Eye className="w-4 h-4" />
-                View Plan
-                <ChevronDown className={`w-3.5 h-3.5 transition-transform ${expandedProgramId === program.id ? 'rotate-180' : ''}`} />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={(e) => { e.stopPropagation(); setEditingProgramId(program.id); }}
-                title="Edit programme"
-              >
-                <Edit className="w-4 h-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={(e) => handleDelete(program.id, e)}
-                className="text-destructive hover:text-destructive"
-              >
-                <Trash2 className="w-4 h-4" />
-              </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={(e) => handleDelete(program.id, e)}
+                  className="text-destructive hover:text-destructive shrink-0"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </Button>
+              </div>
             </div>
           </Card>
 

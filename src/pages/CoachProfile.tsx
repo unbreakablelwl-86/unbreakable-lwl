@@ -89,6 +89,37 @@ export default function CoachProfile() {
               FULLY BOOKED
             </span>
           )}
+
+          {/* Availability fuel meter */}
+          {(() => {
+            const taken = profile.current_clients || 0;
+            const max = profile.max_clients || 20;
+            const remaining = Math.max(max - taken, 0);
+            const pct = max > 0 ? Math.min((taken / max) * 100, 100) : 0;
+            return (
+              <div className="w-full max-w-xs mx-auto space-y-1">
+                <div className="flex items-center justify-between text-[10px] font-display tracking-wider">
+                  <span className="text-muted-foreground">AVAILABILITY</span>
+                  <span className="text-foreground">
+                    <span className="text-primary">{remaining}</span> / {max} spots
+                  </span>
+                </div>
+                <div className="h-2.5 rounded-full bg-muted/50 border border-border overflow-hidden">
+                  <div
+                    className="h-full rounded-full transition-all duration-500"
+                    style={{
+                      width: `${pct}%`,
+                      background: pct >= 90 ? 'hsl(0 70% 50%)' : pct >= 70 ? 'hsl(30 90% 50%)' : 'hsl(var(--primary))',
+                      boxShadow: `0 0 6px ${pct >= 90 ? 'hsl(0 70% 50% / 0.4)' : 'hsl(var(--primary) / 0.3)'}`,
+                    }}
+                  />
+                </div>
+                <p className="text-[9px] text-muted-foreground text-center">
+                  {pct >= 100 ? 'Fully booked — join the waitlist' : pct >= 80 ? 'Almost full — limited spots remaining!' : `${remaining} coaching spots available`}
+                </p>
+              </div>
+            );
+          })()}
         </div>
 
         {/* Bio */}
@@ -112,10 +143,10 @@ export default function CoachProfile() {
             <p className="font-display text-sm text-foreground">{freqLabel}</p>
             <p className="text-[9px] font-display tracking-wider text-muted-foreground">CHECK-INS</p>
           </div>
-          {profile.monthly_price_gbp && (
+          {profile.online_monthly_rate && (
             <div className="rounded-xl border border-primary/15 bg-card p-3 text-center">
               <PoundSterling className="w-5 h-5 text-primary mx-auto mb-1" />
-              <p className="font-display text-lg text-foreground">£{profile.monthly_price_gbp}</p>
+              <p className="font-display text-lg text-foreground">£{profile.online_monthly_rate}</p>
               <p className="text-[9px] font-display tracking-wider text-muted-foreground">/MONTH</p>
             </div>
           )}
@@ -198,9 +229,9 @@ export default function CoachProfile() {
           <div className="rounded-xl border border-primary/20 bg-primary/5 p-6 text-center space-y-3">
             <h2 className="font-display tracking-wide text-lg text-foreground">READY TO START?</h2>
             <p className="text-sm text-muted-foreground">
-              {profile.monthly_price_gbp
-                ? `From £${profile.monthly_price_gbp}/month with ${freqLabel.toLowerCase()} check-ins.`
-                : `${freqLabel} check-ins included.`}
+              {profile.online_monthly_rate
+                ? `Online 1-2-1 coaching from £${profile.online_monthly_rate}/month — includes ${freqLabel.toLowerCase()} check-ins, bespoke programming & ongoing support.`
+                : `1-2-1 coaching with ${freqLabel.toLowerCase()} check-ins, bespoke programming & ongoing support.`}
             </p>
             <Link to="/my-coaching">
               <button className="flex items-center gap-2 mx-auto px-5 py-2.5 rounded-xl bg-primary text-white font-display text-xs tracking-wider hover:bg-primary/80 transition-colors">

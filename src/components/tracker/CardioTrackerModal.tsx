@@ -142,7 +142,7 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
   // Post-session state (also used for manual entry)
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [visibility, setVisibility] = useState<'public' | 'friends' | 'private'>('public');
+  const [visibility, setVisibility] = useState<'public' | 'friends' | 'private'>('private');
 
   // Manual entry fields
   const [manualDistance, setManualDistance] = useState('');

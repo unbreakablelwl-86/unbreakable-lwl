@@ -41,6 +41,7 @@ export function CoachProfileEditor() {
   // Settings
   const [checkInFrequency, setCheckInFrequency] = useState('weekly');
   const [maxClients, setMaxClients] = useState('20');
+  const [currentClients, setCurrentClients] = useState('0');
   const [acceptingClients, setAcceptingClients] = useState(true);
   const [isPublished, setIsPublished] = useState(false);
 
@@ -78,6 +79,7 @@ export function CoachProfileEditor() {
       setIdealClient(profile.ideal_client || '');
       setCheckInFrequency(profile.check_in_frequency || 'weekly');
       setMaxClients(profile.max_clients?.toString() || '20');
+      setCurrentClients(profile.current_clients?.toString() || '0');
       setAcceptingClients(profile.accepting_clients ?? true);
       setMonthlyPrice(profile.monthly_price_gbp?.toString() || '');
       setOnlineMonthlyRate(profile.online_monthly_rate?.toString() || '');
@@ -107,6 +109,7 @@ export function CoachProfileEditor() {
       ideal_client: idealClient || null,
       check_in_frequency: checkInFrequency,
       max_clients: parseInt(maxClients) || 20,
+      current_clients: parseInt(currentClients) || 0,
       accepting_clients: acceptingClients,
       monthly_price_gbp: monthlyPrice ? parseFloat(monthlyPrice) : null,
       online_monthly_rate: onlineMonthlyRate ? parseFloat(onlineMonthlyRate) : null,
@@ -319,14 +322,11 @@ export function CoachProfileEditor() {
             </div>
           </div>
 
-          <div className="border-t border-border pt-3 grid grid-cols-2 gap-3">
+          <div className="border-t border-border pt-3">
             <div>
-              <Label className="text-[10px] font-display tracking-wide text-muted-foreground">ONLINE COACHING /MONTH (£)</Label>
+              <Label className="text-[10px] font-display tracking-wide text-muted-foreground">ONLINE 1-2-1 COACHING /MONTH (£)</Label>
               <Input type="number" step="0.01" value={onlineMonthlyRate} onChange={e => setOnlineMonthlyRate(e.target.value)} placeholder="99.00" className="mt-1" />
-            </div>
-            <div>
-              <Label className="text-[10px] font-display tracking-wide text-muted-foreground">WEEKLY CHECK-INS /MONTH (£)</Label>
-              <Input type="number" step="0.01" value={monthlyPrice} onChange={e => setMonthlyPrice(e.target.value)} placeholder="149.00" className="mt-1" />
+              <p className="text-[9px] text-muted-foreground mt-1">Includes weekly check-in, bespoke programming & ongoing support</p>
             </div>
           </div>
 
@@ -518,9 +518,49 @@ export function CoachProfileEditor() {
           <p className="font-display text-xs tracking-wider flex items-center gap-2">
             <Users className="w-3.5 h-3.5 text-primary" /> COACHING SETTINGS
           </p>
-          <div className="grid grid-cols-2 gap-3">
+
+          {/* Availability fuel meter */}
+          {(() => {
+            const taken = parseInt(currentClients) || 0;
+            const max = parseInt(maxClients) || 20;
+            const pct = max > 0 ? Math.min((taken / max) * 100, 100) : 0;
+            const remaining = Math.max(max - taken, 0);
+            return (
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-muted-foreground font-display tracking-wide">AVAILABILITY</span>
+                  <span className="font-display text-foreground">
+                    <span className="text-primary">{remaining}</span> / {max} spots open
+                  </span>
+                </div>
+                <div className="h-3 rounded-full bg-muted/50 border border-border overflow-hidden">
+                  <div
+                    className="h-full rounded-full transition-all duration-500"
+                    style={{
+                      width: `${pct}%`,
+                      background: pct >= 90 ? 'hsl(0 70% 50%)' : pct >= 70 ? 'hsl(30 90% 50%)' : 'hsl(var(--primary))',
+                      boxShadow: `0 0 8px ${pct >= 90 ? 'hsl(0 70% 50% / 0.4)' : 'hsl(var(--primary) / 0.3)'}`,
+                    }}
+                  />
+                </div>
+                <p className="text-[9px] text-muted-foreground">
+                  {pct >= 100 ? 'Fully booked!' : pct >= 80 ? 'Almost full — limited spots!' : `${taken} of ${max} client slots taken`}
+                </p>
+              </div>
+            );
+          })()}
+
+          <div className="grid grid-cols-3 gap-3">
             <div>
-              <Label className="text-[10px] font-display tracking-wide text-muted-foreground">CHECK-IN FREQUENCY</Label>
+              <Label className="text-[10px] font-display tracking-wide text-muted-foreground">TAKEN SLOTS</Label>
+              <Input type="number" value={currentClients} onChange={e => setCurrentClients(e.target.value)} className="mt-1" min="0" />
+            </div>
+            <div>
+              <Label className="text-[10px] font-display tracking-wide text-muted-foreground">MAX CLIENTS</Label>
+              <Input type="number" value={maxClients} onChange={e => setMaxClients(e.target.value)} className="mt-1" min="1" />
+            </div>
+            <div>
+              <Label className="text-[10px] font-display tracking-wide text-muted-foreground">CHECK-IN</Label>
               <Select value={checkInFrequency} onValueChange={setCheckInFrequency}>
                 <SelectTrigger className="mt-1 text-xs"><SelectValue /></SelectTrigger>
                 <SelectContent>
@@ -529,10 +569,6 @@ export function CoachProfileEditor() {
                   <SelectItem value="monthly">Monthly</SelectItem>
                 </SelectContent>
               </Select>
-            </div>
-            <div>
-              <Label className="text-[10px] font-display tracking-wide text-muted-foreground">MAX CLIENTS</Label>
-              <Input type="number" value={maxClients} onChange={e => setMaxClients(e.target.value)} className="mt-1" />
             </div>
           </div>
           <div className="flex items-center gap-2 pt-1">

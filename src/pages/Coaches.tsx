@@ -93,9 +93,9 @@ export default function Coaches() {
                             <Award className="w-3 h-3 mr-0.5" /> {coach.years_experience}yr
                           </Badge>
                         )}
-                        {coach.monthly_price_gbp && (
+                        {(coach.online_monthly_rate || coach.monthly_price_gbp) && (
                           <Badge variant="outline" className="text-[9px] font-display tracking-wide border-border text-muted-foreground">
-                            <PoundSterling className="w-3 h-3 mr-0.5" /> £{coach.monthly_price_gbp}/mo
+                            <PoundSterling className="w-3 h-3 mr-0.5" /> £{coach.online_monthly_rate || coach.monthly_price_gbp}/mo
                           </Badge>
                         )}
                       </div>

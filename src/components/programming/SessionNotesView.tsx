@@ -24,7 +24,7 @@ interface SessionNotesViewProps {
 
 export function SessionNotesView({
   initialNotes = '',
-  initialVisibility = 'public',
+  initialVisibility = 'private',
   initialMedia = [],
   onSave,
   onClose,

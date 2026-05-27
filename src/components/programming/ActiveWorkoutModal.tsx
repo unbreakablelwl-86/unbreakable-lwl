@@ -639,6 +639,37 @@ export function ActiveWorkoutModal({
         </AlertDialogHeader>
 
         <div className="space-y-4 py-2">
+          {/* Manual duration override */}
+          <div className="space-y-2">
+            <Label className="text-sm font-medium">Session duration</Label>
+            <div className="flex items-center gap-2 p-2 rounded bg-muted/30 border border-border">
+              <span className="text-xs text-muted-foreground whitespace-nowrap">Auto:</span>
+              <span className="text-sm font-display text-primary tabular-nums">{formatElapsed(elapsed)}</span>
+              <span className="text-xs text-muted-foreground mx-1">or set manually:</span>
+              <Input
+                type="number"
+                inputMode="numeric"
+                placeholder="Hrs"
+                value={manualHours}
+                onChange={(e) => setManualHours(e.target.value)}
+                className="h-7 w-14 text-center text-xs"
+                min="0"
+              />
+              <span className="text-xs text-muted-foreground">h</span>
+              <Input
+                type="number"
+                inputMode="numeric"
+                placeholder="Min"
+                value={manualMinutes}
+                onChange={(e) => setManualMinutes(e.target.value)}
+                className="h-7 w-14 text-center text-xs"
+                min="0"
+                max="59"
+              />
+              <span className="text-xs text-muted-foreground">m</span>
+            </div>
+          </div>
+
           {/* Post to timeline visibility */}
           <div className="space-y-2">
             <Label className="text-sm font-medium">Share to timeline?</Label>
