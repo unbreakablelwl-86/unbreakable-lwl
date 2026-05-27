@@ -13,8 +13,8 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/hooks/useAuth';
 import { useUserRole } from '@/hooks/useUserRole';
-import { usePlayer, useFeaturedTracks, useAllTracks, useArtists, useMyPlaylists, useMyArtistProfile, useSearchTracks, useLikeTrack, usePlaylistActions, useLikedTracks, useRecentlyPlayed, usePlaylistTracks } from '@/hooks/useUnTunes';
-import type { Track, Playlist } from '@/hooks/useUnTunes';
+import { usePlayer, useFeaturedTracks, useAllTracks, useArtists, useMyPlaylists, useMyArtistProfile, useSearchTracks, useLikeTrack, usePlaylistActions, useLikedTracks, useRecentlyPlayed, usePlaylistTracks, useAlbums, useAlbumTracks } from '@/hooks/useUnTunes';
+import type { Track, Playlist, Album } from '@/hooks/useUnTunes';
 import { UnTunesTrackRow } from '@/components/untunes/TrackRow';
 import { UnTunesArtistCard } from '@/components/untunes/ArtistCard';
 import { UnTunesArtistSignup } from '@/components/untunes/ArtistSignup';
@@ -39,7 +39,11 @@ export default function UnTunes() {
   const { tracks: featured, loading: featuredLoading } = useFeaturedTracks();
   const { tracks: allTracks, loading: allTracksLoading } = useAllTracks();
   const { artists, loading: artistsLoading } = useArtists();
+  const [browseView, setBrowseView] = useState<'trending' | 'albums' | 'all'>('trending');
   const [showFullLibrary, setShowFullLibrary] = useState(false);
+  const { albums, loading: albumsLoading } = useAlbums();
+  const [selectedAlbum, setSelectedAlbum] = useState<Album | null>(null);
+  const { tracks: albumTracks, loading: albumTracksLoading } = useAlbumTracks(selectedAlbum?.id || null);
   const { playlists } = useMyPlaylists();
   const { artist: myArtist, loading: artistLoading } = useMyArtistProfile();
   const { results: searchResults, loading: searchLoading, search } = useSearchTracks();
@@ -142,104 +146,221 @@ export default function UnTunes() {
           {activeTab === 'browse' && (
             <motion.div key="browse" {...fadeIn} className="space-y-8">
 
-              {/* Browse sub-tabs: Trending / All Tracks */}
-              <div className="flex gap-2">
+              {/* Browse sub-tabs: Trending / Albums / All Tracks */}
+              <div className="flex gap-2 flex-wrap">
                 <Button
-                  variant={!showFullLibrary ? 'default' : 'outline'}
+                  variant={browseView === 'trending' ? 'default' : 'outline'}
                   size="sm"
-                  onClick={() => setShowFullLibrary(false)}
+                  onClick={() => { setBrowseView('trending'); setSelectedAlbum(null); }}
                   className="text-[10px] font-display tracking-wider"
                 >
                   <TrendingUp className="w-3 h-3 mr-1" /> TRENDING
                 </Button>
                 <Button
-                  variant={showFullLibrary ? 'default' : 'outline'}
+                  variant={browseView === 'albums' ? 'default' : 'outline'}
                   size="sm"
-                  onClick={() => setShowFullLibrary(true)}
+                  onClick={() => { setBrowseView('albums'); setSelectedAlbum(null); }}
+                  className="text-[10px] font-display tracking-wider"
+                >
+                  <Disc3 className="w-3 h-3 mr-1" /> ALBUMS ({albums.length})
+                </Button>
+                <Button
+                  variant={browseView === 'all' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => { setBrowseView('all'); setSelectedAlbum(null); }}
                   className="text-[10px] font-display tracking-wider"
                 >
                   <Library className="w-3 h-3 mr-1" /> ALL TRACKS ({allTracks.length})
                 </Button>
               </div>
 
-              {/* Track listing */}
-              <div>
-                {!showFullLibrary ? (
-                  <>
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center gap-2">
-                        <TrendingUp className="w-4 h-4 text-primary drop-shadow-[0_0_6px_rgba(255,85,0,0.5)]" />
-                        <h2 className="font-display text-sm tracking-wider text-foreground">TRENDING NOW</h2>
+              {/* ── Albums View ── */}
+              {browseView === 'albums' && (
+                <div>
+                  {selectedAlbum ? (
+                    /* Album detail — track listing */
+                    <>
+                      <button
+                        onClick={() => setSelectedAlbum(null)}
+                        className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-4"
+                      >
+                        <ChevronRight className="w-4 h-4 rotate-180" /> Back to Albums
+                      </button>
+                      <div className="flex gap-4 mb-6">
+                        {selectedAlbum.cover_url ? (
+                          <img src={selectedAlbum.cover_url} alt={selectedAlbum.title} className="w-28 h-28 sm:w-36 sm:h-36 rounded-lg object-cover shadow-lg shadow-primary/10" />
+                        ) : (
+                          <div className="w-28 h-28 sm:w-36 sm:h-36 rounded-lg bg-card flex items-center justify-center">
+                            <Disc3 className="w-12 h-12 text-primary/30" />
+                          </div>
+                        )}
+                        <div className="flex flex-col justify-center">
+                          <p className="font-display text-[10px] tracking-widest text-primary uppercase">Album</p>
+                          <h2 className="font-display text-lg sm:text-xl tracking-wider text-foreground">{selectedAlbum.title}</h2>
+                          <p className="text-xs text-muted-foreground mt-1">{selectedAlbum.artist_name || 'UNBREAKABLE'}</p>
+                          <p className="text-[10px] text-muted-foreground/60 mt-1">{selectedAlbum.track_count} tracks</p>
+                          {selectedAlbum.description && (
+                            <p className="text-[10px] text-muted-foreground/80 mt-2 max-w-xs">{selectedAlbum.description}</p>
+                          )}
+                          <Button
+                            size="sm"
+                            className="mt-3 gap-1.5 text-[10px] font-display tracking-wider shadow-[0_0_12px_rgba(255,85,0,0.3)] w-fit"
+                            onClick={() => { if (albumTracks.length > 0) playTrack(albumTracks[0], albumTracks); }}
+                            disabled={albumTracksLoading || albumTracks.length === 0}
+                          >
+                            <Play className="w-3 h-3" /> PLAY ALL
+                          </Button>
+                        </div>
                       </div>
-                      <Badge variant="outline" className="text-[10px] font-display tracking-wider border-primary/30 text-primary">
-                        <Sparkles className="w-3 h-3 mr-1" /> TOP {featured.length}
-                      </Badge>
+                      {albumTracksLoading ? (
+                        <div className="flex items-center justify-center py-12">
+                          <Disc3 className="w-8 h-8 text-primary animate-spin" />
+                        </div>
+                      ) : (
+                        <div className="space-y-1">
+                          {albumTracks.map((track, i) => (
+                            <UnTunesTrackRow
+                              key={track.id}
+                              track={track}
+                              index={track.track_number || i + 1}
+                              onPlay={() => playTrack(track, albumTracks)}
+                              onShare={() => handleShareToTimeline(track)}
+                              isLiked={isLiked(track.id)}
+                              onToggleLike={() => toggleLike(track.id)}
+                              onAddToPlaylist={() => openPlaylistSheet(track)}
+                            />
+                          ))}
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    /* Album grid */
+                    <>
+                      <div className="flex items-center gap-2 mb-4">
+                        <Disc3 className="w-4 h-4 text-primary drop-shadow-[0_0_6px_rgba(255,85,0,0.5)]" />
+                        <h2 className="font-display text-sm tracking-wider text-foreground">ALBUMS</h2>
+                      </div>
+                      {albumsLoading ? (
+                        <div className="flex items-center justify-center py-12">
+                          <Disc3 className="w-8 h-8 text-primary animate-spin" />
+                        </div>
+                      ) : albums.length === 0 ? (
+                        <Card className="p-8 text-center border-border/50 bg-card/50">
+                          <Disc3 className="w-10 h-10 text-primary/20 mx-auto mb-3" />
+                          <p className="text-sm text-muted-foreground">No albums yet</p>
+                        </Card>
+                      ) : (
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                          {albums.map(album => (
+                            <button
+                              key={album.id}
+                              onClick={() => setSelectedAlbum(album)}
+                              className="text-left group"
+                            >
+                              <div className="aspect-square rounded-lg overflow-hidden bg-card border border-border/30 mb-2 relative shadow-md group-hover:shadow-primary/20 transition-shadow">
+                                {album.cover_url ? (
+                                  <img src={album.cover_url} alt={album.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                                ) : (
+                                  <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/20 to-primary/5">
+                                    <Disc3 className="w-12 h-12 text-primary/30" />
+                                  </div>
+                                )}
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-3">
+                                  <div className="bg-primary rounded-full p-2 shadow-lg">
+                                    <Play className="w-4 h-4 text-primary-foreground" />
+                                  </div>
+                                </div>
+                              </div>
+                              <p className="font-display text-xs tracking-wider text-foreground truncate">{album.title}</p>
+                              <p className="text-[10px] text-muted-foreground">{album.track_count} tracks</p>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </>
+                  )}
+                </div>
+              )}
+
+              {/* ── Trending View ── */}
+              {browseView === 'trending' && (
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-2">
+                      <TrendingUp className="w-4 h-4 text-primary drop-shadow-[0_0_6px_rgba(255,85,0,0.5)]" />
+                      <h2 className="font-display text-sm tracking-wider text-foreground">TRENDING NOW</h2>
                     </div>
-                    {featuredLoading ? (
-                      <div className="flex items-center justify-center py-12">
-                        <Disc3 className="w-8 h-8 text-primary animate-spin drop-shadow-[0_0_12px_rgba(255,85,0,0.5)]" />
-                      </div>
-                    ) : featured.length === 0 ? (
-                      <Card className="p-8 text-center border-border/50 bg-card/50">
-                        <Music className="w-10 h-10 text-primary/20 mx-auto mb-3" />
-                        <p className="text-sm text-muted-foreground mb-1">No tracks yet</p>
-                      </Card>
-                    ) : (
-                      <div className="space-y-1">
-                        {featured.map((track, i) => (
-                          <UnTunesTrackRow
-                            key={track.id}
-                            track={track}
-                            index={i + 1}
-                            onPlay={() => playTrack(track, featured)}
-                            onShare={() => handleShareToTimeline(track)}
-                            isLiked={isLiked(track.id)}
-                            onToggleLike={() => toggleLike(track.id)}
-                            onAddToPlaylist={() => openPlaylistSheet(track)}
-                          />
-                        ))}
-                      </div>
-                    )}
-                  </>
-                ) : (
-                  <>
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center gap-2">
-                        <Library className="w-4 h-4 text-primary drop-shadow-[0_0_6px_rgba(255,85,0,0.5)]" />
-                        <h2 className="font-display text-sm tracking-wider text-foreground">FULL LIBRARY</h2>
-                      </div>
-                      <Badge variant="outline" className="text-[10px] font-display tracking-wider border-primary/30 text-primary">
-                        {allTracks.length} TRACKS
-                      </Badge>
+                    <Badge variant="outline" className="text-[10px] font-display tracking-wider border-primary/30 text-primary">
+                      <Sparkles className="w-3 h-3 mr-1" /> TOP {featured.length}
+                    </Badge>
+                  </div>
+                  {featuredLoading ? (
+                    <div className="flex items-center justify-center py-12">
+                      <Disc3 className="w-8 h-8 text-primary animate-spin drop-shadow-[0_0_12px_rgba(255,85,0,0.5)]" />
                     </div>
-                    {allTracksLoading ? (
-                      <div className="flex items-center justify-center py-12">
-                        <Disc3 className="w-8 h-8 text-primary animate-spin drop-shadow-[0_0_12px_rgba(255,85,0,0.5)]" />
-                      </div>
-                    ) : allTracks.length === 0 ? (
-                      <Card className="p-8 text-center border-border/50 bg-card/50">
-                        <Music className="w-10 h-10 text-primary/20 mx-auto mb-3" />
-                        <p className="text-sm text-muted-foreground">No tracks in the library yet</p>
-                      </Card>
-                    ) : (
-                      <div className="space-y-1">
-                        {allTracks.map((track, i) => (
-                          <UnTunesTrackRow
-                            key={track.id}
-                            track={track}
-                            index={i + 1}
-                            onPlay={() => playTrack(track, allTracks)}
-                            onShare={() => handleShareToTimeline(track)}
-                            isLiked={isLiked(track.id)}
-                            onToggleLike={() => toggleLike(track.id)}
-                            onAddToPlaylist={() => openPlaylistSheet(track)}
-                          />
-                        ))}
-                      </div>
-                    )}
-                  </>
-                )}
-              </div>
+                  ) : featured.length === 0 ? (
+                    <Card className="p-8 text-center border-border/50 bg-card/50">
+                      <Music className="w-10 h-10 text-primary/20 mx-auto mb-3" />
+                      <p className="text-sm text-muted-foreground mb-1">No tracks yet</p>
+                    </Card>
+                  ) : (
+                    <div className="space-y-1">
+                      {featured.map((track, i) => (
+                        <UnTunesTrackRow
+                          key={track.id}
+                          track={track}
+                          index={i + 1}
+                          onPlay={() => playTrack(track, featured)}
+                          onShare={() => handleShareToTimeline(track)}
+                          isLiked={isLiked(track.id)}
+                          onToggleLike={() => toggleLike(track.id)}
+                          onAddToPlaylist={() => openPlaylistSheet(track)}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* ── All Tracks View ── */}
+              {browseView === 'all' && (
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-2">
+                      <Library className="w-4 h-4 text-primary drop-shadow-[0_0_6px_rgba(255,85,0,0.5)]" />
+                      <h2 className="font-display text-sm tracking-wider text-foreground">FULL LIBRARY</h2>
+                    </div>
+                    <Badge variant="outline" className="text-[10px] font-display tracking-wider border-primary/30 text-primary">
+                      {allTracks.length} TRACKS
+                    </Badge>
+                  </div>
+                  {allTracksLoading ? (
+                    <div className="flex items-center justify-center py-12">
+                      <Disc3 className="w-8 h-8 text-primary animate-spin drop-shadow-[0_0_12px_rgba(255,85,0,0.5)]" />
+                    </div>
+                  ) : allTracks.length === 0 ? (
+                    <Card className="p-8 text-center border-border/50 bg-card/50">
+                      <Music className="w-10 h-10 text-primary/20 mx-auto mb-3" />
+                      <p className="text-sm text-muted-foreground">No tracks in the library yet</p>
+                    </Card>
+                  ) : (
+                    <div className="space-y-1">
+                      {allTracks.map((track, i) => (
+                        <UnTunesTrackRow
+                          key={track.id}
+                          track={track}
+                          index={i + 1}
+                          onPlay={() => playTrack(track, allTracks)}
+                          onShare={() => handleShareToTimeline(track)}
+                          isLiked={isLiked(track.id)}
+                          onToggleLike={() => toggleLike(track.id)}
+                          onAddToPlaylist={() => openPlaylistSheet(track)}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* Featured Artists */}
               <div>

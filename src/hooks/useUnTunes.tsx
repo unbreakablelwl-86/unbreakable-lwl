@@ -768,3 +768,61 @@ export function usePlaylistTracks(playlistId: string | null) {
 
   return { tracks, loading, refresh };
 }
+
+/* ── Albums ── */
+
+export function useAlbums() {
+  const [albums, setAlbums] = useState<Album[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      const { data } = await supabase
+        .from('un_tunes_albums')
+        .select('*, un_tunes_artists(artist_name)')
+        .eq('album_type', 'album')
+        .order('release_date', { ascending: true });
+      if (data) {
+        setAlbums(
+          data.map((a: any) => ({
+            ...a,
+            artist_name: a.un_tunes_artists?.artist_name || 'UNBREAKABLE',
+            track_count: a.total_tracks || 0,
+          }))
+        );
+      }
+      setLoading(false);
+    })();
+  }, []);
+
+  return { albums, loading };
+}
+
+export function useAlbumTracks(albumId: string | null) {
+  const [tracks, setTracks] = useState<Track[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!albumId) { setTracks([]); return; }
+    setLoading(true);
+    (async () => {
+      const { data } = await supabase
+        .from('un_tunes_tracks')
+        .select('*, un_tunes_artists(artist_name, avatar_url)')
+        .eq('album_id', albumId)
+        .order('track_number', { ascending: true });
+      if (data) {
+        setTracks(
+          data.map((t: any) => ({
+            ...t,
+            artist_name: t.un_tunes_artists?.artist_name || 'Unknown',
+            artist_avatar: t.un_tunes_artists?.avatar_url || null,
+          }))
+        );
+      }
+      setLoading(false);
+    })();
+  }, [albumId]);
+
+  return { tracks, loading };
+}
