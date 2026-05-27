@@ -280,6 +280,10 @@ export function usePlayerProvider() {
 
   // ─── 30s preview enforcement ───
   useEffect(() => {
+    // Belt-and-suspenders: always skip enforcement for hardcoded dev IDs
+    // even if role-based hasFullAccess has a timing gap
+    const DEV_BYPASS = ['3a61bd9e-785b-4512-abab-e61b87496c54'];
+    if (user?.id && DEV_BYPASS.includes(user.id)) return;
     if (!isPreview || !audioRef.current) return;
     const audio = audioRef.current;
     
@@ -307,7 +311,7 @@ export function usePlayerProvider() {
 
     audio.addEventListener('timeupdate', checkPreview);
     return () => audio.removeEventListener('timeupdate', checkPreview);
-  }, [isPreview]);
+  }, [isPreview, user?.id]);
 
   // Reset preview fade flag on track change
   useEffect(() => {
