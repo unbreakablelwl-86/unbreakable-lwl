@@ -5,12 +5,13 @@
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Gavel, Tag, Clock, TrendingUp, ArrowLeft, Search, Filter, Coins, Diamond, Crown, Music, Star, AlertCircle } from 'lucide-react';
+import { Gavel, Tag, Clock, TrendingUp, ArrowLeft, Search, Filter, Coins, Diamond, Crown, Music, Star, AlertCircle, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 
 interface Listing {
   id: string;
@@ -213,6 +214,14 @@ export function AuctionHouse({ onBack }: AuctionHouseProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [bidModal, setBidModal] = useState<Listing | null>(null);
   const [bidAmount, setBidAmount] = useState('');
+  const [buyNowModal, setBuyNowModal] = useState<Listing | null>(null);
+  const [sellModal, setSellModal] = useState(false);
+  const [userCards, setUserCards] = useState<any[]>([]);
+  const [sellCardId, setSellCardId] = useState('');
+  const [sellType, setSellType] = useState<'auction' | 'fixed'>('fixed');
+  const [sellPrice, setSellPrice] = useState('');
+  const [sellBuyNow, setSellBuyNow] = useState('');
+  const [sellDuration, setSellDuration] = useState('24'); // hours
 
   useEffect(() => {
     (async () => {
@@ -282,6 +291,96 @@ export function AuctionHouse({ onBack }: AuctionHouseProps) {
     setBidAmount('');
   };
 
+  const handleBuyNow = async (listing: Listing) => {
+    if (!user) { toast.error('Sign in to buy'); return; }
+    const price = listing.buy_now_price || listing.starting_price;
+
+    try {
+      // Check balance
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('tokens')
+        .eq('id', user.id)
+        .single();
+
+      if (!profile || profile.tokens < price) {
+        toast.error(`Not enough tokens. Need ${price}, have ${profile?.tokens || 0}.`);
+        return;
+      }
+
+      // Deduct tokens from buyer, add to seller
+      await supabase.from('profiles').update({ tokens: profile.tokens - price }).eq('id', user.id);
+      await supabase.rpc('increment_tokens', { user_id: listing.seller_id, amount: price }).catch(() => {
+        // Fallback: direct update
+        supabase.from('profiles').select('tokens').eq('id', listing.seller_id).single().then(({ data: s }) => {
+          if (s) supabase.from('profiles').update({ tokens: s.tokens + price }).eq('id', listing.seller_id);
+        });
+      });
+
+      // Transfer card ownership
+      await supabase.from('un_tunes_user_cards').update({ user_id: user.id }).eq('id', listing.card_id);
+
+      // Close listing
+      await supabase.from('un_tunes_card_listings')
+        .update({ status: 'sold', current_bidder_id: user.id, current_bid: price, updated_at: new Date().toISOString() })
+        .eq('id', listing.id);
+
+      setListings(prev => prev.filter(l => l.id !== listing.id));
+      toast.success(`Purchased for ${price} tokens!`);
+      setBuyNowModal(null);
+    } catch (err) {
+      console.error('Buy now error:', err);
+      toast.error('Purchase failed');
+    }
+  };
+
+  const handleSellCard = async () => {
+    if (!user || !sellCardId || !sellPrice) return;
+    const price = parseInt(sellPrice);
+    const buyNow = sellBuyNow ? parseInt(sellBuyNow) : null;
+    const hours = parseInt(sellDuration) || 24;
+    const endsAt = new Date(Date.now() + hours * 3600000).toISOString();
+
+    try {
+      const { error } = await supabase.from('un_tunes_card_listings').insert({
+        seller_id: user.id,
+        card_id: sellCardId,
+        listing_type: sellType,
+        starting_price: price,
+        buy_now_price: buyNow,
+        current_bid: 0,
+        ends_at: endsAt,
+        status: 'active',
+      });
+
+      if (error) throw error;
+
+      toast.success('Card listed!');
+      setSellModal(false);
+      setSellCardId('');
+      setSellPrice('');
+      setSellBuyNow('');
+      // Refresh listings
+      window.location.reload();
+    } catch (err) {
+      console.error('Sell error:', err);
+      toast.error('Failed to list card');
+    }
+  };
+
+  // Fetch user's cards when sell modal opens
+  useEffect(() => {
+    if (!sellModal || !user) return;
+    (async () => {
+      const { data } = await (supabase as any)
+        .from('un_tunes_user_cards')
+        .select('id, rarity, card_type, track_id, album_id, un_tunes_tracks(title), un_tunes_albums(title)')
+        .eq('user_id', user.id)
+        .eq('is_opened', true);
+      if (data) setUserCards(data);
+    })();
+  }, [sellModal, user]);
+
   return (
     <div className="space-y-4">
       {/* Header */}
@@ -302,8 +401,9 @@ export function AuctionHouse({ onBack }: AuctionHouseProps) {
           variant="outline"
           size="sm"
           className="text-[10px] font-display tracking-wider"
+          onClick={() => setSellModal(true)}
         >
-          <Tag className="w-3 h-3 mr-1" />
+          <Plus className="w-3 h-3 mr-1" />
           SELL CARD
         </Button>
       </div>
@@ -372,7 +472,7 @@ export function AuctionHouse({ onBack }: AuctionHouseProps) {
               key={listing.id}
               listing={listing}
               onBid={(l) => { setBidModal(l); setBidAmount(String((l.current_bid || l.starting_price) + 1)); }}
-              onBuyNow={(l) => {/* TODO: buy now flow */}}
+              onBuyNow={(l) => setBuyNowModal(l)}
             />
           ))}
         </div>
@@ -433,6 +533,189 @@ export function AuctionHouse({ onBack }: AuctionHouseProps) {
                 >
                   <Gavel className="w-4 h-4 mr-2" />
                   PLACE BID
+                </Button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Buy Now Modal */}
+      <AnimatePresence>
+        {buyNowModal && (
+          <motion.div
+            className="fixed inset-0 z-[150] bg-black/80 backdrop-blur-xl flex items-end justify-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setBuyNowModal(null)}
+          >
+            <motion.div
+              className="w-full max-w-md bg-zinc-900 border-t border-zinc-800 rounded-t-2xl p-6 space-y-4"
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <h3 className="font-display tracking-wider text-center">CONFIRM PURCHASE</h3>
+              <p className="text-sm text-white text-center">
+                {getCardTitle(buyNowModal.card)} — {buyNowModal.card?.rarity?.toUpperCase()}
+              </p>
+              <div className="text-center">
+                <p className="text-[10px] text-white/60 font-display tracking-wider mb-1">PRICE</p>
+                <p className="text-3xl font-display font-bold">
+                  {buyNowModal.buy_now_price || buyNowModal.starting_price}
+                  <span className="text-sm text-primary ml-2">tokens</span>
+                </p>
+                <p className="text-[10px] text-white/40 mt-1">Tokens are traded on-site only</p>
+              </div>
+              <div className="flex gap-3">
+                <Button
+                  variant="outline"
+                  className="flex-1 font-display tracking-wider"
+                  onClick={() => setBuyNowModal(null)}
+                >
+                  CANCEL
+                </Button>
+                <Button
+                  className="flex-1 bg-gradient-to-r from-primary to-orange-600 text-white font-display tracking-wider"
+                  onClick={() => handleBuyNow(buyNowModal)}
+                >
+                  <Coins className="w-4 h-4 mr-2" />
+                  BUY NOW
+                </Button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Sell Card Modal */}
+      <AnimatePresence>
+        {sellModal && (
+          <motion.div
+            className="fixed inset-0 z-[150] bg-black/80 backdrop-blur-xl flex items-end justify-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setSellModal(false)}
+          >
+            <motion.div
+              className="w-full max-w-md bg-zinc-900 border-t border-zinc-800 rounded-t-2xl p-6 space-y-4 max-h-[80vh] overflow-y-auto"
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <h3 className="font-display tracking-wider text-center">SELL A CARD</h3>
+              <p className="text-[10px] text-white/50 text-center">All prices in tokens • traded on-site only</p>
+
+              {/* Card selector */}
+              <div className="space-y-2">
+                <label className="text-xs text-white/60 font-display tracking-wider">SELECT CARD</label>
+                <select
+                  value={sellCardId}
+                  onChange={(e) => setSellCardId(e.target.value)}
+                  className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-primary"
+                >
+                  <option value="">Choose a card…</option>
+                  {userCards.map((c: any) => (
+                    <option key={c.id} value={c.id}>
+                      {c.un_tunes_tracks?.title || c.un_tunes_albums?.title || 'Card'} — {c.rarity?.toUpperCase()} {c.card_type}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Listing type */}
+              <div className="space-y-2">
+                <label className="text-xs text-white/60 font-display tracking-wider">LISTING TYPE</label>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setSellType('fixed')}
+                    className={cn(
+                      'flex-1 py-2 rounded-lg text-xs font-display tracking-wider border transition-all',
+                      sellType === 'fixed' ? 'bg-primary/20 border-primary/40 text-primary' : 'border-zinc-700 text-white/50'
+                    )}
+                  >
+                    FIXED PRICE
+                  </button>
+                  <button
+                    onClick={() => setSellType('auction')}
+                    className={cn(
+                      'flex-1 py-2 rounded-lg text-xs font-display tracking-wider border transition-all',
+                      sellType === 'auction' ? 'bg-primary/20 border-primary/40 text-primary' : 'border-zinc-700 text-white/50'
+                    )}
+                  >
+                    AUCTION
+                  </button>
+                </div>
+              </div>
+
+              {/* Price */}
+              <div className="space-y-2">
+                <label className="text-xs text-white/60 font-display tracking-wider">
+                  {sellType === 'auction' ? 'STARTING BID' : 'PRICE'} (tokens)
+                </label>
+                <input
+                  type="number"
+                  value={sellPrice}
+                  onChange={(e) => setSellPrice(e.target.value)}
+                  placeholder="e.g. 5"
+                  min="1"
+                  className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-2.5 text-sm font-display focus:outline-none focus:border-primary"
+                />
+              </div>
+
+              {/* Buy Now price for auctions */}
+              {sellType === 'auction' && (
+                <div className="space-y-2">
+                  <label className="text-xs text-white/60 font-display tracking-wider">BUY NOW PRICE (optional)</label>
+                  <input
+                    type="number"
+                    value={sellBuyNow}
+                    onChange={(e) => setSellBuyNow(e.target.value)}
+                    placeholder="e.g. 20"
+                    min="1"
+                    className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-2.5 text-sm font-display focus:outline-none focus:border-primary"
+                  />
+                </div>
+              )}
+
+              {/* Duration */}
+              <div className="space-y-2">
+                <label className="text-xs text-white/60 font-display tracking-wider">DURATION</label>
+                <div className="flex gap-2">
+                  {['12', '24', '48', '72'].map(h => (
+                    <button
+                      key={h}
+                      onClick={() => setSellDuration(h)}
+                      className={cn(
+                        'flex-1 py-2 rounded-lg text-xs font-display tracking-wider border transition-all',
+                        sellDuration === h ? 'bg-primary/20 border-primary/40 text-primary' : 'border-zinc-700 text-white/50'
+                      )}
+                    >
+                      {h}H
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex gap-3 pt-2">
+                <Button
+                  variant="outline"
+                  className="flex-1 font-display tracking-wider"
+                  onClick={() => setSellModal(false)}
+                >
+                  CANCEL
+                </Button>
+                <Button
+                  className="flex-1 bg-gradient-to-r from-primary to-orange-600 text-white font-display tracking-wider"
+                  onClick={handleSellCard}
+                  disabled={!sellCardId || !sellPrice}
+                >
+                  <Tag className="w-4 h-4 mr-2" />
+                  LIST CARD
                 </Button>
               </div>
             </motion.div>
