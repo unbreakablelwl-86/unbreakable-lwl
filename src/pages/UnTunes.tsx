@@ -6,6 +6,7 @@ import {
   Disc3, Podcast, ChevronRight, Sparkles, Crown, Star,
   Share2, Dumbbell, Footprints, Guitar, Flame, Waves, Swords, Drum,
   Zap, Activity, Brain, Loader2,
+  Coins, Diamond, ShoppingBag, LayoutGrid,
 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -24,7 +25,10 @@ import { UnTunesArtistDashboard } from '@/components/untunes/ArtistDashboard';
 import { AddToPlaylistSheet } from '@/components/untunes/AddToPlaylistSheet';
 import { toast } from 'sonner';
 
-type UnTunesTab = 'browse' | 'search' | 'library' | 'podcasts' | 'artist';
+import { UnTunesStore } from '@/components/untunes/UnTunesStore';
+import { CollectionGallery } from '@/components/untunes/CollectionGallery';
+
+type UnTunesTab = 'browse' | 'search' | 'library' | 'store' | 'collection' | 'podcasts' | 'artist';
 
 const fadeIn = { initial: { opacity: 0, y: 12 }, animate: { opacity: 1, y: 0 } };
 
@@ -100,6 +104,8 @@ export default function UnTunes() {
     { key: 'browse' as const, label: 'BROWSE', icon: Music },
     { key: 'search' as const, label: 'SEARCH', icon: Search },
     { key: 'library' as const, label: 'LIBRARY', icon: Library },
+    { key: 'store' as const, label: 'STORE', icon: ShoppingBag },
+    { key: 'collection' as const, label: 'CARDS', icon: LayoutGrid },
     { key: 'podcasts' as const, label: 'PODCASTS', icon: Podcast },
     { key: 'artist' as const, label: myArtist ? 'ARTIST HUB' : 'BECOME ARTIST', icon: myArtist ? Crown : UserPlus },
   ];
@@ -110,13 +116,38 @@ export default function UnTunes() {
       <div className="relative overflow-hidden bg-gradient-to-b from-primary/20 via-primary/5 to-transparent">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent pointer-events-none" />
         <div className="container mx-auto px-4 pt-6 pb-4 relative">
-          <motion.div {...fadeIn} className="flex items-center gap-3 mb-4">
+          <motion.div {...fadeIn} className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center shadow-[0_0_20px_rgba(255,85,0,0.3)]">
               <Music className="w-5 h-5 text-primary drop-shadow-[0_0_6px_rgba(255,85,0,0.6)]" />
             </div>
             <div>
               <h1 className="font-display text-2xl tracking-wider text-foreground">UN-TUNES</h1>
-              <p className="text-xs text-muted-foreground tracking-wider">MUSIC & PODCASTS</p>
+              <p className="text-xs text-muted-foreground tracking-wider">MUSIC • COLLECTIBLES • PODCASTS</p>
+            </div>
+          </motion.div>
+
+          {/* ── Hero: Store & Collectibles CTA ── */}
+          <motion.div
+            {...fadeIn}
+            transition={{ delay: 0.1 }}
+            className="mb-4 rounded-xl border border-primary/20 bg-gradient-to-r from-primary/10 via-zinc-900/80 to-violet-500/10 p-3 flex items-center gap-3 cursor-pointer hover:border-primary/40 transition-colors"
+            onClick={() => setActiveTab('store')}
+          >
+            <div className="flex -space-x-2">
+              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-primary to-orange-600 flex items-center justify-center border-2 border-background z-10">
+                <ShoppingBag className="w-4 h-4 text-white" />
+              </div>
+              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-violet-500 to-pink-500 flex items-center justify-center border-2 border-background">
+                <Diamond className="w-4 h-4 text-white" />
+              </div>
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="font-display text-xs tracking-wider text-white">OWN YOUR TUNES • COLLECT RARE CARDS</p>
+              <p className="text-[10px] text-muted-foreground">Buy singles, albums & bundles → open FIFA-style packs → collect diamond editions</p>
+            </div>
+            <div className="flex items-center gap-1 text-primary">
+              <Coins className="w-3.5 h-3.5" />
+              <ChevronRight className="w-4 h-4" />
             </div>
           </motion.div>
 
@@ -711,6 +742,20 @@ export default function UnTunes() {
                   </div>
                 </>
               )}
+            </motion.div>
+          )}
+
+          {/* ─── Store Tab ─── */}
+          {activeTab === 'store' && (
+            <motion.div key="store" {...fadeIn} className="space-y-4">
+              <UnTunesStore onViewCollection={() => setActiveTab('collection')} />
+            </motion.div>
+          )}
+
+          {/* ─── Collection Tab ─── */}
+          {activeTab === 'collection' && (
+            <motion.div key="collection" {...fadeIn}>
+              <CollectionGallery onBack={() => setActiveTab('store')} />
             </motion.div>
           )}
 

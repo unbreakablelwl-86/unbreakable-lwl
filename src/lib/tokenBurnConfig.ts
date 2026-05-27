@@ -161,6 +161,28 @@ export const TOKEN_ACTIONS: Record<string, TokenAction> = {
     category: 'course',
     baseCost: 150,
   },
+  // ─── Un-Tunes music store ───
+  untunes_single: {
+    id: 'untunes_single',
+    name: 'Un-Tunes single',
+    description: 'Buy a single track + collectible card',
+    category: 'course' as ActionCategory,
+    baseCost: 3,
+  },
+  untunes_album: {
+    id: 'untunes_album',
+    name: 'Un-Tunes album',
+    description: 'Buy a full album + all track cards + album card',
+    category: 'course' as ActionCategory,
+    baseCost: 30,
+  },
+  untunes_bundle: {
+    id: 'untunes_bundle',
+    name: 'Un-Tunes bundle',
+    description: 'All albums bundle — price of 2, boosted rare odds',
+    category: 'bundle' as ActionCategory,
+    baseCost: 50,
+  },
 } as const;
 
 // ─── BUNDLE PRICING (token costs) ───

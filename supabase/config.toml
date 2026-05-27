@@ -47,3 +47,6 @@ verify_jwt = false
 
 [functions.seed-liverpool-desserts]
 verify_jwt = false
+
+[functions.purchase-untunes]
+verify_jwt = false
