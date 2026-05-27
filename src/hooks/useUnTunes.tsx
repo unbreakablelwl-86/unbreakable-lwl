@@ -37,7 +37,6 @@ export interface Track {
   is_free: boolean;
   price_gbp: number | null;
   play_count: number;
-  lyrics: string | null;
   created_at: string;
   track_type: 'music' | 'podcast';
 }
@@ -159,7 +158,7 @@ const PREVIEW_DURATION = 30; // seconds
 
 export function usePlayerProvider() {
   const { user } = useAuth();
-  const { isDev } = useUserRole();
+  const { isDev, isCoach, loading: roleLoading } = useUserRole();
   const ownedTrackIds = useOwnedTracks();
   const [state, setState] = useState<PlayerState>(defaultPlayerState);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -169,9 +168,10 @@ export function usePlayerProvider() {
   const prevTrackRef = useRef<() => void>(() => {});
   const togglePlayRef = useRef<() => void>(() => {});
 
-  // Full access = dev role OR known dev user IDs (hardcoded fallback)
+  // Full access = dev/coach role OR known dev user IDs (hardcoded fallback)
+  // While role is loading, fall back to hardcoded IDs to prevent brief 30s cap flash
   const DEV_USER_IDS = ['3a61bd9e-785b-4512-abab-e61b87496c54'];
-  const hasFullAccess = isDev || (user?.id ? DEV_USER_IDS.includes(user.id) : false);
+  const hasFullAccess = isDev || isCoach || roleLoading || (user?.id ? DEV_USER_IDS.includes(user.id) : false);
 
   // Is current track a preview?
   const isPreview = useMemo(() => {
