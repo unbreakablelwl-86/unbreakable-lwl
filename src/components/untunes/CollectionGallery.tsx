@@ -23,6 +23,17 @@ interface OwnedCard {
   edition_number: number;
   is_opened: boolean;
   created_at: string;
+  card_type?: string;
+  brand_card_id?: string | null;
+  lyric_card_id?: string | null;
+}
+
+interface BrandCard {
+  id: string;
+  slug: string;
+  title: string;
+  description: string;
+  artwork_url: string | null;
 }
 
 interface CollectionGalleryProps {
@@ -60,7 +71,7 @@ function SwipeableCard({
   onOpenFullView,
 }: {
   itemId: string;
-  itemType: 'track' | 'album';
+  itemType: 'track' | 'album' | 'brand';
   title: string;
   coverUrl: string | null;
   ownedByRarity: Record<Rarity, OwnedCard | null>;
@@ -208,6 +219,7 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
   const { tracks, loading: tracksLoading } = useAllTracks();
   const { albums, loading: albumsLoading } = useAlbums();
   const [ownedCards, setOwnedCards] = useState<OwnedCard[]>([]);
+  const [brandCards, setBrandCards] = useState<BrandCard[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'owned' | 'missing' | 'complete'>('all');
   const [fullViewItem, setFullViewItem] = useState<{ id: string; rarity: Rarity } | null>(null);
@@ -215,12 +227,26 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
   useEffect(() => {
     if (!user) { setLoading(false); return; }
     (async () => {
-      const { data, error } = await supabase
-        .from('un_tunes_user_cards')
-        .select('id, track_id, album_id, rarity, edition_number, is_opened, created_at')
-        .eq('user_id', user.id);
+      try {
+        const { data, error } = await (supabase as any)
+          .from('un_tunes_user_cards')
+          .select('id, track_id, album_id, rarity, edition_number, is_opened, created_at, card_type, brand_card_id, lyric_card_id')
+          .eq('user_id', user.id);
 
-      if (!error && data) setOwnedCards(data as any);
+        if (error) {
+          console.error('[CollectionGallery] Card fetch error:', error);
+        }
+        if (data) {
+          setOwnedCards(data as OwnedCard[]);
+        }
+        // Also fetch brand card definitions
+        const { data: bcData } = await (supabase as any)
+          .from('un_tunes_brand_cards')
+          .select('id, slug, title, description, artwork_url');
+        if (bcData) setBrandCards(bcData as BrandCard[]);
+      } catch (err) {
+        console.error('[CollectionGallery] Card fetch exception:', err);
+      }
       setLoading(false);
     })();
   }, [user]);
@@ -236,20 +262,25 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
     for (const album of albums) {
       map[album.id] = { standard: null, gold: null, diamond: null };
     }
+    // Initialize brand cards
+    for (const bc of brandCards) {
+      map[bc.id] = { standard: null, gold: null, diamond: null };
+    }
     
     // Fill in owned cards
     for (const card of ownedCards) {
-      const itemId = card.track_id || card.album_id;
-      if (itemId && map[itemId]) {
+      const itemId = card.track_id || card.album_id || card.brand_card_id || card.lyric_card_id;
+      if (itemId) {
+        if (!map[itemId]) map[itemId] = { standard: null, gold: null, diamond: null };
         map[itemId][card.rarity as Rarity] = card;
       }
     }
     
     return map;
-  }, [tracks, albums, ownedCards]);
+  }, [tracks, albums, brandCards, ownedCards]);
 
   // Stats
-  const totalPossible = (tracks.length + albums.length) * 3;
+  const totalPossible = (tracks.length + albums.length + brandCards.length) * 3;
   const totalOwned = ownedCards.length;
   const diamondOwned = ownedCards.filter(c => c.rarity === 'diamond').length;
   const goldOwned = ownedCards.filter(c => c.rarity === 'gold').length;
@@ -262,6 +293,7 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
   const allItems = [
     ...tracks.map(t => ({ id: t.id, type: 'track' as const, title: t.title, coverUrl: t.cover_url })),
     ...albums.map(a => ({ id: a.id, type: 'album' as const, title: a.title, coverUrl: a.cover_url })),
+    ...brandCards.map(bc => ({ id: bc.id, type: 'brand' as const, title: bc.title, coverUrl: bc.artwork_url })),
   ];
 
   const filteredItems = allItems.filter(item => {
@@ -372,9 +404,9 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
       {/* Stats */}
       <div className="grid grid-cols-4 gap-2">
         {([
-          { rarity: 'diamond' as const, count: diamondOwned, total: tracks.length + albums.length },
-          { rarity: 'gold' as const, count: goldOwned, total: tracks.length + albums.length },
-          { rarity: 'standard' as const, count: standardOwned, total: tracks.length + albums.length },
+          { rarity: 'diamond' as const, count: diamondOwned, total: tracks.length + albums.length + brandCards.length },
+          { rarity: 'gold' as const, count: goldOwned, total: tracks.length + albums.length + brandCards.length },
+          { rarity: 'standard' as const, count: standardOwned, total: tracks.length + albums.length + brandCards.length },
         ] as const).map(({ rarity, count, total }) => {
           const config = RARITY_CONFIG[rarity];
           const Icon = config.icon;
@@ -559,7 +591,7 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
                       </Badge>
                     </div>
                     <p className="text-xs text-muted-foreground">
-                      {item.type === 'track' ? 'Track Card' : 'Album Card'}
+                      {item.type === 'track' ? 'Track Card' : item.type === 'album' ? 'Album Card' : 'Brand Card'}
                     </p>
                     {owned && rarity === 'diamond' && owned.edition_number > 0 && (
                       <p className="text-sm text-violet-300 font-mono">
