@@ -26,6 +26,8 @@ interface OwnedCard {
   card_type?: string;
   brand_card_id?: string | null;
   lyric_card_id?: string | null; // deprecated — lyrics removed
+  cover_url?: string | null;     // from RPC JOIN
+  card_title?: string | null;    // from RPC JOIN
 }
 
 interface BrandCard {

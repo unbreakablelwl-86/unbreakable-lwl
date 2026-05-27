@@ -81,17 +81,24 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
   const handleOpenPendingPacks = useCallback(() => {
     if (pendingPacks.length === 0) return;
     // Convert pending DB cards into PackCard format for the opening animation
+    // The RPC now returns cover_url and card_title directly via JOIN
     const cards: PackCard[] = pendingPacks.map(p => {
+      // Use cover_url/card_title from RPC if available, fall back to hook lookup
+      const directCover = p.cover_url || '';
+      const directTitle = p.card_title || '';
       const track = tracks.find(t => t.id === p.track_id);
       const album = albums.find(a => a.id === p.album_id);
+      const coverUrl = directCover || track?.cover_url || album?.cover_url || '';
+      const title = directTitle || track?.title || album?.title || '';
+      
       return {
         id: p.id,
         rarity: p.rarity || 'standard',
         track_id: p.track_id,
         album_id: p.album_id,
         edition_number: p.edition_number || 0,
-        un_tunes_tracks: track ? { title: track.title, cover_url: track.cover_url || '' } : null,
-        un_tunes_albums: album ? { title: album.title, cover_url: album.cover_url || '' } : null,
+        un_tunes_tracks: p.track_id ? { title, cover_url: coverUrl } : null,
+        un_tunes_albums: p.album_id && !p.track_id ? { title, cover_url: coverUrl } : null,
       };
     });
     setPackType('bundle');
