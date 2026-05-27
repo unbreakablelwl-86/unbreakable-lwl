@@ -118,7 +118,7 @@ Respond in JSON format:
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: "claude-sonnet-4-6",
+        model: "claude-sonnet-4-20250514",
         max_tokens: 4096,
         system: 'You are an expert movement coach and biomechanics specialist.',
         messages: [

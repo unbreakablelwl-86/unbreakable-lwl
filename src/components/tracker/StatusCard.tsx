@@ -129,6 +129,18 @@ export function StatusCard({ post, onKudos, onDelete, onToggleComments, onUpdate
     }
   };
 
+  const handleHideFromFeed = async () => {
+    if (onUpdatePost) {
+      const newVisibility = post.visibility === 'private' ? 'public' : 'private';
+      const { error } = await onUpdatePost(post.id, { visibility: newVisibility });
+      if (error) {
+        toast.error('Failed to update visibility');
+      } else {
+        toast.success(newVisibility === 'private' ? 'Hidden from feed' : 'Now visible on feed');
+      }
+    }
+  };
+
   const handleShareToStory = () => {
     if (onOpenStoryEditor) {
       // Pass ALL media items so each image/video becomes its own story slide
@@ -198,6 +210,8 @@ export function StatusCard({ post, onKudos, onDelete, onToggleComments, onUpdate
             onToggleComments={() => onToggleComments(post.id)}
             onEdit={() => setShowEditModal(true)}
             onShareToStory={handleShareToStory}
+            onHideFromFeed={isOwner ? handleHideFromFeed : undefined}
+            isHidden={post.visibility === 'private'}
             itemType="post"
             authorUserId={post.user_id}
             itemId={post.id}

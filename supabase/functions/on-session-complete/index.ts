@@ -11,8 +11,8 @@ const corsHeaders = {
  * on-session-complete
  * Called from the frontend after a workout session is marked completed.
  * 1. Auto-fills "train" habit for today in daily_habits
- * 2. Generates AI coach feedback via Anthropic (no token deduction — system initiated)
- * 3. Creates an AI coach conversation with session review
+ * 2. Generates rich AI coach feedback via Anthropic (no token deduction — system initiated)
+ * 3. Creates an AI coach conversation with session review + follow-up question
  * 4. Creates a notification for the user
  *
  * Body: { sessionId: string, userId: string }
@@ -37,9 +37,8 @@ serve(async (req) => {
     const supabase = createClient(supabaseUrl, serviceKey);
 
     // ─── 1. Auto-fill habit tracker: mark "train" as true for today ───
-    const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+    const today = new Date().toISOString().slice(0, 10);
     try {
-      // Check if a habit entry exists for today
       const { data: existingHabit } = await supabase
         .from("daily_habits")
         .select("id, train")
@@ -48,13 +47,11 @@ serve(async (req) => {
         .maybeSingle();
 
       if (existingHabit) {
-        // Update existing entry — mark train as true
         await supabase
           .from("daily_habits")
           .update({ train: true })
           .eq("id", existingHabit.id);
       } else {
-        // Create new entry with train checked
         await supabase
           .from("daily_habits")
           .insert({
@@ -75,7 +72,7 @@ serve(async (req) => {
     // ─── 2. Fetch session info ───
     const { data: session } = await supabase
       .from("workout_sessions")
-      .select("id, session_type, day_name, program_id, user_id")
+      .select("id, session_type, day_name, program_id, user_id, started_at, ended_at, duration_seconds, notes")
       .eq("id", sessionId)
       .single();
 
@@ -94,7 +91,6 @@ serve(async (req) => {
       .order("created_at");
 
     if (!logs || logs.length === 0) {
-      // Still create notification even with no logs
       await supabase.from("notifications").insert({
         user_id: userId,
         type: "session_complete_self",
@@ -109,8 +105,64 @@ serve(async (req) => {
       );
     }
 
-    // ─── 4. Build session summary ───
+    // ─── 4. Fetch user profile for personalised coaching ───
+    let userProfile: any = null;
+    try {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("display_name, fitness_level, training_goal, preferred_name")
+        .eq("user_id", userId)
+        .maybeSingle();
+      userProfile = profile;
+    } catch { /* non-blocking */ }
+
+    // ─── 5. Fetch recent session history for comparison ───
+    let recentHistory = "";
+    try {
+      const { data: recentSessions } = await supabase
+        .from("workout_sessions")
+        .select("id, session_type, day_name, ended_at")
+        .eq("user_id", userId)
+        .eq("status", "completed")
+        .neq("id", sessionId)
+        .order("ended_at", { ascending: false })
+        .limit(5);
+
+      if (recentSessions && recentSessions.length > 0) {
+        // Get logs for recent sessions to compare volume
+        const recentIds = recentSessions.map((s: any) => s.id);
+        const { data: recentLogs } = await supabase
+          .from("exercise_logs")
+          .select("session_id, exercise_name, weight_kg, actual_reps, completed")
+          .in("session_id", recentIds);
+
+        if (recentLogs && recentLogs.length > 0) {
+          const sessionVolumes = new Map<string, { volume: number; exercises: string[] }>();
+          for (const log of recentLogs) {
+            if (!log.completed) continue;
+            const entry = sessionVolumes.get(log.session_id) || { volume: 0, exercises: [] };
+            if (log.weight_kg && log.actual_reps) {
+              entry.volume += log.weight_kg * log.actual_reps;
+            }
+            if (!entry.exercises.includes(log.exercise_name)) {
+              entry.exercises.push(log.exercise_name);
+            }
+            sessionVolumes.set(log.session_id, entry);
+          }
+
+          const historyLines = recentSessions.map((s: any) => {
+            const sv = sessionVolumes.get(s.id);
+            const dateStr = s.ended_at ? new Date(s.ended_at).toLocaleDateString("en-GB", { day: "numeric", month: "short" }) : "Unknown";
+            return `- ${dateStr}: ${s.day_name || s.session_type || "Session"} — ${sv ? `${sv.volume.toFixed(0)}kg volume, ${sv.exercises.length} exercises` : "no data"}`;
+          });
+          recentHistory = `\nRecent sessions (last 5):\n${historyLines.join("\n")}`;
+        }
+      }
+    } catch { /* non-blocking */ }
+
+    // ─── 6. Build rich session summary ───
     const completedSets = logs.filter((l: any) => l.completed).length;
+    const skippedSets = logs.filter((l: any) => !l.completed).length;
     const totalWeight = logs.reduce(
       (sum: number, l: any) =>
         l.completed && l.weight_kg && l.actual_reps
@@ -121,22 +173,48 @@ serve(async (req) => {
     const exercises = [...new Set(logs.map((l: any) => l.exercise_name))];
     const painFlags = logs.filter((l: any) => l.pain_flag);
 
-    const summaryText = [
-      `Session Complete — ${completedSets}/${logs.length} sets completed`,
-      `Exercises: ${exercises.join(", ")}`,
-      totalWeight > 0 ? `Total volume: ${totalWeight.toFixed(0)}kg` : "",
-      painFlags.length > 0
-        ? `Pain flagged on: ${painFlags.map((l: any) => l.exercise_name).join(", ")}`
-        : "",
-    ]
-      .filter(Boolean)
-      .join("\n");
+    // RPE analysis
+    const rpeValues = logs.filter((l: any) => l.completed && l.rpe).map((l: any) => l.rpe);
+    const avgRpe = rpeValues.length > 0
+      ? (rpeValues.reduce((a: number, b: number) => a + b, 0) / rpeValues.length)
+      : 0;
+
+    // Rep target analysis
+    const missedTargets: string[] = [];
+    const exceededTargets: string[] = [];
+    for (const log of logs) {
+      if (!log.completed || !log.target_reps || !log.actual_reps) continue;
+      const targetMin = parseInt(String(log.target_reps).split("-")[0]);
+      const targetMax = parseInt(String(log.target_reps).split("-").pop() || String(targetMin));
+      if (log.actual_reps < targetMin) {
+        missedTargets.push(`${log.exercise_name} set ${log.set_number} (${log.actual_reps}/${log.target_reps})`);
+      } else if (log.actual_reps > targetMax) {
+        exceededTargets.push(`${log.exercise_name} set ${log.set_number} (${log.actual_reps}/${log.target_reps})`);
+      }
+    }
+
+    // Exercise-by-exercise detail
+    const exerciseDetails = exercises.map((name) => {
+      const exLogs = logs.filter((l: any) => l.exercise_name === name && l.completed);
+      const sets = exLogs.map(
+        (l: any) =>
+          `  Set ${l.set_number || "?"}: ${l.actual_reps || 0} reps @ ${l.weight_kg || 0}kg${l.rpe ? ` (RPE ${l.rpe})` : ""}${l.pain_flag ? " ⚠️ PAIN" : ""}`
+      );
+      return `${name}:\n${sets.join("\n")}`;
+    });
+
+    // Duration
+    const durationMin = session.duration_seconds
+      ? Math.round(session.duration_seconds / 60)
+      : session.started_at && session.ended_at
+        ? Math.round((new Date(session.ended_at).getTime() - new Date(session.started_at).getTime()) / 60000)
+        : null;
 
     const sessionLabel =
       (session.session_type || "") +
       (session.day_name ? ` (${session.day_name})` : "");
 
-    // ─── 5. Generate AI coach feedback directly via Anthropic ───
+    // ─── 7. Generate AI coach feedback via Anthropic ───
     let aiCoachFeedback = "";
     let conversationId: string | null = null;
 
@@ -144,23 +222,44 @@ serve(async (req) => {
 
     if (ANTHROPIC_API_KEY) {
       try {
-        const exerciseDetails = logs
-          .filter((l: any) => l.completed)
-          .map(
-            (l: any) =>
-              `- ${l.exercise_name}: Set ${l.set_number || "?"} — ${l.actual_reps || 0} reps @ ${l.weight_kg || 0}kg (Target: ${l.target_reps || "N/A"}, RPE: ${l.rpe || "N/A"})`
-          )
-          .join("\n");
+        const userName = userProfile?.preferred_name || userProfile?.display_name || "mate";
+        const fitnessLevel = userProfile?.fitness_level || "unknown";
+        const goal = userProfile?.training_goal || "general fitness";
 
-        const prompt = `You are an expert strength coach reviewing a completed workout session. Be direct, specific, and encouraging.
+        const prompt = `You are the Unbreakable AI Coach — a knowledgeable, encouraging, Scouse-rooted strength coach. You talk like a real coach: direct, warm, sometimes funny, always pushing people to be better. You're reviewing a just-completed workout session.
 
-Session: ${sessionLabel}
-${summaryText}
+USER CONTEXT:
+- Name: ${userName}
+- Fitness level: ${fitnessLevel}
+- Goal: ${goal}
 
-Exercise details:
-${exerciseDetails}
+SESSION: ${sessionLabel}
+- Duration: ${durationMin ? `${durationMin} minutes` : "not recorded"}
+- Sets completed: ${completedSets}/${completedSets + skippedSets}${skippedSets > 0 ? ` (${skippedSets} skipped)` : ""}
+- Total volume: ${totalWeight > 0 ? `${totalWeight.toFixed(0)}kg` : "bodyweight/no weight logged"}
+- Average RPE: ${avgRpe > 0 ? avgRpe.toFixed(1) + "/10" : "not logged"}
 
-Give a short, punchy review (3-5 sentences max). Mention what went well, flag anything to watch (especially pain flags), and give one actionable tip for next session. Keep it conversational — like a coach talking to their athlete after a set. No bullet points, just natural coaching talk.`;
+EXERCISE BREAKDOWN:
+${exerciseDetails.join("\n\n")}
+
+${painFlags.length > 0 ? `\n⚠️ PAIN FLAGGED on: ${painFlags.map((l: any) => `${l.exercise_name} (set ${l.set_number})`).join(", ")}` : ""}
+${missedTargets.length > 0 ? `\nMISSED REP TARGETS: ${missedTargets.join(", ")}` : ""}
+${exceededTargets.length > 0 ? `\nEXCEEDED REP TARGETS: ${exceededTargets.join(", ")}` : ""}
+${recentHistory}
+${session.notes ? `\nUser's session notes: "${session.notes}"` : ""}
+
+YOUR TASK:
+Write a proper coaching review. NOT just stats — actual analysis. Cover:
+1. What they did well and why it matters for their goal
+2. Form/technique observations based on weight vs rep patterns (e.g. if weight dropped but reps stayed, good grinding; if reps dropped sharply, maybe too heavy)
+3. If pain was flagged — address it seriously with practical advice
+4. If they missed or exceeded targets — explain what that means and what to adjust
+5. Compare to recent history if available — are they progressing?
+6. One specific, actionable coaching tip for their next session
+
+Keep it conversational — like a real coach talking after a session. Use their name. Be encouraging but honest. No bullet points, just natural coaching talk. 4-6 short paragraphs.
+
+**IMPORTANT: End your response with a specific question that invites them to continue the conversation.** Something like asking how a particular exercise felt, whether they want to adjust their programme, how their recovery has been, etc. Make it relevant to what you just reviewed. This is a conversation, not a report.`;
 
         const aiResp = await fetch("https://api.anthropic.com/v1/messages", {
           method: "POST",
@@ -171,7 +270,7 @@ Give a short, punchy review (3-5 sentences max). Mention what went well, flag an
           },
           body: JSON.stringify({
             model: "claude-sonnet-4-20250514",
-            max_tokens: 512,
+            max_tokens: 1024,
             messages: [{ role: "user", content: prompt }],
           }),
         });
@@ -183,19 +282,19 @@ Give a short, punchy review (3-5 sentences max). Mention what went well, flag an
         } else {
           console.error("Anthropic API error:", aiResp.status, await aiResp.text());
           aiCoachFeedback =
-            `Solid work today — ${completedSets} sets across ${exercises.length} exercises${totalWeight > 0 ? `, ${totalWeight.toFixed(0)}kg total volume` : ""}. Keep building!`;
+            `Solid work today, ${userName}! ${completedSets} sets across ${exercises.length} exercises${totalWeight > 0 ? `, ${totalWeight.toFixed(0)}kg total volume` : ""}. ${painFlags.length > 0 ? `Keep an eye on that ${painFlags[0].exercise_name} — if the pain sticks around, let's talk about swapping it out.` : "Keep building!"}\n\nHow did that session feel overall? Anything you want to adjust for next time?`;
         }
       } catch (aiErr) {
         console.error("AI feedback generation failed:", aiErr);
         aiCoachFeedback =
-          `Good session logged — ${completedSets} sets completed across ${exercises.length} exercises. Keep the consistency going!`;
+          `Session logged — ${completedSets} sets across ${exercises.length} exercises. ${totalWeight > 0 ? `${totalWeight.toFixed(0)}kg total volume. ` : ""}Consistency is king — keep showing up!\n\nHow are you feeling after that? Anything you'd change for next time?`;
       }
     } else {
       aiCoachFeedback =
-        `Session recorded — ${completedSets} sets across ${exercises.length} exercises${totalWeight > 0 ? `, ${totalWeight.toFixed(0)}kg total volume` : ""}. Nice work!`;
+        `Session recorded — ${completedSets} sets across ${exercises.length} exercises${totalWeight > 0 ? `, ${totalWeight.toFixed(0)}kg total volume` : ""}. Nice work!\n\nHow did that feel? Drop me a message if you want to chat about your programme.`;
     }
 
-    // ─── 6. Create AI coach conversation with the feedback ───
+    // ─── 8. Create AI coach conversation with the feedback ───
     try {
       const { data: convo } = await supabase
         .from("help_conversations")
@@ -209,12 +308,14 @@ Give a short, punchy review (3-5 sentences max). Mention what went well, flag an
       if (convo) {
         conversationId = convo.id;
 
-        // User message (session data)
+        // User message (session data — natural phrasing)
+        const userMsg = `I just finished my ${sessionLabel || "workout"} session. ${completedSets} sets across ${exercises.join(", ")}${totalWeight > 0 ? `. ${totalWeight.toFixed(0)}kg total volume` : ""}${durationMin ? ` in about ${durationMin} minutes` : ""}.${painFlags.length > 0 ? ` Had some pain on ${painFlags.map((l: any) => l.exercise_name).join(", ")}.` : ""}${session.notes ? ` Notes: ${session.notes}` : ""}\n\nHow did I do, coach?`;
+
         await supabase.from("help_messages").insert({
           conversation_id: convo.id,
           user_id: userId,
           role: "user",
-          content: `I just completed a workout session (${sessionLabel}).\n\n${summaryText}\n\nHow did I do?`,
+          content: userMsg,
         });
 
         // AI coach response
@@ -229,21 +330,24 @@ Give a short, punchy review (3-5 sentences max). Mention what went well, flag an
       console.error("Conversation creation failed (non-blocking):", convoErr);
     }
 
-    // ─── 7. Create notification ───
+    // ─── 9. Create notification ───
+    // Truncate for notification but make it enticing
+    const notifBody = aiCoachFeedback.length > 140
+      ? aiCoachFeedback.slice(0, 137) + "..."
+      : aiCoachFeedback;
+
     await supabase.from("notifications").insert({
       user_id: userId,
       type: "ai_session_feedback",
-      title: "🤖 AI Coach Feedback Ready",
-      body: aiCoachFeedback.length > 120
-        ? aiCoachFeedback.slice(0, 117) + "..."
-        : aiCoachFeedback,
+      title: "🔥 Coach Feedback Ready",
+      body: notifBody,
       data: {
         session_id: sessionId,
         conversation_id: conversationId,
       },
     });
 
-    // ─── 8. Schedule 30-min post-session check-in ───
+    // ─── 10. Schedule 30-min post-session check-in ───
     try {
       const checkinDue = new Date(Date.now() + 30 * 60 * 1000).toISOString();
       await supabase.from("pending_session_checkins").insert({

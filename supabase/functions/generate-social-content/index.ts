@@ -246,7 +246,7 @@ Return ONLY valid JSON with "post" and "imagePrompt" keys. No markdown wrapping.
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "claude-sonnet-4-6",
+        model: "claude-sonnet-4-20250514",
         max_tokens: 4096,
         system: systemPrompt,
         messages: [{ role: "user", content: userPrompt }],

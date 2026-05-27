@@ -84,6 +84,18 @@ export function ActivityCard({ run, onKudos, onDelete, onToggleComments, onUpdat
     }
   };
 
+  const handleHideFromFeed = async () => {
+    if (onUpdateRun) {
+      const newVisibility = (run as any).visibility === 'private' ? 'public' : 'private';
+      const { error } = await onUpdateRun(run.id, { visibility: newVisibility });
+      if (error) {
+        toast.error('Failed to update visibility');
+      } else {
+        toast.success(newVisibility === 'private' ? 'Hidden from feed' : 'Now visible on feed');
+      }
+    }
+  };
+
   const handleShareToStory = () => {
     if (onOpenStoryEditor) {
       onOpenStoryEditor({
@@ -164,6 +176,8 @@ export function ActivityCard({ run, onKudos, onDelete, onToggleComments, onUpdat
               onToggleComments={() => onToggleComments(run.id)}
               onEdit={() => setShowEditModal(true)}
               onShareToStory={handleShareToStory}
+              onHideFromFeed={isOwner ? handleHideFromFeed : undefined}
+              isHidden={(run as any).visibility === 'private'}
               itemType="run"
               authorUserId={run.user_id}
               itemId={run.id}

@@ -446,13 +446,12 @@ export function useUnifiedFeed() {
     if (!user) return { error: new Error('Not authenticated') };
     const post = posts.find((p) => p.id === postId);
     if (!post || post.user_id !== user.id) return { error: new Error('Not authorized') };
+    const updateData: Record<string, unknown> = { updated_at: new Date().toISOString() };
+    if (updates.content !== undefined) updateData.content = updates.content;
+    if (updates.visibility !== undefined) updateData.visibility = updates.visibility;
     const { error } = await supabase
       .from('posts')
-      .update({
-        content: updates.content,
-        visibility: updates.visibility,
-        updated_at: new Date().toISOString(),
-      })
+      .update(updateData)
       .eq('id', postId);
     if (!error) {
       setPosts((prev) =>

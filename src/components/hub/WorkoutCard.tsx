@@ -74,6 +74,18 @@ export function WorkoutCard({ workout, onKudos, onDelete, onToggleComments, onUp
     }
   };
 
+  const handleHideFromFeed = async () => {
+    if (onUpdateWorkout) {
+      const newVisibility = workout.visibility === 'private' ? 'public' : 'private';
+      const { error } = await onUpdateWorkout(workout.id, { visibility: newVisibility });
+      if (error) {
+        toast.error('Failed to update visibility');
+      } else {
+        toast.success(newVisibility === 'private' ? 'Hidden from feed' : 'Now visible on feed');
+      }
+    }
+  };
+
   const handleShareToStory = () => {
     if (onOpenStoryEditor) {
       onOpenStoryEditor({
@@ -143,6 +155,8 @@ export function WorkoutCard({ workout, onKudos, onDelete, onToggleComments, onUp
             commentsEnabled={workout.comments_enabled}
             onEdit={() => setShowEditModal(true)}
             onShareToStory={handleShareToStory}
+            onHideFromFeed={isOwner ? handleHideFromFeed : undefined}
+            isHidden={workout.visibility === 'private'}
             itemType="workout"
             authorUserId={workout.user_id}
             itemId={workout.id}

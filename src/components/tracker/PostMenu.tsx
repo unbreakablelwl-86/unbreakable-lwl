@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { MoreHorizontal, Trash2, MessageSquareOff, MessageSquare, Pencil, BookImage, Flag } from 'lucide-react';
+import { MoreHorizontal, Trash2, MessageSquareOff, MessageSquare, Pencil, BookImage, Flag, EyeOff, Eye } from 'lucide-react';
 import { DeleteConfirmModal } from './DeleteConfirmModal';
 import { ReportUserButton } from '@/components/ReportUserButton';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -12,6 +12,8 @@ interface PostMenuProps {
   onToggleComments: () => void;
   onEdit: () => void;
   onShareToStory: () => void;
+  onHideFromFeed?: () => void;
+  isHidden?: boolean;
   itemType?: 'post' | 'run' | 'workout';
   /** User ID of the post author — needed for non-owner report */
   authorUserId?: string;
@@ -26,6 +28,8 @@ export function PostMenu({
   onToggleComments,
   onEdit,
   onShareToStory,
+  onHideFromFeed,
+  isHidden = false,
   itemType = 'post',
   authorUserId,
   itemId,
@@ -61,6 +65,11 @@ export function PostMenu({
   const ownerItems = [
     { icon: Pencil, label: getEditLabel(), action: () => { onEdit(); setShowMenu(false); } },
     { icon: BookImage, label: 'Share to Story', action: () => { onShareToStory(); setShowMenu(false); } },
+    ...(onHideFromFeed ? [{
+      icon: isHidden ? Eye : EyeOff,
+      label: isHidden ? 'Show on Feed' : 'Hide from Feed',
+      action: () => { onHideFromFeed(); setShowMenu(false); },
+    }] : []),
     {
       icon: commentsEnabled ? MessageSquareOff : MessageSquare,
       label: commentsEnabled ? 'Disable Comments' : 'Enable Comments',

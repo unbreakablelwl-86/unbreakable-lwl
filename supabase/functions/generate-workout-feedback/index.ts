@@ -93,7 +93,7 @@ serve(async (req) => {
     }).length;
 
     // Build prompt for AI feedback
-    const prompt = `You are a professional strength coach providing feedback on a completed workout session.
+    const prompt = `You are the Unbreakable AI Coach — a knowledgeable, encouraging strength coach. Provide real coaching feedback, not just stats.
 
 Workout Summary:
 - Completed ${completedSets.length} of ${totalSets} total sets (${Math.round(completionRate * 100)}% completion)
@@ -106,14 +106,14 @@ ${completedSets.map((l: any) =>
 ).join('\n')}
 
 Provide:
-1. A brief overall assessment (2-3 sentences)
-2. Performance rating (excellent/good/average/below_average/poor)
-3. Fatigue score (1-10)
-4. 2-3 specific suggestions for the next session
+1. "content" — 3-4 sentences of actual coaching insight. Don't just repeat the numbers. Analyse patterns: Did weight drop across sets? Did they grind through reps? Were they pushing hard enough (RPE)? What does completion rate tell you? End with a question inviting them to continue the conversation.
+2. "performance_rating" — one of: excellent, good, average, below_average, poor
+3. "fatigue_score" — 1-10 based on RPE pattern and completion
+4. "suggestions" — 2-3 specific, actionable coaching tips for next session (not generic advice)
 
 Respond in JSON format:
 {
-  "content": "Overall feedback text",
+  "content": "Coaching feedback text ending with a question",
   "performance_rating": "rating",
   "fatigue_score": number,
   "suggestions": ["suggestion1", "suggestion2", "suggestion3"]
@@ -127,7 +127,7 @@ Respond in JSON format:
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: "claude-sonnet-4-6",
+        model: "claude-sonnet-4-20250514",
         max_tokens: 4096,
         system: 'You are an expert strength and conditioning coach. Provide constructive, actionable feedback.',
         messages: [

@@ -90,7 +90,7 @@ export function ActiveWorkoutModal({
   const [activeTool, setActiveTool] = useState<ActiveTool>('none');
   const [timerExerciseType, setTimerExerciseType] = useState<string>('strength');
   const [sessionNotes, setSessionNotes] = useState('');
-  const [visibility, setVisibility] = useState<'public' | 'friends' | 'private'>('public');
+  const [visibility, setVisibility] = useState<'public' | 'friends' | 'private'>('private');
   const [sessionMedia, setSessionMedia] = useState<SessionMedia[]>([]);
   const [showExercises, setShowExercises] = useState(false);
   const [habits, setHabits] = useState<HabitState>({
@@ -107,7 +107,7 @@ export function ActiveWorkoutModal({
   const [manualMinutes, setManualMinutes] = useState('');
   const [showDurationEdit, setShowDurationEdit] = useState(false);
   const [showFinishConfirm, setShowFinishConfirm] = useState(false);
-  const [finishVisibility, setFinishVisibility] = useState<'public' | 'friends' | 'private'>('public');
+  const [finishVisibility, setFinishVisibility] = useState<'public' | 'friends' | 'private'>('private');
   const [finishNotes, setFinishNotes] = useState('');
 
   // Full exercise library with GIFs
@@ -641,7 +641,7 @@ export function ActiveWorkoutModal({
         <div className="space-y-4 py-2">
           {/* Post to timeline visibility */}
           <div className="space-y-2">
-            <Label className="text-sm font-medium">Post results to timeline</Label>
+            <Label className="text-sm font-medium">Share to timeline?</Label>
             <div className="flex gap-2">
               {([
                 { value: 'public' as const, label: 'Public', icon: Globe },
@@ -677,7 +677,7 @@ export function ActiveWorkoutModal({
         <AlertDialogFooter>
           <AlertDialogCancel>Keep Training</AlertDialogCancel>
           <AlertDialogAction onClick={handleConfirmFinish}>
-            Complete & Post
+            Complete Session
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
