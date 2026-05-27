@@ -577,6 +577,11 @@ const Mindset = () => {
                 { id: 'reaction', name: 'STRIKE', subtitle: 'HIT BEFORE IT VANISHES.', desc: 'Targets appear — hit them before they disappear. Pure reflex. Zero hesitation.', icon: Crosshair, isNew: true },
                 { id: 'memory', name: 'RECALL', subtitle: 'TOTAL RECALL OR NOTHING.', desc: 'Flash. Memorise. Recreate. Grids grow, flash time shrinks — one wrong tile and it\'s over.', icon: Grid3X3, isNew: true },
                 { id: 'pattern', name: 'LOCK IN', subtitle: 'ONE WRONG MOVE, IT\'S OVER.', desc: 'Watch. Listen. Repeat. Each round adds one more — break focus and you\'re done.', icon: Shapes, isNew: true },
+                { id: 'flow', name: 'FLOW', subtitle: 'STAY IN THE ZONE.', desc: 'Endless runner — dodge obstacles at increasing speed. Double-jump your way to immortality.', icon: Flame, isNew: true },
+                { id: 'maths', name: 'SOLVE', subtitle: 'RAPID FIRE. ZERO HESITATION.', desc: 'Mental maths blitz — solve under countdown. Numbers grow, timer shrinks. 3 lives.', icon: Activity, isNew: true },
+                { id: 'focus', name: 'ZONE', subtitle: 'GET IN THE ZONE.', desc: 'Focus timer with streaks & missions. 5–90 minute sessions. Track your discipline.', icon: Timer, isNew: true },
+                { id: 'wordchain', name: 'WORDSMITH', subtitle: 'CHAIN WORDS. NEVER BREAK.', desc: 'Each word starts with the last letter of the previous. Timer shrinks, min length grows — infinite chain.', icon: Brain, isNew: true },
+                { id: 'flappy', name: 'RISE UP', subtitle: 'TAP. FLY. NEVER FALL.', desc: 'Dodge the pipes. Speed ramps every 5 points. One hit and you\'re done — how high can you rise?', icon: Flame, isNew: true },
               ].map((game, i) => (
                 <button
                   key={game.name}
