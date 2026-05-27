@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -7,7 +7,8 @@ import {
   Users, UserCheck, Clock, Eye, MessageSquare,
   Check, X, Loader2, UserPlus, UserCog,
   Dumbbell, Footprints, Utensils, Brain, MoreHorizontal,
-  UserMinus, RotateCcw, Trash2, ArrowLeft, ChevronRight, Flame, Sparkles
+  UserMinus, RotateCcw, Trash2, ArrowLeft, ChevronRight, Flame, Sparkles,
+  Calendar, ChevronLeft, Plus, Zap
 } from 'lucide-react';
 import {
   AlertDialog,
@@ -35,8 +36,10 @@ import {
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 import { motion, AnimatePresence } from 'framer-motion';
+import { supabase } from '@/integrations/supabase/client';
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, addMonths, subMonths, isToday as checkIsToday, getDay } from 'date-fns';
 
-type Tab = 'athletes' | 'checkins' | 'clients' | 'requests';
+type Tab = 'athletes' | 'checkins' | 'calendar' | 'clients' | 'requests';
 
 const CoachDashboard = ({ embedded = false }: { embedded?: boolean }) => {
   const { user } = useAuth();
@@ -47,6 +50,59 @@ const CoachDashboard = ({ embedded = false }: { embedded?: boolean }) => {
   const [activeTab, setActiveTab] = useState<Tab>('athletes');
   const [showDeactivated, setShowDeactivated] = useState(false);
   const [confirmRemoveId, setConfirmRemoveId] = useState<string | null>(null);
+
+  /* ── Calendar state ── */
+  const [calMonth, setCalMonth] = useState(new Date());
+  const [calBookings, setCalBookings] = useState<any[]>([]);
+  const [calHabits, setCalHabits] = useState<any[]>([]);
+  const [calLoading, setCalLoading] = useState(false);
+  const [calSelectedDay, setCalSelectedDay] = useState<Date | null>(null);
+  const [autoFilling, setAutoFilling] = useState(false);
+
+  // Fetch calendar data when tab switches to calendar
+  useEffect(() => {
+    if (activeTab === 'calendar' && user) fetchCalendar();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTab, user, calMonth]);
+
+  const fetchCalendar = async () => {
+    if (!user) return;
+    setCalLoading(true);
+    const start = format(startOfMonth(calMonth), 'yyyy-MM-dd');
+    const end = format(endOfMonth(calMonth), 'yyyy-MM-dd');
+    try {
+      const { data, error } = await (supabase as any).rpc('get_coach_calendar', {
+        _coach_id: user.id, _start: start, _end: end
+      });
+      if (data && !error) {
+        setCalBookings(data.bookings || []);
+        setCalHabits(data.habits || []);
+      }
+    } catch (e) { console.error('Calendar fetch error:', e); }
+    setCalLoading(false);
+  };
+
+  // Re-fetch when month changes (useEffect above handles it)
+  const changeMonth = (dir: 'prev' | 'next') => {
+    const newMonth = dir === 'prev' ? subMonths(calMonth, 1) : addMonths(calMonth, 1);
+    setCalMonth(newMonth);
+    setCalSelectedDay(null);
+  };
+
+  const handleAutoFillHabits = async () => {
+    if (!user) return;
+    setAutoFilling(true);
+    try {
+      const { data, error } = await (supabase as any).rpc('auto_fill_daily_habits', { _user_id: user.id });
+      if (data?.success) {
+        (await import('sonner')).toast.success('Daily habits auto-filled ✓');
+        fetchCalendar();
+      } else {
+        (await import('sonner')).toast.error(data?.reason || 'Could not auto-fill');
+      }
+    } catch (e) { (await import('sonner')).toast.error('Auto-fill failed'); }
+    setAutoFilling(false);
+  };
 
   if (selectedAthleteId) {
     return (
@@ -67,6 +123,7 @@ const CoachDashboard = ({ embedded = false }: { embedded?: boolean }) => {
   const tabItems: { id: Tab; label: string; icon: any; badge?: number }[] = [
     { id: 'athletes', label: 'ATHLETES', icon: UserCheck },
     { id: 'checkins', label: 'CHECK-INS', icon: Check },
+    { id: 'calendar', label: 'CALENDAR', icon: Calendar },
     { id: 'clients', label: 'USERS', icon: UserPlus },
     { id: 'requests', label: 'REQUESTS', icon: Clock, badge: pendingRequests.length },
   ];
@@ -331,6 +388,191 @@ const CoachDashboard = ({ embedded = false }: { embedded?: boolean }) => {
             <CheckInsTab />
           </motion.div>
         )}
+
+        {activeTab === 'calendar' && (
+          <motion.div key="calendar" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-4">
+            {/* Month Header */}
+            <div className="flex items-center justify-between">
+              <button onClick={() => changeMonth('prev')} className="p-2 rounded-lg hover:bg-primary/10 text-muted-foreground hover:text-primary transition-colors">
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+              <h3 className="font-display text-lg tracking-wider text-foreground">{format(calMonth, 'MMMM yyyy').toUpperCase()}</h3>
+              <button onClick={() => changeMonth('next')} className="p-2 rounded-lg hover:bg-primary/10 text-muted-foreground hover:text-primary transition-colors">
+                <ChevronRight className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Day of week headers */}
+            <div className="grid grid-cols-7 gap-1">
+              {['M','T','W','T','F','S','S'].map((d, i) => (
+                <div key={i} className="text-center text-[10px] font-display tracking-wider text-muted-foreground py-1">{d}</div>
+              ))}
+            </div>
+
+            {/* Calendar grid */}
+            {calLoading ? (
+              <div className="flex justify-center py-12"><Loader2 className="w-6 h-6 animate-spin text-primary" /></div>
+            ) : (
+              <div className="grid grid-cols-7 gap-1">
+                {(() => {
+                  const monthStart = startOfMonth(calMonth);
+                  const monthEnd = endOfMonth(calMonth);
+                  const days = eachDayOfInterval({ start: monthStart, end: monthEnd });
+                  // Monday-first: getDay returns 0=Sun, we want Mon=0
+                  const startDow = (getDay(monthStart) + 6) % 7;
+                  const cells: React.ReactNode[] = [];
+                  
+                  // Empty cells for days before month start
+                  for (let i = 0; i < startDow; i++) {
+                    cells.push(<div key={`empty-${i}`} className="aspect-square" />);
+                  }
+
+                  days.forEach(day => {
+                    const dayStr = format(day, 'yyyy-MM-dd');
+                    const dayBookings = calBookings.filter(b => b.session_date === dayStr);
+                    const dayHabit = calHabits.find((h: any) => h.habit_date === dayStr);
+                    const isSelected = calSelectedDay && isSameDay(day, calSelectedDay);
+                    const isCurrentDay = checkIsToday(day);
+                    const habitCount = dayHabit ? [dayHabit.train, dayHabit.learn_daily, dayHabit.water, dayHabit.hit_your_numbers, dayHabit.sauna, dayHabit.cold_shower, dayHabit.breathwork_done].filter(Boolean).length : 0;
+                    
+                    cells.push(
+                      <button
+                        key={dayStr}
+                        onClick={() => { setCalSelectedDay(day); if (calBookings.length === 0 && calHabits.length === 0) fetchCalendar(); }}
+                        className={`aspect-square rounded-lg border transition-all flex flex-col items-center justify-center gap-0.5 text-xs ${
+                          isSelected 
+                            ? 'border-primary bg-primary/15 text-primary' 
+                            : isCurrentDay 
+                              ? 'border-primary/40 bg-primary/5 text-foreground'
+                              : 'border-transparent hover:border-border hover:bg-card/50 text-foreground'
+                        }`}
+                      >
+                        <span className={`font-display text-sm ${isCurrentDay ? 'text-primary font-bold' : ''}`}>{format(day, 'd')}</span>
+                        <div className="flex gap-0.5">
+                          {dayBookings.length > 0 && (
+                            <div className="w-1.5 h-1.5 rounded-full bg-violet-400" />
+                          )}
+                          {habitCount >= 7 ? (
+                            <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+                          ) : habitCount > 0 ? (
+                            <div className="w-1.5 h-1.5 rounded-full bg-yellow-400" />
+                          ) : null}
+                        </div>
+                      </button>
+                    );
+                  });
+                  return cells;
+                })()}
+              </div>
+            )}
+
+            {/* Legend */}
+            <div className="flex items-center gap-4 text-[10px] text-muted-foreground justify-center">
+              <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-violet-400 inline-block" /> Sessions</span>
+              <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-primary inline-block" /> Habits Done</span>
+              <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-yellow-400 inline-block" /> Partial</span>
+            </div>
+
+            {/* Auto-fill habits button */}
+            <Card className="border-primary/20 bg-gradient-to-r from-primary/5 to-card">
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
+                      <Zap className="w-5 h-5 text-primary" />
+                    </div>
+                    <div>
+                      <p className="font-display text-sm tracking-wider text-foreground">AUTO-FILL TODAY</p>
+                      <p className="text-[10px] text-muted-foreground">Mark all 7 habits as complete</p>
+                    </div>
+                  </div>
+                  <Button 
+                    size="sm" 
+                    className="bg-primary text-white font-display tracking-wider text-xs" 
+                    onClick={handleAutoFillHabits}
+                    disabled={autoFilling}
+                  >
+                    {autoFilling ? <Loader2 className="w-4 h-4 animate-spin" /> : 'FILL'}
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Selected day detail */}
+            {calSelectedDay && (() => {
+              const dayStr = format(calSelectedDay, 'yyyy-MM-dd');
+              const dayBookings = calBookings.filter(b => b.session_date === dayStr);
+              const dayHabit = calHabits.find((h: any) => h.habit_date === dayStr);
+              
+              return (
+                <div className="space-y-3">
+                  <h4 className="font-display text-sm tracking-wider text-foreground">{format(calSelectedDay, 'EEEE d MMMM').toUpperCase()}</h4>
+                  
+                  {/* Bookings for this day */}
+                  {dayBookings.length > 0 ? dayBookings.map((b: any) => (
+                    <Card key={b.id} className="border-violet-500/30 bg-violet-500/5">
+                      <CardContent className="p-3 flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-lg bg-violet-500/10 flex items-center justify-center">
+                          <Calendar className="w-4 h-4 text-violet-400" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-display text-xs tracking-wider text-foreground">{b.session_type?.toUpperCase() || 'SESSION'}</p>
+                          <p className="text-[10px] text-muted-foreground">{b.start_time?.slice(0,5)} — {b.end_time?.slice(0,5)} {b.athlete_name ? `• ${b.athlete_name}` : ''}</p>
+                          {b.location && <p className="text-[10px] text-muted-foreground mt-0.5">📍 {b.location}</p>}
+                        </div>
+                        <Badge variant="outline" className="text-[9px] font-display">{b.status?.toUpperCase() || 'BOOKED'}</Badge>
+                      </CardContent>
+                    </Card>
+                  )) : (
+                    <div className="rounded-xl border border-border bg-card/50 p-4 text-center">
+                      <p className="text-xs text-muted-foreground font-display tracking-wide">NO SESSIONS</p>
+                    </div>
+                  )}
+                  
+                  {/* Habits for this day */}
+                  {dayHabit ? (
+                    <Card className="border-primary/20">
+                      <CardContent className="p-3">
+                        <p className="font-display text-xs tracking-wider text-foreground mb-2">DAILY HABITS</p>
+                        <div className="grid grid-cols-4 gap-2">
+                          {[
+                            { key: 'train', label: 'TRAIN', icon: '🏋️' },
+                            { key: 'learn_daily', label: 'LEARN', icon: '📖' },
+                            { key: 'water', label: 'HYDRATE', icon: '💧' },
+                            { key: 'hit_your_numbers', label: 'NUMBERS', icon: '🎯' },
+                            { key: 'sauna', label: 'SAUNA', icon: '🔥' },
+                            { key: 'cold_shower', label: 'COLD', icon: '❄️' },
+                            { key: 'breathwork_done', label: 'BREATHE', icon: '🌬️' },
+                          ].map(h => (
+                            <div key={h.key} className={`text-center rounded-lg p-1.5 text-[9px] font-display tracking-wider ${
+                              (dayHabit as any)[h.key] ? 'bg-primary/10 text-primary border border-primary/20' : 'bg-zinc-800/50 text-zinc-600'
+                            }`}>
+                              <span className="text-sm">{h.icon}</span>
+                              <p className="mt-0.5">{h.label}</p>
+                            </div>
+                          ))}
+                          {dayHabit.has_journal && (
+                            <div className="text-center rounded-lg p-1.5 text-[9px] font-display tracking-wider bg-primary/10 text-primary border border-primary/20">
+                              <span className="text-sm">✍️</span>
+                              <p className="mt-0.5">JOURNAL</p>
+                            </div>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ) : (
+                    <Card className="border-border/30">
+                      <CardContent className="p-3 text-center">
+                        <p className="text-xs text-muted-foreground font-display tracking-wide">NO HABITS LOGGED</p>
+                      </CardContent>
+                    </Card>
+                  )}
+                </div>
+              );
+            })()}
+          </motion.div>
+        )}
+
         {activeTab === 'clients' && (
           <motion.div key="clients" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
             <ClientSearchPanel />

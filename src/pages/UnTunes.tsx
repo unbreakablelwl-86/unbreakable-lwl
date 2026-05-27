@@ -135,7 +135,7 @@ export default function UnTunes() {
             {...fadeIn}
             transition={{ delay: 0.1 }}
             className="mb-4 rounded-xl border border-primary/20 bg-gradient-to-r from-primary/10 via-zinc-900/80 to-violet-500/10 p-3 flex items-center gap-3 cursor-pointer hover:border-primary/40 transition-colors"
-            onClick={() => setActiveTab('store')}
+            onClick={() => setActiveTab(activeTab === 'store' ? 'collection' : 'store')}
           >
             <div className="flex -space-x-2">
               <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-primary to-orange-600 flex items-center justify-center border-2 border-background z-10">
