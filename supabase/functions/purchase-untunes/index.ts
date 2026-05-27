@@ -227,7 +227,7 @@ serve(async (req) => {
         const { data: edNum } = await supabase.rpc("claim_diamond_edition", { p_album_id: albumId });
         if (edNum === -1) {
           // No diamond editions left — downgrade to gold
-          cards.push({ user_id: user.id, album_id: albumId, rarity: "gold", edition_number: 0, purchase_id: purchase.id });
+          cards.push({ user_id: user.id, album_id: albumId, card_type: "album", rarity: "gold", edition_number: 0, purchase_id: purchase.id });
           continue;
         }
         editionNumber = edNum;
@@ -237,6 +237,7 @@ serve(async (req) => {
         user_id: user.id,
         album_id: albumId,
         track_id: null,
+        card_type: "album",
         rarity,
         edition_number: editionNumber,
         purchase_id: purchase.id,
@@ -251,7 +252,7 @@ serve(async (req) => {
       if (rarity === "diamond") {
         const { data: edNum } = await supabase.rpc("claim_diamond_edition", { p_track_id: trackId });
         if (edNum === -1) {
-          cards.push({ user_id: user.id, track_id: trackId, rarity: "gold", edition_number: 0, purchase_id: purchase.id });
+          cards.push({ user_id: user.id, track_id: trackId, card_type: "track", rarity: "gold", edition_number: 0, purchase_id: purchase.id });
           continue;
         }
         editionNumber = edNum;
@@ -260,13 +261,88 @@ serve(async (req) => {
       cards.push({
         user_id: user.id,
         track_id: trackId,
+        card_type: "track",
         rarity,
         edition_number: editionNumber,
         purchase_id: purchase.id,
       });
     }
 
-    // Insert all cards
+    // ── Brand card drops (ultra-rare, per-pack chance) ──
+    try {
+      const { data: brandCards } = await supabase
+        .from("un_tunes_brand_cards")
+        .select("id, slug, title, max_standard, max_gold, max_diamond, drop_rate_standard, drop_rate_gold, drop_rate_diamond");
+
+      if (brandCards && brandCards.length > 0) {
+        for (const bc of brandCards) {
+          // Roll for each rarity independently (diamond first, then gold, then standard)
+          const dRoll = Math.random();
+          const gRoll = Math.random();
+          const sRoll = Math.random();
+
+          let brandRarity: "diamond" | "gold" | "standard" | null = null;
+          if (dRoll < Number(bc.drop_rate_diamond)) brandRarity = "diamond";
+          else if (gRoll < Number(bc.drop_rate_gold)) brandRarity = "gold";
+          else if (sRoll < Number(bc.drop_rate_standard)) brandRarity = "standard";
+
+          if (brandRarity) {
+            // Check edition availability via RPC
+            const { data: edNum } = await supabase.rpc("claim_brand_edition", {
+              p_brand_card_id: bc.id,
+              p_rarity: brandRarity,
+            });
+
+            if (edNum && edNum > 0) {
+              cards.push({
+                user_id: user.id,
+                track_id: null,
+                album_id: null,
+                brand_card_id: bc.id,
+                lyric_card_id: null,
+                card_type: "brand",
+                rarity: brandRarity,
+                edition_number: edNum,
+                purchase_id: purchase.id,
+              });
+            }
+          }
+        }
+      }
+    } catch (e) {
+      console.error("Brand card roll error (non-fatal):", e);
+    }
+
+    // ── Lyric card drops (bonus card chance per pack) ──
+    try {
+      // 15% chance to get a random lyric card per purchase
+      if (Math.random() < 0.15) {
+        const { data: lyricCards } = await supabase
+          .from("un_tunes_lyric_cards")
+          .select("id, track_id");
+
+        if (lyricCards && lyricCards.length > 0) {
+          const randomLyric = lyricCards[Math.floor(Math.random() * lyricCards.length)];
+          const lyricRarity = rollRarity(type as any);
+
+          cards.push({
+            user_id: user.id,
+            track_id: null,
+            album_id: null,
+            brand_card_id: null,
+            lyric_card_id: randomLyric.id,
+            card_type: "lyric",
+            rarity: lyricRarity,
+            edition_number: 0,
+            purchase_id: purchase.id,
+          });
+        }
+      }
+    } catch (e) {
+      console.error("Lyric card roll error (non-fatal):", e);
+    }
+
+    // Insert all cards (track + album + brand + lyric)
     const { data: insertedCards, error: cardError } = await supabase
       .from("un_tunes_user_cards")
       .insert(cards)

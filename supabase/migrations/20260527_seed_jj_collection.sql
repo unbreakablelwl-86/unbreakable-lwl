@@ -83,3 +83,42 @@ VALUES
 ('3a61bd9e-785b-4512-abab-e61b87496c54', NULL, 'f5997368-06ca-430b-9e3e-1ab50b38bee7', 'standard', 0, true, NOW(), NOW()),
 ('3a61bd9e-785b-4512-abab-e61b87496c54', NULL, 'f5997368-06ca-430b-9e3e-1ab50b38bee7', 'gold', 0, true, NOW(), NOW()),
 ('3a61bd9e-785b-4512-abab-e61b87496c54', NULL, 'f5997368-06ca-430b-9e3e-1ab50b38bee7', 'diamond', 26, true, NOW(), NOW());
+
+-- ═══════════════════════════════════════════════════════════════
+-- Brand cards + lyric cards for JJ's complete dev collection
+-- Run AFTER 20260527_brand_cards_trading.sql
+-- ═══════════════════════════════════════════════════════════════
+
+-- Brand cards: all 3 × 3 rarities = 9 cards
+INSERT INTO un_tunes_user_cards (user_id, card_type, brand_card_id, rarity, edition_number, is_opened, opened_at, created_at)
+SELECT 
+  '3a61bd9e-785b-4512-abab-e61b87496c54',
+  'brand',
+  bc.id,
+  r.rarity,
+  r.edition,
+  true,
+  NOW(),
+  NOW()
+FROM un_tunes_brand_cards bc
+CROSS JOIN (
+  VALUES ('standard', 1), ('gold', 1), ('diamond', 1)
+) AS r(rarity, edition)
+ON CONFLICT DO NOTHING;
+
+-- Lyric cards: all tracks × 3 rarities (if lyric cards table is populated)
+INSERT INTO un_tunes_user_cards (user_id, card_type, lyric_card_id, rarity, edition_number, is_opened, opened_at, created_at)
+SELECT 
+  '3a61bd9e-785b-4512-abab-e61b87496c54',
+  'lyric',
+  lc.id,
+  r.rarity,
+  0,
+  true,
+  NOW(),
+  NOW()
+FROM un_tunes_lyric_cards lc
+CROSS JOIN (
+  VALUES ('standard'), ('gold'), ('diamond')
+) AS r(rarity)
+ON CONFLICT DO NOTHING;
