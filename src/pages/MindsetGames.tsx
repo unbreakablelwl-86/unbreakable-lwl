@@ -1,7 +1,7 @@
 import { useState, useEffect, lazy, Suspense } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Gamepad2, Zap, Blocks, Crosshair, Grid3X3, Shapes, Wind, Calculator, Timer, ChevronRight, ArrowLeft } from "lucide-react";
+import { Gamepad2, Zap, Blocks, Crosshair, Grid3X3, Shapes, Wind, Calculator, Timer, Type, Flame, ChevronRight, ArrowLeft } from "lucide-react";
 const SnakeGame = lazy(() => import("@/components/mindset/SnakeGame"));
 const AlleywayGame = lazy(() => import("@/components/mindset/AlleywayGame"));
 const TetrisGame = lazy(() => import("@/components/mindset/TetrisGame"));
@@ -11,8 +11,10 @@ const PatternBreakerGame = lazy(() => import("@/components/mindset/PatternBreake
 const FlowStateGame = lazy(() => import("@/components/mindset/FlowStateGame"));
 const MentalMathsGame = lazy(() => import("@/components/mindset/MentalMathsGame"));
 const FocusTimerGame = lazy(() => import("@/components/mindset/FocusTimerGame"));
+const WordChainGame = lazy(() => import("@/components/mindset/WordChainGame"));
+const FlappyGame = lazy(() => import("@/components/mindset/FlappyGame"));
 
-type ViewState = "selection" | "snake" | "alleyway" | "tetris" | "reaction" | "memory" | "pattern" | "flow" | "maths" | "focus";
+type ViewState = "selection" | "snake" | "alleyway" | "tetris" | "reaction" | "memory" | "pattern" | "flow" | "maths" | "focus" | "wordchain" | "flappy";
 
 const games = [
   { id: "snake" as const, name: "HUNT", icon: Gamepad2, tagline: "Chase. Devour. Never Stop.", desc: "Split-second decisions — react too slow and it's over. Reflexes become razor-sharp." },
@@ -24,6 +26,8 @@ const games = [
   { id: "flow" as const, name: "FLOW", icon: Wind, tagline: "Stay In The Zone.", desc: "Endless runner — dodge obstacles at increasing speed. Double-jump your way to immortality.", isNew: true },
   { id: "maths" as const, name: "SOLVE", icon: Calculator, tagline: "Rapid Fire. Zero Hesitation.", desc: "Mental maths blitz — solve under countdown. Numbers grow, timer shrinks. 3 lives.", isNew: true },
   { id: "focus" as const, name: "ZONE", icon: Timer, tagline: "Get In The Zone.", desc: "Focus timer with streaks & missions. 5–90 minute sessions. Track your discipline.", isNew: true },
+  { id: "wordchain" as const, name: "WORDSMITH", icon: Type, tagline: "Chain Words. Never Break.", desc: "Each word starts with the last letter of the previous. Timer shrinks, min length grows — infinite chain.", isNew: true },
+  { id: "flappy" as const, name: "RISE UP", icon: Flame, tagline: "Tap. Fly. Never Fall.", desc: "Dodge the pipes. Speed ramps every 5 points. One hit and you're done — how high can you rise?", isNew: true },
 ];
 
 // GameWrapper must be OUTSIDE the main component — if defined inside,
@@ -58,6 +62,8 @@ const GAME_COMPONENTS: Record<string, React.LazyExoticComponent<React.ComponentT
   flow: FlowStateGame,
   maths: MentalMathsGame,
   focus: FocusTimerGame,
+  wordchain: WordChainGame,
+  flappy: FlappyGame,
 };
 
 const MindsetGames = () => {

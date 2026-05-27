@@ -1,6 +1,6 @@
 import { useRef, useCallback, useEffect, useState } from "react";
 
-type GameType = "snake" | "alleyway" | "tetris" | "reaction" | "memory" | "pattern" | "flow" | "maths" | "focus";
+type GameType = "snake" | "alleyway" | "tetris" | "reaction" | "memory" | "pattern" | "flow" | "maths" | "focus" | "wordchain" | "flappy";
 
 // Note frequencies for 8-bit melodies
 const NOTES: Record<string, number> = {
@@ -90,6 +90,24 @@ const MELODIES: Record<GameType, { notes: string[]; tempo: number }> = {
       "F4", "A4", "C5", "F5", "C5", "A4", "F4", "E4",
       "G4", "B4", "D5", "G5", "D5", "B4", "G4", "C4",
       "E4", "G4", "C5", "G4", "E4", "C4", "E4", "G4",
+    ],
+  },
+  wordchain: {
+    tempo: 120,
+    notes: [
+      "C4", "D4", "E4", "G4", "A4", "G4", "E4", "D4",
+      "C4", "E4", "G4", "C5", "A4", "G4", "E4", "C4",
+      "D4", "F4", "A4", "D5", "C5", "A4", "F4", "D4",
+      "E4", "G4", "B4", "E5", "D5", "B4", "G4", "E4",
+    ],
+  },
+  flappy: {
+    tempo: 155,
+    notes: [
+      "E4", "E4", "G4", "A4", "G4", "E4", "C4", "D4",
+      "E4", "G4", "A4", "C5", "A4", "G4", "E4", "G4",
+      "A4", "C5", "D5", "C5", "A4", "G4", "E4", "D4",
+      "C4", "D4", "E4", "G4", "E4", "D4", "C4", "C4",
     ],
   },
 };
