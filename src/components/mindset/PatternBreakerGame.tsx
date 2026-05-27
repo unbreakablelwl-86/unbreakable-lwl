@@ -315,6 +315,16 @@ const PatternBreakerGame = () => {
 
   const currentStage = getStage(sequence.length);
 
+  const CRTOverlay = () => (
+    <div
+      className="absolute inset-0 pointer-events-none z-30"
+      style={{
+        background: "repeating-linear-gradient(0deg, rgba(255,85,0,0.04) 0px, transparent 1px, transparent 2px)",
+        mixBlendMode: "multiply",
+      }}
+    />
+  );
+
   // ═══════════════════════════════════════════════════════════
   // ─── LEADERBOARD ──────────────────────────────────────────
   // ═══════════════════════════════════════════════════════════
