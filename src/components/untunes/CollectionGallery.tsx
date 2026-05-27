@@ -7,7 +7,7 @@
 
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { motion, AnimatePresence, PanInfo } from 'framer-motion';
-import { Diamond, Crown, Music, Disc3, X, Download, ArrowLeft, ChevronLeft, ChevronRight, Lock, Trash2 } from 'lucide-react';
+import { Diamond, Crown, Music, Disc3, X, Download, ArrowLeft, ChevronLeft, ChevronRight, Lock, Trash2, Share2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
@@ -410,6 +410,27 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
     }
   };
 
+  /** Share a card to the user's timeline */
+  const handleShareToTimeline = async (card: OwnedCard, title: string, coverUrl: string | null) => {
+    if (!user) return;
+    const rarityLabel = card.rarity.toUpperCase();
+    const content = `🃏 Check out my ${rarityLabel} card — *${title}*! #UnTunes #Collectibles`;
+    try {
+      const { error } = await supabase
+        .from('posts')
+        .insert({
+          user_id: user.id,
+          content,
+          image_url: coverUrl,
+          visibility: 'public',
+        });
+      if (error) throw error;
+      toast.success('Shared to your timeline!');
+    } catch {
+      toast.error('Failed to share');
+    }
+  };
+
   // Check if a specific card is a duplicate (more than one card for same item+rarity)
   const isDuplicateCard = (card: OwnedCard): boolean => {
     const itemId = card.track_id || card.album_id || card.brand_card_id;
@@ -670,6 +691,17 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
                         >
                           <Download className="w-3 h-3 mr-1" />
                           DOWNLOAD
+                        </Button>
+                      )}
+                      {owned && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="text-xs font-display tracking-wider text-primary border-primary/30 hover:bg-primary/10"
+                          onClick={() => handleShareToTimeline(owned, item.title, item.coverUrl)}
+                        >
+                          <Share2 className="w-3 h-3 mr-1" />
+                          SHARE
                         </Button>
                       )}
                       {owned && isDuplicateCard(owned) && (

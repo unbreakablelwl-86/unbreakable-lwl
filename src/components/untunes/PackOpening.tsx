@@ -8,7 +8,10 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion';
-import { X, Download, Sparkles, Crown, Diamond, Music, Disc3 } from 'lucide-react';
+import { X, Download, Sparkles, Crown, Diamond, Music, Disc3, Share2 } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
@@ -309,9 +312,10 @@ function SealedPack({ purchaseType, cardCount, onClick }: { purchaseType: string
 }
 
 /* ── Single Card Reveal ── */
-function CardReveal({ card, index, onNext, isDuplicate, onDiscard }: {
+function CardReveal({ card, index, onNext, isDuplicate, onDiscard, onShareToStory }: {
   card: PackCard; index: number; onNext: () => void;
   isDuplicate?: boolean; onDiscard?: (cardId: string) => void;
+  onShareToStory?: (card: PackCard) => void;
 }) {
   const [revealed, setRevealed] = useState(false);
   const [showParticles, setShowParticles] = useState(false);
@@ -506,17 +510,33 @@ function CardReveal({ card, index, onNext, isDuplicate, onDiscard }: {
         {revealed ? 'TAP FOR NEXT CARD' : 'TAP TO REVEAL'}
       </motion.p>
 
-      {/* Duplicate discard option — only for standard cards */}
-      {revealed && isDuplicate && card.rarity === 'standard' && onDiscard && (
-        <motion.button
-          className="mt-3 px-4 py-1.5 rounded-full border border-red-500/30 text-red-400 text-[10px] font-display tracking-[0.2em] hover:bg-red-500/10 transition-colors"
+      {/* Action buttons row */}
+      {revealed && (
+        <motion.div
+          className="mt-3 flex items-center gap-2"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          onClick={(e) => { e.stopPropagation(); onDiscard(card.id); onNext(); }}
+          transition={{ delay: 0.4 }}
         >
-          DUPLICATE — TAP TO DISCARD
-        </motion.button>
+          {/* Share to story */}
+          {onShareToStory && (
+            <button
+              className="px-4 py-1.5 rounded-full border border-primary/30 text-primary text-[10px] font-display tracking-[0.2em] hover:bg-primary/10 transition-colors flex items-center gap-1.5"
+              onClick={(e) => { e.stopPropagation(); onShareToStory(card); }}
+            >
+              <Share2 className="w-3 h-3" /> SHARE
+            </button>
+          )}
+          {/* Duplicate discard option — only for standard cards */}
+          {isDuplicate && card.rarity === 'standard' && onDiscard && (
+            <button
+              className="px-4 py-1.5 rounded-full border border-red-500/30 text-red-400 text-[10px] font-display tracking-[0.2em] hover:bg-red-500/10 transition-colors"
+              onClick={(e) => { e.stopPropagation(); onDiscard(card.id); onNext(); }}
+            >
+              DISCARD DUPE
+            </button>
+          )}
+        </motion.div>
       )}
     </motion.div>
   );
@@ -524,9 +544,33 @@ function CardReveal({ card, index, onNext, isDuplicate, onDiscard }: {
 
 /* ── Main Pack Opening Component ── */
 export function PackOpening({ cards, purchaseType, onClose, onMarkOpened, existingCardKeys, onDiscardCard }: PackOpeningProps) {
+  const { user } = useAuth();
   const [phase, setPhase] = useState<'intro' | 'revealing' | 'summary'>('intro');
   const [currentIndex, setCurrentIndex] = useState(0);
   const [revealedCards, setRevealedCards] = useState<PackCard[]>([]);
+
+  /** Share a revealed card to the user's timeline */
+  const handleShareCard = async (card: PackCard) => {
+    if (!user) return;
+    const title = card.title || 'Unknown';
+    const coverUrl = card.cover_url || null;
+    const rarityLabel = card.rarity.toUpperCase();
+    const content = `🃏 Just pulled a ${rarityLabel} card — *${title}*! #UnTunes #Collectibles`;
+    try {
+      const { error } = await supabase
+        .from('posts')
+        .insert({
+          user_id: user.id,
+          content,
+          image_url: coverUrl,
+          visibility: 'public',
+        });
+      if (error) throw error;
+      toast.success('Shared to your timeline!');
+    } catch {
+      toast.error('Failed to share');
+    }
+  };
 
   // Save the best for last — standard first, gold middle, diamond finale
   const orderedCards = [...cards].sort((a, b) => {
@@ -594,6 +638,7 @@ export function PackOpening({ cards, purchaseType, onClose, onMarkOpened, existi
               `${orderedCards[currentIndex].track_id || orderedCards[currentIndex].album_id || orderedCards[currentIndex].brand_card_id}-${orderedCards[currentIndex].rarity}`
             )}
             onDiscard={onDiscardCard}
+            onShareToStory={handleShareCard}
           />
         )}
 

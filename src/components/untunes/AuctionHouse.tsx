@@ -1,15 +1,17 @@
 /**
  * AuctionHouse — Browse active listings, place bids, buy-now, and list your own cards.
- * Includes price history and card value tracking.
+ * All token transactions handled via SECURITY DEFINER RPCs.
  */
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Gavel, Tag, Clock, TrendingUp, ArrowLeft, Search, Filter, Coins, Diamond, Crown, Music, Star, AlertCircle } from 'lucide-react';
+import { Gavel, Tag, Clock, TrendingUp, ArrowLeft, Search, Filter, Coins, Diamond, Crown, Music, Star, AlertCircle, Plus, X, Share2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { useTokenBalance } from '@/hooks/useTokenBalance';
+import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 
 interface Listing {
@@ -24,7 +26,6 @@ interface Listing {
   ends_at: string;
   status: string;
   created_at: string;
-  // Joined card info
   card?: {
     card_type: string;
     rarity: string;
@@ -32,9 +33,19 @@ interface Listing {
     track?: { title: string; cover_url: string } | null;
     album?: { title: string; cover_url: string } | null;
     brand_card?: { title: string; artwork_url: string } | null;
-    /** @deprecated lyric cards removed */
   };
   seller?: { display_name: string; avatar_url: string } | null;
+}
+
+interface OwnedCardForListing {
+  id: string;
+  rarity: string;
+  edition_number: number;
+  track_id?: string | null;
+  album_id?: string | null;
+  brand_card_id?: string | null;
+  title: string;
+  cover_url: string | null;
 }
 
 interface AuctionHouseProps {
@@ -48,10 +59,10 @@ const RARITY_CONFIG = {
 };
 
 function timeRemaining(endsAt: string): string {
-  const diff = new Date(endsAt).getTime() - Date.now();
-  if (diff <= 0) return 'Ended';
-  const h = Math.floor(diff / 3600000);
-  const m = Math.floor((diff % 3600000) / 60000);
+  const ms = new Date(endsAt).getTime() - Date.now();
+  if (ms <= 0) return 'ENDED';
+  const h = Math.floor(ms / 3600000);
+  const m = Math.floor((ms % 3600000) / 60000);
   if (h > 24) return `${Math.floor(h / 24)}d ${h % 24}h`;
   if (h > 0) return `${h}h ${m}m`;
   return `${m}m`;
@@ -59,146 +70,291 @@ function timeRemaining(endsAt: string): string {
 
 function getCardTitle(card: Listing['card']): string {
   if (!card) return 'Unknown';
-  if (card.brand_card) return card.brand_card.title;
-  // lyric cards removed
-  if (card.track) return card.track.title;
-  if (card.album) return card.album.title;
-  return 'Unknown';
+  return card.track?.title || card.album?.title || card.brand_card?.title || 'Unknown';
 }
 
 function getCardImage(card: Listing['card']): string | null {
   if (!card) return null;
-  if (card.brand_card?.artwork_url) return card.brand_card.artwork_url;
-  // lyric cards removed
-  if (card.track?.cover_url) return card.track.cover_url;
-  if (card.album?.cover_url) return card.album.cover_url;
-  return null;
+  return card.track?.cover_url || card.album?.cover_url || card.brand_card?.artwork_url || null;
 }
 
 function getCardTypeLabel(card: Listing['card']): string {
-  if (!card) return 'Card';
-  if (card.card_type === 'brand') return '⭐ BRAND';
-  if (card.card_type === 'lyric') return '🎤 LYRIC';
-  if (card.card_type === 'album') return '💿 ALBUM';
-  return '🎵 TRACK';
+  if (!card) return '';
+  if (card.track) return 'Track';
+  if (card.album) return 'Album';
+  if (card.brand_card) return 'Brand';
+  return '';
 }
 
-/* ── Single Listing Card ── */
+/* ── Listing Card (in grid) ── */
 function ListingCard({ listing, onBid, onBuyNow }: {
   listing: Listing;
-  onBid: (listing: Listing) => void;
-  onBuyNow: (listing: Listing) => void;
+  onBid: (l: Listing) => void;
+  onBuyNow: (l: Listing) => void;
 }) {
-  const card = listing.card;
-  const rarity = (card?.rarity || 'standard') as keyof typeof RARITY_CONFIG;
-  const config = RARITY_CONFIG[rarity];
-  const RIcon = config.icon;
-  const remaining = timeRemaining(listing.ends_at);
-  const isEnded = remaining === 'Ended';
-  const imgUrl = getCardImage(card);
+  const config = RARITY_CONFIG[listing.card?.rarity as keyof typeof RARITY_CONFIG] || RARITY_CONFIG.standard;
+  const title = getCardTitle(listing.card);
+  const image = getCardImage(listing.card);
+  const timeLeft = timeRemaining(listing.ends_at);
 
   return (
     <motion.div
-      className={cn(
-        'rounded-xl border overflow-hidden bg-zinc-900/50',
-        config.border,
-        rarity !== 'standard' && 'shadow-lg',
-      )}
+      className={cn('relative rounded-xl border overflow-hidden bg-zinc-900/50', config.border)}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
       whileHover={{ scale: 1.02 }}
-      whileTap={{ scale: 0.98 }}
     >
-      {/* Card image */}
-      <div className="relative aspect-square">
-        {imgUrl ? (
-          <img src={imgUrl} alt={getCardTitle(card)} className="w-full h-full object-cover" />
-        ) : (
-          <div className="w-full h-full bg-zinc-800 flex items-center justify-center">
-            <Music className="w-8 h-8 text-zinc-700" />
-          </div>
-        )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-        
-        {/* Badges */}
-        <div className="absolute top-2 left-2 flex gap-1">
-          <span className={cn('text-[9px] px-1.5 py-0.5 rounded-full font-display tracking-wider', config.bg, config.text)}>
-            {config.label.toUpperCase()}
-          </span>
-          <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-zinc-800/80 text-zinc-400 font-display tracking-wider">
-            {getCardTypeLabel(card)}
-          </span>
+      {/* Cover image */}
+      {image ? (
+        <img src={image} alt={title} className="w-full aspect-square object-cover" />
+      ) : (
+        <div className="w-full aspect-square bg-zinc-800 flex items-center justify-center">
+          <Music className="w-8 h-8 text-zinc-700" />
         </div>
-        
-        {/* Time remaining */}
-        <div className={cn(
-          'absolute top-2 right-2 flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-full font-display tracking-wider',
-          isEnded ? 'bg-red-500/20 text-red-400' : 'bg-zinc-800/80 text-zinc-300',
-        )}>
-          <Clock className="w-3 h-3" />
-          {remaining}
-        </div>
-        
-        {/* Title */}
-        <div className="absolute bottom-2 left-2 right-2">
-          <p className="text-sm font-display tracking-wider text-white truncate">{getCardTitle(card)}</p>
-          {card?.rarity === 'diamond' && card.edition_number > 0 && (
-            <p className="text-[10px] text-violet-300 font-mono">#{String(card.edition_number).padStart(3, '0')}</p>
-          )}
-        </div>
+      )}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+
+      {/* Rarity badge */}
+      <div className={cn('absolute top-2 left-2 px-2 py-0.5 rounded-full text-[9px] font-display tracking-widest border', config.border, config.text, config.bg)}>
+        {config.label.toUpperCase()}
       </div>
-      
-      {/* Price & actions */}
-      <div className="p-3 space-y-2">
+
+      {/* Time remaining */}
+      <div className="absolute top-2 right-2 px-2 py-0.5 rounded-full bg-black/60 text-[9px] text-white font-display tracking-wider flex items-center gap-1">
+        <Clock className="w-2.5 h-2.5" />
+        {timeLeft}
+      </div>
+
+      {/* Card info */}
+      <div className="absolute bottom-0 left-0 right-0 p-2.5 space-y-1.5">
+        <p className="text-white text-xs font-display tracking-wider truncate">{title}</p>
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-[10px] text-muted-foreground font-display tracking-wider">
+            <p className="text-[9px] text-muted-foreground font-display tracking-wider">
               {listing.listing_type === 'auction' ? 'CURRENT BID' : 'PRICE'}
             </p>
-            <div className="flex items-center gap-1">
-              <span className="text-lg font-display font-bold">
-                {listing.listing_type === 'auction' 
-                  ? (listing.current_bid || listing.starting_price) 
-                  : listing.starting_price}
-              </span>
-              <Coins className="w-3 h-3 text-primary" />
-            </div>
+            <p className="text-sm font-display font-bold text-white">
+              {listing.listing_type === 'auction' ? (listing.current_bid || listing.starting_price) : listing.starting_price}
+              <span className="text-[10px] text-primary ml-1">tokens</span>
+            </p>
           </div>
-          {listing.listing_type === 'auction' && listing.buy_now_price && (
-            <div className="text-right">
-              <p className="text-[10px] text-muted-foreground font-display tracking-wider">BUY NOW</p>
-              <div className="flex items-center gap-1">
-                <span className="text-sm font-display font-bold text-primary">{listing.buy_now_price}</span>
-                <Coins className="w-3 h-3 text-primary" />
-              </div>
-            </div>
+          {listing.listing_type === 'auction' ? (
+            <Button size="sm" className="h-7 text-[10px] font-display tracking-wider bg-primary/20 text-primary hover:bg-primary/30 border border-primary/30" onClick={() => onBid(listing)}>
+              <Gavel className="w-3 h-3 mr-1" /> BID
+            </Button>
+          ) : (
+            <Button size="sm" className="h-7 text-[10px] font-display tracking-wider bg-gradient-to-r from-primary to-orange-600 text-white" onClick={() => onBuyNow(listing)}>
+              BUY NOW
+            </Button>
           )}
         </div>
-        
-        {!isEnded && (
-          <div className="flex gap-2">
-            {listing.listing_type === 'auction' && (
-              <Button
-                size="sm"
-                variant="outline"
-                className="flex-1 text-[10px] font-display tracking-wider"
-                onClick={() => onBid(listing)}
-              >
-                <Gavel className="w-3 h-3 mr-1" />
-                BID
-              </Button>
-            )}
-            {(listing.buy_now_price || listing.listing_type === 'fixed') && (
-              <Button
-                size="sm"
-                className="flex-1 bg-gradient-to-r from-primary to-orange-600 text-white text-[10px] font-display tracking-wider"
-                onClick={() => onBuyNow(listing)}
-              >
-                <Tag className="w-3 h-3 mr-1" />
-                {listing.listing_type === 'fixed' ? 'BUY' : 'BUY NOW'}
-              </Button>
-            )}
-          </div>
+        {listing.buy_now_price && listing.listing_type === 'auction' && (
+          <button
+            className="w-full text-[9px] text-center text-primary/60 font-display tracking-wider hover:text-primary transition-colors"
+            onClick={() => onBuyNow(listing)}
+          >
+            BUY NOW: {listing.buy_now_price} tokens
+          </button>
         )}
       </div>
+    </motion.div>
+  );
+}
+
+/* ── Sell Card Modal ── */
+function SellCardModal({ cards, onClose, onListCreated }: {
+  cards: OwnedCardForListing[];
+  onClose: () => void;
+  onListCreated: () => void;
+}) {
+  const { user } = useAuth();
+  const [selectedCard, setSelectedCard] = useState<OwnedCardForListing | null>(null);
+  const [listingType, setListingType] = useState<'auction' | 'fixed'>('auction');
+  const [startingPrice, setStartingPrice] = useState('3');
+  const [buyNowPrice, setBuyNowPrice] = useState('');
+  const [duration, setDuration] = useState('24');
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleSubmit = async () => {
+    if (!user || !selectedCard) return;
+    setSubmitting(true);
+    try {
+      const { data, error } = await (supabase as any).rpc('create_card_listing', {
+        _uid: user.id,
+        _card_id: selectedCard.id,
+        _listing_type: listingType,
+        _starting_price: parseInt(startingPrice) || 1,
+        _buy_now_price: buyNowPrice ? parseInt(buyNowPrice) : null,
+        _duration_hours: parseInt(duration) || 24,
+      });
+      if (error) throw error;
+      if (data?.error) {
+        toast.error(data.error);
+        return;
+      }
+      toast.success('Card listed!');
+      onListCreated();
+      onClose();
+    } catch (err) {
+      console.error('List error:', err);
+      toast.error('Failed to list card');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <motion.div
+      className="fixed inset-0 z-[150] bg-black/80 backdrop-blur-xl flex items-end justify-center"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      onClick={onClose}
+    >
+      <motion.div
+        className="w-full max-w-md bg-zinc-900 border-t border-zinc-800 rounded-t-2xl p-6 space-y-4 max-h-[85vh] overflow-y-auto"
+        initial={{ y: '100%' }}
+        animate={{ y: 0 }}
+        exit={{ y: '100%' }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between">
+          <h3 className="font-display tracking-wider">SELL A CARD</h3>
+          <Button variant="ghost" size="icon" onClick={onClose}><X className="w-4 h-4" /></Button>
+        </div>
+
+        {/* Step 1: Select card */}
+        {!selectedCard ? (
+          <div className="space-y-2">
+            <p className="text-xs text-muted-foreground font-display tracking-wider">SELECT A CARD TO LIST</p>
+            <div className="grid grid-cols-3 gap-2 max-h-[50vh] overflow-y-auto">
+              {cards.map(card => {
+                const cfg = RARITY_CONFIG[card.rarity as keyof typeof RARITY_CONFIG] || RARITY_CONFIG.standard;
+                return (
+                  <button
+                    key={card.id}
+                    className={cn('relative rounded-lg overflow-hidden border transition-all hover:scale-105', cfg.border)}
+                    onClick={() => setSelectedCard(card)}
+                  >
+                    {card.cover_url ? (
+                      <img src={card.cover_url} alt={card.title} className="w-full aspect-square object-cover" />
+                    ) : (
+                      <div className="w-full aspect-square bg-zinc-800 flex items-center justify-center">
+                        <Music className="w-6 h-6 text-zinc-700" />
+                      </div>
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
+                    <div className="absolute bottom-0 left-0 right-0 p-1">
+                      <p className="text-white text-[8px] font-display tracking-wider truncate">{card.title}</p>
+                      <p className={cn('text-[7px] font-display tracking-widest', cfg.text)}>{cfg.label.toUpperCase()}</p>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+            {cards.length === 0 && (
+              <p className="text-center text-sm text-muted-foreground py-4">No cards to list</p>
+            )}
+          </div>
+        ) : (
+          /* Step 2: Configure listing */
+          <div className="space-y-4">
+            {/* Selected card preview */}
+            <div className="flex items-center gap-3 p-3 rounded-xl bg-zinc-800/50 border border-zinc-700/50">
+              {selectedCard.cover_url ? (
+                <img src={selectedCard.cover_url} className="w-12 h-12 rounded-lg object-cover" />
+              ) : (
+                <div className="w-12 h-12 rounded-lg bg-zinc-700 flex items-center justify-center"><Music className="w-5 h-5 text-zinc-500" /></div>
+              )}
+              <div className="flex-1">
+                <p className="text-sm font-display tracking-wider text-white">{selectedCard.title}</p>
+                <p className={cn('text-[10px] font-display tracking-widest',
+                  (RARITY_CONFIG[selectedCard.rarity as keyof typeof RARITY_CONFIG] || RARITY_CONFIG.standard).text
+                )}>
+                  {selectedCard.rarity.toUpperCase()}
+                  {selectedCard.rarity === 'diamond' && selectedCard.edition_number > 0 && ` #${String(selectedCard.edition_number).padStart(3, '0')}`}
+                </p>
+              </div>
+              <button className="text-xs text-muted-foreground" onClick={() => setSelectedCard(null)}>Change</button>
+            </div>
+
+            {/* Listing type */}
+            <div className="space-y-2">
+              <p className="text-xs text-muted-foreground font-display tracking-wider">LISTING TYPE</p>
+              <div className="flex gap-2">
+                {(['auction', 'fixed'] as const).map(t => (
+                  <button
+                    key={t}
+                    onClick={() => setListingType(t)}
+                    className={cn(
+                      'flex-1 py-2 rounded-lg border text-xs font-display tracking-wider transition-all',
+                      listingType === t ? 'bg-primary/20 border-primary/40 text-primary' : 'border-zinc-700 text-muted-foreground'
+                    )}
+                  >
+                    {t === 'auction' ? '🔨 AUCTION' : '🏷️ FIXED PRICE'}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Price */}
+            <div className="space-y-2">
+              <p className="text-xs text-muted-foreground font-display tracking-wider">
+                {listingType === 'auction' ? 'STARTING PRICE' : 'PRICE'} (TOKENS)
+              </p>
+              <input
+                type="number"
+                value={startingPrice}
+                onChange={(e) => setStartingPrice(e.target.value)}
+                min={1}
+                className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3 text-lg font-display text-center focus:outline-none focus:border-primary"
+              />
+            </div>
+
+            {/* Buy-now (auction only) */}
+            {listingType === 'auction' && (
+              <div className="space-y-2">
+                <p className="text-xs text-muted-foreground font-display tracking-wider">BUY NOW PRICE (OPTIONAL)</p>
+                <input
+                  type="number"
+                  value={buyNowPrice}
+                  onChange={(e) => setBuyNowPrice(e.target.value)}
+                  placeholder="—"
+                  className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3 text-lg font-display text-center focus:outline-none focus:border-primary"
+                />
+              </div>
+            )}
+
+            {/* Duration */}
+            <div className="space-y-2">
+              <p className="text-xs text-muted-foreground font-display tracking-wider">DURATION</p>
+              <div className="flex gap-2">
+                {[{ h: 6, l: '6H' }, { h: 12, l: '12H' }, { h: 24, l: '24H' }, { h: 48, l: '2D' }, { h: 168, l: '7D' }].map(d => (
+                  <button
+                    key={d.h}
+                    onClick={() => setDuration(String(d.h))}
+                    className={cn(
+                      'flex-1 py-2 rounded-lg border text-[10px] font-display tracking-wider transition-all',
+                      duration === String(d.h) ? 'bg-primary/20 border-primary/40 text-primary' : 'border-zinc-700 text-muted-foreground'
+                    )}
+                  >
+                    {d.l}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Submit */}
+            <Button
+              className="w-full bg-gradient-to-r from-primary to-orange-600 text-white font-display tracking-wider py-3"
+              onClick={handleSubmit}
+              disabled={submitting || !startingPrice}
+            >
+              {submitting ? 'LISTING...' : listingType === 'auction' ? '🔨 LIST FOR AUCTION' : '🏷️ LIST AT FIXED PRICE'}
+            </Button>
+          </div>
+        )}
+      </motion.div>
     </motion.div>
   );
 }
@@ -206,79 +362,121 @@ function ListingCard({ listing, onBid, onBuyNow }: {
 /* ── Main Auction House ── */
 export function AuctionHouse({ onBack }: AuctionHouseProps) {
   const { user } = useAuth();
+  const { balance, refresh: refreshBalance } = useTokenBalance();
   const [listings, setListings] = useState<Listing[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'auction' | 'fixed' | 'ending_soon'>('all');
   const [rarityFilter, setRarityFilter] = useState<'all' | 'standard' | 'gold' | 'diamond'>('all');
-  const [searchQuery, setSearchQuery] = useState('');
   const [bidModal, setBidModal] = useState<Listing | null>(null);
   const [bidAmount, setBidAmount] = useState('');
+  const [showSellModal, setShowSellModal] = useState(false);
+  const [myCards, setMyCards] = useState<OwnedCardForListing[]>([]);
 
-  useEffect(() => {
-    (async () => {
-      // Fetch active listings with card details
-      const { data, error } = await supabase
-        .from('un_tunes_card_listings')
-        .select(`
-          *,
-          card:un_tunes_user_cards(
-            card_type, rarity, edition_number,
-            track:un_tunes_tracks(title, cover_url),
-            album:un_tunes_albums(title, cover_url),
-            brand_card:un_tunes_brand_cards(title, artwork_url)
-          )
-        `)
-        .eq('status', 'active')
-        .order('ends_at', { ascending: true });
+  const fetchListings = useCallback(async () => {
+    const { data, error } = await supabase
+      .from('un_tunes_card_listings')
+      .select(`
+        *,
+        card:un_tunes_user_cards(
+          card_type, rarity, edition_number,
+          track:un_tunes_tracks(title, cover_url),
+          album:un_tunes_albums(title, cover_url),
+          brand_card:un_tunes_brand_cards(title, artwork_url)
+        )
+      `)
+      .eq('status', 'active')
+      .order('ends_at', { ascending: true });
 
-      if (!error && data) setListings(data as any);
-      setLoading(false);
-    })();
+    if (!error && data) setListings(data as any);
+    setLoading(false);
   }, []);
+
+  useEffect(() => { fetchListings(); }, [fetchListings]);
+
+  const fetchMyCards = useCallback(async () => {
+    if (!user) return;
+    const { data } = await (supabase as any).rpc('get_my_cards', { _uid: user.id });
+    if (data) {
+      const cards: OwnedCardForListing[] = data
+        .filter((c: any) => c.is_opened)
+        .map((c: any) => ({
+          id: c.id,
+          rarity: c.rarity,
+          edition_number: c.edition_number,
+          track_id: c.track_id,
+          album_id: c.album_id,
+          brand_card_id: c.brand_card_id,
+          title: c.card_title || 'Unknown',
+          cover_url: c.cover_url || null,
+        }));
+      setMyCards(cards);
+    }
+  }, [user]);
+
+  const handleOpenSellModal = async () => {
+    await fetchMyCards();
+    setShowSellModal(true);
+  };
 
   const filteredListings = useMemo(() => {
     let result = listings;
-    
     if (filter === 'auction') result = result.filter(l => l.listing_type === 'auction');
     if (filter === 'fixed') result = result.filter(l => l.listing_type === 'fixed');
     if (filter === 'ending_soon') {
       const oneHour = Date.now() + 3600000;
       result = result.filter(l => new Date(l.ends_at).getTime() < oneHour);
     }
-    
     if (rarityFilter !== 'all') {
       result = result.filter(l => l.card?.rarity === rarityFilter);
     }
-    
     return result;
   }, [listings, filter, rarityFilter]);
 
   const handlePlaceBid = async () => {
     if (!bidModal || !user || !bidAmount) return;
     const amount = parseInt(bidAmount);
-    const minBid = (bidModal.current_bid || bidModal.starting_price) + 1;
-    
-    if (amount < minBid) return;
-
-    const { error: bidError } = await supabase.from('un_tunes_bids').insert({
-      listing_id: bidModal.id,
-      bidder_id: user.id,
-      amount,
-    });
-
-    if (!bidError) {
-      await supabase
-        .from('un_tunes_card_listings')
-        .update({ current_bid: amount, current_bidder_id: user.id, updated_at: new Date().toISOString() })
-        .eq('id', bidModal.id);
-      
-      setListings(prev => prev.map(l => 
+    try {
+      const { data, error } = await (supabase as any).rpc('place_bid', {
+        _uid: user.id,
+        _listing_id: bidModal.id,
+        _amount: amount,
+      });
+      if (error) throw error;
+      if (data?.error) {
+        toast.error(data.error);
+        return;
+      }
+      toast.success(`Bid placed: ${amount} tokens`);
+      setListings(prev => prev.map(l =>
         l.id === bidModal.id ? { ...l, current_bid: amount, current_bidder_id: user.id } : l
       ));
+    } catch (err) {
+      toast.error('Failed to place bid');
     }
-    
     setBidModal(null);
     setBidAmount('');
+  };
+
+  const handleBuyNow = async (listing: Listing) => {
+    if (!user) return;
+    const price = listing.buy_now_price || listing.starting_price;
+    if (!confirm(`Buy now for ${price} tokens?`)) return;
+    try {
+      const { data, error } = await (supabase as any).rpc('buy_now_listing', {
+        _uid: user.id,
+        _listing_id: listing.id,
+      });
+      if (error) throw error;
+      if (data?.error) {
+        toast.error(data.error);
+        return;
+      }
+      toast.success(`Purchased for ${data.price} tokens!`);
+      refreshBalance();
+      fetchListings();
+    } catch (err) {
+      toast.error('Purchase failed');
+    }
   };
 
   return (
@@ -295,12 +493,15 @@ export function AuctionHouse({ onBack }: AuctionHouseProps) {
             <Gavel className="w-5 h-5 text-primary" />
             AUCTION HOUSE
           </h2>
-          <p className="text-xs text-muted-foreground">{listings.length} active listings</p>
+          <p className="text-xs text-muted-foreground">
+            {listings.length} active listing{listings.length !== 1 ? 's' : ''} — all prices in tokens
+          </p>
         </div>
         <Button
           variant="outline"
           size="sm"
           className="text-[10px] font-display tracking-wider"
+          onClick={handleOpenSellModal}
         >
           <Tag className="w-3 h-3 mr-1" />
           SELL CARD
@@ -363,6 +564,9 @@ export function AuctionHouse({ onBack }: AuctionHouseProps) {
               ? 'No cards listed yet — be the first to sell!'
               : 'No listings match your filters'}
           </p>
+          <Button variant="outline" size="sm" className="mt-4 text-xs font-display tracking-wider" onClick={handleOpenSellModal}>
+            <Plus className="w-3 h-3 mr-1" /> LIST YOUR FIRST CARD
+          </Button>
         </div>
       ) : (
         <div className="grid grid-cols-2 gap-3">
@@ -371,11 +575,22 @@ export function AuctionHouse({ onBack }: AuctionHouseProps) {
               key={listing.id}
               listing={listing}
               onBid={(l) => { setBidModal(l); setBidAmount(String((l.current_bid || l.starting_price) + 1)); }}
-              onBuyNow={(l) => {/* TODO: buy now flow */}}
+              onBuyNow={handleBuyNow}
             />
           ))}
         </div>
       )}
+
+      {/* Sell card modal */}
+      <AnimatePresence>
+        {showSellModal && (
+          <SellCardModal
+            cards={myCards}
+            onClose={() => setShowSellModal(false)}
+            onListCreated={fetchListings}
+          />
+        )}
+      </AnimatePresence>
 
       {/* Bid modal */}
       <AnimatePresence>
