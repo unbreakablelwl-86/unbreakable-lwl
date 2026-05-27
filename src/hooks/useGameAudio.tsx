@@ -24,18 +24,20 @@ export function useGameAudio(gameType: GameType) {
   const isMuted = sfxMuted;
 
   // ─── Un-Tunes player for background music ───
-  const { state: playerState, playTrack, togglePlay: playerToggle, setVolume } = usePlayer();
+  const { state: playerState, playTrack, togglePlay: playerToggle, setVolume, stop: playerStop } = usePlayer();
 
   const playTrackRef = useRef(playTrack);
   const playerToggleRef = useRef(playerToggle);
   const playerStateRef = useRef(playerState);
   const setVolumeRef = useRef(setVolume);
+  const playerStopRef = useRef(playerStop);
   const startedByGameRef = useRef(false);
 
   playTrackRef.current = playTrack;
   playerToggleRef.current = playerToggle;
   playerStateRef.current = playerState;
   setVolumeRef.current = setVolume;
+  playerStopRef.current = playerStop;
 
   // ─── Web Audio context for SFX oscillators ───
   const getCtx = useCallback(() => {
@@ -114,9 +116,17 @@ export function useGameAudio(gameType: GameType) {
     }
   }, [musicMuted]);
 
+  /** Stop game music and auto-close the mini player popup.
+   *  Uses full stop (clears current track) instead of toggle-pause
+   *  so the mini player disappears and preview enforcement resets. */
   const stopMusic = useCallback(() => {
-    if (startedByGameRef.current && playerStateRef.current.isPlaying) {
-      playerToggleRef.current();
+    if (startedByGameRef.current) {
+      // Use full stop if available (clears player state), else toggle pause
+      if (playerStopRef.current) {
+        playerStopRef.current();
+      } else if (playerStateRef.current.isPlaying) {
+        playerToggleRef.current();
+      }
     }
     startedByGameRef.current = false;
   }, []);
