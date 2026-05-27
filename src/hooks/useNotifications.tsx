@@ -29,6 +29,7 @@ export function useNotifications() {
       .from('notifications')
       .select('*')
       .eq('user_id', user.id)
+      .or('scheduled_for.is.null,scheduled_for.lte.' + new Date().toISOString())
       .order('created_at', { ascending: false })
       .limit(50);
 

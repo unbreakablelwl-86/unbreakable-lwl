@@ -17,6 +17,8 @@ import {
   Trash2,
   ChevronRight,
   Brain,
+  Flame,
+  ClipboardCheck,
 } from 'lucide-react';
 
 interface NotificationsPanelProps {
@@ -49,6 +51,11 @@ function getNotificationLink(notification: Notification): string | null {
 
   // Plan updates from coach
   if (t === 'plan_update') return '/my-coaching';
+
+  // Coach accountability & daily reminders → home dashboard
+  if (t === 'coach_accountability' || t === 'daily_reminder') return '/';
+  // Post-session check-in → programming
+  if (t === 'post_session_checkin') return '/programming/my-programmes';
 
   // Social — follow
   if (t === 'follow' && d.follower_id) return `/user/${d.follower_id}`;
@@ -113,6 +120,11 @@ function getNotificationIcon(type: string) {
     case 'adherence_alert':
     case 'athlete_skipped_session':
       return <Dumbbell className="w-4 h-4" />;
+    case 'coach_accountability':
+    case 'daily_reminder':
+      return <Flame className="w-4 h-4" />;
+    case 'post_session_checkin':
+      return <ClipboardCheck className="w-4 h-4" />;
     default:
       return <Bell className="w-4 h-4" />;
   }

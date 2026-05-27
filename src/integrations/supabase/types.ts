@@ -382,6 +382,30 @@ export type Database = {
         }
         Relationships: []
       }
+      login_streaks: {
+        Row: {
+          user_id: string
+          current_streak: number
+          best_streak: number
+          last_login_date: string
+          updated_at: string
+        }
+        Insert: {
+          user_id: string
+          current_streak?: number
+          best_streak?: number
+          last_login_date?: string
+          updated_at?: string
+        }
+        Update: {
+          user_id?: string
+          current_streak?: number
+          best_streak?: number
+          last_login_date?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       coach_public_profiles: {
         Row: {
           id: string

@@ -243,6 +243,19 @@ Give a short, punchy review (3-5 sentences max). Mention what went well, flag an
       },
     });
 
+    // ─── 8. Schedule 30-min post-session check-in ───
+    try {
+      const checkinDue = new Date(Date.now() + 30 * 60 * 1000).toISOString();
+      await supabase.from("pending_session_checkins").insert({
+        user_id: userId,
+        session_id: sessionId,
+        checkin_due_at: checkinDue,
+      });
+      console.log("Scheduled 30-min check-in for", checkinDue);
+    } catch (checkinErr) {
+      console.error("Check-in scheduling failed (non-blocking):", checkinErr);
+    }
+
     return new Response(
       JSON.stringify({
         ok: true,
