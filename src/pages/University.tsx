@@ -12,12 +12,11 @@ import { getCourseColors } from '@/lib/university/courseColors';
 import type { CourseType } from '@/lib/university/types';
 import { GuidesSection } from '@/components/university/GuidesSection';
 
-const courseTabs: { key: CourseType; label: string; icon: React.ReactNode; description: string; tagline: string }[] = [
-  { key: 'gym', label: 'Power', icon: <Dumbbell className="w-5 h-5" />, description: 'Applied Fitness & Exercise Science', tagline: 'Understand how your body moves, adapts, and grows.' },
-  { key: 'nutrition', label: 'Fuel', icon: <Apple className="w-5 h-5" />, description: 'Healthy Eating & Nutritional Science', tagline: 'Master the science of what you eat and why it matters.' },
-  { key: 'mindset', label: 'Mindset', icon: <Brain className="w-5 h-5" />, description: 'Mental Performance & Wellbeing', tagline: 'Build the mental resilience to keep showing up.' },
-  { key: 'sport', label: 'Sport', icon: <Trophy className="w-5 h-5" />, description: 'Sport-Specific Training', tagline: 'Apply your knowledge to the sport you love.' },
-  // { key: 'guides', label: 'Guides', icon: <FileText className="w-5 h-5" />, description: 'Downloadable Training Guides', tagline: 'Professional PDF guides — download, keep forever, train anywhere.' },
+const courseTabs: { key: CourseType; label: string; icon: React.ReactNode; description: string; tagline: string; emoji: string }[] = [
+  { key: 'gym', label: 'Power', icon: <Dumbbell className="w-5 h-5" />, description: 'Applied Fitness & Exercise Science', tagline: 'Understand how your body moves, adapts, and grows.', emoji: '💪' },
+  { key: 'nutrition', label: 'Fuel', icon: <Apple className="w-5 h-5" />, description: 'Healthy Eating & Nutritional Science', tagline: 'Master the science of what you eat and why it matters.', emoji: '🍏' },
+  { key: 'mindset', label: 'Mindset', icon: <Brain className="w-5 h-5" />, description: 'Mental Performance & Wellbeing', tagline: 'Build the mental resilience to keep showing up.', emoji: '🧠' },
+  { key: 'sport', label: 'Sport', icon: <Trophy className="w-5 h-5" />, description: 'Sport-Specific Training', tagline: 'Apply your knowledge to the sport you love.', emoji: '🏆' },
 ];
 
 /** Animated number counter */
@@ -32,7 +31,7 @@ function AnimatedStat({ value, suffix = '' }: { value: string; suffix?: string }
     const animate = (now: number) => {
       const elapsed = now - start;
       const progress = Math.min(elapsed / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+      const eased = 1 - Math.pow(1 - progress, 3);
       setDisplayed(Math.round(numericPart * eased));
       if (progress < 1) frame = requestAnimationFrame(animate);
     };
@@ -59,10 +58,10 @@ export default function University() {
   const activeTabData = courseTabs.find(t => t.key === activeTab) || courseTabs[0];
 
   return (
-    <div className="min-h-screen pb-24" >
-{/* Hero */}
-      <section className="pt-6 pb-14 md:pt-8 md:pb-20 border-b border-primary/20 relative overflow-hidden">
-        {/* Gradient backdrop */}
+    <div className="min-h-screen pb-24">
+
+      {/* ━━━ Hero ━━━ */}
+      <section className="pt-6 pb-12 md:pt-8 md:pb-16 border-b border-primary/20 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent pointer-events-none" />
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-primary/5 rounded-full blur-3xl pointer-events-none" />
 
@@ -71,9 +70,9 @@ export default function University() {
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="space-y-5"
+            className="space-y-4"
           >
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-2">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-1">
               <GraduationCap className="w-4 h-4 text-primary" />
               <span className="text-xs font-display tracking-wider text-primary">EDUCATION FOR EVERYONE</span>
             </div>
@@ -92,16 +91,15 @@ export default function University() {
               UNBREAKABLE courses are written to NVQ standard. These are not official qualifications — they are UNBREAKABLE education, built to be accessible to everyone.
             </p>
 
-            {/* Animated Stats */}
+            {/* Stats */}
             <motion.div
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3, duration: 0.5 }}
-              className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 pt-3"
+              className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 pt-2"
             >
               {[
                 { value: '19', suffix: '', label: 'Courses', icon: <BookOpen className="w-3.5 h-3.5" /> },
-                // { value: '20', suffix: '', label: 'Guides', icon: <FileText className="w-3.5 h-3.5" /> },
                 { value: '4400', suffix: '+', label: 'Quiz Questions', icon: <Award className="w-3.5 h-3.5" /> },
                 { value: '5', suffix: '', label: 'Disciplines', icon: <Zap className="w-3.5 h-3.5" /> },
               ].map((stat) => (
@@ -120,13 +118,15 @@ export default function University() {
         </div>
       </section>
 
-      {/* Course Selection */}
-      <div className="container mx-auto px-4 py-8">
+      {/* ━━━ Course Tabs ━━━ */}
+      <div className="container mx-auto px-4 py-6 md:py-8">
         <div className="max-w-3xl mx-auto">
           <p className="font-display text-xs tracking-wider text-muted-foreground text-center mb-4">
             CHOOSE YOUR DISCIPLINE
           </p>
-          <div className="flex flex-wrap justify-center gap-3">
+
+          {/* Horizontal scrollable on mobile, grid on desktop */}
+          <div className="flex justify-center gap-2 sm:gap-3 flex-wrap">
             {courseTabs.map((tab, i) => {
               const tabColors = getCourseColors(tab.key);
               const isActive = activeTab === tab.key;
@@ -139,7 +139,7 @@ export default function University() {
                   transition={{ delay: i * 0.08 }}
                   whileHover={{ y: -2 }}
                   whileTap={{ scale: 0.97 }}
-                  className={`relative flex flex-col items-center gap-2 p-4 sm:p-5 rounded-xl border transition-all w-[calc(50%-6px)] sm:w-[calc(20%-10px)] ${
+                  className={`relative flex flex-col items-center gap-1.5 sm:gap-2 p-3 sm:p-5 rounded-xl border transition-all w-[calc(25%-6px)] sm:w-[calc(25%-10px)] min-w-[72px] ${
                     isActive
                       ? `${tabColors.bg} ${tabColors.borderActive} shadow-lg ${tabColors.glow}`
                       : 'bg-card/50 border-border hover:border-primary/20 hover:bg-card'
@@ -152,15 +152,14 @@ export default function University() {
                   }`}>
                     {tab.icon}
                   </div>
-                  <span className={`font-display text-sm sm:text-base tracking-wider ${
+                  <span className={`font-display text-[11px] sm:text-sm tracking-wider ${
                     isActive ? tabColors.text : 'text-foreground'
                   }`}>
                     {tab.label.toUpperCase()}
                   </span>
-                  <span className="text-[10px] sm:text-xs text-muted-foreground text-center leading-tight hidden sm:block">
+                  <span className="text-[9px] sm:text-xs text-muted-foreground text-center leading-tight hidden md:block">
                     {tab.description}
                   </span>
-                  {/* Active indicator dot */}
                   {isActive && (
                     <motion.div
                       layoutId="activeDot"
@@ -174,7 +173,7 @@ export default function University() {
         </div>
       </div>
 
-      {/* Active Course Header */}
+      {/* ━━━ Active Course Tagline ━━━ */}
       <div className="container mx-auto px-4">
         <div className="max-w-3xl mx-auto">
           <AnimatePresence mode="wait">
@@ -192,7 +191,7 @@ export default function University() {
         </div>
       </div>
 
-      {/* Level Cards / Sport Grid */}
+      {/* ━━━ Content Area ━━━ */}
       <main className="container mx-auto px-4 pb-12 md:pb-20">
         <div className="max-w-3xl mx-auto space-y-5">
 
@@ -201,7 +200,7 @@ export default function University() {
             <GuidesSection />
           )}
 
-          {/* Sport tab: flat grid of individual sport courses */}
+          {/* Sport tab: grid of individual sport courses */}
           {activeTab === 'sport' && (() => {
             const sportList: { key: string; label: string; emoji: string }[] = [
               { key: 'sport-football', label: 'Football', emoji: '⚽' },
@@ -216,7 +215,7 @@ export default function University() {
               { key: 'sport-cricket', label: 'Cricket', emoji: '🏏' },
             ];
             return (
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
                 {sportList.map((sport, i) => {
                   const sData = allCourses[sport.key] || [];
                   const total = sData.length > 0 ? getTotalChapters(sData[0].level, sport.key) : 0;
@@ -228,7 +227,7 @@ export default function University() {
                       initial={{ opacity: 0, y: 12 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: i * 0.05 }}
-                      whileHover={{ y: -3 }}
+                      whileHover={{ y: -3, scale: 1.02 }}
                     >
                       <Card
                         className={`relative overflow-hidden ${colors.border} hover:${colors.borderActive} cursor-pointer hover:shadow-lg ${colors.glow} transition-all group`}
@@ -244,16 +243,16 @@ export default function University() {
                             />
                           </div>
                         )}
-                        <div className="p-5 text-center space-y-2">
-                          <div className="text-3xl">{sport.emoji}</div>
-                          <h3 className={`font-display text-base sm:text-lg tracking-wider text-foreground group-hover:${colors.text} transition-colors`}>
+                        <div className="p-4 sm:p-5 text-center space-y-1.5">
+                          <div className="text-2xl sm:text-3xl">{sport.emoji}</div>
+                          <h3 className={`font-display text-xs sm:text-sm tracking-wider text-foreground group-hover:${colors.text} transition-colors`}>
                             {sport.label.toUpperCase()}
                           </h3>
-                          <p className="text-[10px] sm:text-xs text-muted-foreground">
-                            {total} Chapters · 8 Topics
+                          <p className="text-[9px] sm:text-[10px] text-muted-foreground">
+                            {total} Chapters
                           </p>
                           {total > 0 && completed > 0 && (
-                            <p className={`text-[10px] ${colors.text} font-display tracking-wider`}>{pct}% COMPLETE</p>
+                            <p className={`text-[9px] sm:text-[10px] ${colors.text} font-display tracking-wider`}>{pct}%</p>
                           )}
                         </div>
                       </Card>
@@ -264,7 +263,7 @@ export default function University() {
             );
           })()}
 
-          {/* Non-sport tabs: level cards */}
+          {/* Non-sport tabs: coming soon */}
           {activeTab !== 'sport' && activeTab !== 'guides' && courseData.length === 0 && (
             <Card className={`p-8 ${colors.border} text-center`}>
               <Flame className={`w-10 h-10 ${colors.text} mx-auto mb-4`} />
@@ -275,6 +274,7 @@ export default function University() {
             </Card>
           )}
 
+          {/* Non-sport tabs: level cards */}
           <AnimatePresence mode="wait">
             {activeTab !== 'sport' && activeTab !== 'guides' && courseData.map((level, i) => {
               const totalChapters = getTotalChapters(level.level, activeTab);
@@ -282,8 +282,6 @@ export default function University() {
               const hasContent = level.units.some(u => u.chapters.length > 0);
               const isLocked = level.level > 2 && !hasPassedAssessment(level.level - 1, 0, activeTab);
               const progressPercent = totalChapters > 0 ? Math.round((completedChapters / totalChapters) * 100) : 0;
-
-              // Estimate total chapters reading time (~5 min avg per chapter)
               const estimatedHours = Math.round(totalChapters * 5 / 60);
 
               return (
@@ -315,20 +313,20 @@ export default function University() {
                       </div>
                     )}
 
-                    <div className="p-6">
-                      <div className="flex items-start justify-between mb-4">
-                        <div className="flex items-center gap-4">
-                          <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${
+                    <div className="p-5 sm:p-6">
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="flex items-center gap-3 sm:gap-4">
+                          <div className={`w-11 h-11 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center shrink-0 ${
                             isLocked ? 'bg-muted/30' : colors.iconBg
                           }`}>
                             {isLocked ? (
                               <Lock className="w-5 h-5 text-muted-foreground" />
                             ) : (
-                              <GraduationCap className={`w-6 h-6 ${colors.text}`} />
+                              <GraduationCap className={`w-5 h-5 sm:w-6 sm:h-6 ${colors.text}`} />
                             )}
                           </div>
                           <div>
-                            <h2 className="font-display text-xl tracking-wider text-foreground">{level.title}</h2>
+                            <h2 className="font-display text-lg sm:text-xl tracking-wider text-foreground">{level.title}</h2>
                             <p className={`text-xs ${colors.text} font-display tracking-wider mt-0.5`}>{level.subtitle}</p>
                           </div>
                         </div>
@@ -337,10 +335,10 @@ export default function University() {
                         )}
                       </div>
 
-                      <p className="text-sm text-muted-foreground leading-relaxed mb-5">{level.description}</p>
+                      <p className="text-sm text-muted-foreground leading-relaxed mb-4">{level.description}</p>
 
                       {/* Stats row */}
-                      <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-muted-foreground mb-4">
+                      <div className="flex flex-wrap items-center gap-x-4 sm:gap-x-5 gap-y-2 text-xs text-muted-foreground mb-4">
                         <div className="flex items-center gap-1.5">
                           <BookOpen className={`w-3.5 h-3.5 ${colors.textMuted}`} />
                           <span>{level.units.length} Units</span>
@@ -351,11 +349,11 @@ export default function University() {
                         </div>
                         <div className="flex items-center gap-1.5">
                           <Clock className={`w-3.5 h-3.5 ${colors.textMuted}`} />
-                          <span>~{estimatedHours}h to complete</span>
+                          <span>~{estimatedHours}h</span>
                         </div>
                         <div className="flex items-center gap-1.5">
                           <Award className={`w-3.5 h-3.5 ${colors.textMuted}`} />
-                          <span>80% Pass Mark</span>
+                          <span>80% Pass</span>
                         </div>
                       </div>
 
@@ -417,6 +415,6 @@ export default function University() {
       </main>
 
       <AdminControlPanel />
-</div>
+    </div>
   );
 }
