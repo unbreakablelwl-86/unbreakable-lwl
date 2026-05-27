@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/hooks/useAuth';
 import { useUserRole } from '@/hooks/useUserRole';
-import { usePlayer, useFeaturedTracks, useArtists, useMyPlaylists, useMyArtistProfile, useSearchTracks, useLikeTrack, usePlaylistActions, useLikedTracks, useRecentlyPlayed, usePlaylistTracks, GENRES, GENRE_CATEGORIES } from '@/hooks/useUnTunes';
+import { usePlayer, useFeaturedTracks, useArtists, useMyPlaylists, useMyArtistProfile, useSearchTracks, useLikeTrack, usePlaylistActions, useLikedTracks, useRecentlyPlayed, usePlaylistTracks } from '@/hooks/useUnTunes';
 import type { Track, Playlist } from '@/hooks/useUnTunes';
 import { UnTunesTrackRow } from '@/components/untunes/TrackRow';
 import { UnTunesArtistCard } from '@/components/untunes/ArtistCard';
@@ -29,16 +29,12 @@ type UnTunesTab = 'browse' | 'search' | 'library' | 'podcasts' | 'artist';
 const fadeIn = { initial: { opacity: 0, y: 12 }, animate: { opacity: 1, y: 0 } };
 
 /* ── Map genre icon names to Lucide components ── */
-const GENRE_ICONS: Record<string, React.ComponentType<any>> = {
-  Dumbbell, Footprints, Mic2, Headphones, Guitar, Flame, Waves, Podcast, Swords, Drum,
-  Zap, Activity, Brain,
-};
 
 export default function UnTunes() {
   const { user } = useAuth();
   const { isDev, isCoach } = useUserRole();
   const [activeTab, setActiveTab] = useState<UnTunesTab>('browse');
-  const [selectedGenre, setSelectedGenre] = useState<string | null>(null);
+  
   // const spotify = useSpotify(); // parked
   const { tracks: featured, loading: featuredLoading } = useFeaturedTracks();
   const { artists, loading: artistsLoading } = useArtists();
@@ -143,34 +139,7 @@ export default function UnTunes() {
           {/* ─── Browse Tab ─── */}
           {activeTab === 'browse' && (
             <motion.div key="browse" {...fadeIn} className="space-y-8">
-              {/* Pillar Tabs — Power / Movement / Mindset */}
-              <div className="space-y-3">
-                <h2 className="font-display text-xs tracking-wider text-muted-foreground">BROWSE BY PILLAR</h2>
-                <div className="flex gap-2">
-                  {GENRE_CATEGORIES.map(cat => {
-                    const CatIcon = GENRE_ICONS[cat.icon] || Music;
-                    const isActive = selectedGenre === cat.key;
-                    return (
-                      <button
-                        key={cat.key}
-                        onClick={() => setSelectedGenre(isActive ? null : cat.key)}
-                        className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl border transition-all ${
-                          isActive
-                            ? 'bg-primary/15 border-primary/40 shadow-[0_0_16px_rgba(255,85,0,0.2)]'
-                            : 'bg-card/30 border-border/50 hover:border-primary/20 hover:bg-card/50'
-                        }`}
-                      >
-                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-                          isActive ? 'bg-primary/20 shadow-[0_0_12px_rgba(255,85,0,0.3)]' : 'bg-primary/10'
-                        }`}>
-                          <CatIcon className={`w-4 h-4 text-primary ${isActive ? 'drop-shadow-[0_0_6px_rgba(255,85,0,0.6)]' : ''}`} />
-                        </div>
-                        <span className={`font-display text-xs tracking-wider ${isActive ? 'text-primary' : 'text-foreground'}`}>{cat.label}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
+              {/* All Tracks Header */}
 
               {/* Trending Tracks */}
               <div>
@@ -197,7 +166,6 @@ export default function UnTunes() {
                 ) : (
                   <div className="space-y-1">
                     {featured
-                      .filter(t => !selectedGenre || t.genre === selectedGenre)
                       .map((track, i) => (
                         <UnTunesTrackRow
                           key={track.id}
@@ -299,28 +267,8 @@ export default function UnTunes() {
 
               {!searchQuery && (
                 <div className="space-y-4">
-                  <p className="font-display text-xs tracking-wider text-muted-foreground">BROWSE BY PILLAR</p>
-                  <div className="grid grid-cols-3 gap-2">
-                    {GENRE_CATEGORIES.map(cat => {
-                      const CatIcon = GENRE_ICONS[cat.icon] || Music;
-                      return (
-                        <button
-                          key={cat.key}
-                          onClick={() => {
-                            setSearchQuery(cat.label);
-                            search(cat.key);
-                          }}
-                          className="relative overflow-hidden rounded-xl border border-border/50 bg-card/30 px-4 py-5 text-center transition-all hover:border-primary/30 hover:bg-card/50 group"
-                        >
-                          <div className="absolute inset-0 opacity-5 group-hover:opacity-15 transition-opacity bg-gradient-to-br from-primary/40 to-transparent" />
-                          <div className="w-10 h-10 rounded-xl bg-primary/15 flex items-center justify-center mx-auto mb-2">
-                            <CatIcon className="w-5 h-5 text-primary drop-shadow-[0_0_6px_rgba(255,85,0,0.5)]" />
-                          </div>
-                          <p className="font-display text-xs tracking-wider text-foreground relative">{cat.label}</p>
-                        </button>
-                      );
-                    })}
-                  </div>
+                  <p className="font-display text-xs tracking-wider text-muted-foreground">ALL TRACKS</p>
+                  <p className="text-xs text-muted-foreground/60">Search by title or artist above</p>
                 </div>
               )}
             </motion.div>
