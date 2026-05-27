@@ -37,6 +37,7 @@ export interface Track {
   is_free: boolean;
   price_gbp: number | null;
   play_count: number;
+  lyrics: string | null;
   created_at: string;
   track_type: 'music' | 'podcast';
 }
