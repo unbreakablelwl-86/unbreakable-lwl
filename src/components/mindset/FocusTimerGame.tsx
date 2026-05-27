@@ -4,9 +4,9 @@ import { Play, Pause, RotateCcw, Volume2, VolumeX, Flame, Trophy, Target, Clock 
 import { motion, AnimatePresence } from "framer-motion";
 import { useGameAudio } from "@/hooks/useGameAudio";
 import { useAuth } from "@/hooks/useAuth";
+import { useUserRole } from "@/hooks/useUserRole";
 import { useFocusTimerScores } from "@/hooks/useFocusTimerScores";
 import { GameLeaderboard } from "./GameLeaderboard";
-import { GameAudioControls } from "./GameAudioControls";
 
 // ═══════════════════════════════════════════════════════════════
 // ZONE — FOCUS TIMER · POMODORO+
@@ -65,10 +65,13 @@ const FocusTimerGame = () => {
   remainingRef.current = remaining;
 
   // Boot
+  const [screenLocked, setScreenLocked] = useState(false);
 
   const { user } = useAuth();
+  const { isDev, isCoach } = useUserRole();
+  const canBypassLock = isDev || isCoach;
   const { saveScore: saveDbScore, topScores, userBest, refetch } = useFocusTimerScores();
-  const { playHit, playLevelUp, playGameOver, startMusic, stopMusic, toggleMute, isMuted, sfxMuted, musicMuted, toggleSfx, toggleMusic } = useGameAudio("focus");
+  const { playHit, playLevelUp, playGameOver, startMusic, stopMusic, toggleMute, isMuted } = useGameAudio("focus");
 // Timer logic
   useEffect(() => {
     if (!isRunning) {
@@ -103,6 +106,7 @@ const FocusTimerGame = () => {
             }
             setShowBreakPicker(true);
             setGameState("done");
+            setScreenLocked(false);
             // Save to leaderboard: score = total minutes focused × total sessions
             saveDbScore(newMins * newTotal, newMins, newTotal);
           } else if (gameState === "break") {
@@ -122,6 +126,7 @@ const FocusTimerGame = () => {
     setRemaining(duration);
     setIsRunning(true);
     setGameState("focus");
+    setScreenLocked(true);
     startMusic();
     setPulseRing(true);
   }, [duration, startMusic]);
@@ -152,6 +157,7 @@ const FocusTimerGame = () => {
     setGameState("setup");
     setShowBreakPicker(false);
     setPulseRing(false);
+    setScreenLocked(false);
   }, [duration, stopMusic]);
 
   const formatTime = (secs: number) => {
@@ -264,7 +270,9 @@ const FocusTimerGame = () => {
                   <p className="font-display text-xs text-primary">{streak}</p>
                 </div>
               )}
-              <GameAudioControls sfxMuted={sfxMuted} musicMuted={musicMuted} toggleSfx={toggleSfx} toggleMusic={toggleMusic} />
+              <Button variant="ghost" size="sm" onClick={toggleMute} className="h-8 w-8 p-0 text-muted-foreground hover:text-primary">
+                {isMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
+              </Button>
             </div>
           </div>
 
@@ -415,6 +423,34 @@ const FocusTimerGame = () => {
           )}
         </div>
       </div>
+
+      {/* ═══ Screen Lock Overlay ═══ */}
+      <AnimatePresence>
+        {screenLocked && !canBypassLock && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-xl flex flex-col items-center justify-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <motion.div
+              animate={{ opacity: [0.4, 1, 0.4] }}
+              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+              className="text-center"
+            >
+              <div className="w-20 h-20 rounded-full border-2 border-primary/30 flex items-center justify-center mx-auto mb-6">
+                <Target className="w-10 h-10 text-primary" />
+              </div>
+              <p className="font-display text-2xl tracking-wider text-primary mb-2">STAY FOCUSED</p>
+              <p className="font-display text-4xl tracking-wider text-white mb-4">{formatTime(remaining)}</p>
+              <p className="text-xs text-muted-foreground font-display tracking-wider">
+                SESSION IN PROGRESS • DON'T BREAK THE CHAIN
+              </p>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

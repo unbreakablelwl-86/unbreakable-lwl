@@ -182,11 +182,11 @@ export default function UnTunes() {
                     <span className="text-muted-foreground"> &nbsp;•&nbsp; </span>
                     <span className="text-foreground">Single track <span className="text-primary font-bold">{info.singleCost}</span></span>
                     <span className="text-muted-foreground"> &nbsp;•&nbsp; </span>
-                    <span className="text-primary font-bold">Buy with your monthly tokens — no extra cost!</span>
+                    <span className="text-primary font-bold">Download & own your music — buy with monthly tokens!</span>
                     <span className="text-muted-foreground"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
                     <Coins className="w-3 h-3 inline mr-1 text-primary" />
                     <span className="text-primary font-bold">{info.label} SAVINGS</span>
-                    <span className="text-foreground"> — All 3 albums for <span className="text-primary font-bold">{info.bundleCost}</span> with your plan tokens</span>
+                    <span className="text-foreground"> — All 3 albums for <span className="text-primary font-bold">{info.bundleCost}</span> • Download & own forever with your plan tokens</span>
                   </motion.div>
                 </div>
               </div>

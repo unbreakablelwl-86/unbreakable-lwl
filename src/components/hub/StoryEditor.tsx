@@ -173,7 +173,7 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
   const [showMusicPicker, setShowMusicPicker] = useState(false);
   const [selectedTrack, setSelectedTrack] = useState<Track | null>(null);
   const [musicClipStart, setMusicClipStart] = useState(0); // seconds
-  const [musicClipEnd, setMusicClipEnd] = useState(15);     // seconds (default 15s clip)
+  const [musicClipEnd, setMusicClipEnd] = useState(30);     // seconds (default 30s clip)
   const [showClipTrimmer, setShowClipTrimmer] = useState(false);
   const audioPreviewRef = useRef<HTMLAudioElement | null>(null);
   // Draggable music sticker position (% of canvas)
@@ -1010,7 +1010,7 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
                     })}
                   </div>
                   <input type="range" min={0} max={Math.max((selectedTrack.duration_seconds || 180) - 5, 10)} value={musicClipStart}
-                    onChange={(e) => { const s = Number(e.target.value); setMusicClipStart(s); setMusicClipEnd(Math.min(s + 15, selectedTrack.duration_seconds || 180)); if (audioPreviewRef.current) { audioPreviewRef.current.currentTime = s; audioPreviewRef.current.play().catch(() => {}); } }}
+                    onChange={(e) => { const s = Number(e.target.value); setMusicClipStart(s); setMusicClipEnd(Math.min(s + 30, selectedTrack.duration_seconds || 180)); if (audioPreviewRef.current) { audioPreviewRef.current.currentTime = s; audioPreviewRef.current.play().catch(() => {}); } }}
                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" style={{ touchAction: 'none' }}
                   />
                 </div>

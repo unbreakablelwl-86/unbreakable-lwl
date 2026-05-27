@@ -3,11 +3,11 @@
  * Includes buy buttons, token pricing, and triggers pack opening animation.
  */
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Coins, Music, Disc3, Package, ShoppingBag, Sparkles,
-  Diamond, Crown, ChevronRight, Loader2, Zap,
+  Diamond, Crown, ChevronRight, Loader2, Zap, Gift,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -39,6 +39,50 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
   const [packCards, setPackCards] = useState<PackCard[] | null>(null);
   const [packType, setPackType] = useState<'single' | 'album' | 'bundle'>('single');
   const [storeView, setStoreView] = useState<'main' | 'singles'>('main');
+
+  // ── Pending (unopened) packs ──
+  const [pendingPacks, setPendingPacks] = useState<any[]>([]);
+  const [pendingLoading, setPendingLoading] = useState(false);
+
+  const fetchPendingPacks = useCallback(async () => {
+    if (!user) return;
+    setPendingLoading(true);
+    try {
+      const { data, error } = await (supabase as any)
+        .from('un_tunes_user_cards')
+        .select('id, track_id, album_id, rarity, card_type, brand_card_id, edition_number, created_at')
+        .eq('user_id', user.id)
+        .eq('is_opened', false)
+        .order('created_at', { ascending: true });
+      if (error) console.error('[UnTunesStore] Pending packs error:', error);
+      setPendingPacks(data || []);
+    } catch (err) {
+      console.error('[UnTunesStore] Pending packs exception:', err);
+    }
+    setPendingLoading(false);
+  }, [user]);
+
+  useEffect(() => { fetchPendingPacks(); }, [fetchPendingPacks]);
+
+  const handleOpenPendingPacks = useCallback(() => {
+    if (pendingPacks.length === 0) return;
+    // Convert pending DB cards into PackCard format for the opening animation
+    const cards: PackCard[] = pendingPacks.map(p => {
+      const track = tracks.find(t => t.id === p.track_id);
+      const album = albums.find(a => a.id === p.album_id);
+      return {
+        id: p.id,
+        rarity: p.rarity || 'standard',
+        track_id: p.track_id,
+        album_id: p.album_id,
+        edition_number: p.edition_number || 0,
+        un_tunes_tracks: track ? { title: track.title, cover_url: track.cover_url || '' } : null,
+        un_tunes_albums: album ? { title: album.title, cover_url: album.cover_url || '' } : null,
+      };
+    });
+    setPackType('bundle');
+    setPackCards(cards);
+  }, [pendingPacks, tracks, albums]);
 
   const handlePurchase = useCallback(async (
     type: 'single' | 'album' | 'bundle',
@@ -91,12 +135,13 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
 
   const handlePackClose = () => {
     setPackCards(null);
+    fetchPendingPacks(); // Refresh after opening
   };
 
   const handleMarkOpened = async (cardIds: string[]) => {
     // Mark cards as opened in DB
     const now = new Date().toISOString();
-    await supabase
+    await (supabase as any)
       .from('un_tunes_user_cards')
       .update({ is_opened: true, opened_at: now })
       .in('id', cardIds);
@@ -126,6 +171,50 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
 
         {storeView === 'main' ? (
           <>
+            {/* ═══ PENDING PACKS — Unopened cards waiting ═══ */}
+            {pendingPacks.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <Card className="relative overflow-hidden border-violet-500/40 bg-gradient-to-br from-violet-950/40 via-zinc-900 to-violet-950/40 cursor-pointer"
+                  onClick={handleOpenPendingPacks}
+                >
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_30%,rgba(139,92,246,0.15),transparent_60%)]" />
+                  <div className="relative p-5">
+                    <div className="flex items-center gap-3">
+                      <div className="relative">
+                        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center">
+                          <Gift className="w-6 h-6 text-white" />
+                        </div>
+                        <motion.div
+                          animate={{ scale: [1, 1.3, 1] }}
+                          transition={{ duration: 2, repeat: Infinity }}
+                          className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-primary flex items-center justify-center"
+                        >
+                          <span className="text-[10px] font-display text-white">{pendingPacks.length}</span>
+                        </motion.div>
+                      </div>
+                      <div className="flex-1">
+                        <p className="font-display text-sm tracking-wider text-white">PACKS TO OPEN!</p>
+                        <p className="text-[10px] text-violet-300">
+                          {pendingPacks.length} card{pendingPacks.length !== 1 ? 's' : ''} waiting to be revealed
+                        </p>
+                      </div>
+                      <Button
+                        className="bg-gradient-to-r from-violet-500 to-purple-600 text-white font-display tracking-wider text-xs"
+                        onClick={(e) => { e.stopPropagation(); handleOpenPendingPacks(); }}
+                      >
+                        <Sparkles className="w-4 h-4 mr-1" />
+                        OPEN
+                      </Button>
+                    </div>
+                  </div>
+                </Card>
+              </motion.div>
+            )}
+
             {/* ═══ BUNDLE DEAL — Hero card ═══ */}
             <motion.div whileTap={{ scale: 0.98 }}>
               <Card className="relative overflow-hidden border-primary/30 bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900">
