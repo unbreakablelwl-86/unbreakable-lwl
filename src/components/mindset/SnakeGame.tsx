@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/hooks/useAuth";
 import { useSnakeScores } from "@/hooks/useSnakeScores";
 import { GameLeaderboard } from "./GameLeaderboard";
-import { GameAudioControls } from "./GameAudioControls";
 import { useGameAudio } from "@/hooks/useGameAudio";
 
 // ─── Types ───────────────────────────────────────────────────
@@ -714,8 +713,8 @@ const SnakeGame = () => {
               <p className="text-muted-foreground text-sm"><span className="text-primary font-bold">▸</span> <span className="text-yellow-400">Golden food</span> = 3x base points</p>
             </div>
 
-            <Button onClick={startGame} className="font-display text-lg tracking-wider px-8 py-4 bg-primary hover:bg-primary/80" style={{ boxShadow: "0 0 20px rgba(255,85,0,0.4)" }}>
-              <Play className="w-5 h-5 mr-2" /> START HUNT
+            <Button onClick={startGame} className="font-display text-xl tracking-wider px-12 py-6 bg-primary hover:bg-primary/80 rounded-xl" style={{ boxShadow: "0 0 30px rgba(255,85,0,0.5)" }}>
+              <Play className="w-6 h-6 mr-2" /> START HUNT
             </Button>
 
             {userBest !== null && (
@@ -779,11 +778,11 @@ const SnakeGame = () => {
             </div>
 
             <div className="flex gap-3 justify-center">
-              <Button onClick={startGame} className="font-display tracking-wider px-6 bg-primary hover:bg-primary/80 gap-2">
-                <RotateCcw className="w-4 h-4" /> HUNT AGAIN
+              <Button onClick={startGame} className="font-display text-lg tracking-wider px-8 py-5 bg-primary hover:bg-primary/80 gap-2 rounded-xl" style={{ boxShadow: "0 0 25px rgba(255,85,0,0.4)" }}>
+                <RotateCcw className="w-5 h-5" /> HUNT AGAIN
               </Button>
-              <Button onClick={() => { refetch(); setView("leaderboard"); }} variant="outline" className="font-display tracking-wider px-6 gap-2 border-primary/30">
-                <Trophy className="w-4 h-4" /> BOARD
+              <Button onClick={() => { refetch(); setView("leaderboard"); }} variant="outline" className="font-display text-lg tracking-wider px-8 py-5 gap-2 border-primary/30 rounded-xl">
+                <Trophy className="w-5 h-5" /> BOARD
               </Button>
             </div>
 
@@ -880,7 +879,9 @@ const SnakeGame = () => {
             <p className="font-display text-[10px] tracking-wider text-muted-foreground">BEST</p>
             <p className="font-display text-base sm:text-lg tracking-wide text-primary leading-none">{Math.max(highScore, userBest || 0)}</p>
           </div>
-          <GameAudioControls sfxMuted={audio.sfxMuted} musicMuted={audio.musicMuted} toggleSfx={audio.toggleSfx} toggleMusic={audio.toggleMusic} />
+          <Button variant="ghost" size="sm" onClick={audio.toggleMute} className="h-8 w-8 p-0 text-muted-foreground hover:text-primary">
+            {audio.isMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
+          </Button>
         </div>
       </div>
 
