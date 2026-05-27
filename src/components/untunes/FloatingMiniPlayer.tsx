@@ -5,6 +5,7 @@ import {
   Play, Pause, SkipForward, X, Music,
   Maximize2, ChevronDown, SkipBack, Shuffle, Repeat, Repeat1,
   Volume2, VolumeX, Dumbbell, Share2, MessageSquare, Download, ListMusic,
+  RotateCcw, RotateCw,
 
 } from 'lucide-react';
 import { usePlayer, useLikeTrack } from '@/hooks/useUnTunes';
@@ -41,6 +42,18 @@ export function FloatingMiniPlayer() {
   useEffect(() => {
     if (state.currentTrack) setDismissed(false);
   }, [state.currentTrack?.id]);
+
+  // Auto-dismiss when exiting a game
+  useEffect(() => {
+    const handler = () => {
+      if (state.isPlaying) {
+        stop();
+      }
+      setDismissed(true);
+    };
+    window.addEventListener('game-exit', handler);
+    return () => window.removeEventListener('game-exit', handler);
+  }, [state.isPlaying, stop]);
 
   if (!state.currentTrack || dismissed) return null;
 
@@ -165,9 +178,9 @@ export function FloatingMiniPlayer() {
               style={{ width: 260 }}
             >
               {/* Progress bar */}
-              <div className="h-0.5 bg-muted/20">
+              <div className="h-1 bg-white/20">
                 <div
-                  className="h-full bg-primary transition-[width] duration-300 shadow-[0_0_4px_rgba(255,85,0,0.6)]"
+                  className="h-full bg-primary transition-[width] duration-300 shadow-[0_0_6px_rgba(255,85,0,0.6)]"
                   style={{ width: `${progress}%` }}
                 />
               </div>
@@ -264,7 +277,7 @@ export function FloatingMiniPlayer() {
             {/* Progress */}
             <div className="px-6 mb-4">
               <div
-                className="w-full h-1.5 bg-muted/30 rounded-full cursor-pointer relative group"
+                className="w-full h-2.5 bg-white/20 rounded-full cursor-pointer relative group"
                 onClick={(e) => {
                   const rect = e.currentTarget.getBoundingClientRect();
                   const pct = (e.clientX - rect.left) / rect.width;
@@ -272,18 +285,23 @@ export function FloatingMiniPlayer() {
                 }}
               >
                 <div
-                  className="absolute inset-y-0 left-0 bg-primary rounded-full transition-all shadow-[0_0_8px_rgba(255,85,0,0.4)]"
+                  className="absolute inset-y-0 left-0 bg-primary rounded-full transition-all shadow-[0_0_10px_rgba(255,85,0,0.6)]"
                   style={{ width: `${progress}%` }}
+                />
+                {/* Scrub handle */}
+                <div
+                  className="absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-white rounded-full shadow-[0_0_8px_rgba(255,85,0,0.5)] opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+                  style={{ left: `calc(${progress}% - 8px)` }}
                 />
               </div>
               <div className="flex justify-between mt-1.5">
-                <span className="text-[10px] text-white/70 tabular-nums">{formatTime(state.currentTime)}</span>
-                <span className="text-[10px] text-white/70 tabular-nums">{formatTime(state.duration)}</span>
+                <span className="text-xs text-white font-mono tabular-nums">{formatTime(state.currentTime)}</span>
+                <span className="text-xs text-white font-mono tabular-nums">{formatTime(state.duration)}</span>
               </div>
             </div>
 
             {/* Controls */}
-            <div className="flex items-center justify-center gap-6 px-6 mb-4">
+            <div className="flex items-center justify-center gap-4 px-6 mb-4">
               <button
                 onClick={toggleShuffle}
                 className={`transition-colors ${state.shuffle ? 'text-primary drop-shadow-[0_0_6px_rgba(255,85,0,0.5)]' : 'text-white hover:text-primary'}`}
@@ -294,6 +312,16 @@ export function FloatingMiniPlayer() {
                 <SkipBack className="w-6 h-6" />
               </button>
               <button
+                onClick={() => seekTo(Math.max(0, state.currentTime - 10))}
+                className="text-white hover:text-primary transition-colors"
+                aria-label="Back 10s"
+              >
+                <span className="relative inline-flex items-center justify-center w-8 h-8">
+                  <RotateCcw className="w-5 h-5" />
+                  <span className="absolute text-[8px] font-bold mt-0.5">10</span>
+                </span>
+              </button>
+              <button
                 onClick={togglePlay}
                 className="w-14 h-14 rounded-full bg-primary flex items-center justify-center shadow-[0_0_24px_rgba(255,85,0,0.4)] hover:scale-105 active:scale-95 transition-transform"
               >
@@ -302,6 +330,16 @@ export function FloatingMiniPlayer() {
                 ) : (
                   <Play className="w-6 h-6 text-primary-foreground ml-0.5" />
                 )}
+              </button>
+              <button
+                onClick={() => seekTo(Math.min(state.duration, state.currentTime + 10))}
+                className="text-white hover:text-primary transition-colors"
+                aria-label="Forward 10s"
+              >
+                <span className="relative inline-flex items-center justify-center w-8 h-8">
+                  <RotateCw className="w-5 h-5" />
+                  <span className="absolute text-[8px] font-bold mt-0.5">10</span>
+                </span>
               </button>
               <button onClick={nextTrack} className="text-foreground hover:text-primary transition-colors">
                 <SkipForward className="w-6 h-6" />

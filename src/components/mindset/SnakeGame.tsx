@@ -948,20 +948,20 @@ const SnakeGame = () => {
         <div className="flex items-center justify-center">
           <div className="grid grid-cols-3 gap-1.5">
             <div />
-            <Button className="h-16 w-16 sm:h-14 sm:w-16 bg-primary text-primary-foreground hover:bg-primary/90 active:scale-95 transition-all rounded-xl shadow-md" onPointerDown={() => handleDPad("UP")} aria-label="Up">
-              <ArrowUp className="w-7 h-7" />
+            <Button className="h-20 w-20 sm:h-18 sm:w-20 bg-primary text-primary-foreground hover:bg-primary/90 active:scale-95 transition-all rounded-xl shadow-md" onPointerDown={() => handleDPad("UP")} aria-label="Up">
+              <ArrowUp className="w-9 h-9" />
             </Button>
             <div />
-            <Button className="h-16 w-16 sm:h-14 sm:w-16 bg-primary text-primary-foreground hover:bg-primary/90 active:scale-95 transition-all rounded-xl shadow-md" onPointerDown={() => handleDPad("LEFT")} aria-label="Left">
-              <ArrowLeft className="w-7 h-7" />
+            <Button className="h-20 w-20 sm:h-18 sm:w-20 bg-primary text-primary-foreground hover:bg-primary/90 active:scale-95 transition-all rounded-xl shadow-md" onPointerDown={() => handleDPad("LEFT")} aria-label="Left">
+              <ArrowLeft className="w-9 h-9" />
             </Button>
-            <div className="h-16 w-16 sm:h-14 sm:w-16" />
-            <Button className="h-16 w-16 sm:h-14 sm:w-16 bg-primary text-primary-foreground hover:bg-primary/90 active:scale-95 transition-all rounded-xl shadow-md" onPointerDown={() => handleDPad("RIGHT")} aria-label="Right">
-              <ArrowRight className="w-7 h-7" />
+            <div className="h-20 w-20 sm:h-18 sm:w-20" />
+            <Button className="h-20 w-20 sm:h-18 sm:w-20 bg-primary text-primary-foreground hover:bg-primary/90 active:scale-95 transition-all rounded-xl shadow-md" onPointerDown={() => handleDPad("RIGHT")} aria-label="Right">
+              <ArrowRight className="w-9 h-9" />
             </Button>
             <div />
-            <Button className="h-16 w-16 sm:h-14 sm:w-16 bg-primary text-primary-foreground hover:bg-primary/90 active:scale-95 transition-all rounded-xl shadow-md" onPointerDown={() => handleDPad("DOWN")} aria-label="Down">
-              <ArrowDown className="w-7 h-7" />
+            <Button className="h-20 w-20 sm:h-18 sm:w-20 bg-primary text-primary-foreground hover:bg-primary/90 active:scale-95 transition-all rounded-xl shadow-md" onPointerDown={() => handleDPad("DOWN")} aria-label="Down">
+              <ArrowDown className="w-9 h-9" />
             </Button>
             <div />
           </div>

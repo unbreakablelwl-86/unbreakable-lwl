@@ -88,7 +88,7 @@ export function UnTunesTrackRow({ track, index, onPlay, onShare, isLiked, onTogg
           className={`w-7 h-7 rounded-lg flex items-center justify-center transition-all ${
             isLiked
               ? 'text-primary drop-shadow-[0_0_6px_rgba(255,85,0,0.5)]'
-              : 'text-white/60 opacity-0 group-hover:opacity-100 hover:text-primary'
+              : 'text-white hover:text-primary'
           }`}
           title={isLiked ? 'Unlike' : 'Like'}
         >
@@ -103,7 +103,7 @@ export function UnTunesTrackRow({ track, index, onPlay, onShare, isLiked, onTogg
           className={`w-7 h-7 rounded-lg flex items-center justify-center transition-all ${
             justAdded
               ? 'text-green-500'
-              : 'text-white/60 opacity-0 group-hover:opacity-100 hover:text-primary'
+              : 'text-white hover:text-primary'
           }`}
           title="Add to playlist"
         >
@@ -115,7 +115,7 @@ export function UnTunesTrackRow({ track, index, onPlay, onShare, isLiked, onTogg
       {onShare && (
         <button
           onClick={(e) => { e.stopPropagation(); onShare(); }}
-          className="w-7 h-7 rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-primary/10"
+          className="w-7 h-7 rounded-lg flex items-center justify-center transition-opacity hover:bg-primary/10"
         >
           <Share2 className="w-3.5 h-3.5 text-primary" />
         </button>

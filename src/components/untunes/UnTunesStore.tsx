@@ -53,7 +53,7 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
     try {
       // Use RPC first for reliability, then filter unopened
       let packData: any[] | null = null;
-      const { data: rpcData, error: rpcError } = await (supabase as any).rpc('get_my_cards');
+      const { data: rpcData, error: rpcError } = await (supabase as any).rpc('get_my_cards', { _uid: user.id });
       if (rpcData && !rpcError) {
         packData = rpcData
           .filter((c: any) => !c.is_opened)
@@ -123,7 +123,12 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
       if (trackId) body.trackId = trackId;
       if (albumId) body.albumId = albumId;
 
-      const { data, error } = await supabase.functions.invoke('purchase-untunes', { body });
+      // Use database RPC instead of edge function for reliability
+      const { data, error } = await (supabase as any).rpc('purchase_untunes', {
+        _type: type,
+        _track_id: trackId || null,
+        _album_id: albumId || null,
+      });
 
       if (error) throw error;
       if (data?.error) {
@@ -139,7 +144,7 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
       setPackType(type);
       setPackCards(data.cards || []);
       refreshBalance();
-      toast.success(`${data.tokensSpent} tokens spent`);
+      toast.success(`${data.tokensSpent || 0} tokens spent`);
     } catch (err) {
       console.error('Purchase error:', err);
       toast.error('Purchase failed. Please try again.');

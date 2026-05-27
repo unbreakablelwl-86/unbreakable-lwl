@@ -14,13 +14,13 @@ import { GameAudioControls } from "./GameAudioControls";
 // ═══════════════════════════════════════════════════════════════
 
 const NAMED_STAGES = [
-  { threshold: 0, name: "WARM UP", label: "STAGE 1", timePerQ: 10, maxNum: 12, multMax: 5, divMax: 5, ops: ["+", "-"] as string[] },
-  { threshold: 15, name: "MOVING", label: "STAGE 2", timePerQ: 9, maxNum: 20, multMax: 5, divMax: 5, ops: ["+", "-"] },
-  { threshold: 35, name: "SHARPER", label: "STAGE 3", timePerQ: 8, maxNum: 25, multMax: 6, divMax: 6, ops: ["+", "-", "×"] },
-  { threshold: 60, name: "LOCKED IN", label: "STAGE 4", timePerQ: 7, maxNum: 35, multMax: 8, divMax: 8, ops: ["+", "-", "×"] },
+  { threshold: 0, name: "WARM UP", label: "STAGE 1", timePerQ: 10, maxNum: 10, multMax: 4, divMax: 4, ops: ["+", "-", "×", "÷"] as string[] },
+  { threshold: 15, name: "MOVING", label: "STAGE 2", timePerQ: 9, maxNum: 15, multMax: 5, divMax: 5, ops: ["+", "-", "×", "÷"] },
+  { threshold: 35, name: "SHARPER", label: "STAGE 3", timePerQ: 8, maxNum: 20, multMax: 6, divMax: 6, ops: ["+", "-", "×", "÷"] },
+  { threshold: 60, name: "LOCKED IN", label: "STAGE 4", timePerQ: 7, maxNum: 30, multMax: 8, divMax: 8, ops: ["+", "-", "×", "÷"] },
   { threshold: 100, name: "ON FIRE", label: "STAGE 5", timePerQ: 6, maxNum: 50, multMax: 10, divMax: 10, ops: ["+", "-", "×", "÷"] },
   { threshold: 150, name: "UNTOUCHABLE", label: "STAGE 6", timePerQ: 5.5, maxNum: 75, multMax: 12, divMax: 12, ops: ["+", "-", "×", "÷"] },
-  { threshold: 210, name: "GODSPEED", label: "STAGE 7", timePerQ: 5, maxNum: 100, multMax: 15, divMax: 15, ops: ["+", "-", "×", "÷"] },
+  { threshold: 210, name: "GODSPEED", label: "STAGE 7", timePerQ: 5, maxNum: 100, multMax: 15, divMax: 12, ops: ["+", "-", "×", "÷"] },
   { threshold: 300, name: "IMMORTAL", label: "STAGE 8", timePerQ: 4.5, maxNum: 150, multMax: 20, divMax: 15, ops: ["+", "-", "×", "÷"] },
 ];
 

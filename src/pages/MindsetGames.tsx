@@ -66,7 +66,14 @@ const MindsetGames = () => {
     }
   }, []);
 
-  const handleBack = () => setView("selection");
+  const handleBack = () => {
+    // Stop mini player when exiting a game
+    try {
+      const event = new CustomEvent('game-exit');
+      window.dispatchEvent(event);
+    } catch {}
+    setView("selection");
+  };
 
   // Render game if selected
   if (view !== "selection") {

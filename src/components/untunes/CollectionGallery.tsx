@@ -230,7 +230,7 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
       try {
         // Use SECURITY DEFINER RPC to bypass any RLS timing issues
         let cardData: any[] | null = null;
-        const { data: rpcData, error: rpcError } = await (supabase as any).rpc('get_my_cards');
+        const { data: rpcData, error: rpcError } = await (supabase as any).rpc('get_my_cards', { _uid: user.id });
         if (rpcData && !rpcError) {
           cardData = rpcData;
         } else {
