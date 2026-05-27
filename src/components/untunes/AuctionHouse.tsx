@@ -33,7 +33,7 @@ interface Listing {
     track?: { title: string; cover_url: string } | null;
     album?: { title: string; cover_url: string } | null;
     brand_card?: { title: string; artwork_url: string } | null;
-    lyric_card?: { lyric_text: string; artwork_url: string; track: { title: string } } | null;
+
   };
   seller?: { display_name: string; avatar_url: string } | null;
 }
@@ -61,7 +61,6 @@ function timeRemaining(endsAt: string): string {
 function getCardTitle(card: Listing['card']): string {
   if (!card) return 'Unknown';
   if (card.brand_card) return card.brand_card.title;
-  if (card.lyric_card) return `"${card.lyric_card.lyric_text.slice(0, 30)}..."`;
   if (card.track) return card.track.title;
   if (card.album) return card.album.title;
   return 'Unknown';
@@ -70,7 +69,6 @@ function getCardTitle(card: Listing['card']): string {
 function getCardImage(card: Listing['card']): string | null {
   if (!card) return null;
   if (card.brand_card?.artwork_url) return card.brand_card.artwork_url;
-  if (card.lyric_card?.artwork_url) return card.lyric_card.artwork_url;
   if (card.track?.cover_url) return card.track.cover_url;
   if (card.album?.cover_url) return card.album.cover_url;
   return null;
@@ -79,7 +77,6 @@ function getCardImage(card: Listing['card']): string | null {
 function getCardTypeLabel(card: Listing['card']): string {
   if (!card) return 'Card';
   if (card.card_type === 'brand') return '⭐ BRAND';
-  if (card.card_type === 'lyric') return '🎤 LYRIC';
   if (card.card_type === 'album') return '💿 ALBUM';
   return '🎵 TRACK';
 }
@@ -235,7 +232,7 @@ export function AuctionHouse({ onBack }: AuctionHouseProps) {
             track:un_tunes_tracks(title, cover_url),
             album:un_tunes_albums(title, cover_url),
             brand_card:un_tunes_brand_cards(title, artwork_url),
-            lyric_card:un_tunes_lyric_cards(lyric_text, artwork_url, track:un_tunes_tracks(title))
+
           )
         `)
         .eq('status', 'active')

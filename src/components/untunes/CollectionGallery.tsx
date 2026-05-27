@@ -25,7 +25,7 @@ interface OwnedCard {
   created_at: string;
   card_type?: string;
   brand_card_id?: string | null;
-  lyric_card_id?: string | null;
+  lyric_card_id?: string | null; // deprecated — lyrics removed
 }
 
 interface BrandCard {

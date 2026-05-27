@@ -5,7 +5,7 @@ import {
   Play, Pause, SkipForward, X, Music,
   Maximize2, ChevronDown, SkipBack, Shuffle, Repeat, Repeat1,
   Volume2, VolumeX, Dumbbell, Share2, MessageSquare, Download, ListMusic,
-  FileText, ImageIcon,
+
 } from 'lucide-react';
 import { usePlayer, useLikeTrack } from '@/hooks/useUnTunes';
 import { ShareTrackSheet } from './ShareTrackSheet';
@@ -30,7 +30,7 @@ export function FloatingMiniPlayer() {
   const [showVolume, setShowVolume] = useState(false);
   const [showShareSheet, setShowShareSheet] = useState(false);
   const [dismissed, setDismissed] = useState(false);
-  const [showLyrics, setShowLyrics] = useState(false);
+  // Lyrics removed — just songs & album covers
 
   // Drag state
   const constraintsRef = useRef<HTMLDivElement | null>(null);
@@ -238,68 +238,21 @@ export function FloatingMiniPlayer() {
               </button>
             </div>
 
-            {/* Cover Art / Lyrics Toggle Area */}
+            {/* Cover Art */}
             <div className="flex-1 min-h-0 flex flex-col items-center justify-center px-8 py-4 relative">
-              <AnimatePresence mode="wait">
-                {!showLyrics ? (
-                  <motion.div
-                    key="cover"
-                    initial={{ opacity: 0, rotateY: -90 }}
-                    animate={{ opacity: 1, rotateY: 0 }}
-                    exit={{ opacity: 0, rotateY: 90 }}
-                    transition={{ duration: 0.3 }}
-                    className="relative"
-                  >
-                    <motion.div
-                      animate={{ rotate: state.isPlaying ? 360 : 0 }}
-                      transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
-                      className="w-56 h-56 sm:w-64 sm:h-64 md:w-72 md:h-72 rounded-2xl overflow-hidden border-2 border-primary/20 shadow-[0_0_40px_rgba(255,85,0,0.2)] shrink-0"
-                    >
-                      {track.cover_url ? (
-                        <img src={track.cover_url} alt={track.title} className="w-full h-full object-cover" />
-                      ) : (
-                        <div className="w-full h-full bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center">
-                          <Music className="w-16 h-16 text-primary/40 drop-shadow-[0_0_12px_rgba(255,85,0,0.3)]" />
-                        </div>
-                      )}
-                    </motion.div>
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    key="lyrics"
-                    initial={{ opacity: 0, rotateY: 90 }}
-                    animate={{ opacity: 1, rotateY: 0 }}
-                    exit={{ opacity: 0, rotateY: -90 }}
-                    transition={{ duration: 0.3 }}
-                    className="w-full max-w-sm h-56 sm:h-64 md:h-72 rounded-2xl overflow-hidden border-2 border-primary/20 shadow-[0_0_40px_rgba(255,85,0,0.2)] relative"
-                  >
-                    {track.cover_url && (
-                      <img src={track.cover_url} alt="" className="absolute inset-0 w-full h-full object-cover blur-xl opacity-30" />
-                    )}
-                    <div className="absolute inset-0 bg-black/70" />
-                    <div className="relative h-full overflow-y-auto p-5 scrollbar-thin scrollbar-thumb-primary/30">
-                      {track.lyrics ? (
-                        <pre className="text-sm text-white/90 whitespace-pre-wrap font-sans leading-relaxed tracking-wide">
-                          {track.lyrics}
-                        </pre>
-                      ) : (
-                        <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
-                          <FileText className="w-8 h-8 mb-2 opacity-40" />
-                          <p className="text-xs font-display tracking-wider">LYRICS COMING SOON</p>
-                        </div>
-                      )}
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-              {/* Toggle button */}
-              <button
-                onClick={() => setShowLyrics(!showLyrics)}
-                className="mt-3 flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-primary/25 bg-primary/10 text-xs font-display tracking-wider text-primary active:scale-95 transition-all"
+              <motion.div
+                animate={{ rotate: state.isPlaying ? 360 : 0 }}
+                transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
+                className="w-56 h-56 sm:w-64 sm:h-64 md:w-72 md:h-72 rounded-2xl overflow-hidden border-2 border-primary/20 shadow-[0_0_40px_rgba(255,85,0,0.2)] shrink-0"
               >
-                {showLyrics ? <><ImageIcon className="w-3 h-3" /> COVER ART</> : <><FileText className="w-3 h-3" /> LYRICS</>}
-              </button>
+                {track.cover_url ? (
+                  <img src={track.cover_url} alt={track.title} className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center">
+                    <Music className="w-16 h-16 text-primary/40 drop-shadow-[0_0_12px_rgba(255,85,0,0.3)]" />
+                  </div>
+                )}
+              </motion.div>
             </div>
 
             {/* Track Info */}
