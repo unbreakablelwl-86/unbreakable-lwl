@@ -5,7 +5,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Mail, Lock, User, Cake, ArrowLeft, Eye, EyeOff, Tag } from 'lucide-react';
 import { toast } from 'sonner';
 import shieldLogo from '@/assets/unbreakable-shield.png';
-import lwlFilmstrip from '@/assets/lwl-filmstrip-web.png';
+
 
 export default function SignIn() {
   const { user, signIn, signUp } = useAuth();
@@ -294,10 +294,8 @@ export default function SignIn() {
         </form>
       </div>
 
-      {/* LWL filmstrip footer */}
-      <div className="mt-10 opacity-30">
-        <img src={lwlFilmstrip} alt="Live Without Limits" className="h-8 object-contain" />
-      </div>
+      {/* Footer spacer */}
+      <div className="mt-10" />
     </div>
   );
 }
