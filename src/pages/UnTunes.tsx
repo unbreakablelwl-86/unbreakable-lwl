@@ -24,6 +24,7 @@ import { UnTunesArtistDashboard } from '@/components/untunes/ArtistDashboard';
 // MiniPlayer removed — now using FloatingMiniPlayer in App.tsx
 import { AddToPlaylistSheet } from '@/components/untunes/AddToPlaylistSheet';
 import { toast } from 'sonner';
+import { useTokenBalance } from '@/hooks/useTokenBalance';
 
 import { UnTunesStore } from '@/components/untunes/UnTunesStore';
 import { CollectionGallery } from '@/components/untunes/CollectionGallery';
@@ -38,6 +39,7 @@ const fadeIn = { initial: { opacity: 0, y: 12 }, animate: { opacity: 1, y: 0 } }
 export default function UnTunes() {
   const { user } = useAuth();
   const { isDev, isCoach } = useUserRole();
+  const { currentTier, balance, monthlyTokens } = useTokenBalance();
   const [activeTab, setActiveTab] = useState<UnTunesTab>('browse');
   
   // const spotify = useSpotify(); // parked
@@ -103,12 +105,12 @@ export default function UnTunes() {
 
   const tabs = [
     { key: 'browse' as const, label: 'BROWSE', icon: Music },
+    { key: 'podcasts' as const, label: 'PODS', icon: Podcast },
     { key: 'search' as const, label: 'SEARCH', icon: Search },
     { key: 'library' as const, label: 'LIBRARY', icon: Library },
     { key: 'store' as const, label: 'STORE', icon: ShoppingBag },
     { key: 'collection' as const, label: 'CARDS', icon: LayoutGrid },
     { key: 'auction' as const, label: 'TRADE', icon: Gavel },
-    { key: 'podcasts' as const, label: 'PODS', icon: Podcast },
     { key: 'artist' as const, label: myArtist ? 'ARTIST HUB' : 'BECOME ARTIST', icon: myArtist ? Crown : UserPlus },
   ];
 
@@ -152,6 +154,67 @@ export default function UnTunes() {
               <ChevronRight className="w-4 h-4" />
             </div>
           </motion.div>
+
+          {/* ── Token Savings Scroll Banner ── */}
+          {(() => {
+            // Token value per tier (monthly price / monthly tokens)
+            const tierValue: Record<string, { perToken: number; bundleCost: string; albumCost: string; singleCost: string; label: string }> = {
+              elite:  { perToken: 0.20, bundleCost: '£10',    albumCost: '£6',    singleCost: '£0.60', label: 'ELITE' },
+              pro:    { perToken: 0.25, bundleCost: '£12.50', albumCost: '£7.50', singleCost: '£0.75', label: 'PRO' },
+              base:   { perToken: 0.33, bundleCost: '£16.50', albumCost: '£9.90', singleCost: '£0.99', label: 'BASE' },
+            };
+            const info = tierValue[currentTier];
+            if (info) return (
+              <div className="mb-3 rounded-lg overflow-hidden border border-primary/20 bg-gradient-to-r from-primary/10 via-zinc-900/80 to-primary/10">
+                <div className="overflow-hidden whitespace-nowrap py-2">
+                  <motion.div
+                    animate={{ x: ['100%', '-100%'] }}
+                    transition={{ duration: 24, repeat: Infinity, ease: 'linear' }}
+                    className="inline-block whitespace-nowrap font-display tracking-wider text-xs"
+                  >
+                    <Coins className="w-3 h-3 inline mr-1 text-primary" />
+                    <span className="text-primary font-bold">{info.label} MEMBER</span>
+                    <span className="text-foreground"> — Your tokens = <span className="text-primary font-bold">{info.perToken.toFixed(2)}/token</span></span>
+                    <span className="text-muted-foreground"> &nbsp;•&nbsp; </span>
+                    <span className="text-foreground">All 3 albums for just <span className="text-primary font-bold">{info.bundleCost}</span></span>
+                    <span className="text-muted-foreground"> &nbsp;•&nbsp; </span>
+                    <span className="text-foreground">Single album <span className="text-primary font-bold">{info.albumCost}</span></span>
+                    <span className="text-muted-foreground"> &nbsp;•&nbsp; </span>
+                    <span className="text-foreground">Single track <span className="text-primary font-bold">{info.singleCost}</span></span>
+                    <span className="text-muted-foreground"> &nbsp;•&nbsp; </span>
+                    <span className="text-primary font-bold">Buy with your monthly tokens — no extra cost!</span>
+                    <span className="text-muted-foreground"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+                    <Coins className="w-3 h-3 inline mr-1 text-primary" />
+                    <span className="text-primary font-bold">{info.label} SAVINGS</span>
+                    <span className="text-foreground"> — All 3 albums for <span className="text-primary font-bold">{info.bundleCost}</span> with your plan tokens</span>
+                  </motion.div>
+                </div>
+              </div>
+            );
+            // Free / non-subscriber — nudge to upgrade
+            if (currentTier === 'free' || currentTier === 'absolute_base') return (
+              <div className="mb-3 rounded-lg overflow-hidden border border-primary/20 bg-gradient-to-r from-primary/10 via-zinc-900/80 to-primary/10">
+                <div className="overflow-hidden whitespace-nowrap py-2">
+                  <motion.div
+                    animate={{ x: ['100%', '-100%'] }}
+                    transition={{ duration: 22, repeat: Infinity, ease: 'linear' }}
+                    className="inline-block whitespace-nowrap font-display tracking-wider text-xs"
+                  >
+                    🔥 <span className="text-primary font-bold">UPGRADE TO ELITE</span>
+                    <span className="text-foreground"> — All 3 albums for just <span className="text-primary font-bold">£10</span> with Elite tokens (vs £16.67 top-up)</span>
+                    <span className="text-muted-foreground"> &nbsp;•&nbsp; </span>
+                    <span className="text-foreground">Elite = £0.20/token &nbsp;•&nbsp; 500 tokens/month</span>
+                    <span className="text-muted-foreground"> &nbsp;•&nbsp; </span>
+                    <span className="text-primary font-bold">USE CODE LAUNCH50 — 50% OFF FIRST MONTH</span>
+                    <span className="text-muted-foreground"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+                    🔥 <span className="text-primary font-bold">UPGRADE TO ELITE</span>
+                    <span className="text-foreground"> — Best value tokens for music, coaching & more</span>
+                  </motion.div>
+                </div>
+              </div>
+            );
+            return null;
+          })()}
 
           {/* Tabs */}
           <div className="flex gap-1 bg-card/50 p-1 rounded-xl border border-border/50">

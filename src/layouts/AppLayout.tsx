@@ -337,7 +337,7 @@ export default function AppLayout() {
       {/* ━━━ Sticky Purchase Banner (free users only) ━━━ */}
       {!hideBottomNav && isFreeUser && location.pathname !== '/ai-tokens' && location.pathname !== '/plans' && (
         <Link
-          to="/ai-tokens"
+          to="/ai-tokens?coupon=LAUNCH50"
           className="fixed left-0 right-0 z-[49] flex items-center justify-center gap-2 py-2.5 px-4"
           style={{
             bottom: '60px',
