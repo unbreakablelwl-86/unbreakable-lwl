@@ -101,6 +101,7 @@ interface PlayerContextType {
   toggleShuffle: () => void;
   toggleRepeat: () => void;
   addToQueue: (track: Track) => void;
+  stop: () => void;
 }
 
 export const PlayerContext = createContext<PlayerContextType>({
@@ -114,6 +115,7 @@ export const PlayerContext = createContext<PlayerContextType>({
   toggleShuffle: () => {},
   toggleRepeat: () => {},
   addToQueue: () => {},
+  stop: () => {},
 });
 
 export function usePlayer() {
@@ -329,6 +331,14 @@ export function usePlayerProvider() {
     setState(s => ({ ...s, queue: [...s.queue, track] }));
   }, []);
 
+  const stop = useCallback(() => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    }
+    setState(s => ({ ...s, isPlaying: false, currentTrack: null, queue: [], queueIndex: -1, currentTime: 0, duration: 0 }));
+  }, []);
+
   // Keep Media Session action refs in sync with latest callbacks
   useEffect(() => { nextTrackRef.current = nextTrack; }, [nextTrack]);
   useEffect(() => { prevTrackRef.current = prevTrack; }, [prevTrack]);
@@ -345,6 +355,7 @@ export function usePlayerProvider() {
     toggleShuffle,
     toggleRepeat,
     addToQueue,
+    stop,
   };
 }
 
