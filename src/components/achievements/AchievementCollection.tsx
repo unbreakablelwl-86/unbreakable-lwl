@@ -691,7 +691,7 @@ function AchievementFullViewer({
           <div className="space-y-2">
             <div className="flex items-center justify-center gap-1.5 mb-1">
               <Sparkles className="w-3 h-3 text-green-400" />
-              <span className="text-[10px] font-display tracking-wider text-green-400">PURCHASED — DOWNLOAD READY</span>
+              <span className="text-[10px] font-display tracking-wider text-green-400">PURCHASED — TAP TO DOWNLOAD</span>
             </div>
             <div className="flex gap-2">
               <Button variant="outline" size="sm"
@@ -707,7 +707,7 @@ function AchievementFullViewer({
                     URL.revokeObjectURL(url);
                   }
                 }}>
-                <Image className="w-3 h-3 mr-1" /> IMAGE
+                <Download className="w-3 h-3 mr-1" /> DOWNLOAD IMAGE
               </Button>
               {card.video_url && (
                 <Button variant="outline" size="sm"
@@ -721,19 +721,24 @@ function AchievementFullViewer({
                       link.click();
                     }
                   }}>
-                  <Video className="w-3 h-3 mr-1" /> VIDEO
+                  <Download className="w-3 h-3 mr-1" /> DOWNLOAD VIDEO
                 </Button>
               )}
             </div>
           </div>
         ) : (
           /* Not purchased — show buy button */
-          <Button size="sm"
-            className="w-full text-xs font-display tracking-wider bg-[#FF5500] hover:bg-[#FF5500]/90 text-white"
-            style={{ boxShadow: '0 0 20px rgba(255,85,0,0.3), 0 0 40px rgba(255,85,0,0.1)' }}
-            onClick={() => onPurchase(card)}>
-            <ShoppingCart className="w-3 h-3 mr-1" /> BUY CARD · 3 TOKENS (IMAGE) / 5 (VIDEO)
-          </Button>
+          <div className="space-y-1.5">
+            <Button size="sm"
+              className="w-full text-xs font-display tracking-wider bg-[#FF5500] hover:bg-[#FF5500]/90 text-white"
+              style={{ boxShadow: '0 0 20px rgba(255,85,0,0.3), 0 0 40px rgba(255,85,0,0.1)' }}
+              onClick={() => onPurchase(card)}>
+              <ShoppingCart className="w-3 h-3 mr-1" /> PURCHASE CARD DOWNLOAD
+            </Button>
+            <p className="text-[9px] text-center text-zinc-500 font-display tracking-wider">
+              3 TOKENS (IMAGE) · 5 TOKENS (VIDEO)
+            </p>
+          </div>
         )}
 
         <div className="flex gap-2">

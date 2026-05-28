@@ -58,139 +58,121 @@ export function useAchievementIntegration() {
   const { user } = useAuth();
 
   /**
-   * Call after a workout session completes — checks each exercise for PB
+   * Call after a workout session completes — awards/upgrades card for EVERY exercise logged.
+   * First log of any exercise = bronze card. Better lifts upgrade rarity automatically.
+   * DB function handles upsert (one card per exercise per user).
    */
   const checkLiftPBs = useCallback(async (lifts: LiftResult[]): Promise<AwardedCard[]> => {
     if (!user) return [];
     const awarded: AwardedCard[] = [];
-
+    // Deduplicate by exercise — keep best e1RM per exercise in this session
+    const bestByExercise = new Map<string, { e1rm: number; lift: LiftResult }>();
     for (const lift of lifts) {
       const e1rm = estimatedOneRepMax(lift.weightKg, lift.reps);
       if (e1rm <= 0) continue;
+      const existing = bestByExercise.get(lift.exerciseName);
+      if (!existing || e1rm > existing.e1rm) {
+        bestByExercise.set(lift.exerciseName, { e1rm, lift });
+      }
+    }
 
-      // Fetch user's top 3 lifts for this exercise (by estimated 1RM)
-      const { data: topLifts } = await supabase
-        .from('exercise_logs')
-        .select('id, weight_kg, actual_reps')
-        .eq('user_id', user.id)
-        .eq('exercise_name', lift.exerciseName)
-        .eq('completed', true)
-        .gt('weight_kg', 0)
-        .order('weight_kg', { ascending: false })
-        .limit(20);
+    for (const [exerciseName, { e1rm, lift }] of bestByExercise) {
+      try {
+        const { data: cardId } = await supabase.rpc('award_pb_card', {
+          p_user_id: user.id,
+          p_activity_category: 'lift' as ActivityCategory,
+          p_exercise_name: exerciseName,
+          p_value: e1rm,
+          p_unit: 'kg',
+          p_rank: 1,
+          p_distance_type: null,
+          p_source_run_id: null,
+          p_source_session_id: lift.sessionId,
+        });
 
-      if (!topLifts) continue;
-
-      // Calculate e1rms and sort
-      const sorted = topLifts
-        .map(l => ({
-          id: l.id,
-          e1rm: estimatedOneRepMax(l.weight_kg, l.actual_reps || 1),
-        }))
-        .sort((a, b) => b.e1rm - a.e1rm);
-
-      // Find this lift's rank in the sorted list
-      const rank = sorted.findIndex(l => l.e1rm <= e1rm) + 1;
-      
-      // Only award for top 3
-      if (rank > 0 && rank <= 3) {
-        try {
-          const { data: cardId } = await supabase.rpc('award_pb_card', {
-            p_user_id: user.id,
-            p_activity_category: 'lift' as ActivityCategory,
-            p_exercise_name: lift.exerciseName,
-            p_value: e1rm,
-            p_unit: 'kg',
-            p_rank: rank,
-            p_distance_type: null,
-            p_source_run_id: null,
-            p_source_session_id: lift.sessionId,
+        if (cardId) {
+          // Fetch the actual rarity assigned by the DB trigger
+          const { data: cardData } = await supabase
+            .from('achievement_cards')
+            .select('rarity')
+            .eq('id', cardId)
+            .single();
+          const rarity = cardData?.rarity || 'bronze';
+          awarded.push({ cardId, rarity, type: 'pb_personal' });
+          toast.success(`🏋️ ${rarity.toUpperCase()} PB Card: ${exerciseName} — ${e1rm}kg`, {
+            duration: 5000,
           });
 
-          if (cardId) {
-            const rarity = rank === 1 ? 'gold' : rank === 2 ? 'silver' : 'bronze';
-            awarded.push({ cardId, rarity, type: 'pb_personal' });
-            toast.success(`🏋️ New ${rarity.toUpperCase()} PB Card: ${lift.exerciseName} — ${e1rm}kg e1RM`, {
-              duration: 5000,
-            });
+          // Generate AI bio line (fire-and-forget, non-blocking)
+          generateCardBio(cardId, exerciseName, e1rm, 'kg');
 
-            // Generate AI bio line (fire-and-forget, non-blocking)
-            generateCardBio(cardId, lift.exerciseName, e1rm, 'kg');
-
-            // Also check global ranking
+          // Also check global ranking
+          try {
             await supabase.rpc('check_global_pb_ranking', {
               p_user_id: user.id,
               p_activity_category: 'lift',
-              p_exercise_name: lift.exerciseName,
+              p_exercise_name: exerciseName,
               p_distance_type: null,
             });
-          }
-        } catch (err) {
-          console.error('Error awarding lift PB card:', err);
+          } catch { /* non-critical */ }
         }
+      } catch (err) {
+        console.error('Error awarding lift PB card:', err);
       }
     }
     return awarded;
   }, [user]);
 
   /**
-   * Call after a run is logged — checks run PB and awards card
+   * Call after a run is logged — awards/upgrades card for this distance.
+   * First run = card. Faster times upgrade rarity automatically.
+   * DB function handles upsert (one card per distance per user).
    */
   const checkRunPB = useCallback(async (run: RunResult): Promise<AwardedCard[]> => {
     if (!user) return [];
     const awarded: AwardedCard[] = [];
 
-    // Fetch user's top 3 times for this distance type
-    const { data: topRuns } = await supabase
-      .from('personal_records')
-      .select('id, time_seconds, distance_type')
-      .eq('user_id', user.id)
-      .eq('distance_type', run.distanceType)
-      .eq('activity_type', run.activityType)
-      .order('time_seconds', { ascending: true })
-      .limit(3);
+    try {
+      const { data: cardId } = await supabase.rpc('award_pb_card', {
+        p_user_id: user.id,
+        p_activity_category: run.activityType as ActivityCategory,
+        p_exercise_name: run.distanceType,
+        p_value: run.timeSeconds,
+        p_unit: 'seconds',
+        p_rank: 1,
+        p_distance_type: run.distanceType,
+        p_source_run_id: run.runId,
+        p_source_session_id: null,
+      });
 
-    if (!topRuns) return awarded;
+      if (cardId) {
+        // Fetch actual rarity from DB trigger
+        const { data: cardData } = await supabase
+          .from('achievement_cards')
+          .select('rarity')
+          .eq('id', cardId)
+          .single();
+        const rarity = cardData?.rarity || 'bronze';
+        awarded.push({ cardId, rarity, type: 'pb_personal' });
 
-    // Find this run's rank
-    const rank = topRuns.findIndex(r => r.time_seconds !== null && run.timeSeconds <= r.time_seconds) + 1;
-    const actualRank = rank === 0 ? topRuns.length + 1 : rank;
-
-    if (actualRank <= 3) {
-      try {
-        const { data: cardId } = await supabase.rpc('award_pb_card', {
-          p_user_id: user.id,
-          p_activity_category: run.activityType as ActivityCategory,
-          p_exercise_name: run.distanceType,
-          p_value: run.timeSeconds,
-          p_unit: 'seconds',
-          p_rank: actualRank,
-          p_distance_type: run.distanceType,
-          p_source_run_id: run.runId,
-          p_source_session_id: null,
+        const mins = Math.floor(run.timeSeconds / 60);
+        const secs = Math.round(run.timeSeconds % 60);
+        toast.success(`🏃 ${rarity.toUpperCase()} PB Card: ${run.distanceType} — ${mins}:${secs.toString().padStart(2, '0')}`, {
+          duration: 5000,
         });
 
-        if (cardId) {
-          const rarity = actualRank === 1 ? 'gold' : actualRank === 2 ? 'silver' : 'bronze';
-          awarded.push({ cardId, rarity, type: 'pb_personal' });
-
-          const mins = Math.floor(run.timeSeconds / 60);
-          const secs = Math.round(run.timeSeconds % 60);
-          toast.success(`🏃 New ${rarity.toUpperCase()} PB Card: ${run.distanceType} — ${mins}:${secs.toString().padStart(2, '0')}`, {
-            duration: 5000,
-          });
-
-          // Check global ranking
+        // Check global ranking
+        try {
           await supabase.rpc('check_global_pb_ranking', {
             p_user_id: user.id,
             p_activity_category: run.activityType,
             p_exercise_name: null,
             p_distance_type: run.distanceType,
           });
-        }
-      } catch (err) {
-        console.error('Error awarding run PB card:', err);
+        } catch { /* non-critical */ }
       }
+    } catch (err) {
+      console.error('Error awarding run PB card:', err);
     }
     return awarded;
   }, [user]);
