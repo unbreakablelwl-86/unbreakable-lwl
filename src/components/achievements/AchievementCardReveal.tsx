@@ -134,8 +134,8 @@ const ACHIEVEMENT_RARITY_CONFIG: Record<AchievementRarity, {
 export const achievementCardStyles = `
 /* Bronze: warm pulse glow */
 @keyframes achBronzePulse {
-  0%, 100% { opacity: 0.3; }
-  50% { opacity: 0.6; }
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
 }
 /* Silver: light sweep left to right */
 @keyframes achSilverSweep {
@@ -202,18 +202,18 @@ export function BronzeShimmer() {
           animation: 'achGrainShift 8s steps(4) infinite',
         }}
       />
-      {/* Warm copper ambient — intensified */}
+      {/* Warm copper ambient — bright shimmer */}
       <div
         className="absolute inset-0"
         style={{
-          background: 'linear-gradient(145deg, rgba(205,127,50,0.14) 0%, rgba(139,69,19,0.18) 30%, rgba(210,105,30,0.10) 50%, rgba(205,127,50,0.18) 70%, rgba(139,69,19,0.14) 100%)',
+          background: 'linear-gradient(145deg, rgba(205,127,50,0.22) 0%, rgba(139,69,19,0.28) 30%, rgba(210,105,30,0.18) 50%, rgba(205,127,50,0.28) 70%, rgba(139,69,19,0.22) 100%)',
         }}
       />
-      {/* Warm bronze pulse glow from border — stronger */}
+      {/* Warm bronze pulse glow from border — brighter */}
       <div
         className="absolute inset-0"
         style={{
-          boxShadow: 'inset 0 0 40px rgba(205,127,50,0.25), inset 0 0 80px rgba(139,69,19,0.12)',
+          boxShadow: 'inset 0 0 50px rgba(205,127,50,0.4), inset 0 0 90px rgba(139,69,19,0.2)',
           animation: 'achBronzePulse 3s ease-in-out infinite',
         }}
       />
@@ -233,18 +233,18 @@ export function SilverShimmer() {
           backgroundSize: '100% 3px',
         }}
       />
-      {/* Cool silver base */}
+      {/* Cool silver base — brighter */}
       <div
         className="absolute inset-0"
         style={{
-          background: 'linear-gradient(145deg, rgba(192,192,192,0.06) 0%, rgba(232,232,232,0.1) 30%, rgba(255,255,255,0.04) 50%, rgba(192,192,192,0.1) 70%, rgba(169,169,169,0.06) 100%)',
+          background: 'linear-gradient(145deg, rgba(192,192,192,0.12) 0%, rgba(232,232,232,0.2) 30%, rgba(255,255,255,0.1) 50%, rgba(192,192,192,0.2) 70%, rgba(169,169,169,0.12) 100%)',
         }}
       />
-      {/* Silver light sweep left to right */}
+      {/* Silver light sweep left to right — brighter */}
       <div
-        className="absolute -inset-y-4 w-20"
+        className="absolute -inset-y-4 w-24"
         style={{
-          background: 'linear-gradient(90deg, transparent 0%, rgba(232,232,232,0.08) 20%, rgba(255,255,255,0.35) 45%, rgba(232,232,232,0.45) 50%, rgba(255,255,255,0.35) 55%, rgba(232,232,232,0.08) 80%, transparent 100%)',
+          background: 'linear-gradient(90deg, transparent 0%, rgba(232,232,232,0.15) 20%, rgba(255,255,255,0.55) 45%, rgba(232,232,232,0.65) 50%, rgba(255,255,255,0.55) 55%, rgba(232,232,232,0.15) 80%, transparent 100%)',
           animation: 'achSilverSweep 3.5s ease-in-out infinite',
         }}
       />
@@ -256,11 +256,11 @@ export function SilverShimmer() {
 export function GoldShimmer() {
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl z-[12]">
-      {/* Gold foil base gradient */}
+      {/* Gold foil base gradient — brighter */}
       <div
         className="absolute inset-0"
         style={{
-          background: 'linear-gradient(145deg, rgba(255,215,0,0.08) 0%, rgba(184,134,11,0.14) 30%, rgba(255,215,0,0.06) 50%, rgba(218,165,32,0.14) 70%, rgba(255,215,0,0.08) 100%)',
+          background: 'linear-gradient(145deg, rgba(255,215,0,0.16) 0%, rgba(184,134,11,0.24) 30%, rgba(255,215,0,0.12) 50%, rgba(218,165,32,0.24) 70%, rgba(255,215,0,0.16) 100%)',
         }}
       />
       {/* Diamond-cut border texture (subtle pattern) */}
@@ -271,19 +271,19 @@ export function GoldShimmer() {
           backgroundSize: '20px 20px',
         }}
       />
-      {/* Shimmer sweep */}
+      {/* Shimmer sweep — brighter */}
       <div
-        className="absolute -inset-y-4 w-28"
+        className="absolute -inset-y-4 w-32"
         style={{
-          background: 'linear-gradient(90deg, transparent 0%, rgba(255,215,0,0.05) 20%, rgba(255,215,0,0.35) 45%, rgba(255,240,180,0.5) 50%, rgba(255,215,0,0.35) 55%, rgba(255,215,0,0.05) 80%, transparent 100%)',
+          background: 'linear-gradient(90deg, transparent 0%, rgba(255,215,0,0.1) 20%, rgba(255,215,0,0.55) 45%, rgba(255,240,180,0.7) 50%, rgba(255,215,0,0.55) 55%, rgba(255,215,0,0.1) 80%, transparent 100%)',
           animation: 'achGoldShimmer 3.8s ease-in-out infinite',
         }}
       />
-      {/* Particle sparkle overlay */}
+      {/* Particle sparkle overlay — brighter */}
       <div
         className="absolute inset-0"
         style={{
-          background: 'radial-gradient(circle at 25% 25%, rgba(255,215,0,0.15) 0%, transparent 15%), radial-gradient(circle at 75% 35%, rgba(255,240,180,0.1) 0%, transparent 12%), radial-gradient(circle at 50% 80%, rgba(255,215,0,0.12) 0%, transparent 18%)',
+          background: 'radial-gradient(circle at 25% 25%, rgba(255,215,0,0.25) 0%, transparent 15%), radial-gradient(circle at 75% 35%, rgba(255,240,180,0.2) 0%, transparent 12%), radial-gradient(circle at 50% 80%, rgba(255,215,0,0.22) 0%, transparent 18%)',
           animation: 'achBronzePulse 2.5s ease-in-out infinite',
         }}
       />
@@ -303,28 +303,28 @@ export function DiamondHolo() {
           backgroundSize: '30px 30px',
         }}
       />
-      {/* Rainbow hue-shifting holographic base (blue→purple→teal→silver) */}
+      {/* Rainbow hue-shifting holographic base — brighter */}
       <div
         className="absolute inset-0"
         style={{
-          background: 'linear-gradient(125deg, rgba(125,249,255,0.12) 0%, rgba(191,95,255,0.12) 25%, rgba(0,206,209,0.12) 50%, rgba(192,192,192,0.12) 75%, rgba(125,249,255,0.12) 100%)',
+          background: 'linear-gradient(125deg, rgba(125,249,255,0.2) 0%, rgba(191,95,255,0.2) 25%, rgba(0,206,209,0.2) 50%, rgba(192,192,192,0.2) 75%, rgba(125,249,255,0.2) 100%)',
           backgroundSize: '200% 200%',
           animation: 'achPrismaticShift 6s ease-in-out infinite',
         }}
       />
-      {/* Prismatic light explosion sweep */}
+      {/* Prismatic light explosion sweep — brighter */}
       <div
-        className="absolute -inset-y-4 w-32"
+        className="absolute -inset-y-4 w-36"
         style={{
-          background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.05) 25%, rgba(125,249,255,0.4) 40%, rgba(255,255,255,0.55) 50%, rgba(191,95,255,0.4) 60%, rgba(255,255,255,0.05) 75%, transparent 100%)',
+          background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.1) 25%, rgba(125,249,255,0.6) 40%, rgba(255,255,255,0.75) 50%, rgba(191,95,255,0.6) 60%, rgba(255,255,255,0.1) 75%, transparent 100%)',
           animation: 'achDiamondHolo 4.5s ease-in-out infinite',
         }}
       />
-      {/* Secondary prismatic colour-shift */}
+      {/* Secondary prismatic colour-shift — brighter */}
       <div
-        className="absolute -inset-y-4 w-16"
+        className="absolute -inset-y-4 w-20"
         style={{
-          background: 'linear-gradient(90deg, transparent, rgba(0,206,209,0.2), rgba(191,95,255,0.15), transparent)',
+          background: 'linear-gradient(90deg, transparent, rgba(0,206,209,0.35), rgba(191,95,255,0.25), transparent)',
           animation: 'achDiamondHolo 6s ease-in-out infinite 1.5s',
         }}
       />
@@ -344,34 +344,34 @@ export function PlatinumChrome() {
           backgroundSize: '4px 4px',
         }}
       />
-      {/* Brushed platinum base with rose-gold thread */}
+      {/* Brushed platinum base with rose-gold thread — brighter */}
       <div
         className="absolute inset-0"
         style={{
-          background: 'linear-gradient(155deg, rgba(229,228,226,0.08) 0%, rgba(212,208,204,0.12) 25%, rgba(255,255,255,0.06) 50%, rgba(183,110,121,0.08) 75%, rgba(229,228,226,0.08) 100%)',
+          background: 'linear-gradient(155deg, rgba(229,228,226,0.16) 0%, rgba(212,208,204,0.22) 25%, rgba(255,255,255,0.12) 50%, rgba(183,110,121,0.16) 75%, rgba(229,228,226,0.16) 100%)',
         }}
       />
-      {/* Liquid platinum pools with rose-gold accent */}
+      {/* Liquid platinum pools with rose-gold accent — brighter */}
       <div
         className="absolute inset-0"
         style={{
-          background: 'radial-gradient(ellipse at 30% 40%, rgba(229,228,226,0.12) 0%, transparent 50%), radial-gradient(ellipse at 70% 60%, rgba(183,110,121,0.1) 0%, transparent 50%)',
+          background: 'radial-gradient(ellipse at 30% 40%, rgba(229,228,226,0.22) 0%, transparent 50%), radial-gradient(ellipse at 70% 60%, rgba(183,110,121,0.18) 0%, transparent 50%)',
           animation: 'achPulse 4s ease-in-out infinite',
         }}
       />
-      {/* Chrome sweep */}
+      {/* Chrome sweep — brighter */}
       <div
-        className="absolute -inset-y-4 w-36"
+        className="absolute -inset-y-4 w-40"
         style={{
-          background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.08) 20%, rgba(229,228,226,0.45) 42%, rgba(255,255,255,0.65) 50%, rgba(229,228,226,0.45) 58%, rgba(255,255,255,0.08) 80%, transparent 100%)',
+          background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.15) 20%, rgba(229,228,226,0.65) 42%, rgba(255,255,255,0.85) 50%, rgba(229,228,226,0.65) 58%, rgba(255,255,255,0.15) 80%, transparent 100%)',
           animation: 'achPlatChrome 5s ease-in-out infinite',
         }}
       />
-      {/* Rose-gold accent wave */}
+      {/* Rose-gold accent wave — brighter */}
       <div
-        className="absolute -inset-y-4 w-20"
+        className="absolute -inset-y-4 w-24"
         style={{
-          background: 'linear-gradient(90deg, transparent, rgba(183,110,121,0.25), transparent)',
+          background: 'linear-gradient(90deg, transparent, rgba(183,110,121,0.4), transparent)',
           animation: 'achPlatChrome 7s ease-in-out infinite 2s',
         }}
       />
