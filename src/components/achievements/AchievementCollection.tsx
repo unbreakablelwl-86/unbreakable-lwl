@@ -742,12 +742,11 @@ export function AchievementCollection() {
                 style={{ background: containerBg, boxShadow: glow.boxShadow }}
               >
                 <AchievementCardStatic card={card} size="sm" onClick={() => setSelectedIndex(i)} />
-                <div className="absolute bottom-3 right-3 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-20">
-                  <button onClick={(e) => { e.stopPropagation(); setShareCard(card); }}
-                    className="w-7 h-7 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center border border-white/10 hover:border-white/30 transition-colors">
-                    <Share2 className="w-3 h-3 text-white/70" />
-                  </button>
-                </div>
+                {/* Edit media icon */}
+                <button onClick={(e) => { e.stopPropagation(); setSelectedIndex(filteredCards.indexOf(card)); }}
+                  className="absolute top-2 right-2 w-6 h-6 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center border border-white/15 z-20">
+                  <Camera className="w-2.5 h-2.5 text-white/60" />
+                </button>
               </motion.div>
             );
           })}
@@ -765,12 +764,11 @@ export function AchievementCollection() {
                 style={{ background: containerBg, boxShadow: glow.boxShadow }}
               >
                 <AchievementCardStatic card={card} size="sm" onClick={() => setSelectedIndex(i)} />
-                <div className="absolute bottom-3 right-3 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-20">
-                  <button onClick={(e) => { e.stopPropagation(); setShareCard(card); }}
-                    className="w-7 h-7 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center border border-white/10 hover:border-white/30 transition-colors">
-                    <Share2 className="w-3 h-3 text-white/70" />
-                  </button>
-                </div>
+                {/* Edit media icon */}
+                <button onClick={(e) => { e.stopPropagation(); setSelectedIndex(filteredCards.indexOf(card)); }}
+                  className="absolute top-2 right-2 w-6 h-6 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center border border-white/15 z-20">
+                  <Camera className="w-2.5 h-2.5 text-white/60" />
+                </button>
               </motion.div>
             );
           })}

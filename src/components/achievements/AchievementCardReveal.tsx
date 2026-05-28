@@ -881,43 +881,49 @@ function PBCardArtwork({ card, accentColor, size = 'md' }: { card: AchievementCa
           }} />
         </>
       ) : (
-        /* ═══ FALLBACK — SVG silhouette style ═══ */
+        /* ═══ FALLBACK — premium abstract exercise artwork ═══ */
         <>
-          {/* Dark base with orange vignette */}
+          {/* Dark cinematic base */}
           <div className="absolute inset-0" style={{
-            background: 'radial-gradient(ellipse at 50% 35%, rgba(255,85,0,0.07) 0%, rgba(0,0,0,0.95) 65%)',
+            background: `radial-gradient(ellipse at 50% 30%, ${accentColor}12 0%, transparent 55%), linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.95) 70%)`,
           }} />
 
-          {/* Tech grid background */}
-          <svg className="absolute inset-0 w-full h-full opacity-[0.05]" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" viewBox="0 0 300 450">
-            <line x1="0" y1="0" x2="120" y2="450" stroke="#FF5500" strokeWidth="0.3" />
-            <line x1="180" y1="0" x2="300" y2="450" stroke="#FF5500" strokeWidth="0.3" />
-            <path d="M10 10 L10 35 M10 10 L35 10" fill="none" stroke="#FF5500" strokeWidth="1" />
-            <path d="M290 10 L290 35 M290 10 L265 10" fill="none" stroke="#FF5500" strokeWidth="1" />
-            <path d="M10 440 L10 415 M10 440 L35 440" fill="none" stroke="#FF5500" strokeWidth="1" />
-            <path d="M290 440 L290 415 M290 440 L265 440" fill="none" stroke="#FF5500" strokeWidth="1" />
-          </svg>
+          {/* Dramatic light beam from top */}
+          <div className="absolute inset-0" style={{
+            background: `radial-gradient(ellipse at 50% 0%, ${accentColor}18 0%, transparent 50%)`,
+          }} />
 
-          {/* MAIN FIGURE — SVG silhouette */}
+          {/* Exercise category icon — large, centered, with glow */}
           <div className={cn(
-            'absolute left-1/2 -translate-x-1/2',
-            size === 'sm' ? 'top-4 w-24 h-20' : size === 'lg' ? 'top-6 w-52 h-44' : 'top-5 w-36 h-32',
+            'absolute left-1/2 -translate-x-1/2 flex items-center justify-center',
+            size === 'sm' ? 'top-3 w-20 h-16' : size === 'lg' ? 'top-8 w-44 h-36' : 'top-5 w-32 h-28',
           )}>
-            <ExerciseFigure exerciseName={exerciseName} isFemale={isFemale} />
+            {/* Glow halo behind figure */}
+            <div className="absolute inset-0 rounded-full" style={{
+              background: `radial-gradient(circle, ${accentColor}20 0%, ${accentColor}08 40%, transparent 70%)`,
+              filter: 'blur(12px)',
+            }} />
+            {/* Figure silhouette — brightness boosted, rarity-tinted */}
+            <div className="relative z-10 w-full h-full" style={{
+              filter: 'brightness(1.3) contrast(1.1)',
+              opacity: 0.85,
+            }}>
+              <ExerciseFigure exerciseName={exerciseName} isFemale={isFemale} />
+            </div>
           </div>
 
-          {/* Floor/ground glow beneath figure */}
+          {/* Floor reflection glow */}
           <div className={cn(
             'absolute left-1/2 -translate-x-1/2 rounded-full',
-            size === 'sm' ? 'top-20 w-20 h-3' : size === 'lg' ? 'top-44 w-40 h-5' : 'top-32 w-28 h-4',
+            size === 'sm' ? 'top-[70%] w-24 h-6' : size === 'lg' ? 'top-[55%] w-48 h-10' : 'top-[60%] w-32 h-8',
           )} style={{
-            background: `radial-gradient(ellipse, ${accentColor}15 0%, transparent 70%)`,
-            filter: 'blur(4px)',
+            background: `radial-gradient(ellipse, ${accentColor}12 0%, transparent 70%)`,
+            filter: 'blur(8px)',
           }} />
 
-          {/* Orange accent glow at bottom */}
-          <div className="absolute bottom-0 left-0 right-0 h-24" style={{
-            background: 'linear-gradient(to top, rgba(255,85,0,0.05), transparent)',
+          {/* Accent light at bottom for text area readability */}
+          <div className="absolute bottom-0 left-0 right-0 h-1/3" style={{
+            background: 'linear-gradient(to top, rgba(0,0,0,0.95), rgba(0,0,0,0.4), transparent)',
           }} />
         </>
       )}

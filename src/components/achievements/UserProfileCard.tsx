@@ -145,17 +145,37 @@ export default function UserProfileCard() {
     return [...sbdPBs.slice(0, 3), ...otherPBs.slice(0, 5 - Math.min(sbdPBs.length, 3))].slice(0, 5);
   }, [cardConfig.customPBs, availableExercises, coachingProfile]);
 
-  // Best cardio
-  const bestCardio = useMemo(() => {
+  // All PBs (for expanded view)
+  const allPBs = useMemo(() => {
+    return availableExercises.map(ex => ({
+      exerciseName: ex.name,
+      value: ex.value,
+      unit: ex.unit,
+    }));
+  }, [availableExercises]);
+
+  // Cardio PBs (5K, 10K, etc)
+  const cardioPBs = useMemo(() => {
     const cardioCards = cards.filter(c =>
       c.card_type === 'pb_personal' &&
       c.pb_rank === 1 &&
       ['run', 'cycle', 'row', 'swim'].includes(c.activity_category || '')
     );
-    if (cardioCards.length === 0) return null;
-    const best = cardioCards.sort((a, b) => (b.pb_value || 0) - (a.pb_value || 0))[0];
-    return { name: best.exercise_name || 'Run', value: best.pb_value || 0, unit: best.pb_unit || 'km' };
+    return cardioCards.map(c => ({
+      exerciseName: c.exercise_name || 'Run',
+      value: c.pb_value || 0,
+      unit: c.pb_unit || 'km',
+    })).sort((a, b) => a.exerciseName.localeCompare(b.exerciseName));
   }, [cards]);
+
+  // Best cardio (for legacy — kept but we now show all cardio inline)
+  const bestCardio = useMemo(() => {
+    if (cardioPBs.length === 0) return null;
+    const best = [...cardioPBs].sort((a, b) => b.value - a.value)[0];
+    return best;
+  }, [cardioPBs]);
+
+  const [showAllPBs, setShowAllPBs] = useState(false);
 
   // Handle image upload
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -371,24 +391,58 @@ export default function UserProfileCard() {
               ⚡ PERSONAL BESTS {cardConfig.customPBs.length > 0 ? '(CUSTOM)' : ''}
             </p>
 
-            {displayPBs.length > 0 ? (
-              <div className="space-y-[3px]">
-                {displayPBs.map((pb, i) => (
+            {(() => {
+              const visiblePBs = showAllPBs ? allPBs : displayPBs;
+              return visiblePBs.length > 0 ? (
+                <div className="space-y-[3px]">
+                  {visiblePBs.map((pb, i) => (
+                    <StatBar
+                      key={pb.exerciseName}
+                      label={pb.exerciseName}
+                      value={pb.value}
+                      unit={pb.unit}
+                      maxValue={getMaxForExercise(pb.exerciseName, pb.unit)}
+                      color="#FF5500"
+                      delay={i * 0.05}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <p className="text-[10px] text-white/20 font-mono text-center py-2">
+                  No PBs yet — start lifting!
+                </p>
+              );
+            })()}
+
+            {/* Cardio PBs (5K, 10K etc) */}
+            {cardioPBs.length > 0 && (
+              <div className="mt-1 pt-1 space-y-[3px]" style={{ borderTop: '1px solid rgba(255,85,0,0.08)' }}>
+                {cardioPBs.map((pb, i) => (
                   <StatBar
                     key={pb.exerciseName}
-                    label={getShortLabel(pb.exerciseName)}
+                    label={pb.exerciseName}
                     value={pb.value}
                     unit={pb.unit}
                     maxValue={getMaxForExercise(pb.exerciseName, pb.unit)}
                     color="#FF5500"
-                    delay={i * 0.1}
+                    delay={(displayPBs.length + i) * 0.05}
                   />
                 ))}
               </div>
-            ) : (
-              <p className="text-[10px] text-white/20 font-mono text-center py-2">
-                No PBs yet — start lifting!
-              </p>
+            )}
+
+            {/* Expand/collapse toggle */}
+            {allPBs.length > 5 && (
+              <button
+                onClick={() => setShowAllPBs(!showAllPBs)}
+                className="w-full mt-1 pt-1 text-center"
+                style={{ borderTop: '1px solid rgba(255,85,0,0.06)' }}
+              >
+                <span className="text-[7px] font-mono tracking-wider uppercase"
+                  style={{ color: '#FF5500', textShadow: '0 0 4px rgba(255,85,0,0.3)' }}>
+                  {showAllPBs ? '▲ SHOW LESS' : `▼ SHOW ALL ${allPBs.length} LIFTS`}
+                </span>
+              </button>
             )}
 
             {/* SBD Total */}
@@ -403,24 +457,6 @@ export default function UserProfileCard() {
               </div>
             )}
           </div>
-
-          {/* ═══ Cardio stat ═══ */}
-          {bestCardio && (
-            <div className="rounded-lg p-1.5 mb-1.5" style={{
-              background: 'rgba(255,85,0,0.03)',
-              border: '1px solid rgba(255,85,0,0.08)',
-            }}>
-              <div className="flex items-center justify-between">
-                <span className="text-[7px] font-mono tracking-[0.2em] uppercase"
-                  style={{ color: '#FF5500', textShadow: '0 0 6px rgba(255,85,0,0.3)' }}>🏃 CARDIO</span>
-                <span className="text-[11px] font-display tracking-wide font-bold"
-                  style={{ color: '#FF5500', textShadow: '0 0 8px rgba(255,85,0,0.4)' }}>
-                  {bestCardio.value}{bestCardio.unit}
-                </span>
-              </div>
-              <p className="text-[8px] text-white/60 font-mono truncate">{bestCardio.name}</p>
-            </div>
-          )}
 
           {/* ═══ Body stats ═══ */}
           {(weightDisplay || heightDisplay || ageDisplay) && (
@@ -688,8 +724,8 @@ function StatBar({ label, value, unit, maxValue, color, delay = 0 }: {
 
   return (
     <div className="flex items-center gap-1.5">
-      <span className="text-[8px] font-mono w-7 tracking-wider truncate font-bold"
-        style={{ color: 'rgba(255,255,255,0.7)' }}>{label}</span>
+      <span className="text-[7px] font-mono w-16 tracking-wider truncate font-bold shrink-0"
+        style={{ color: 'rgba(255,255,255,0.7)' }}>{label.toUpperCase()}</span>
       <div className="flex-1 h-[5px] rounded-full overflow-hidden" style={{ background: `${color}15` }}>
         {value ? (
           <motion.div
