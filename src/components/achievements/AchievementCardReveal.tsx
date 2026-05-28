@@ -549,38 +549,207 @@ function CableFlyFigure({ isFemale }: { isFemale?: boolean }) {
   );
 }
 
-/* ═══ Exercise figure picker ═══ */
+/* ═══ Additional exercise figures ═══ */
+
+function LegPressFigure({ isFemale }: { isFemale?: boolean }) {
+  return (
+    <svg viewBox="0 0 200 180" fill="none" className="w-full h-full">
+      {/* Seated leg press — reclined with legs pushing platform */}
+      <circle cx={isFemale ? "55" : "52"} cy={isFemale ? "50" : "48"} r={isFemale ? "8" : "9"} fill="#FF6B00" opacity="0.7" />
+      {/* Reclined torso */}
+      <path d={isFemale
+        ? "M55 58 Q70 75 80 90 L72 94 Q65 78 50 62 Z"
+        : "M52 57 Q68 74 80 92 L72 96 Q62 76 48 60 Z"
+      } fill="#FF6B00" opacity="0.45" />
+      {/* Legs bent pushing */}
+      <path d="M80 90 Q110 70 130 55" fill="none" stroke="#FF6B00" strokeWidth="5" strokeLinecap="round" opacity="0.5" />
+      <path d="M78 96 Q108 78 128 62" fill="none" stroke="#FF6B00" strokeWidth="4" strokeLinecap="round" opacity="0.45" />
+      {/* Platform */}
+      <rect x="125" y="42" width="8" height="35" rx="3" fill="#FF6B00" opacity="0.6" transform="rotate(-15 129 59)" />
+      {/* Feet on platform */}
+      <circle cx="130" cy="54" r="3" fill="#FF6B00" opacity="0.5" />
+      <circle cx="128" cy="62" r="3" fill="#FF6B00" opacity="0.5" />
+    </svg>
+  );
+}
+
+function DipFigure({ isFemale }: { isFemale?: boolean }) {
+  return (
+    <svg viewBox="0 0 200 180" fill="none" className="w-full h-full">
+      {/* Parallel bar dip — arms supporting body */}
+      <circle cx="100" cy={isFemale ? "28" : "25"} r={isFemale ? "8" : "9"} fill="#FF6B00" opacity="0.7" />
+      {/* Torso hanging */}
+      <path d={isFemale
+        ? "M94 36 L92 90 L108 90 L106 36 Z"
+        : "M93 34 L90 92 L110 92 L107 34 Z"
+      } fill="#FF6B00" opacity="0.45" />
+      {/* Arms on bars — locked out */}
+      <path d="M93 40 Q75 38 65 35 L65 42 Q78 44 93 48" fill="#FF6B00" opacity="0.5" />
+      <path d="M107 40 Q125 38 135 35 L135 42 Q122 44 107 48" fill="#FF6B00" opacity="0.5" />
+      {/* Parallel bars */}
+      <rect x="58" y="34" width="4" height="50" rx="2" fill="#FF6B00" opacity="0.3" />
+      <rect x="138" y="34" width="4" height="50" rx="2" fill="#FF6B00" opacity="0.3" />
+      {/* Legs hanging, slightly bent */}
+      <path d="M96 90 Q93 115 90 140 Q88 148 92 150" fill="none" stroke="#FF6B00" strokeWidth="4" strokeLinecap="round" opacity="0.4" />
+      <path d="M104 90 Q107 115 110 140 Q112 148 108 150" fill="none" stroke="#FF6B00" strokeWidth="4" strokeLinecap="round" opacity="0.4" />
+    </svg>
+  );
+}
+
+function PullUpFigure({ isFemale }: { isFemale?: boolean }) {
+  return (
+    <svg viewBox="0 0 200 180" fill="none" className="w-full h-full">
+      {/* Pull-up — hanging from bar, pulling up */}
+      {/* Bar */}
+      <rect x="40" y="10" width="120" height="5" rx="2" fill="#FF6B00" opacity="0.35" />
+      {/* Hands */}
+      <circle cx="72" cy="14" r="4" fill="#FF6B00" opacity="0.6" />
+      <circle cx="128" cy="14" r="4" fill="#FF6B00" opacity="0.6" />
+      {/* Head */}
+      <circle cx="100" cy={isFemale ? "35" : "32"} r={isFemale ? "8" : "9"} fill="#FF6B00" opacity="0.7" />
+      {/* Arms reaching up */}
+      <path d="M93 36 Q82 26 72 16" fill="none" stroke="#FF6B00" strokeWidth="3" strokeLinecap="round" opacity="0.55" />
+      <path d="M107 36 Q118 26 128 16" fill="none" stroke="#FF6B00" strokeWidth="3" strokeLinecap="round" opacity="0.55" />
+      {/* Torso */}
+      <path d={isFemale
+        ? "M94 43 L92 100 L108 100 L106 43 Z"
+        : "M92 41 L89 102 L111 102 L108 41 Z"
+      } fill="#FF6B00" opacity="0.45" />
+      {/* Legs hanging */}
+      <line x1="96" y1="100" x2="90" y2="155" stroke="#FF6B00" strokeWidth="4" strokeLinecap="round" opacity="0.4" />
+      <line x1="104" y1="100" x2="110" y2="155" stroke="#FF6B00" strokeWidth="4" strokeLinecap="round" opacity="0.4" />
+    </svg>
+  );
+}
+
+function CyclingFigure({ isFemale }: { isFemale?: boolean }) {
+  return (
+    <svg viewBox="0 0 200 180" fill="none" className="w-full h-full">
+      {/* Cycling — rider on bike */}
+      {/* Wheels */}
+      <circle cx="55" cy="130" r="25" fill="none" stroke="#FF6B00" strokeWidth="2" opacity="0.3" />
+      <circle cx="145" cy="130" r="25" fill="none" stroke="#FF6B00" strokeWidth="2" opacity="0.3" />
+      <circle cx="55" cy="130" r="2" fill="#FF6B00" opacity="0.4" />
+      <circle cx="145" cy="130" r="2" fill="#FF6B00" opacity="0.4" />
+      {/* Frame */}
+      <path d="M55 130 L100 90 L145 130 M100 90 L90 130" fill="none" stroke="#FF6B00" strokeWidth="2" opacity="0.35" />
+      {/* Handlebars */}
+      <path d="M145 130 L140 100 L148 95" fill="none" stroke="#FF6B00" strokeWidth="2" opacity="0.35" />
+      {/* Head */}
+      <circle cx="142" cy={isFemale ? "60" : "58"} r={isFemale ? "7" : "8"} fill="#FF6B00" opacity="0.7" />
+      {/* Torso leaning */}
+      <path d={isFemale
+        ? "M138 68 L108 86 L112 92 L140 72 Z"
+        : "M136 66 L106 85 L110 92 L140 70 Z"
+      } fill="#FF6B00" opacity="0.45" />
+      {/* Arms to handlebars */}
+      <path d="M138 70 Q142 82 146 96" fill="none" stroke="#FF6B00" strokeWidth="3" strokeLinecap="round" opacity="0.5" />
+      {/* Legs pedaling */}
+      <path d="M108 88 Q95 105 90 125" fill="none" stroke="#FF6B00" strokeWidth="4" strokeLinecap="round" opacity="0.45" />
+      <path d="M110 92 Q115 110 100 130" fill="none" stroke="#FF6B00" strokeWidth="4" strokeLinecap="round" opacity="0.4" />
+    </svg>
+  );
+}
+
+function PlankFigure({ isFemale }: { isFemale?: boolean }) {
+  return (
+    <svg viewBox="0 0 200 120" fill="none" className="w-full h-full">
+      {/* Plank — horizontal body hold */}
+      {/* Head */}
+      <circle cx="160" cy={isFemale ? "48" : "45"} r={isFemale ? "7" : "8"} fill="#FF6B00" opacity="0.7" />
+      {/* Body — mostly horizontal */}
+      <path d={isFemale
+        ? "M155 54 L40 58 L40 66 L155 62 Z"
+        : "M152 52 L38 58 L38 68 L152 62 Z"
+      } fill="#FF6B00" opacity="0.45" />
+      {/* Arms — forearms on ground */}
+      <path d="M145 58 L155 72 L160 70" fill="none" stroke="#FF6B00" strokeWidth="3" strokeLinecap="round" opacity="0.5" />
+      {/* Feet */}
+      <path d="M42 60 L30 78" fill="none" stroke="#FF6B00" strokeWidth="4" strokeLinecap="round" opacity="0.45" />
+      <path d="M38 64 L28 82" fill="none" stroke="#FF6B00" strokeWidth="4" strokeLinecap="round" opacity="0.45" />
+    </svg>
+  );
+}
+
+function LungesFigure({ isFemale }: { isFemale?: boolean }) {
+  return (
+    <svg viewBox="0 0 200 180" fill="none" className="w-full h-full">
+      {/* Lunge — one leg forward, one back */}
+      <circle cx="100" cy={isFemale ? "22" : "20"} r={isFemale ? "8" : "9"} fill="#FF6B00" opacity="0.7" />
+      {/* Torso upright */}
+      <path d={isFemale
+        ? "M94 30 L93 80 L107 80 L106 30 Z"
+        : "M93 29 L91 82 L109 82 L107 29 Z"
+      } fill="#FF6B00" opacity="0.45" />
+      {/* Front leg (bent 90°) */}
+      <path d="M97 82 Q80 100 70 120 L70 155" fill="none" stroke="#FF6B00" strokeWidth="5" strokeLinecap="round" opacity="0.5" />
+      {/* Back leg (extended) */}
+      <path d="M103 82 Q120 100 140 130 L150 148" fill="none" stroke="#FF6B00" strokeWidth="4" strokeLinecap="round" opacity="0.4" />
+      {/* Arms at sides */}
+      <line x1="94" y1="38" x2="85" y2="70" stroke="#FF6B00" strokeWidth="3" strokeLinecap="round" opacity="0.4" />
+      <line x1="106" y1="38" x2="115" y2="70" stroke="#FF6B00" strokeWidth="3" strokeLinecap="round" opacity="0.4" />
+    </svg>
+  );
+}
+
+/* ═══ Exercise figure picker — expanded with unique per-exercise mapping ═══ */
 function ExerciseFigure({ exerciseName, isFemale }: { exerciseName: string; isFemale?: boolean }) {
   const name = (exerciseName || '').toLowerCase();
-  if (name.includes('bench') || name.includes('incline') && name.includes('press'))
+  
+  // Chest
+  if (name.includes('bench') || (name.includes('chest') && name.includes('press')) || (name.includes('incline') && name.includes('press')))
     return <BenchPressFigure isFemale={isFemale} />;
-  if (name.includes('deadlift'))
+  if (name.includes('cable') || name.includes('fly') || name.includes('crossover') || name.includes('pec'))
+    return <CableFlyFigure isFemale={isFemale} />;
+  if (name.includes('dip') || name.includes('chest dip'))
+    return <DipFigure isFemale={isFemale} />;
+
+  // Back
+  if (name.includes('deadlift') || name.includes('rdl') || name.includes('hip hinge'))
     return <DeadliftFigure isFemale={isFemale} />;
-  if (name.includes('squat'))
-    return <SquatFigure isFemale={isFemale} />;
-  if (name.includes('curl') || name.includes('bicep'))
-    return <CurlFigure isFemale={isFemale} />;
   if (name.includes('pulldown') || name.includes('pull down') || name.includes('lat'))
     return <PulldownFigure isFemale={isFemale} />;
-  if (name.includes('shoulder') || name.includes('overhead') || name.includes('ohp'))
-    return <ShoulderPressFigure isFemale={isFemale} />;
+  if (name.includes('pull up') || name.includes('pullup') || name.includes('chin up') || name.includes('chinup'))
+    return <PullUpFigure isFemale={isFemale} />;
   if (name.includes('row') || name.includes('upright'))
     return <RowFigure isFemale={isFemale} />;
-  if (name.includes('cable') || name.includes('fly'))
-    return <CableFlyFigure isFemale={isFemale} />;
-  if (name.includes('raise') || name.includes('lateral'))
+
+  // Legs
+  if (name.includes('squat') || name.includes('front squat') || name.includes('goblet'))
+    return <SquatFigure isFemale={isFemale} />;
+  if (name.includes('leg press') || name.includes('legpress'))
+    return <LegPressFigure isFemale={isFemale} />;
+  if (name.includes('lunge') || name.includes('split squat') || name.includes('bulgarian'))
+    return <LungesFigure isFemale={isFemale} />;
+
+  // Arms
+  if (name.includes('curl') || name.includes('bicep') || name.includes('hammer'))
+    return <CurlFigure isFemale={isFemale} />;
+
+  // Shoulders
+  if (name.includes('shoulder') || name.includes('overhead') || name.includes('ohp') || name.includes('military'))
+    return <ShoulderPressFigure isFemale={isFemale} />;
+  if (name.includes('raise') || name.includes('lateral') || name.includes('front raise'))
     return <GenericLiftFigure isFemale={isFemale} />;
-  // Running / cardio
-  if (name.includes('run') || name.includes('km') || name.includes('mile') || name.includes('sprint') || name.includes('walk'))
+
+  // Core
+  if (name.includes('plank') || name.includes('hold'))
+    return <PlankFigure isFemale={isFemale} />;
+
+  // Cardio
+  if (name.includes('run') || name.includes('km') || name.includes('mile') || name.includes('sprint') || name.includes('walk') || name.includes('jog'))
     return <RunningFigure isFemale={isFemale} />;
-  // Default: generic lift
+  if (name.includes('cycle') || name.includes('bike') || name.includes('cycling'))
+    return <CyclingFigure isFemale={isFemale} />;
+
+  // Default: generic standing lift
   return <GenericLiftFigure isFemale={isFemale} />;
 }
 
 /* ═══ Pokémon-style card artwork overlay ═══ */
 function PBCardArtwork({ card, accentColor, size = 'md' }: { card: AchievementCard; accentColor: string; size?: 'sm' | 'md' | 'lg' }) {
-  // TODO: detect user sex from profile — for now default to exerciseName hint or male
-  const isFemale = false; // will be wired to user profile sex field
+  // Wire to user profile gender field
+  const isFemale = card.owner_gender === 'female';
   const isRun = card.activity_category === 'run' || (card.exercise_name || '').toLowerCase().match(/run|km|mile|walk|sprint/);
   const exerciseName = card.exercise_name || (isRun ? 'run' : 'lift');
   const hasArtwork = !!card.image_url;
@@ -1059,58 +1228,119 @@ export function AchievementCardReveal({
                     {config.label}
                   </motion.div>
 
-                  {/* Card info at bottom */}
-                  <div className="absolute bottom-0 left-0 right-0 p-4">
-                    {/* Owner name */}
+                  {/* ═══ Pokémon-style card info panel at bottom ═══ */}
+                  <div className="absolute bottom-0 left-0 right-0 p-3" style={{
+                    background: 'linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.8) 60%, transparent 100%)',
+                  }}>
+                    {/* Trainer tag */}
                     {card.owner_display_name && (
                       <motion.p
-                        className={cn('text-[10px] font-display tracking-widest uppercase opacity-60 mb-0.5', config.textColor)}
+                        className={cn('text-[9px] font-mono tracking-widest uppercase opacity-50 mb-0.5', config.textColor)}
                         initial={{ y: 20, opacity: 0 }}
-                        animate={{ y: 0, opacity: 0.6 }}
+                        animate={{ y: 0, opacity: 0.5 }}
                         transition={{ delay: 0.15 }}
                       >
-                        {card.owner_display_name}
+                        ★ {card.owner_display_name}
                       </motion.p>
                     )}
-                    <motion.div
+                    {/* Exercise name */}
+                    <motion.h3
+                      className={cn('font-display text-lg tracking-wider uppercase truncate', config.textColor)}
+                      style={{ textShadow: `0 0 12px ${config.accentHex}50` }}
                       initial={{ y: 20, opacity: 0 }}
                       animate={{ y: 0, opacity: 1 }}
                       transition={{ delay: 0.2 }}
                     >
-                      <h3
-                        className={cn(
-                          'font-display text-lg tracking-wider uppercase truncate',
-                          config.textColor,
-                        )}
-                        style={{
-                          textShadow: `0 0 12px ${config.accentHex}50`,
-                        }}
-                      >
-                        {title}
-                      </h3>
-                    </motion.div>
-                    <motion.p
-                      className={cn('text-[11px] mt-1 font-display tracking-wider opacity-80', config.textColor)}
-                      initial={{ y: 20, opacity: 0 }}
-                      animate={{ y: 0, opacity: 0.8 }}
-                      transition={{ delay: 0.35 }}
-                    >
-                      {subtitle}
-                    </motion.p>
+                      {title}
+                    </motion.h3>
 
-                    {/* Earned date */}
-                    <motion.p
-                      className="text-[10px] mt-2 text-white/30 font-mono"
+                    {/* Pokémon-style stats box */}
+                    {(isPBPersonal || isPBGlobal) && card.pb_value && (
+                      <motion.div
+                        className="mt-1.5 rounded-lg p-2"
+                        style={{
+                          background: `${config.accentHex}08`,
+                          border: `1px solid ${config.accentHex}18`,
+                        }}
+                        initial={{ y: 20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        transition={{ delay: 0.3 }}
+                      >
+                        {/* Stat rows */}
+                        <div className="space-y-1">
+                          {/* LIFT / DIST value + bar */}
+                          <div className="flex items-center gap-2">
+                            <span className={cn('text-[9px] font-mono uppercase opacity-50 w-8', config.textColor)}>
+                              {card.pb_unit === 'km' || card.pb_unit === 'mi' ? 'DIST' : 'LIFT'}
+                            </span>
+                            <span className={cn('text-sm font-display tracking-wide flex-1', config.textColor)}
+                              style={{ textShadow: `0 0 8px ${config.accentHex}40` }}>
+                              {formatPBValue(card.pb_value, card.pb_unit || 'kg')}
+                            </span>
+                            {/* Power bar */}
+                            <div className="w-16 h-1.5 rounded-full overflow-hidden" style={{ background: `${config.accentHex}15` }}>
+                              <div className="h-full rounded-full" style={{
+                                width: `${Math.min(100, Math.max(15, (card.pb_value / (card.pb_unit === 'kg' ? 300 : card.pb_unit === 'km' ? 42 : 200)) * 100))}%`,
+                                background: `linear-gradient(90deg, ${config.accentHex}60, ${config.accentHex})`,
+                                boxShadow: `0 0 6px ${config.accentHex}40`,
+                              }} />
+                            </div>
+                          </div>
+                          {/* RANK */}
+                          {card.pb_rank && (
+                            <div className="flex items-center gap-2">
+                              <span className={cn('text-[9px] font-mono uppercase opacity-50 w-8', config.textColor)}>RANK</span>
+                              <span className={cn('text-xs font-display', config.textColor)}>
+                                {formatRank(card.pb_rank)}
+                              </span>
+                            </div>
+                          )}
+                          {/* TYPE badge */}
+                          <div className="flex items-center gap-2">
+                            <span className={cn('text-[9px] font-mono uppercase opacity-50 w-8', config.textColor)}>TYPE</span>
+                            <span className={cn(
+                              'text-[9px] font-display tracking-wider px-1.5 py-0.5 rounded',
+                              config.textColor,
+                            )} style={{
+                              background: `${config.accentHex}12`,
+                              border: `1px solid ${config.accentHex}20`,
+                            }}>
+                              {['run', 'cycle', 'row', 'swim'].includes(card.activity_category || '') ? '🏃 CARDIO' : '💪 STRENGTH'}
+                            </span>
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+
+                    {/* Subtitle for trophies */}
+                    {!isPBPersonal && !isPBGlobal && (
+                      <motion.p
+                        className={cn('text-[11px] mt-1 font-display tracking-wider opacity-80', config.textColor)}
+                        initial={{ y: 20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 0.8 }}
+                        transition={{ delay: 0.35 }}
+                      >
+                        {subtitle}
+                      </motion.p>
+                    )}
+
+                    {/* Date stamp */}
+                    <motion.div
+                      className="flex items-center gap-1 mt-1.5"
+                      style={{ borderTop: `1px solid ${config.accentHex}10`, paddingTop: 4 }}
                       initial={{ y: 20, opacity: 0 }}
                       animate={{ y: 0, opacity: 1 }}
                       transition={{ delay: 0.5 }}
                     >
-                      {new Date(card.earned_at).toLocaleDateString('en-GB', {
-                        day: 'numeric',
-                        month: 'short',
-                        year: 'numeric',
-                      })}
-                    </motion.p>
+                      <span className="text-[8px] text-white/25 font-mono">AWARDED</span>
+                      <span className="text-[8px] text-white/40 font-mono">
+                        {new Date(card.earned_at).toLocaleDateString('en-GB', {
+                          day: '2-digit',
+                          month: 'short',
+                          year: 'numeric',
+                        }).toUpperCase()}
+                      </span>
+                    </motion.div>
                   </div>
 
                   {/* Rarity frame border */}
@@ -1264,46 +1494,73 @@ export function AchievementCardStatic({
         </div>
 
         {/* ═══ Pokémon-style bottom stats panel ═══ */}
-        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/75 to-transparent"
-          style={{ paddingTop: size === 'sm' ? 12 : 20 }}>
+        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/95 via-black/80 to-transparent"
+          style={{ paddingTop: size === 'sm' ? 16 : 24 }}>
           <div className="px-2 pb-1.5">
-            {/* Owner name */}
+            {/* Owner name — small trainer tag */}
             {card.owner_display_name && (
-              <p className={cn('font-display tracking-wider uppercase truncate opacity-70', size === 'sm' ? 'text-[7px]' : 'text-[9px]', config.textColor)}>
-                {card.owner_display_name}
+              <p className={cn('font-mono tracking-widest uppercase truncate opacity-50', size === 'sm' ? 'text-[6px]' : 'text-[8px]', config.textColor)}>
+                ★ {card.owner_display_name}
               </p>
             )}
-            {/* Title */}
+            {/* Exercise title */}
             <p className={cn('font-display tracking-wider uppercase truncate', titleSize, config.textColor)}
               style={{ textShadow: `0 0 8px ${config.accentHex}40` }}>
               {title}
             </p>
-            {/* Stats row */}
+
+            {/* Pokémon-style stat bar */}
             {card.pb_value && (
-              <div className="flex items-baseline gap-1 mt-0.5">
-                <span className={cn('font-display tracking-wide', config.textColor, size === 'sm' ? 'text-xs' : 'text-base')}
-                  style={{ textShadow: `0 0 10px ${config.accentHex}50` }}>
-                  {formatPBValue(card.pb_value, card.pb_unit || 'kg')}
-                </span>
-                {card.pb_rank && (
-                  <span className={cn('font-display opacity-50', config.textColor, size === 'sm' ? 'text-[7px]' : 'text-[9px]')}>
-                    {formatRank(card.pb_rank)}
+              <div className="mt-1 rounded" style={{
+                background: `${config.accentHex}08`,
+                border: `1px solid ${config.accentHex}15`,
+                padding: size === 'sm' ? '2px 4px' : '3px 6px',
+              }}>
+                <div className="flex items-center justify-between">
+                  <span className={cn('font-mono uppercase opacity-50', config.textColor, size === 'sm' ? 'text-[6px]' : 'text-[8px]')}>
+                    {card.pb_unit === 'km' || card.pb_unit === 'mi' ? 'DIST' : 'LIFT'}
                   </span>
-                )}
+                  <span className={cn('font-display tracking-wide', config.textColor, size === 'sm' ? 'text-xs' : 'text-sm')}
+                    style={{ textShadow: `0 0 10px ${config.accentHex}50` }}>
+                    {formatPBValue(card.pb_value, card.pb_unit || 'kg')}
+                  </span>
+                </div>
+                {/* Visual power bar */}
+                <div className="w-full h-[2px] rounded-full mt-0.5" style={{ background: `${config.accentHex}15` }}>
+                  <div className="h-full rounded-full" style={{
+                    width: `${Math.min(100, Math.max(15, (card.pb_value / (card.pb_unit === 'kg' ? 300 : card.pb_unit === 'km' ? 42 : 200)) * 100))}%`,
+                    background: `linear-gradient(90deg, ${config.accentHex}60, ${config.accentHex})`,
+                    boxShadow: `0 0 4px ${config.accentHex}40`,
+                  }} />
+                </div>
               </div>
             )}
+
+            {/* Rank badge */}
+            {card.pb_rank && (
+              <div className="flex items-center gap-1 mt-0.5">
+                <span className={cn('font-mono opacity-40', config.textColor, size === 'sm' ? 'text-[6px]' : 'text-[7px]')}>
+                  RANK
+                </span>
+                <span className={cn('font-display', config.textColor, size === 'sm' ? 'text-[8px]' : 'text-[9px]')}>
+                  {formatRank(card.pb_rank)}
+                </span>
+              </div>
+            )}
+
             {/* Global ranking info */}
             {isPBGlobal && card.age_category && (
               <p className={cn(textSize, 'opacity-60 mt-0.5', config.textColor)}>
                 {card.age_category} • TOP {card.global_percentile ? Math.round(100 - card.global_percentile) : '?'}%
               </p>
             )}
-            {/* Date stamp — always visible */}
-            <div className="flex items-center gap-1 mt-1" style={{ borderTop: `1px solid ${config.accentHex}15`, paddingTop: 3 }}>
-              <span className={cn('font-mono opacity-35', size === 'sm' ? 'text-[6px]' : 'text-[8px]', config.textColor)}>
+
+            {/* Date stamp */}
+            <div className="flex items-center gap-1 mt-1" style={{ borderTop: `1px solid ${config.accentHex}12`, paddingTop: 2 }}>
+              <span className={cn('font-mono opacity-30', size === 'sm' ? 'text-[5px]' : 'text-[7px]', config.textColor)}>
                 AWARDED
               </span>
-              <span className={cn('font-mono opacity-50', size === 'sm' ? 'text-[6px]' : 'text-[8px]', config.textColor)}>
+              <span className={cn('font-mono opacity-45', size === 'sm' ? 'text-[5px]' : 'text-[7px]', config.textColor)}>
                 {new Date(card.earned_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase()}
               </span>
             </div>

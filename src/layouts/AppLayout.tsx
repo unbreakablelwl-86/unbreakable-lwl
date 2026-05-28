@@ -31,7 +31,7 @@ import {
   Music,
   LogOut,
 } from 'lucide-react';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useConversations } from '@/hooks/useConversations';
 import { useTokenBalance } from '@/hooks/useTokenBalance';
 import shieldLogo from '@/assets/unbreakable-shield.png';
@@ -226,6 +226,7 @@ const ALL_NAV_ITEMS: NavItemDef[] = [
 /* Default 5 tabs in bottom bar (before More) */
 const DEFAULT_TAB_IDS = ['home', 'social', 'power', 'fuel', 'movement', 'mindset'];
 const STORAGE_KEY = 'ub-nav-tabs';
+const MORE_ORDER_KEY = 'ub-nav-more-order';
 
 function loadSavedTabs(): string[] {
   try {
@@ -233,13 +234,23 @@ function loadSavedTabs(): string[] {
     if (saved) {
       const parsed = JSON.parse(saved);
       if (Array.isArray(parsed) && parsed.length >= 2 && parsed.length <= 6) {
-        // Validate all IDs exist
         const valid = parsed.filter((id: string) => ALL_NAV_ITEMS.find(n => n.id === id));
         if (valid.length >= 2) return valid;
       }
     }
   } catch {}
   return DEFAULT_TAB_IDS;
+}
+
+function loadMoreOrder(): string[] {
+  try {
+    const saved = localStorage.getItem(MORE_ORDER_KEY);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed)) return parsed.filter((id: string) => ALL_NAV_ITEMS.find(n => n.id === id));
+    }
+  } catch {}
+  return [];
 }
 
 const HIDE_NAV_PATHS = ['/onboarding'];
@@ -251,6 +262,7 @@ export default function AppLayout() {
   const [showMore, setShowMore] = useState(false);
   const [showCustomize, setShowCustomize] = useState(false);
   const [activeTabs, setActiveTabs] = useState<string[]>(loadSavedTabs);
+  const [moreOrder, setMoreOrder] = useState<string[]>(loadMoreOrder);
   const { unreadCount } = useConversations();
   const { currentTier, loading: tierLoading } = useTokenBalance();
   const isFreeUser = !tierLoading && (!currentTier || currentTier === 'free');
@@ -300,8 +312,28 @@ export default function AppLayout() {
     });
   }, []);
 
+  const moveMoreItem = useCallback((id: string, dir: -1 | 1) => {
+    setMoreOrder(prev => {
+      // Build the current more list in display order
+      const currentMore = ALL_NAV_ITEMS.filter(n => !activeTabs.includes(n.id));
+      const ordered = prev.length > 0
+        ? [...prev.filter(id => currentMore.find(n => n.id === id)), ...currentMore.filter(n => !prev.includes(n.id)).map(n => n.id)]
+        : currentMore.map(n => n.id);
+      const idx = ordered.indexOf(id);
+      if (idx < 0) return prev;
+      const newIdx = idx + dir;
+      if (newIdx < 0 || newIdx >= ordered.length) return prev;
+      const next = [...ordered];
+      [next[idx], next[newIdx]] = [next[newIdx], next[idx]];
+      localStorage.setItem(MORE_ORDER_KEY, JSON.stringify(next));
+      return next;
+    });
+  }, [activeTabs]);
+
   const resetTabs = useCallback(() => {
     saveTabs(DEFAULT_TAB_IDS);
+    setMoreOrder([]);
+    localStorage.removeItem(MORE_ORDER_KEY);
   }, [saveTabs]);
 
   // Build bottom nav items from active tabs
@@ -309,8 +341,21 @@ export default function AppLayout() {
     .map(id => ALL_NAV_ITEMS.find(n => n.id === id))
     .filter(Boolean) as NavItemDef[];
 
-  // Items NOT in bottom nav go into More menu
-  const moreMenuItems = ALL_NAV_ITEMS.filter(n => !activeTabs.includes(n.id));
+  // Items NOT in bottom nav go into More menu — respect custom order
+  const moreMenuItems = useMemo(() => {
+    const items = ALL_NAV_ITEMS.filter(n => !activeTabs.includes(n.id));
+    if (moreOrder.length === 0) return items;
+    const ordered: NavItemDef[] = [];
+    for (const id of moreOrder) {
+      const item = items.find(n => n.id === id);
+      if (item) ordered.push(item);
+    }
+    // Add any items not in moreOrder at end
+    for (const item of items) {
+      if (!ordered.find(o => o.id === item.id)) ordered.push(item);
+    }
+    return ordered;
+  }, [activeTabs, moreOrder]);
 
   const isActive = (item: NavItemDef) => {
     if (item.activeMatch) {
@@ -537,13 +582,30 @@ export default function AppLayout() {
                 {/* Available tabs */}
                 {moreMenuItems.length > 0 && (
                   <div className="px-4 py-3">
-                    <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold mb-2">Available</p>
+                    <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold mb-2">Available ({moreMenuItems.length})</p>
                     <div className="space-y-1">
-                      {moreMenuItems.map(item => {
+                      {moreMenuItems.map((item, idx) => {
                         const Icon = item.icon;
                         const canAdd = activeTabs.length < 6;
                         return (
-                          <div key={item.id} className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-white/[0.02] transition-colors">
+                          <div key={item.id} className="flex items-center gap-3 p-2.5 rounded-xl bg-white/[0.02]">
+                            {/* Reorder arrows */}
+                            <div className="flex flex-col gap-0.5">
+                              <button
+                                onClick={() => moveMoreItem(item.id, -1)}
+                                disabled={idx === 0}
+                                className="text-muted-foreground hover:text-foreground disabled:opacity-20 transition-colors"
+                              >
+                                <svg width="12" height="8" viewBox="0 0 12 8"><path d="M6 0L12 8H0z" fill="currentColor"/></svg>
+                              </button>
+                              <button
+                                onClick={() => moveMoreItem(item.id, 1)}
+                                disabled={idx === moreMenuItems.length - 1}
+                                className="text-muted-foreground hover:text-foreground disabled:opacity-20 transition-colors"
+                              >
+                                <svg width="12" height="8" viewBox="0 0 12 8"><path d="M6 8L0 0h12z" fill="currentColor"/></svg>
+                              </button>
+                            </div>
                             <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
                               style={{ background: `${item.color}10` }}>
                               {Icon && <Icon size={16} style={{ color: item.color, opacity: 0.6 }} />}

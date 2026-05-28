@@ -36,6 +36,7 @@ export interface AchievementCard {
   image_url?: string;
   programme_stats?: Record<string, unknown>;
   owner_display_name?: string;
+  owner_gender?: string | null;
   earned_at: string;
 }
 
@@ -63,10 +64,11 @@ export function useAchievementCards() {
     // Fetch cards + profile in parallel
     const [cardsResult, profileResult] = await Promise.all([
       supabase.rpc('get_achievement_collection', { p_user_id: user.id }),
-      supabase.from('profiles').select('display_name').eq('user_id', user.id).single(),
+      supabase.from('profiles').select('display_name, gender').eq('user_id', user.id).single(),
     ]);
 
     const ownerName = profileResult.data?.display_name || user.user_metadata?.full_name || null;
+    const ownerGender = profileResult.data?.gender || null;
 
     let rawCards: AchievementCard[];
     if (cardsResult.error) {
@@ -81,8 +83,8 @@ export function useAchievementCards() {
       rawCards = (cardsResult.data || []) as AchievementCard[];
     }
 
-    // Stamp owner name onto every card
-    setCards(rawCards.map(c => ({ ...c, owner_display_name: ownerName })));
+    // Stamp owner name + gender onto every card
+    setCards(rawCards.map(c => ({ ...c, owner_display_name: ownerName, owner_gender: ownerGender })));
     setLoading(false);
   }, [user]);
 

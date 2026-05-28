@@ -35,7 +35,7 @@ const RARITY_CONFIG: Record<AchievementRarity, {
   platinum: { label: 'Platinum', textColor: 'text-slate-200',  bgClass: 'bg-slate-200/10',    borderClass: 'border-slate-300/30',  color: '#e2e8f0', icon: Sparkles },
 };
 
-type TabType = 'all' | 'trophies' | 'pbs' | 'global';
+type TabType = 'all' | 'trophies' | 'strength' | 'cardio' | 'global';
 type SortType = 'newest' | 'rarity' | 'exercise';
 
 /* ═══ Generate shareable card image (same as UN-TUNES) ═══ */
@@ -390,11 +390,16 @@ export function AchievementCollection() {
   const [shareCard, setShareCard] = useState<AchievementCard | null>(null);
   const [discardCard, setDiscardCard] = useState<AchievementCard | null>(null);
   const counts = getCounts();
+  const CARDIO_CATS = useMemo(() => ['run', 'cycle', 'row', 'swim'], []);
+  const strengthCount = useMemo(() => cards.filter(c => c.card_type === 'pb_personal' && !CARDIO_CATS.includes(c.activity_category || '')).length, [cards, CARDIO_CATS]);
+  const cardioCount = useMemo(() => cards.filter(c => c.card_type === 'pb_personal' && CARDIO_CATS.includes(c.activity_category || '')).length, [cards, CARDIO_CATS]);
 
   const filteredCards = useMemo(() => {
     let result = [...cards];
     if (activeTab === 'trophies') result = result.filter(c => c.card_type === 'programme_trophy');
-    if (activeTab === 'pbs') result = result.filter(c => c.card_type === 'pb_personal');
+    const CARDIO_CATEGORIES = ['run', 'cycle', 'row', 'swim'];
+    if (activeTab === 'strength') result = result.filter(c => c.card_type === 'pb_personal' && !CARDIO_CATEGORIES.includes(c.activity_category || ''));
+    if (activeTab === 'cardio') result = result.filter(c => c.card_type === 'pb_personal' && CARDIO_CATEGORIES.includes(c.activity_category || ''));
     if (activeTab === 'global') result = result.filter(c => c.card_type === 'pb_global');
     if (filterRarity !== 'all') result = result.filter(c => c.rarity === filterRarity);
 
@@ -465,20 +470,23 @@ export function AchievementCollection() {
         </Card>
       </motion.div>
 
-      {/* Tabs */}
+      {/* Tabs — 5 categories: All / Trophies / Strength / Cardio / Global */}
       <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as TabType)}>
-        <TabsList className="grid w-full grid-cols-4 bg-background border border-border">
-          <TabsTrigger value="all" className="font-display tracking-wide text-[10px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+        <TabsList className="grid w-full grid-cols-5 bg-background border border-border">
+          <TabsTrigger value="all" className="font-display tracking-wide text-[9px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
             ALL ({counts.total})
           </TabsTrigger>
-          <TabsTrigger value="trophies" className="font-display tracking-wide text-[10px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-            <Trophy className="w-3 h-3 mr-1" /> TROPHY ({counts.trophies})
+          <TabsTrigger value="trophies" className="font-display tracking-wide text-[9px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+            <Trophy className="w-3 h-3 mr-0.5" /> TROPHY ({counts.trophies})
           </TabsTrigger>
-          <TabsTrigger value="pbs" className="font-display tracking-wide text-[10px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-            <TrendingUp className="w-3 h-3 mr-1" /> PB ({counts.pbPersonal})
+          <TabsTrigger value="strength" className="font-display tracking-wide text-[9px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+            <Dumbbell className="w-3 h-3 mr-0.5" /> STR ({strengthCount})
           </TabsTrigger>
-          <TabsTrigger value="global" className="font-display tracking-wide text-[10px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-            <Globe className="w-3 h-3 mr-1" /> GLOBAL ({counts.pbGlobal})
+          <TabsTrigger value="cardio" className="font-display tracking-wide text-[9px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+            <Footprints className="w-3 h-3 mr-0.5" /> RUN ({cardioCount})
+          </TabsTrigger>
+          <TabsTrigger value="global" className="font-display tracking-wide text-[9px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+            <Globe className="w-3 h-3 mr-0.5" /> GLOBAL ({counts.pbGlobal})
           </TabsTrigger>
         </TabsList>
       </Tabs>
@@ -506,7 +514,8 @@ export function AchievementCollection() {
           <Trophy className="w-12 h-12 text-muted-foreground mx-auto mb-3 opacity-30" />
           <p className="text-muted-foreground font-display tracking-wider text-sm">
             {activeTab === 'trophies' ? 'Complete a programme to earn your first trophy card'
-              : activeTab === 'pbs' ? 'Set a personal best to unlock PB cards'
+              : activeTab === 'strength' ? 'Hit a strength PB to earn your first lifting card'
+              : activeTab === 'cardio' ? 'Set a running PB to earn your first cardio card'
               : activeTab === 'global' ? 'Reach top 5% in your age group for a global card'
               : 'No achievement cards yet — keep grinding!'}
           </p>

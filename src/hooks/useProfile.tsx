@@ -22,6 +22,7 @@ export interface Profile {
   social_facebook: string | null;
   social_youtube: string | null;
   social_snapchat: string | null;
+  gender: string | null;
   created_at: string;
   updated_at: string;
 }
