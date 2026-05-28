@@ -149,7 +149,7 @@ function ExerciseGroup({
               ))}
               {cards.length === 1 && (
                 <p className="text-[10px] text-muted-foreground text-center py-1 font-display tracking-wider">
-                  Beat your PB to unlock Silver & Bronze cards
+                  Log more lifts to earn cards at every tier
                 </p>
               )}
             </div>

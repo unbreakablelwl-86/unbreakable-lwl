@@ -29,6 +29,8 @@ import {
   BadgeCheck,
   MoreHorizontal,
   Trophy,
+  Share2,
+  Trash2,
 } from 'lucide-react';
 import { format, formatDistanceToNow } from 'date-fns';
 import shieldLogo from '@/assets/unbreakable-shield.png';
@@ -221,14 +223,76 @@ function PostDetailModal({
   profile,
   onClose,
   onSave,
+  onDelete,
 }: {
   post: OwnPost | null;
   profile: { display_name: string | null; username: string | null; avatar_url: string | null };
   onClose: () => void;
   onSave?: (postId: string) => void;
+  onDelete?: (postId: string) => void;
 }) {
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [shareCaption, setShareCaption] = useState('');
+  const [showShareSheet, setShowShareSheet] = useState(false);
+
   if (!post) return null;
   const displayName = profile.display_name || profile.username || 'You';
+
+  const handleDelete = async () => {
+    if (!onDelete) return;
+    setDeleting(true);
+    await onDelete(post.id);
+    setDeleting(false);
+    setShowDeleteConfirm(false);
+    onClose();
+  };
+
+  const handleShare = async () => {
+    const caption = shareCaption || post.content?.slice(0, 200) || '';
+    const shareText = `${caption} 💪 #UNBREAKABLE #LiveWithoutLimits`;
+
+    // Try native share API first (mobile)
+    if (navigator.share) {
+      try {
+        // If there's media, try to capture it as an image for sharing
+        const shareData: ShareData = {
+          title: 'UNBREAKABLE',
+          text: shareText,
+        };
+
+        // Add image if available
+        const mediaUrl = post.image_url || post.media_items?.[0]?.url;
+        if (mediaUrl) {
+          try {
+            const resp = await fetch(mediaUrl);
+            const blob = await resp.blob();
+            const file = new File([blob], 'unbreakable-post.jpg', { type: blob.type });
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+              shareData.files = [file];
+            }
+          } catch { /* fallback to text-only share */ }
+        }
+
+        await navigator.share(shareData);
+      } catch (err) {
+        if ((err as Error).name !== 'AbortError') {
+          console.error('Share failed:', err);
+        }
+      }
+    } else {
+      // Desktop fallback — copy link
+      try {
+        await navigator.clipboard.writeText(shareText);
+        const toast = document.createElement('div');
+        toast.textContent = '📋 Copied to clipboard!';
+        toast.className = 'fixed bottom-24 left-1/2 -translate-x-1/2 bg-card text-foreground text-sm px-4 py-2 rounded-full border border-primary/30 z-[9999] shadow-lg';
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 2000);
+      } catch { /* ignore */ }
+    }
+    setShowShareSheet(false);
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm" onClick={onClose}>
@@ -253,9 +317,32 @@ function PostDetailModal({
               </p>
             </div>
           </div>
-          <button onClick={onClose} className="p-1.5 hover:bg-white/[0.05] rounded-full">
-            <X className="w-5 h-5 text-muted-foreground" />
-          </button>
+          <div className="flex items-center gap-1">
+            {/* Share button */}
+            <button
+              onClick={() => {
+                setShareCaption(post.content?.slice(0, 200) || '');
+                setShowShareSheet(true);
+              }}
+              className="p-1.5 hover:bg-white/[0.05] rounded-full transition-colors"
+              title="Share"
+            >
+              <Share2 className="w-5 h-5 text-muted-foreground" />
+            </button>
+            {/* Delete button */}
+            {onDelete && (
+              <button
+                onClick={() => setShowDeleteConfirm(true)}
+                className="p-1.5 hover:bg-red-500/10 rounded-full transition-colors"
+                title="Delete post"
+              >
+                <Trash2 className="w-5 h-5 text-muted-foreground hover:text-red-400" />
+              </button>
+            )}
+            <button onClick={onClose} className="p-1.5 hover:bg-white/[0.05] rounded-full">
+              <X className="w-5 h-5 text-muted-foreground" />
+            </button>
+          </div>
         </div>
 
         <PostMediaCarousel post={post} />
@@ -280,6 +367,95 @@ function PostDetailModal({
           </div>
           {post.content && <RichContent text={post.content} className="text-sm text-foreground/80" />}
         </div>
+
+        {/* Delete confirmation overlay */}
+        <AnimatePresence>
+          {showDeleteConfirm && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center rounded-2xl z-10"
+              onClick={() => setShowDeleteConfirm(false)}
+            >
+              <motion.div
+                initial={{ scale: 0.9, y: 10 }}
+                animate={{ scale: 1, y: 0 }}
+                exit={{ scale: 0.9, y: 10 }}
+                className="bg-card border border-red-500/30 rounded-2xl p-5 max-w-xs w-full mx-4 space-y-4 text-center"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <Trash2 className="w-10 h-10 text-red-400 mx-auto" />
+                <h3 className="font-display tracking-wider text-sm text-white">DELETE POST?</h3>
+                <p className="text-xs text-muted-foreground">This can't be undone. The post will be permanently removed.</p>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setShowDeleteConfirm(false)}
+                    className="flex-1 px-4 py-2.5 rounded-xl border border-border text-sm font-display tracking-wider text-muted-foreground hover:bg-white/5 transition-colors"
+                  >
+                    CANCEL
+                  </button>
+                  <button
+                    onClick={handleDelete}
+                    disabled={deleting}
+                    className="flex-1 px-4 py-2.5 rounded-xl bg-red-500/20 border border-red-500/40 text-sm font-display tracking-wider text-red-400 hover:bg-red-500/30 transition-colors disabled:opacity-50"
+                  >
+                    {deleting ? 'DELETING…' : 'DELETE'}
+                  </button>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Share sheet overlay */}
+        <AnimatePresence>
+          {showShareSheet && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-black/80 backdrop-blur-sm flex items-end justify-center rounded-2xl z-10"
+              onClick={() => setShowShareSheet(false)}
+            >
+              <motion.div
+                initial={{ y: 100 }}
+                animate={{ y: 0 }}
+                exit={{ y: 100 }}
+                className="bg-card border-t border-primary/20 rounded-t-2xl p-5 w-full space-y-4"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="w-10 h-1 bg-zinc-700 rounded-full mx-auto" />
+                <h3 className="font-display tracking-wider text-sm text-white text-center">SHARE POST</h3>
+                
+                {/* Editable caption */}
+                <div className="space-y-2">
+                  <label className="text-[10px] font-display tracking-widest text-muted-foreground uppercase">Edit caption</label>
+                  <textarea
+                    value={shareCaption}
+                    onChange={(e) => setShareCaption(e.target.value)}
+                    className="w-full bg-black/60 border border-border rounded-xl p-3 text-sm text-white resize-none focus:border-primary/40 focus:outline-none"
+                    rows={3}
+                    placeholder="Add a caption..."
+                  />
+                </div>
+
+                <button
+                  onClick={handleShare}
+                  className="w-full py-3 rounded-xl bg-gradient-to-r from-[#FF5500] to-orange-600 text-white text-sm font-display tracking-wider flex items-center justify-center gap-2"
+                >
+                  <Share2 className="w-4 h-4" /> SHARE
+                </button>
+                <button
+                  onClick={() => setShowShareSheet(false)}
+                  className="w-full py-2 text-sm font-display tracking-wider text-muted-foreground"
+                >
+                  CANCEL
+                </button>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </motion.div>
     </div>
   );
@@ -579,6 +755,13 @@ export default function Profile() {
             post={selectedPost}
             profile={profile}
             onClose={() => setSelectedPost(null)}
+            onDelete={async (postId) => {
+              const { error } = await supabase.from('posts').delete().eq('id', postId);
+              if (!error) {
+                setPosts(prev => prev.filter(p => p.id !== postId));
+                setSelectedPost(null);
+              }
+            }}
             onSave={async (postId) => {
               const { error } = await supabase
                 .from('saved_posts')
@@ -586,7 +769,6 @@ export default function Profile() {
               if (!error) {
                 const el = document.activeElement as HTMLElement;
                 el?.blur();
-                // Simple toast-like feedback
                 const toast = document.createElement('div');
                 toast.textContent = '✅ Post saved!';
                 toast.className = 'fixed bottom-24 left-1/2 -translate-x-1/2 bg-card text-foreground text-sm px-4 py-2 rounded-full border border-primary/30 z-[9999] shadow-lg';
