@@ -278,49 +278,8 @@ export function usePlayerProvider() {
     }
   }, [Math.floor(state.currentTime), state.duration, state.isPlaying]);
 
-  // ─── 30s preview enforcement ───
-  useEffect(() => {
-    // Belt-and-suspenders: always skip enforcement for hardcoded dev IDs
-    // even if role-based hasFullAccess has a timing gap
-    const DEV_BYPASS = ['3a61bd9e-785b-4512-abab-e61b87496c54'];
-    if (user?.id && DEV_BYPASS.includes(user.id)) return;
-    if (!isPreview || !audioRef.current) return;
-    const audio = audioRef.current;
-    
-    const checkPreview = () => {
-      if (audio.currentTime >= PREVIEW_DURATION && !previewFadingRef.current) {
-        previewFadingRef.current = true;
-        // Fade out over 2 seconds
-        const startVol = audio.volume;
-        const fadeSteps = 20;
-        const fadeInterval = 100; // 2s total
-        let step = 0;
-        const fade = setInterval(() => {
-          step++;
-          audio.volume = Math.max(0, startVol * (1 - step / fadeSteps));
-          if (step >= fadeSteps) {
-            clearInterval(fade);
-            audio.pause();
-            audio.volume = startVol; // restore for next track
-            previewFadingRef.current = false;
-            // Auto-advance to next track (plays next 30s preview)
-            handleTrackEnd();
-          }
-        }, fadeInterval);
-      }
-    };
-
-    audio.addEventListener('timeupdate', checkPreview);
-    return () => audio.removeEventListener('timeupdate', checkPreview);
-  }, [isPreview, user?.id, handleTrackEnd]);
-
-  // Reset preview fade flag on track change
-  useEffect(() => {
-    previewFadingRef.current = false;
-  }, [state.currentTrack?.id]);
-
+  // ─── Track end handler (must be declared before effects that use it) ───
   const handleTrackEnd = useCallback(() => {
-    // Read current state snapshot and compute next action outside setState
     setState(prev => {
       const audio = audioRef.current;
       if (!audio) return { ...prev, isPlaying: false };
@@ -329,7 +288,7 @@ export function usePlayerProvider() {
       if (prev.repeat === 'one') {
         audio.currentTime = 0;
         audio.play().catch(() => {});
-        return prev; // keep same state, just restart audio
+        return prev;
       }
 
       // Compute next index
@@ -342,7 +301,6 @@ export function usePlayerProvider() {
         if (prev.repeat === 'all' && prev.queue.length > 0) {
           // Loop back to start
           const track = prev.queue[0];
-          // Use setTimeout to avoid side-effects-in-setState race
           setTimeout(() => {
             audio.src = track.audio_url;
             audio.play().catch(() => {});
@@ -362,6 +320,44 @@ export function usePlayerProvider() {
       return { ...prev, currentTrack: track, queueIndex: nextIdx, isPlaying: true };
     });
   }, []);
+
+  // ─── 30s preview enforcement ───
+  useEffect(() => {
+    const DEV_BYPASS = ['3a61bd9e-785b-4512-abab-e61b87496c54'];
+    if (user?.id && DEV_BYPASS.includes(user.id)) return;
+    if (!isPreview || !audioRef.current) return;
+    const audio = audioRef.current;
+    
+    const checkPreview = () => {
+      if (audio.currentTime >= PREVIEW_DURATION && !previewFadingRef.current) {
+        previewFadingRef.current = true;
+        const startVol = audio.volume;
+        const fadeSteps = 20;
+        const fadeInterval = 100; // 2s total
+        let step = 0;
+        const fade = setInterval(() => {
+          step++;
+          audio.volume = Math.max(0, startVol * (1 - step / fadeSteps));
+          if (step >= fadeSteps) {
+            clearInterval(fade);
+            audio.pause();
+            audio.volume = startVol;
+            previewFadingRef.current = false;
+            // Auto-advance to next track's 30s preview
+            handleTrackEnd();
+          }
+        }, fadeInterval);
+      }
+    };
+
+    audio.addEventListener('timeupdate', checkPreview);
+    return () => audio.removeEventListener('timeupdate', checkPreview);
+  }, [isPreview, user?.id, handleTrackEnd]);
+
+  // Reset preview fade flag on track change
+  useEffect(() => {
+    previewFadingRef.current = false;
+  }, [state.currentTrack?.id]);
 
   const playTrack = useCallback((track: Track, queue?: Track[]) => {
     const q = queue || [track];

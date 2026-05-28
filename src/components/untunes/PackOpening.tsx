@@ -80,10 +80,42 @@ const RARITY_CONFIG = {
 };
 
 /* ═══ Shared CSS-in-JS keyframes ═══ */
-const goldSheenKF = `@keyframes goldSheen { 0%,100% { left: -50%; } 50% { left: 150%; } }`;
-const holoKF = `@keyframes holoShift { 0% { filter: hue-rotate(0deg); } 100% { filter: hue-rotate(360deg); } }`;
 const pulseGlowKF = `@keyframes pulseGlow { 0%,100% { opacity: 0.3; } 50% { opacity: 0.8; } }`;
 const scanlineKF = `@keyframes scanMove { 0% { transform: translateY(-100%); } 100% { transform: translateY(100%); } }`;
+
+const cardEffectsCSS = `
+@keyframes goldSweep {
+  0% { transform: translateX(-150%) rotate(25deg); }
+  100% { transform: translateX(250%) rotate(25deg); }
+}
+@keyframes goldPulse {
+  0%, 100% { box-shadow: 0 0 15px 3px rgba(255,191,36,0.3), inset 0 0 15px rgba(255,191,36,0.1); }
+  50% { box-shadow: 0 0 30px 8px rgba(255,191,36,0.5), inset 0 0 30px rgba(255,191,36,0.15); }
+}
+@keyframes diamondRefract {
+  0% { background-position: 0% 50%; filter: hue-rotate(0deg); }
+  50% { background-position: 100% 50%; filter: hue-rotate(180deg); }
+  100% { background-position: 0% 50%; filter: hue-rotate(360deg); }
+}
+@keyframes diamondSweep {
+  0% { transform: translateX(-200%) rotate(35deg); }
+  100% { transform: translateX(300%) rotate(35deg); }
+}
+@keyframes platSweep {
+  0% { transform: translateX(-150%) skewX(-15deg); }
+  100% { transform: translateX(350%) skewX(-15deg); }
+}
+@keyframes platRipple {
+  0%, 100% { opacity: 0.05; transform: scale(1); }
+  50% { opacity: 0.15; transform: scale(1.05); }
+}
+@keyframes sparkleFloat {
+  0% { transform: translateY(0) scale(0); opacity: 0; }
+  20% { opacity: 1; transform: translateY(-5px) scale(1); }
+  80% { opacity: 1; transform: translateY(-20px) scale(0.8); }
+  100% { transform: translateY(-30px) scale(0); opacity: 0; }
+}
+`;
 
 /* ── Particle Burst ── */
 function ParticleBurst({ color, count = 24 }: { color: string; count?: number }) {
@@ -119,124 +151,265 @@ function ParticleBurst({ color, count = 24 }: { color: string; count?: number })
   );
 }
 
-/* ── Gold metallic shimmer sweep ── */
+/* ── Gold — liquid metallic with sweep highlights + floating embers ── */
 function GoldShimmer() {
   return (
     <>
-      <style>{goldSheenKF}</style>
-      <div
-        className="absolute inset-0 pointer-events-none rounded-2xl overflow-hidden"
-        style={{ mixBlendMode: 'overlay' }}
-      >
-        <div
-          className="absolute top-0 w-1/3 h-full"
-          style={{
-            background: 'linear-gradient(90deg, transparent, rgba(255,215,0,0.35), transparent)',
-            animation: 'goldSheen 3s ease-in-out infinite',
-          }}
-        />
-      </div>
-      {/* Floating gold dots */}
-      {Array.from({ length: 8 }).map((_, i) => (
+      <style>{cardEffectsCSS}</style>
+      {/* Base metallic gold gradient overlay */}
+      <div className="absolute inset-0 pointer-events-none rounded-2xl overflow-hidden">
         <motion.div
-          key={i}
-          className="absolute w-1.5 h-1.5 rounded-full bg-yellow-400 pointer-events-none"
-          style={{
-            left: `${15 + Math.random() * 70}%`,
-            top: `${15 + Math.random() * 70}%`,
-          }}
-          animate={{ opacity: [0, 1, 0], scale: [0.5, 1.2, 0.5] }}
-          transition={{
-            duration: 2 + Math.random(),
-            repeat: Infinity,
-            delay: Math.random() * 2,
-          }}
-        />
-      ))}
-    </>
-  );
-}
-
-/* ── Diamond holographic effect ── */
-function DiamondHolo() {
-  return (
-    <>
-      <style>{holoKF}</style>
-      <div
-        className="absolute inset-0 pointer-events-none rounded-2xl overflow-hidden"
-        style={{ mixBlendMode: 'overlay', animation: 'holoShift 4s linear infinite' }}
-      >
-        <div
           className="absolute inset-0"
           style={{
-            background: 'linear-gradient(135deg, rgba(0,255,255,0.15), rgba(255,0,255,0.15), rgba(255,255,0,0.15), rgba(0,255,255,0.15))',
-            backgroundSize: '200% 200%',
+            background: 'linear-gradient(145deg, rgba(255,191,36,0.08) 0%, rgba(184,134,11,0.12) 30%, rgba(255,215,0,0.06) 50%, rgba(218,165,32,0.12) 70%, rgba(255,191,36,0.08) 100%)',
+            mixBlendMode: 'overlay',
+          }}
+          animate={{ opacity: [0.6, 1, 0.6] }}
+          transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+        />
+        {/* Primary sweep — bright gold bar */}
+        <div
+          className="absolute top-0 h-full"
+          style={{
+            width: '40%',
+            background: 'linear-gradient(90deg, transparent 0%, rgba(255,215,0,0.05) 20%, rgba(255,215,0,0.35) 45%, rgba(255,240,180,0.5) 50%, rgba(255,215,0,0.35) 55%, rgba(255,215,0,0.05) 80%, transparent 100%)',
+            animation: 'goldSweep 2.8s ease-in-out infinite',
+          }}
+        />
+        {/* Secondary sweep — subtle warm accent */}
+        <div
+          className="absolute top-0 h-full"
+          style={{
+            width: '25%',
+            background: 'linear-gradient(90deg, transparent, rgba(255,165,0,0.2), transparent)',
+            animation: 'goldSweep 4.2s ease-in-out infinite',
+            animationDelay: '1.4s',
           }}
         />
       </div>
-      {/* Sparkle stars */}
-      {Array.from({ length: 12 }).map((_, i) => (
+      {/* Metallic edge glow */}
+      <div
+        className="absolute inset-0 rounded-2xl pointer-events-none"
+        style={{
+          animation: 'goldPulse 3s ease-in-out infinite',
+        }}
+      />
+      {/* Floating ember sparks */}
+      {Array.from({ length: 14 }).map((_, i) => (
         <motion.div
           key={i}
-          className="absolute pointer-events-none text-white"
+          className="absolute pointer-events-none"
           style={{
-            left: `${10 + Math.random() * 80}%`,
-            top: `${10 + Math.random() * 80}%`,
-            fontSize: 8 + Math.random() * 8,
-          }}
-          animate={{ opacity: [0, 1, 0], rotate: [0, 180], scale: [0.3, 1, 0.3] }}
-          transition={{
-            duration: 1.5 + Math.random(),
-            repeat: Infinity,
-            delay: Math.random() * 3,
+            left: `${8 + Math.random() * 84}%`,
+            top: `${20 + Math.random() * 70}%`,
           }}
         >
-          ✦
+          <motion.div
+            className="rounded-full"
+            style={{
+              width: 2 + Math.random() * 4,
+              height: 2 + Math.random() * 4,
+              background: `radial-gradient(circle, ${Math.random() > 0.5 ? 'rgba(255,215,0,0.9)' : 'rgba(255,240,180,0.8)'} 0%, transparent 70%)`,
+              boxShadow: `0 0 ${4 + Math.random() * 6}px rgba(255,191,36,0.6)`,
+            }}
+            animate={{
+              opacity: [0, 0.8, 1, 0.8, 0],
+              scale: [0.2, 1.2, 1, 1.1, 0.2],
+              y: [0, -8, -18, -28, -40],
+            }}
+            transition={{
+              duration: 2.5 + Math.random() * 1.5,
+              repeat: Infinity,
+              delay: Math.random() * 4,
+              ease: 'easeOut',
+            }}
+          />
         </motion.div>
       ))}
     </>
   );
 }
 
-/* ── Platinum chrome / liquid metal effect ── */
-const platinumKF = `@keyframes platinumSweep { 0%,100% { background-position: 200% center; } 50% { background-position: -200% center; } }`;
-function PlatinumChrome() {
+/* ── Diamond — holographic rainbow refraction with prismatic light ── */
+function DiamondHolo() {
   return (
     <>
-      <style>{platinumKF}</style>
-      <div
-        className="absolute inset-0 pointer-events-none rounded-2xl overflow-hidden"
-        style={{ mixBlendMode: 'overlay' }}
-      >
+      <style>{cardEffectsCSS}</style>
+      {/* Rainbow holographic base — shifts hue continuously */}
+      <div className="absolute inset-0 pointer-events-none rounded-2xl overflow-hidden">
         <div
           className="absolute inset-0"
           style={{
-            background: 'linear-gradient(110deg, transparent 20%, rgba(255,255,255,0.4) 45%, rgba(200,200,220,0.2) 55%, transparent 80%)',
-            backgroundSize: '300% 100%',
-            animation: 'platinumSweep 4s ease-in-out infinite',
+            background: 'linear-gradient(125deg, rgba(120,0,255,0.12) 0%, rgba(0,210,255,0.12) 18%, rgba(0,255,170,0.12) 32%, rgba(255,255,0,0.12) 48%, rgba(255,100,0,0.12) 62%, rgba(255,0,128,0.12) 78%, rgba(120,0,255,0.12) 100%)',
+            backgroundSize: '300% 300%',
+            animation: 'diamondRefract 5s linear infinite',
+            mixBlendMode: 'overlay',
+          }}
+        />
+        {/* Bright prismatic sweep */}
+        <div
+          className="absolute top-0 h-full"
+          style={{
+            width: '35%',
+            background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.05) 25%, rgba(200,220,255,0.4) 45%, rgba(255,255,255,0.55) 50%, rgba(200,220,255,0.4) 55%, rgba(255,255,255,0.05) 75%, transparent 100%)',
+            animation: 'diamondSweep 3.5s ease-in-out infinite',
+          }}
+        />
+        {/* Secondary rainbow sweep offset */}
+        <div
+          className="absolute top-0 h-full"
+          style={{
+            width: '20%',
+            background: 'linear-gradient(90deg, transparent, rgba(0,200,255,0.2), rgba(200,0,255,0.15), transparent)',
+            animation: 'diamondSweep 5s ease-in-out infinite',
+            animationDelay: '1.5s',
           }}
         />
       </div>
-      {/* Chrome sparkle dots */}
-      {Array.from({ length: 10 }).map((_, i) => (
+      {/* Prismatic edge glow */}
+      <motion.div
+        className="absolute inset-0 rounded-2xl pointer-events-none"
+        animate={{
+          boxShadow: [
+            '0 0 15px 3px rgba(0,200,255,0.25), inset 0 0 10px rgba(120,0,255,0.1)',
+            '0 0 25px 6px rgba(200,0,255,0.35), inset 0 0 15px rgba(0,200,255,0.12)',
+            '0 0 15px 3px rgba(0,200,255,0.25), inset 0 0 10px rgba(120,0,255,0.1)',
+          ],
+        }}
+        transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+      />
+      {/* Sparkle star bursts */}
+      {Array.from({ length: 16 }).map((_, i) => {
+        const colors = ['#fff', '#88f', '#8ff', '#f8f', '#ff8', '#8f8'];
+        const color = colors[i % colors.length];
+        return (
+          <motion.div
+            key={i}
+            className="absolute pointer-events-none"
+            style={{
+              left: `${8 + Math.random() * 84}%`,
+              top: `${8 + Math.random() * 84}%`,
+            }}
+          >
+            <motion.svg
+              width={10 + Math.random() * 12}
+              height={10 + Math.random() * 12}
+              viewBox="0 0 24 24"
+              fill={color}
+              style={{ filter: `drop-shadow(0 0 4px ${color})` }}
+              animate={{
+                opacity: [0, 0.9, 0],
+                scale: [0.2, 1.3, 0.2],
+                rotate: [0, 90 + Math.random() * 90],
+              }}
+              transition={{
+                duration: 1.2 + Math.random() * 1.5,
+                repeat: Infinity,
+                delay: Math.random() * 4,
+                ease: 'easeInOut',
+              }}
+            >
+              <path d="M12 0 L14 9 L24 12 L14 15 L12 24 L10 15 L0 12 L10 9 Z" />
+            </motion.svg>
+          </motion.div>
+        );
+      })}
+    </>
+  );
+}
+
+/* ── Platinum — chrome mirror + liquid mercury ripple ── */
+function PlatinumChrome() {
+  return (
+    <>
+      <style>{cardEffectsCSS}</style>
+      {/* Chrome base layer */}
+      <div className="absolute inset-0 pointer-events-none rounded-2xl overflow-hidden">
         <motion.div
-          key={i}
-          className="absolute pointer-events-none rounded-full"
+          className="absolute inset-0"
           style={{
-            width: 2 + Math.random() * 3,
-            height: 2 + Math.random() * 3,
-            backgroundColor: '#fff',
-            left: `${10 + Math.random() * 80}%`,
-            top: `${10 + Math.random() * 80}%`,
-            boxShadow: '0 0 6px 2px rgba(255,255,255,0.6)',
+            background: 'linear-gradient(155deg, rgba(180,190,210,0.08) 0%, rgba(220,225,235,0.12) 25%, rgba(255,255,255,0.06) 50%, rgba(200,210,225,0.12) 75%, rgba(180,190,210,0.08) 100%)',
+            mixBlendMode: 'overlay',
           }}
-          animate={{ opacity: [0, 1, 0], scale: [0.3, 1.5, 0.3] }}
-          transition={{
-            duration: 1.2 + Math.random() * 0.8,
-            repeat: Infinity,
-            delay: Math.random() * 3,
+          animate={{
+            opacity: [0.5, 0.9, 0.5],
+          }}
+          transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+        />
+        {/* Mercury ripple underlayer */}
+        <motion.div
+          className="absolute inset-0"
+          style={{
+            background: 'radial-gradient(ellipse at 30% 40%, rgba(220,230,240,0.12) 0%, transparent 50%), radial-gradient(ellipse at 70% 60%, rgba(200,220,240,0.12) 0%, transparent 50%)',
+          }}
+          animate={{
+            opacity: [0.3, 0.7, 0.3],
+            scale: [1, 1.03, 1],
+          }}
+          transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
+        />
+        {/* Primary chrome sweep — bright white bar */}
+        <div
+          className="absolute top-0 h-full"
+          style={{
+            width: '30%',
+            background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.08) 20%, rgba(230,235,245,0.45) 42%, rgba(255,255,255,0.65) 50%, rgba(230,235,245,0.45) 58%, rgba(255,255,255,0.08) 80%, transparent 100%)',
+            animation: 'platSweep 3.2s ease-in-out infinite',
           }}
         />
+        {/* Secondary cool sweep */}
+        <div
+          className="absolute top-0 h-full"
+          style={{
+            width: '20%',
+            background: 'linear-gradient(90deg, transparent, rgba(180,200,230,0.25), transparent)',
+            animation: 'platSweep 5s ease-in-out infinite',
+            animationDelay: '1.6s',
+          }}
+        />
+      </div>
+      {/* Chrome edge glow */}
+      <motion.div
+        className="absolute inset-0 rounded-2xl pointer-events-none"
+        animate={{
+          boxShadow: [
+            '0 0 12px 2px rgba(200,210,230,0.2), inset 0 0 8px rgba(200,210,230,0.08)',
+            '0 0 25px 6px rgba(220,225,240,0.4), inset 0 0 18px rgba(220,225,240,0.12)',
+            '0 0 12px 2px rgba(200,210,230,0.2), inset 0 0 8px rgba(200,210,230,0.08)',
+          ],
+        }}
+        transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut' }}
+      />
+      {/* Chrome lens flare sparks */}
+      {Array.from({ length: 12 }).map((_, i) => (
+        <motion.div
+          key={i}
+          className="absolute pointer-events-none"
+          style={{
+            left: `${8 + Math.random() * 84}%`,
+            top: `${15 + Math.random() * 70}%`,
+          }}
+        >
+          <motion.div
+            style={{
+              width: 3 + Math.random() * 5,
+              height: 3 + Math.random() * 5,
+              background: 'radial-gradient(circle, rgba(255,255,255,0.95) 0%, rgba(200,215,240,0.5) 40%, transparent 70%)',
+              borderRadius: '50%',
+              boxShadow: `0 0 ${6 + Math.random() * 8}px rgba(200,215,240,0.7)`,
+            }}
+            animate={{
+              opacity: [0, 1, 0.7, 1, 0],
+              scale: [0.3, 1.4, 1, 1.3, 0.3],
+            }}
+            transition={{
+              duration: 2 + Math.random() * 2,
+              repeat: Infinity,
+              delay: Math.random() * 5,
+              ease: 'easeInOut',
+            }}
+          />
+        </motion.div>
       ))}
     </>
   );
@@ -493,7 +666,15 @@ function CardReveal({
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.2 }}
                   >
-                    <CardTitle title={title} className="text-white" />
+                    <CardTitle
+                      title={title}
+                      className={cn(
+                        'text-white',
+                        card.rarity === 'gold' && 'drop-shadow-[0_0_8px_rgba(251,191,36,0.5)]',
+                        card.rarity === 'diamond' && 'drop-shadow-[0_0_8px_rgba(139,92,246,0.5)]',
+                        card.rarity === 'platinum' && 'drop-shadow-[0_0_10px_rgba(226,232,240,0.6)]',
+                      )}
+                    />
                   </motion.div>
                   <motion.p
                     className={cn('text-xs mt-1 font-display tracking-wider', config.textColor)}
@@ -501,16 +682,26 @@ function CardReveal({
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.35 }}
                   >
+                    {card.rarity !== 'standard' && (
+                      <span className="mr-1.5">
+                        {card.rarity === 'platinum' ? '✦' : card.rarity === 'diamond' ? '◆' : '♛'}
+                      </span>
+                    )}
                     {isTrack ? 'TRACK CARD' : card.card_type === 'brand' ? 'BRAND CARD' : 'ALBUM CARD'}
                   </motion.p>
                   {(card.rarity === 'diamond' || card.rarity === 'platinum') && card.edition_number > 0 && (
                     <motion.p
-                      className={cn('text-xs font-mono mt-2', card.rarity === 'platinum' ? 'text-slate-200' : 'text-violet-300')}
+                      className={cn(
+                        'text-xs font-mono mt-2',
+                        card.rarity === 'platinum'
+                          ? 'text-slate-200 drop-shadow-[0_0_6px_rgba(226,232,240,0.5)]'
+                          : 'text-violet-300 drop-shadow-[0_0_6px_rgba(139,92,246,0.4)]',
+                      )}
                       initial={{ y: 20, opacity: 0 }}
                       animate={{ y: 0, opacity: 1 }}
                       transition={{ delay: 0.5 }}
                     >
-                      #{String(card.edition_number).padStart(3, '0')} / {card.rarity === 'platinum' ? '100' : '100'}
+                      #{String(card.edition_number).padStart(3, '0')} / {card.rarity === 'platinum' ? '100' : '∞'}
                     </motion.p>
                   )}
                 </div>
