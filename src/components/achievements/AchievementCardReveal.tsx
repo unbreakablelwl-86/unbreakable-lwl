@@ -131,7 +131,7 @@ const ACHIEVEMENT_RARITY_CONFIG: Record<AchievementRarity, {
 };
 
 /* ═══ Keyframe styles — 5-tier rarity system ═══ */
-const achievementCardStyles = `
+export const achievementCardStyles = `
 /* Bronze: warm pulse glow */
 @keyframes achBronzePulse {
   0%, 100% { opacity: 0.3; }

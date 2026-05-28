@@ -11,7 +11,7 @@ import { useState, useEffect, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence, PanInfo } from 'framer-motion';
 import {
   Diamond, Crown, Music, Disc3, X, Download, ArrowLeft,
-  Lock, Trash2, Share2, Sparkles, Gavel,
+  Lock, Trash2, Share2, Sparkles, Gavel, ShoppingCart, Coins, Loader2,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -19,9 +19,11 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useAllTracks, useAlbums } from '@/hooks/useUnTunes';
 import { useToast } from '@/hooks/use-toast';
+import { useTokenBalance } from '@/hooks/useTokenBalance';
 import { cn } from '@/lib/utils';
 import {
-  BronzeShimmer, SilverShimmer, GoldShimmer, DiamondHolo, PlatinumChrome, DumbbellSparkle,
+  BronzeShimmer, SilverShimmer, GoldShimmer, DiamondHolo, PlatinumChrome,
+  achievementCardStyles,
 } from '@/components/achievements/AchievementCardReveal';
 
 interface OwnedCard {
@@ -36,6 +38,7 @@ interface OwnedCard {
   brand_card_id?: string | null;
   cover_url?: string | null;
   card_title?: string | null;
+  purchased?: boolean;
 }
 
 interface BrandCard {
@@ -395,6 +398,9 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
   const [auctionModal, setAuctionModal] = useState<{ cardId: string; title: string; rarity: string } | null>(null);
   const [auctionPrice, setAuctionPrice] = useState('1.0');
   const [auctionLoading, setAuctionLoading] = useState(false);
+  const [purchaseModal, setPurchaseModal] = useState<{ card: OwnedCard; title: string; rarity: string; coverUrl: string | null } | null>(null);
+  const [purchasing, setPurchasing] = useState(false);
+  const { balance, refresh: refreshTokens } = useTokenBalance();
   const { toast } = useToast();
 
   const fetchCards = useCallback(async () => {
@@ -402,7 +408,7 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
     try {
       const { data: cardData, error: cardError } = await supabase
         .from('un_tunes_user_cards')
-        .select('id, track_id, album_id, rarity, edition_number, is_opened, created_at, card_type, brand_card_id')
+        .select('id, track_id, album_id, rarity, edition_number, is_opened, created_at, card_type, brand_card_id, purchased')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false });
       if (cardError) console.error('[CollectionGallery] Card fetch error:', cardError);
@@ -621,6 +627,9 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
 
   return (
     <div className="space-y-4">
+      {/* Inject keyframe animations for rarity effects */}
+      <style>{achievementCardStyles}</style>
+
       {/* Header */}
       <div className="flex items-center gap-3">
         {onBack && (
@@ -917,7 +926,7 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
                     {owned && rarity === 'gold' && <GoldShimmer />}
                     {owned && rarity === 'diamond' && <DiamondHolo />}
                     {owned && rarity === 'platinum' && <PlatinumChrome />}
-                    {owned && <DumbbellSparkle tier={rarity} />}
+                    {/* DumbbellSparkle removed — music cards don't need dumbbell overlay */}
                   </div>
 
                   {/* Card info area — rarity-themed base */}
@@ -957,14 +966,26 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
                       </Button>
                       {owned && (() => {
                         const rc = RARITY_CONFIG[rarity] || RARITY_CONFIG.standard;
+                        if (owned.purchased) {
+                          return (
+                            <Button
+                              size="sm"
+                              className="flex-1 text-white text-xs font-display tracking-wider"
+                              style={{ background: `linear-gradient(to right, ${rc.color}, ${rc.color}cc)` }}
+                              onClick={() => handleDownloadCard(owned, item.title, item.coverUrl, item.type)}
+                            >
+                              <Download className="w-3 h-3 mr-1" /> DOWNLOAD
+                            </Button>
+                          );
+                        }
                         return (
                           <Button
                             size="sm"
                             className="flex-1 text-white text-xs font-display tracking-wider"
                             style={{ background: `linear-gradient(to right, ${rc.color}, ${rc.color}cc)` }}
-                            onClick={() => handleDownloadCard(owned, item.title, item.coverUrl, item.type)}
+                            onClick={() => setPurchaseModal({ card: owned, title: item.title, rarity, coverUrl: item.coverUrl })}
                           >
-                            <Download className="w-3 h-3 mr-1" /> DOWNLOAD
+                            <ShoppingCart className="w-3 h-3 mr-1" /> BUY · 1 TOKEN
                           </Button>
                         );
                       })()}
@@ -1084,6 +1105,114 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
             </motion.div>
           </motion.div>
         )}
+      </AnimatePresence>
+
+      {/* ═══ Card Purchase Modal ═══ */}
+      <AnimatePresence>
+        {purchaseModal && (() => {
+          const rc = RARITY_CONFIG[purchaseModal.rarity as Rarity] || RARITY_CONFIG.standard;
+          const canAfford = balance >= 1;
+          return (
+            <motion.div
+              className="fixed inset-0 z-[260] bg-black/85 backdrop-blur-sm flex items-center justify-center p-6"
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              onClick={() => setPurchaseModal(null)}
+            >
+              <motion.div
+                className="max-w-sm w-full bg-zinc-900 rounded-2xl border p-5 space-y-4"
+                style={{ borderColor: rc.color + '40' }}
+                initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9, y: 20 }}
+                onClick={(e: React.MouseEvent) => e.stopPropagation()}
+              >
+                <div className="text-center">
+                  <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-3"
+                    style={{ background: `${rc.color}15`, border: `1px solid ${rc.color}30` }}>
+                    <ShoppingCart className="w-7 h-7" style={{ color: rc.color }} />
+                  </div>
+                  <h3 className="font-display text-white tracking-wider text-sm">PURCHASE CARD DOWNLOAD</h3>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    Unlock <span style={{ color: rc.color }}>{rc.label}</span> "{purchaseModal.title}" for PDF download
+                  </p>
+                </div>
+
+                {/* Card preview */}
+                {purchaseModal.coverUrl && (
+                  <div className="rounded-xl overflow-hidden border" style={{ borderColor: `${rc.color}30` }}>
+                    <img src={purchaseModal.coverUrl} alt={purchaseModal.title} className="w-full aspect-square object-cover" />
+                  </div>
+                )}
+
+                {/* Cost */}
+                <div className="text-center p-3 rounded-xl bg-black/60 border" style={{ borderColor: `${rc.color}20` }}>
+                  <div className="flex items-center justify-center gap-2">
+                    <Coins className="w-5 h-5 text-yellow-400" />
+                    <span className="text-2xl font-display text-white">1</span>
+                    <span className="text-sm text-muted-foreground">TOKEN</span>
+                  </div>
+                </div>
+
+                {/* Balance */}
+                <div className="bg-black/40 rounded-lg p-3 border border-border/30 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Coins className="w-4 h-4 text-yellow-400" />
+                    <span className="text-xs text-muted-foreground">Your balance:</span>
+                    <span className="text-sm font-display text-white">{balance}</span>
+                  </div>
+                  <span className={cn("text-[10px] font-display tracking-wider", canAfford ? "text-green-400" : "text-red-400")}>
+                    {canAfford ? '✓ ENOUGH' : '✗ NEED MORE'}
+                  </span>
+                </div>
+
+                <Button
+                  size="sm"
+                  className="w-full text-xs font-display tracking-wider text-white"
+                  style={{ background: `linear-gradient(to right, ${rc.color}, ${rc.color}cc)`, boxShadow: `0 0 20px ${rc.color}4d` }}
+                  onClick={async () => {
+                    setPurchasing(true);
+                    try {
+                      const { data, error } = await supabase.functions.invoke('purchase-untunes-card', {
+                        body: { cardId: purchaseModal.card.id },
+                      });
+                      if (error) throw error;
+                      if (data?.error) {
+                        toast({ title: 'Purchase failed', description: data.error, variant: 'destructive' });
+                        return;
+                      }
+                      toast({ title: '🎉 Card Purchased!', description: 'PDF download unlocked. 1 token spent.' });
+                      await refreshTokens();
+                      // Update local card state
+                      setOwnedCards(prev => prev.map(c =>
+                        c.id === purchaseModal.card.id ? { ...c, purchased: true } : c
+                      ));
+                      setPurchaseModal(null);
+                    } catch (err: unknown) {
+                      const msg = err instanceof Error ? err.message : 'Purchase failed';
+                      toast({ title: 'Purchase failed', description: msg, variant: 'destructive' });
+                    } finally {
+                      setPurchasing(false);
+                    }
+                  }}
+                  disabled={purchasing || !canAfford}
+                >
+                  {purchasing ? <Loader2 className="w-3 h-3 mr-1 animate-spin" /> : <ShoppingCart className="w-3 h-3 mr-1" />}
+                  {purchasing ? 'PURCHASING…' : 'BUY CARD · 1 TOKEN'}
+                </Button>
+
+                {!canAfford && (
+                  <p className="text-[10px] text-center text-muted-foreground">
+                    Need more tokens? Visit <span className="text-[#FF5500]">AI Tokens</span> to top up.
+                  </p>
+                )}
+
+                <Button variant="ghost" size="sm"
+                  className="w-full text-xs font-display tracking-wider text-muted-foreground"
+                  onClick={() => setPurchaseModal(null)}>
+                  CANCEL
+                </Button>
+              </motion.div>
+            </motion.div>
+          );
+        })()}
       </AnimatePresence>
     </div>
   );
