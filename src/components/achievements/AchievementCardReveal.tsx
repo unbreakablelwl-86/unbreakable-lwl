@@ -197,7 +197,7 @@ function BronzeShimmer() {
       <div
         className="absolute inset-0"
         style={{
-          backgroundImage: \`url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E")\`,
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E")`,
           animation: 'achGrainShift 8s steps(4) infinite',
         }}
       />
@@ -266,7 +266,7 @@ function GoldShimmer() {
       <div
         className="absolute inset-0"
         style={{
-          backgroundImage: \`url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 0L40 20L20 40L0 20Z' fill='none' stroke='rgba(255,215,0,0.04)' stroke-width='0.5'/%3E%3C/svg%3E")\`,
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 0L40 20L20 40L0 20Z' fill='none' stroke='rgba(255,215,0,0.04)' stroke-width='0.5'/%3E%3C/svg%3E")`,
           backgroundSize: '20px 20px',
         }}
       />
@@ -298,7 +298,7 @@ function DiamondHolo() {
       <div
         className="absolute inset-0"
         style={{
-          backgroundImage: \`url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0L60 30L30 60L0 30Z' fill='none' stroke='rgba(125,249,255,0.04)' stroke-width='0.5'/%3E%3Cpath d='M15 15L45 15L45 45L15 45Z' fill='none' stroke='rgba(191,95,255,0.03)' stroke-width='0.3'/%3E%3C/svg%3E")\`,
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0L60 30L30 60L0 30Z' fill='none' stroke='rgba(125,249,255,0.04)' stroke-width='0.5'/%3E%3Cpath d='M15 15L45 15L45 45L15 45Z' fill='none' stroke='rgba(191,95,255,0.03)' stroke-width='0.3'/%3E%3C/svg%3E")`,
           backgroundSize: '30px 30px',
         }}
       />
