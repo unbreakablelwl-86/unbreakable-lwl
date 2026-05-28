@@ -5,14 +5,14 @@
  *
  * Updated: Neon glow system + unified CardShareSheet + RarityBadge
  */
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import {
   Trophy, Dumbbell, Activity, Crown, Diamond, Sparkles,
   Shield, Medal, Award, Globe, TrendingUp, X, Share2,
   Download, Trash2, Loader2, ChevronLeft, ChevronRight,
-  ChevronDown, AlertCircle,
+  ChevronDown, AlertCircle, Camera,
 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { CardShareSheet } from '@/components/achievements/CardShareSheet';
@@ -24,6 +24,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useAchievementCards, AchievementCard, AchievementRarity, AchievementCardType } from '@/hooks/useAchievementCards';
 import { AchievementCardStatic, AchievementCardReveal, formatPBValue } from '@/components/achievements/AchievementCardReveal';
 import UserProfileCard from '@/components/achievements/UserProfileCard';
+import { supabase } from '@/integrations/supabase/client';
 
 /* ═══ Reflective container backgrounds per rarity — behind cards ═══ */
 const CONTAINER_REFLECTIVE_BG: Record<string, string> = {
@@ -349,6 +350,46 @@ function AchievementFullViewer({
   const hasPrev = currentIndex > 0;
   const hasNext = currentIndex < cards.length - 1;
   const date = new Date(card.earned_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+  const { toast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+
+  const handleMediaUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const isVideo = file.type.startsWith('video/');
+    const isImage = file.type.startsWith('image/');
+    if (!isVideo && !isImage) {
+      toast({ title: 'Invalid file', description: 'Upload an image or video of your lift.' });
+      return;
+    }
+    if (file.size > 50 * 1024 * 1024) {
+      toast({ title: 'File too large', description: 'Max 50MB for card media.' });
+      return;
+    }
+    setUploading(true);
+    try {
+      const ext = file.name.split('.').pop() || (isVideo ? 'mp4' : 'jpg');
+      const path = `card-media/${card.id}.${ext}`;
+      const { error: uploadErr } = await supabase.storage.from('avatars').upload(path, file, { upsert: true });
+      if (uploadErr) throw uploadErr;
+      const { data: urlData } = supabase.storage.from('avatars').getPublicUrl(path);
+      const publicUrl = urlData?.publicUrl;
+      if (!publicUrl) throw new Error('No URL');
+      const updateField = isVideo
+        ? { video_url: publicUrl, media_type: 'video', image_url: card.image_url }
+        : { image_url: publicUrl, media_type: 'image', video_url: card.video_url };
+      const { error: dbErr } = await supabase.from('achievement_cards').update(updateField).eq('id', card.id);
+      if (dbErr) throw dbErr;
+      toast({ title: isVideo ? '🎬 Video uploaded!' : '📸 Image uploaded!', description: 'Your card has been updated. Refresh to see it.' });
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Upload failed';
+      toast({ title: 'Upload failed', description: msg });
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
 
   return (
     <motion.div
@@ -383,9 +424,38 @@ function AchievementFullViewer({
         </Button>
       )}
 
+      {/* Hidden file input for media upload */}
+      <input ref={fileInputRef} type="file" accept="image/*,video/*" className="hidden" onChange={handleMediaUpload} />
+
       {/* Card — shows static (already revealed) in library view */}
+      {/* If card has video, show auto-playing video instead of static card */}
       <div className="flex-1 flex items-center justify-center px-8 w-full max-w-sm">
-        <AchievementCardStatic card={card} size="lg" />
+        {card.video_url && card.media_type === 'video' ? (
+          <div className="relative w-72 h-[28rem] rounded-2xl overflow-hidden"
+            style={{ boxShadow: RARITY_GLOW[card.rarity as RarityTier]?.boxShadow }}>
+            <video
+              src={card.video_url}
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="absolute inset-0 w-full h-full object-cover rounded-2xl"
+            />
+            {/* Overlay card info at bottom */}
+            <div className="absolute bottom-0 left-0 right-0 p-3 z-10" style={{
+              background: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 60%, transparent 100%)',
+            }}>
+              <p className="text-white font-display text-sm tracking-wider uppercase font-black" style={{ textShadow: '0 2px 8px rgba(0,0,0,0.8)' }}>
+                {card.owner_display_name || 'ATHLETE'}
+              </p>
+              <p className="text-[10px] font-display tracking-wider" style={{ color: '#FF5500' }}>
+                {card.exercise_name} · {formatPBValue(card.pb_value || 0, card.pb_unit || 'kg')}
+              </p>
+            </div>
+          </div>
+        ) : (
+          <AchievementCardStatic card={card} size="lg" />
+        )}
       </div>
 
       {/* Card details + actions */}
@@ -400,15 +470,21 @@ function AchievementFullViewer({
         <div className="flex gap-2">
           <Button variant="outline" size="sm"
             className="flex-1 text-xs font-display tracking-wider border-primary/30 text-primary hover:bg-primary/10"
-            onClick={() => onShare(card)}>
-            <Share2 className="w-3 h-3 mr-2" /> SHARE
+            onClick={() => fileInputRef.current?.click()}
+            disabled={uploading}>
+            <Camera className="w-3 h-3 mr-1" /> {uploading ? 'UPLOADING…' : card.image_url || card.video_url ? 'CHANGE MEDIA' : 'ADD PHOTO/VIDEO'}
           </Button>
           <Button variant="outline" size="sm"
-            className="flex-1 text-xs font-display tracking-wider border-red-500/30 text-red-400 hover:bg-red-500/10"
-            onClick={() => onDiscard(card)}>
-            <Trash2 className="w-3 h-3 mr-2" /> DISCARD
+            className="flex-1 text-xs font-display tracking-wider border-primary/30 text-primary hover:bg-primary/10"
+            onClick={() => onShare(card)}>
+            <Share2 className="w-3 h-3 mr-1" /> SHARE
           </Button>
         </div>
+        <Button variant="outline" size="sm"
+          className="w-full text-xs font-display tracking-wider border-red-500/30 text-red-400 hover:bg-red-500/10"
+          onClick={() => onDiscard(card)}>
+          <Trash2 className="w-3 h-3 mr-2" /> DISCARD
+        </Button>
       </div>
     </motion.div>
   );

@@ -41,6 +41,8 @@ export interface AchievementCard {
   total_in_category?: number;
   completion_count?: number;
   image_url?: string;
+  video_url?: string;
+  media_type?: 'none' | 'image' | 'video';
   programme_stats?: Record<string, unknown>;
   owner_display_name?: string;
   owner_gender?: string | null;
