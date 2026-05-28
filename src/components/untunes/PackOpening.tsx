@@ -47,7 +47,7 @@ const RARITY_CONFIG = {
     gradient: 'from-zinc-400 to-zinc-600',
     glow: 'shadow-[0_0_30px_rgba(161,161,170,0.4)]',
     particleColor: '#a1a1aa',
-    textColor: 'text-zinc-300',
+    textColor: 'text-foreground',
     borderColor: 'border-zinc-500/50',
     bgGlow: 'bg-zinc-500/10',
     borderHex: 'rgba(161,161,170,0.5)',
@@ -805,7 +805,7 @@ function CardReveal({
                     card.rarity === 'gold' && 'bg-yellow-900/60 backdrop-blur-sm',
                     card.rarity === 'diamond' && 'bg-violet-900/60 backdrop-blur-sm',
                     card.rarity === 'platinum' && 'bg-slate-800/60 backdrop-blur-sm',
-                    card.rarity === 'standard' && 'bg-zinc-900/60 backdrop-blur-sm',
+                    card.rarity === 'standard' && 'bg-card/60 backdrop-blur-sm',
                   )}
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
@@ -1302,7 +1302,7 @@ function ConfirmDiscardModal({
       onClick={onCancel}
     >
       <motion.div
-        className="max-w-xs w-full bg-zinc-900 rounded-2xl border border-red-500/30 p-5 space-y-4"
+        className="max-w-xs w-full bg-card rounded-2xl border border-red-500/30 p-5 space-y-4"
         initial={{ scale: 0.9 }}
         animate={{ scale: 1 }}
         exit={{ scale: 0.9 }}
@@ -1416,7 +1416,7 @@ function ShareMenu({
       onClick={onClose}
     >
       <motion.div
-        className="max-w-xs w-full bg-zinc-900 rounded-2xl border border-primary/30 p-5 space-y-3"
+        className="max-w-xs w-full bg-card rounded-2xl border border-primary/30 p-5 space-y-3"
         initial={{ scale: 0.9, y: 20 }}
         animate={{ scale: 1, y: 0 }}
         exit={{ scale: 0.9, y: 20 }}
@@ -1451,7 +1451,7 @@ function ShareMenu({
         <Button
           variant="outline"
           size="sm"
-          className="w-full text-xs font-display tracking-wider border-zinc-600 text-zinc-300 hover:bg-zinc-800"
+          className="w-full text-xs font-display tracking-wider border-zinc-600 text-foreground hover:bg-card"
           onClick={(e) => { e.stopPropagation(); handleDownload(); }}
         >
           <Download className="w-3 h-3 mr-2" /> SAVE IMAGE
@@ -1650,7 +1650,7 @@ export function PackOpening({ cards, purchaseType, packTierId, onClose, onMarkOp
                           className="w-full aspect-square object-cover"
                         />
                       ) : (
-                        <div className="w-full aspect-square bg-zinc-900 flex items-center justify-center">
+                        <div className="w-full aspect-square bg-card flex items-center justify-center">
                           <Music className="w-8 h-8 text-zinc-700" />
                         </div>
                       )}

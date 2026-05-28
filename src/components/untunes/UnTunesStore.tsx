@@ -189,7 +189,7 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
     <>
       <div className="space-y-4">
         {/* Token balance bar */}
-        <div className="flex items-center justify-between bg-zinc-900/50 border border-border rounded-xl px-4 py-3">
+        <div className="flex items-center justify-between bg-card/50 border border-border rounded-xl px-4 py-3">
           <div className="flex items-center gap-2">
             <Coins className="w-4 h-4 text-primary" />
             <span className="text-sm font-display tracking-wider text-white">{hasFullAccess ? '∞' : balance}</span>
@@ -278,11 +278,11 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
                   </div>
 
                   <div className="grid grid-cols-3 gap-2 mb-4">
-                    <div className="text-center p-2 rounded-lg bg-zinc-800/50 border border-zinc-700/50">
+                    <div className="text-center p-2 rounded-lg bg-card/50 border border-border/50">
                       <p className="text-lg font-display text-white">{albums.length}</p>
                       <p className="text-[9px] text-muted-foreground tracking-wider">ALBUMS</p>
                     </div>
-                    <div className="text-center p-2 rounded-lg bg-zinc-800/50 border border-zinc-700/50">
+                    <div className="text-center p-2 rounded-lg bg-card/50 border border-border/50">
                       <p className="text-lg font-display text-white">{tracks.length}</p>
                       <p className="text-[9px] text-muted-foreground tracking-wider">TRACKS</p>
                     </div>
@@ -429,7 +429,7 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
                       {album.cover_url ? (
                         <img src={album.cover_url} alt={album.title} className="w-14 h-14 rounded-lg object-cover" />
                       ) : (
-                        <div className="w-14 h-14 rounded-lg bg-zinc-800 flex items-center justify-center">
+                        <div className="w-14 h-14 rounded-lg bg-card flex items-center justify-center">
                           <Disc3 className="w-6 h-6 text-zinc-600" />
                         </div>
                       )}
@@ -472,7 +472,7 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
                 className="flex items-center gap-3 p-4 border-border/50 bg-card/30 cursor-pointer hover:border-primary/20 transition-colors"
                 onClick={() => setStoreView('singles')}
               >
-                <div className="w-10 h-10 rounded-xl bg-zinc-800 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-xl bg-card flex items-center justify-center">
                   <Music className="w-5 h-5 text-primary" />
                 </div>
                 <div className="flex-1">
@@ -488,7 +488,7 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
               <p className="font-display text-xs tracking-wider text-muted-foreground mb-3">COLLECTIBLE RARITIES</p>
               <div className="space-y-2">
                 {[
-                  { rarity: 'standard', icon: Music, desc: 'Guaranteed with every purchase', color: 'text-zinc-400' },
+                  { rarity: 'standard', icon: Music, desc: 'Guaranteed with every purchase', color: 'text-muted-foreground' },
                   { rarity: 'gold', icon: Crown, desc: 'Uncommon — gold-framed variant', color: 'text-yellow-400' },
                   { rarity: 'diamond', icon: Diamond, desc: 'Only 100 ever — numbered editions', color: 'text-violet-400' },
                 ].map(({ rarity, icon: Icon, desc, color }) => (
@@ -529,7 +529,7 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
                     {track.cover_url ? (
                       <img src={track.cover_url} alt={track.title} className="w-10 h-10 rounded-lg object-cover" />
                     ) : (
-                      <div className="w-10 h-10 rounded-lg bg-zinc-800 flex items-center justify-center">
+                      <div className="w-10 h-10 rounded-lg bg-card flex items-center justify-center">
                         <Music className="w-4 h-4 text-zinc-600" />
                       </div>
                     )}

@@ -59,10 +59,10 @@ const RARITY_CONFIG: Record<Rarity, {
 }> = {
   standard: {
     label: 'Standard', icon: Music, gradient: 'from-zinc-400 to-zinc-600',
-    border: 'border-zinc-500/30', text: 'text-zinc-400', bg: 'bg-zinc-500/10',
+    border: 'border-zinc-500/30', text: 'text-muted-foreground', bg: 'bg-zinc-500/10',
     glow: '', color: '#a1a1aa', frame: 'border-zinc-600/50',
     baseBg: 'bg-zinc-950', baseGradient: 'from-zinc-900 to-zinc-950',
-    edgeGlow: '', titleClass: 'text-zinc-300', badgeBg: 'bg-zinc-800/60',
+    edgeGlow: '', titleClass: 'text-foreground', badgeBg: 'bg-card/60',
   },
   gold: {
     label: 'Gold', icon: Crown, gradient: 'from-yellow-400 to-amber-500',
@@ -142,7 +142,7 @@ function SwipeableCard({
       className={cn(
         'relative rounded-xl overflow-hidden cursor-pointer select-none',
         'transition-all duration-300',
-        owned ? `border-2 ${config.frame} ${config.glow}` : 'border border-zinc-800/50',
+        owned ? `border-2 ${config.frame} ${config.glow}` : 'border border-border/50',
       )}
       whileTap={{ scale: 0.95 }}
       drag={forcedRarity ? false : 'x'}
@@ -234,7 +234,7 @@ function SwipeableCard({
 
         {/* Rarity badge — pill style */}
         <div className={cn('absolute top-1.5 right-1.5 rounded-full px-1.5 py-0.5 flex items-center gap-0.5',
-          owned ? config.badgeBg : 'bg-zinc-900/80',
+          owned ? config.badgeBg : 'bg-card/80',
           owned && `border border-[${config.color}]/30`
         )}>
           <Icon className={cn('w-2.5 h-2.5', owned ? config.text : 'text-zinc-700')} />
@@ -278,8 +278,8 @@ function SwipeableCard({
             <span className={cn(
               'text-[8px] font-display tracking-wider px-1 py-0.5 rounded',
               ownedCount === RARITIES.length ? 'bg-primary/20 text-primary' :
-              ownedCount > 0 ? 'bg-zinc-800/80 text-zinc-400' :
-              'bg-zinc-900/60 text-zinc-700',
+              ownedCount > 0 ? 'bg-card/80 text-muted-foreground' :
+              'bg-card/60 text-zinc-700',
             )}>
               {ownedCount}/{RARITIES.length}
             </span>
@@ -312,11 +312,11 @@ function DuplicateCardRow({
   return (
     <div className={cn('flex items-center gap-3 p-3 rounded-xl border', config.border, config.bg)}>
       {/* Mini cover */}
-      <div className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 border border-zinc-800">
+      <div className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 border border-border">
         {coverUrl ? (
           <img src={coverUrl} alt={itemTitle} className="w-full h-full object-cover" />
         ) : (
-          <div className="w-full h-full bg-zinc-900 flex items-center justify-center">
+          <div className="w-full h-full bg-card flex items-center justify-center">
             <Music className="w-5 h-5 text-zinc-700" />
           </div>
         )}
@@ -381,18 +381,12 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
   const fetchCards = useCallback(async () => {
     if (!user) { setLoading(false); return; }
     try {
-      let cardData: any[] | null = null;
-      const { data: rpcData, error: rpcError } = await (supabase as any).rpc('get_my_cards', { _uid: user.id });
-      if (rpcData && !rpcError) {
-        cardData = rpcData;
-      } else {
-        const { data, error } = await (supabase as any)
-          .from('un_tunes_user_cards')
-          .select('id, track_id, album_id, rarity, edition_number, is_opened, created_at, card_type, brand_card_id')
-          .eq('user_id', user.id);
-        if (error) console.error('[CollectionGallery] Card fetch error:', error);
-        cardData = data;
-      }
+      const { data: cardData, error: cardError } = await supabase
+        .from('un_tunes_user_cards')
+        .select('id, track_id, album_id, rarity, edition_number, is_opened, created_at, card_type, brand_card_id')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+      if (cardError) console.error('[CollectionGallery] Card fetch error:', cardError);
       if (cardData) setOwnedCards(cardData as OwnedCard[]);
 
       const { data: bcData } = await (supabase as any)
@@ -518,7 +512,7 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
   // Discard handler
   const handleDiscard = useCallback(async (cardId: string) => {
     try {
-      const { data, error } = await (supabase as any).rpc('discard_card', { _card_id: cardId });
+      const { data, error } = await (supabase as any).rpc('discard_card', { p_card_id: cardId });
       if (error) throw error;
       if (data?.error) { toast({ title: 'Error', description: data.error, variant: 'destructive' }); return; }
       toast({ title: 'Card discarded', description: 'Duplicate removed from your collection.' });
@@ -534,9 +528,8 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
     setAuctionLoading(true);
     try {
       const { data, error } = await (supabase as any).rpc('list_card_for_auction', {
-        _card_id: cardId,
-        _starting_price: startingPrice,
-        _bid_increment: 0.1,
+        p_card_id: cardId,
+        p_starting_price: startingPrice,
       });
       if (error) throw error;
       if (data?.error) {
@@ -626,7 +619,7 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
       </div>
 
       {/* Completion bar */}
-      <div className="relative h-2 bg-zinc-800 rounded-full overflow-hidden">
+      <div className="relative h-2 bg-card rounded-full overflow-hidden">
         <motion.div
           className="absolute inset-y-0 left-0 bg-gradient-to-r from-primary to-orange-600 rounded-full"
           initial={{ width: 0 }}
@@ -698,7 +691,7 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
           <p className={cn('text-xs font-display tracking-wider', RARITY_CONFIG[rarityFilter].text)}>
             SHOWING {RARITY_CONFIG[rarityFilter].label.toUpperCase()} CARDS
           </p>
-          <button onClick={() => setRarityFilter(null)} className="text-zinc-400 hover:text-white">
+          <button onClick={() => setRarityFilter(null)} className="text-muted-foreground hover:text-white">
             <X className="w-3.5 h-3.5" />
           </button>
         </motion.div>
@@ -867,7 +860,7 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
                         onClick={() => setFullViewItem({ id: item.id, rarity: r })}
                         className={cn(
                           'flex items-center gap-1 px-2.5 py-1 rounded-full border text-[10px] font-display tracking-wider transition-all',
-                          isActive ? `${rConfig.border} ${rConfig.text} ${rConfig.bg}` : 'border-zinc-800 text-zinc-600',
+                          isActive ? `${rConfig.border} ${rConfig.text} ${rConfig.bg}` : 'border-border text-zinc-600',
                           !isOwned && 'opacity-40',
                         )}
                       >
@@ -881,7 +874,7 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
 
                 <div className={cn(
                   'rounded-2xl overflow-hidden',
-                  owned ? `border-2 ${config.frame} ${config.glow}` : 'border border-zinc-800',
+                  owned ? `border-2 ${config.frame} ${config.glow}` : 'border border-border',
                 )}>
                   <div className={cn('relative', owned && config.edgeGlow)}>
                     {item.coverUrl ? (
@@ -895,7 +888,7 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
                       <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
                         <div className="text-center">
                           <Lock className="w-8 h-8 text-zinc-600 mx-auto mb-2" />
-                          <p className="text-xs text-zinc-500 font-display tracking-wider">NOT YET COLLECTED</p>
+                          <p className="text-xs text-muted-foreground font-display tracking-wider">NOT YET COLLECTED</p>
                         </div>
                       </div>
                     )}
@@ -968,7 +961,7 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
                       <h3 className={cn('font-display tracking-wider text-sm', owned ? config.titleClass : 'text-white')}>{item.title}</h3>
                       <Badge variant="outline" className={cn(
                         'text-[10px] font-display tracking-widest',
-                        owned ? `${config.text} ${config.border} ${config.badgeBg}` : 'text-zinc-600 border-zinc-800',
+                        owned ? `${config.text} ${config.border} ${config.badgeBg}` : 'text-zinc-600 border-border',
                       )}>
                         {config.label.toUpperCase()}
                       </Badge>
@@ -1051,7 +1044,7 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
             onClick={() => setAuctionModal(null)}
           >
             <motion.div
-              className="max-w-xs w-full bg-zinc-900 rounded-2xl border border-primary/30 p-5 space-y-4"
+              className="max-w-xs w-full bg-card rounded-2xl border border-primary/30 p-5 space-y-4"
               initial={{ scale: 0.9 }}
               animate={{ scale: 1 }}
               exit={{ scale: 0.9 }}
@@ -1071,7 +1064,7 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
                 </label>
                 <div className="flex items-center gap-2">
                   <button
-                    className="w-8 h-8 rounded-lg border border-zinc-700 text-white flex items-center justify-center hover:bg-zinc-800"
+                    className="w-8 h-8 rounded-lg border border-border text-white flex items-center justify-center hover:bg-card"
                     onClick={() => setAuctionPrice(p => String(Math.max(0.1, parseFloat(p) - 0.1).toFixed(1)))}
                   >
                     −
@@ -1082,10 +1075,10 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
                     min="0.1"
                     value={auctionPrice}
                     onChange={(e) => setAuctionPrice(e.target.value)}
-                    className="flex-1 bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-center text-white font-display text-sm focus:outline-none focus:border-primary/50"
+                    className="flex-1 bg-card border border-border rounded-lg px-3 py-2 text-center text-white font-display text-sm focus:outline-none focus:border-primary/50"
                   />
                   <button
-                    className="w-8 h-8 rounded-lg border border-zinc-700 text-white flex items-center justify-center hover:bg-zinc-800"
+                    className="w-8 h-8 rounded-lg border border-border text-white flex items-center justify-center hover:bg-card"
                     onClick={() => setAuctionPrice(p => String((parseFloat(p) + 0.1).toFixed(1)))}
                   >
                     +

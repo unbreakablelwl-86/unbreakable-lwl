@@ -3,11 +3,11 @@
  * Same standard as UN-TUNES CollectionGallery: share to socials, download image,
  * full-screen viewer, confirm discard, Pokédex-style library.
  */
-import { useState, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import {
-  Trophy, Dumbbell, Footprints, Crown, Diamond, Sparkles,
+  Trophy, Dumbbell, Activity, Crown, Diamond, Sparkles,
   Shield, Medal, Award, Globe, TrendingUp, X, Share2,
   Download, Trash2, Loader2, ChevronLeft, ChevronRight,
   ChevronDown,
@@ -18,6 +18,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { useAchievementCards, AchievementCard, AchievementRarity, AchievementCardType } from '@/hooks/useAchievementCards';
 import { AchievementCardStatic, AchievementCardReveal } from '@/components/achievements/AchievementCardReveal';
+import UserProfileCard from '@/components/achievements/UserProfileCard';
 
 /* ═══ Rarity config — mirrors UN-TUNES ═══ */
 const RARITY_ORDER: Record<AchievementRarity, number> = {
@@ -483,13 +484,20 @@ export function AchievementCollection() {
             <Dumbbell className="w-3 h-3 mr-0.5" /> STR ({strengthCount})
           </TabsTrigger>
           <TabsTrigger value="cardio" className="font-display tracking-wide text-[9px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-            <Footprints className="w-3 h-3 mr-0.5" /> RUN ({cardioCount})
+            <Activity className="w-3 h-3 mr-0.5" /> CARDIO ({cardioCount})
           </TabsTrigger>
           <TabsTrigger value="global" className="font-display tracking-wide text-[9px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
             <Globe className="w-3 h-3 mr-0.5" /> GLOBAL ({counts.pbGlobal})
           </TabsTrigger>
         </TabsList>
       </Tabs>
+
+      {/* User Profile Card — shown at top of ALL tab */}
+      {activeTab === 'all' && (
+        <div className="max-w-[280px] mx-auto">
+          <UserProfileCard />
+        </div>
+      )}
 
       {/* Sort + filter controls */}
       <div className="flex gap-2">
@@ -515,7 +523,7 @@ export function AchievementCollection() {
           <p className="text-muted-foreground font-display tracking-wider text-sm">
             {activeTab === 'trophies' ? 'Complete a programme to earn your first trophy card'
               : activeTab === 'strength' ? 'Hit a strength PB to earn your first lifting card'
-              : activeTab === 'cardio' ? 'Set a running PB to earn your first cardio card'
+              : activeTab === 'cardio' ? 'Set a cardio PB (run, cycle, row, swim) to earn your first card'
               : activeTab === 'global' ? 'Reach top 5% in your age group for a global card'
               : 'No achievement cards yet — keep grinding!'}
           </p>
@@ -536,6 +544,13 @@ export function AchievementCollection() {
             </motion.div>
           ))}
         </motion.div>
+      ) : (activeTab === 'strength' || activeTab === 'cardio') ? (
+        /* Exercise-grouped view — each lift shows its own ranked results */
+        <ExerciseGroupedView
+          cards={filteredCards}
+          onSelectCard={(card) => setSelectedIndex(filteredCards.findIndex(c => c.id === card.id))}
+          onShareCard={(card) => setShareCard(card)}
+        />
       ) : (
         /* Expanding rarity dropdowns */
         <RarityDropdownGrid
@@ -581,6 +596,167 @@ export function AchievementCollection() {
           />
         )}
       </AnimatePresence>
+    </div>
+  );
+}
+
+/* ═══ Exercise-grouped view — each lift shows its own ranked results ═══ */
+function ExerciseGroupedView({
+  cards,
+  onSelectCard,
+  onShareCard,
+}: {
+  cards: AchievementCard[];
+  onSelectCard: (card: AchievementCard) => void;
+  onShareCard: (card: AchievementCard) => void;
+}) {
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+
+  // Group by exercise_name, sorted by total number of cards desc
+  const exerciseGroups = useMemo(() => {
+    const groups: Record<string, AchievementCard[]> = {};
+    cards.forEach(card => {
+      const key = card.exercise_name || 'Unknown';
+      if (!groups[key]) groups[key] = [];
+      groups[key].push(card);
+    });
+    // Sort cards within each group by rank (1=gold first)
+    Object.values(groups).forEach(arr => arr.sort((a, b) => (a.pb_rank || 99) - (b.pb_rank || 99)));
+    // Sort groups by best rarity, then by number of cards
+    const RARITY_WEIGHT: Record<string, number> = { platinum: 5, diamond: 4, gold: 3, silver: 2, bronze: 1 };
+    return Object.entries(groups).sort(([, a], [, b]) => {
+      const aBest = Math.max(...a.map(c => RARITY_WEIGHT[c.rarity] || 0));
+      const bBest = Math.max(...b.map(c => RARITY_WEIGHT[c.rarity] || 0));
+      if (bBest !== aBest) return bBest - aBest;
+      return b.length - a.length;
+    });
+  }, [cards]);
+
+  // Default: top 3 exercises expanded
+  useEffect(() => {
+    if (exerciseGroups.length > 0 && Object.keys(expanded).length === 0) {
+      const initial: Record<string, boolean> = {};
+      exerciseGroups.slice(0, 3).forEach(([name]) => { initial[name] = true; });
+      setExpanded(initial);
+    }
+  }, [exerciseGroups]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const RANK_LABELS = ['🥇 1st', '🥈 2nd', '🥉 3rd', '4th'];
+
+  return (
+    <div className="space-y-2">
+      {exerciseGroups.map(([exerciseName, exCards]) => {
+        const isExpanded = expanded[exerciseName] ?? false;
+        const bestCard = exCards[0];
+        const bestRarity = bestCard?.rarity || 'bronze';
+        const cfg = RARITY_CONFIG[bestRarity];
+
+        return (
+          <motion.div key={exerciseName} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+            <Card className={cn('border overflow-hidden transition-all', cfg.borderClass, 'bg-card')}>
+              {/* Exercise header — tap to expand */}
+              <button
+                onClick={() => setExpanded(prev => ({ ...prev, [exerciseName]: !prev[exerciseName] }))}
+                className="w-full flex items-center justify-between p-3 hover:bg-white/5 transition-colors"
+              >
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <cfg.icon className={cn('w-4 h-4 flex-shrink-0', cfg.textColor)} />
+                  <span className="font-display tracking-wider text-[13px] text-foreground uppercase truncate">
+                    {exerciseName}
+                  </span>
+                  <span className={cn(
+                    'px-1.5 py-0.5 rounded-full text-[9px] font-display tracking-wider flex-shrink-0',
+                    cfg.textColor, 'bg-white/5 border', cfg.borderClass,
+                  )}>
+                    {exCards.length} {exCards.length === 1 ? 'PB' : 'PBs'}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  {/* Quick peek: best value */}
+                  {bestCard?.pb_value && (
+                    <span className={cn('text-xs font-display tracking-wide', cfg.textColor)}>
+                      {bestCard.pb_value}{bestCard.pb_unit || 'kg'}
+                    </span>
+                  )}
+                  <motion.div animate={{ rotate: isExpanded ? 180 : 0 }} transition={{ duration: 0.2 }}>
+                    <ChevronDown className="w-4 h-4 text-muted-foreground opacity-60" />
+                  </motion.div>
+                </div>
+              </button>
+
+              {/* Expanding ranked results */}
+              <AnimatePresence initial={false}>
+                {isExpanded && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.25, ease: 'easeInOut' }}
+                    className="overflow-hidden"
+                  >
+                    <div className="px-3 pb-3 space-y-2">
+                      {exCards.map((card, i) => {
+                        const rankCfg = RARITY_CONFIG[card.rarity];
+                        return (
+                          <motion.div
+                            key={card.id}
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: i * 0.06 }}
+                            className="flex items-center gap-3 group"
+                          >
+                            {/* Rank label */}
+                            <div className="w-12 text-center flex-shrink-0">
+                              <span className={cn('text-xs font-display tracking-wider', rankCfg.textColor)}>
+                                {RANK_LABELS[i] || `${i + 1}th`}
+                              </span>
+                            </div>
+
+                            {/* Mini card preview */}
+                            <div className="w-16 h-22 flex-shrink-0 cursor-pointer" onClick={() => onSelectCard(card)}>
+                              <AchievementCardStatic card={card} size="sm" onClick={() => onSelectCard(card)} />
+                            </div>
+
+                            {/* Stats */}
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-baseline gap-1.5">
+                                <span className={cn('text-lg font-display tracking-wide', rankCfg.textColor)}>
+                                  {card.pb_value}{card.pb_unit || 'kg'}
+                                </span>
+                                <span className={cn('text-[9px] font-display uppercase tracking-wider opacity-60', rankCfg.textColor)}>
+                                  {rankCfg.label}
+                                </span>
+                              </div>
+                              {/* Power bar */}
+                              <div className="w-full h-1 rounded-full mt-1" style={{ background: `${rankCfg.color}15` }}>
+                                <div className="h-full rounded-full transition-all" style={{
+                                  width: `${Math.min(100, Math.max(20, (card.pb_value || 0) / (card.pb_unit === 'km' ? 42 : 300) * 100))}%`,
+                                  background: `linear-gradient(90deg, ${rankCfg.color}99, ${rankCfg.color})`,
+                                }} />
+                              </div>
+                              <p className="text-[9px] text-muted-foreground font-mono mt-0.5">
+                                {new Date(card.earned_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
+                              </p>
+                            </div>
+
+                            {/* Share button */}
+                            <button
+                              onClick={(e) => { e.stopPropagation(); onShareCard(card); }}
+                              className="w-7 h-7 rounded-full bg-white/5 flex items-center justify-center border border-white/10 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"
+                            >
+                              <Share2 className="w-3 h-3 text-white/60" />
+                            </button>
+                          </motion.div>
+                        );
+                      })}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </Card>
+          </motion.div>
+        );
+      })}
     </div>
   );
 }

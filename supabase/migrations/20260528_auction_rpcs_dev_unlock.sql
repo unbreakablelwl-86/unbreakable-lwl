@@ -260,7 +260,8 @@ CREATE OR REPLACE FUNCTION public.list_card_for_auction(
   p_card_id UUID,
   p_starting_price NUMERIC DEFAULT 1.0,
   p_buy_now_price NUMERIC DEFAULT NULL,
-  p_duration_hours INTEGER DEFAULT 24
+  p_duration_hours INTEGER DEFAULT 24,
+  p_listing_type TEXT DEFAULT 'auction'
 )
 RETURNS JSONB
 LANGUAGE plpgsql SECURITY DEFINER
@@ -268,7 +269,10 @@ AS $$
 DECLARE
   v_card RECORD;
   v_listing_id UUID;
+  v_type TEXT;
 BEGIN
+  v_type := CASE WHEN p_listing_type = 'fixed' THEN 'fixed' ELSE 'auction' END;
+
   -- Verify ownership
   SELECT * INTO v_card FROM un_tunes_user_cards WHERE id = p_card_id AND user_id = auth.uid();
   IF NOT FOUND THEN
@@ -283,8 +287,14 @@ BEGIN
     RETURN jsonb_build_object('error', 'Minimum starting price is 0.1 tokens');
   END IF;
 
+  -- For fixed-price listings, set buy_now_price = starting_price so buy-now works
   INSERT INTO un_tunes_card_listings (seller_id, card_id, listing_type, starting_price, buy_now_price, current_bid, ends_at)
-  VALUES (auth.uid(), p_card_id, 'auction', p_starting_price, p_buy_now_price, 0, NOW() + (p_duration_hours || ' hours')::interval)
+  VALUES (
+    auth.uid(), p_card_id, v_type, p_starting_price,
+    CASE WHEN v_type = 'fixed' THEN p_starting_price ELSE p_buy_now_price END,
+    0,
+    NOW() + (p_duration_hours || ' hours')::interval
+  )
   RETURNING id INTO v_listing_id;
 
   RETURN jsonb_build_object('success', true, 'listing_id', v_listing_id);

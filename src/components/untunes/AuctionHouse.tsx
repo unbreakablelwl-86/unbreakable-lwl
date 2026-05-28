@@ -53,7 +53,7 @@ interface AuctionHouseProps {
 }
 
 const RARITY_CONFIG = {
-  standard: { label: 'Standard', icon: Music, text: 'text-zinc-400', border: 'border-zinc-500/30', bg: 'bg-zinc-500/10' },
+  standard: { label: 'Standard', icon: Music, text: 'text-muted-foreground', border: 'border-zinc-500/30', bg: 'bg-zinc-500/10' },
   gold: { label: 'Gold', icon: Crown, text: 'text-yellow-400', border: 'border-yellow-500/40', bg: 'bg-yellow-500/10' },
   diamond: { label: 'Diamond', icon: Diamond, text: 'text-violet-400', border: 'border-violet-500/40', bg: 'bg-violet-500/10' },
 };
@@ -99,7 +99,7 @@ function ListingCard({ listing, onBid, onBuyNow }: {
 
   return (
     <motion.div
-      className={cn('relative rounded-xl border overflow-hidden bg-zinc-900/50', config.border)}
+      className={cn('relative rounded-xl border overflow-hidden bg-card/50', config.border)}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ scale: 1.02 }}
@@ -108,7 +108,7 @@ function ListingCard({ listing, onBid, onBuyNow }: {
       {image ? (
         <img src={image} alt={title} className="w-full aspect-square object-cover" />
       ) : (
-        <div className="w-full aspect-square bg-zinc-800 flex items-center justify-center">
+        <div className="w-full aspect-square bg-card flex items-center justify-center">
           <Music className="w-8 h-8 text-zinc-700" />
         </div>
       )}
@@ -179,13 +179,12 @@ function SellCardModal({ cards, onClose, onListCreated }: {
     if (!user || !selectedCard) return;
     setSubmitting(true);
     try {
-      const { data, error } = await (supabase as any).rpc('create_card_listing', {
-        _uid: user.id,
-        _card_id: selectedCard.id,
-        _listing_type: listingType,
-        _starting_price: parseFloat(startingPrice) || 1,
-        _buy_now_price: buyNowPrice ? parseFloat(buyNowPrice) : null,
-        _duration_hours: parseInt(duration) || 24,
+      const { data, error } = await (supabase as any).rpc('list_card_for_auction', {
+        p_card_id: selectedCard.id,
+        p_listing_type: listingType,
+        p_starting_price: parseFloat(startingPrice) || 1,
+        p_buy_now_price: buyNowPrice ? parseFloat(buyNowPrice) : null,
+        p_duration_hours: parseInt(duration) || 24,
       });
       if (error) throw error;
       if (data?.error) {
@@ -212,7 +211,7 @@ function SellCardModal({ cards, onClose, onListCreated }: {
       onClick={onClose}
     >
       <motion.div
-        className="w-full max-w-md bg-zinc-900 border-t border-zinc-800 rounded-t-2xl p-6 space-y-4 max-h-[85vh] overflow-y-auto"
+        className="w-full max-w-md bg-card border-t border-border rounded-t-2xl p-6 space-y-4 max-h-[85vh] overflow-y-auto"
         initial={{ y: '100%' }}
         animate={{ y: 0 }}
         exit={{ y: '100%' }}
@@ -239,7 +238,7 @@ function SellCardModal({ cards, onClose, onListCreated }: {
                     {card.cover_url ? (
                       <img src={card.cover_url} alt={card.title} className="w-full aspect-square object-cover" />
                     ) : (
-                      <div className="w-full aspect-square bg-zinc-800 flex items-center justify-center">
+                      <div className="w-full aspect-square bg-card flex items-center justify-center">
                         <Music className="w-6 h-6 text-zinc-700" />
                       </div>
                     )}
@@ -260,11 +259,11 @@ function SellCardModal({ cards, onClose, onListCreated }: {
           /* Step 2: Configure listing */
           <div className="space-y-4">
             {/* Selected card preview */}
-            <div className="flex items-center gap-3 p-3 rounded-xl bg-zinc-800/50 border border-zinc-700/50">
+            <div className="flex items-center gap-3 p-3 rounded-xl bg-card/50 border border-border/50">
               {selectedCard.cover_url ? (
                 <img src={selectedCard.cover_url} className="w-12 h-12 rounded-lg object-cover" />
               ) : (
-                <div className="w-12 h-12 rounded-lg bg-zinc-700 flex items-center justify-center"><Music className="w-5 h-5 text-zinc-500" /></div>
+                <div className="w-12 h-12 rounded-lg bg-zinc-700 flex items-center justify-center"><Music className="w-5 h-5 text-muted-foreground" /></div>
               )}
               <div className="flex-1">
                 <p className="text-sm font-display tracking-wider text-white">{selectedCard.title}</p>
@@ -288,7 +287,7 @@ function SellCardModal({ cards, onClose, onListCreated }: {
                     onClick={() => setListingType(t)}
                     className={cn(
                       'flex-1 py-2 rounded-lg border text-xs font-display tracking-wider transition-all',
-                      listingType === t ? 'bg-primary/20 border-primary/40 text-primary' : 'border-zinc-700 text-muted-foreground'
+                      listingType === t ? 'bg-primary/20 border-primary/40 text-primary' : 'border-border text-muted-foreground'
                     )}
                   >
                     {t === 'auction' ? '🔨 AUCTION' : '🏷️ FIXED PRICE'}
@@ -308,7 +307,7 @@ function SellCardModal({ cards, onClose, onListCreated }: {
                 onChange={(e) => setStartingPrice(e.target.value)}
                 min={0.1}
                 step={0.1}
-                className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3 text-lg font-display text-center focus:outline-none focus:border-primary"
+                className="w-full bg-card border border-border rounded-lg px-4 py-3 text-lg font-display text-center focus:outline-none focus:border-primary"
               />
             </div>
 
@@ -323,7 +322,7 @@ function SellCardModal({ cards, onClose, onListCreated }: {
                   placeholder="—"
                   min={0.1}
                   step={0.1}
-                  className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3 text-lg font-display text-center focus:outline-none focus:border-primary"
+                  className="w-full bg-card border border-border rounded-lg px-4 py-3 text-lg font-display text-center focus:outline-none focus:border-primary"
                 />
               </div>
             )}
@@ -338,7 +337,7 @@ function SellCardModal({ cards, onClose, onListCreated }: {
                     onClick={() => setDuration(String(d.h))}
                     className={cn(
                       'flex-1 py-2 rounded-lg border text-[10px] font-display tracking-wider transition-all',
-                      duration === String(d.h) ? 'bg-primary/20 border-primary/40 text-primary' : 'border-zinc-700 text-muted-foreground'
+                      duration === String(d.h) ? 'bg-primary/20 border-primary/40 text-primary' : 'border-border text-muted-foreground'
                     )}
                   >
                     {d.l}
@@ -398,20 +397,29 @@ export function AuctionHouse({ onBack }: AuctionHouseProps) {
 
   const fetchMyCards = useCallback(async () => {
     if (!user) return;
-    const { data } = await (supabase as any).rpc('get_my_cards', { _uid: user.id });
-    if (data) {
-      const cards: OwnedCardForListing[] = data
-        .filter((c: any) => c.is_opened)
-        .map((c: any) => ({
-          id: c.id,
-          rarity: c.rarity,
-          edition_number: c.edition_number,
-          track_id: c.track_id,
-          album_id: c.album_id,
-          brand_card_id: c.brand_card_id,
-          title: c.card_title || 'Unknown',
-          cover_url: c.cover_url || null,
-        }));
+    const { data, error } = await supabase
+      .from('un_tunes_user_cards')
+      .select(`
+        id, rarity, edition_number, is_opened,
+        track_id, album_id, brand_card_id,
+        track:un_tunes_tracks(title, cover_url),
+        album:un_tunes_albums(title, cover_url),
+        brand_card:un_tunes_brand_cards(title, artwork_url)
+      `)
+      .eq('user_id', user.id)
+      .eq('is_opened', true)
+      .order('created_at', { ascending: false });
+    if (!error && data) {
+      const cards: OwnedCardForListing[] = data.map((c: any) => ({
+        id: c.id,
+        rarity: c.rarity,
+        edition_number: c.edition_number,
+        track_id: c.track_id,
+        album_id: c.album_id,
+        brand_card_id: c.brand_card_id,
+        title: c.track?.title || c.album?.title || c.brand_card?.title || 'Unknown',
+        cover_url: c.track?.cover_url || c.album?.cover_url || c.brand_card?.artwork_url || null,
+      }));
       setMyCards(cards);
     }
   }, [user]);
@@ -440,9 +448,8 @@ export function AuctionHouse({ onBack }: AuctionHouseProps) {
     const amount = parseInt(bidAmount);
     try {
       const { data, error } = await (supabase as any).rpc('place_bid', {
-        _uid: user.id,
-        _listing_id: bidModal.id,
-        _amount: amount,
+        p_listing_id: bidModal.id,
+        p_amount: amount,
       });
       if (error) throw error;
       if (data?.error) {
@@ -465,9 +472,8 @@ export function AuctionHouse({ onBack }: AuctionHouseProps) {
     const price = listing.buy_now_price || listing.starting_price;
     if (!confirm(`Buy now for ${price} tokens?`)) return;
     try {
-      const { data, error } = await (supabase as any).rpc('buy_now_listing', {
-        _uid: user.id,
-        _listing_id: listing.id,
+      const { data, error } = await (supabase as any).rpc('buy_now_card', {
+        p_listing_id: listing.id,
       });
       if (error) throw error;
       if (data?.error) {
@@ -606,7 +612,7 @@ export function AuctionHouse({ onBack }: AuctionHouseProps) {
             onClick={() => setBidModal(null)}
           >
             <motion.div
-              className="w-full max-w-md bg-zinc-900 border-t border-zinc-800 rounded-t-2xl p-6 space-y-4"
+              className="w-full max-w-md bg-card border-t border-border rounded-t-2xl p-6 space-y-4"
               initial={{ y: '100%' }}
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
@@ -631,7 +637,7 @@ export function AuctionHouse({ onBack }: AuctionHouseProps) {
                     value={bidAmount}
                     onChange={(e) => setBidAmount(e.target.value)}
                     min={(bidModal.current_bid || bidModal.starting_price) + 1}
-                    className="flex-1 bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3 text-lg font-display text-center focus:outline-none focus:border-primary"
+                    className="flex-1 bg-card border border-border rounded-lg px-4 py-3 text-lg font-display text-center focus:outline-none focus:border-primary"
                   />
                   <span className="text-sm text-muted-foreground">tokens</span>
                 </div>
