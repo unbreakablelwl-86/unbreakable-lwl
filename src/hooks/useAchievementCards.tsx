@@ -35,6 +35,7 @@ export interface AchievementCard {
   completion_count?: number;
   image_url?: string;
   programme_stats?: Record<string, unknown>;
+  owner_display_name?: string;
   earned_at: string;
 }
 
@@ -59,21 +60,29 @@ export function useAchievementCards() {
     if (!user) return;
     setLoading(true);
 
-    const { data, error } = await supabase
-      .rpc('get_achievement_collection', { p_user_id: user.id });
+    // Fetch cards + profile in parallel
+    const [cardsResult, profileResult] = await Promise.all([
+      supabase.rpc('get_achievement_collection', { p_user_id: user.id }),
+      supabase.from('profiles').select('display_name').eq('user_id', user.id).single(),
+    ]);
 
-    if (error) {
-      console.error('Error fetching achievement cards:', error);
-      // Fallback: direct table query
+    const ownerName = profileResult.data?.display_name || user.user_metadata?.full_name || null;
+
+    let rawCards: AchievementCard[];
+    if (cardsResult.error) {
+      console.error('Error fetching achievement cards:', cardsResult.error);
       const { data: fallback } = await supabase
         .from('achievement_cards')
         .select('*')
         .eq('user_id', user.id)
         .order('earned_at', { ascending: false });
-      setCards((fallback || []) as AchievementCard[]);
+      rawCards = (fallback || []) as AchievementCard[];
     } else {
-      setCards((data || []) as AchievementCard[]);
+      rawCards = (cardsResult.data || []) as AchievementCard[];
     }
+
+    // Stamp owner name onto every card
+    setCards(rawCards.map(c => ({ ...c, owner_display_name: ownerName })));
     setLoading(false);
   }, [user]);
 

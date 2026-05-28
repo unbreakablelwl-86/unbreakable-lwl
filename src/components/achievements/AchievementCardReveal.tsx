@@ -953,52 +953,52 @@ export function AchievementCardReveal({
                     <PBCardArtwork card={card} accentColor={config.accentHex} size="md" />
                   )}
 
-                  {/* Central icon with glow */}
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="relative">
-                      {/* Background glow */}
-                      <motion.div
-                        className="absolute -inset-16 rounded-full"
-                        style={{
-                          background: `radial-gradient(circle, ${config.accentHex}20 0%, transparent 70%)`,
-                        }}
-                        animate={{ scale: [1, 1.1, 1], opacity: [0.5, 0.8, 0.5] }}
-                        transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-                      />
-                      {/* Icon */}
-                      <motion.div
-                        className="relative z-10"
-                        style={{ animation: 'achFloat 4s ease-in-out infinite' }}
-                      >
-                        <div
-                          className="w-20 h-20 rounded-2xl flex items-center justify-center"
+                  {/* Central icon — only for programme trophies */}
+                  {isProgramme && (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="relative">
+                        <motion.div
+                          className="absolute -inset-16 rounded-full"
                           style={{
-                            background: `linear-gradient(145deg, ${config.accentHex}15, ${config.accentHex}05)`,
-                            border: `2px solid ${config.accentHex}30`,
-                            boxShadow: `0 0 30px ${config.accentHex}20`,
+                            background: `radial-gradient(circle, ${config.accentHex}20 0%, transparent 70%)`,
                           }}
+                          animate={{ scale: [1, 1.1, 1], opacity: [0.5, 0.8, 0.5] }}
+                          transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+                        />
+                        <motion.div
+                          className="relative z-10"
+                          style={{ animation: 'achFloat 4s ease-in-out infinite' }}
                         >
-                          <Icon className="w-10 h-10" style={{ color: config.accentHex }} />
-                        </div>
-                      </motion.div>
+                          <div
+                            className="w-20 h-20 rounded-2xl flex items-center justify-center"
+                            style={{
+                              background: `linear-gradient(145deg, ${config.accentHex}15, ${config.accentHex}05)`,
+                              border: `2px solid ${config.accentHex}30`,
+                              boxShadow: `0 0 30px ${config.accentHex}20`,
+                            }}
+                          >
+                            <Icon className="w-10 h-10" style={{ color: config.accentHex }} />
+                          </div>
+                        </motion.div>
+                      </div>
                     </div>
-                  </div>
+                  )}
 
-                  {/* PB Value display (big number) */}
+                  {/* PB Value display — centered big number (replaces icon for PB cards) */}
                   {(isPBPersonal || isPBGlobal) && card.pb_value && (
                     <motion.div
-                      className="absolute top-1/2 left-0 right-0 flex justify-center mt-14"
+                      className="absolute inset-0 flex items-center justify-center"
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
                       transition={{ delay: 0.3, type: 'spring' }}
                     >
                       <span
                         className={cn(
-                          'font-display text-3xl tracking-wider',
+                          'font-display text-4xl tracking-wider',
                           config.textColor,
                         )}
                         style={{
-                          textShadow: `0 0 20px ${config.accentHex}60`,
+                          textShadow: `0 0 24px ${config.accentHex}60`,
                         }}
                       >
                         {formatPBValue(card.pb_value, card.pb_unit || 'kg')}
@@ -1061,6 +1061,17 @@ export function AchievementCardReveal({
 
                   {/* Card info at bottom */}
                   <div className="absolute bottom-0 left-0 right-0 p-4">
+                    {/* Owner name */}
+                    {card.owner_display_name && (
+                      <motion.p
+                        className={cn('text-[10px] font-display tracking-widest uppercase opacity-60 mb-0.5', config.textColor)}
+                        initial={{ y: 20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 0.6 }}
+                        transition={{ delay: 0.15 }}
+                      >
+                        {card.owner_display_name}
+                      </motion.p>
+                    )}
                     <motion.div
                       initial={{ y: 20, opacity: 0 }}
                       animate={{ y: 0, opacity: 1 }}
@@ -1226,15 +1237,11 @@ export function AchievementCardStatic({
         {card.rarity === 'diamond' && <DiamondHolo />}
         {card.rarity === 'platinum' && <PlatinumChrome />}
 
-        {/* Center icon */}
-        <div className="absolute inset-0 flex items-center justify-center">
-          <Icon className={cn(iconSize, 'opacity-60')} style={{ color: config.accentHex }} />
-        </div>
-
-        {/* PB Value */}
+        {/* PB Value — centered on card (no icon watermark) */}
         {card.pb_value && (
-          <div className="absolute top-1/2 left-0 right-0 flex justify-center mt-6">
-            <span className={cn('font-display tracking-wider', config.textColor, size === 'sm' ? 'text-sm' : 'text-xl')}>
+          <div className="absolute inset-0 flex flex-col items-center justify-center">
+            <span className={cn('font-display tracking-wider', config.textColor, size === 'sm' ? 'text-lg' : 'text-2xl')}
+              style={{ textShadow: `0 0 16px ${config.accentHex}50` }}>
               {formatPBValue(card.pb_value, card.pb_unit || 'kg')}
             </span>
           </div>
@@ -1260,6 +1267,12 @@ export function AchievementCardStatic({
         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/75 to-transparent"
           style={{ paddingTop: size === 'sm' ? 12 : 20 }}>
           <div className="px-2 pb-1.5">
+            {/* Owner name */}
+            {card.owner_display_name && (
+              <p className={cn('font-display tracking-wider uppercase truncate opacity-70', size === 'sm' ? 'text-[7px]' : 'text-[9px]', config.textColor)}>
+                {card.owner_display_name}
+              </p>
+            )}
             {/* Title */}
             <p className={cn('font-display tracking-wider uppercase truncate', titleSize, config.textColor)}
               style={{ textShadow: `0 0 8px ${config.accentHex}40` }}>
