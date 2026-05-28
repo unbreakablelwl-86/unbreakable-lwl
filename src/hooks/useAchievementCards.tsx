@@ -55,6 +55,7 @@ export interface AchievementCard {
   category_label?: string;
   edition_number?: number;
   edition_total?: number;
+  purchased?: boolean;
 }
 
 export interface AchievementCounts {

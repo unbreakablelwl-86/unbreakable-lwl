@@ -161,6 +161,21 @@ export const TOKEN_ACTIONS: Record<string, TokenAction> = {
     category: 'course',
     baseCost: 150,
   },
+  // ─── PB Card purchases ───
+  card_image: {
+    id: 'card_image',
+    name: 'PB Card image download',
+    description: 'Download your PB card as a high-quality image file',
+    category: 'course' as ActionCategory,
+    baseCost: 3,
+  },
+  card_video: {
+    id: 'card_video',
+    name: 'PB Card video download',
+    description: 'Download your PB card as a video file with rarity animation',
+    category: 'course' as ActionCategory,
+    baseCost: 5,
+  },
   // ─── Un-Tunes music store ───
   untunes_single: {
     id: 'untunes_single',

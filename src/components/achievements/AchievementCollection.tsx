@@ -5,14 +5,14 @@
  *
  * Updated: Neon glow system + unified CardShareSheet + RarityBadge
  */
-import { useState, useEffect, useMemo, useRef } from 'react';
+import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import {
   Trophy, Dumbbell, Activity, Crown, Diamond, Sparkles,
   Shield, Medal, Award, Globe, TrendingUp, X, Share2,
   Download, Trash2, Loader2, ChevronLeft, ChevronRight,
-  ChevronDown, AlertCircle, Camera,
+  ChevronDown, AlertCircle, Camera, Coins, Lock, Image, Video, ShoppingCart,
 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { CardShareSheet } from '@/components/achievements/CardShareSheet';
@@ -24,6 +24,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useAchievementCards, AchievementCard, AchievementRarity, AchievementCardType } from '@/hooks/useAchievementCards';
 import { AchievementCardStatic, AchievementCardReveal, formatPBValue } from '@/components/achievements/AchievementCardReveal';
 import UserProfileCard from '@/components/achievements/UserProfileCard';
+import { useTokenBalance } from '@/hooks/useTokenBalance';
 import { supabase } from '@/integrations/supabase/client';
 
 /* ═══ Reflective container backgrounds per rarity — behind cards ═══ */
@@ -283,6 +284,151 @@ function AchievementShareMenu({
   );
 }
 
+/* ═══ Card Purchase Modal — 3 tokens (image) / 5 tokens (video) ═══ */
+function CardPurchaseModal({
+  card, onClose, onPurchased,
+}: {
+  card: AchievementCard; onClose: () => void; onPurchased: () => void;
+}) {
+  const config = RARITY_CONFIG[card.rarity];
+  const [purchasing, setPurchasing] = useState(false);
+  const [selectedType, setSelectedType] = useState<'image' | 'video'>('image');
+  const { toast } = useToast();
+  const { balance, refresh: refreshTokens } = useTokenBalance();
+
+  const cost = selectedType === 'video' ? 5 : 3;
+  const canAfford = balance >= cost;
+
+  const handlePurchase = async () => {
+    setPurchasing(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('purchase-card', {
+        body: { cardId: card.id, mediaType: selectedType },
+      });
+      if (error) throw error;
+      if (data?.error) {
+        if (data.error === 'Not enough tokens') {
+          toast({ title: 'Not enough tokens', description: `You need ${cost} tokens. Current balance: ${data.balance}` });
+        } else {
+          throw new Error(data.error);
+        }
+        return;
+      }
+      toast({ title: '🎉 Card Purchased!', description: `${selectedType === 'video' ? 'Video' : 'Image'} download unlocked. ${data.tokensSpent} tokens spent.` });
+      await refreshTokens();
+      onPurchased();
+      onClose();
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Purchase failed';
+      toast({ title: 'Purchase failed', description: msg });
+    } finally {
+      setPurchasing(false);
+    }
+  };
+
+  return (
+    <motion.div
+      className="fixed inset-0 z-[260] bg-black/85 backdrop-blur-sm flex items-center justify-center p-6"
+      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+      onClick={onClose}
+    >
+      <motion.div
+        className="max-w-sm w-full bg-zinc-900 rounded-2xl border p-5 space-y-4"
+        style={{ borderColor: config.color + '40' }}
+        initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9, y: 20 }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="text-center">
+          <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-3"
+            style={{ background: `${config.color}15`, border: `1px solid ${config.color}30` }}>
+            <ShoppingCart className="w-7 h-7" style={{ color: config.color }} />
+          </div>
+          <h3 className="font-display text-white tracking-wider text-sm">PURCHASE CARD DOWNLOAD</h3>
+          <p className="text-xs text-muted-foreground mt-2">
+            Unlock <span className={config.textColor}>{config.label}</span> "{card.exercise_name || card.title}" for download
+          </p>
+        </div>
+
+        {/* Type selector */}
+        <div className="grid grid-cols-2 gap-2">
+          <button
+            onClick={() => setSelectedType('image')}
+            className={cn(
+              "relative p-3 rounded-xl border transition-all text-center",
+              selectedType === 'image'
+                ? "border-[#FF5500] bg-[#FF5500]/10"
+                : "border-border hover:border-border/60 bg-card"
+            )}
+          >
+            <Image className="w-5 h-5 mx-auto mb-1.5 text-white" />
+            <p className="text-[10px] font-display tracking-wider text-white">IMAGE</p>
+            <div className="flex items-center justify-center gap-1 mt-1">
+              <Coins className="w-3 h-3 text-yellow-400" />
+              <span className="text-xs font-display text-yellow-400">3</span>
+            </div>
+            {selectedType === 'image' && (
+              <motion.div layoutId="purchase-select" className="absolute inset-0 rounded-xl border-2 border-[#FF5500]" />
+            )}
+          </button>
+          <button
+            onClick={() => setSelectedType('video')}
+            className={cn(
+              "relative p-3 rounded-xl border transition-all text-center",
+              selectedType === 'video'
+                ? "border-[#FF5500] bg-[#FF5500]/10"
+                : "border-border hover:border-border/60 bg-card"
+            )}
+          >
+            <Video className="w-5 h-5 mx-auto mb-1.5 text-white" />
+            <p className="text-[10px] font-display tracking-wider text-white">VIDEO</p>
+            <div className="flex items-center justify-center gap-1 mt-1">
+              <Coins className="w-3 h-3 text-yellow-400" />
+              <span className="text-xs font-display text-yellow-400">5</span>
+            </div>
+            {selectedType === 'video' && (
+              <motion.div layoutId="purchase-select" className="absolute inset-0 rounded-xl border-2 border-[#FF5500]" />
+            )}
+          </button>
+        </div>
+
+        {/* Balance + buy */}
+        <div className="bg-card rounded-lg p-3 border border-border flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Coins className="w-4 h-4 text-yellow-400" />
+            <span className="text-xs text-muted-foreground">Your balance:</span>
+            <span className="text-sm font-display text-white">{balance}</span>
+          </div>
+          <span className={cn("text-[10px] font-display tracking-wider", canAfford ? "text-green-400" : "text-red-400")}>
+            {canAfford ? '✓ ENOUGH' : '✗ NEED MORE'}
+          </span>
+        </div>
+
+        <Button
+          size="sm"
+          className="w-full text-xs font-display tracking-wider bg-[#FF5500] hover:bg-[#FF5500]/90 text-white"
+          style={{ boxShadow: '0 0 20px rgba(255,85,0,0.3)' }}
+          onClick={handlePurchase}
+          disabled={purchasing || !canAfford}
+        >
+          {purchasing ? <Loader2 className="w-3 h-3 mr-1 animate-spin" /> : <ShoppingCart className="w-3 h-3 mr-1" />}
+          {purchasing ? 'PURCHASING…' : `BUY ${selectedType.toUpperCase()} · ${cost} TOKENS`}
+        </Button>
+
+        {!canAfford && (
+          <p className="text-[10px] text-center text-muted-foreground">
+            Need more tokens? Visit <span className="text-[#FF5500]">AI Tokens</span> to top up.
+          </p>
+        )}
+
+        <Button variant="ghost" size="sm"
+          className="w-full text-xs font-display tracking-wider text-muted-foreground" onClick={onClose}>
+          CANCEL
+        </Button>
+      </motion.div>
+    </motion.div>
+  );
+}
+
 /* ═══ Confirm Discard Modal ═══ */
 function AchievementDiscardModal({
   card, onConfirm, onCancel,
@@ -337,6 +483,7 @@ function AchievementFullViewer({
   onNavigate,
   onShare,
   onDiscard,
+  onPurchase,
 }: {
   card: AchievementCard;
   cards: AchievementCard[];
@@ -345,6 +492,7 @@ function AchievementFullViewer({
   onNavigate: (index: number) => void;
   onShare: (card: AchievementCard) => void;
   onDiscard: (card: AchievementCard) => void;
+  onPurchase: (card: AchievementCard) => void;
 }) {
   const config = RARITY_CONFIG[card.rarity];
   const hasPrev = currentIndex > 0;
@@ -467,6 +615,57 @@ function AchievementFullViewer({
           <p className="text-[10px] text-zinc-500 mt-1">Earned {date}</p>
         </div>
 
+        {/* ── Purchase / Download section ── */}
+        {card.purchased ? (
+          /* Already purchased — show download buttons */
+          <div className="space-y-2">
+            <div className="flex items-center justify-center gap-1.5 mb-1">
+              <Sparkles className="w-3 h-3 text-green-400" />
+              <span className="text-[10px] font-display tracking-wider text-green-400">PURCHASED — DOWNLOAD READY</span>
+            </div>
+            <div className="flex gap-2">
+              <Button variant="outline" size="sm"
+                className="flex-1 text-xs font-display tracking-wider border-green-500/30 text-green-400 hover:bg-green-500/10"
+                onClick={async () => {
+                  const blob = await generateAchievementCardImage(card);
+                  if (blob) {
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = `PB-${card.rarity}-${(card.exercise_name || card.title).replace(/\s+/g, '-')}.png`;
+                    link.click();
+                    URL.revokeObjectURL(url);
+                  }
+                }}>
+                <Image className="w-3 h-3 mr-1" /> IMAGE
+              </Button>
+              {card.video_url && (
+                <Button variant="outline" size="sm"
+                  className="flex-1 text-xs font-display tracking-wider border-green-500/30 text-green-400 hover:bg-green-500/10"
+                  onClick={() => {
+                    if (card.video_url) {
+                      const link = document.createElement('a');
+                      link.href = card.video_url;
+                      link.download = `PB-${card.rarity}-${(card.exercise_name || card.title).replace(/\s+/g, '-')}.mp4`;
+                      link.target = '_blank';
+                      link.click();
+                    }
+                  }}>
+                  <Video className="w-3 h-3 mr-1" /> VIDEO
+                </Button>
+              )}
+            </div>
+          </div>
+        ) : (
+          /* Not purchased — show buy button */
+          <Button size="sm"
+            className="w-full text-xs font-display tracking-wider bg-[#FF5500] hover:bg-[#FF5500]/90 text-white"
+            style={{ boxShadow: '0 0 20px rgba(255,85,0,0.3), 0 0 40px rgba(255,85,0,0.1)' }}
+            onClick={() => onPurchase(card)}>
+            <ShoppingCart className="w-3 h-3 mr-1" /> BUY CARD · 3 TOKENS (IMAGE) / 5 (VIDEO)
+          </Button>
+        )}
+
         <div className="flex gap-2">
           <Button variant="outline" size="sm"
             className="flex-1 text-xs font-display tracking-wider border-primary/30 text-primary hover:bg-primary/10"
@@ -500,6 +699,7 @@ export function AchievementCollection() {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [shareCard, setShareCard] = useState<AchievementCard | null>(null);
   const [discardCard, setDiscardCard] = useState<AchievementCard | null>(null);
+  const [purchaseCard, setPurchaseCard] = useState<AchievementCard | null>(null);
   const counts = getCounts();
   const CARDIO_CATS = useMemo(() => ['run', 'cycle', 'row', 'swim'], []);
   const strengthCount = useMemo(() => cards.filter(c => c.card_type === 'pb_personal' && !CARDIO_CATS.includes(c.activity_category || '')).length, [cards, CARDIO_CATS]);
@@ -630,6 +830,53 @@ export function AchievementCollection() {
                 </button>
               );
             })}
+          </div>
+        </Card>
+      </motion.div>
+
+      {/* ═══ HERO PURCHASE BANNER — Buy your PB cards ═══ */}
+      <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
+        <Card className="border-[#FF5500]/30 bg-card overflow-hidden relative">
+          {/* Gradient accent bar */}
+          <div className="h-1" style={{ background: 'linear-gradient(90deg, #FF5500 0%, #FFD700 50%, #FF5500 100%)' }} />
+          {/* Glow overlay */}
+          <div className="absolute inset-0 pointer-events-none" style={{
+            background: 'radial-gradient(ellipse at 50% 0%, rgba(255,85,0,0.08) 0%, transparent 70%)',
+          }} />
+          <div className="p-4 space-y-3 relative">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-[#FF5500]/15 border border-[#FF5500]/30 flex items-center justify-center">
+                <ShoppingCart className="w-4 h-4 text-[#FF5500]" />
+              </div>
+              <div>
+                <h4 className="font-display text-sm tracking-wider text-foreground">OWN YOUR CARDS</h4>
+                <p className="text-[10px] text-muted-foreground">Download your PB cards as premium image or video files</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <div className="rounded-lg bg-zinc-800/50 border border-zinc-700/50 p-2.5 text-center">
+                <Image className="w-4 h-4 mx-auto mb-1 text-white/70" />
+                <p className="text-[9px] font-display tracking-wider text-white/80">IMAGE CARD</p>
+                <div className="flex items-center justify-center gap-1 mt-0.5">
+                  <Coins className="w-2.5 h-2.5 text-yellow-400" />
+                  <span className="text-xs font-display text-yellow-400 font-bold">3</span>
+                  <span className="text-[8px] text-muted-foreground">tokens</span>
+                </div>
+              </div>
+              <div className="rounded-lg bg-zinc-800/50 border border-zinc-700/50 p-2.5 text-center">
+                <Video className="w-4 h-4 mx-auto mb-1 text-white/70" />
+                <p className="text-[9px] font-display tracking-wider text-white/80">VIDEO CARD</p>
+                <div className="flex items-center justify-center gap-1 mt-0.5">
+                  <Coins className="w-2.5 h-2.5 text-yellow-400" />
+                  <span className="text-xs font-display text-yellow-400 font-bold">5</span>
+                  <span className="text-[8px] text-muted-foreground">tokens</span>
+                </div>
+              </div>
+            </div>
+            <p className="text-[10px] text-muted-foreground text-center leading-relaxed">
+              Tap any card → <span className="text-[#FF5500] font-semibold">Buy</span> → choose image or video → download instantly.
+              <br />All lift categories · All rarity tiers · Your card, your file.
+            </p>
           </div>
         </Card>
       </motion.div>
@@ -817,6 +1064,7 @@ export function AchievementCollection() {
             onNavigate={setSelectedIndex}
             onShare={(c) => { setSelectedIndex(null); setShareCard(c); }}
             onDiscard={(c) => { setSelectedIndex(null); setDiscardCard(c); }}
+            onPurchase={(c) => setPurchaseCard(c)}
           />
         )}
       </AnimatePresence>
@@ -838,6 +1086,20 @@ export function AchievementCollection() {
             card={discardCard}
             onConfirm={() => handleDiscard(discardCard)}
             onCancel={() => setDiscardCard(null)}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Purchase card modal */}
+      <AnimatePresence>
+        {purchaseCard && (
+          <CardPurchaseModal
+            card={purchaseCard}
+            onClose={() => setPurchaseCard(null)}
+            onPurchased={() => {
+              // Refresh cards to update purchased status
+              window.location.reload();
+            }}
           />
         )}
       </AnimatePresence>
