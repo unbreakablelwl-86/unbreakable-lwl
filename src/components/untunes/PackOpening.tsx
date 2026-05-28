@@ -23,10 +23,13 @@ export interface PackCard {
   rarity: 'standard' | 'gold' | 'diamond' | 'platinum';
   edition_number: number;
   card_type?: string;
-  un_tunes_tracks?: { title: string; cover_url: string } | null;
+  un_tunes_tracks?: { title: string; artist?: string; cover_url: string } | null;
   un_tunes_albums?: { title: string; cover_url: string } | null;
+  un_tunes_brand_cards?: { title: string; slug?: string; image_url?: string } | null;
+  brand_card_id?: string | null;
   cover_url?: string;
   card_title?: string;
+  is_bonus?: boolean;
 }
 
 interface PackOpeningProps {
@@ -696,8 +699,9 @@ function CardReveal({
   const [showParticles, setShowParticles] = useState(false);
   const config = RARITY_CONFIG[card.rarity];
   const isTrack = !!card.track_id;
-  const title = card.card_title || (isTrack ? card.un_tunes_tracks?.title : card.un_tunes_albums?.title) || 'Unknown';
-  const coverUrl = card.cover_url || (isTrack ? card.un_tunes_tracks?.cover_url : card.un_tunes_albums?.cover_url);
+  const isBrand = card.card_type === 'brand';
+  const title = card.card_title || (isTrack ? card.un_tunes_tracks?.title : isBrand ? card.un_tunes_brand_cards?.title : card.un_tunes_albums?.title) || 'Unknown';
+  const coverUrl = card.cover_url || (isTrack ? card.un_tunes_tracks?.cover_url : isBrand ? card.un_tunes_brand_cards?.image_url : card.un_tunes_albums?.cover_url);
 
   const handleReveal = () => {
     if (revealed) {
@@ -823,7 +827,8 @@ function CardReveal({
                     <CardTitle
                       title={title}
                       className={cn(
-                        'text-white',
+                        config.textColor,
+                        'drop-shadow-[0_0_8px_rgba(0,0,0,0.5)]',
                         card.rarity === 'gold' && 'drop-shadow-[0_0_8px_rgba(251,191,36,0.5)]',
                         card.rarity === 'diamond' && 'drop-shadow-[0_0_8px_rgba(139,92,246,0.5)]',
                         card.rarity === 'platinum' && 'drop-shadow-[0_0_10px_rgba(226,232,240,0.6)]',

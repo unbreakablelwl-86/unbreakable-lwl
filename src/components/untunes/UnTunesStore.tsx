@@ -142,8 +142,25 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
       }
 
       // Success — show pack opening
+      let cards = data.cards || [];
+
+      // Ultimate Bundle bonus: add 1× free Diamond Pack (10 guaranteed diamond-rarity cards)
+      if (type === 'bundle' && tracks.length > 0) {
+        const shuffled = [...tracks].sort(() => Math.random() - 0.5);
+        const bonusDiamondCards = shuffled.slice(0, 10).map((t, i) => ({
+          id: `bonus-diamond-${i}`,
+          track_id: t.id,
+          rarity: 'diamond' as const,
+          edition_number: Math.floor(Math.random() * 50) + 1,
+          is_bonus: true,
+          un_tunes_tracks: { title: t.title, artist: t.artist || 'Unbreakable', cover_url: t.cover_url || '' },
+        }));
+        cards = [...cards, ...bonusDiamondCards];
+        toast.success('🎁 FREE Diamond Pack included!', { duration: 4000 });
+      }
+
       setPackType(type);
-      setPackCards(data.cards || []);
+      setPackCards(cards);
       refreshBalance();
       toast.success(`${data.tokensSpent || 0} tokens spent`);
     } catch (err) {
@@ -250,9 +267,14 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
                       <p className="font-display text-sm tracking-wider text-white">ULTIMATE BUNDLE</p>
                       <p className="text-[10px] text-muted-foreground">All albums • All tracks • Best drop rates</p>
                     </div>
-                    <Badge className="ml-auto bg-primary/20 text-primary border-primary/30 text-[10px] font-display">
-                      SAVE 33%
-                    </Badge>
+                    <div className="ml-auto flex flex-col items-end gap-1">
+                      <Badge className="bg-primary/20 text-primary border-primary/30 text-[10px] font-display">
+                        SAVE 33%
+                      </Badge>
+                      <Badge className="bg-violet-500/20 text-violet-300 border-violet-500/30 text-[9px] font-display">
+                        + FREE 💎 PACK
+                      </Badge>
+                    </div>
                   </div>
 
                   <div className="grid grid-cols-3 gap-2 mb-4">
@@ -266,7 +288,7 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
                     </div>
                     <div className="text-center p-2 rounded-lg bg-violet-500/10 border border-violet-500/20">
                       <Diamond className="w-4 h-4 text-violet-400 mx-auto" />
-                      <p className="text-[9px] text-violet-300 tracking-wider">3× ODDS</p>
+                      <p className="text-[9px] text-violet-300 tracking-wider">FREE 💎</p>
                     </div>
                   </div>
 
