@@ -416,8 +416,53 @@ export function StatusCard({ post, onKudos, onDelete, onToggleComments, onUpdate
           </div>
         )}
 
+        {/* Daily 7 auto-post styled background — Unbreakable branded */}
+        {isAutoPost && !post.image_url && !post.video_url && (!post.media_items || post.media_items.length === 0) && post.content && (
+          <div className="relative overflow-hidden" style={{ minHeight: 200 }}>
+            {/* Dark gradient background */}
+            <div className="absolute inset-0" style={{
+              background: 'linear-gradient(145deg, #0a0a0a 0%, #111111 30%, #0d0d0d 60%, #080808 100%)',
+            }} />
+            {/* Orange accent glow */}
+            <div className="absolute inset-0" style={{
+              background: 'radial-gradient(ellipse at 50% 0%, rgba(255,85,0,0.12) 0%, transparent 60%), radial-gradient(ellipse at 80% 100%, rgba(255,85,0,0.06) 0%, transparent 40%)',
+            }} />
+            {/* Subtle grid pattern */}
+            <div className="absolute inset-0 opacity-[0.04]" style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h40v40H0z' fill='none' stroke='rgba(255,85,0,0.3)' stroke-width='0.5'/%3E%3C/svg%3E")`,
+              backgroundSize: '40px 40px',
+            }} />
+            {/* Shield watermark */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.04]">
+              <svg width="120" height="120" viewBox="0 0 100 100" fill="none">
+                <path d="M50 5 L90 25 L90 55 Q90 80 50 95 Q10 80 10 55 L10 25 Z" stroke="#FF5500" strokeWidth="2" fill="none" />
+                <path d="M50 20 L70 30 L70 50 Q70 65 50 75 Q30 65 30 50 L30 30 Z" stroke="#FF5500" strokeWidth="1.5" fill="none" />
+              </svg>
+            </div>
+            {/* Top accent line */}
+            <div className="absolute top-0 left-0 right-0 h-[2px]" style={{
+              background: 'linear-gradient(90deg, transparent 0%, #FF5500 30%, #FF5500 70%, transparent 100%)',
+            }} />
+            {/* Content */}
+            <div className="relative z-10 px-5 py-6 flex flex-col items-center justify-center text-center" style={{ minHeight: 200 }}>
+              <div className="mb-3 px-3 py-1 rounded-full border border-[#FF5500]/30 bg-[#FF5500]/10">
+                <span className="text-[10px] font-display tracking-[0.2em] text-[#FF5500]">DAILY 7 CHECK-IN</span>
+              </div>
+              <RichContent
+                text={post.content}
+                className="text-sm text-white/90 leading-relaxed"
+                usernamePrefix={post.profiles?.display_name || post.profiles?.username}
+              />
+            </div>
+            {/* Bottom accent line */}
+            <div className="absolute bottom-0 left-0 right-0 h-[1px]" style={{
+              background: 'linear-gradient(90deg, transparent 0%, rgba(255,85,0,0.3) 50%, transparent 100%)',
+            }} />
+          </div>
+        )}
+
         {/* Content — below media like Instagram */}
-        {post.content && (
+        {post.content && !(isAutoPost && !post.image_url && !post.video_url && (!post.media_items || post.media_items.length === 0)) && (
           <div className="px-4 pb-2">
             <RichContent
               text={post.content}
