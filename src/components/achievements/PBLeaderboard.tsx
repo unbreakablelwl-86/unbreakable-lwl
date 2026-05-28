@@ -1,15 +1,19 @@
 /**
- * PBLeaderboard — Global leaderboard for lifts & runs with age categories
+ * PBLeaderboard — Global leaderboard for exercises & runs with age categories
  * Shows where users rank for diamond/platinum card eligibility.
  * Links to the achievement card system.
+ *
+ * Exercise selector: searchable dropdown from the full 1500-exercise library.
+ * If a user selects an exercise with no leaderboard data yet, we show an
+ * empty state and the view auto-populates as users log that exercise.
  */
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import {
-  Trophy, Dumbbell, Footprints, Crown, Diamond, Sparkles,
+  Trophy, Dumbbell, Activity, Crown, Diamond, Sparkles,
   Medal, Award, Globe, Users, Filter, TrendingUp,
-  ChevronDown, Loader2, User, Flame,
+  ChevronDown, Loader2, User, Flame, Search, X,
 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -23,14 +27,18 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import type { Exercise } from '@/lib/exercise-types';
 
 /* ═══ Constants ═══ */
 const AGE_CATEGORIES = ['all', '18-24', '25-34', '35-44', '45-54', '55+'] as const;
 const SEX_CATEGORIES = ['all', 'male', 'female'] as const;
 const SEX_LABELS: Record<string, string> = { all: 'ALL', male: 'MALE', female: 'FEMALE' };
 
-const BIG_LIFTS = [
+/** Pinned exercises shown at top of the picker */
+const FEATURED_EXERCISES = [
   'Bench Press', 'Barbell Squat', 'Deadlift', 'Overhead Press', 'Barbell Row',
+  'Push-Up', 'Pull-Up', 'Dumbbell Curl', 'Lat Pulldown', 'Leg Press',
+  'Incline Bench Press', 'Romanian Deadlift', 'Dip', 'Lunges', 'Shoulder Press',
 ] as const;
 
 const RUN_DISTANCES = [
@@ -59,7 +67,175 @@ interface LeaderboardEntry {
   isCurrentUser: boolean;
 }
 
-type LeaderboardMode = 'lifts' | 'runs';
+type LeaderboardMode = 'exercises' | 'runs';
+
+/* ═══ Normalise exercise name for DB matching ═══ */
+function normaliseExerciseName(name: string): string {
+  // Convert library format "push-up" → "Push-Up", "barbell bench press" → "Barbell Bench Press"
+  return name
+    .split(/[\s-]+/)
+    .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+    .join(w => name.includes('-') ? '-' : ' ');
+}
+
+/** Title-case helper: "barbell bench press" → "Barbell Bench Press" */
+function titleCase(s: string): string {
+  return s.replace(/\b\w/g, c => c.toUpperCase());
+}
+
+/* ═══ Searchable Exercise Picker ═══ */
+function ExercisePicker({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (name: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState('');
+  const [library, setLibrary] = useState<Exercise[]>([]);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Load exercise library once
+  useEffect(() => {
+    fetch('/data/exercises.json')
+      .then(r => r.json())
+      .then((data: Exercise[]) => setLibrary(data))
+      .catch(() => {});
+  }, []);
+
+  // Close on outside click
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [open]);
+
+  // Filter exercises
+  const filtered = useMemo(() => {
+    const q = query.toLowerCase().trim();
+    if (!q) {
+      // Show featured exercises at top, then rest alphabetically
+      const featuredSet = new Set(FEATURED_EXERCISES.map(f => f.toLowerCase()));
+      const featured = FEATURED_EXERCISES
+        .map(name => library.find(ex => ex.name.toLowerCase() === name.toLowerCase()))
+        .filter(Boolean) as Exercise[];
+      return featured.slice(0, 15);
+    }
+    return library
+      .filter(ex =>
+        ex.name.toLowerCase().includes(q) ||
+        ex.primaryMuscles?.some(m => m.toLowerCase().includes(q)) ||
+        (ex.equipment || '').toLowerCase().includes(q)
+      )
+      .slice(0, 30);
+  }, [library, query]);
+
+  const handleSelect = (ex: Exercise) => {
+    onChange(titleCase(ex.name));
+    setQuery('');
+    setOpen(false);
+  };
+
+  return (
+    <div className="relative flex-1" ref={containerRef}>
+      <button
+        type="button"
+        className="w-full flex items-center justify-between rounded-md border border-border bg-background px-3 py-2 text-xs font-display tracking-wider"
+        onClick={() => {
+          setOpen(!open);
+          setTimeout(() => inputRef.current?.focus(), 100);
+        }}
+      >
+        <span className="truncate">{value.toUpperCase()}</span>
+        <ChevronDown className="w-3.5 h-3.5 ml-1 text-muted-foreground flex-shrink-0" />
+      </button>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, y: -4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -4 }}
+            transition={{ duration: 0.15 }}
+            className="absolute z-50 mt-1 left-0 right-0 bg-card border border-border rounded-lg shadow-xl overflow-hidden"
+            style={{ maxHeight: '60vh' }}
+          >
+            {/* Search input */}
+            <div className="flex items-center gap-2 p-2 border-b border-border">
+              <Search className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />
+              <input
+                ref={inputRef}
+                type="text"
+                placeholder="Search 1500+ exercises..."
+                value={query}
+                onChange={e => setQuery(e.target.value)}
+                className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none font-display tracking-wider"
+                autoComplete="off"
+              />
+              {query && (
+                <button onClick={() => setQuery('')} className="text-muted-foreground hover:text-foreground">
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
+
+            {/* Results */}
+            <div className="overflow-y-auto" style={{ maxHeight: 'calc(60vh - 44px)' }}>
+              {!query && (
+                <p className="text-[9px] text-muted-foreground font-display tracking-widest px-3 pt-2 pb-1">
+                  FEATURED
+                </p>
+              )}
+              {filtered.length === 0 ? (
+                <div className="p-4 text-center text-muted-foreground text-xs font-display">
+                  No exercises found
+                </div>
+              ) : (
+                filtered.map(ex => {
+                  const isActive = titleCase(ex.name) === value;
+                  return (
+                    <button
+                      key={ex.id}
+                      type="button"
+                      className={cn(
+                        'w-full flex items-center gap-2 px-3 py-2 text-left text-xs font-display tracking-wider transition-colors',
+                        isActive
+                          ? 'bg-primary text-primary-foreground'
+                          : 'text-foreground hover:bg-primary/10',
+                      )}
+                      onClick={() => handleSelect(ex)}
+                    >
+                      {isActive && <span className="text-primary-foreground">✓</span>}
+                      <span className="truncate">{titleCase(ex.name)}</span>
+                      {ex.primaryMuscles?.[0] && (
+                        <span className="ml-auto text-[9px] opacity-50 flex-shrink-0">
+                          {ex.primaryMuscles[0].toUpperCase()}
+                        </span>
+                      )}
+                    </button>
+                  );
+                })
+              )}
+
+              {query && filtered.length > 0 && (
+                <p className="text-[9px] text-muted-foreground text-center py-2 font-display tracking-wider">
+                  {filtered.length < 30 ? `${filtered.length} results` : '30+ results — refine search'}
+                </p>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
 
 /* ═══ Rank badge component ═══ */
 function RankBadge({ rank, percentile }: { rank: number; percentile: number }) {
@@ -87,7 +263,7 @@ function RankBadge({ rank, percentile }: { rank: number; percentile: number }) {
       </div>
     );
   }
-  // Platinum tier (top 1%) — must check before diamond
+  // Platinum tier (top 1%)
   if (percentile >= 99) {
     return (
       <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-slate-200/10 border border-slate-300/30">
@@ -128,8 +304,8 @@ function formatRunTime(seconds: number): string {
 /* ═══ MAIN COMPONENT ═══ */
 export function PBLeaderboard() {
   const { user } = useAuth();
-  const [mode, setMode] = useState<LeaderboardMode>('lifts');
-  const [exercise, setExercise] = useState<string>(BIG_LIFTS[0]);
+  const [mode, setMode] = useState<LeaderboardMode>('exercises');
+  const [exercise, setExercise] = useState<string>('Bench Press');
   const [distance, setDistance] = useState<string>(RUN_DISTANCES[1]);
   const [ageCategory, setAgeCategory] = useState<string>('all');
   const [sexFilter, setSexFilter] = useState<string>('all');
@@ -143,8 +319,9 @@ export function PBLeaderboard() {
   const loadLeaderboard = async () => {
     setLoading(true);
     try {
-      if (mode === 'lifts') {
-        // Query the pb_leaderboard view
+      if (mode === 'exercises') {
+        // Query the pb_leaderboard view — works for ANY exercise name
+        // The view is built from exercise_logs, so any exercise users have logged will appear
         let query = supabase
           .from('pb_leaderboard')
           .select('*')
@@ -250,12 +427,12 @@ export function PBLeaderboard() {
       {/* Mode toggle */}
       <div className="flex gap-2">
         <Button
-          variant={mode === 'lifts' ? 'default' : 'outline'}
+          variant={mode === 'exercises' ? 'default' : 'outline'}
           size="sm"
           className="flex-1 font-display tracking-wider"
-          onClick={() => { setMode('lifts'); setExercise(BIG_LIFTS[0]); }}
+          onClick={() => { setMode('exercises'); setExercise('Bench Press'); }}
         >
-          <Dumbbell className="w-4 h-4 mr-2" /> LIFTS
+          <Dumbbell className="w-4 h-4 mr-2" /> EXERCISES
         </Button>
         <Button
           variant={mode === 'runs' ? 'default' : 'outline'}
@@ -263,36 +440,30 @@ export function PBLeaderboard() {
           className="flex-1 font-display tracking-wider"
           onClick={() => { setMode('runs'); setDistance(RUN_DISTANCES[1]); }}
         >
-          <Footprints className="w-4 h-4 mr-2" /> RUNS
+          <Activity className="w-4 h-4 mr-2" /> RUNS
         </Button>
       </div>
 
       {/* Filters */}
       <Card className="border-border p-3 bg-card">
         <div className="flex gap-2">
-          {/* Exercise / distance selector */}
-          <Select
-            value={mode === 'lifts' ? exercise : distance}
-            onValueChange={(v) => mode === 'lifts' ? setExercise(v) : setDistance(v)}
-          >
-            <SelectTrigger className="flex-1 font-display tracking-wider text-xs">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {mode === 'lifts'
-                ? BIG_LIFTS.map(l => (
-                    <SelectItem key={l} value={l} className="font-display tracking-wider text-xs">
-                      {l.toUpperCase()}
-                    </SelectItem>
-                  ))
-                : RUN_DISTANCES.map(d => (
-                    <SelectItem key={d} value={d} className="font-display tracking-wider text-xs">
-                      {RUN_DISTANCE_LABELS[d] || d.toUpperCase()}
-                    </SelectItem>
-                  ))
-              }
-            </SelectContent>
-          </Select>
+          {/* Exercise selector (searchable) or distance selector */}
+          {mode === 'exercises' ? (
+            <ExercisePicker value={exercise} onChange={setExercise} />
+          ) : (
+            <Select value={distance} onValueChange={setDistance}>
+              <SelectTrigger className="flex-1 font-display tracking-wider text-xs">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {RUN_DISTANCES.map(d => (
+                  <SelectItem key={d} value={d} className="font-display tracking-wider text-xs">
+                    {RUN_DISTANCE_LABELS[d] || d.toUpperCase()}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
 
           {/* Age category */}
           <Select value={ageCategory} onValueChange={setAgeCategory}>
@@ -339,7 +510,7 @@ export function PBLeaderboard() {
                 </div>
               </div>
               <span className="font-display text-lg text-primary">
-                {mode === 'lifts' ? formatLiftValue(myEntry.value) : formatRunTime(myEntry.value)}
+                {mode === 'exercises' ? formatLiftValue(myEntry.value) : formatRunTime(myEntry.value)}
               </span>
             </div>
             {myEntry.percentile >= 95 && (
@@ -369,8 +540,16 @@ export function PBLeaderboard() {
       ) : entries.length === 0 ? (
         <Card className="border-border p-8 bg-card text-center">
           <TrendingUp className="w-10 h-10 text-muted-foreground mx-auto mb-3 opacity-30" />
-          <p className="text-muted-foreground font-display tracking-wider text-sm">
-            No entries yet for this category
+          <p className="text-foreground font-display tracking-wider text-sm mb-1">
+            NO ENTRIES YET FOR {mode === 'exercises' ? exercise.toUpperCase() : (RUN_DISTANCE_LABELS[distance] || distance).toUpperCase()}
+          </p>
+          <p className="text-muted-foreground text-xs">
+            {mode === 'exercises'
+              ? 'Log this exercise in a workout to be the first on the leaderboard!'
+              : 'Complete a run to be the first on the leaderboard!'}
+          </p>
+          <p className="text-primary/60 text-[10px] mt-3 font-display tracking-wider">
+            Rankings auto-generate when users log PBs
           </p>
         </Card>
       ) : (
@@ -424,7 +603,7 @@ export function PBLeaderboard() {
                         ? 'text-yellow-400'
                         : 'text-foreground',
                 )}>
-                  {mode === 'lifts' ? formatLiftValue(entry.value) : formatRunTime(entry.value)}
+                  {mode === 'exercises' ? formatLiftValue(entry.value) : formatRunTime(entry.value)}
                 </span>
               </Card>
             </motion.div>
