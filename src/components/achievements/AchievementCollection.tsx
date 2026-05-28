@@ -10,6 +10,7 @@ import {
   Trophy, Dumbbell, Footprints, Crown, Diamond, Sparkles,
   Shield, Medal, Award, Globe, TrendingUp, X, Share2,
   Download, Trash2, Loader2, ChevronLeft, ChevronRight,
+  ChevronDown,
 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -499,7 +500,7 @@ export function AchievementCollection() {
         )}
       </div>
 
-      {/* Card grid */}
+      {/* Card library — expanding rarity sections */}
       {filteredCards.length === 0 ? (
         <Card className="border-border p-8 bg-card text-center">
           <Trophy className="w-12 h-12 text-muted-foreground mx-auto mb-3 opacity-30" />
@@ -510,29 +511,29 @@ export function AchievementCollection() {
               : 'No achievement cards yet — keep grinding!'}
           </p>
         </Card>
-      ) : (
+      ) : filterRarity !== 'all' ? (
+        /* When filtered to single rarity, show flat grid */
         <motion.div className="grid grid-cols-2 gap-3 sm:grid-cols-3" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
           {filteredCards.map((card, i) => (
-            <motion.div
-              key={card.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.03 }}
-              className="relative group"
-            >
+            <motion.div key={card.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.03 }} className="relative group">
               <AchievementCardStatic card={card} size="sm" onClick={() => setSelectedIndex(i)} />
-              {/* Quick share overlay */}
               <div className="absolute bottom-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                <button
-                  onClick={(e) => { e.stopPropagation(); setShareCard(card); }}
-                  className="w-7 h-7 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center border border-white/10 hover:border-white/30 transition-colors"
-                >
+                <button onClick={(e) => { e.stopPropagation(); setShareCard(card); }}
+                  className="w-7 h-7 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center border border-white/10 hover:border-white/30 transition-colors">
                   <Share2 className="w-3 h-3 text-white/70" />
                 </button>
               </div>
             </motion.div>
           ))}
         </motion.div>
+      ) : (
+        /* Expanding rarity dropdowns */
+        <RarityDropdownGrid
+          cards={filteredCards}
+          onSelectCard={(card) => setSelectedIndex(filteredCards.findIndex(c => c.id === card.id))}
+          onShareCard={(card) => setShareCard(card)}
+        />
       )}
 
       {/* Full-screen viewer */}
@@ -571,6 +572,107 @@ export function AchievementCollection() {
           />
         )}
       </AnimatePresence>
+    </div>
+  );
+}
+
+/* ═══ Expanding rarity dropdown sections ═══ */
+function RarityDropdownGrid({
+  cards,
+  onSelectCard,
+  onShareCard,
+}: {
+  cards: AchievementCard[];
+  onSelectCard: (card: AchievementCard) => void;
+  onShareCard: (card: AchievementCard) => void;
+}) {
+  const [expanded, setExpanded] = useState<Record<AchievementRarity, boolean>>({
+    platinum: true, diamond: true, gold: true, silver: false, bronze: false,
+  });
+
+  const grouped = useMemo(() => {
+    const groups: Record<AchievementRarity, AchievementCard[]> = {
+      platinum: [], diamond: [], gold: [], silver: [], bronze: [],
+    };
+    cards.forEach(card => {
+      if (groups[card.rarity]) groups[card.rarity].push(card);
+    });
+    return groups;
+  }, [cards]);
+
+  const rarityOrder: AchievementRarity[] = ['platinum', 'diamond', 'gold', 'silver', 'bronze'];
+
+  return (
+    <div className="space-y-2">
+      {rarityOrder.map(rarity => {
+        const rarityCards = grouped[rarity];
+        if (rarityCards.length === 0) return null;
+        const cfg = RARITY_CONFIG[rarity];
+        const isExpanded = expanded[rarity];
+
+        return (
+          <motion.div key={rarity} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+            <Card className={cn('border overflow-hidden transition-all', cfg.borderClass, cfg.bgClass)}>
+              {/* Dropdown header */}
+              <button
+                onClick={() => setExpanded(prev => ({ ...prev, [rarity]: !prev[rarity] }))}
+                className="w-full flex items-center justify-between p-3 hover:bg-white/5 transition-colors"
+              >
+                <div className="flex items-center gap-2.5">
+                  <cfg.icon className={cn('w-5 h-5', cfg.textColor)} />
+                  <span className={cn('font-display tracking-wider text-sm', cfg.textColor)}>
+                    {cfg.label.toUpperCase()}
+                  </span>
+                  <span className={cn(
+                    'px-2 py-0.5 rounded-full text-[10px] font-display tracking-wider',
+                    cfg.textColor, 'bg-white/5 border', cfg.borderClass,
+                  )}>
+                    {rarityCards.length}
+                  </span>
+                </div>
+                <motion.div animate={{ rotate: isExpanded ? 180 : 0 }} transition={{ duration: 0.2 }}>
+                  <ChevronDown className={cn('w-4 h-4', cfg.textColor, 'opacity-60')} />
+                </motion.div>
+              </button>
+
+              {/* Expanding card grid */}
+              <AnimatePresence initial={false}>
+                {isExpanded && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.25, ease: 'easeInOut' }}
+                    className="overflow-hidden"
+                  >
+                    <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 p-3 pt-0">
+                      {rarityCards.map((card, i) => (
+                        <motion.div
+                          key={card.id}
+                          initial={{ opacity: 0, scale: 0.9 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ delay: i * 0.04 }}
+                          className="relative group"
+                        >
+                          <AchievementCardStatic card={card} size="sm" onClick={() => onSelectCard(card)} />
+                          <div className="absolute bottom-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button
+                              onClick={(e) => { e.stopPropagation(); onShareCard(card); }}
+                              className="w-7 h-7 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center border border-white/10 hover:border-white/30 transition-colors"
+                            >
+                              <Share2 className="w-3 h-3 text-white/70" />
+                            </button>
+                          </div>
+                        </motion.div>
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </Card>
+          </motion.div>
+        );
+      })}
     </div>
   );
 }
