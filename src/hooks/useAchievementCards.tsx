@@ -89,8 +89,15 @@ export function useAchievementCards() {
       rawCards = (cardsResult.data || []) as AchievementCard[];
     }
 
-    // Stamp owner name + gender onto every card
-    setCards(rawCards.map(c => ({ ...c, owner_display_name: ownerName, owner_gender: ownerGender })));
+    // Stamp owner name + gender onto every card, and map DB columns to component fields
+    setCards(rawCards.map(c => ({
+      ...c,
+      owner_display_name: ownerName,
+      owner_gender: ownerGender,
+      // Map DB column names → component field names
+      pb_value: c.pb_value ?? c.record_value,
+      pb_unit: c.pb_unit ?? c.record_unit,
+    })));
     setLoading(false);
   }, [user]);
 
