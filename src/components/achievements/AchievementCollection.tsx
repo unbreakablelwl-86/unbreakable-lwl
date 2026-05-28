@@ -471,6 +471,60 @@ export function AchievementCollection() {
         </Card>
       </motion.div>
 
+      {/* ═══ HERO EXPLAINER — Diamond & Platinum tiers ═══ */}
+      <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
+        <Card className="border-border bg-card overflow-hidden">
+          {/* Top accent bar */}
+          <div className="h-1" style={{ background: 'linear-gradient(90deg, #8b5cf6 0%, #e2e8f0 50%, #8b5cf6 100%)' }} />
+          <div className="p-4 space-y-3">
+            <div className="flex items-center gap-2">
+              <Globe className="w-4 h-4 text-violet-400" />
+              <h4 className="font-display text-sm tracking-wider text-foreground">HOW RARE IS YOUR CARD?</h4>
+            </div>
+            <p className="text-[11px] text-muted-foreground leading-relaxed">
+              Every PB you set earns a card. Your card's rarity is determined by how your lift compares to athletes
+              of the <span className="text-foreground font-semibold">same age and sex</span> worldwide.
+            </p>
+            <div className="space-y-2">
+              {/* Bronze/Silver/Gold */}
+              <div className="flex items-start gap-2.5">
+                <div className="flex gap-1 mt-0.5 flex-shrink-0">
+                  <Award className="w-3.5 h-3.5 text-amber-600" />
+                  <Medal className="w-3.5 h-3.5 text-gray-300" />
+                  <Crown className="w-3.5 h-3.5 text-yellow-400" />
+                </div>
+                <p className="text-[10px] text-muted-foreground leading-relaxed">
+                  <span className="text-amber-600 font-display">BRONZE</span> · <span className="text-gray-300 font-display">SILVER</span> · <span className="text-yellow-400 font-display">GOLD</span> —
+                  Earned on every PB. Rank up as you beat your own records.
+                </p>
+              </div>
+              {/* Diamond */}
+              <div className="flex items-start gap-2.5 rounded-lg p-2 -mx-1"
+                style={{ background: 'linear-gradient(135deg, rgba(139,92,246,0.06), rgba(139,92,246,0.02))' }}>
+                <Diamond className="w-4 h-4 text-violet-400 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-[10px] leading-relaxed">
+                    <span className="text-violet-400 font-display tracking-wider">DIAMOND</span>
+                    <span className="text-muted-foreground"> — Top 5% in your age &amp; sex bracket globally. Prismatic holographic finish. Only the elite unlock these.</span>
+                  </p>
+                </div>
+              </div>
+              {/* Platinum */}
+              <div className="flex items-start gap-2.5 rounded-lg p-2 -mx-1"
+                style={{ background: 'linear-gradient(135deg, rgba(226,232,240,0.08), rgba(226,232,240,0.02))', border: '1px solid rgba(226,232,240,0.08)' }}>
+                <Sparkles className="w-4 h-4 text-slate-200 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-[10px] leading-relaxed">
+                    <span className="text-slate-200 font-display tracking-wider">PLATINUM</span>
+                    <span className="text-muted-foreground"> — Top 1%. Numbered edition. Brushed chrome finish. The rarest card in the game. One lift. One moment. Generational.</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Card>
+      </motion.div>
+
       {/* Tabs — 5 categories: All / Programmes / Strength / Cardio / Global */}
       <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as TabType)}>
         <TabsList className="grid w-full grid-cols-5 bg-background border border-border">

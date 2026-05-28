@@ -89,15 +89,33 @@ export function useAchievementCards() {
       rawCards = (cardsResult.data || []) as AchievementCard[];
     }
 
-    // Stamp owner name + gender onto every card, and map DB columns to component fields
-    setCards(rawCards.map(c => ({
+    // Map DB column names → component field names, derive missing fields
+    const CATEGORY_TO_ACTIVITY: Record<string, string> = {
+      'Strength': 'lift', 'Power': 'lift', 'Cardio': 'run',
+    };
+    const mapped = rawCards.map(c => ({
       ...c,
       owner_display_name: ownerName,
       owner_gender: ownerGender,
-      // Map DB column names → component field names
       pb_value: c.pb_value ?? c.record_value,
       pb_unit: c.pb_unit ?? c.record_unit,
-    })));
+      activity_category: c.activity_category || (CATEGORY_TO_ACTIVITY[c.category_label || ''] as any) || 'lift',
+    }));
+
+    // Derive pb_rank within each exercise group (1 = best, by record_value desc)
+    const exerciseGroups: Record<string, typeof mapped> = {};
+    mapped.forEach(c => {
+      if (c.card_type !== 'pb_personal') return;
+      const key = c.exercise_name || 'Unknown';
+      if (!exerciseGroups[key]) exerciseGroups[key] = [];
+      exerciseGroups[key].push(c);
+    });
+    Object.values(exerciseGroups).forEach(group => {
+      group.sort((a, b) => (Number(b.pb_value) || 0) - (Number(a.pb_value) || 0));
+      group.forEach((c, i) => { c.pb_rank = i + 1; });
+    });
+
+    setCards(mapped);
     setLoading(false);
   }, [user]);
 
