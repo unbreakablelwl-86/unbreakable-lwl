@@ -583,8 +583,28 @@ export function AchievementCollection() {
             </div>
           </div>
 
-          {/* Rarity breakdown — neon glow per tier */}
-          <div className="flex justify-between gap-2">
+          {/* Rarity breakdown — neon glow per tier + ALL filter */}
+          <div className="flex justify-between gap-1.5">
+            {/* ALL button */}
+            <button
+              onClick={() => setFilterRarity('all')}
+              className={cn(
+                'flex-1 flex flex-col items-center gap-1 py-2 px-1 rounded-lg border transition-all',
+                filterRarity === 'all'
+                  ? 'border-[#FF5500]/60 bg-[#FF5500]/10'
+                  : 'border-border/40 hover:bg-muted/30',
+              )}
+              style={filterRarity === 'all' ? { boxShadow: '0 0 8px rgba(255,85,0,0.3)' } : undefined}
+            >
+              <Trophy className="w-4 h-4 text-primary" />
+              <span
+                className="font-display text-lg"
+                style={filterRarity === 'all' ? { color: '#FF5500', textShadow: '0 0 6px rgba(255,85,0,0.4)' } : { color: '#FF5500' }}
+              >
+                {counts.total}
+              </span>
+              <span className="text-[9px] text-muted-foreground uppercase tracking-wider">ALL</span>
+            </button>
             {(['platinum', 'diamond', 'gold', 'silver', 'bronze'] as AchievementRarity[]).map(r => {
               const glowCfg = RARITY_GLOW[r];
               const count = counts[r];
@@ -592,10 +612,10 @@ export function AchievementCollection() {
               return (
                 <button
                   key={r}
-                  onClick={() => setFilterRarity(filterRarity === r ? 'all' : r)}
+                  onClick={() => setFilterRarity(isActive ? 'all' : r)}
                   className={cn(
                     'flex-1 flex flex-col items-center gap-1 py-2 px-1 rounded-lg border transition-all',
-                    isActive ? glowCfg.borderClass + ' ' + glowCfg.bgClass : 'border-transparent hover:bg-muted/30',
+                    isActive ? glowCfg.borderClass + ' ' + glowCfg.bgClass : 'border-border/40 hover:bg-muted/30',
                   )}
                   style={isActive ? { boxShadow: glowCfg.boxShadow } : undefined}
                 >

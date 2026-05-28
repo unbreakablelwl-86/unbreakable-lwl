@@ -375,6 +375,35 @@ function PlatinumChrome() {
           animation: 'achPlatChrome 7s ease-in-out infinite 2s',
         }}
       />
+      {/* Platinum dumbbell sparkle watermark */}
+      <div className="absolute inset-0 flex items-center justify-center" style={{ opacity: 0.06 }}>
+        <svg viewBox="0 0 200 60" className="w-3/4" fill="none">
+          {/* Left weight plates */}
+          <rect x="10" y="8" width="18" height="44" rx="4" stroke="rgba(229,228,226,0.8)" strokeWidth="1.5" />
+          <rect x="22" y="12" width="14" height="36" rx="3" stroke="rgba(229,228,226,0.6)" strokeWidth="1.2" />
+          {/* Bar */}
+          <rect x="36" y="26" width="128" height="8" rx="4" fill="rgba(229,228,226,0.3)" />
+          {/* Right weight plates */}
+          <rect x="164" y="12" width="14" height="36" rx="3" stroke="rgba(229,228,226,0.6)" strokeWidth="1.2" />
+          <rect x="172" y="8" width="18" height="44" rx="4" stroke="rgba(229,228,226,0.8)" strokeWidth="1.5" />
+          {/* Sparkle dots */}
+          <circle cx="50" cy="20" r="1.5" fill="rgba(255,255,255,0.8)">
+            <animate attributeName="opacity" values="0.2;1;0.2" dur="2s" repeatCount="indefinite" />
+          </circle>
+          <circle cx="100" cy="15" r="1" fill="rgba(255,255,255,0.6)">
+            <animate attributeName="opacity" values="0.3;1;0.3" dur="3s" repeatCount="indefinite" begin="0.5s" />
+          </circle>
+          <circle cx="150" cy="22" r="1.5" fill="rgba(255,255,255,0.8)">
+            <animate attributeName="opacity" values="0.2;1;0.2" dur="2.5s" repeatCount="indefinite" begin="1s" />
+          </circle>
+          <circle cx="75" cy="45" r="1" fill="rgba(255,255,255,0.5)">
+            <animate attributeName="opacity" values="0.1;0.8;0.1" dur="2.8s" repeatCount="indefinite" begin="0.3s" />
+          </circle>
+          <circle cx="125" cy="42" r="1.2" fill="rgba(255,255,255,0.7)">
+            <animate attributeName="opacity" values="0.2;0.9;0.2" dur="2.2s" repeatCount="indefinite" begin="0.8s" />
+          </circle>
+        </svg>
+      </div>
     </div>
   );
 }
