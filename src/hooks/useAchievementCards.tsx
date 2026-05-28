@@ -38,6 +38,12 @@ export interface AchievementCard {
   owner_display_name?: string;
   owner_gender?: string | null;
   earned_at: string;
+  // FIFA-standard fields
+  overall_rating?: number;
+  athlete_stats?: { str: number; pwr: number; spd: number; end: number; agi: number; rec: number };
+  bio_line?: string;
+  card_number?: string;
+  category_label?: string;
 }
 
 export interface AchievementCounts {

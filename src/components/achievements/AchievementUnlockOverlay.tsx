@@ -3,7 +3,7 @@
  * Triggered by programme completion, new PB, or global ranking milestone.
  * Same visual standard as UN-TUNES pack opening.
  */
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import {
@@ -13,6 +13,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { AchievementCardReveal } from '@/components/achievements/AchievementCardReveal';
 import { U86Certificate } from '@/components/achievements/U86Certificate';
+import { usePlayer } from '@/hooks/useUnTunes';
 import type { AchievementCard } from '@/hooks/useAchievementCards';
 
 interface AchievementUnlockOverlayProps {
@@ -39,6 +40,37 @@ export function AchievementUnlockOverlay({ cards, onComplete }: AchievementUnloc
   const [currentIndex, setCurrentIndex] = useState(-1); // -1 = intro screen
   const [isVisible, setIsVisible] = useState(true);
   const [showU86Cert, setShowU86Cert] = useState(false);
+  const musicStartedRef = useRef(false);
+
+  // Play random Un-Tunes track during card reveal (same as pack opening)
+  const player = usePlayer();
+
+  useEffect(() => {
+    // Start music when user taps "REVEAL CARDS" (currentIndex goes from -1 to 0)
+    if (currentIndex === 0 && !musicStartedRef.current && player) {
+      musicStartedRef.current = true;
+      // Pick a random track from the queue and play it
+      if (player.queue && player.queue.length > 0) {
+        const randomTrack = player.queue[Math.floor(Math.random() * player.queue.length)];
+        player.playTrack(randomTrack);
+      } else if (player.currentTrack) {
+        // If nothing in queue, just play what's loaded
+        player.playTrack(player.currentTrack);
+      }
+      // Hide the mini player pill so it doesn't overlap the ceremony
+      player.setHidden(true);
+    }
+  }, [currentIndex]);
+
+  // Stop music + restore mini player when overlay closes
+  useEffect(() => {
+    return () => {
+      if (musicStartedRef.current && player) {
+        player.stop();
+        player.setHidden(false);
+      }
+    };
+  }, []);
 
   if (!isVisible || cards.length === 0) return null;
 

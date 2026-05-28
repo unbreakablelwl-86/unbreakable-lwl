@@ -13,6 +13,18 @@ import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
 import type { ProgrammeType, ActivityCategory } from '@/hooks/useAchievementCards';
 
+/* ═══ Generate AI bio line for a card (fire-and-forget) ═══ */
+async function generateCardBio(cardId: string, exerciseName: string, pbValue: number, pbUnit: string) {
+  try {
+    await supabase.functions.invoke('generate-pb-bio', {
+      body: { card_id: cardId, exercise_name: exerciseName, pb_value: pbValue, pb_unit: pbUnit },
+    });
+  } catch (err) {
+    // Non-critical — card works without bio
+    console.warn('Bio generation failed (non-critical):', err);
+  }
+}
+
 /* ═══ Types ═══ */
 interface LiftResult {
   exerciseName: string;
@@ -101,6 +113,9 @@ export function useAchievementIntegration() {
             toast.success(`🏋️ New ${rarity.toUpperCase()} PB Card: ${lift.exerciseName} — ${e1rm}kg e1RM`, {
               duration: 5000,
             });
+
+            // Generate AI bio line (fire-and-forget, non-blocking)
+            generateCardBio(cardId, lift.exerciseName, e1rm, 'kg');
 
             // Also check global ranking
             await supabase.rpc('check_global_pb_ranking', {

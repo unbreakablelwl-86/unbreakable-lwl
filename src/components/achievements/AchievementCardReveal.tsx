@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import type { AchievementCard, AchievementRarity } from '@/hooks/useAchievementCards';
+import { STAT_LABELS, STAT_ORDER } from '@/hooks/useAthleteStats';
 
 /* ═══════════════════════════════════════════════════ */
 /*  RARITY VISUAL CONFIG                              */
@@ -1237,62 +1238,48 @@ export function AchievementCardReveal({
                     );
                   })()}
 
-                  {/* PB Value display — centered big number (replaces icon for PB cards) */}
-                  {(isPBPersonal || isPBGlobal) && card.pb_value && (
-                    <motion.div
-                      className="absolute inset-0 flex items-center justify-center"
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      transition={{ delay: 0.3, type: 'spring' }}
-                    >
-                      <span
-                        className={cn(
-                          'font-display text-4xl tracking-wider',
-                          config.textColor,
-                        )}
-                        style={{
-                          textShadow: `0 0 24px ${config.accentHex}60`,
-                        }}
-                      >
-                        {formatPBValue(card.pb_value, card.pb_unit || 'kg')}
-                      </span>
-                    </motion.div>
-                  )}
+                  {/* ═══ FIFA ULTIMATE TEAM CARD LAYOUT ═══ */}
 
-                  {/* Global ranking badge */}
-                  {isPBGlobal && card.global_rank && (
-                    <motion.div
-                      className="absolute top-16 left-0 right-0 flex justify-center"
-                      initial={{ y: -20, opacity: 0 }}
-                      animate={{ y: 0, opacity: 1 }}
-                      transition={{ delay: 0.4 }}
-                    >
-                      <div
-                        className="flex items-center gap-2 px-3 py-1.5 rounded-full"
-                        style={{
-                          background: `${config.accentHex}15`,
-                          border: `1px solid ${config.accentHex}30`,
-                        }}
-                      >
-                        <Globe className="w-4 h-4" style={{ color: config.accentHex }} />
-                        <span className={cn('text-sm font-display tracking-wider', config.textColor)}>
-                          #{card.global_rank} OF {card.total_in_category}
-                        </span>
-                      </div>
-                    </motion.div>
-                  )}
-
-                  {/* Rarity effects */}
+                  {/* Rarity effects (render first, behind everything) */}
                   {card.rarity === 'bronze' && <BronzeShimmer />}
                   {card.rarity === 'silver' && <SilverShimmer />}
                   {card.rarity === 'gold' && <GoldShimmer />}
                   {card.rarity === 'diamond' && <DiamondHolo />}
                   {card.rarity === 'platinum' && <PlatinumChrome />}
 
-                  {/* Rarity badge top-right */}
+                  {/* ── TOP-LEFT: Overall Rating (FIFA-style big number) ── */}
+                  {(isPBPersonal || isPBGlobal) && (
+                    <motion.div
+                      className="absolute top-3 left-3 z-20"
+                      initial={{ scale: 0, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ delay: 0.2, type: 'spring', damping: 15 }}
+                    >
+                      <div className="flex flex-col items-center">
+                        <span
+                          className="font-display text-3xl leading-none tracking-tight"
+                          style={{
+                            color: config.accentHex,
+                            textShadow: `0 0 20px ${config.accentHex}60, 0 2px 4px rgba(0,0,0,0.5)`,
+                            fontWeight: 900,
+                          }}
+                        >
+                          {card.overall_rating || 0}
+                        </span>
+                        <span
+                          className="text-[7px] font-display tracking-[0.2em] uppercase opacity-60 mt-0.5"
+                          style={{ color: config.accentHex }}
+                        >
+                          OVERALL
+                        </span>
+                      </div>
+                    </motion.div>
+                  )}
+
+                  {/* ── TOP-RIGHT: Rarity badge ── */}
                   <motion.div
                     className={cn(
-                      'absolute top-3 right-3 px-2.5 py-1 rounded-full border text-[10px] font-display tracking-widest flex items-center gap-1',
+                      'absolute top-3 right-3 px-2.5 py-1 rounded-full border text-[10px] font-display tracking-widest flex items-center gap-1 z-20',
                       config.borderColor,
                       config.textColor,
                     )}
@@ -1312,118 +1299,207 @@ export function AchievementCardReveal({
                     {config.label}
                   </motion.div>
 
-                  {/* ═══ Pokémon-style card info panel at bottom ═══ */}
-                  <div className="absolute bottom-0 left-0 right-0 p-3" style={{
-                    background: 'linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.8) 60%, transparent 100%)',
-                  }}>
-                    {/* Trainer tag */}
-                    {card.owner_display_name && (
-                      <motion.p
-                        className={cn('text-[9px] font-mono tracking-widest uppercase opacity-50 mb-0.5', config.textColor)}
-                        initial={{ y: 20, opacity: 0 }}
-                        animate={{ y: 0, opacity: 0.5 }}
-                        transition={{ delay: 0.15 }}
+                  {/* ── CATEGORY BADGE (below rating) ── */}
+                  {(isPBPersonal || isPBGlobal) && (
+                    <motion.div
+                      className="absolute top-[52px] left-3 z-20"
+                      initial={{ x: -10, opacity: 0 }}
+                      animate={{ x: 0, opacity: 1 }}
+                      transition={{ delay: 0.35 }}
+                    >
+                      <div
+                        className="px-2 py-0.5 rounded text-[8px] font-display tracking-[0.15em] uppercase"
+                        style={{
+                          background: `${config.accentHex}18`,
+                          border: `1px solid ${config.accentHex}25`,
+                          color: config.accentHex,
+                        }}
                       >
-                        ★ {card.owner_display_name}
-                      </motion.p>
-                    )}
-                    {/* Exercise name */}
+                        {card.category_label || (['run', 'cycle', 'row', 'swim'].includes(card.activity_category || '') ? 'CARDIO' : 'STRENGTH')}
+                      </div>
+                    </motion.div>
+                  )}
+
+                  {/* ── GLOBAL RANKING BADGE (below category) ── */}
+                  {isPBGlobal && card.global_rank && (
+                    <motion.div
+                      className="absolute top-[74px] left-3 z-20"
+                      initial={{ x: -10, opacity: 0 }}
+                      animate={{ x: 0, opacity: 1 }}
+                      transition={{ delay: 0.4 }}
+                    >
+                      <div
+                        className="flex items-center gap-1 px-2 py-0.5 rounded"
+                        style={{
+                          background: `${config.accentHex}12`,
+                          border: `1px solid ${config.accentHex}20`,
+                        }}
+                      >
+                        <Globe className="w-3 h-3" style={{ color: config.accentHex }} />
+                        <span className="text-[8px] font-display tracking-wider" style={{ color: config.accentHex }}>
+                          #{card.global_rank} · {card.age_category}
+                        </span>
+                      </div>
+                    </motion.div>
+                  )}
+
+                  {/* ── CARD NUMBER (top-right, below rarity) ── */}
+                  {card.card_number && (
+                    <motion.div
+                      className="absolute top-[38px] right-3 z-20"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 0.5 }}
+                      transition={{ delay: 0.45 }}
+                    >
+                      <span className="text-[8px] font-mono tracking-wider text-white/40">
+                        {card.card_number}
+                        {card.rarity === 'platinum' && card.edition_number ? ` · ED.${card.edition_number}` : ''}
+                      </span>
+                    </motion.div>
+                  )}
+
+                  {/* ═══ BOTTOM INFO PANEL — FIFA-style with stats ═══ */}
+                  <div className="absolute bottom-0 left-0 right-0 p-3 z-10" style={{
+                    background: 'linear-gradient(to top, rgba(0,0,0,0.97) 0%, rgba(0,0,0,0.92) 35%, rgba(0,0,0,0.7) 70%, transparent 100%)',
+                  }}>
+                    {/* ── ATHLETE NAME (Barlow Condensed 900, large) ── */}
                     <motion.h3
-                      className={cn('font-display text-lg tracking-wider uppercase truncate', config.textColor)}
-                      style={{ textShadow: `0 0 12px ${config.accentHex}50` }}
+                      className="font-display tracking-wider uppercase truncate leading-tight"
+                      style={{
+                        fontSize: '20px',
+                        fontWeight: 900,
+                        color: 'white',
+                        textShadow: `0 0 16px ${config.accentHex}50, 0 2px 4px rgba(0,0,0,0.6)`,
+                      }}
                       initial={{ y: 20, opacity: 0 }}
                       animate={{ y: 0, opacity: 1 }}
                       transition={{ delay: 0.2 }}
                     >
-                      {title}
+                      {card.owner_display_name || 'ATHLETE'}
                     </motion.h3>
 
-                    {/* Pokémon-style stats box */}
-                    {(isPBPersonal || isPBGlobal) && card.pb_value && (
-                      <motion.div
-                        className="mt-1.5 rounded-lg p-2"
-                        style={{
-                          background: `${config.accentHex}08`,
-                          border: `1px solid ${config.accentHex}18`,
-                        }}
+                    {/* ── EXERCISE + PB STAT LINE ("Deadlift · 180kg · 28 May 2026") ── */}
+                    {(isPBPersonal || isPBGlobal) && (
+                      <motion.p
+                        className="text-[11px] font-display tracking-wider mt-0.5"
+                        style={{ color: config.accentHex, textShadow: `0 0 8px ${config.accentHex}40` }}
                         initial={{ y: 20, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
-                        transition={{ delay: 0.3 }}
+                        transition={{ delay: 0.25 }}
                       >
-                        {/* Stat rows */}
-                        <div className="space-y-1">
-                          {/* LIFT / DIST value + bar */}
-                          <div className="flex items-center gap-2">
-                            <span className={cn('text-[9px] font-mono uppercase opacity-50 w-8', config.textColor)}>
-                              {card.pb_unit === 'km' || card.pb_unit === 'mi' ? 'DIST' : 'LIFT'}
-                            </span>
-                            <span className={cn('text-sm font-display tracking-wide flex-1', config.textColor)}
-                              style={{ textShadow: `0 0 8px ${config.accentHex}40` }}>
-                              {formatPBValue(card.pb_value, card.pb_unit || 'kg')}
-                            </span>
-                            {/* Power bar */}
-                            <div className="w-16 h-1.5 rounded-full overflow-hidden" style={{ background: `${config.accentHex}15` }}>
-                              <div className="h-full rounded-full" style={{
-                                width: `${Math.min(100, Math.max(15, (card.pb_value / (card.pb_unit === 'kg' ? 300 : card.pb_unit === 'km' ? 42 : 200)) * 100))}%`,
-                                background: `linear-gradient(90deg, ${config.accentHex}60, ${config.accentHex})`,
-                                boxShadow: `0 0 6px ${config.accentHex}40`,
-                              }} />
-                            </div>
-                          </div>
-                          {/* RANK */}
-                          {card.pb_rank && (
-                            <div className="flex items-center gap-2">
-                              <span className={cn('text-[9px] font-mono uppercase opacity-50 w-8', config.textColor)}>RANK</span>
-                              <span className={cn('text-xs font-display', config.textColor)}>
-                                {formatRank(card.pb_rank)}
-                              </span>
-                            </div>
-                          )}
-                          {/* TYPE badge */}
-                          <div className="flex items-center gap-2">
-                            <span className={cn('text-[9px] font-mono uppercase opacity-50 w-8', config.textColor)}>TYPE</span>
-                            <span className={cn(
-                              'text-[9px] font-display tracking-wider px-1.5 py-0.5 rounded',
-                              config.textColor,
-                            )} style={{
-                              background: `${config.accentHex}12`,
-                              border: `1px solid ${config.accentHex}20`,
-                            }}>
-                              {['run', 'cycle', 'row', 'swim'].includes(card.activity_category || '') ? '🏃 CARDIO' : '💪 STRENGTH'}
-                            </span>
-                          </div>
-                        </div>
-                      </motion.div>
+                        {title}
+                        {card.pb_value ? ` · ${formatPBValue(card.pb_value, card.pb_unit || 'kg')}` : ''}
+                        {' · '}
+                        {new Date(card.earned_at).toLocaleDateString('en-GB', {
+                          day: '2-digit', month: 'short', year: 'numeric',
+                        }).toUpperCase()}
+                      </motion.p>
                     )}
 
                     {/* Subtitle for trophies */}
-                    {!isPBPersonal && !isPBGlobal && (
+                    {isProgramme && (
                       <motion.p
-                        className={cn('text-[11px] mt-1 font-display tracking-wider opacity-80', config.textColor)}
+                        className={cn('text-[11px] mt-0.5 font-display tracking-wider opacity-80', config.textColor)}
                         initial={{ y: 20, opacity: 0 }}
                         animate={{ y: 0, opacity: 0.8 }}
-                        transition={{ delay: 0.35 }}
+                        transition={{ delay: 0.25 }}
                       >
                         {subtitle}
                       </motion.p>
                     )}
 
-                    {/* Date stamp */}
+                    {/* ── 6-STAT BAR (STR/PWR/SPD/END/AGI/REC) ── */}
+                    {(isPBPersonal || isPBGlobal) && card.athlete_stats && (
+                      <motion.div
+                        className="mt-2 rounded-lg p-2"
+                        style={{
+                          background: `${config.accentHex}06`,
+                          border: `1px solid ${config.accentHex}15`,
+                        }}
+                        initial={{ y: 20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        transition={{ delay: 0.35 }}
+                      >
+                        <div className="grid grid-cols-3 gap-x-3 gap-y-1.5">
+                          {STAT_ORDER.map((statKey) => {
+                            const statVal = (card.athlete_stats as Record<string, number>)?.[statKey] || 0;
+                            const statInfo = STAT_LABELS[statKey];
+                            return (
+                              <div key={statKey} className="flex items-center gap-1.5">
+                                <span
+                                  className="text-[8px] font-display tracking-wider w-6 shrink-0"
+                                  style={{ color: statInfo.color, opacity: 0.9 }}
+                                >
+                                  {statInfo.label}
+                                </span>
+                                <div className="flex-1 h-[3px] rounded-full overflow-hidden" style={{ background: `${config.accentHex}12` }}>
+                                  <div
+                                    className="h-full rounded-full transition-all duration-500"
+                                    style={{
+                                      width: `${Math.max(3, statVal)}%`,
+                                      background: `linear-gradient(90deg, ${statInfo.color}80, ${statInfo.color})`,
+                                      boxShadow: `0 0 4px ${statInfo.color}40`,
+                                    }}
+                                  />
+                                </div>
+                                <span
+                                  className="text-[9px] font-display tracking-wider w-5 text-right shrink-0"
+                                  style={{ color: config.accentHex }}
+                                >
+                                  {statVal}
+                                </span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </motion.div>
+                    )}
+
+                    {/* ── AI BIO LINE ── */}
+                    {card.bio_line && (
+                      <motion.p
+                        className="text-[9px] font-mono tracking-wide italic mt-1.5 opacity-60 text-white/70"
+                        initial={{ y: 10, opacity: 0 }}
+                        animate={{ y: 0, opacity: 0.6 }}
+                        transition={{ delay: 0.5 }}
+                      >
+                        "{card.bio_line}"
+                      </motion.p>
+                    )}
+
+                    {/* ── BOTTOM ROW: Date + Card Number ── */}
                     <motion.div
-                      className="flex items-center gap-1 mt-1.5"
+                      className="flex items-center justify-between mt-1.5"
                       style={{ borderTop: `1px solid ${config.accentHex}10`, paddingTop: 4 }}
                       initial={{ y: 20, opacity: 0 }}
                       animate={{ y: 0, opacity: 1 }}
-                      transition={{ delay: 0.5 }}
+                      transition={{ delay: 0.55 }}
                     >
-                      <span className="text-[8px] text-white/25 font-mono">AWARDED</span>
-                      <span className="text-[8px] text-white/40 font-mono">
-                        {new Date(card.earned_at).toLocaleDateString('en-GB', {
-                          day: '2-digit',
-                          month: 'short',
-                          year: 'numeric',
-                        }).toUpperCase()}
-                      </span>
+                      <div className="flex items-center gap-1">
+                        <span className="text-[7px] text-white/25 font-mono">AWARDED</span>
+                        <span className="text-[7px] text-white/40 font-mono">
+                          {new Date(card.earned_at).toLocaleDateString('en-GB', {
+                            day: '2-digit', month: 'short', year: 'numeric',
+                          }).toUpperCase()}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        {card.card_number && (
+                          <span className="text-[7px] text-white/30 font-mono">{card.card_number}</span>
+                        )}
+                        {card.pb_rank && (
+                          <span
+                            className="text-[7px] font-display tracking-wider px-1 py-0.5 rounded"
+                            style={{
+                              background: `${config.accentHex}12`,
+                              color: config.accentHex,
+                              border: `1px solid ${config.accentHex}20`,
+                            }}
+                          >
+                            {formatRank(card.pb_rank)}
+                          </span>
+                        )}
+                      </div>
                     </motion.div>
                   </div>
 
@@ -1630,20 +1706,46 @@ export function AchievementCardStatic({
           );
         })()}
 
-        {/* PB Value — centered on card (no icon watermark) */}
-        {card.pb_value && !isProgramme && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className={cn('font-display tracking-wider', config.textColor, size === 'sm' ? 'text-lg' : 'text-2xl')}
-              style={{ textShadow: `0 0 16px ${config.accentHex}50` }}>
-              {formatPBValue(card.pb_value, card.pb_unit || 'kg')}
+        {/* ═══ FIFA CARD LAYOUT — Static version ═══ */}
+
+        {/* Overall Rating — top-left */}
+        {!isProgramme && (
+          <div className="absolute top-2 left-2 z-10 flex flex-col items-center">
+            <span
+              className={cn('font-display leading-none tracking-tight', size === 'sm' ? 'text-xl' : 'text-2xl')}
+              style={{ color: config.accentHex, fontWeight: 900, textShadow: `0 0 12px ${config.accentHex}50, 0 1px 3px rgba(0,0,0,0.5)` }}
+            >
+              {card.overall_rating || 0}
+            </span>
+            <span className={cn('font-display tracking-[0.15em] uppercase opacity-50', size === 'sm' ? 'text-[4px]' : 'text-[6px]')}
+              style={{ color: config.accentHex }}>
+              OVR
             </span>
           </div>
         )}
 
-        {/* Rarity badge */}
+        {/* Category badge — below rating */}
+        {!isProgramme && (
+          <div className={cn('absolute left-2 z-10', size === 'sm' ? 'top-[32px]' : 'top-[40px]')}>
+            <div className={cn('rounded', size === 'sm' ? 'px-1 py-0.5 text-[5px]' : 'px-1.5 py-0.5 text-[7px]')}
+              style={{
+                background: `${config.accentHex}15`,
+                border: `1px solid ${config.accentHex}20`,
+                color: config.accentHex,
+                fontFamily: 'var(--font-display)',
+                fontWeight: 900,
+                letterSpacing: '0.1em',
+                textTransform: 'uppercase',
+              }}>
+              {card.category_label || (['run', 'cycle', 'row', 'swim'].includes(card.activity_category || '') ? 'CARDIO' : 'STR')}
+            </div>
+          </div>
+        )}
+
+        {/* Rarity badge — top-right */}
         <div
           className={cn(
-            'absolute top-2 right-2 px-1.5 py-0.5 rounded-full flex items-center gap-0.5',
+            'absolute top-2 right-2 px-1.5 py-0.5 rounded-full flex items-center gap-0.5 z-10',
             textSize,
             'font-display tracking-widest',
             config.textColor,
@@ -1653,79 +1755,111 @@ export function AchievementCardStatic({
           {card.rarity === 'platinum' && <Sparkles className="w-2.5 h-2.5" />}
           {card.rarity === 'diamond' && <Diamond className="w-2.5 h-2.5" />}
           {card.rarity === 'gold' && <Crown className="w-2.5 h-2.5" />}
+          {card.rarity === 'silver' && <Medal className="w-2.5 h-2.5" />}
+          {card.rarity === 'bronze' && <Award className="w-2.5 h-2.5" />}
           {config.label}
         </div>
 
-        {/* ═══ Pokémon-style bottom stats panel ═══ */}
-        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/95 via-black/80 to-transparent"
-          style={{ paddingTop: size === 'sm' ? 16 : 24 }}>
+        {/* Card number — below rarity */}
+        {card.card_number && (
+          <div className={cn('absolute right-2 z-10', size === 'sm' ? 'top-[28px]' : 'top-[32px]')}>
+            <span className={cn('font-mono tracking-wider text-white/30', size === 'sm' ? 'text-[5px]' : 'text-[6px]')}>
+              {card.card_number}
+              {card.rarity === 'platinum' && card.edition_number ? ` · ED.${card.edition_number}` : ''}
+            </span>
+          </div>
+        )}
+
+        {/* ═══ FIFA bottom info panel ═══ */}
+        <div className="absolute bottom-0 left-0 right-0 z-10" style={{
+          background: 'linear-gradient(to top, rgba(0,0,0,0.97) 0%, rgba(0,0,0,0.9) 40%, rgba(0,0,0,0.6) 75%, transparent 100%)',
+          paddingTop: size === 'sm' ? 12 : 20,
+        }}>
           <div className="px-2 pb-1.5">
-            {/* Owner name — small trainer tag */}
-            {card.owner_display_name && (
-              <p className={cn('font-mono tracking-widest uppercase truncate opacity-50', size === 'sm' ? 'text-[6px]' : 'text-[8px]', config.textColor)}>
-                ★ {card.owner_display_name}
-              </p>
-            )}
-            {/* Exercise title */}
-            <p className={cn('font-display tracking-wider uppercase truncate', titleSize, config.textColor)}
-              style={{ textShadow: `0 0 8px ${config.accentHex}40` }}>
-              {title}
+            {/* Athlete name — Barlow 900 */}
+            <p className={cn('font-display tracking-wider uppercase truncate', size === 'sm' ? 'text-[11px]' : 'text-sm')}
+              style={{ color: 'white', fontWeight: 900, textShadow: `0 0 10px ${config.accentHex}40, 0 1px 3px rgba(0,0,0,0.5)` }}>
+              {card.owner_display_name || 'ATHLETE'}
             </p>
 
-            {/* Pokémon-style stat bar */}
+            {/* Exercise · Weight · Date line */}
             {card.pb_value && (
-              <div className="mt-1 rounded" style={{
-                background: `${config.accentHex}08`,
-                border: `1px solid ${config.accentHex}15`,
-                padding: size === 'sm' ? '2px 4px' : '3px 6px',
-              }}>
-                <div className="flex items-center justify-between">
-                  <span className={cn('font-mono uppercase opacity-50', config.textColor, size === 'sm' ? 'text-[6px]' : 'text-[8px]')}>
-                    {card.pb_unit === 'km' || card.pb_unit === 'mi' ? 'DIST' : 'LIFT'}
-                  </span>
-                  <span className={cn('font-display tracking-wide', config.textColor, size === 'sm' ? 'text-xs' : 'text-sm')}
-                    style={{ textShadow: `0 0 10px ${config.accentHex}50` }}>
-                    {formatPBValue(card.pb_value, card.pb_unit || 'kg')}
-                  </span>
-                </div>
-                {/* Visual power bar */}
-                <div className="w-full h-[2px] rounded-full mt-0.5" style={{ background: `${config.accentHex}15` }}>
-                  <div className="h-full rounded-full" style={{
-                    width: `${Math.min(100, Math.max(15, (card.pb_value / (card.pb_unit === 'kg' ? 300 : card.pb_unit === 'km' ? 42 : 200)) * 100))}%`,
-                    background: `linear-gradient(90deg, ${config.accentHex}60, ${config.accentHex})`,
-                    boxShadow: `0 0 4px ${config.accentHex}40`,
-                  }} />
-                </div>
-              </div>
-            )}
-
-            {/* Rank badge */}
-            {card.pb_rank && (
-              <div className="flex items-center gap-1 mt-0.5">
-                <span className={cn('font-mono opacity-40', config.textColor, size === 'sm' ? 'text-[6px]' : 'text-[7px]')}>
-                  RANK
-                </span>
-                <span className={cn('font-display', config.textColor, size === 'sm' ? 'text-[8px]' : 'text-[9px]')}>
-                  {formatRank(card.pb_rank)}
-                </span>
-              </div>
-            )}
-
-            {/* Global ranking info */}
-            {isPBGlobal && card.age_category && (
-              <p className={cn(textSize, 'opacity-60 mt-0.5', config.textColor)}>
-                {card.age_category} • TOP {card.global_percentile ? Math.round(100 - card.global_percentile) : '?'}%
+              <p className={cn('font-display tracking-wider mt-0.5', size === 'sm' ? 'text-[7px]' : 'text-[9px]')}
+                style={{ color: config.accentHex, textShadow: `0 0 6px ${config.accentHex}30` }}>
+                {title}
+                {` · ${formatPBValue(card.pb_value, card.pb_unit || 'kg')}`}
+                {` · ${new Date(card.earned_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase()}`}
               </p>
             )}
 
-            {/* Date stamp */}
-            <div className="flex items-center gap-1 mt-1" style={{ borderTop: `1px solid ${config.accentHex}12`, paddingTop: 2 }}>
-              <span className={cn('font-mono opacity-30', size === 'sm' ? 'text-[5px]' : 'text-[7px]', config.textColor)}>
-                AWARDED
-              </span>
-              <span className={cn('font-mono opacity-45', size === 'sm' ? 'text-[5px]' : 'text-[7px]', config.textColor)}>
-                {new Date(card.earned_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase()}
-              </span>
+            {/* Programme subtitle */}
+            {isProgramme && (
+              <p className={cn('font-display tracking-wider opacity-80 mt-0.5', size === 'sm' ? 'text-[7px]' : 'text-[9px]', config.textColor)}>
+                {title}
+              </p>
+            )}
+
+            {/* 6-stat grid (3×2) — PB cards only */}
+            {!isProgramme && card.athlete_stats && (
+              <div className={cn('rounded mt-1', size === 'sm' ? 'p-1' : 'p-1.5')}
+                style={{ background: `${config.accentHex}06`, border: `1px solid ${config.accentHex}12` }}>
+                <div className={cn('grid grid-cols-3', size === 'sm' ? 'gap-x-2 gap-y-0.5' : 'gap-x-2.5 gap-y-1')}>
+                  {STAT_ORDER.map((statKey) => {
+                    const statVal = (card.athlete_stats as Record<string, number>)?.[statKey] || 0;
+                    const statInfo = STAT_LABELS[statKey];
+                    return (
+                      <div key={statKey} className="flex items-center gap-1">
+                        <span className={cn('font-display tracking-wider shrink-0', size === 'sm' ? 'text-[5px] w-4' : 'text-[7px] w-5')}
+                          style={{ color: statInfo.color, opacity: 0.85 }}>
+                          {statInfo.label}
+                        </span>
+                        <div className={cn('flex-1 rounded-full overflow-hidden', size === 'sm' ? 'h-[2px]' : 'h-[3px]')}
+                          style={{ background: `${config.accentHex}10` }}>
+                          <div className="h-full rounded-full" style={{
+                            width: `${Math.max(3, statVal)}%`,
+                            background: `linear-gradient(90deg, ${statInfo.color}70, ${statInfo.color})`,
+                            boxShadow: `0 0 3px ${statInfo.color}30`,
+                          }} />
+                        </div>
+                        <span className={cn('font-display tracking-wider shrink-0 text-right', size === 'sm' ? 'text-[6px] w-3' : 'text-[8px] w-4')}
+                          style={{ color: config.accentHex }}>
+                          {statVal}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Bio line */}
+            {card.bio_line && (
+              <p className={cn('font-mono italic opacity-50 text-white/60 mt-0.5 truncate', size === 'sm' ? 'text-[5px]' : 'text-[7px]')}>
+                "{card.bio_line}"
+              </p>
+            )}
+
+            {/* Bottom row — date + card# + rank */}
+            <div className="flex items-center justify-between mt-1" style={{ borderTop: `1px solid ${config.accentHex}10`, paddingTop: 2 }}>
+              <div className="flex items-center gap-1">
+                <span className={cn('font-mono opacity-25', size === 'sm' ? 'text-[4px]' : 'text-[6px]', config.textColor)}>
+                  AWARDED
+                </span>
+                <span className={cn('font-mono opacity-40', size === 'sm' ? 'text-[4px]' : 'text-[6px]', config.textColor)}>
+                  {new Date(card.earned_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase()}
+                </span>
+              </div>
+              <div className="flex items-center gap-1">
+                {card.card_number && (
+                  <span className={cn('font-mono text-white/25', size === 'sm' ? 'text-[4px]' : 'text-[5px]')}>{card.card_number}</span>
+                )}
+                {card.pb_rank && (
+                  <span className={cn('font-display tracking-wider px-1 py-0.5 rounded', size === 'sm' ? 'text-[5px]' : 'text-[6px]')}
+                    style={{ background: `${config.accentHex}10`, color: config.accentHex, border: `1px solid ${config.accentHex}18` }}>
+                    {formatRank(card.pb_rank)}
+                  </span>
+                )}
+              </div>
             </div>
           </div>
         </div>
