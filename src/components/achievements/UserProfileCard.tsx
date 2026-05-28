@@ -142,7 +142,7 @@ export default function UserProfileCard() {
       }
     }
 
-    return [...sbdPBs.slice(0, 3), ...otherPBs.slice(0, 5 - Math.min(sbdPBs.length, 3))].slice(0, 5);
+    return [...sbdPBs.slice(0, 3), ...otherPBs.slice(0, 7 - Math.min(sbdPBs.length, 3))].slice(0, 7);
   }, [cardConfig.customPBs, availableExercises, coachingProfile]);
 
   // All PBs (for expanded view)
@@ -176,6 +176,7 @@ export default function UserProfileCard() {
   }, [cardioPBs]);
 
   const [showAllPBs, setShowAllPBs] = useState(false);
+  const [showCardioDropdown, setShowCardioDropdown] = useState(false);
 
   // Handle image upload
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -219,7 +220,7 @@ export default function UserProfileCard() {
   // PB edit handlers
   const addCustomPB = useCallback((exerciseName: string, value: number, unit: string) => {
     setCardConfig(prev => {
-      if (prev.customPBs.length >= 5) return prev;
+      if (prev.customPBs.length >= 7) return prev;
       if (prev.customPBs.find(p => p.exerciseName === exerciseName)) return prev;
       const next = { ...prev, customPBs: [...prev.customPBs, { exerciseName, value, unit }] };
       saveCardConfig(next);
@@ -404,81 +405,147 @@ export default function UserProfileCard() {
             )}
           </div>
 
-          {/* ═══ PB Stats Block ═══ */}
-          <div className="rounded-lg p-2 mb-1.5" style={{
+          {/* ═══ STRENGTH PB Dropdown ═══ */}
+          <div className="rounded-lg mb-1.5 overflow-hidden" style={{
             background: 'rgba(255,85,0,0.04)',
             border: '1px solid rgba(255,85,0,0.12)',
           }}>
-            <p className="text-[7px] font-mono tracking-[0.2em] uppercase mb-1"
-              style={{ color: '#FF5500', textShadow: '0 0 6px rgba(255,85,0,0.3)' }}>
-              ⚡ PERSONAL BESTS
-            </p>
-
-            {(() => {
-              const visiblePBs = showAllPBs ? allPBs : displayPBs;
-              return visiblePBs.length > 0 ? (
-                <div className="space-y-[3px]">
-                  {visiblePBs.map((pb, i) => (
-                    <StatBar
-                      key={pb.exerciseName}
-                      label={pb.exerciseName}
-                      value={pb.value}
-                      unit={pb.unit}
-                      maxValue={getMaxForExercise(pb.exerciseName, pb.unit)}
-                      color="#FF5500"
-                      delay={i * 0.05}
-                    />
-                  ))}
-                </div>
-              ) : (
-                <p className="text-[10px] text-white/20 font-mono text-center py-2">
-                  No PBs yet — start lifting!
-                </p>
-              );
-            })()}
-
-            {/* Cardio PBs (5K, 10K etc) */}
-            {cardioPBs.length > 0 && (
-              <div className="mt-1 pt-1 space-y-[3px]" style={{ borderTop: '1px solid rgba(255,85,0,0.08)' }}>
-                {cardioPBs.map((pb, i) => (
-                  <StatBar
-                    key={pb.exerciseName}
-                    label={pb.exerciseName}
-                    value={pb.value}
-                    unit={pb.unit}
-                    maxValue={getMaxForExercise(pb.exerciseName, pb.unit)}
-                    color="#FF5500"
-                    delay={(displayPBs.length + i) * 0.05}
-                  />
-                ))}
-              </div>
-            )}
-
-            {/* Expand/collapse toggle */}
-            {allPBs.length > 5 && (
-              <button
-                onClick={() => setShowAllPBs(!showAllPBs)}
-                className="w-full mt-1 pt-1 text-center"
-                style={{ borderTop: '1px solid rgba(255,85,0,0.06)' }}
-              >
-                <span className="text-[7px] font-mono tracking-wider uppercase"
-                  style={{ color: '#FF5500', textShadow: '0 0 4px rgba(255,85,0,0.3)' }}>
-                  {showAllPBs ? '▲ SHOW LESS' : `▼ SHOW ALL ${allPBs.length} LIFTS`}
+            <button
+              onClick={() => setShowAllPBs(!showAllPBs)}
+              className="w-full flex items-center justify-between px-2 py-1.5"
+            >
+              <div className="flex items-center gap-1.5">
+                <Dumbbell className="w-3 h-3" style={{ color: '#FF5500' }} />
+                <span className="text-[7px] font-mono tracking-[0.2em] uppercase"
+                  style={{ color: '#FF5500', textShadow: '0 0 6px rgba(255,85,0,0.3)' }}>
+                  STRENGTH PBs
                 </span>
-              </button>
-            )}
-
-            {/* SBD Total */}
-            {sbdTotal > 0 && (
-              <div className="flex items-center justify-between mt-1 pt-1" style={{ borderTop: '1px solid rgba(255,85,0,0.08)' }}>
-                <span className="text-[8px] font-mono tracking-wider"
-                  style={{ color: '#FF5500', textShadow: '0 0 6px rgba(255,85,0,0.4)' }}>SBD TOTAL</span>
-                <span className="text-sm font-display tracking-wider font-black"
-                  style={{ color: '#FF5500', textShadow: '0 0 12px rgba(255,85,0,0.5), 0 0 24px rgba(255,85,0,0.2)' }}>
-                  {sbdTotal}KG
-                </span>
+                <span className="text-[8px] font-display text-white/40">({displayPBs.length})</span>
               </div>
-            )}
+              <motion.span
+                animate={{ rotate: showAllPBs ? 180 : 0 }}
+                className="text-[8px]" style={{ color: '#FF5500' }}
+              >▼</motion.span>
+            </button>
+
+            <AnimatePresence initial={false}>
+              {showAllPBs && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="overflow-hidden"
+                >
+                  <div className="px-2 pb-2 space-y-[3px]">
+                    {(() => {
+                      const visiblePBs = displayPBs;
+                      return visiblePBs.length > 0 ? (
+                        <>
+                          {visiblePBs.map((pb, i) => (
+                            <StatBar
+                              key={pb.exerciseName}
+                              label={pb.exerciseName}
+                              value={pb.value}
+                              unit={pb.unit}
+                              maxValue={getMaxForExercise(pb.exerciseName, pb.unit)}
+                              color="#FF5500"
+                              delay={i * 0.05}
+                            />
+                          ))}
+                          {/* Show all lifts toggle if more exist */}
+                          {allPBs.length > 7 && (
+                            <button
+                              onClick={(e) => { e.stopPropagation(); }}
+                              className="w-full mt-0.5 text-center"
+                            >
+                              <span className="text-[6px] font-mono tracking-wider uppercase"
+                                style={{ color: 'rgba(255,85,0,0.5)' }}>
+                                {allPBs.length} EXERCISES TRACKED
+                              </span>
+                            </button>
+                          )}
+                        </>
+                      ) : (
+                        <p className="text-[10px] text-white/20 font-mono text-center py-2">
+                          No PBs yet — start lifting!
+                        </p>
+                      );
+                    })()}
+
+                    {/* SBD Total */}
+                    {sbdTotal > 0 && (
+                      <div className="flex items-center justify-between mt-1 pt-1" style={{ borderTop: '1px solid rgba(255,85,0,0.08)' }}>
+                        <span className="text-[8px] font-mono tracking-wider"
+                          style={{ color: '#FF5500', textShadow: '0 0 6px rgba(255,85,0,0.4)' }}>SBD TOTAL</span>
+                        <span className="text-sm font-display tracking-wider font-black"
+                          style={{ color: '#FF5500', textShadow: '0 0 12px rgba(255,85,0,0.5), 0 0 24px rgba(255,85,0,0.2)' }}>
+                          {sbdTotal}KG
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
+          {/* ═══ CARDIO PB Dropdown ═══ */}
+          <div className="rounded-lg mb-1.5 overflow-hidden" style={{
+            background: 'rgba(0,200,255,0.03)',
+            border: '1px solid rgba(0,200,255,0.10)',
+          }}>
+            <button
+              onClick={() => setShowCardioDropdown(!showCardioDropdown)}
+              className="w-full flex items-center justify-between px-2 py-1.5"
+            >
+              <div className="flex items-center gap-1.5">
+                <svg className="w-3 h-3" style={{ color: '#00C8FF' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+                </svg>
+                <span className="text-[7px] font-mono tracking-[0.2em] uppercase"
+                  style={{ color: '#00C8FF', textShadow: '0 0 6px rgba(0,200,255,0.3)' }}>
+                  CARDIO PBs
+                </span>
+                <span className="text-[8px] font-display text-white/40">({cardioPBs.length})</span>
+              </div>
+              <motion.span
+                animate={{ rotate: showCardioDropdown ? 180 : 0 }}
+                className="text-[8px]" style={{ color: '#00C8FF' }}
+              >▼</motion.span>
+            </button>
+
+            <AnimatePresence initial={false}>
+              {showCardioDropdown && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="overflow-hidden"
+                >
+                  <div className="px-2 pb-2 space-y-[3px]">
+                    {cardioPBs.length > 0 ? (
+                      cardioPBs.map((pb, i) => (
+                        <StatBar
+                          key={pb.exerciseName}
+                          label={pb.exerciseName}
+                          value={pb.value}
+                          unit={pb.unit}
+                          maxValue={getMaxForExercise(pb.exerciseName, pb.unit)}
+                          color="#00C8FF"
+                          delay={i * 0.05}
+                        />
+                      ))
+                    ) : (
+                      <p className="text-[10px] text-white/20 font-mono text-center py-2">
+                        No cardio PBs yet — log a 5K or 10K!
+                      </p>
+                    )}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
           {/* Body stats moved to top — see above name section */}
