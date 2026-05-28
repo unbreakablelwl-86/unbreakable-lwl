@@ -1,10 +1,17 @@
 /**
  * useAchievementCards — hook for Programme Trophies & PB Cards
- * Same pattern as UN-TUNES cards but for achievements
+ * Same pattern as UN-TUNES cards but for achievements.
+ * Integrates Wilks/IPF scoring engine for overall_rating + 6-stat calculation.
  */
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import {
+  calculateOverallRating,
+  calculateSixStats,
+  classifyExercise,
+  percentileRank,
+} from '@/lib/wilksIpfEngine';
 
 export type AchievementCardType = 'programme_trophy' | 'pb_personal' | 'pb_global' | 'moment';
 export type AchievementRarity = 'bronze' | 'silver' | 'gold' | 'diamond' | 'platinum';
@@ -91,18 +98,63 @@ export function useAchievementCards() {
       rawCards = (cardsResult.data || []) as AchievementCard[];
     }
 
+    // Fetch user's body weight for Wilks/IPF calculation
+    let bodyweightKg = 80; // sensible default
+    let userAge = 30;
+    try {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('weight_kg, date_of_birth')
+        .eq('user_id', user.id)
+        .single();
+      if (profile?.weight_kg) bodyweightKg = profile.weight_kg;
+      if (profile?.date_of_birth) {
+        const dob = new Date(profile.date_of_birth);
+        userAge = Math.floor((Date.now() - dob.getTime()) / (365.25 * 86400000));
+      }
+    } catch { /* use defaults */ }
+
+    const isMale = (ownerGender || '').toLowerCase() !== 'female';
+
     // Map DB column names → component field names, derive missing fields
     const CATEGORY_TO_ACTIVITY: Record<string, string> = {
       'Strength': 'lift', 'Power': 'lift', 'Cardio': 'run',
     };
-    const mapped = rawCards.map(c => ({
-      ...c,
-      owner_display_name: ownerName,
-      owner_gender: ownerGender,
-      pb_value: c.pb_value ?? c.record_value,
-      pb_unit: c.pb_unit ?? c.record_unit,
-      activity_category: c.activity_category || (CATEGORY_TO_ACTIVITY[c.category_label || ''] as any) || 'lift',
-    }));
+    const mapped = rawCards.map(c => {
+      const actCat = c.activity_category || (CATEGORY_TO_ACTIVITY[c.category_label || ''] as any) || 'lift';
+      const pbVal = c.pb_value ?? c.record_value;
+      const exName = c.exercise_name || '';
+
+      // Calculate Wilks/IPF overall rating if not already in DB
+      let overallRating = c.overall_rating;
+      let athleteStats = c.athlete_stats;
+
+      if ((c.card_type === 'pb_personal' || c.card_type === 'pb_global') && pbVal) {
+        if (!overallRating) {
+          overallRating = calculateOverallRating(
+            exName, pbVal, bodyweightKg, isMale, userAge
+          );
+        }
+        if (!athleteStats) {
+          athleteStats = calculateSixStats(
+            exName, pbVal, bodyweightKg, isMale,
+            actCat === 'lift' ? 'strength' : 'cardio',
+            c.global_rank_pct,
+          );
+        }
+      }
+
+      return {
+        ...c,
+        owner_display_name: ownerName,
+        owner_gender: ownerGender,
+        pb_value: pbVal,
+        pb_unit: c.pb_unit ?? c.record_unit,
+        activity_category: actCat,
+        overall_rating: overallRating,
+        athlete_stats: athleteStats,
+      };
+    });
 
     // Derive pb_rank within each exercise group (1 = best, by record_value desc)
     const exerciseGroups: Record<string, typeof mapped> = {};
