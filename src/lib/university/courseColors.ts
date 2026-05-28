@@ -18,17 +18,17 @@ export interface CourseColorScheme {
 const schemes: Record<string, CourseColorScheme> = {
   gym: {
     accent: 'orange',
-    bg: 'bg-orange-500/10',
-    bgGradient: 'from-orange-500/20 to-red-500/10',
-    border: 'border-orange-500/20',
-    borderActive: 'border-orange-500/40',
-    text: 'text-orange-500',
-    textMuted: 'text-orange-500/60',
-    iconBg: 'bg-orange-500/15',
-    progressBg: 'bg-orange-500/30',
-    progressFill: 'bg-orange-500',
-    glow: 'shadow-orange-500/5',
-    hoverBg: 'hover:bg-orange-500/5',
+    bg: 'bg-[#FF5500]/10',
+    bgGradient: 'from-[#FF5500]/20 to-[#FF3300]/10',
+    border: 'border-[#FF5500]/25',
+    borderActive: 'border-[#FF5500]/50',
+    text: 'text-[#FF5500]',
+    textMuted: 'text-[#FF5500]/60',
+    iconBg: 'bg-[#FF5500]/15',
+    progressBg: 'bg-[#FF5500]/30',
+    progressFill: 'bg-[#FF5500]',
+    glow: 'shadow-[0_0_12px_rgba(255,85,0,0.15)]',
+    hoverBg: 'hover:bg-[#FF5500]/5',
   },
   nutrition: {
     accent: 'green',
@@ -60,21 +60,21 @@ const schemes: Record<string, CourseColorScheme> = {
   },
   sport: {
     accent: 'yellow',
-    bg: 'bg-amber-500/10',
-    bgGradient: 'from-amber-500/20 to-yellow-500/10',
-    border: 'border-amber-500/20',
-    borderActive: 'border-amber-500/40',
-    text: 'text-amber-500',
-    textMuted: 'text-amber-500/60',
-    iconBg: 'bg-amber-500/15',
-    progressBg: 'bg-amber-500/30',
-    progressFill: 'bg-amber-500',
-    glow: 'shadow-amber-500/5',
-    hoverBg: 'hover:bg-amber-500/5',
+    bg: 'bg-[#CCFF00]/10',
+    bgGradient: 'from-[#CCFF00]/20 to-[#AADD00]/10',
+    border: 'border-[#CCFF00]/25',
+    borderActive: 'border-[#CCFF00]/50',
+    text: 'text-[#CCFF00]',
+    textMuted: 'text-[#CCFF00]/60',
+    iconBg: 'bg-[#CCFF00]/15',
+    progressBg: 'bg-[#CCFF00]/30',
+    progressFill: 'bg-[#CCFF00]',
+    glow: 'shadow-[0_0_12px_rgba(204,255,0,0.15)]',
+    hoverBg: 'hover:bg-[#CCFF00]/5',
   },
 };
 
-// Default = primary orange (same as gym)
+// Default = primary neon orange (same as gym/power)
 const defaultScheme = schemes.gym;
 
 export function getCourseColors(courseType: string): CourseColorScheme {
