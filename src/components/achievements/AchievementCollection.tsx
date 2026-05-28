@@ -81,87 +81,157 @@ async function generateAchievementCardImage(card: AchievementCard): Promise<Blob
     const config = RARITY_CONFIG[card.rarity];
     const color = config.color;
 
+    const W = 1080, H = 1620;
     const canvas = document.createElement('canvas');
-    canvas.width = 1080; canvas.height = 1350;
+    canvas.width = W; canvas.height = H;
     const ctx = canvas.getContext('2d')!;
 
     // Background
-    ctx.fillStyle = '#0a0a0a'; ctx.fillRect(0, 0, 1080, 1350);
+    ctx.fillStyle = '#0a0a0a'; ctx.fillRect(0, 0, W, H);
 
-    // Radial glow
-    const grad = ctx.createRadialGradient(540, 500, 0, 540, 500, 600);
-    grad.addColorStop(0, `${color}25`);
-    grad.addColorStop(1, 'transparent');
-    ctx.fillStyle = grad; ctx.fillRect(0, 0, 1080, 1350);
+    // Rarity radial glow
+    const glow = ctx.createRadialGradient(W / 2, 420, 0, W / 2, 420, 600);
+    glow.addColorStop(0, `${color}20`);
+    glow.addColorStop(0.5, `${color}08`);
+    glow.addColorStop(1, 'transparent');
+    ctx.fillStyle = glow; ctx.fillRect(0, 0, W, H);
 
-    // Outer border
-    ctx.strokeStyle = color; ctx.lineWidth = 4;
-    ctx.strokeRect(40, 40, 1000, 1270);
-    ctx.strokeStyle = `${color}40`; ctx.lineWidth = 1;
-    ctx.strokeRect(52, 52, 976, 1246);
+    // Outer border with rarity colour
+    ctx.strokeStyle = color; ctx.lineWidth = 6;
+    ctx.strokeRect(30, 30, W - 60, H - 60);
+    ctx.strokeStyle = `${color}30`; ctx.lineWidth = 1;
+    ctx.strokeRect(44, 44, W - 88, H - 88);
 
-    // Card type icon area (large circle)
-    ctx.beginPath();
-    ctx.arc(540, 420, 180, 0, Math.PI * 2);
-    ctx.fillStyle = `${color}15`;
-    ctx.fill();
-    ctx.strokeStyle = `${color}60`;
-    ctx.lineWidth = 3;
-    ctx.stroke();
-
-    // Icon text (emoji-style)
-    ctx.textAlign = 'center';
-    ctx.fillStyle = color;
-    ctx.font = '120px system-ui';
-    if (card.card_type === 'programme_trophy') {
-      ctx.fillText('🏆', 540, 460);
-    } else if (card.exercise_name?.toLowerCase().includes('run') || card.exercise_name?.toLowerCase().includes('km')) {
-      ctx.fillText('🏃', 540, 460);
-    } else if (card.exercise_name?.toLowerCase().includes('walk')) {
-      ctx.fillText('🚶', 540, 460);
+    // Exercise artwork — full card hero image
+    if (card.image_url) {
+      try {
+        const img = new Image(); img.crossOrigin = 'anonymous';
+        await new Promise<void>((res, rej) => { img.onload = () => res(); img.onerror = rej; img.src = card.image_url!; });
+        // Draw artwork covering top portion
+        const artH = 720;
+        const artY = 60;
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(50, artY, W - 100, artH);
+        ctx.clip();
+        // Scale to cover
+        const scale = Math.max((W - 100) / img.width, artH / img.height);
+        const drawW = img.width * scale;
+        const drawH = img.height * scale;
+        const drawX = 50 + ((W - 100) - drawW) / 2;
+        const drawY = artY + (artH - drawH) / 2;
+        ctx.drawImage(img, drawX, drawY, drawW, drawH);
+        ctx.restore();
+        // Gradient fade at bottom of artwork
+        const fadeGrad = ctx.createLinearGradient(0, artY + artH - 120, 0, artY + artH);
+        fadeGrad.addColorStop(0, 'transparent');
+        fadeGrad.addColorStop(1, '#0a0a0a');
+        ctx.fillStyle = fadeGrad;
+        ctx.fillRect(50, artY + artH - 120, W - 100, 120);
+      } catch { /* proceed without artwork */ }
     } else {
-      ctx.fillText('💪', 540, 460);
+      // Fallback icon
+      ctx.textAlign = 'center'; ctx.fillStyle = color; ctx.font = '120px system-ui';
+      if (card.exercise_name?.toLowerCase().includes('run') || card.exercise_name?.toLowerCase().includes('km')) {
+        ctx.fillText('🏃', W / 2, 460);
+      } else { ctx.fillText('💪', W / 2, 460); }
     }
 
+    // Rarity shimmer lines (subtle diagonal sparkle effect)
+    ctx.save();
+    ctx.globalAlpha = 0.06;
+    for (let i = 0; i < 12; i++) {
+      const x = (i * 120) - 200;
+      ctx.strokeStyle = color; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x + H, H); ctx.stroke();
+    }
+    ctx.restore();
+
+    const textY = 830;
+
     // Card type label
-    ctx.fillStyle = color; ctx.font = '600 24px system-ui';
+    ctx.textAlign = 'center';
+    ctx.fillStyle = color; ctx.font = '600 22px system-ui';
     const typeLabel = card.card_type === 'programme_trophy' ? 'PROGRAMME TROPHY'
-      : card.card_type === 'pb_global' ? 'GLOBAL PB CARD'
-      : 'PERSONAL BEST CARD';
-    ctx.fillText(typeLabel, 540, 680);
+      : card.card_type === 'pb_global' ? 'GLOBAL PB CARD' : 'PERSONAL BEST CARD';
+    ctx.fillText(typeLabel, W / 2, textY);
 
-    // Title
-    ctx.fillStyle = '#ffffff'; ctx.font = '700 48px system-ui';
-    ctx.fillText(card.title.substring(0, 25), 540, 780);
+    // Exercise name / title
+    ctx.fillStyle = '#ffffff'; ctx.font = '700 52px system-ui';
+    ctx.fillText((card.exercise_name || card.title).substring(0, 22), W / 2, textY + 70);
 
-    // Subtitle (value)
+    // PB value
     if (card.subtitle) {
-      ctx.fillStyle = color; ctx.font = '600 64px system-ui';
-      ctx.fillText(card.subtitle, 540, 870);
+      ctx.fillStyle = color; ctx.font = '700 72px system-ui';
+      ctx.fillText(card.subtitle, W / 2, textY + 160);
+    }
+
+    // Overall rating circle
+    if (card.overall_rating) {
+      const ratingX = W / 2, ratingY = textY + 240;
+      ctx.beginPath(); ctx.arc(ratingX, ratingY, 40, 0, Math.PI * 2);
+      ctx.fillStyle = `${color}20`; ctx.fill();
+      ctx.strokeStyle = color; ctx.lineWidth = 3; ctx.stroke();
+      ctx.fillStyle = '#fff'; ctx.font = '700 36px system-ui';
+      ctx.fillText(String(card.overall_rating), ratingX, ratingY + 13);
+      ctx.fillStyle = '#a1a1aa'; ctx.font = '400 18px system-ui';
+      ctx.fillText('RATING', ratingX, ratingY + 60);
+    }
+
+    // Stat bars (if available)
+    if (card.athlete_stats) {
+      const statNames = ['STR', 'PWR', 'SPD', 'END', 'AGI', 'REC'] as const;
+      const statKeys = ['str', 'pwr', 'spd', 'end', 'agi', 'rec'] as const;
+      const barY = textY + 320;
+      const barW = 130, barH = 6, gap = 10;
+      const totalW = statKeys.length * barW + (statKeys.length - 1) * gap;
+      const startX = (W - totalW) / 2;
+      statKeys.forEach((key, i) => {
+        const x = startX + i * (barW + gap);
+        const val = card.athlete_stats![key] || 0;
+        // Label
+        ctx.fillStyle = '#71717a'; ctx.font = '500 14px system-ui'; ctx.textAlign = 'center';
+        ctx.fillText(statNames[i], x + barW / 2, barY - 8);
+        // Bar bg
+        ctx.fillStyle = '#27272a'; ctx.fillRect(x, barY, barW, barH);
+        // Bar fill
+        ctx.fillStyle = color; ctx.fillRect(x, barY, barW * (val / 99), barH);
+        // Value
+        ctx.fillStyle = '#d4d4d8'; ctx.font = '600 16px system-ui';
+        ctx.fillText(String(val), x + barW / 2, barY + 28);
+      });
     }
 
     // Rarity badge
-    ctx.fillStyle = color; ctx.font = '600 28px system-ui';
-    ctx.fillText(`${config.label.toUpperCase()} EDITION`, 540, 980);
+    ctx.textAlign = 'center';
+    ctx.fillStyle = color; ctx.font = '600 26px system-ui';
+    ctx.fillText(`${config.label.toUpperCase()} EDITION`, W / 2, H - 180);
 
-    // Divider line
-    ctx.strokeStyle = `${color}40`; ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.moveTo(200, 1020); ctx.lineTo(880, 1020); ctx.stroke();
-
-    // Exercise / Programme name
-    if (card.exercise_name || card.programme_name) {
-      ctx.fillStyle = '#a1a1aa'; ctx.font = '400 24px system-ui';
-      ctx.fillText(card.exercise_name || card.programme_name || '', 540, 1070);
+    // Category label
+    if (card.category_label) {
+      ctx.fillStyle = '#a1a1aa'; ctx.font = '400 20px system-ui';
+      ctx.fillText(card.category_label, W / 2, H - 145);
     }
 
-    // Date earned
+    // Date + card number
     const date = new Date(card.earned_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
-    ctx.fillStyle = '#71717a'; ctx.font = '300 20px system-ui';
-    ctx.fillText(`Earned ${date}`, 540, 1120);
+    ctx.fillStyle = '#71717a'; ctx.font = '300 18px system-ui';
+    const dateStr = card.card_number ? `${date}  •  ${card.card_number}` : date;
+    ctx.fillText(dateStr, W / 2, H - 110);
 
     // Branding
-    ctx.fillStyle = '#52525b'; ctx.font = '300 18px system-ui';
-    ctx.fillText('UNBREAKABLE • ACHIEVEMENT CARD', 540, 1260);
+    ctx.fillStyle = '#52525b'; ctx.font = '300 16px system-ui';
+    ctx.fillText('UNBREAKABLE • LIVE WITHOUT LIMITS™', W / 2, H - 60);
+
+    // Shield watermark (subtle)
+    ctx.save(); ctx.globalAlpha = 0.03;
+    ctx.strokeStyle = color; ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(W / 2, H - 280); ctx.lineTo(W / 2 + 50, H - 260); ctx.lineTo(W / 2 + 50, H - 230);
+    ctx.quadraticCurveTo(W / 2 + 50, H - 200, W / 2, H - 190);
+    ctx.quadraticCurveTo(W / 2 - 50, H - 200, W / 2 - 50, H - 230);
+    ctx.lineTo(W / 2 - 50, H - 260); ctx.closePath(); ctx.stroke();
+    ctx.restore();
 
     return new Promise((resolve) => canvas.toBlob(resolve, 'image/png'));
   } catch { return null; }
