@@ -19,7 +19,7 @@ export interface PackCard {
   id: string;
   track_id?: string | null;
   album_id?: string | null;
-  rarity: 'standard' | 'gold' | 'diamond';
+  rarity: 'standard' | 'gold' | 'diamond' | 'platinum';
   edition_number: number;
   card_type?: string;
   un_tunes_tracks?: { title: string; cover_url: string } | null;
@@ -66,6 +66,16 @@ const RARITY_CONFIG = {
     borderColor: 'border-violet-500/50',
     bgGlow: 'bg-violet-500/10',
     borderHex: 'rgba(139,92,246,0.6)',
+  },
+  platinum: {
+    label: 'PLATINUM',
+    gradient: 'from-slate-200 via-white to-slate-300',
+    glow: 'shadow-[0_0_120px_rgba(226,232,240,0.9)]',
+    particleColor: '#e2e8f0',
+    textColor: 'text-slate-200',
+    borderColor: 'border-slate-300/60',
+    bgGlow: 'bg-slate-200/15',
+    borderHex: 'rgba(226,232,240,0.7)',
   },
 };
 
@@ -188,6 +198,50 @@ function DiamondHolo() {
   );
 }
 
+/* ── Platinum chrome / liquid metal effect ── */
+const platinumKF = `@keyframes platinumSweep { 0%,100% { background-position: 200% center; } 50% { background-position: -200% center; } }`;
+function PlatinumChrome() {
+  return (
+    <>
+      <style>{platinumKF}</style>
+      <div
+        className="absolute inset-0 pointer-events-none rounded-2xl overflow-hidden"
+        style={{ mixBlendMode: 'overlay' }}
+      >
+        <div
+          className="absolute inset-0"
+          style={{
+            background: 'linear-gradient(110deg, transparent 20%, rgba(255,255,255,0.4) 45%, rgba(200,200,220,0.2) 55%, transparent 80%)',
+            backgroundSize: '300% 100%',
+            animation: 'platinumSweep 4s ease-in-out infinite',
+          }}
+        />
+      </div>
+      {/* Chrome sparkle dots */}
+      {Array.from({ length: 10 }).map((_, i) => (
+        <motion.div
+          key={i}
+          className="absolute pointer-events-none rounded-full"
+          style={{
+            width: 2 + Math.random() * 3,
+            height: 2 + Math.random() * 3,
+            backgroundColor: '#fff',
+            left: `${10 + Math.random() * 80}%`,
+            top: `${10 + Math.random() * 80}%`,
+            boxShadow: '0 0 6px 2px rgba(255,255,255,0.6)',
+          }}
+          animate={{ opacity: [0, 1, 0], scale: [0.3, 1.5, 0.3] }}
+          transition={{
+            duration: 1.2 + Math.random() * 0.8,
+            repeat: Infinity,
+            delay: Math.random() * 3,
+          }}
+        />
+      ))}
+    </>
+  );
+}
+
 /* ── Auto-sizing title ── */
 function CardTitle({ title, className }: { title: string; className?: string }) {
   // Scale font size based on title length to prevent overflow
@@ -250,14 +304,19 @@ function BrandedCardBack() {
           }}
         />
 
-        {/* Icon */}
+        {/* Unbreakable shield logo */}
         <motion.div
           animate={{ rotate: [0, 5, -5, 0], scale: [1, 1.05, 1] }}
           transition={{ duration: 4, repeat: Infinity }}
         >
-          <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-primary/90 to-orange-700 flex items-center justify-center shadow-lg shadow-primary/30">
-            <Sparkles className="w-8 h-8 text-white" />
-          </div>
+          <img
+            src="/unbreakable-shield.png"
+            alt="Unbreakable"
+            className="w-20 h-20 object-contain drop-shadow-[0_0_15px_rgba(255,107,0,0.4)]"
+            onError={(e) => {
+              (e.target as HTMLImageElement).style.display = 'none';
+            }}
+          />
         </motion.div>
 
         {/* Brand text */}
@@ -298,11 +357,13 @@ function CardReveal({
   index,
   onNext,
   onShare,
+  onDiscard,
 }: {
   card: PackCard;
   index: number;
   onNext: () => void;
   onShare?: (card: PackCard) => void;
+  onDiscard?: (card: PackCard) => void;
 }) {
   const [revealed, setRevealed] = useState(false);
   const [showParticles, setShowParticles] = useState(false);
@@ -402,6 +463,7 @@ function CardReveal({
                 {/* Rarity effects */}
                 {card.rarity === 'gold' && <GoldShimmer />}
                 {card.rarity === 'diamond' && <DiamondHolo />}
+                {card.rarity === 'platinum' && <PlatinumChrome />}
 
                 {/* Rarity badge top-right */}
                 <motion.div
@@ -411,12 +473,14 @@ function CardReveal({
                     config.textColor,
                     card.rarity === 'gold' && 'bg-yellow-900/60 backdrop-blur-sm',
                     card.rarity === 'diamond' && 'bg-violet-900/60 backdrop-blur-sm',
+                    card.rarity === 'platinum' && 'bg-slate-800/60 backdrop-blur-sm',
                     card.rarity === 'standard' && 'bg-zinc-900/60 backdrop-blur-sm',
                   )}
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ delay: 0.3, type: 'spring' }}
                 >
+                  {card.rarity === 'platinum' && <Sparkles className="w-3 h-3" />}
                   {card.rarity === 'diamond' && <Diamond className="w-3 h-3" />}
                   {card.rarity === 'gold' && <Crown className="w-3 h-3" />}
                   {config.label}
@@ -439,14 +503,14 @@ function CardReveal({
                   >
                     {isTrack ? 'TRACK CARD' : card.card_type === 'brand' ? 'BRAND CARD' : 'ALBUM CARD'}
                   </motion.p>
-                  {card.rarity === 'diamond' && card.edition_number > 0 && (
+                  {(card.rarity === 'diamond' || card.rarity === 'platinum') && card.edition_number > 0 && (
                     <motion.p
-                      className="text-xs text-violet-300 font-mono mt-2"
+                      className={cn('text-xs font-mono mt-2', card.rarity === 'platinum' ? 'text-slate-200' : 'text-violet-300')}
                       initial={{ y: 20, opacity: 0 }}
                       animate={{ y: 0, opacity: 1 }}
                       transition={{ delay: 0.5 }}
                     >
-                      #{String(card.edition_number).padStart(3, '0')} / 100
+                      #{String(card.edition_number).padStart(3, '0')} / {card.rarity === 'platinum' ? '100' : '100'}
                     </motion.p>
                   )}
                 </div>
@@ -455,6 +519,7 @@ function CardReveal({
                 <motion.div
                   className={cn(
                     'absolute inset-0 rounded-2xl pointer-events-none',
+                    card.rarity === 'platinum' && 'border-2 border-slate-200/70',
                     card.rarity === 'gold' && 'border-2 border-yellow-400/60',
                     card.rarity === 'diamond' && 'border-2 border-violet-400/60',
                     card.rarity === 'standard' && 'border border-white/10',
@@ -486,24 +551,39 @@ function CardReveal({
         {revealed ? 'TAP FOR NEXT CARD' : 'TAP TO REVEAL'}
       </motion.p>
 
-      {revealed && onShare && (
+      {revealed && (onShare || onDiscard) && (
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="mt-3"
+          className="mt-3 flex gap-2"
         >
-          <Button
-            variant="outline"
-            size="sm"
-            className="font-display tracking-wider text-xs border-primary/30 text-primary hover:bg-primary/10"
-            onClick={(e) => {
-              e.stopPropagation();
-              onShare(card);
-            }}
-          >
-            <Share2 className="w-4 h-4 mr-2" /> SHARE
-          </Button>
+          {onShare && (
+            <Button
+              variant="outline"
+              size="sm"
+              className="font-display tracking-wider text-xs border-primary/30 text-primary hover:bg-primary/10"
+              onClick={(e) => {
+                e.stopPropagation();
+                onShare(card);
+              }}
+            >
+              <Share2 className="w-4 h-4 mr-2" /> SHARE
+            </Button>
+          )}
+          {onDiscard && (
+            <Button
+              variant="outline"
+              size="sm"
+              className="font-display tracking-wider text-xs border-red-500/30 text-red-400 hover:bg-red-500/10"
+              onClick={(e) => {
+                e.stopPropagation();
+                onDiscard(card);
+              }}
+            >
+              <Trash2 className="w-4 h-4 mr-2" /> BIN
+            </Button>
+          )}
         </motion.div>
       )}
     </motion.div>
@@ -584,14 +664,21 @@ function SealedPack({ cardCount, onOpen }: { cardCount: number; onOpen: () => vo
               }}
             />
 
-            {/* Icon */}
+            {/* Unbreakable shield logo */}
             <motion.div
-              animate={{ rotate: [0, 8, -8, 0], scale: [1, 1.08, 1] }}
+              animate={{ rotate: [0, 4, -4, 0], scale: [1, 1.06, 1] }}
               transition={{ duration: 4, repeat: Infinity }}
             >
-              <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary to-orange-700 flex items-center justify-center shadow-xl shadow-primary/25">
-                <Sparkles className="w-10 h-10 text-white" />
-              </div>
+              <img
+                src="/unbreakable-shield.png"
+                alt="Unbreakable"
+                className="w-24 h-24 object-contain drop-shadow-[0_0_20px_rgba(255,107,0,0.4)]"
+                onError={(e) => {
+                  // Fallback to icon if image missing
+                  (e.target as HTMLImageElement).style.display = 'none';
+                  (e.target as HTMLImageElement).parentElement!.innerHTML = '<div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary to-orange-700 flex items-center justify-center shadow-xl shadow-primary/25"><svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/></svg></div>';
+                }}
+              />
             </motion.div>
 
             {/* Brand text */}
@@ -740,6 +827,16 @@ export function PackOpening({ cards, purchaseType, onClose, onMarkOpened, onDisc
             index={currentIndex}
             onNext={handleNextCard}
             onShare={handleShareCard}
+            onDiscard={async (card) => {
+              try {
+                const { data, error } = await (supabase as any).rpc('discard_card', { _card_id: card.id });
+                if (error) throw error;
+                toast({ title: 'Card binned', description: 'Duplicate removed.' });
+                handleNextCard();
+              } catch {
+                toast({ title: 'Error', description: 'Could not discard card.', variant: 'destructive' });
+              }
+            }}
           />
         )}
 

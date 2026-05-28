@@ -303,7 +303,8 @@ export function usePlayerProvider() {
             audio.pause();
             audio.volume = startVol; // restore for next track
             previewFadingRef.current = false;
-            setState(s => ({ ...s, isPlaying: false }));
+            // Auto-advance to next track (plays next 30s preview)
+            handleTrackEnd();
           }
         }, fadeInterval);
       }
@@ -311,7 +312,7 @@ export function usePlayerProvider() {
 
     audio.addEventListener('timeupdate', checkPreview);
     return () => audio.removeEventListener('timeupdate', checkPreview);
-  }, [isPreview, user?.id]);
+  }, [isPreview, user?.id, handleTrackEnd]);
 
   // Reset preview fade flag on track change
   useEffect(() => {
@@ -319,35 +320,45 @@ export function usePlayerProvider() {
   }, [state.currentTrack?.id]);
 
   const handleTrackEnd = useCallback(() => {
+    // Read current state snapshot and compute next action outside setState
     setState(prev => {
+      const audio = audioRef.current;
+      if (!audio) return { ...prev, isPlaying: false };
+
+      // Repeat ONE → restart same track
       if (prev.repeat === 'one') {
-        if (audioRef.current) {
-          audioRef.current.currentTime = 0;
-          audioRef.current.play();
-        }
-        return prev;
+        audio.currentTime = 0;
+        audio.play().catch(() => {});
+        return prev; // keep same state, just restart audio
       }
+
+      // Compute next index
       const nextIdx = prev.shuffle
         ? Math.floor(Math.random() * prev.queue.length)
         : prev.queueIndex + 1;
 
+      // End of queue
       if (nextIdx >= prev.queue.length) {
         if (prev.repeat === 'all' && prev.queue.length > 0) {
+          // Loop back to start
           const track = prev.queue[0];
-          if (audioRef.current) {
-            audioRef.current.src = track.audio_url;
-            audioRef.current.play();
-          }
+          // Use setTimeout to avoid side-effects-in-setState race
+          setTimeout(() => {
+            audio.src = track.audio_url;
+            audio.play().catch(() => {});
+          }, 0);
           return { ...prev, currentTrack: track, queueIndex: 0, isPlaying: true };
         }
+        // Repeat off + end of queue → stop
         return { ...prev, isPlaying: false };
       }
 
+      // Normal advance to next track
       const track = prev.queue[nextIdx];
-      if (audioRef.current) {
-        audioRef.current.src = track.audio_url;
-        audioRef.current.play();
-      }
+      setTimeout(() => {
+        audio.src = track.audio_url;
+        audio.play().catch(() => {});
+      }, 0);
       return { ...prev, currentTrack: track, queueIndex: nextIdx, isPlaying: true };
     });
   }, []);
