@@ -92,7 +92,7 @@ serve(async (req) => {
       mode,
       allow_promotion_codes: true,
       success_url: `${origin}/?checkout=success`,
-      cancel_url: isSubscription ? `${origin}/plans` : `${origin}/university`,
+      cancel_url: isSubscription ? `${origin}/ai-tokens` : `${origin}/university`,
       metadata: { user_id: user.id, price_id: priceId },
     };
 
@@ -108,8 +108,12 @@ serve(async (req) => {
       };
     }
 
-    const session = await stripe.checkout.sessions.create(sessionConfig);
-    logStep("Checkout session created", { sessionId: session.id, mode });
+    // Idempotency key: prevents duplicate sessions from double-click / retry
+    const idempotencyKey = `checkout_${user.id}_${priceId}_${Math.floor(Date.now() / 30000)}`;
+    const session = await stripe.checkout.sessions.create(sessionConfig, {
+      idempotencyKey,
+    });
+    logStep("Checkout session created", { sessionId: session.id, mode, idempotencyKey });
 
     // If Tier 2 (121 coaching), notify all dev users
     if (COACHING_121_PRICES.has(priceId)) {

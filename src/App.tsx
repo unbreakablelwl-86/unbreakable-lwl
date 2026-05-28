@@ -9,6 +9,7 @@ import { PlayerContext, usePlayerProvider } from "@/hooks/useUnTunes";
 import { UniversityAdminProvider } from "@/hooks/useUniversityAdmin";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { RouteErrorBoundary } from "@/components/RouteErrorBoundary";
 import { InstallPrompt } from "@/components/pwa/InstallPrompt";
 import { SplashScreen } from "@/components/SplashScreen";
 import AppLayout from "@/layouts/AppLayout";
@@ -57,7 +58,7 @@ import CoachProfileEdit from "./pages/CoachProfileEdit";
 import CoachProfile from "./pages/CoachProfile";
 import Coaches from "./pages/Coaches";
 import CoachCommandCentre from "./pages/CoachCommandCentre";
-import Plans from "./pages/Plans";
+// Plans removed — /plans redirects inline to /ai-tokens
 import Founder from "./pages/Founder";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
@@ -117,7 +118,7 @@ const App = () => {
                 {/* Index handles both logged-in hub and logged-out landing */}
                 <Route path="/" element={<Index />} />
                 <Route path="/social" element={
-                  <ProtectedRoute><Social /></ProtectedRoute>
+                  <ProtectedRoute><RouteErrorBoundary section="Social"><Social /></RouteErrorBoundary></ProtectedRoute>
                 } />
                 
                 {/* Founder page - pre-sign-in */}
@@ -142,10 +143,8 @@ const App = () => {
                   <ProtectedRoute><AITokens /></ProtectedRoute>
                 } />
 
-                {/* Plans - subscription selection */}
-                <Route path="/plans" element={
-                  <ProtectedRoute><Plans /></ProtectedRoute>
-                } />
+                {/* Plans — legacy URL redirect */}
+                <Route path="/plans" element={<Navigate to="/ai-tokens" replace />} />
                 
                 {/* Inbox - free (hub feature) */}
                 <Route path="/inbox" element={
@@ -166,87 +165,87 @@ const App = () => {
                 
                 {/* Programming (Power) routes */}
                 <Route path="/programming" element={
-                  <ProtectedRoute><Programming /></ProtectedRoute>
+                  <ProtectedRoute><RouteErrorBoundary section="Power"><Programming /></RouteErrorBoundary></ProtectedRoute>
                 } />
                 <Route path="/programming/create" element={
-                  <ProtectedRoute><ProgrammingCreate /></ProtectedRoute>
+                  <ProtectedRoute><RouteErrorBoundary section="Power"><ProgrammingCreate /></RouteErrorBoundary></ProtectedRoute>
                 } />
                 <Route path="/programming/my-programmes" element={
-                  <ProtectedRoute><ProgrammingMyProgrammes /></ProtectedRoute>
+                  <ProtectedRoute><RouteErrorBoundary section="Power"><ProgrammingMyProgrammes /></RouteErrorBoundary></ProtectedRoute>
                 } />
                 <Route path="/programming/logs" element={
-                  <ProtectedRoute><ProgrammingLogs /></ProtectedRoute>
+                  <ProtectedRoute><RouteErrorBoundary section="Power"><ProgrammingLogs /></RouteErrorBoundary></ProtectedRoute>
                 } />
-                <Route path="/programming/exercises" element={<ExerciseLibrary />} />
+                <Route path="/programming/exercises" element={<RouteErrorBoundary section="Power"><ExerciseLibrary /></RouteErrorBoundary>} />
                 
                 {/* Tracker (Movement) routes */}
                 <Route path="/tracker" element={
-                  <ProtectedRoute><Tracker /></ProtectedRoute>
+                  <ProtectedRoute><RouteErrorBoundary section="Movement"><Tracker /></RouteErrorBoundary></ProtectedRoute>
                 } />
                 <Route path="/tracker/create" element={
-                  <ProtectedRoute><TrackerCreate /></ProtectedRoute>
+                  <ProtectedRoute><RouteErrorBoundary section="Movement"><TrackerCreate /></RouteErrorBoundary></ProtectedRoute>
                 } />
                 <Route path="/tracker/my-programmes" element={
-                  <ProtectedRoute><TrackerMyProgrammes /></ProtectedRoute>
+                  <ProtectedRoute><RouteErrorBoundary section="Movement"><TrackerMyProgrammes /></RouteErrorBoundary></ProtectedRoute>
                 } />
                 
                 {/* Fuel routes */}
                 <Route path="/fuel" element={
-                  <ProtectedRoute><Fuel /></ProtectedRoute>
+                  <ProtectedRoute><RouteErrorBoundary section="Fuel"><Fuel /></RouteErrorBoundary></ProtectedRoute>
                 } />
                 <Route path="/fuel/history" element={
-                  <ProtectedRoute><FuelHistory /></ProtectedRoute>
+                  <ProtectedRoute><RouteErrorBoundary section="Fuel"><FuelHistory /></RouteErrorBoundary></ProtectedRoute>
                 } />
                 <Route path="/fuel/recipes" element={
-                  <ProtectedRoute><FuelRecipes /></ProtectedRoute>
+                  <ProtectedRoute><RouteErrorBoundary section="Fuel"><FuelRecipes /></RouteErrorBoundary></ProtectedRoute>
                 } />
                 <Route path="/fuel/planning" element={
-                  <ProtectedRoute><FuelPlanning /></ProtectedRoute>
+                  <ProtectedRoute><RouteErrorBoundary section="Fuel"><FuelPlanning /></RouteErrorBoundary></ProtectedRoute>
                 } />
                 <Route path="/fuel/foods" element={
-                  <ProtectedRoute><FuelFoods /></ProtectedRoute>
+                  <ProtectedRoute><RouteErrorBoundary section="Fuel"><FuelFoods /></RouteErrorBoundary></ProtectedRoute>
                 } />
                 <Route path="/fuel/my-fuel" element={
-                  <ProtectedRoute><FuelMyFuel /></ProtectedRoute>
+                  <ProtectedRoute><RouteErrorBoundary section="Fuel"><FuelMyFuel /></RouteErrorBoundary></ProtectedRoute>
                 } />
                 
                 {/* Mindset routes */}
                 <Route path="/mindset" element={
-                  <ProtectedRoute><Mindset /></ProtectedRoute>
+                  <ProtectedRoute><RouteErrorBoundary section="Mindset"><Mindset /></RouteErrorBoundary></ProtectedRoute>
                 } />
                 <Route path="/mindset/breathing" element={
-                  <ProtectedRoute><MindsetBreathing /></ProtectedRoute>
+                  <ProtectedRoute><RouteErrorBoundary section="Mindset"><MindsetBreathing /></RouteErrorBoundary></ProtectedRoute>
                 } />
                 <Route path="/mindset/games" element={
-                  <ProtectedRoute><MindsetGames /></ProtectedRoute>
+                  <ProtectedRoute><RouteErrorBoundary section="Mindset"><MindsetGames /></RouteErrorBoundary></ProtectedRoute>
                 } />
                 <Route path="/zone" element={
-                  <ProtectedRoute><Zone /></ProtectedRoute>
+                  <ProtectedRoute><RouteErrorBoundary section="Mindset"><Zone /></RouteErrorBoundary></ProtectedRoute>
                 } />
                 
                 {/* Coaching (Help) — uses Unbreakable token system, not subscription */}
                 <Route path="/help" element={
-                  <ProtectedRoute><Help /></ProtectedRoute>
+                  <ProtectedRoute><RouteErrorBoundary section="Coach"><Help /></RouteErrorBoundary></ProtectedRoute>
                 } />
                 
                 {/* University */}
                 <Route path="/university" element={
-                  <ProtectedRoute><University /></ProtectedRoute>
+                  <ProtectedRoute><RouteErrorBoundary section="University"><University /></RouteErrorBoundary></ProtectedRoute>
                 } />
                 <Route path="/university/:courseType/:level" element={
-                  <ProtectedRoute><UniversityLevel /></ProtectedRoute>
+                  <ProtectedRoute><RouteErrorBoundary section="University"><UniversityLevel /></RouteErrorBoundary></ProtectedRoute>
                 } />
                 <Route path="/university/:courseType/:level/:unit/:chapter" element={
-                  <ProtectedRoute><UniversityChapter /></ProtectedRoute>
+                  <ProtectedRoute><RouteErrorBoundary section="University"><UniversityChapter /></RouteErrorBoundary></ProtectedRoute>
                 } />
                 <Route path="/university/:courseType/:level/:unit/:chapter/quiz" element={
-                  <ProtectedRoute><UniversityChapterQuiz /></ProtectedRoute>
+                  <ProtectedRoute><RouteErrorBoundary section="University"><UniversityChapterQuiz /></RouteErrorBoundary></ProtectedRoute>
                 } />
                 <Route path="/university/:courseType/:level/:unit/assessment" element={
-                  <ProtectedRoute><UniversityAssessment /></ProtectedRoute>
+                  <ProtectedRoute><RouteErrorBoundary section="University"><UniversityAssessment /></RouteErrorBoundary></ProtectedRoute>
                 } />
                 <Route path="/university/:courseType/:level/certificate" element={
-                  <ProtectedRoute><UniversityCertificate /></ProtectedRoute>
+                  <ProtectedRoute><RouteErrorBoundary section="University"><UniversityCertificate /></RouteErrorBoundary></ProtectedRoute>
                 } />
                 
                 {/* Habits - free to build daily engagement */}
@@ -259,7 +258,7 @@ const App = () => {
                 } />
 
                 {/* Un-Tunes — Music & Podcasts */}
-                <Route path="/untunes" element={<UnTunes />} />
+                <Route path="/untunes" element={<RouteErrorBoundary section="Un-Tunes"><UnTunes /></RouteErrorBoundary>} />
                 <Route path="/untunes/terms" element={<UnTunesTerms />} />
                 <Route path="/achievements" element={<AchievementsPage />} />
                 {/* <Route path="/callback/spotify" element={<SpotifyCallback />} /> */}
