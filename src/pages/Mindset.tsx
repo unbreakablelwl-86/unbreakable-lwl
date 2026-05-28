@@ -584,6 +584,9 @@ const Mindset = () => {
                 { id: 'pattern', name: 'LOCK IN', subtitle: 'ONE WRONG MOVE, IT\'S OVER.', desc: 'Watch. Listen. Repeat. Each round adds one more — break focus and you\'re done.', icon: Shapes },
                 { id: 'flow', name: 'FLOW', subtitle: 'STAY IN THE ZONE.', desc: 'Endless runner — dodge obstacles at increasing speed. Double-jump your way to immortality.', icon: Flame },
                 { id: 'maths', name: 'SOLVE', subtitle: 'RAPID FIRE. ZERO HESITATION.', desc: 'Mental maths blitz — solve under countdown. Numbers grow, timer shrinks. 3 lives.', icon: Activity },
+                { id: 'flappy', name: 'RISE', subtitle: 'DEFY GRAVITY.', desc: 'Tap to fly through impossible gaps. One mistake and you\'re done. How far can you go?', icon: Gamepad2 },
+                { id: 'memory', name: 'RECALL', subtitle: 'REMEMBER EVERYTHING.', desc: 'Memorise the grid pattern. Tiles flash faster, grids grow bigger. Pure visual memory.', icon: Gamepad2 },
+                { id: 'reaction', name: 'STRIKE', subtitle: 'MILLISECONDS MATTER.', desc: 'Test your raw reaction speed. Hit the target the instant it appears. Track your best times.', icon: Gamepad2 },
               ].map((game, i) => (
                 <button
                   key={game.name}

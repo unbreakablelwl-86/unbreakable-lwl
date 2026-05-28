@@ -306,7 +306,7 @@ function SellCardModal({ cards, onClose, onListCreated }: {
                 value={startingPrice}
                 onChange={(e) => setStartingPrice(e.target.value)}
                 min={0.1}
-                step={0.1}
+                step={1}
                 className="w-full bg-card border border-border rounded-lg px-4 py-3 text-lg font-display text-center focus:outline-none focus:border-primary"
               />
             </div>
@@ -321,7 +321,7 @@ function SellCardModal({ cards, onClose, onListCreated }: {
                   onChange={(e) => setBuyNowPrice(e.target.value)}
                   placeholder="—"
                   min={0.1}
-                  step={0.1}
+                  step={1}
                   className="w-full bg-card border border-border rounded-lg px-4 py-3 text-lg font-display text-center focus:outline-none focus:border-primary"
                 />
               </div>

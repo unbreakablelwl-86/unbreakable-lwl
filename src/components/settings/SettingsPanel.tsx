@@ -13,6 +13,12 @@ import {
   Volume2,
   Video,
   Brain,
+  Lock,
+  Trash2,
+  Eye,
+  EyeOff,
+  Shield,
+  Bell,
 } from 'lucide-react';
 import { useUserSettings, UserSettings } from '@/hooks/useUserSettings';
 import { useAIPreferences } from '@/hooks/useAIPreferences';
@@ -21,6 +27,19 @@ import { useProfile } from '@/hooks/useProfile';
 import { toast } from 'sonner';
 
 import { BlockedUsersSection } from './BlockedUsersSection';
+import { Input } from '@/components/ui/input';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+import { supabase } from '@/integrations/supabase/client';
 import { SocialLinksCard } from './SocialLinksCard';
 import { SportPreferenceCard } from './SportPreferenceCard';
 
@@ -30,6 +49,11 @@ export function SettingsPanel() {
   const { profile, updateProfile } = useProfile();
   const { signOut } = useAuth();
   const [saving, setSaving] = useState(false);
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [changingPassword, setChangingPassword] = useState(false);
+  const [deletingAccount, setDeletingAccount] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState('');
 
   if (loading || !settings) {
     return (
@@ -54,6 +78,51 @@ export function SettingsPanel() {
     const { error } = await toggleTheme();
     if (error) {
       toast.error('Failed to update theme');
+    }
+  };
+
+  const handlePasswordChange = async () => {
+    if (newPassword.length < 8) {
+      toast.error('Password must be at least 8 characters');
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      toast.error('Passwords do not match');
+      return;
+    }
+    setChangingPassword(true);
+    const { error } = await supabase.auth.updateUser({ password: newPassword });
+    setChangingPassword(false);
+    if (error) {
+      toast.error(error.message || 'Failed to change password');
+    } else {
+      toast.success('Password changed successfully');
+      setNewPassword('');
+      setConfirmPassword('');
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    if (deleteConfirmText !== 'DELETE') return;
+    setDeletingAccount(true);
+    // Call edge function to delete user data, then sign out
+    const { error } = await supabase.functions.invoke('delete-account');
+    if (error) {
+      toast.error('Failed to delete account. Please contact support.');
+      setDeletingAccount(false);
+      return;
+    }
+    await signOut();
+    toast.success('Account deleted successfully');
+  };
+
+  const handlePrivacyToggle = async (isPublic: boolean) => {
+    if (!profile) return;
+    const { error } = await updateProfile({ is_public: isPublic } as any);
+    if (error) {
+      toast.error('Failed to update privacy setting');
+    } else {
+      toast.success(isPublic ? 'Profile is now public' : 'Profile is now private');
     }
   };
 
@@ -228,6 +297,72 @@ export function SettingsPanel() {
       {/* Social Links */}
       <SocialLinksCard profile={profile} updateProfile={updateProfile} />
 
+      {/* Privacy */}
+      <Card className="bg-card border-border">
+        <CardHeader>
+          <CardTitle className="font-heading text-xl tracking-wide flex items-center gap-2">
+            <Shield className="w-5 h-5 text-primary" />
+            PRIVACY
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="space-y-0.5">
+              <Label className="text-foreground font-medium flex items-center gap-2">
+                {(profile as any)?.is_public ? <Eye className="w-4 h-4 text-primary" /> : <EyeOff className="w-4 h-4 text-primary" />}
+                Public Profile
+              </Label>
+              <p className="text-sm text-muted-foreground">
+                {(profile as any)?.is_public ? 'Anyone can see your profile and posts' : 'Only followers can see your profile'}
+              </p>
+            </div>
+            <Switch
+              checked={(profile as any)?.is_public ?? false}
+              onCheckedChange={handlePrivacyToggle}
+            />
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Password Change */}
+      <Card className="bg-card border-border">
+        <CardHeader>
+          <CardTitle className="font-heading text-xl tracking-wide flex items-center gap-2">
+            <Lock className="w-5 h-5 text-primary" />
+            CHANGE PASSWORD
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label className="text-foreground font-medium">New Password</Label>
+            <Input
+              type="password"
+              placeholder="Min 8 characters"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              className="bg-background border-border"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label className="text-foreground font-medium">Confirm Password</Label>
+            <Input
+              type="password"
+              placeholder="Repeat password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              className="bg-background border-border"
+            />
+          </div>
+          <Button
+            onClick={handlePasswordChange}
+            disabled={changingPassword || !newPassword || !confirmPassword}
+            className="w-full font-heading tracking-wide"
+          >
+            {changingPassword ? 'CHANGING...' : 'CHANGE PASSWORD'}
+          </Button>
+        </CardContent>
+      </Card>
+
       {/* Sign Out */}
       <Card className="bg-card border-border border-destructive/30">
         <CardContent className="pt-6">
@@ -239,6 +374,54 @@ export function SettingsPanel() {
             <LogOut className="w-4 h-4 mr-2" />
             SIGN OUT
           </Button>
+        </CardContent>
+      </Card>
+
+      {/* Account Deletion */}
+      <Card className="bg-card border-border border-destructive/50">
+        <CardHeader>
+          <CardTitle className="font-heading text-xl tracking-wide flex items-center gap-2 text-destructive">
+            <Trash2 className="w-5 h-5" />
+            DELETE ACCOUNT
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-muted-foreground mb-4">
+            Permanently delete your account and all data. This action cannot be undone.
+          </p>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="destructive" className="w-full font-heading tracking-wide">
+                <Trash2 className="w-4 h-4 mr-2" />
+                DELETE MY ACCOUNT
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent className="bg-card border-border">
+              <AlertDialogHeader>
+                <AlertDialogTitle className="font-display text-foreground">Are you absolutely sure?</AlertDialogTitle>
+                <AlertDialogDescription className="text-muted-foreground">
+                  This will permanently delete your account, all your data, achievements, and progress. 
+                  This cannot be undone. Type <span className="text-destructive font-bold">DELETE</span> to confirm.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <Input
+                value={deleteConfirmText}
+                onChange={(e) => setDeleteConfirmText(e.target.value)}
+                placeholder='Type "DELETE" to confirm'
+                className="bg-background border-border"
+              />
+              <AlertDialogFooter>
+                <AlertDialogCancel className="font-display">CANCEL</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleDeleteAccount}
+                  disabled={deleteConfirmText !== 'DELETE' || deletingAccount}
+                  className="bg-destructive text-destructive-foreground font-display"
+                >
+                  {deletingAccount ? 'DELETING...' : 'DELETE FOREVER'}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </CardContent>
       </Card>
     </div>

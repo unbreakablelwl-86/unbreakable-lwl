@@ -6,12 +6,14 @@ import { useProfile } from '@/hooks/useProfile';
 import { useTokenBalance } from '@/hooks/useTokenBalance';
 import { useLoginStreak } from '@/hooks/useLoginStreak';
 import { UpgradeNudge } from '@/components/paywall/UpgradeNudge';
+import { NotificationsPanel } from '@/components/hub/NotificationsPanel';
+import { useNotifications } from '@/hooks/useNotifications';
 import { 
   Zap, Flame, Activity, Brain, GraduationCap, Music,
   Camera, Footprints, Dumbbell, BookOpen,
   ChevronRight, Settings, Check, Plus, X,
   Sparkles, Calculator, MessageCircle, User,
-  HelpCircle, Calendar, Search, Wind,
+  HelpCircle, Calendar, Search, Wind, Bell,
 } from 'lucide-react';
 
 /* ── Pillar card config ── */
@@ -265,7 +267,15 @@ export function HomeDashboard() {
             {editing ? (
               <><Check className="w-3.5 h-3.5" /> Done</>
             ) : (
-              <><Settings className="w-3.5 h-3.5" /> Edit</>
+              <><button onClick={() => setShowNotifications(true)} className="relative p-2 rounded-xl hover:bg-white/5 transition-colors">
+              <Bell className="w-5 h-5 text-foreground" />
+              {unreadCount > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-primary text-[9px] text-white flex items-center justify-center font-display">
+                  {unreadCount > 9 ? '9+' : unreadCount}
+                </span>
+              )}
+            </button>
+            <Settings className="w-3.5 h-3.5" /> Edit</>
             )}
           </button>
         </div>
@@ -375,6 +385,7 @@ export function HomeDashboard() {
           </Link>
         </section>
       )}
+    <NotificationsPanel isOpen={showNotifications} onClose={() => setShowNotifications(false)} />
     </div>
   );
 }
