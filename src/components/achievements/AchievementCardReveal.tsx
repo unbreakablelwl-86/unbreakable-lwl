@@ -18,7 +18,10 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import type { AchievementCard, AchievementRarity } from '@/hooks/useAchievementCards';
-import { STAT_LABELS, STAT_ORDER } from '@/hooks/useAthleteStats';
+import {
+  STRENGTH_STAT_LABELS, STRENGTH_STAT_ORDER,
+  CARDIO_STAT_LABELS, CARDIO_STAT_ORDER,
+} from '@/hooks/useAthleteStats';
 
 /* ═══════════════════════════════════════════════════ */
 /*  RARITY VISUAL CONFIG                              */
@@ -81,14 +84,16 @@ const ACHIEVEMENT_RARITY_CONFIG: Record<AchievementRarity, {
   },
   platinum: {
     label: 'PLATINUM',
-    gradient: 'from-slate-200 via-white to-slate-300',
-    glow: 'shadow-[0_0_120px_rgba(226,232,240,0.9)]',
-    particleColor: '#e2e8f0',
-    textColor: 'text-slate-200',
-    borderColor: 'border-slate-300/60',
-    bgGlow: 'bg-slate-200/15',
-    borderHex: 'rgba(226,232,240,0.7)',
-    accentHex: '#e2e8f0',
+    gradient: 'from-[#E5E4E2] via-white to-[#E5E4E2]',
+    glow: 'shadow-[0_0_120px_rgba(229,228,226,0.9)]',
+    particleColor: '#E5E4E2',
+    textColor: 'text-[#E5E4E2]',
+    borderColor: 'border-[#E5E4E2]/60',
+    bgGlow: 'bg-[#E5E4E2]/15',
+    borderHex: 'rgba(229,228,226,0.7)',
+    accentHex: '#E5E4E2',
+    roseGold: '#B76E79',
+    borderGradient: 'linear-gradient(135deg, #E5E4E2, #B76E79, #E5E4E2)',
   },
 };
 
@@ -1048,11 +1053,11 @@ export function AchievementCardReveal({
     ? PROGRAMME_ICONS[card.programme_type || 'power'] || Trophy
     : ACTIVITY_ICONS[card.activity_category || 'lift'] || Dumbbell;
 
+  // Use bespoke base colour per rarity tier
+  const rarityBase = config.baseBg || '#0A0A0A';
   const cardBg = isProgramme
     ? PROGRAMME_BACKGROUNDS[card.programme_type || 'power']
-    : isPBGlobal
-      ? 'radial-gradient(ellipse at 50% 30%, #0a0814 0%, #04030a 40%, #020104 100%)'
-      : 'radial-gradient(ellipse at 50% 30%, #140a08 0%, #0a0504 40%, #060302 100%)';
+    : `radial-gradient(ellipse at 50% 30%, ${rarityBase} 0%, ${rarityBase}f0 40%, ${rarityBase}e0 100%)`;
 
   const title = isProgramme
     ? card.programme_name || 'Programme Complete'
@@ -1408,8 +1413,12 @@ export function AchievementCardReveal({
                       </motion.p>
                     )}
 
-                    {/* ── 6-STAT BAR (STR/PWR/SPD/END/AGI/REC) ── */}
-                    {(isPBPersonal || isPBGlobal) && card.athlete_stats && (
+                    {/* ── 6-STAT BAR — Strength: STR/PWR/CON/PGS/EXP/RNK · Cardio: SPD/END/CON/DST/ELV/RNK ── */}
+                    {(isPBPersonal || isPBGlobal) && card.athlete_stats && (() => {
+                      const isCardio = ['run', 'cycle', 'row', 'swim'].includes(card.activity_category || '');
+                      const currentStatOrder = isCardio ? CARDIO_STAT_ORDER : STRENGTH_STAT_ORDER;
+                      const currentStatLabels = isCardio ? CARDIO_STAT_LABELS : STRENGTH_STAT_LABELS;
+                      return (
                       <motion.div
                         className="mt-2 rounded-lg p-2"
                         style={{
@@ -1421,9 +1430,9 @@ export function AchievementCardReveal({
                         transition={{ delay: 0.35 }}
                       >
                         <div className="grid grid-cols-3 gap-x-3 gap-y-1.5">
-                          {STAT_ORDER.map((statKey) => {
+                          {currentStatOrder.map((statKey) => {
                             const statVal = (card.athlete_stats as Record<string, number>)?.[statKey] || 0;
-                            const statInfo = STAT_LABELS[statKey];
+                            const statInfo = currentStatLabels[statKey];
                             return (
                               <div key={statKey} className="flex items-center gap-1.5">
                                 <span
@@ -1453,7 +1462,8 @@ export function AchievementCardReveal({
                           })}
                         </div>
                       </motion.div>
-                    )}
+                      );
+                    })()}
 
                     {/* ── AI BIO LINE ── */}
                     {card.bio_line && (
@@ -1583,11 +1593,11 @@ export function AchievementCardStatic({
     ? PROGRAMME_ICONS[card.programme_type || 'power'] || Trophy
     : ACTIVITY_ICONS[card.activity_category || 'lift'] || Dumbbell;
 
+  // Use bespoke base colour per rarity tier
+  const rarityBase = config.baseBg || '#0A0A0A';
   const cardBg = isProgramme
     ? PROGRAMME_BACKGROUNDS[card.programme_type || 'power']
-    : isPBGlobal
-      ? 'radial-gradient(ellipse at 50% 30%, #0a0814 0%, #04030a 40%, #020104 100%)'
-      : 'radial-gradient(ellipse at 50% 30%, #140a08 0%, #0a0504 40%, #060302 100%)';
+    : `radial-gradient(ellipse at 50% 30%, ${rarityBase} 0%, ${rarityBase}f0 40%, ${rarityBase}e0 100%)`;
 
   const title = isProgramme
     ? card.programme_name || 'Programme'
@@ -1799,14 +1809,18 @@ export function AchievementCardStatic({
               </p>
             )}
 
-            {/* 6-stat grid (3×2) — PB cards only */}
-            {!isProgramme && card.athlete_stats && (
+            {/* 6-stat grid (3×2) — PB cards only, per-type */}
+            {!isProgramme && card.athlete_stats && (() => {
+              const isCardioCard = ['run', 'cycle', 'row', 'swim'].includes(card.activity_category || '');
+              const cStatOrder = isCardioCard ? CARDIO_STAT_ORDER : STRENGTH_STAT_ORDER;
+              const cStatLabels = isCardioCard ? CARDIO_STAT_LABELS : STRENGTH_STAT_LABELS;
+              return (
               <div className={cn('rounded mt-1', size === 'sm' ? 'p-1' : 'p-1.5')}
                 style={{ background: `${config.accentHex}06`, border: `1px solid ${config.accentHex}12` }}>
                 <div className={cn('grid grid-cols-3', size === 'sm' ? 'gap-x-2 gap-y-0.5' : 'gap-x-2.5 gap-y-1')}>
-                  {STAT_ORDER.map((statKey) => {
+                  {cStatOrder.map((statKey) => {
                     const statVal = (card.athlete_stats as Record<string, number>)?.[statKey] || 0;
-                    const statInfo = STAT_LABELS[statKey];
+                    const statInfo = cStatLabels[statKey];
                     return (
                       <div key={statKey} className="flex items-center gap-1">
                         <span className={cn('font-display tracking-wider shrink-0', size === 'sm' ? 'text-[5px] w-4' : 'text-[7px] w-5')}
@@ -1830,7 +1844,8 @@ export function AchievementCardStatic({
                   })}
                 </div>
               </div>
-            )}
+              );
+            })()}
 
             {/* Bio line */}
             {card.bio_line && (

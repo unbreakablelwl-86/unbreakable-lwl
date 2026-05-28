@@ -2,6 +2,8 @@
  * AchievementCollection — Full gallery for Programme Trophies & PB Cards
  * Same standard as UN-TUNES CollectionGallery: share to socials, download image,
  * full-screen viewer, confirm discard, Pokédex-style library.
+ *
+ * Updated: Neon glow system + unified CardShareSheet + RarityBadge
  */
 import { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -10,9 +12,12 @@ import {
   Trophy, Dumbbell, Activity, Crown, Diamond, Sparkles,
   Shield, Medal, Award, Globe, TrendingUp, X, Share2,
   Download, Trash2, Loader2, ChevronLeft, ChevronRight,
-  ChevronDown,
+  ChevronDown, AlertCircle,
 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
+import { CardShareSheet } from '@/components/achievements/CardShareSheet';
+import { RarityBadge } from '@/components/achievements/RarityBadge';
+import { RARITY_GLOW, type RarityTier } from '@/lib/rarityGlow';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
@@ -410,8 +415,9 @@ export function AchievementCollection() {
     return result;
   }, [cards, activeTab, sort, filterRarity]);
 
-  const handleShareFeed = async (card: AchievementCard) => {
-    toast({ title: 'Posted!', description: 'Achievement shared to your timeline.' });
+  // Share is now handled by CardShareSheet — kept for backwards compat
+  const handleShareFeed = async (_card: AchievementCard) => {
+    // Now handled by CardShareSheet component
     setShareCard(null);
   };
 
@@ -426,8 +432,32 @@ export function AchievementCollection() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-16">
-        <Loader2 className="w-8 h-8 text-primary animate-spin" />
+      <div className="space-y-4 animate-pulse">
+        {/* Header skeleton */}
+        <Card className="border-border p-4 bg-card">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-xl bg-muted" />
+            <div className="space-y-2 flex-1">
+              <div className="h-5 bg-muted rounded w-48" />
+              <div className="h-3 bg-muted/50 rounded w-28" />
+            </div>
+          </div>
+          <div className="flex gap-2">
+            {[1, 2, 3, 4, 5].map(i => (
+              <div key={i} className="flex-1 flex flex-col items-center gap-1 py-2">
+                <div className="w-4 h-4 rounded bg-muted" />
+                <div className="h-5 w-6 rounded bg-muted" />
+                <div className="h-2 w-10 rounded bg-muted/50" />
+              </div>
+            ))}
+          </div>
+        </Card>
+        {/* Grid skeleton */}
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+          {[1, 2, 3, 4, 5, 6].map(i => (
+            <div key={i} className="aspect-[3/4] rounded-xl bg-muted border border-border" />
+          ))}
+        </div>
       </div>
     );
   }
@@ -447,22 +477,29 @@ export function AchievementCollection() {
             </div>
           </div>
 
-          {/* Rarity breakdown */}
+          {/* Rarity breakdown — neon glow per tier */}
           <div className="flex justify-between gap-2">
             {(['platinum', 'diamond', 'gold', 'silver', 'bronze'] as AchievementRarity[]).map(r => {
-              const cfg = RARITY_CONFIG[r];
+              const glowCfg = RARITY_GLOW[r];
               const count = counts[r];
+              const isActive = filterRarity === r;
               return (
                 <button
                   key={r}
                   onClick={() => setFilterRarity(filterRarity === r ? 'all' : r)}
                   className={cn(
                     'flex-1 flex flex-col items-center gap-1 py-2 px-1 rounded-lg border transition-all',
-                    filterRarity === r ? `${cfg.bgClass} ${cfg.borderClass}` : 'border-transparent hover:bg-muted/30',
+                    isActive ? glowCfg.borderClass + ' ' + glowCfg.bgClass : 'border-transparent hover:bg-muted/30',
                   )}
+                  style={isActive ? { boxShadow: glowCfg.boxShadow } : undefined}
                 >
-                  <cfg.icon className={cn('w-4 h-4', cfg.textColor)} />
-                  <span className={cn('font-display text-lg', cfg.textColor)}>{count}</span>
+                  <RarityBadge tier={r} variant="icon" size="sm" />
+                  <span
+                    className="font-display text-lg"
+                    style={isActive ? { color: glowCfg.primary, textShadow: glowCfg.textShadow } : { color: glowCfg.primary }}
+                  >
+                    {count}
+                  </span>
                   <span className="text-[9px] text-muted-foreground uppercase tracking-wider">{r}</span>
                 </button>
               );
@@ -585,18 +622,24 @@ export function AchievementCollection() {
       ) : filterRarity !== 'all' ? (
         /* When filtered to single rarity, show flat grid */
         <motion.div className="grid grid-cols-2 gap-3 sm:grid-cols-3" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-          {filteredCards.map((card, i) => (
-            <motion.div key={card.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.03 }} className="relative group">
-              <AchievementCardStatic card={card} size="sm" onClick={() => setSelectedIndex(i)} />
-              <div className="absolute bottom-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                <button onClick={(e) => { e.stopPropagation(); setShareCard(card); }}
-                  className="w-7 h-7 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center border border-white/10 hover:border-white/30 transition-colors">
-                  <Share2 className="w-3 h-3 text-white/70" />
-                </button>
-              </div>
-            </motion.div>
-          ))}
+          {filteredCards.map((card, i) => {
+            const glow = RARITY_GLOW[card.rarity as RarityTier] || RARITY_GLOW.bronze;
+            return (
+              <motion.div key={card.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.03 }}
+                className="relative group aspect-[3/4] rarity-gpu-hint"
+                style={{ boxShadow: glow.boxShadow }}
+              >
+                <AchievementCardStatic card={card} size="sm" onClick={() => setSelectedIndex(i)} />
+                <div className="absolute bottom-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button onClick={(e) => { e.stopPropagation(); setShareCard(card); }}
+                    className="w-7 h-7 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center border border-white/10 hover:border-white/30 transition-colors">
+                    <Share2 className="w-3 h-3 text-white/70" />
+                  </button>
+                </div>
+              </motion.div>
+            );
+          })}
         </motion.div>
       ) : (activeTab === 'strength' || activeTab === 'cardio') ? (
         /* Exercise-grouped view — each lift shows its own ranked results */
@@ -629,16 +672,15 @@ export function AchievementCollection() {
         )}
       </AnimatePresence>
 
-      {/* Share menu modal */}
-      <AnimatePresence>
-        {shareCard && (
-          <AchievementShareMenu
-            card={shareCard}
-            onShareFeed={() => handleShareFeed(shareCard)}
-            onClose={() => setShareCard(null)}
-          />
-        )}
-      </AnimatePresence>
+      {/* Share — unified CardShareSheet */}
+      {shareCard && (
+        <CardShareSheet
+          open={!!shareCard}
+          onOpenChange={(open) => !open && setShareCard(null)}
+          card={shareCard}
+          cardSystem="pb"
+        />
+      )}
 
       {/* Confirm discard modal */}
       <AnimatePresence>

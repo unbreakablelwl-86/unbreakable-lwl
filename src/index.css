@@ -512,4 +512,53 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+  /* Rarity glow: static tint fallback, no animation */
+  .rarity-glow-bronze,
+  .rarity-glow-silver,
+  .rarity-glow-gold,
+  .rarity-glow-diamond,
+  .rarity-glow-platinum {
+    text-shadow: none !important;
+    box-shadow: none !important;
+  }
+}
+
+/* ========================================
+   RARITY NEON GLOW SYSTEM
+   5-tier glow for #080808 dark backgrounds
+   ======================================== */
+
+/* Bronze — warm copper, subtle */
+.rarity-glow-bronze { color: #CD7F32; text-shadow: 0 0 8px #CD7F32, 0 0 16px #8B4513; }
+.rarity-box-bronze { box-shadow: 0 0 8px rgba(205,127,50,0.3), 0 0 16px rgba(139,69,19,0.15); border-color: rgba(205,127,50,0.4); }
+
+/* Silver — chrome, cool */
+.rarity-glow-silver { color: #C0C0C0; text-shadow: 0 0 8px #C0C0C0, 0 0 20px #E8E8E8; }
+.rarity-box-silver { box-shadow: 0 0 8px rgba(192,192,192,0.3), 0 0 20px rgba(232,232,232,0.15); border-color: rgba(192,192,192,0.4); }
+
+/* Gold — foil, warm particle */
+.rarity-glow-gold { color: #FFD700; text-shadow: 0 0 10px #FFD700, 0 0 25px #B8860B, 0 0 40px #FFD700; }
+.rarity-box-gold { box-shadow: 0 0 10px rgba(255,215,0,0.35), 0 0 25px rgba(184,134,11,0.2), 0 0 40px rgba(255,215,0,0.1); border-color: rgba(255,215,0,0.4); }
+
+/* Diamond — prismatic, colour cycles */
+.rarity-glow-diamond { color: #F0F8FF; text-shadow: 0 0 12px #7DF9FF, 0 0 30px #BF5FFF, 0 0 50px #F0F8FF; }
+.rarity-box-diamond { box-shadow: 0 0 12px rgba(125,249,255,0.35), 0 0 30px rgba(191,95,255,0.2), 0 0 50px rgba(240,248,255,0.1); border-color: rgba(125,249,255,0.4); }
+@keyframes diamondPrismatic {
+  0% { text-shadow: 0 0 12px #7DF9FF, 0 0 30px #BF5FFF, 0 0 50px #F0F8FF; }
+  33% { text-shadow: 0 0 12px #BF5FFF, 0 0 30px #F0F8FF, 0 0 50px #7DF9FF; }
+  66% { text-shadow: 0 0 12px #F0F8FF, 0 0 30px #7DF9FF, 0 0 50px #BF5FFF; }
+  100% { text-shadow: 0 0 12px #7DF9FF, 0 0 30px #BF5FFF, 0 0 50px #F0F8FF; }
+}
+.rarity-glow-diamond-animated { animation: diamondPrismatic 4s ease-in-out infinite; }
+
+/* Platinum — maximum glow, rose-gold accent */
+.rarity-glow-platinum { color: #E5E4E2; text-shadow: 0 0 15px #E5E4E2, 0 0 35px #B76E79, 0 0 60px #FFFFFF; }
+.rarity-box-platinum { box-shadow: 0 0 15px rgba(229,228,226,0.4), 0 0 35px rgba(183,110,121,0.25), 0 0 60px rgba(255,255,255,0.1); border-color: rgba(229,228,226,0.5); }
+.rarity-platinum-stamp { color: #B76E79; text-shadow: 0 0 8px #B76E79, 0 0 20px #E5E4E2; }
+
+/* GPU hints for heavy effects */
+.rarity-gpu-hint {
+  will-change: transform, opacity;
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
