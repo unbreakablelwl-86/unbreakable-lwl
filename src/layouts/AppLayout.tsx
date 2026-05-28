@@ -368,12 +368,7 @@ export default function AppLayout() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* ━━━ Global Theme Toggle ━━━ */}
-      {!hideNav && (
-        <div className="fixed top-3 right-3 z-[60]">
-          <ThemeToggle />
-        </div>
-      )}
+      {/* Theme toggle moved to More panel — no longer floating on every page */}
 
       <main className={hideBottomNav ? '' : isFreeUser ? 'pb-32' : 'pb-20'}>
         <Outlet />
@@ -506,6 +501,7 @@ export default function AppLayout() {
                 </span>
               </div>
               <div className="flex items-center gap-2">
+                <ThemeToggle />
                 <button
                   onClick={() => setShowCustomize(!showCustomize)}
                   className={`p-1.5 rounded-full transition-colors ${showCustomize ? 'bg-primary/20 text-primary' : 'hover:bg-white/5 text-muted-foreground'}`}

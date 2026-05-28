@@ -22,6 +22,7 @@ import {
   STRENGTH_STAT_LABELS, STRENGTH_STAT_ORDER,
   CARDIO_STAT_LABELS, CARDIO_STAT_ORDER,
 } from '@/hooks/useAthleteStats';
+import { useExerciseGif } from '@/hooks/useExerciseGif';
 
 /* ═══════════════════════════════════════════════════ */
 /*  RARITY VISUAL CONFIG — Exact spec values 28/05/26 */
@@ -858,15 +859,17 @@ function PBCardArtwork({ card, accentColor, size = 'md' }: { card: AchievementCa
   const isFemale = card.owner_gender === 'female';
   const isRun = card.activity_category === 'run' || (card.exercise_name || '').toLowerCase().match(/run|km|mile|walk|sprint/);
   const exerciseName = card.exercise_name || (isRun ? 'run' : 'lift');
-  const hasArtwork = !!card.image_url;
+  const exerciseGif = useExerciseGif(exerciseName);
+  const artworkSrc = card.image_url || exerciseGif;
+  const hasArtwork = !!artworkSrc;
 
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden">
       {hasArtwork ? (
-        /* ═══ AI-GENERATED ARTWORK — full card image ═══ */
+        /* ═══ ARTWORK — user upload, AI-generated, or ExerciseDB GIF ═══ */
         <>
           <img
-            src={card.image_url!}
+            src={artworkSrc!}
             alt={exerciseName}
             className="absolute inset-0 w-full h-full object-cover"
             style={{ objectPosition: 'center 30%' }}
@@ -1587,10 +1590,10 @@ export function AchievementCardReveal({
                             return (
                               <div key={statKey} className="flex items-center gap-1.5">
                                 <span
-                                  className="text-[8px] font-display font-black tracking-wider w-6 shrink-0"
+                                  className="text-[7px] font-display font-black tracking-wider w-14 shrink-0 truncate"
                                   style={{ color: '#FFFFFF' }}
                                 >
-                                  {statInfo.label}
+                                  {statInfo.fullLabel.toUpperCase()}
                                 </span>
                                 <span
                                   className="text-[9px] font-display tracking-wider shrink-0"
@@ -2087,9 +2090,9 @@ export function AchievementCardStatic({
                     const statInfo = cStatLabels[statKey];
                     return (
                       <div key={statKey} className="flex items-center gap-1">
-                        <span className={cn('font-display tracking-wider shrink-0 font-black', size === 'sm' ? 'text-[5px] w-4' : 'text-[7px] w-5')}
+                        <span className={cn('font-display tracking-wider shrink-0 font-black truncate', size === 'sm' ? 'text-[4px] w-8' : 'text-[6px] w-12')}
                           style={{ color: '#FFFFFF' }}>
-                          {statInfo.label}
+                          {statInfo.fullLabel.toUpperCase()}
                         </span>
                         <span className={cn('font-display tracking-wider shrink-0', size === 'sm' ? 'text-[6px]' : 'text-[8px]')}
                           style={{ color: '#FF5500', textShadow: '0 0 6px rgba(255,85,0,0.4)' }}>
