@@ -63,7 +63,7 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
         // Fallback: direct query
         const { data, error } = await (supabase as any)
           .from('un_tunes_user_cards')
-          .select('id, track_id, album_id, rarity, card_type, brand_card_id, edition_number, created_at')
+          .select('id, track_id, album_id, rarity, card_type, brand_card_id, edition_number, created_at, date_stamped')
           .eq('user_id', user.id)
           .eq('is_opened', false)
           .order('created_at', { ascending: true });
@@ -499,7 +499,8 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
                 {[
                   { rarity: 'standard', icon: Music, desc: 'Guaranteed with every purchase', color: 'text-muted-foreground' },
                   { rarity: 'gold', icon: Crown, desc: 'Uncommon — gold-framed variant', color: 'text-yellow-400' },
-                  { rarity: 'diamond', icon: Diamond, desc: 'Only 100 ever — numbered editions', color: 'text-violet-400' },
+                  { rarity: 'diamond', icon: Diamond, desc: 'Rare — numbered editions', color: 'text-violet-400' },
+                  { rarity: 'platinum', icon: Sparkles, desc: 'Only 250 ever — numbered, dated, legendary', color: 'text-slate-200' },
                 ].map(({ rarity, icon: Icon, desc, color }) => (
                   <div key={rarity} className="flex items-center gap-3">
                     <Icon className={cn('w-4 h-4', color)} />
