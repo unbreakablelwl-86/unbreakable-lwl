@@ -25,6 +25,35 @@ import { useAchievementCards, AchievementCard, AchievementRarity, AchievementCar
 import { AchievementCardStatic, AchievementCardReveal, formatPBValue } from '@/components/achievements/AchievementCardReveal';
 import UserProfileCard from '@/components/achievements/UserProfileCard';
 
+/* ═══ Reflective container backgrounds per rarity — behind cards ═══ */
+const CONTAINER_REFLECTIVE_BG: Record<string, string> = {
+  bronze: `
+    radial-gradient(ellipse at 50% 40%, rgba(205,127,50,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse at 30% 90%, rgba(139,69,19,0.06) 0%, transparent 40%),
+    linear-gradient(180deg, #0D0B09 0%, #0A0908 50%, #0D0B09 100%)
+  `,
+  silver: `
+    radial-gradient(ellipse at 50% 40%, rgba(192,192,192,0.07) 0%, transparent 60%),
+    radial-gradient(ellipse at 70% 90%, rgba(232,232,232,0.05) 0%, transparent 40%),
+    linear-gradient(180deg, #0C0C0D 0%, #0A0A0B 50%, #0C0C0D 100%)
+  `,
+  gold: `
+    radial-gradient(ellipse at 50% 35%, rgba(255,215,0,0.10) 0%, transparent 55%),
+    radial-gradient(ellipse at 30% 85%, rgba(184,134,11,0.07) 0%, transparent 40%),
+    linear-gradient(180deg, #0B0A06 0%, #090804 50%, #0B0A06 100%)
+  `,
+  diamond: `
+    radial-gradient(ellipse at 40% 35%, rgba(125,249,255,0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 60% 80%, rgba(191,95,255,0.06) 0%, transparent 45%),
+    linear-gradient(180deg, #060609 0%, #04040A 50%, #060609 100%)
+  `,
+  platinum: `
+    radial-gradient(ellipse at 50% 35%, rgba(229,228,226,0.09) 0%, transparent 55%),
+    radial-gradient(ellipse at 40% 85%, rgba(183,110,121,0.06) 0%, transparent 40%),
+    linear-gradient(180deg, #0C0B0B 0%, #0A0909 50%, #0C0B0B 100%)
+  `,
+};
+
 /* ═══ Rarity config — mirrors UN-TUNES ═══ */
 const RARITY_ORDER: Record<AchievementRarity, number> = {
   platinum: 5, diamond: 4, gold: 3, silver: 2, bronze: 1,
@@ -626,17 +655,18 @@ export function AchievementCollection() {
         </Card>
       ) : filterRarity !== 'all' ? (
         /* When filtered to single rarity, show flat grid */
-        <motion.div className="grid grid-cols-2 gap-3 sm:grid-cols-3" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+        <motion.div className="grid grid-cols-2 gap-4 sm:grid-cols-3" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
           {filteredCards.map((card, i) => {
             const glow = RARITY_GLOW[card.rarity as RarityTier] || RARITY_GLOW.bronze;
+            const containerBg = CONTAINER_REFLECTIVE_BG[card.rarity] || CONTAINER_REFLECTIVE_BG.bronze;
             return (
               <motion.div key={card.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.03 }}
-                className="relative group aspect-[3/4] rarity-gpu-hint"
-                style={{ boxShadow: glow.boxShadow }}
+                className="relative group aspect-[3/4] rarity-gpu-hint rounded-2xl p-1.5"
+                style={{ background: containerBg, boxShadow: glow.boxShadow }}
               >
                 <AchievementCardStatic card={card} size="sm" onClick={() => setSelectedIndex(i)} />
-                <div className="absolute bottom-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="absolute bottom-3 right-3 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-20">
                   <button onClick={(e) => { e.stopPropagation(); setShareCard(card); }}
                     className="w-7 h-7 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center border border-white/10 hover:border-white/30 transition-colors">
                     <Share2 className="w-3 h-3 text-white/70" />
@@ -648,17 +678,18 @@ export function AchievementCollection() {
         </motion.div>
       ) : sort !== 'rarity' ? (
         /* Flat sorted grid — when user picks NEWEST or NAME, show cards in order */
-        <motion.div className="grid grid-cols-2 gap-3 sm:grid-cols-3" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+        <motion.div className="grid grid-cols-2 gap-4 sm:grid-cols-3" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
           {filteredCards.map((card, i) => {
             const glow = RARITY_GLOW[card.rarity as RarityTier] || RARITY_GLOW.bronze;
+            const containerBg = CONTAINER_REFLECTIVE_BG[card.rarity] || CONTAINER_REFLECTIVE_BG.bronze;
             return (
               <motion.div key={card.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.03 }}
-                className="relative group aspect-[3/4] rarity-gpu-hint rounded-xl overflow-hidden"
-                style={{ boxShadow: glow.boxShadow }}
+                className="relative group aspect-[3/4] rarity-gpu-hint rounded-2xl p-1.5"
+                style={{ background: containerBg, boxShadow: glow.boxShadow }}
               >
                 <AchievementCardStatic card={card} size="sm" onClick={() => setSelectedIndex(i)} />
-                <div className="absolute bottom-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="absolute bottom-3 right-3 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-20">
                   <button onClick={(e) => { e.stopPropagation(); setShareCard(card); }}
                     className="w-7 h-7 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center border border-white/10 hover:border-white/30 transition-colors">
                     <Share2 className="w-3 h-3 text-white/70" />

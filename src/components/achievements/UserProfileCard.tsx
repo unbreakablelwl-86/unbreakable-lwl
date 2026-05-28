@@ -261,15 +261,19 @@ export default function UserProfileCard() {
         style={{
           aspectRatio: '3 / 4.5',
           maxWidth: '100%',
-          border: '2px solid rgba(255,85,0,0.3)',
-          boxShadow: '0 0 20px rgba(255,85,0,0.1), inset 0 0 30px rgba(0,0,0,0.5)',
+          border: '2px solid rgba(255,85,0,0.45)',
+          boxShadow: '0 0 20px rgba(255,85,0,0.15), 0 0 40px rgba(255,85,0,0.06), inset 0 0 30px rgba(0,0,0,0.5)',
         }}
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
       >
-        {/* Background */}
+        {/* Background — premium dark with orange warmth */}
         <div className="absolute inset-0" style={{
-          background: 'linear-gradient(135deg, #0a0a0a 0%, #1a0a00 40%, #0d0d0d 100%)',
+          background: 'linear-gradient(135deg, #0a0a0a 0%, #1a0800 30%, #120600 60%, #0d0d0d 100%)',
+        }} />
+        {/* Subtle metallic sheen */}
+        <div className="absolute inset-0" style={{
+          background: 'radial-gradient(ellipse at 50% 20%, rgba(255,85,0,0.06) 0%, transparent 60%), radial-gradient(ellipse at 30% 80%, rgba(255,85,0,0.03) 0%, transparent 40%)',
         }} />
 
         {/* Tech grid */}
@@ -352,7 +356,8 @@ export default function UserProfileCard() {
               {profile.display_name || profile.username || 'TRAINER'}
             </h2>
             {profile.username && (
-              <p className="text-[9px] font-mono tracking-wider text-primary/40 uppercase">@{profile.username}</p>
+              <p className="text-[9px] font-mono tracking-wider uppercase"
+                style={{ color: '#FF5500', textShadow: '0 0 8px rgba(255,85,0,0.4)' }}>@{profile.username}</p>
             )}
           </div>
 
@@ -361,7 +366,8 @@ export default function UserProfileCard() {
             background: 'rgba(255,85,0,0.04)',
             border: '1px solid rgba(255,85,0,0.12)',
           }}>
-            <p className="text-[7px] font-mono tracking-[0.2em] text-primary/35 uppercase mb-1">
+            <p className="text-[7px] font-mono tracking-[0.2em] uppercase mb-1"
+              style={{ color: '#FF5500', textShadow: '0 0 6px rgba(255,85,0,0.3)' }}>
               ⚡ PERSONAL BESTS {cardConfig.customPBs.length > 0 ? '(CUSTOM)' : ''}
             </p>
 
@@ -388,10 +394,11 @@ export default function UserProfileCard() {
             {/* SBD Total */}
             {sbdTotal > 0 && (
               <div className="flex items-center justify-between mt-1 pt-1" style={{ borderTop: '1px solid rgba(255,85,0,0.08)' }}>
-                <span className="text-[8px] font-mono text-primary/40 tracking-wider">SBD TOTAL</span>
-                <span className="text-xs font-display text-primary tracking-wider"
-                  style={{ textShadow: '0 0 8px rgba(255,85,0,0.3)' }}>
-                  {sbdTotal}kg
+                <span className="text-[8px] font-mono tracking-wider"
+                  style={{ color: '#FF5500', textShadow: '0 0 6px rgba(255,85,0,0.4)' }}>SBD TOTAL</span>
+                <span className="text-sm font-display tracking-wider font-black"
+                  style={{ color: '#FF5500', textShadow: '0 0 12px rgba(255,85,0,0.5), 0 0 24px rgba(255,85,0,0.2)' }}>
+                  {sbdTotal}KG
                 </span>
               </div>
             )}
@@ -404,37 +411,39 @@ export default function UserProfileCard() {
               border: '1px solid rgba(255,85,0,0.08)',
             }}>
               <div className="flex items-center justify-between">
-                <span className="text-[7px] font-mono tracking-[0.2em] text-primary/35 uppercase">🏃 CARDIO</span>
-                <span className="text-[11px] font-display text-primary/70 tracking-wide">
+                <span className="text-[7px] font-mono tracking-[0.2em] uppercase"
+                  style={{ color: '#FF5500', textShadow: '0 0 6px rgba(255,85,0,0.3)' }}>🏃 CARDIO</span>
+                <span className="text-[11px] font-display tracking-wide font-bold"
+                  style={{ color: '#FF5500', textShadow: '0 0 8px rgba(255,85,0,0.4)' }}>
                   {bestCardio.value}{bestCardio.unit}
                 </span>
               </div>
-              <p className="text-[8px] text-white/25 font-mono truncate">{bestCardio.name}</p>
+              <p className="text-[8px] text-white/60 font-mono truncate">{bestCardio.name}</p>
             </div>
           )}
 
           {/* ═══ Body stats ═══ */}
           {(weightDisplay || heightDisplay || ageDisplay) && (
-            <div className="flex items-center justify-center gap-4 py-1 rounded-lg" style={{
-              background: 'rgba(255,255,255,0.02)',
-              border: '1px solid rgba(255,255,255,0.04)',
+            <div className="flex items-center justify-center gap-5 py-1.5 rounded-lg" style={{
+              background: 'rgba(255,85,0,0.04)',
+              border: '1px solid rgba(255,85,0,0.12)',
             }}>
               {ageDisplay && (
                 <div className="text-center">
-                  <p className="text-[7px] font-mono text-white/20 tracking-wider">AGE</p>
-                  <p className="text-[11px] font-display text-white/50">{ageDisplay}</p>
+                  <p className="text-[7px] font-mono tracking-wider" style={{ color: 'rgba(255,85,0,0.6)' }}>AGE</p>
+                  <p className="text-[12px] font-display text-white font-bold">{ageDisplay}</p>
                 </div>
               )}
               {heightDisplay && (
                 <div className="text-center">
-                  <p className="text-[7px] font-mono text-white/20 tracking-wider">HT</p>
-                  <p className="text-[11px] font-display text-white/50">{heightDisplay}</p>
+                  <p className="text-[7px] font-mono tracking-wider" style={{ color: 'rgba(255,85,0,0.6)' }}>HT</p>
+                  <p className="text-[12px] font-display text-white font-bold">{heightDisplay}</p>
                 </div>
               )}
               {weightDisplay && (
                 <div className="text-center">
-                  <p className="text-[7px] font-mono text-white/20 tracking-wider">WT</p>
-                  <p className="text-[11px] font-display text-white/50">{weightDisplay}</p>
+                  <p className="text-[7px] font-mono tracking-wider" style={{ color: 'rgba(255,85,0,0.6)' }}>WT</p>
+                  <p className="text-[12px] font-display text-white font-bold">{weightDisplay}</p>
                 </div>
               )}
             </div>
@@ -442,10 +451,12 @@ export default function UserProfileCard() {
 
           {/* Footer */}
           <div className="absolute bottom-1.5 left-3 right-3 flex items-center justify-between">
-            <span className="text-[6px] font-mono text-white/12 tracking-wider uppercase">
+            <span className="text-[6px] font-mono tracking-wider uppercase"
+              style={{ color: 'rgba(255,85,0,0.35)' }}>
               UNBREAKABLE • EST {new Date(profile.created_at).getFullYear()}
             </span>
-            <span className="text-[6px] font-mono text-white/12 tracking-wider">
+            <span className="text-[6px] font-mono tracking-wider"
+              style={{ color: 'rgba(255,85,0,0.25)' }}>
               #{user.id.slice(0, 8).toUpperCase()}
             </span>
           </div>
@@ -677,8 +688,9 @@ function StatBar({ label, value, unit, maxValue, color, delay = 0 }: {
 
   return (
     <div className="flex items-center gap-1.5">
-      <span className="text-[8px] font-mono text-white/35 w-7 tracking-wider truncate">{label}</span>
-      <div className="flex-1 h-[4px] rounded-full overflow-hidden" style={{ background: `${color}10` }}>
+      <span className="text-[8px] font-mono w-7 tracking-wider truncate font-bold"
+        style={{ color: 'rgba(255,255,255,0.7)' }}>{label}</span>
+      <div className="flex-1 h-[5px] rounded-full overflow-hidden" style={{ background: `${color}15` }}>
         {value ? (
           <motion.div
             className="h-full rounded-full"
@@ -686,17 +698,18 @@ function StatBar({ label, value, unit, maxValue, color, delay = 0 }: {
             animate={{ width: `${fillWidth}%` }}
             transition={{ duration: 0.8, delay, ease: 'easeOut' }}
             style={{
-              background: `linear-gradient(90deg, ${color}50, ${color})`,
-              boxShadow: `0 0 4px ${color}25`,
+              background: `linear-gradient(90deg, ${color}70, ${color})`,
+              boxShadow: `0 0 8px ${color}40, 0 0 16px ${color}15`,
             }}
           />
         ) : null}
       </div>
-      <span className={cn(
-        'text-[9px] font-display tracking-wide w-11 text-right',
-        value ? 'text-white/60' : 'text-white/15',
-      )}>
-        {value ? `${value}${unit}` : '—'}
+      <span className="text-[9px] font-display tracking-wide w-14 text-right font-bold"
+        style={{
+          color: value ? '#FFFFFF' : 'rgba(255,255,255,0.15)',
+          textShadow: value ? '0 0 4px rgba(255,255,255,0.2)' : 'none',
+        }}>
+        {value ? `${value}${unit.toUpperCase()}` : '—'}
       </span>
     </div>
   );
@@ -708,7 +721,9 @@ function getShortLabel(name: string): string {
   if (n.includes('squat')) return 'SQT';
   if (n.includes('bench')) return 'BNC';
   if (n.includes('deadlift') || n.includes('sumo')) return 'DL';
-  if (n.includes('shoulder') || n.includes('ohp')) return 'OHP';
+  if (n.includes('overhead') || n.includes('shoulder') || n.includes('ohp')) return 'OHP';
+  if (n.includes('press up') || n.includes('push up') || n.includes('pushup') || n.includes('press-up')) return 'PU';
+  if (n.includes('pull-up') || n.includes('pull up') || n.includes('pullup')) return 'PU';
   if (n.includes('curl')) return 'CRL';
   if (n.includes('row')) return 'ROW';
   if (n.includes('pull')) return 'PLU';

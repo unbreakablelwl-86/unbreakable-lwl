@@ -192,27 +192,27 @@ const achievementCardStyles = `
 /** Bronze: fine grain texture + warm copper ambient glow + slow pulse */
 function BronzeShimmer() {
   return (
-    <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl">
+    <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-xl">
       {/* Fine grain texture */}
       <div
         className="absolute inset-0"
         style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E")`,
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23n)' opacity='0.12'/%3E%3C/svg%3E")`,
           animation: 'achGrainShift 8s steps(4) infinite',
         }}
       />
-      {/* Warm copper ambient */}
+      {/* Warm copper ambient — intensified */}
       <div
         className="absolute inset-0"
         style={{
-          background: 'linear-gradient(145deg, rgba(205,127,50,0.08) 0%, rgba(139,69,19,0.12) 30%, rgba(210,105,30,0.06) 50%, rgba(205,127,50,0.12) 70%, rgba(139,69,19,0.08) 100%)',
+          background: 'linear-gradient(145deg, rgba(205,127,50,0.14) 0%, rgba(139,69,19,0.18) 30%, rgba(210,105,30,0.10) 50%, rgba(205,127,50,0.18) 70%, rgba(139,69,19,0.14) 100%)',
         }}
       />
-      {/* Warm bronze pulse glow from border */}
+      {/* Warm bronze pulse glow from border — stronger */}
       <div
         className="absolute inset-0"
         style={{
-          boxShadow: 'inset 0 0 30px rgba(205,127,50,0.15), inset 0 0 60px rgba(139,69,19,0.08)',
+          boxShadow: 'inset 0 0 40px rgba(205,127,50,0.25), inset 0 0 80px rgba(139,69,19,0.12)',
           animation: 'achBronzePulse 3s ease-in-out infinite',
         }}
       />
@@ -1841,28 +1841,47 @@ export function AchievementCardStatic({
     ? card.programme_name || 'Programme'
     : card.exercise_name || 'PB';
 
-  const dims = size === 'sm' ? 'w-32 h-48' : size === 'lg' ? 'w-72 h-[28rem]' : 'w-48 h-72';
+  const dims = size === 'sm' ? 'w-full h-full' : size === 'lg' ? 'w-72 h-[28rem]' : 'w-48 h-72';
   const iconSize = size === 'sm' ? 'w-6 h-6' : size === 'lg' ? 'w-12 h-12' : 'w-8 h-8';
   const textSize = size === 'sm' ? 'text-[9px]' : size === 'lg' ? 'text-sm' : 'text-[11px]';
   const titleSize = size === 'sm' ? 'text-[10px]' : size === 'lg' ? 'text-base' : 'text-xs';
 
+  /* ── Thick metallic gradient border ── */
+  const BORDER_GRADIENT: Record<string, string> = {
+    bronze: 'linear-gradient(135deg, #CD7F32 0%, #8B4513 25%, #D2691E 50%, #CD7F32 75%, #8B4513 100%)',
+    silver: 'linear-gradient(135deg, #C0C0C0 0%, #E8E8E8 25%, #A9A9A9 50%, #E8E8E8 75%, #C0C0C0 100%)',
+    gold: 'linear-gradient(135deg, #FFD700 0%, #B8860B 20%, #FFD700 40%, #DAA520 60%, #FFD700 80%, #B8860B 100%)',
+    diamond: 'linear-gradient(135deg, #7DF9FF 0%, #BF5FFF 20%, #00CED1 40%, #C0C0C0 60%, #BF5FFF 80%, #7DF9FF 100%)',
+    platinum: 'linear-gradient(135deg, #E5E4E2 0%, #B76E79 25%, #E5E4E2 50%, #D4D0CC 75%, #B76E79 100%)',
+  };
+  const borderWidth = size === 'sm' ? 2 : size === 'lg' ? 3 : 2.5;
+
   return (
     <>
       <style>{achievementCardStyles}</style>
+      {/* Outer gradient border wrapper */}
       <motion.div
         className={cn(
           dims,
-          'relative rounded-xl overflow-hidden cursor-pointer',
-          config.glow,
+          'relative cursor-pointer',
         )}
         style={{
-          background: cardBg,
-          border: `1.5px solid ${config.borderHex}`,
+          borderRadius: size === 'sm' ? 14 : 16,
+          background: BORDER_GRADIENT[card.rarity] || BORDER_GRADIENT.bronze,
+          padding: borderWidth,
           boxShadow: config.boxGlow,
         }}
         whileHover={{ scale: 1.05, y: -4 }}
         whileTap={{ scale: 0.95 }}
         onClick={() => onClick?.(card)}
+      >
+      {/* Inner card surface */}
+      <div
+        className="relative w-full h-full overflow-hidden"
+        style={{
+          borderRadius: size === 'sm' ? 12 : 14,
+          background: cardBg,
+        }}
       >
         {/* Pokémon-style PB card artwork overlay */}
         {(card.card_type === 'pb_personal' || card.card_type === 'pb_global') && (
@@ -2118,6 +2137,7 @@ export function AchievementCardStatic({
             </div>
           </div>
         </div>
+      </div>{/* end inner card surface */}
       </motion.div>
     </>
   );
