@@ -369,7 +369,7 @@ export default function UserProfileCard() {
 
         {/* ═══ STATS SECTION (62%) ═══ */}
         <div className="relative px-3 pt-0.5" style={{ height: '62%' }}>
-          {/* Name */}
+          {/* Name + Bio Stats */}
           <div className="mb-1.5">
             <h2 className="font-display text-lg tracking-wider uppercase text-white truncate"
               style={{ textShadow: '0 0 12px rgba(255,85,0,0.3)' }}>
@@ -378,6 +378,29 @@ export default function UserProfileCard() {
             {profile.username && (
               <p className="text-[9px] font-mono tracking-wider uppercase"
                 style={{ color: '#FF5500', textShadow: '0 0 8px rgba(255,85,0,0.4)' }}>@{profile.username}</p>
+            )}
+            {/* Bio stats — AGE / HT / WT */}
+            {(weightDisplay || heightDisplay || ageDisplay) && (
+              <div className="flex items-center gap-4 mt-1">
+                {ageDisplay && (
+                  <span className="text-[9px] font-mono text-white/70">
+                    <span style={{ color: 'rgba(255,85,0,0.6)', fontSize: '7px' }}>AGE </span>
+                    <span className="font-bold text-white">{ageDisplay}</span>
+                  </span>
+                )}
+                {heightDisplay && (
+                  <span className="text-[9px] font-mono text-white/70">
+                    <span style={{ color: 'rgba(255,85,0,0.6)', fontSize: '7px' }}>HT </span>
+                    <span className="font-bold text-white">{heightDisplay}</span>
+                  </span>
+                )}
+                {weightDisplay && (
+                  <span className="text-[9px] font-mono text-white/70">
+                    <span style={{ color: 'rgba(255,85,0,0.6)', fontSize: '7px' }}>WT </span>
+                    <span className="font-bold text-white">{weightDisplay}</span>
+                  </span>
+                )}
+              </div>
             )}
           </div>
 
@@ -388,7 +411,7 @@ export default function UserProfileCard() {
           }}>
             <p className="text-[7px] font-mono tracking-[0.2em] uppercase mb-1"
               style={{ color: '#FF5500', textShadow: '0 0 6px rgba(255,85,0,0.3)' }}>
-              ⚡ PERSONAL BESTS {cardConfig.customPBs.length > 0 ? '(CUSTOM)' : ''}
+              ⚡ PERSONAL BESTS
             </p>
 
             {(() => {
@@ -458,32 +481,7 @@ export default function UserProfileCard() {
             )}
           </div>
 
-          {/* ═══ Body stats ═══ */}
-          {(weightDisplay || heightDisplay || ageDisplay) && (
-            <div className="flex items-center justify-center gap-5 py-1.5 rounded-lg" style={{
-              background: 'rgba(255,85,0,0.04)',
-              border: '1px solid rgba(255,85,0,0.12)',
-            }}>
-              {ageDisplay && (
-                <div className="text-center">
-                  <p className="text-[7px] font-mono tracking-wider" style={{ color: 'rgba(255,85,0,0.6)' }}>AGE</p>
-                  <p className="text-[12px] font-display text-white font-bold">{ageDisplay}</p>
-                </div>
-              )}
-              {heightDisplay && (
-                <div className="text-center">
-                  <p className="text-[7px] font-mono tracking-wider" style={{ color: 'rgba(255,85,0,0.6)' }}>HT</p>
-                  <p className="text-[12px] font-display text-white font-bold">{heightDisplay}</p>
-                </div>
-              )}
-              {weightDisplay && (
-                <div className="text-center">
-                  <p className="text-[7px] font-mono tracking-wider" style={{ color: 'rgba(255,85,0,0.6)' }}>WT</p>
-                  <p className="text-[12px] font-display text-white font-bold">{weightDisplay}</p>
-                </div>
-              )}
-            </div>
-          )}
+          {/* Body stats moved to top — see above name section */}
 
           {/* Footer */}
           <div className="absolute bottom-1.5 left-3 right-3 flex items-center justify-between">
@@ -774,6 +772,14 @@ function getMaxForExercise(name: string, unit: string): number {
   if (unit === 'km') return 42;
   if (unit === 'mi') return 26;
   if (unit === 'min') return 120;
+  if (unit === 'reps') {
+    const n = name.toLowerCase();
+    if (n.includes('pull') || n.includes('chin')) return 30;
+    if (n.includes('dip')) return 60;
+    if (n.includes('push') || n.includes('press up')) return 60;
+    if (n.includes('sit') || n.includes('crunch')) return 100;
+    return 50;
+  }
   const n = name.toLowerCase();
   if (n.includes('deadlift') || n.includes('sumo')) return 350;
   if (n.includes('squat')) return 300;
@@ -781,6 +787,6 @@ function getMaxForExercise(name: string, unit: string): number {
   if (n.includes('leg press')) return 400;
   if (n.includes('row')) return 150;
   if (n.includes('curl')) return 80;
-  if (n.includes('shoulder') || n.includes('ohp')) return 120;
+  if (n.includes('shoulder') || n.includes('ohp') || n.includes('overhead')) return 120;
   return 200;
 }
