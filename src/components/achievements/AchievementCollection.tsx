@@ -594,7 +594,12 @@ export function AchievementCollection() {
       <div className="flex gap-2">
         {(['newest', 'rarity', 'exercise'] as SortType[]).map(s => (
           <Button key={s} variant={sort === s ? 'default' : 'outline'} size="sm"
-            className="font-display tracking-wider text-[10px]" onClick={() => setSort(s)}>
+            className={cn(
+              "font-display tracking-wider text-[10px] transition-all",
+              sort === s && "bg-[#FF5500] text-white border-[#FF5500] hover:bg-[#FF5500]/90"
+            )}
+            style={sort === s ? { boxShadow: '0 0 12px rgba(255,85,0,0.5), 0 0 24px rgba(255,85,0,0.2)' } : undefined}
+            onClick={() => setSort(s)}>
             {s === 'newest' ? 'NEWEST' : s === 'rarity' ? 'RARITY' : 'NAME'}
           </Button>
         ))}
@@ -628,6 +633,28 @@ export function AchievementCollection() {
               <motion.div key={card.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.03 }}
                 className="relative group aspect-[3/4] rarity-gpu-hint"
+                style={{ boxShadow: glow.boxShadow }}
+              >
+                <AchievementCardStatic card={card} size="sm" onClick={() => setSelectedIndex(i)} />
+                <div className="absolute bottom-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button onClick={(e) => { e.stopPropagation(); setShareCard(card); }}
+                    className="w-7 h-7 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center border border-white/10 hover:border-white/30 transition-colors">
+                    <Share2 className="w-3 h-3 text-white/70" />
+                  </button>
+                </div>
+              </motion.div>
+            );
+          })}
+        </motion.div>
+      ) : sort !== 'rarity' ? (
+        /* Flat sorted grid — when user picks NEWEST or NAME, show cards in order */
+        <motion.div className="grid grid-cols-2 gap-3 sm:grid-cols-3" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+          {filteredCards.map((card, i) => {
+            const glow = RARITY_GLOW[card.rarity as RarityTier] || RARITY_GLOW.bronze;
+            return (
+              <motion.div key={card.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.03 }}
+                className="relative group aspect-[3/4] rarity-gpu-hint rounded-xl overflow-hidden"
                 style={{ boxShadow: glow.boxShadow }}
               >
                 <AchievementCardStatic card={card} size="sm" onClick={() => setSelectedIndex(i)} />
