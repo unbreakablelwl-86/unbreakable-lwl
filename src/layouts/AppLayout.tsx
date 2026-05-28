@@ -30,9 +30,11 @@ import {
   Bot,
   Music,
   LogOut,
+  Bell,
 } from 'lucide-react';
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useConversations } from '@/hooks/useConversations';
+import { useNotifications } from '@/hooks/useNotifications';
 import { useTokenBalance } from '@/hooks/useTokenBalance';
 import shieldLogo from '@/assets/unbreakable-shield.png';
 import CasioZoneIcon from '@/components/icons/CasioZoneIcon';
@@ -159,6 +161,15 @@ const ALL_NAV_ITEMS: NavItemDef[] = [
     description: 'Unbreakable AI Coach',
   },
   {
+    id: 'notifications',
+    icon: Bell,
+    label: 'Alerts',
+    path: '/social?tab=notifications',
+    activeMatch: [],
+    color: '#FF5500',
+    description: 'Notifications & alerts',
+  },
+  {
     id: 'inbox',
     icon: MessageCircle,
     label: 'Inbox',
@@ -264,6 +275,7 @@ export default function AppLayout() {
   const [activeTabs, setActiveTabs] = useState<string[]>(loadSavedTabs);
   const [moreOrder, setMoreOrder] = useState<string[]>(loadMoreOrder);
   const { unreadCount } = useConversations();
+  const { unreadCount: notifUnread } = useNotifications();
   const { currentTier, loading: tierLoading } = useTokenBalance();
   const isFreeUser = !tierLoading && (!currentTier || currentTier === 'free');
   // pillar theme removed — all neon orange
@@ -438,6 +450,19 @@ export default function AppLayout() {
                   <span className={`text-[10px] transition-all ${active ? 'font-bold' : 'font-medium'}`}>
                     {item.label}
                   </span>
+                  {/* Notification badge */}
+                  {(item.id === 'social' || item.id === 'notifications') && notifUnread > 0 && (
+                    <span className="absolute -top-0.5 right-0 w-4 h-4 bg-primary text-[9px] text-white rounded-full flex items-center justify-center font-bold"
+                      style={{ boxShadow: '0 0 8px rgba(255,85,0,0.5)' }}>
+                      {notifUnread > 9 ? '9+' : notifUnread}
+                    </span>
+                  )}
+                  {item.id === 'inbox' && unreadCount > 0 && (
+                    <span className="absolute -top-0.5 right-0 w-4 h-4 bg-primary text-[9px] text-white rounded-full flex items-center justify-center font-bold"
+                      style={{ boxShadow: '0 0 8px rgba(255,85,0,0.5)' }}>
+                      {unreadCount > 9 ? '9+' : unreadCount}
+                    </span>
+                  )}
                   {/* Active glow dot */}
                   {active && (
                     <div className="absolute -bottom-0.5 w-1 h-1 rounded-full"

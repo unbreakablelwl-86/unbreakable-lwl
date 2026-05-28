@@ -165,10 +165,11 @@ export function StrengthPBTracker() {
   const { cards, loading } = useAchievementCards();
 
   const exerciseGroups = useMemo(() => {
-    // Filter to strength PB cards
+    // Filter to strength PB cards (kg lifts + bodyweight reps like Dips, Pull-Ups, Press Ups)
     const strengthCards = cards.filter(c =>
       c.card_type === 'pb_personal' &&
-      (c.pb_unit === 'kg' || (c as any).record_unit === 'kg')
+      (c.pb_unit === 'kg' || (c as any).record_unit === 'kg' ||
+       c.pb_unit === 'reps' || (c as any).record_unit === 'reps')
     );
 
     // Group by exercise
@@ -210,7 +211,7 @@ export function StrengthPBTracker() {
           <div>
             <h3 className="font-display text-sm tracking-wider text-foreground">STRENGTH PBs</h3>
             <p className="text-[10px] text-muted-foreground">
-              {exerciseGroups.length} exercises • {cards.filter(c => c.card_type === 'pb_personal' && (c.pb_unit === 'kg' || (c as any).record_unit === 'kg')).length} cards
+              {exerciseGroups.length} exercises • {cards.filter(c => c.card_type === 'pb_personal' && (c.pb_unit === 'kg' || (c as any).record_unit === 'kg' || c.pb_unit === 'reps' || (c as any).record_unit === 'reps')).length} cards
             </p>
           </div>
         </div>

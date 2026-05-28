@@ -116,7 +116,7 @@ const App = () => {
               {/* All pages wrapped in AppLayout (provides bottom nav) */}
               <Route element={<AppLayout />}>
                 {/* Index handles both logged-in hub and logged-out landing */}
-                <Route path="/" element={<Index />} />
+                <Route path="/" element={<RouteErrorBoundary section="Home"><Index /></RouteErrorBoundary>} />
                 <Route path="/social" element={
                   <ProtectedRoute><RouteErrorBoundary section="Social"><Social /></RouteErrorBoundary></ProtectedRoute>
                 } />
@@ -135,12 +135,12 @@ const App = () => {
                 
                 {/* Profile - free access (has membership tab) */}
                 <Route path="/profile" element={
-                  <ProtectedRoute><Profile /></ProtectedRoute>
+                  <ProtectedRoute><RouteErrorBoundary section="Profile"><Profile /></RouteErrorBoundary></ProtectedRoute>
                 } />
                 
                 {/* Unbreakable Tokens - token tier selection */}
                 <Route path="/ai-tokens" element={
-                  <ProtectedRoute><AITokens /></ProtectedRoute>
+                  <ProtectedRoute><RouteErrorBoundary section="Tokens"><AITokens /></RouteErrorBoundary></ProtectedRoute>
                 } />
 
                 {/* Plans — legacy URL redirect */}
@@ -148,7 +148,7 @@ const App = () => {
                 
                 {/* Inbox - free (hub feature) */}
                 <Route path="/inbox" element={
-                  <ProtectedRoute><Inbox /></ProtectedRoute>
+                  <ProtectedRoute><RouteErrorBoundary section="Inbox"><Inbox /></RouteErrorBoundary></ProtectedRoute>
                 } />
                 
                 {/* User Profile - Public profile viewing */}
@@ -158,7 +158,7 @@ const App = () => {
                 
                 {/* Calculators - free to drive engagement */}
                 <Route path="/calculators" element={
-                  <ProtectedRoute><Calculators /></ProtectedRoute>
+                  <ProtectedRoute><RouteErrorBoundary section="Calculators"><Calculators /></RouteErrorBoundary></ProtectedRoute>
                 } />
                 
                 {/* ============ SUBSCRIBED ROUTES (paid tier) ============ */}
@@ -250,7 +250,7 @@ const App = () => {
                 
                 {/* Habits - free to build daily engagement */}
                 <Route path="/habits" element={
-                  <ProtectedRoute><Habits /></ProtectedRoute>
+                  <ProtectedRoute><RouteErrorBoundary section="Habits"><Habits /></RouteErrorBoundary></ProtectedRoute>
                 } />
 
                 <Route path="/unbreakable-86" element={
@@ -260,12 +260,12 @@ const App = () => {
                 {/* Un-Tunes — Music & Podcasts */}
                 <Route path="/untunes" element={<RouteErrorBoundary section="Un-Tunes"><UnTunes /></RouteErrorBoundary>} />
                 <Route path="/untunes/terms" element={<UnTunesTerms />} />
-                <Route path="/achievements" element={<AchievementsPage />} />
+                <Route path="/achievements" element={<RouteErrorBoundary section="Achievements"><AchievementsPage /></RouteErrorBoundary>} />
                 {/* <Route path="/callback/spotify" element={<SpotifyCallback />} /> */}
                 
                 {/* Coach Dashboard - role-protected + subscribed */}
                 <Route path="/coach" element={
-                  <ProtectedRoute><CoachDashboard /></ProtectedRoute>
+                  <ProtectedRoute><RouteErrorBoundary section="Coach"><CoachDashboard /></RouteErrorBoundary></ProtectedRoute>
                 } />
                 
                 {/* Athlete coaching page */}
