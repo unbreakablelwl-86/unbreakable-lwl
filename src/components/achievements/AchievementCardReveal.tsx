@@ -193,7 +193,7 @@ const achievementCardStyles = `
 /** Bronze: fine grain texture + warm copper ambient glow + slow pulse */
 export function BronzeShimmer() {
   return (
-    <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-xl">
+    <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-xl z-[12]">
       {/* Fine grain texture */}
       <div
         className="absolute inset-0"
@@ -224,7 +224,7 @@ export function BronzeShimmer() {
 /** Silver: brushed metal horizontal lines + chrome sweep left-to-right */
 export function SilverShimmer() {
   return (
-    <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl">
+    <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl z-[12]">
       {/* Brushed metal horizontal lines texture */}
       <div
         className="absolute inset-0"
@@ -255,7 +255,7 @@ export function SilverShimmer() {
 /** Gold: foil tilt effect + shimmer sweep + particle sparkles + diamond-cut border texture */
 export function GoldShimmer() {
   return (
-    <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl">
+    <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl z-[12]">
       {/* Gold foil base gradient */}
       <div
         className="absolute inset-0"
@@ -294,7 +294,7 @@ export function GoldShimmer() {
 /** Diamond: prismatic holographic border — full spectrum colour shift on tilt + geometric facet texture */
 export function DiamondHolo() {
   return (
-    <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl">
+    <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl z-[12]">
       {/* Geometric facet texture */}
       <div
         className="absolute inset-0"
@@ -335,7 +335,7 @@ export function DiamondHolo() {
 /** Platinum: directional grain + linen-like surface + rose-gold thread + crown emblem */
 export function PlatinumChrome() {
   return (
-    <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl">
+    <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl z-[12]">
       {/* Directional grain, linen-like surface texture */}
       <div
         className="absolute inset-0"
@@ -390,7 +390,7 @@ export function DumbbellSparkle({ tier }: { tier: string }) {
   };
   const c = colors[tier] || colors.bronze;
   return (
-    <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl flex items-center justify-center" style={{ opacity: c.opacity }}>
+    <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl flex items-center justify-center z-[15]" style={{ opacity: c.opacity }}>
       <svg viewBox="0 0 120 50" className="w-2/3" fill="none">
         {/* Dumbbell — Unbreakable like-button shape */}
         {/* Left weight */}

@@ -142,7 +142,16 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
       }
 
       // Success — show pack opening
-      let cards = data.cards || [];
+      // Enrich cards with track/album data (RPC doesn't return PostgREST joins)
+      let cards: PackCard[] = (data.cards || []).map((c: any) => {
+        const track = c.track_id ? tracks.find(t => t.id === c.track_id) : null;
+        const album = c.album_id ? albums.find(a => a.id === c.album_id) : null;
+        return {
+          ...c,
+          un_tunes_tracks: c.un_tunes_tracks || (track ? { title: track.title, artist: (track as any).artist || 'Unbreakable', cover_url: track.cover_url || '' } : null),
+          un_tunes_albums: c.un_tunes_albums || (album ? { title: album.title, cover_url: album.cover_url || '' } : null),
+        };
+      });
 
       // Ultimate Bundle bonus: add 1× free Diamond Pack (10 guaranteed diamond-rarity cards)
       if (type === 'bundle' && tracks.length > 0) {

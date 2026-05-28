@@ -633,15 +633,15 @@ function PBEditMenu({
 
       {/* Sheet */}
       <motion.div
-        className="relative w-full max-w-md bg-background rounded-t-2xl border-t border-border overflow-hidden"
-        style={{ maxHeight: '75vh' }}
+        className="relative w-full max-w-md bg-background rounded-t-2xl border-t border-border flex flex-col"
+        style={{ maxHeight: '85vh' }}
         initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }}
         transition={{ type: 'spring', damping: 25, stiffness: 300 }}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-4 py-3 border-b border-border">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-border shrink-0">
           <h3 className="font-display tracking-wider text-sm uppercase text-foreground">
-            Card PBs ({customPBs.length}/5)
+            Card PBs ({customPBs.length}/7)
           </h3>
           <div className="flex items-center gap-2">
             {customPBs.length > 0 && (
@@ -655,12 +655,12 @@ function PBEditMenu({
           </div>
         </div>
 
-        <div className="overflow-y-auto" style={{ maxHeight: 'calc(75vh - 56px)' }}>
+        <div className="overflow-y-auto flex-1 min-h-0">
           {/* Current selections */}
           {customPBs.length > 0 && (
             <div className="px-4 py-3 border-b border-border">
               <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold mb-2">
-                Selected ({customPBs.length}/5)
+                Selected ({customPBs.length}/7)
               </p>
               <div className="space-y-1">
                 {customPBs.map(pb => (
@@ -708,7 +708,7 @@ function PBEditMenu({
                     </div>
                     <button
                       onClick={() => onAdd(ex.name, ex.value, ex.unit)}
-                      disabled={customPBs.length >= 5}
+                      disabled={customPBs.length >= 7}
                       className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center hover:bg-primary/20 disabled:opacity-20"
                     >
                       <Plus className="w-3.5 h-3.5 text-primary" />
@@ -762,7 +762,7 @@ function PBEditMenu({
                 </div>
                 <div className="flex gap-2">
                   <Button variant="ghost" size="sm" onClick={() => setShowManual(false)} className="flex-1">Cancel</Button>
-                  <Button size="sm" onClick={handleManualAdd} disabled={!manualName.trim() || !manualValue || customPBs.length >= 5}
+                  <Button size="sm" onClick={handleManualAdd} disabled={!manualName.trim() || !manualValue || customPBs.length >= 7}
                     className="flex-1 font-display tracking-wider">
                     <Check className="w-3 h-3 mr-1" /> ADD
                   </Button>
