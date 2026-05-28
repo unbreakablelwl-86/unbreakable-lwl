@@ -24,7 +24,7 @@ import {
 } from '@/hooks/useAthleteStats';
 
 /* ═══════════════════════════════════════════════════ */
-/*  RARITY VISUAL CONFIG                              */
+/*  RARITY VISUAL CONFIG — Exact spec values 28/05/26 */
 /* ═══════════════════════════════════════════════════ */
 
 const ACHIEVEMENT_RARITY_CONFIG: Record<AchievementRarity, {
@@ -37,94 +37,133 @@ const ACHIEVEMENT_RARITY_CONFIG: Record<AchievementRarity, {
   bgGlow: string;
   borderHex: string;
   accentHex: string;
+  baseBg: string;
+  textGlow: string;
+  boxGlow: string;
+  hasTiltEffect: boolean;
+  hasParticles: boolean;
+  roseGold?: string;
+  borderGradient?: string;
 }> = {
   bronze: {
     label: 'BRONZE',
-    gradient: 'from-amber-700 via-orange-600 to-amber-800',
-    glow: 'shadow-[0_0_40px_rgba(180,83,9,0.5)]',
-    particleColor: '#b45309',
-    textColor: 'text-amber-400',
-    borderColor: 'border-amber-600/50',
-    bgGlow: 'bg-amber-600/10',
-    borderHex: 'rgba(180,83,9,0.5)',
-    accentHex: '#d97706',
+    gradient: 'from-[#CD7F32] via-[#A0522D] to-[#8B4513]',
+    glow: 'shadow-[0_0_40px_rgba(205,127,50,0.4)]',
+    particleColor: '#CD7F32',
+    textColor: 'text-[#F5F5DC]',
+    borderColor: 'border-[#CD7F32]/50',
+    bgGlow: 'bg-[#CD7F32]/10',
+    borderHex: 'rgba(205,127,50,0.5)',
+    accentHex: '#CD7F32',
+    baseBg: '#1A1A1A',
+    textGlow: '0 0 8px #CD7F32, 0 0 16px #8B4513',
+    boxGlow: '0 0 12px rgba(205,127,50,0.3), 0 0 24px rgba(139,69,19,0.2)',
+    hasTiltEffect: false,
+    hasParticles: false,
   },
   silver: {
     label: 'SILVER',
-    gradient: 'from-gray-300 via-gray-200 to-gray-400',
-    glow: 'shadow-[0_0_50px_rgba(156,163,175,0.5)]',
-    particleColor: '#9ca3af',
-    textColor: 'text-gray-300',
-    borderColor: 'border-gray-400/50',
-    bgGlow: 'bg-gray-400/10',
-    borderHex: 'rgba(156,163,175,0.5)',
-    accentHex: '#9ca3af',
+    gradient: 'from-[#C0C0C0] via-[#D8D8D8] to-[#E8E8E8]',
+    glow: 'shadow-[0_0_50px_rgba(192,192,192,0.4)]',
+    particleColor: '#C0C0C0',
+    textColor: 'text-white',
+    borderColor: 'border-[#C0C0C0]/50',
+    bgGlow: 'bg-[#C0C0C0]/10',
+    borderHex: 'rgba(192,192,192,0.5)',
+    accentHex: '#C0C0C0',
+    baseBg: '#111111',
+    textGlow: '0 0 8px #C0C0C0, 0 0 20px #E8E8E8',
+    boxGlow: '0 0 15px rgba(192,192,192,0.3), 0 0 30px rgba(232,232,232,0.15)',
+    hasTiltEffect: false,
+    hasParticles: false,
   },
   gold: {
     label: 'GOLD',
-    gradient: 'from-yellow-400 via-amber-300 to-yellow-500',
-    glow: 'shadow-[0_0_60px_rgba(251,191,36,0.6)]',
-    particleColor: '#fbbf24',
-    textColor: 'text-yellow-400',
-    borderColor: 'border-yellow-500/50',
-    bgGlow: 'bg-yellow-500/10',
-    borderHex: 'rgba(251,191,36,0.6)',
-    accentHex: '#fbbf24',
+    gradient: 'from-[#FFD700] via-[#B8860B] to-[#FFD700]',
+    glow: 'shadow-[0_0_60px_rgba(255,215,0,0.5)]',
+    particleColor: '#FFD700',
+    textColor: 'text-white',
+    borderColor: 'border-[#FFD700]/50',
+    bgGlow: 'bg-[#FFD700]/10',
+    borderHex: 'rgba(255,215,0,0.6)',
+    accentHex: '#FFD700',
+    baseBg: '#080808',
+    textGlow: '0 0 10px #FFD700, 0 0 25px #B8860B, 0 0 40px #FFD700',
+    boxGlow: '0 0 20px rgba(255,215,0,0.4), 0 0 40px rgba(184,134,11,0.2)',
+    hasTiltEffect: true,
+    hasParticles: true,
   },
   diamond: {
     label: 'DIAMOND',
-    gradient: 'from-cyan-400 via-violet-400 to-pink-400',
-    glow: 'shadow-[0_0_100px_rgba(139,92,246,0.8)]',
-    particleColor: '#8b5cf6',
-    textColor: 'text-violet-400',
-    borderColor: 'border-violet-500/50',
-    bgGlow: 'bg-violet-500/10',
-    borderHex: 'rgba(139,92,246,0.6)',
-    accentHex: '#8b5cf6',
+    gradient: 'from-[#7DF9FF] via-[#BF5FFF] to-[#00CED1]',
+    glow: 'shadow-[0_0_100px_rgba(125,249,255,0.6)]',
+    particleColor: '#7DF9FF',
+    textColor: 'text-[#F0F8FF]',
+    borderColor: 'border-[#7DF9FF]/50',
+    bgGlow: 'bg-[#7DF9FF]/10',
+    borderHex: 'rgba(125,249,255,0.6)',
+    accentHex: '#7DF9FF',
+    baseBg: '#000000',
+    textGlow: '0 0 12px #7DF9FF, 0 0 30px #BF5FFF, 0 0 50px #F0F8FF',
+    boxGlow: '0 0 25px rgba(125,249,255,0.4), 0 0 50px rgba(191,95,255,0.2)',
+    hasTiltEffect: true,
+    hasParticles: true,
   },
   platinum: {
     label: 'PLATINUM',
-    gradient: 'from-[#E5E4E2] via-white to-[#E5E4E2]',
-    glow: 'shadow-[0_0_120px_rgba(229,228,226,0.9)]',
+    gradient: 'from-[#E5E4E2] via-[#D4D0CC] to-[#B76E79]',
+    glow: 'shadow-[0_0_120px_rgba(229,228,226,0.7)]',
     particleColor: '#E5E4E2',
-    textColor: 'text-[#E5E4E2]',
+    textColor: 'text-white',
     borderColor: 'border-[#E5E4E2]/60',
     bgGlow: 'bg-[#E5E4E2]/15',
     borderHex: 'rgba(229,228,226,0.7)',
     accentHex: '#E5E4E2',
+    baseBg: '#0A0A0A',
+    textGlow: '0 0 15px #E5E4E2, 0 0 35px #B76E79, 0 0 60px #FFFFFF',
+    boxGlow: '0 0 30px rgba(229,228,226,0.4), 0 0 60px rgba(183,110,121,0.3)',
+    hasTiltEffect: true,
+    hasParticles: true,
     roseGold: '#B76E79',
     borderGradient: 'linear-gradient(135deg, #E5E4E2, #B76E79, #E5E4E2)',
   },
 };
 
-/* ═══ Keyframe styles ═══ */
+/* ═══ Keyframe styles — 5-tier rarity system ═══ */
 const achievementCardStyles = `
-@keyframes achBronzeGlow {
+/* Bronze: warm pulse glow */
+@keyframes achBronzePulse {
   0%, 100% { opacity: 0.3; }
-  50% { opacity: 0.7; }
+  50% { opacity: 0.6; }
 }
+/* Silver: light sweep left to right */
 @keyframes achSilverSweep {
   0% { transform: translateX(-100%) rotate(25deg); }
   100% { transform: translateX(200%) rotate(25deg); }
 }
+/* Gold: shimmer sweep + particle sparkle */
 @keyframes achGoldShimmer {
   0% { transform: translateX(-100%) rotate(20deg); }
   100% { transform: translateX(200%) rotate(20deg); }
 }
+/* Diamond: prismatic holo sweep */
 @keyframes achDiamondHolo {
   0% { transform: translateX(-120%) rotate(15deg); opacity: 0; }
   20% { opacity: 1; }
   80% { opacity: 1; }
   100% { transform: translateX(220%) rotate(15deg); opacity: 0; }
 }
-@keyframes achPlatChrome {
-  0% { transform: translateX(-100%) rotate(15deg); }
-  100% { transform: translateX(250%) rotate(15deg); }
-}
+/* Diamond: full spectrum hue cycle */
 @keyframes achHueRotate {
   0% { filter: hue-rotate(0deg); }
   100% { filter: hue-rotate(360deg); }
 }
+/* Platinum: chrome sweep */
+@keyframes achPlatChrome {
+  0% { transform: translateX(-100%) rotate(15deg); }
+  100% { transform: translateX(250%) rotate(15deg); }
+}
+/* Shared: gentle pulse for ambient effects */
 @keyframes achPulse {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.05); }
@@ -133,47 +172,78 @@ const achievementCardStyles = `
   0%, 100% { transform: translateY(0px); }
   50% { transform: translateY(-8px); }
 }
+/* Bronze grain noise texture */
+@keyframes achGrainShift {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(-2px, 2px); }
+  50% { transform: translate(2px, -1px); }
+  75% { transform: translate(-1px, -2px); }
+}
+/* Diamond prismatic colour shift */
+@keyframes achPrismaticShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
 `;
 
-/* ═══ Rarity overlay effects (same standard as UN-TUNES) ═══ */
+/* ═══ Rarity overlay effects — 5-tier system ═══ */
 
+/** Bronze: fine grain texture + warm copper ambient glow + slow pulse */
 function BronzeShimmer() {
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl">
-      {/* Warm bronze ambient glow */}
+      {/* Fine grain texture */}
       <div
         className="absolute inset-0"
         style={{
-          background: 'linear-gradient(145deg, rgba(180,83,9,0.08) 0%, rgba(217,119,6,0.12) 30%, rgba(245,158,11,0.06) 50%, rgba(180,83,9,0.12) 70%, rgba(146,64,14,0.08) 100%)',
+          backgroundImage: \`url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E")\`,
+          animation: 'achGrainShift 8s steps(4) infinite',
         }}
       />
-      {/* Sweep highlight */}
+      {/* Warm copper ambient */}
       <div
-        className="absolute -inset-y-4 w-24"
+        className="absolute inset-0"
         style={{
-          background: 'linear-gradient(90deg, transparent 0%, rgba(217,119,6,0.05) 20%, rgba(245,158,11,0.3) 45%, rgba(252,211,77,0.4) 50%, rgba(245,158,11,0.3) 55%, rgba(217,119,6,0.05) 80%, transparent 100%)',
-          animation: 'achGoldShimmer 4s ease-in-out infinite',
+          background: 'linear-gradient(145deg, rgba(205,127,50,0.08) 0%, rgba(139,69,19,0.12) 30%, rgba(210,105,30,0.06) 50%, rgba(205,127,50,0.12) 70%, rgba(139,69,19,0.08) 100%)',
+        }}
+      />
+      {/* Warm bronze pulse glow from border */}
+      <div
+        className="absolute inset-0"
+        style={{
+          boxShadow: 'inset 0 0 30px rgba(205,127,50,0.15), inset 0 0 60px rgba(139,69,19,0.08)',
+          animation: 'achBronzePulse 3s ease-in-out infinite',
         }}
       />
     </div>
   );
 }
 
+/** Silver: brushed metal horizontal lines + chrome sweep left-to-right */
 function SilverShimmer() {
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl">
+      {/* Brushed metal horizontal lines texture */}
+      <div
+        className="absolute inset-0"
+        style={{
+          backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(192,192,192,0.03) 2px, rgba(192,192,192,0.03) 3px)',
+          backgroundSize: '100% 3px',
+        }}
+      />
       {/* Cool silver base */}
       <div
         className="absolute inset-0"
         style={{
-          background: 'linear-gradient(145deg, rgba(156,163,175,0.06) 0%, rgba(209,213,219,0.1) 30%, rgba(243,244,246,0.04) 50%, rgba(156,163,175,0.1) 70%, rgba(107,114,128,0.06) 100%)',
+          background: 'linear-gradient(145deg, rgba(192,192,192,0.06) 0%, rgba(232,232,232,0.1) 30%, rgba(255,255,255,0.04) 50%, rgba(192,192,192,0.1) 70%, rgba(169,169,169,0.06) 100%)',
         }}
       />
-      {/* Sharp chrome sweep */}
+      {/* Silver light sweep left to right */}
       <div
         className="absolute -inset-y-4 w-20"
         style={{
-          background: 'linear-gradient(90deg, transparent 0%, rgba(243,244,246,0.08) 20%, rgba(255,255,255,0.35) 45%, rgba(243,244,246,0.45) 50%, rgba(255,255,255,0.35) 55%, rgba(243,244,246,0.08) 80%, transparent 100%)',
+          background: 'linear-gradient(90deg, transparent 0%, rgba(232,232,232,0.08) 20%, rgba(255,255,255,0.35) 45%, rgba(232,232,232,0.45) 50%, rgba(255,255,255,0.35) 55%, rgba(232,232,232,0.08) 80%, transparent 100%)',
           animation: 'achSilverSweep 3.5s ease-in-out infinite',
         }}
       />
@@ -181,15 +251,26 @@ function SilverShimmer() {
   );
 }
 
+/** Gold: foil tilt effect + shimmer sweep + particle sparkles + diamond-cut border texture */
 function GoldShimmer() {
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl">
+      {/* Gold foil base gradient */}
       <div
         className="absolute inset-0"
         style={{
-          background: 'linear-gradient(145deg, rgba(255,191,36,0.08) 0%, rgba(184,134,11,0.12) 30%, rgba(255,215,0,0.06) 50%, rgba(218,165,32,0.12) 70%, rgba(255,191,36,0.08) 100%)',
+          background: 'linear-gradient(145deg, rgba(255,215,0,0.08) 0%, rgba(184,134,11,0.14) 30%, rgba(255,215,0,0.06) 50%, rgba(218,165,32,0.14) 70%, rgba(255,215,0,0.08) 100%)',
         }}
       />
+      {/* Diamond-cut border texture (subtle pattern) */}
+      <div
+        className="absolute inset-0"
+        style={{
+          backgroundImage: \`url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 0L40 20L20 40L0 20Z' fill='none' stroke='rgba(255,215,0,0.04)' stroke-width='0.5'/%3E%3C/svg%3E")\`,
+          backgroundSize: '20px 20px',
+        }}
+      />
+      {/* Shimmer sweep */}
       <div
         className="absolute -inset-y-4 w-28"
         style={{
@@ -197,42 +278,52 @@ function GoldShimmer() {
           animation: 'achGoldShimmer 3.8s ease-in-out infinite',
         }}
       />
-      {/* Gold dust particles */}
+      {/* Particle sparkle overlay */}
       <div
-        className="absolute top-0 left-0 w-full h-full"
+        className="absolute inset-0"
         style={{
-          background: 'linear-gradient(90deg, transparent, rgba(255,165,0,0.2), transparent)',
-          animation: 'achBronzeGlow 2.5s ease-in-out infinite',
+          background: 'radial-gradient(circle at 25% 25%, rgba(255,215,0,0.15) 0%, transparent 15%), radial-gradient(circle at 75% 35%, rgba(255,240,180,0.1) 0%, transparent 12%), radial-gradient(circle at 50% 80%, rgba(255,215,0,0.12) 0%, transparent 18%)',
+          animation: 'achBronzePulse 2.5s ease-in-out infinite',
         }}
       />
     </div>
   );
 }
 
+/** Diamond: prismatic holographic border — full spectrum colour shift on tilt + geometric facet texture */
 function DiamondHolo() {
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl">
-      {/* Rainbow hue-shifting base */}
+      {/* Geometric facet texture */}
       <div
         className="absolute inset-0"
         style={{
-          background: 'linear-gradient(125deg, rgba(120,0,255,0.12) 0%, rgba(0,210,255,0.12) 18%, rgba(0,255,170,0.12) 32%, rgba(255,255,0,0.12) 48%, rgba(255,100,0,0.12) 62%, rgba(255,0,128,0.12) 78%, rgba(120,0,255,0.12) 100%)',
-          animation: 'achHueRotate 8s linear infinite',
+          backgroundImage: \`url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0L60 30L30 60L0 30Z' fill='none' stroke='rgba(125,249,255,0.04)' stroke-width='0.5'/%3E%3Cpath d='M15 15L45 15L45 45L15 45Z' fill='none' stroke='rgba(191,95,255,0.03)' stroke-width='0.3'/%3E%3C/svg%3E")\`,
+          backgroundSize: '30px 30px',
         }}
       />
-      {/* Prismatic sweep */}
+      {/* Rainbow hue-shifting holographic base (blue→purple→teal→silver) */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background: 'linear-gradient(125deg, rgba(125,249,255,0.12) 0%, rgba(191,95,255,0.12) 25%, rgba(0,206,209,0.12) 50%, rgba(192,192,192,0.12) 75%, rgba(125,249,255,0.12) 100%)',
+          backgroundSize: '200% 200%',
+          animation: 'achPrismaticShift 6s ease-in-out infinite',
+        }}
+      />
+      {/* Prismatic light explosion sweep */}
       <div
         className="absolute -inset-y-4 w-32"
         style={{
-          background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.05) 25%, rgba(200,220,255,0.4) 45%, rgba(255,255,255,0.55) 50%, rgba(200,220,255,0.4) 55%, rgba(255,255,255,0.05) 75%, transparent 100%)',
+          background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.05) 25%, rgba(125,249,255,0.4) 40%, rgba(255,255,255,0.55) 50%, rgba(191,95,255,0.4) 60%, rgba(255,255,255,0.05) 75%, transparent 100%)',
           animation: 'achDiamondHolo 4.5s ease-in-out infinite',
         }}
       />
-      {/* Secondary color sweep */}
+      {/* Secondary prismatic colour-shift */}
       <div
         className="absolute -inset-y-4 w-16"
         style={{
-          background: 'linear-gradient(90deg, transparent, rgba(0,200,255,0.2), rgba(200,0,255,0.15), transparent)',
+          background: 'linear-gradient(90deg, transparent, rgba(0,206,209,0.2), rgba(191,95,255,0.15), transparent)',
           animation: 'achDiamondHolo 6s ease-in-out infinite 1.5s',
         }}
       />
@@ -240,21 +331,30 @@ function DiamondHolo() {
   );
 }
 
+/** Platinum: directional grain + linen-like surface + rose-gold thread + crown emblem */
 function PlatinumChrome() {
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl">
-      {/* Mercury liquid base */}
+      {/* Directional grain, linen-like surface texture */}
       <div
         className="absolute inset-0"
         style={{
-          background: 'linear-gradient(155deg, rgba(180,190,210,0.08) 0%, rgba(220,225,235,0.12) 25%, rgba(255,255,255,0.06) 50%, rgba(200,210,225,0.12) 75%, rgba(180,190,210,0.08) 100%)',
+          backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 1px, rgba(229,228,226,0.02) 1px, rgba(229,228,226,0.02) 2px), repeating-linear-gradient(-45deg, transparent, transparent 1px, rgba(183,110,121,0.015) 1px, rgba(183,110,121,0.015) 2px)',
+          backgroundSize: '4px 4px',
         }}
       />
-      {/* Liquid mercury pools */}
+      {/* Brushed platinum base with rose-gold thread */}
       <div
         className="absolute inset-0"
         style={{
-          background: 'radial-gradient(ellipse at 30% 40%, rgba(220,230,240,0.12) 0%, transparent 50%), radial-gradient(ellipse at 70% 60%, rgba(200,220,240,0.12) 0%, transparent 50%)',
+          background: 'linear-gradient(155deg, rgba(229,228,226,0.08) 0%, rgba(212,208,204,0.12) 25%, rgba(255,255,255,0.06) 50%, rgba(183,110,121,0.08) 75%, rgba(229,228,226,0.08) 100%)',
+        }}
+      />
+      {/* Liquid platinum pools with rose-gold accent */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background: 'radial-gradient(ellipse at 30% 40%, rgba(229,228,226,0.12) 0%, transparent 50%), radial-gradient(ellipse at 70% 60%, rgba(183,110,121,0.1) 0%, transparent 50%)',
           animation: 'achPulse 4s ease-in-out infinite',
         }}
       />
@@ -262,15 +362,15 @@ function PlatinumChrome() {
       <div
         className="absolute -inset-y-4 w-36"
         style={{
-          background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.08) 20%, rgba(230,235,245,0.45) 42%, rgba(255,255,255,0.65) 50%, rgba(230,235,245,0.45) 58%, rgba(255,255,255,0.08) 80%, transparent 100%)',
+          background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.08) 20%, rgba(229,228,226,0.45) 42%, rgba(255,255,255,0.65) 50%, rgba(229,228,226,0.45) 58%, rgba(255,255,255,0.08) 80%, transparent 100%)',
           animation: 'achPlatChrome 5s ease-in-out infinite',
         }}
       />
-      {/* Secondary chrome wave */}
+      {/* Rose-gold accent wave */}
       <div
         className="absolute -inset-y-4 w-20"
         style={{
-          background: 'linear-gradient(90deg, transparent, rgba(180,200,230,0.25), transparent)',
+          background: 'linear-gradient(90deg, transparent, rgba(183,110,121,0.25), transparent)',
           animation: 'achPlatChrome 7s ease-in-out infinite 2s',
         }}
       />
@@ -1128,6 +1228,25 @@ export function AchievementCardReveal({
                     <PBCardArtwork card={card} accentColor={config.accentHex} size="md" />
                   )}
 
+                  {/* Unbreakable shield watermark — all cards */}
+                  <motion.div
+                    className="absolute top-3 left-3 flex items-center gap-1.5 z-20"
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.15 }}
+                  >
+                    <img
+                      src="/unbreakable-shield.png"
+                      alt=""
+                      className="w-5 h-5 object-contain"
+                      style={{ filter: `drop-shadow(0 0 4px ${config.accentHex}40)`, opacity: 0.6 }}
+                    />
+                    <div>
+                      <p className="text-[6px] font-display tracking-[0.2em] text-white/40">UNBREAKABLE</p>
+                      <p className="text-[5px] font-mono tracking-[0.12em] text-white/25">LIVE WITHOUT LIMITS™</p>
+                    </div>
+                  </motion.div>
+
                   {/* ═══ Programme trophy — Unbreakable/LWL branded card with stats ═══ */}
                   {isProgramme && (() => {
                     const ps = (card.programme_stats || {}) as Record<string, any>;
@@ -1265,11 +1384,11 @@ export function AchievementCardReveal({
                           className="font-display text-3xl leading-none tracking-tight"
                           style={{
                             color: config.accentHex,
-                            textShadow: `0 0 20px ${config.accentHex}60, 0 2px 4px rgba(0,0,0,0.5)`,
+                            textShadow: config.textGlow,
                             fontWeight: 900,
                           }}
                         >
-                          {card.overall_rating || 0}
+                          {card.overall_rating ? String(card.overall_rating).padStart(2, '0') : '00'}
                         </span>
                         <span
                           className="text-[7px] font-display tracking-[0.2em] uppercase opacity-60 mt-0.5"
@@ -1367,14 +1486,14 @@ export function AchievementCardReveal({
                   <div className="absolute bottom-0 left-0 right-0 p-3 z-10" style={{
                     background: 'linear-gradient(to top, rgba(0,0,0,0.97) 0%, rgba(0,0,0,0.92) 35%, rgba(0,0,0,0.7) 70%, transparent 100%)',
                   }}>
-                    {/* ── ATHLETE NAME (Barlow Condensed 900, large) ── */}
+                    {/* ── ATHLETE NAME (Barlow Condensed 900, spec neon glow) ── */}
                     <motion.h3
                       className="font-display tracking-wider uppercase truncate leading-tight"
                       style={{
                         fontSize: '20px',
                         fontWeight: 900,
                         color: 'white',
-                        textShadow: `0 0 16px ${config.accentHex}50, 0 2px 4px rgba(0,0,0,0.6)`,
+                        textShadow: config.textGlow,
                       }}
                       initial={{ y: 20, opacity: 0 }}
                       animate={{ y: 0, opacity: 1 }}
@@ -1513,14 +1632,75 @@ export function AchievementCardReveal({
                     </motion.div>
                   </div>
 
-                  {/* Rarity frame border */}
+                  {/* Rarity frame border — gradient for Gold+ */}
                   <motion.div
                     className="absolute inset-0 rounded-2xl pointer-events-none"
-                    style={{ border: `2px solid ${config.borderHex}` }}
+                    style={{
+                      border: `2px solid ${config.borderHex}`,
+                      boxShadow: config.boxGlow,
+                    }}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.2 }}
                   />
+
+                  {/* Platinum: crown/shield emblem at top + numbered print bottom-right */}
+                  {card.rarity === 'platinum' && (
+                    <>
+                      <motion.div
+                        className="absolute top-2 left-1/2 -translate-x-1/2 z-30"
+                        initial={{ y: -20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        transition={{ delay: 0.6, type: 'spring' }}
+                      >
+                        <Crown
+                          className="w-5 h-5"
+                          style={{
+                            color: '#E5E4E2',
+                            filter: 'drop-shadow(0 0 8px rgba(183,110,121,0.5))',
+                          }}
+                        />
+                      </motion.div>
+                      <motion.div
+                        className="absolute bottom-2 right-3 z-30"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.7 }}
+                      >
+                        <span
+                          className="text-[9px] font-display tracking-wider"
+                          style={{
+                            color: '#B76E79',
+                            textShadow: '0 0 8px rgba(183,110,121,0.4)',
+                          }}
+                        >
+                          {card.edition_number ? `#${String(card.edition_number).padStart(3, '0')} / 50` : ''}
+                        </span>
+                      </motion.div>
+                    </>
+                  )}
+
+                  {/* Debossed "PLATINUM" badge — part of card surface */}
+                  {card.rarity === 'platinum' && (
+                    <motion.div
+                      className="absolute bottom-14 left-1/2 -translate-x-1/2 z-20"
+                      initial={{ scale: 0.8, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 0.7 }}
+                      transition={{ delay: 0.65 }}
+                    >
+                      <span
+                        className="text-[8px] font-display tracking-[0.3em] uppercase px-3 py-0.5 rounded-sm"
+                        style={{
+                          color: '#E5E4E2',
+                          border: '1px solid rgba(229,228,226,0.2)',
+                          background: 'rgba(229,228,226,0.05)',
+                          textShadow: '0 0 6px rgba(229,228,226,0.3)',
+                        }}
+                      >
+                        PLATINUM
+                      </span>
+                    </motion.div>
+                  )}
                 </motion.div>
               )}
             </AnimatePresence>
@@ -1620,6 +1800,7 @@ export function AchievementCardStatic({
         style={{
           background: cardBg,
           border: `1.5px solid ${config.borderHex}`,
+          boxShadow: config.boxGlow,
         }}
         whileHover={{ scale: 1.05, y: -4 }}
         whileTap={{ scale: 0.95 }}
@@ -1630,7 +1811,7 @@ export function AchievementCardStatic({
           <PBCardArtwork card={card} accentColor={config.accentHex} size={size} />
         )}
 
-        {/* Rarity effects */}
+        {/* Rarity effects — spec textures */}
         {card.rarity === 'bronze' && <BronzeShimmer />}
         {card.rarity === 'silver' && <SilverShimmer />}
         {card.rarity === 'gold' && <GoldShimmer />}
@@ -1723,7 +1904,7 @@ export function AchievementCardStatic({
           <div className="absolute top-2 left-2 z-10 flex flex-col items-center">
             <span
               className={cn('font-display leading-none tracking-tight', size === 'sm' ? 'text-xl' : 'text-2xl')}
-              style={{ color: config.accentHex, fontWeight: 900, textShadow: `0 0 12px ${config.accentHex}50, 0 1px 3px rgba(0,0,0,0.5)` }}
+              style={{ color: config.accentHex, fontWeight: 900, textShadow: config.textGlow }}
             >
               {card.overall_rating || 0}
             </span>
@@ -1788,7 +1969,7 @@ export function AchievementCardStatic({
           <div className="px-2 pb-1.5">
             {/* Athlete name — Barlow 900 */}
             <p className={cn('font-display tracking-wider uppercase truncate', size === 'sm' ? 'text-[11px]' : 'text-sm')}
-              style={{ color: 'white', fontWeight: 900, textShadow: `0 0 10px ${config.accentHex}40, 0 1px 3px rgba(0,0,0,0.5)` }}>
+              style={{ color: 'white', fontWeight: 900, textShadow: config.textGlow }}>
               {card.owner_display_name || 'ATHLETE'}
             </p>
 

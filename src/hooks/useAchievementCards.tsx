@@ -6,7 +6,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 
-export type AchievementCardType = 'programme_trophy' | 'pb_personal' | 'pb_global';
+export type AchievementCardType = 'programme_trophy' | 'pb_personal' | 'pb_global' | 'moment';
 export type AchievementRarity = 'bronze' | 'silver' | 'gold' | 'diamond' | 'platinum';
 export type ActivityCategory = 'lift' | 'run' | 'cycle' | 'row' | 'swim';
 export type ProgrammeType = 'power' | 'cardio' | 'mindset' | 'fuel' | 'u86';
@@ -44,6 +44,8 @@ export interface AchievementCard {
   bio_line?: string;
   card_number?: string;
   category_label?: string;
+  edition_number?: number;
+  edition_total?: number;
 }
 
 export interface AchievementCounts {
@@ -175,7 +177,7 @@ export function useAchievementCards() {
     return cards.find(c => c.id === data) || null;
   }, [user, fetchCards, cards]);
 
-  // Award PB cards after a new personal best
+  // Award PB cards after a new personal best (with duplicate detection + auto bio)
   const awardPBCards = useCallback(async (
     activityCategory: ActivityCategory,
     exerciseName: string,
@@ -187,6 +189,18 @@ export function useAchievementCards() {
     sourceSessionId?: string,
   ): Promise<string | null> => {
     if (!user) return null;
+
+    // Duplicate detection — skip if identical card exists (same exercise + value + unit)
+    const existing = cards.find(
+      c => c.card_type === 'pb_personal'
+        && c.exercise_name === exerciseName
+        && c.record_value === value
+        && c.record_unit === unit
+    );
+    if (existing) {
+      console.log(`[PB Cards] Duplicate detected for ${exerciseName} ${value}${unit}, skipping`);
+      return existing.id;
+    }
 
     const { data, error } = await supabase.rpc('award_pb_card', {
       p_user_id: user.id,
@@ -213,9 +227,16 @@ export function useAchievementCards() {
       p_distance_type: distanceType || null,
     });
 
+    // Auto-trigger AI bio generation for the new card
+    if (data) {
+      supabase.functions.invoke('generate-pb-bio', {
+        body: { cardId: data },
+      }).catch(err => console.warn('Bio generation failed (non-blocking):', err));
+    }
+
     await fetchCards();
     return data;
-  }, [user, fetchCards]);
+  }, [user, fetchCards, cards]);
 
   const deleteCard = useCallback(async (cardId: string) => {
     if (!user) return;

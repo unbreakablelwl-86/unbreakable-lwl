@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { AchievementCardReveal } from '@/components/achievements/AchievementCardReveal';
+import { CardShareSheet } from '@/components/achievements/CardShareSheet';
 import { U86Certificate } from '@/components/achievements/U86Certificate';
 import { usePlayer } from '@/hooks/useUnTunes';
 import type { AchievementCard } from '@/hooks/useAchievementCards';
@@ -40,6 +41,7 @@ export function AchievementUnlockOverlay({ cards, onComplete }: AchievementUnloc
   const [currentIndex, setCurrentIndex] = useState(-1); // -1 = intro screen
   const [isVisible, setIsVisible] = useState(true);
   const [showU86Cert, setShowU86Cert] = useState(false);
+  const [shareCard, setShareCard] = useState<AchievementCard | null>(null);
   const musicStartedRef = useRef(false);
 
   // Play random Un-Tunes track during card reveal (same as pack opening)
@@ -96,6 +98,7 @@ export function AchievementUnlockOverlay({ cards, onComplete }: AchievementUnloc
   const unlockInfo = UNLOCK_MESSAGES[firstCard.card_type] || UNLOCK_MESSAGES.pb_personal;
 
   return (
+    <>
     <AnimatePresence>
       {isVisible && (
         <motion.div
@@ -232,6 +235,7 @@ export function AchievementUnlockOverlay({ cards, onComplete }: AchievementUnloc
                 card={currentCard}
                 index={currentIndex}
                 onNext={handleNext}
+                onShare={() => setShareCard(currentCard)}
               />
             ) : null}
           </AnimatePresence>
@@ -257,5 +261,16 @@ export function AchievementUnlockOverlay({ cards, onComplete }: AchievementUnloc
         </motion.div>
       )}
     </AnimatePresence>
+
+    {/* Share sheet (available during reveal) */}
+    {shareCard && (
+      <CardShareSheet
+        open={!!shareCard}
+        onOpenChange={(open) => !open && setShareCard(null)}
+        card={shareCard}
+        cardSystem="pb"
+      />
+    )}
+    </>
   );
 }
