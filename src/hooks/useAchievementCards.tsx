@@ -253,7 +253,7 @@ export function useAchievementCards() {
         && c.record_unit === unit
     );
     if (existing) {
-      console.log(`[PB Cards] Duplicate detected for ${exerciseName} ${value}${unit}, skipping`);
+      // Duplicate detected — skip
       return existing.id;
     }
 
