@@ -234,7 +234,7 @@ export function StrengthPBTracker() {
               key={name}
               exerciseName={name}
               cards={exCards}
-              defaultOpen={i < 3}
+              defaultOpen={false}
             />
           ))
         )}
@@ -310,7 +310,7 @@ export function CardioPBTracker() {
               key={name}
               exerciseName={name}
               cards={exCards}
-              defaultOpen={i < 3}
+              defaultOpen={false}
             />
           ))
         )}

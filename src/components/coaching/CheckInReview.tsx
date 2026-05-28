@@ -53,9 +53,9 @@ function ScoreBar({ label, value, max = 10, icon: Icon }: { label: string; value
 export function CheckInReview({ checkIn, onReview, onBack }: CheckInReviewProps) {
   const [coachResponse, setCoachResponse] = useState(checkIn.coach_response || '');
   const [submitting, setSubmitting] = useState(false);
-  const [showBody, setShowBody] = useState(true);
-  const [showWellness, setShowWellness] = useState(true);
-  const [showCompliance, setShowCompliance] = useState(true);
+  const [showBody, setShowBody] = useState(false);
+  const [showWellness, setShowWellness] = useState(false);
+  const [showCompliance, setShowCompliance] = useState(false);
 
   const handleReview = async () => {
     if (!coachResponse.trim()) return;

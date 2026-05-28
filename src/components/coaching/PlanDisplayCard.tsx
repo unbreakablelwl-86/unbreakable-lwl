@@ -41,7 +41,7 @@ export function PlanDisplayCard({
   onViewInHub,
   onSaveToLibrary,
 }: PlanDisplayCardProps) {
-  const [showDetails, setShowDetails] = useState(true);
+  const [showDetails, setShowDetails] = useState(false);
   const isProgramme = planType === 'programme';
   const isMindset = planType === 'mindset';
   const Icon = isProgramme ? Dumbbell : isMindset ? Brain : UtensilsCrossed;
