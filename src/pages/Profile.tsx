@@ -28,9 +28,11 @@ import {
   Tag,
   BadgeCheck,
   MoreHorizontal,
+  Trophy,
 } from 'lucide-react';
 import { format, formatDistanceToNow } from 'date-fns';
 import shieldLogo from '@/assets/unbreakable-shield.png';
+import { ProfileAchievements } from '@/components/profile/AchievementPBTrackers';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 interface OwnPost {
@@ -291,7 +293,7 @@ export default function Profile() {
   const { followerCount, followingCount, postCount, fetchFollowers, fetchFollowing } = useFollow(user?.id);
 
   const [showAuthModal, setShowAuthModal] = useState(false);
-  const [activeTab, setActiveTab] = useState<'posts' | 'saved' | 'tagged' | 'settings'>('posts');
+  const [activeTab, setActiveTab] = useState<'posts' | 'saved' | 'tagged' | 'achievements' | 'settings'>('posts');
   const [posts, setPosts] = useState<OwnPost[]>([]);
   const [postsLoading, setPostsLoading] = useState(false);
   const [selectedPost, setSelectedPost] = useState<OwnPost | null>(null);
@@ -450,34 +452,39 @@ export default function Profile() {
         {/* Action Buttons */}
         <div className="flex gap-2 mt-4">
           <motion.button
-            whileTap={{ scale: 0.95 }}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.92, opacity: 0.7 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 17 }}
             onClick={() => setActiveTab('settings')}
-            className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-foreground bg-muted/80 border border-border/50 active:bg-muted transition-all duration-150"
+            className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-foreground bg-muted/80 border border-border/50 active:bg-primary/20 active:border-primary/40 transition-colors duration-150"
           >
             Edit Profile
           </motion.button>
           <motion.button
-            whileTap={{ scale: 0.95 }}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.92, opacity: 0.7 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 17 }}
             onClick={async () => {
               const url = `${window.location.origin}/user/${user.id}`;
               if (navigator.share) {
                 try { await navigator.share({ title: displayName, url }); } catch {}
               } else {
                 await navigator.clipboard.writeText(url);
-                // Simple flash feedback
                 const el = document.getElementById('share-btn');
-                if (el) { el.textContent = 'Copied!'; setTimeout(() => { el.textContent = 'Share Profile'; }, 1500); }
+                if (el) { el.textContent = '✓ Copied!'; setTimeout(() => { el.textContent = 'Share Profile'; }, 1500); }
               }
             }}
             id="share-btn"
-            className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-foreground bg-muted/80 border border-border/50 active:bg-muted transition-all duration-150"
+            className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-foreground bg-muted/80 border border-border/50 active:bg-primary/20 active:border-primary/40 transition-colors duration-150"
           >
             Share Profile
           </motion.button>
           <motion.button
-            whileTap={{ scale: 0.9 }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.88, rotate: 45, opacity: 0.7 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 17 }}
             onClick={() => navigate('/admin')}
-            className="py-2.5 px-4 rounded-xl text-sm font-semibold text-foreground bg-muted/80 border border-border/50 active:bg-muted transition-all duration-150"
+            className="py-2.5 px-4 rounded-xl text-sm font-semibold text-foreground bg-muted/80 border border-border/50 active:bg-primary/20 active:border-primary/40 transition-colors duration-150"
             title="Admin & Content Studio"
           >
             <Settings size={18} className="text-muted-foreground" />
@@ -489,6 +496,7 @@ export default function Profile() {
       <div className="flex border-b border-border sticky top-[57px] z-30" >
         {[
           { key: 'posts' as const, icon: Grid3X3 },
+          { key: 'achievements' as const, icon: Trophy },
           { key: 'saved' as const, icon: Bookmark },
           { key: 'tagged' as const, icon: Tag },
         ].map(({ key, icon: Icon }) => (
@@ -544,6 +552,12 @@ export default function Profile() {
           <p className="font-heading font-bold text-sm text-muted-foreground uppercase tracking-wider">Tagged Posts</p>
           <p className="text-xs text-muted-foreground mt-1">Posts where you've been tagged</p>
         </div>
+      )}
+
+      {activeTab === 'achievements' && (
+        <section className="px-4 py-4">
+          <ProfileAchievements />
+        </section>
       )}
 
       {activeTab === 'settings' && (

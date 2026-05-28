@@ -172,7 +172,7 @@ function SellCardModal({ cards, onClose, onListCreated }: {
   const [listingType, setListingType] = useState<'auction' | 'fixed'>('auction');
   const [startingPrice, setStartingPrice] = useState('3');
   const [buyNowPrice, setBuyNowPrice] = useState('');
-  const [duration, setDuration] = useState('24');
+  const [duration, setDuration] = useState('72');
   const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = async () => {
@@ -183,8 +183,8 @@ function SellCardModal({ cards, onClose, onListCreated }: {
         _uid: user.id,
         _card_id: selectedCard.id,
         _listing_type: listingType,
-        _starting_price: parseInt(startingPrice) || 1,
-        _buy_now_price: buyNowPrice ? parseInt(buyNowPrice) : null,
+        _starting_price: parseFloat(startingPrice) || 1,
+        _buy_now_price: buyNowPrice ? parseFloat(buyNowPrice) : null,
         _duration_hours: parseInt(duration) || 24,
       });
       if (error) throw error;
@@ -306,7 +306,8 @@ function SellCardModal({ cards, onClose, onListCreated }: {
                 type="number"
                 value={startingPrice}
                 onChange={(e) => setStartingPrice(e.target.value)}
-                min={1}
+                min={0.1}
+                step={0.1}
                 className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3 text-lg font-display text-center focus:outline-none focus:border-primary"
               />
             </div>
@@ -320,6 +321,8 @@ function SellCardModal({ cards, onClose, onListCreated }: {
                   value={buyNowPrice}
                   onChange={(e) => setBuyNowPrice(e.target.value)}
                   placeholder="—"
+                  min={0.1}
+                  step={0.1}
                   className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3 text-lg font-display text-center focus:outline-none focus:border-primary"
                 />
               </div>
@@ -329,7 +332,7 @@ function SellCardModal({ cards, onClose, onListCreated }: {
             <div className="space-y-2">
               <p className="text-xs text-muted-foreground font-display tracking-wider">DURATION</p>
               <div className="flex gap-2">
-                {[{ h: 6, l: '6H' }, { h: 12, l: '12H' }, { h: 24, l: '24H' }, { h: 48, l: '2D' }, { h: 168, l: '7D' }].map(d => (
+                {[{ h: 24, l: '1 DAY' }, { h: 72, l: '3 DAYS' }, { h: 120, l: '5 DAYS' }, { h: 168, l: '7 DAYS' }].map(d => (
                   <button
                     key={d.h}
                     onClick={() => setDuration(String(d.h))}

@@ -195,7 +195,7 @@ export function usePlayerProvider() {
 
   // Full access = dev/coach role OR known dev user IDs (hardcoded fallback)
   // While role is loading, fall back to hardcoded IDs to prevent brief 30s cap flash
-  const DEV_USER_IDS = ['3a61bd9e-785b-4512-abab-e61b87496c54'];
+  const DEV_USER_IDS = ['3a61bd9e-785b-4512-abab-e61b87496c54', 'c219f448-c05a-4fe3-ae11-793222b7dced'];
   const hasFullAccess = isDev || isCoach || roleLoading || (user?.id ? DEV_USER_IDS.includes(user.id) : false);
 
   // Is current track a preview?

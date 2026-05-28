@@ -1,0 +1,202 @@
+/**
+ * useAchievementCards — hook for Programme Trophies & PB Cards
+ * Same pattern as UN-TUNES cards but for achievements
+ */
+import { useState, useEffect, useCallback } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
+
+export type AchievementCardType = 'programme_trophy' | 'pb_personal' | 'pb_global';
+export type AchievementRarity = 'bronze' | 'silver' | 'gold' | 'diamond' | 'platinum';
+export type ActivityCategory = 'lift' | 'run' | 'cycle' | 'row' | 'swim';
+export type ProgrammeType = 'power' | 'cardio' | 'mindset' | 'fuel' | 'u86';
+
+export interface AchievementCard {
+  id: string;
+  card_type: AchievementCardType;
+  rarity: AchievementRarity;
+  title: string;
+  subtitle?: string;
+  programme_type?: ProgrammeType;
+  programme_name?: string;
+  activity_category?: ActivityCategory;
+  exercise_name?: string;
+  record_value?: number;
+  record_unit?: string;
+  pb_value?: number;
+  pb_unit?: string;
+  pb_rank?: number;
+  distance_type?: string;
+  age_category?: string;
+  global_rank_pct?: number;
+  global_percentile?: number;
+  global_rank?: number;
+  total_in_category?: number;
+  completion_count?: number;
+  image_url?: string;
+  programme_stats?: Record<string, unknown>;
+  earned_at: string;
+}
+
+export interface AchievementCounts {
+  total: number;
+  bronze: number;
+  silver: number;
+  gold: number;
+  diamond: number;
+  platinum: number;
+  trophies: number;
+  pbPersonal: number;
+  pbGlobal: number;
+}
+
+export function useAchievementCards() {
+  const { user } = useAuth();
+  const [cards, setCards] = useState<AchievementCard[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchCards = useCallback(async () => {
+    if (!user) return;
+    setLoading(true);
+
+    const { data, error } = await supabase
+      .rpc('get_achievement_collection', { p_user_id: user.id });
+
+    if (error) {
+      console.error('Error fetching achievement cards:', error);
+      // Fallback: direct table query
+      const { data: fallback } = await supabase
+        .from('achievement_cards')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('earned_at', { ascending: false });
+      setCards((fallback || []) as AchievementCard[]);
+    } else {
+      setCards((data || []) as AchievementCard[]);
+    }
+    setLoading(false);
+  }, [user]);
+
+  useEffect(() => {
+    if (user) fetchCards();
+    else {
+      setCards([]);
+      setLoading(false);
+    }
+  }, [user, fetchCards]);
+
+  const getCounts = useCallback((): AchievementCounts => {
+    return {
+      total: cards.length,
+      bronze: cards.filter(c => c.rarity === 'bronze').length,
+      silver: cards.filter(c => c.rarity === 'silver').length,
+      gold: cards.filter(c => c.rarity === 'gold').length,
+      diamond: cards.filter(c => c.rarity === 'diamond').length,
+      platinum: cards.filter(c => c.rarity === 'platinum').length,
+      trophies: cards.filter(c => c.card_type === 'programme_trophy').length,
+      pbPersonal: cards.filter(c => c.card_type === 'pb_personal').length,
+      pbGlobal: cards.filter(c => c.card_type === 'pb_global').length,
+    };
+  }, [cards]);
+
+  const getByType = useCallback((type: AchievementCardType) => {
+    return cards.filter(c => c.card_type === type);
+  }, [cards]);
+
+  const getByExercise = useCallback((exercise: string) => {
+    return cards.filter(c => c.exercise_name === exercise);
+  }, [cards]);
+
+  // Award a programme trophy after programme completion
+  const awardProgrammeTrophy = useCallback(async (
+    programmeType: ProgrammeType,
+    programmeName: string,
+    programmeId: string,
+    stats?: Record<string, unknown>,
+  ): Promise<AchievementCard | null> => {
+    if (!user) return null;
+
+    const { data, error } = await supabase.rpc('award_programme_trophy', {
+      p_user_id: user.id,
+      p_programme_type: programmeType,
+      p_programme_name: programmeName,
+      p_programme_id: programmeId,
+      p_stats: stats || {},
+    });
+
+    if (error) {
+      console.error('Error awarding programme trophy:', error);
+      return null;
+    }
+
+    await fetchCards();
+    return cards.find(c => c.id === data) || null;
+  }, [user, fetchCards, cards]);
+
+  // Award PB cards after a new personal best
+  const awardPBCards = useCallback(async (
+    activityCategory: ActivityCategory,
+    exerciseName: string,
+    value: number,
+    unit: string,
+    rank: number,
+    distanceType?: string,
+    sourceRunId?: string,
+    sourceSessionId?: string,
+  ): Promise<string | null> => {
+    if (!user) return null;
+
+    const { data, error } = await supabase.rpc('award_pb_card', {
+      p_user_id: user.id,
+      p_activity_category: activityCategory,
+      p_exercise_name: exerciseName,
+      p_value: value,
+      p_unit: unit,
+      p_rank: rank,
+      p_distance_type: distanceType || null,
+      p_source_run_id: sourceRunId || null,
+      p_source_session_id: sourceSessionId || null,
+    });
+
+    if (error) {
+      console.error('Error awarding PB card:', error);
+      return null;
+    }
+
+    // Also check for global ranking
+    await supabase.rpc('check_global_pb_ranking', {
+      p_user_id: user.id,
+      p_activity_category: activityCategory,
+      p_exercise_name: exerciseName,
+      p_distance_type: distanceType || null,
+    });
+
+    await fetchCards();
+    return data;
+  }, [user, fetchCards]);
+
+  const deleteCard = useCallback(async (cardId: string) => {
+    if (!user) return;
+    const { error } = await supabase
+      .from('achievement_cards' as any)
+      .delete()
+      .eq('id', cardId)
+      .eq('user_id', user.id);
+    if (error) {
+      console.error('Error deleting achievement card:', error);
+    }
+    setCards(prev => prev.filter(c => c.id !== cardId));
+  }, [user]);
+
+  return {
+    cards,
+    loading,
+    refetch: fetchCards,
+    getCounts,
+    getByType,
+    getByExercise,
+    awardProgrammeTrophy,
+    awardPBCards,
+    deleteCard,
+  };
+}

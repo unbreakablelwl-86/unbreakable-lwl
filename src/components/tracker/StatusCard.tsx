@@ -65,6 +65,14 @@ export function StatusCard({ post, onKudos, onDelete, onToggleComments, onUpdate
 
   const isOwner = user?.id === post.user_id;
 
+  // Detect AI coach auto-posts (Daily 7 check-ins, AI habit notes, etc.)
+  const isAutoPost = !!(post.content && (
+    /^✅\s*(Daily\s*7|daily\s*7)/i.test(post.content.trim()) ||
+    /^(📋|🤖|🧠)\s*(Daily|AI Coach|Habit)/i.test(post.content.trim()) ||
+    post.content.includes('[AI Coach]') ||
+    post.content.includes('[Auto]')
+  ));
+
   const handleKudos = async () => {
     if (!user) return;
     setIsLiking(true);
@@ -172,7 +180,19 @@ export function StatusCard({ post, onKudos, onDelete, onToggleComments, onUpdate
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
     >
-      <div className="overflow-hidden border-b border-white/[0.04] bg-background">
+      <div className={`overflow-hidden border-b bg-background ${
+        isAutoPost
+          ? 'border-2 border-orange-500/60 rounded-xl shadow-[0_0_15px_rgba(249,115,22,0.15)] relative'
+          : 'border-white/[0.04]'
+      }`}>
+        {/* AI auto-post neon glow accent */}
+        {isAutoPost && (
+          <div className="absolute inset-0 rounded-xl pointer-events-none z-0"
+            style={{
+              background: 'linear-gradient(135deg, rgba(249,115,22,0.06) 0%, transparent 40%, transparent 60%, rgba(249,115,22,0.04) 100%)',
+            }}
+          />
+        )}
         {/* Header — Instagram-style */}
         <div className="px-4 py-3 flex items-center gap-3">
           <ClickableAvatar
@@ -201,6 +221,11 @@ export function StatusCard({ post, onKudos, onDelete, onToggleComments, onUpdate
               <span className="flex items-center gap-0.5">
                 {getVisibilityIcon()}
               </span>
+              {isAutoPost && (
+                <span className="ml-1 px-1.5 py-0.5 text-[9px] font-display tracking-widest bg-orange-500/15 text-orange-400 border border-orange-500/30 rounded-full uppercase">
+                  AI Coach
+                </span>
+              )}
             </div>
           </div>
           <PostMenu

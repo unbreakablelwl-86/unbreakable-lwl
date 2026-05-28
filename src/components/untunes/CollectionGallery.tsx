@@ -54,26 +54,39 @@ const RARITY_CONFIG: Record<Rarity, {
   label: string; icon: any; gradient: string;
   border: string; text: string; bg: string;
   glow: string; color: string; frame: string;
+  baseBg: string; baseGradient: string; edgeGlow: string;
+  titleClass: string; badgeBg: string;
 }> = {
   standard: {
     label: 'Standard', icon: Music, gradient: 'from-zinc-400 to-zinc-600',
     border: 'border-zinc-500/30', text: 'text-zinc-400', bg: 'bg-zinc-500/10',
-    glow: '', color: '#a1a1aa', frame: 'border-zinc-500/40',
+    glow: '', color: '#a1a1aa', frame: 'border-zinc-600/50',
+    baseBg: 'bg-zinc-950', baseGradient: 'from-zinc-900 to-zinc-950',
+    edgeGlow: '', titleClass: 'text-zinc-300', badgeBg: 'bg-zinc-800/60',
   },
   gold: {
     label: 'Gold', icon: Crown, gradient: 'from-yellow-400 to-amber-500',
     border: 'border-yellow-500/40', text: 'text-yellow-400', bg: 'bg-yellow-500/10',
-    glow: 'shadow-[0_0_20px_rgba(251,191,36,0.3)]', color: '#fbbf24', frame: 'border-yellow-500/50',
+    glow: 'shadow-[0_0_25px_rgba(251,191,36,0.35)]', color: '#fbbf24', frame: 'border-yellow-500/60',
+    baseBg: 'bg-yellow-950/40', baseGradient: 'from-yellow-900/30 via-amber-950/20 to-zinc-950',
+    edgeGlow: 'shadow-[inset_0_0_30px_rgba(251,191,36,0.12)]',
+    titleClass: 'text-yellow-400', badgeBg: 'bg-yellow-900/40',
   },
   diamond: {
     label: 'Diamond', icon: Diamond, gradient: 'from-cyan-400 via-violet-400 to-pink-400',
     border: 'border-violet-500/40', text: 'text-violet-400', bg: 'bg-violet-500/10',
-    glow: 'shadow-[0_0_30px_rgba(139,92,246,0.4)]', color: '#8b5cf6', frame: 'border-violet-500/50',
+    glow: 'shadow-[0_0_35px_rgba(139,92,246,0.45)]', color: '#8b5cf6', frame: 'border-violet-400/60',
+    baseBg: 'bg-violet-950/40', baseGradient: 'from-violet-900/25 via-indigo-950/20 to-zinc-950',
+    edgeGlow: 'shadow-[inset_0_0_30px_rgba(139,92,246,0.12)]',
+    titleClass: 'text-violet-300', badgeBg: 'bg-violet-900/40',
   },
   platinum: {
     label: 'Platinum', icon: Sparkles, gradient: 'from-slate-200 via-white to-slate-300',
     border: 'border-slate-300/40', text: 'text-slate-200', bg: 'bg-slate-200/10',
-    glow: 'shadow-[0_0_40px_rgba(226,232,240,0.5)]', color: '#e2e8f0', frame: 'border-slate-300/50',
+    glow: 'shadow-[0_0_45px_rgba(226,232,240,0.5)]', color: '#e2e8f0', frame: 'border-slate-300/60',
+    baseBg: 'bg-slate-900/40', baseGradient: 'from-slate-800/25 via-zinc-900/20 to-zinc-950',
+    edgeGlow: 'shadow-[inset_0_0_30px_rgba(226,232,240,0.08)]',
+    titleClass: 'text-slate-100', badgeBg: 'bg-slate-800/40',
   },
 };
 
@@ -122,13 +135,14 @@ function SwipeableCard({
     }
   };
 
+  const Icon = config.icon;
+
   return (
     <motion.div
       className={cn(
-        'relative rounded-lg overflow-hidden cursor-pointer select-none',
-        'border-2 transition-all duration-300',
-        owned ? config.frame : 'border-zinc-800/50',
-        owned && rarity !== 'standard' && config.glow,
+        'relative rounded-xl overflow-hidden cursor-pointer select-none',
+        'transition-all duration-300',
+        owned ? `border-2 ${config.frame} ${config.glow}` : 'border border-zinc-800/50',
       )}
       whileTap={{ scale: 0.95 }}
       drag={forcedRarity ? false : 'x'}
@@ -137,7 +151,8 @@ function SwipeableCard({
       onDragEnd={handleDragEnd}
       onClick={() => onOpenFullView(itemId, rarity)}
     >
-      <div className="aspect-square relative">
+      {/* Rarity-specific card background */}
+      <div className={cn('aspect-square relative', owned && config.edgeGlow)}>
         {coverUrl ? (
           <img
             src={coverUrl}
@@ -148,11 +163,11 @@ function SwipeableCard({
             )}
           />
         ) : (
-          <div className={cn('w-full h-full flex items-center justify-center', owned ? 'bg-zinc-900' : 'bg-zinc-950')}>
+          <div className={cn('w-full h-full flex items-center justify-center', owned ? config.baseBg : 'bg-zinc-950')}>
             {itemType === 'track' ? (
-              <Music className={cn('w-6 h-6', owned ? 'text-zinc-700' : 'text-zinc-800')} />
+              <Music className={cn('w-6 h-6', owned ? config.text : 'text-zinc-800')} />
             ) : (
-              <Disc3 className={cn('w-6 h-6', owned ? 'text-zinc-700' : 'text-zinc-800')} />
+              <Disc3 className={cn('w-6 h-6', owned ? config.text : 'text-zinc-800')} />
             )}
           </div>
         )}
@@ -163,29 +178,76 @@ function SwipeableCard({
           </div>
         )}
 
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+        {/* Rarity-specific overlay effects */}
+        <div className={cn('absolute inset-0 bg-gradient-to-t via-transparent to-transparent pointer-events-none',
+          owned && rarity === 'gold' ? 'from-yellow-900/50' :
+          owned && rarity === 'diamond' ? 'from-violet-900/50' :
+          owned && rarity === 'platinum' ? 'from-slate-800/50' :
+          'from-black/70'
+        )} />
 
         {owned && rarity === 'gold' && (
-          <motion.div className="absolute inset-0 bg-gradient-to-br from-yellow-400/15 via-transparent to-amber-400/15 pointer-events-none" animate={{ opacity: [0.3, 0.5, 0.3] }} transition={{ duration: 2, repeat: Infinity }} />
+          <>
+            <motion.div className="absolute inset-0 pointer-events-none"
+              style={{ background: 'linear-gradient(135deg, rgba(251,191,36,0.18) 0%, transparent 50%, rgba(217,119,6,0.15) 100%)' }}
+              animate={{ opacity: [0.4, 0.7, 0.4] }} transition={{ duration: 2.5, repeat: Infinity }} />
+            {/* Gold shimmer line */}
+            <motion.div className="absolute inset-0 pointer-events-none overflow-hidden"
+              initial={false}
+            >
+              <motion.div className="absolute w-[200%] h-[1px] bg-gradient-to-r from-transparent via-yellow-300/50 to-transparent"
+                style={{ top: '30%', left: '-100%', rotate: '-45deg' }}
+                animate={{ left: ['−100%', '100%'] }}
+                transition={{ duration: 3, repeat: Infinity, repeatDelay: 2 }}
+              />
+            </motion.div>
+          </>
         )}
         {owned && rarity === 'diamond' && (
-          <motion.div className="absolute inset-0 bg-gradient-to-br from-cyan-400/15 via-violet-400/10 to-pink-400/15 pointer-events-none" animate={{ opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 2, repeat: Infinity }} />
+          <>
+            <motion.div className="absolute inset-0 pointer-events-none"
+              style={{ background: 'linear-gradient(135deg, rgba(6,182,212,0.15) 0%, rgba(139,92,246,0.12) 50%, rgba(236,72,153,0.12) 100%)' }}
+              animate={{ opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 2, repeat: Infinity }} />
+            {/* Diamond prismatic shimmer */}
+            <motion.div className="absolute inset-0 pointer-events-none"
+              style={{ background: 'conic-gradient(from 0deg, rgba(6,182,212,0.08), rgba(139,92,246,0.08), rgba(236,72,153,0.08), rgba(6,182,212,0.08))' }}
+              animate={{ rotate: [0, 360] }}
+              transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
+            />
+          </>
         )}
         {owned && rarity === 'platinum' && (
-          <motion.div className="absolute inset-0 bg-gradient-to-br from-white/10 via-slate-200/5 to-white/10 pointer-events-none" animate={{ opacity: [0.2, 0.5, 0.2] }} transition={{ duration: 2, repeat: Infinity }} />
+          <>
+            <motion.div className="absolute inset-0 pointer-events-none"
+              style={{ background: 'linear-gradient(135deg, rgba(226,232,240,0.12) 0%, transparent 40%, rgba(148,163,184,0.1) 100%)' }}
+              animate={{ opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 2, repeat: Infinity }} />
+            {/* Platinum chrome sweep */}
+            <motion.div className="absolute inset-0 pointer-events-none overflow-hidden">
+              <motion.div className="absolute w-[200%] h-[2px] bg-gradient-to-r from-transparent via-white/40 to-transparent"
+                style={{ top: '40%', left: '-100%', rotate: '-30deg' }}
+                animate={{ left: ['-100%', '100%'] }}
+                transition={{ duration: 2.5, repeat: Infinity, repeatDelay: 3 }}
+              />
+            </motion.div>
+          </>
         )}
 
-        {/* Rarity badge */}
-        <div className={cn('absolute top-1 right-1 rounded-full p-1', owned ? config.bg : 'bg-zinc-900/80')}>
-          {rarity === 'platinum' && <Sparkles className={cn('w-3 h-3', owned ? 'text-slate-200' : 'text-zinc-700')} />}
-          {rarity === 'diamond' && <Diamond className={cn('w-3 h-3', owned ? 'text-violet-400' : 'text-zinc-700')} />}
-          {rarity === 'gold' && <Crown className={cn('w-3 h-3', owned ? 'text-yellow-400' : 'text-zinc-700')} />}
-          {rarity === 'standard' && <Music className={cn('w-3 h-3', owned ? 'text-zinc-400' : 'text-zinc-700')} />}
+        {/* Rarity badge — pill style */}
+        <div className={cn('absolute top-1.5 right-1.5 rounded-full px-1.5 py-0.5 flex items-center gap-0.5',
+          owned ? config.badgeBg : 'bg-zinc-900/80',
+          owned && `border border-[${config.color}]/30`
+        )}>
+          <Icon className={cn('w-2.5 h-2.5', owned ? config.text : 'text-zinc-700')} />
+          <span className={cn('text-[7px] font-display tracking-widest', owned ? config.text : 'text-zinc-700')}>
+            {rarity === 'standard' ? '' : config.label[0]}
+          </span>
         </div>
 
-        {/* Title + dots */}
+        {/* Title + dots — rarity coloured */}
         <div className="absolute bottom-0 left-0 right-0 p-1.5">
-          <p className={cn('text-[10px] font-display tracking-wider truncate', owned ? 'text-white' : 'text-zinc-600')}>
+          <p className={cn('text-[10px] font-display tracking-wider truncate',
+            owned ? config.titleClass : 'text-zinc-600'
+          )}>
             {title}
           </p>
           {!forcedRarity && (
@@ -818,16 +880,15 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
                 </div>
 
                 <div className={cn(
-                  'rounded-2xl border-2 overflow-hidden',
-                  owned ? config.frame : 'border-zinc-800',
-                  owned && rarity !== 'standard' && config.glow,
+                  'rounded-2xl overflow-hidden',
+                  owned ? `border-2 ${config.frame} ${config.glow}` : 'border border-zinc-800',
                 )}>
-                  <div className="relative">
+                  <div className={cn('relative', owned && config.edgeGlow)}>
                     {item.coverUrl ? (
                       <img src={item.coverUrl} alt={item.title} className={cn('w-full aspect-square object-cover', !owned && 'grayscale brightness-[0.3]')} />
                     ) : (
-                      <div className={cn('w-full aspect-square flex items-center justify-center', owned ? 'bg-zinc-900' : 'bg-zinc-950')}>
-                        <Music className="w-16 h-16 text-zinc-700" />
+                      <div className={cn('w-full aspect-square flex items-center justify-center', owned ? config.baseBg : 'bg-zinc-950')}>
+                        <Music className={cn('w-16 h-16', owned ? config.text : 'text-zinc-700')} />
                       </div>
                     )}
                     {!owned && (
@@ -838,23 +899,76 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
                         </div>
                       </div>
                     )}
+                    {/* Gold — metallic shimmer overlay */}
                     {owned && rarity === 'gold' && (
-                      <motion.div className="absolute inset-0 bg-gradient-to-br from-yellow-400/20 via-transparent to-amber-400/20 pointer-events-none" animate={{ opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 2, repeat: Infinity }} />
+                      <>
+                        <motion.div className="absolute inset-0 pointer-events-none"
+                          style={{ background: 'linear-gradient(135deg, rgba(251,191,36,0.2) 0%, transparent 40%, transparent 60%, rgba(217,119,6,0.18) 100%)' }}
+                          animate={{ opacity: [0.3, 0.7, 0.3] }} transition={{ duration: 3, repeat: Infinity }} />
+                        <motion.div className="absolute inset-0 pointer-events-none overflow-hidden">
+                          <motion.div className="absolute w-[300%] h-[2px] bg-gradient-to-r from-transparent via-yellow-300/60 to-transparent"
+                            style={{ top: '35%', left: '-150%', rotate: '-40deg' }}
+                            animate={{ left: ['-150%', '150%'] }}
+                            transition={{ duration: 3.5, repeat: Infinity, repeatDelay: 2 }}
+                          />
+                        </motion.div>
+                        {/* Gold corner accents */}
+                        <div className="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-yellow-400/30 rounded-tl-xl pointer-events-none" />
+                        <div className="absolute top-0 right-0 w-8 h-8 border-t-2 border-r-2 border-yellow-400/30 rounded-tr-xl pointer-events-none" />
+                        <div className="absolute bottom-0 left-0 w-8 h-8 border-b-2 border-l-2 border-yellow-400/30 rounded-bl-xl pointer-events-none" />
+                        <div className="absolute bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 border-yellow-400/30 rounded-br-xl pointer-events-none" />
+                      </>
                     )}
+                    {/* Diamond — prismatic holographic */}
                     {owned && rarity === 'diamond' && (
-                      <motion.div className="absolute inset-0 bg-gradient-to-br from-cyan-400/20 via-violet-400/10 to-pink-400/20 pointer-events-none" animate={{ opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 2, repeat: Infinity }} />
+                      <>
+                        <motion.div className="absolute inset-0 pointer-events-none"
+                          style={{ background: 'linear-gradient(135deg, rgba(6,182,212,0.18) 0%, rgba(139,92,246,0.15) 50%, rgba(236,72,153,0.15) 100%)' }}
+                          animate={{ opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 2, repeat: Infinity }} />
+                        <motion.div className="absolute inset-0 pointer-events-none"
+                          style={{ background: 'conic-gradient(from 0deg at 50% 50%, rgba(6,182,212,0.1), rgba(139,92,246,0.1), rgba(236,72,153,0.1), rgba(6,182,212,0.1))' }}
+                          animate={{ rotate: [0, 360] }}
+                          transition={{ duration: 10, repeat: Infinity, ease: 'linear' }}
+                        />
+                        {/* Diamond sparkle dots */}
+                        <motion.div className="absolute w-1 h-1 bg-violet-300 rounded-full pointer-events-none" style={{ top: '15%', right: '20%' }}
+                          animate={{ opacity: [0, 1, 0], scale: [0.5, 1.2, 0.5] }} transition={{ duration: 2, repeat: Infinity, delay: 0 }} />
+                        <motion.div className="absolute w-1 h-1 bg-cyan-300 rounded-full pointer-events-none" style={{ top: '45%', left: '12%' }}
+                          animate={{ opacity: [0, 1, 0], scale: [0.5, 1.2, 0.5] }} transition={{ duration: 2, repeat: Infinity, delay: 0.7 }} />
+                        <motion.div className="absolute w-1 h-1 bg-pink-300 rounded-full pointer-events-none" style={{ bottom: '25%', right: '15%' }}
+                          animate={{ opacity: [0, 1, 0], scale: [0.5, 1.2, 0.5] }} transition={{ duration: 2, repeat: Infinity, delay: 1.3 }} />
+                      </>
                     )}
+                    {/* Platinum — liquid chrome */}
                     {owned && rarity === 'platinum' && (
-                      <motion.div className="absolute inset-0 bg-gradient-to-br from-white/15 via-slate-200/5 to-white/15 pointer-events-none" animate={{ opacity: [0.2, 0.5, 0.2] }} transition={{ duration: 2, repeat: Infinity }} />
+                      <>
+                        <motion.div className="absolute inset-0 pointer-events-none"
+                          style={{ background: 'linear-gradient(135deg, rgba(226,232,240,0.15) 0%, transparent 30%, transparent 70%, rgba(148,163,184,0.12) 100%)' }}
+                          animate={{ opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 2, repeat: Infinity }} />
+                        {/* Chrome sweep lines */}
+                        <motion.div className="absolute inset-0 pointer-events-none overflow-hidden">
+                          <motion.div className="absolute w-[300%] h-[3px] bg-gradient-to-r from-transparent via-white/50 to-transparent"
+                            style={{ top: '30%', left: '-150%', rotate: '-25deg' }}
+                            animate={{ left: ['-150%', '150%'] }}
+                            transition={{ duration: 3, repeat: Infinity, repeatDelay: 2 }}
+                          />
+                          <motion.div className="absolute w-[300%] h-[1px] bg-gradient-to-r from-transparent via-slate-200/30 to-transparent"
+                            style={{ top: '60%', left: '150%', rotate: '-25deg' }}
+                            animate={{ left: ['150%', '-150%'] }}
+                            transition={{ duration: 3, repeat: Infinity, repeatDelay: 3, delay: 1 }}
+                          />
+                        </motion.div>
+                      </>
                     )}
                   </div>
 
-                  <div className="bg-zinc-900 p-4 space-y-2">
+                  {/* Card info area — rarity-themed base */}
+                  <div className={cn('p-4 space-y-2 bg-gradient-to-b', owned ? config.baseGradient : 'from-zinc-900 to-zinc-950')}>
                     <div className="flex items-center justify-between">
-                      <h3 className="font-display text-white tracking-wider text-sm">{item.title}</h3>
+                      <h3 className={cn('font-display tracking-wider text-sm', owned ? config.titleClass : 'text-white')}>{item.title}</h3>
                       <Badge variant="outline" className={cn(
                         'text-[10px] font-display tracking-widest',
-                        owned ? `${config.text} ${config.border}` : 'text-zinc-600 border-zinc-800',
+                        owned ? `${config.text} ${config.border} ${config.badgeBg}` : 'text-zinc-600 border-zinc-800',
                       )}>
                         {config.label.toUpperCase()}
                       </Badge>
