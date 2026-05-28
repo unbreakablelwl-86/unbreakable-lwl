@@ -1094,8 +1094,9 @@ function AchievementCardBack({ cardType }: { cardType: string }) {
 }
 
 /* ═══ Format helpers ═══ */
-function formatPBValue(value: number, unit: string): string {
+export function formatPBValue(value: number, unit: string): string {
   if (unit === 'kg') return `${value}kg`;
+  if (unit === 'reps') return `× ${value}`;
   if (unit === 'seconds') {
     const hours = Math.floor(value / 3600);
     const mins = Math.floor((value % 3600) / 60);
@@ -1108,6 +1109,8 @@ function formatPBValue(value: number, unit: string): string {
     const secs = Math.round(value % 60);
     return `${mins}:${secs.toString().padStart(2, '0')}/km`;
   }
+  if (unit === 'km') return `${value}km`;
+  if (unit === 'm') return `${value}m`;
   return `${value}`;
 }
 
@@ -1155,9 +1158,19 @@ export function AchievementCardReveal({
 
   // Use bespoke base colour per rarity tier
   const rarityBase = config.baseBg || '#0A0A0A';
+
+  /* ── Reflective material backgrounds per rarity ── */
+  const REVEAL_MATERIAL_BG: Record<string, string> = {
+    bronze: `radial-gradient(ellipse at 30% 20%, rgba(205,127,50,0.15) 0%, transparent 50%), radial-gradient(ellipse at 70% 80%, rgba(139,69,19,0.12) 0%, transparent 50%), linear-gradient(165deg, #1A1A1A 0%, #151210 30%, #1A1610 60%, #1A1A1A 100%)`,
+    silver: `radial-gradient(ellipse at 25% 15%, rgba(232,232,232,0.12) 0%, transparent 45%), radial-gradient(ellipse at 75% 85%, rgba(192,192,192,0.08) 0%, transparent 45%), linear-gradient(155deg, #141414 0%, #181818 25%, #141416 50%, #111111 100%)`,
+    gold: `radial-gradient(ellipse at 20% 10%, rgba(255,215,0,0.18) 0%, transparent 40%), radial-gradient(ellipse at 80% 90%, rgba(184,134,11,0.12) 0%, transparent 45%), radial-gradient(circle at 50% 50%, rgba(255,215,0,0.04) 0%, transparent 70%), linear-gradient(160deg, #0C0A04 0%, #0A0800 30%, #0C0908 60%, #080808 100%)`,
+    diamond: `radial-gradient(ellipse at 20% 20%, rgba(125,249,255,0.12) 0%, transparent 40%), radial-gradient(ellipse at 80% 80%, rgba(191,95,255,0.10) 0%, transparent 40%), radial-gradient(ellipse at 50% 50%, rgba(0,206,209,0.06) 0%, transparent 60%), linear-gradient(150deg, #020208 0%, #04020A 30%, #02060A 60%, #000000 100%)`,
+    platinum: `radial-gradient(ellipse at 25% 15%, rgba(229,228,226,0.14) 0%, transparent 40%), radial-gradient(ellipse at 75% 85%, rgba(183,110,121,0.10) 0%, transparent 40%), radial-gradient(circle at 50% 40%, rgba(229,228,226,0.05) 0%, transparent 55%), linear-gradient(160deg, #0E0E0D 0%, #0C0A0B 30%, #0A0A0A 60%, #0A0A0A 100%)`,
+  };
+
   const cardBg = isProgramme
     ? PROGRAMME_BACKGROUNDS[card.programme_type || 'power']
-    : `radial-gradient(ellipse at 50% 30%, ${rarityBase} 0%, ${rarityBase}f0 40%, ${rarityBase}e0 100%)`;
+    : (REVEAL_MATERIAL_BG[card.rarity] || `radial-gradient(ellipse at 50% 30%, ${rarityBase} 0%, ${rarityBase}f0 40%, ${rarityBase}e0 100%)`);
 
   const title = isProgramme
     ? card.programme_name || 'Programme Complete'
@@ -1555,27 +1568,27 @@ export function AchievementCardReveal({
                             return (
                               <div key={statKey} className="flex items-center gap-1.5">
                                 <span
-                                  className="text-[8px] font-display tracking-wider w-6 shrink-0"
-                                  style={{ color: statInfo.color, opacity: 0.9 }}
+                                  className="text-[8px] font-display font-black tracking-wider w-6 shrink-0"
+                                  style={{ color: '#FFFFFF' }}
                                 >
                                   {statInfo.label}
                                 </span>
-                                <div className="flex-1 h-[3px] rounded-full overflow-hidden" style={{ background: `${config.accentHex}12` }}>
+                                <span
+                                  className="text-[9px] font-display tracking-wider shrink-0"
+                                  style={{ color: '#FF5500', textShadow: '0 0 6px rgba(255,85,0,0.4)' }}
+                                >
+                                  {statVal}
+                                </span>
+                                <div className="flex-1 h-[3px] rounded-full overflow-hidden" style={{ background: 'rgba(255,85,0,0.10)' }}>
                                   <div
                                     className="h-full rounded-full transition-all duration-500"
                                     style={{
                                       width: `${Math.max(3, statVal)}%`,
-                                      background: `linear-gradient(90deg, ${statInfo.color}80, ${statInfo.color})`,
-                                      boxShadow: `0 0 4px ${statInfo.color}40`,
+                                      background: 'linear-gradient(90deg, #FF550080, #FF5500)',
+                                      boxShadow: '0 0 4px rgba(255,85,0,0.3)',
                                     }}
                                   />
                                 </div>
-                                <span
-                                  className="text-[9px] font-display tracking-wider w-5 text-right shrink-0"
-                                  style={{ color: config.accentHex }}
-                                >
-                                  {statVal}
-                                </span>
                               </div>
                             );
                           })}
@@ -1587,9 +1600,10 @@ export function AchievementCardReveal({
                     {/* ── AI BIO LINE ── */}
                     {card.bio_line && (
                       <motion.p
-                        className="text-[9px] font-mono tracking-wide italic mt-1.5 opacity-60 text-white/70"
+                        className="text-[9px] font-display tracking-wide italic mt-1.5"
+                        style={{ color: '#FFFFFF', opacity: 0.9, textShadow: '0 1px 3px rgba(0,0,0,0.6)' }}
                         initial={{ y: 10, opacity: 0 }}
-                        animate={{ y: 0, opacity: 0.6 }}
+                        animate={{ y: 0, opacity: 0.9 }}
                         transition={{ delay: 0.5 }}
                       >
                         "{card.bio_line}"
@@ -1775,9 +1789,42 @@ export function AchievementCardStatic({
 
   // Use bespoke base colour per rarity tier
   const rarityBase = config.baseBg || '#0A0A0A';
+
+  /* ── Reflective material backgrounds per rarity ── */
+  const MATERIAL_BG: Record<string, string> = {
+    bronze: `
+      radial-gradient(ellipse at 30% 20%, rgba(205,127,50,0.15) 0%, transparent 50%),
+      radial-gradient(ellipse at 70% 80%, rgba(139,69,19,0.12) 0%, transparent 50%),
+      linear-gradient(165deg, #1A1A1A 0%, #151210 30%, #1A1610 60%, #1A1A1A 100%)
+    `,
+    silver: `
+      radial-gradient(ellipse at 25% 15%, rgba(232,232,232,0.12) 0%, transparent 45%),
+      radial-gradient(ellipse at 75% 85%, rgba(192,192,192,0.08) 0%, transparent 45%),
+      linear-gradient(155deg, #141414 0%, #181818 25%, #141416 50%, #111111 100%)
+    `,
+    gold: `
+      radial-gradient(ellipse at 20% 10%, rgba(255,215,0,0.18) 0%, transparent 40%),
+      radial-gradient(ellipse at 80% 90%, rgba(184,134,11,0.12) 0%, transparent 45%),
+      radial-gradient(circle at 50% 50%, rgba(255,215,0,0.04) 0%, transparent 70%),
+      linear-gradient(160deg, #0C0A04 0%, #0A0800 30%, #0C0908 60%, #080808 100%)
+    `,
+    diamond: `
+      radial-gradient(ellipse at 20% 20%, rgba(125,249,255,0.12) 0%, transparent 40%),
+      radial-gradient(ellipse at 80% 80%, rgba(191,95,255,0.10) 0%, transparent 40%),
+      radial-gradient(ellipse at 50% 50%, rgba(0,206,209,0.06) 0%, transparent 60%),
+      linear-gradient(150deg, #020208 0%, #04020A 30%, #02060A 60%, #000000 100%)
+    `,
+    platinum: `
+      radial-gradient(ellipse at 25% 15%, rgba(229,228,226,0.14) 0%, transparent 40%),
+      radial-gradient(ellipse at 75% 85%, rgba(183,110,121,0.10) 0%, transparent 40%),
+      radial-gradient(circle at 50% 40%, rgba(229,228,226,0.05) 0%, transparent 55%),
+      linear-gradient(160deg, #0E0E0D 0%, #0C0A0B 30%, #0A0A0A 60%, #0A0A0A 100%)
+    `,
+  };
+
   const cardBg = isProgramme
     ? PROGRAMME_BACKGROUNDS[card.programme_type || 'power']
-    : `radial-gradient(ellipse at 50% 30%, ${rarityBase} 0%, ${rarityBase}f0 40%, ${rarityBase}e0 100%)`;
+    : (MATERIAL_BG[card.rarity] || `radial-gradient(ellipse at 50% 30%, ${rarityBase} 0%, ${rarityBase}f0 40%, ${rarityBase}e0 100%)`);
 
   const title = isProgramme
     ? card.programme_name || 'Programme'
@@ -2004,22 +2051,22 @@ export function AchievementCardStatic({
                     const statInfo = cStatLabels[statKey];
                     return (
                       <div key={statKey} className="flex items-center gap-1">
-                        <span className={cn('font-display tracking-wider shrink-0', size === 'sm' ? 'text-[5px] w-4' : 'text-[7px] w-5')}
-                          style={{ color: statInfo.color, opacity: 0.85 }}>
+                        <span className={cn('font-display tracking-wider shrink-0 font-black', size === 'sm' ? 'text-[5px] w-4' : 'text-[7px] w-5')}
+                          style={{ color: '#FFFFFF' }}>
                           {statInfo.label}
                         </span>
-                        <div className={cn('flex-1 rounded-full overflow-hidden', size === 'sm' ? 'h-[2px]' : 'h-[3px]')}
-                          style={{ background: `${config.accentHex}10` }}>
-                          <div className="h-full rounded-full" style={{
-                            width: `${Math.max(3, statVal)}%`,
-                            background: `linear-gradient(90deg, ${statInfo.color}70, ${statInfo.color})`,
-                            boxShadow: `0 0 3px ${statInfo.color}30`,
-                          }} />
-                        </div>
-                        <span className={cn('font-display tracking-wider shrink-0 text-right', size === 'sm' ? 'text-[6px] w-3' : 'text-[8px] w-4')}
-                          style={{ color: config.accentHex }}>
+                        <span className={cn('font-display tracking-wider shrink-0', size === 'sm' ? 'text-[6px]' : 'text-[8px]')}
+                          style={{ color: '#FF5500', textShadow: '0 0 6px rgba(255,85,0,0.4)' }}>
                           {statVal}
                         </span>
+                        <div className={cn('flex-1 rounded-full overflow-hidden', size === 'sm' ? 'h-[2px]' : 'h-[3px]')}
+                          style={{ background: 'rgba(255,85,0,0.10)' }}>
+                          <div className="h-full rounded-full" style={{
+                            width: `${Math.max(3, statVal)}%`,
+                            background: 'linear-gradient(90deg, #FF550070, #FF5500)',
+                            boxShadow: '0 0 4px rgba(255,85,0,0.3)',
+                          }} />
+                        </div>
                       </div>
                     );
                   })}
@@ -2028,9 +2075,10 @@ export function AchievementCardStatic({
               );
             })()}
 
-            {/* Bio line */}
+            {/* Bio line — white, visible */}
             {card.bio_line && (
-              <p className={cn('font-mono italic opacity-50 text-white/60 mt-0.5 truncate', size === 'sm' ? 'text-[5px]' : 'text-[7px]')}>
+              <p className={cn('font-display italic mt-0.5 truncate', size === 'sm' ? 'text-[5px]' : 'text-[7px]')}
+                style={{ color: '#FFFFFF', opacity: 0.9, textShadow: '0 1px 2px rgba(0,0,0,0.5)' }}>
                 "{card.bio_line}"
               </p>
             )}

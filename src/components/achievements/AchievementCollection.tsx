@@ -22,7 +22,7 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { useAchievementCards, AchievementCard, AchievementRarity, AchievementCardType } from '@/hooks/useAchievementCards';
-import { AchievementCardStatic, AchievementCardReveal } from '@/components/achievements/AchievementCardReveal';
+import { AchievementCardStatic, AchievementCardReveal, formatPBValue } from '@/components/achievements/AchievementCardReveal';
 import UserProfileCard from '@/components/achievements/UserProfileCard';
 
 /* ═══ Rarity config — mirrors UN-TUNES ═══ */
@@ -771,7 +771,7 @@ function ExerciseGroupedView({
                   {/* Quick peek: best value */}
                   {bestCard?.pb_value && (
                     <span className={cn('text-xs font-display tracking-wide', cfg.textColor)}>
-                      {bestCard.pb_value}{bestCard.pb_unit || 'kg'}
+                      {formatPBValue(bestCard.pb_value, bestCard.pb_unit || 'kg')}
                     </span>
                   )}
                   <motion.div animate={{ rotate: isExpanded ? 180 : 0 }} transition={{ duration: 0.2 }}>
@@ -817,7 +817,7 @@ function ExerciseGroupedView({
                             <div className="flex-1 min-w-0">
                               <div className="flex items-baseline gap-1.5">
                                 <span className={cn('text-lg font-display tracking-wide', rankCfg.textColor)}>
-                                  {card.pb_value}{card.pb_unit || 'kg'}
+                                  {formatPBValue(card.pb_value || 0, card.pb_unit || 'kg')}
                                 </span>
                                 <span className={cn('text-[9px] font-display uppercase tracking-wider opacity-60', rankCfg.textColor)}>
                                   {rankCfg.label}
