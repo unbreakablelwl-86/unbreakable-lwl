@@ -216,7 +216,7 @@ function SwipeableCard({
             >
               <motion.div className="absolute w-[200%] h-[1px] bg-gradient-to-r from-transparent via-yellow-300/50 to-transparent"
                 style={{ top: '30%', left: '-100%', rotate: '-45deg' }}
-                animate={{ left: ['−100%', '100%'] }}
+                animate={{ left: ['-100%', '100%'] }}
                 transition={{ duration: 3, repeat: Infinity, repeatDelay: 2 }}
               />
             </motion.div>
@@ -955,28 +955,36 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
                       <Button variant="outline" size="sm" className="flex-1 text-xs font-display tracking-wider" onClick={() => setFullViewItem(null)}>
                         CLOSE
                       </Button>
-                      {owned && (
-                        <Button
-                          size="sm"
-                          className="flex-1 bg-gradient-to-r from-primary to-orange-600 text-white text-xs font-display tracking-wider"
-                          onClick={() => handleDownloadCard(owned, item.title, item.coverUrl, item.type)}
-                        >
-                          <Download className="w-3 h-3 mr-1" /> DOWNLOAD
-                        </Button>
-                      )}
+                      {owned && (() => {
+                        const rc = RARITY_CONFIG[rarity] || RARITY_CONFIG.standard;
+                        return (
+                          <Button
+                            size="sm"
+                            className="flex-1 text-white text-xs font-display tracking-wider"
+                            style={{ background: `linear-gradient(to right, ${rc.color}, ${rc.color}cc)` }}
+                            onClick={() => handleDownloadCard(owned, item.title, item.coverUrl, item.type)}
+                          >
+                            <Download className="w-3 h-3 mr-1" /> DOWNLOAD
+                          </Button>
+                        );
+                      })()}
                     </div>
 
                     {/* Auction + Bin row */}
-                    {owned && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="w-full text-primary border-primary/30 hover:bg-primary/10 text-xs font-display tracking-wider"
-                        onClick={() => setAuctionModal({ cardId: owned.id, title: item.title, rarity })}
-                      >
-                        <Gavel className="w-3 h-3 mr-1" /> LIST FOR AUCTION
-                      </Button>
-                    )}
+                    {owned && (() => {
+                      const rc = RARITY_CONFIG[rarity] || RARITY_CONFIG.standard;
+                      return (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="w-full text-xs font-display tracking-wider"
+                          style={{ color: rc.color, borderColor: `${rc.color}4d` }}
+                          onClick={() => setAuctionModal({ cardId: owned.id, title: item.title, rarity })}
+                        >
+                          <Gavel className="w-3 h-3 mr-1" /> LIST FOR AUCTION
+                        </Button>
+                      );
+                    })()}
                     {dupeCount > 0 && (
                       <Button
                         variant="outline"

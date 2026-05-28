@@ -198,7 +198,7 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
     <>
       <div className="space-y-4">
         {/* Token balance bar */}
-        <div className="flex items-center justify-between bg-card/50 border border-border rounded-xl px-4 py-3">
+        <div className="flex items-center justify-between bg-black/60 border border-primary/15 rounded-xl px-4 py-3">
           <div className="flex items-center gap-2">
             <Coins className="w-4 h-4 text-primary" />
             <span className="text-sm font-display tracking-wider text-white">{hasFullAccess ? '∞' : balance}</span>
@@ -287,17 +287,17 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
                   </div>
 
                   <div className="grid grid-cols-3 gap-2 mb-4">
-                    <div className="text-center p-2 rounded-lg bg-card/50 border border-border/50">
-                      <p className="text-lg font-display text-white">{albums.length}</p>
-                      <p className="text-[9px] text-muted-foreground tracking-wider">ALBUMS</p>
+                    <div className="text-center p-3 rounded-xl bg-black/60 border border-primary/20" style={{ boxShadow: 'inset 0 1px 0 rgba(255,85,0,0.08)' }}>
+                      <p className="text-xl font-display text-white">{albums.length}</p>
+                      <p className="text-[9px] text-primary/70 tracking-wider font-semibold">ALBUMS</p>
                     </div>
-                    <div className="text-center p-2 rounded-lg bg-card/50 border border-border/50">
-                      <p className="text-lg font-display text-white">{tracks.length}</p>
-                      <p className="text-[9px] text-muted-foreground tracking-wider">TRACKS</p>
+                    <div className="text-center p-3 rounded-xl bg-black/60 border border-primary/20" style={{ boxShadow: 'inset 0 1px 0 rgba(255,85,0,0.08)' }}>
+                      <p className="text-xl font-display text-white">{tracks.length}</p>
+                      <p className="text-[9px] text-primary/70 tracking-wider font-semibold">TRACKS</p>
                     </div>
-                    <div className="text-center p-2 rounded-lg bg-violet-500/10 border border-violet-500/20">
-                      <Diamond className="w-4 h-4 text-violet-400 mx-auto" />
-                      <p className="text-[9px] text-violet-300 tracking-wider">FREE 💎</p>
+                    <div className="text-center p-3 rounded-xl bg-violet-500/10 border border-violet-500/30" style={{ boxShadow: 'inset 0 1px 0 rgba(139,92,246,0.12)' }}>
+                      <Diamond className="w-5 h-5 text-violet-400 mx-auto" />
+                      <p className="text-[9px] text-violet-300 tracking-wider font-semibold mt-0.5">FREE 💎</p>
                     </div>
                   </div>
 
@@ -434,7 +434,7 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
                   <div className="text-center py-6 text-muted-foreground text-xs">Loading albums…</div>
                 ) : albums.map((album) => (
                   <motion.div key={album.id} whileTap={{ scale: 0.98 }}>
-                    <Card className="flex items-center gap-3 p-3 border-border/50 bg-card/50">
+                    <Card className="flex items-center gap-3 p-3 border-primary/15 bg-black/60">
                       {album.cover_url ? (
                         <img src={album.cover_url} alt={album.title} className="w-14 h-14 rounded-lg object-cover" />
                       ) : (
@@ -478,7 +478,7 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
             {/* ═══ SINGLES — teaser ═══ */}
             <motion.div whileTap={{ scale: 0.98 }}>
               <Card
-                className="flex items-center gap-3 p-4 border-border/50 bg-card/30 cursor-pointer hover:border-primary/20 transition-colors"
+                className="flex items-center gap-3 p-4 border-primary/15 bg-black/60 cursor-pointer hover:border-primary/30 transition-colors"
                 onClick={() => setStoreView('singles')}
               >
                 <div className="w-10 h-10 rounded-xl bg-card flex items-center justify-center">
@@ -534,7 +534,7 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
                 <div className="text-center py-6 text-muted-foreground text-xs">Loading tracks…</div>
               ) : tracks.map((track) => (
                 <motion.div key={track.id} whileTap={{ scale: 0.98 }}>
-                  <Card className="flex items-center gap-3 p-3 border-border/30 bg-card/30">
+                  <Card className="flex items-center gap-3 p-3 border-primary/15 bg-black/60">
                     {track.cover_url ? (
                       <img src={track.cover_url} alt={track.title} className="w-10 h-10 rounded-lg object-cover" />
                     ) : (
