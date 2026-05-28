@@ -1122,36 +1122,120 @@ export function AchievementCardReveal({
                     <PBCardArtwork card={card} accentColor={config.accentHex} size="md" />
                   )}
 
-                  {/* Central icon — only for programme trophies */}
-                  {isProgramme && (
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="relative">
+                  {/* ═══ Programme trophy — Unbreakable/LWL branded card with stats ═══ */}
+                  {isProgramme && (() => {
+                    const ps = (card.programme_stats || {}) as Record<string, any>;
+                    return (
+                      <div className="absolute inset-0 flex flex-col">
+                        {/* Unbreakable branding top-left */}
                         <motion.div
-                          className="absolute -inset-16 rounded-full"
-                          style={{
-                            background: `radial-gradient(circle, ${config.accentHex}20 0%, transparent 70%)`,
-                          }}
-                          animate={{ scale: [1, 1.1, 1], opacity: [0.5, 0.8, 0.5] }}
-                          transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-                        />
-                        <motion.div
-                          className="relative z-10"
-                          style={{ animation: 'achFloat 4s ease-in-out infinite' }}
+                          className="absolute top-3 left-3 flex items-center gap-1.5 z-20"
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 0.2 }}
                         >
-                          <div
-                            className="w-20 h-20 rounded-2xl flex items-center justify-center"
-                            style={{
-                              background: `linear-gradient(145deg, ${config.accentHex}15, ${config.accentHex}05)`,
-                              border: `2px solid ${config.accentHex}30`,
-                              boxShadow: `0 0 30px ${config.accentHex}20`,
-                            }}
-                          >
-                            <Icon className="w-10 h-10" style={{ color: config.accentHex }} />
+                          <img
+                            src="/unbreakable-shield.png"
+                            alt=""
+                            className="w-6 h-6 object-contain"
+                            style={{ filter: `drop-shadow(0 0 4px ${config.accentHex}40)` }}
+                          />
+                          <div>
+                            <p className="text-[7px] font-display tracking-[0.2em] text-white/60">UNBREAKABLE</p>
+                            <p className="text-[6px] font-mono tracking-[0.15em] text-white/35">LIVE WITHOUT LIMITS</p>
                           </div>
                         </motion.div>
+
+                        {/* Centre — programme stats panel */}
+                        <div className="flex-1 flex flex-col items-center justify-center px-5 pt-14 pb-24">
+                          {/* Programme icon badge */}
+                          <motion.div
+                            className="mb-3"
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            transition={{ delay: 0.25, type: 'spring' }}
+                          >
+                            <div
+                              className="w-14 h-14 rounded-2xl flex items-center justify-center"
+                              style={{
+                                background: `linear-gradient(145deg, ${config.accentHex}15, ${config.accentHex}05)`,
+                                border: `2px solid ${config.accentHex}30`,
+                                boxShadow: `0 0 25px ${config.accentHex}15`,
+                              }}
+                            >
+                              {card.programme_type === 'u86' ? (
+                                <img src="/unbreakable-shield.png" alt="U86" className="w-9 h-9 object-contain"
+                                  style={{ filter: `drop-shadow(0 0 6px ${config.accentHex}50)` }} />
+                              ) : (
+                                <Icon className="w-7 h-7" style={{ color: config.accentHex }} />
+                              )}
+                            </div>
+                          </motion.div>
+
+                          {/* Stats grid */}
+                          <motion.div
+                            className="w-full rounded-xl p-3 space-y-2"
+                            style={{
+                              background: `${config.accentHex}06`,
+                              border: `1px solid ${config.accentHex}15`,
+                            }}
+                            initial={{ y: 15, opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
+                            transition={{ delay: 0.35 }}
+                          >
+                            {/* Weeks */}
+                            {ps.weeks_completed && (
+                              <div className="flex items-center justify-between">
+                                <span className={cn('text-[9px] font-mono uppercase opacity-50', config.textColor)}>WEEKS</span>
+                                <span className={cn('text-sm font-display tracking-wider', config.textColor)}>{ps.weeks_completed}</span>
+                              </div>
+                            )}
+                            {/* Sessions */}
+                            {ps.workouts_completed && (
+                              <div className="flex items-center justify-between">
+                                <span className={cn('text-[9px] font-mono uppercase opacity-50', config.textColor)}>SESSIONS</span>
+                                <span className={cn('text-sm font-display tracking-wider', config.textColor)}>{ps.workouts_completed}</span>
+                              </div>
+                            )}
+                            {/* Total volume */}
+                            {ps.total_volume && (
+                              <div className="flex items-center justify-between">
+                                <span className={cn('text-[9px] font-mono uppercase opacity-50', config.textColor)}>KG LIFTED</span>
+                                <span className={cn('text-sm font-display tracking-wider', config.textColor)}>
+                                  {ps.total_volume >= 1000 ? `${(ps.total_volume / 1000).toFixed(1)}K` : ps.total_volume}
+                                </span>
+                              </div>
+                            )}
+                            {/* Completion rate */}
+                            {ps.completion_rate && (
+                              <div className="flex items-center justify-between">
+                                <span className={cn('text-[9px] font-mono uppercase opacity-50', config.textColor)}>COMPLETION</span>
+                                <span className={cn('text-sm font-display tracking-wider', config.textColor)}>{Math.round(ps.completion_rate)}%</span>
+                              </div>
+                            )}
+                          </motion.div>
+
+                          {/* U86 cert badge */}
+                          {card.programme_type === 'u86' && (
+                            <motion.div
+                              className="flex items-center gap-1.5 mt-3 px-3 py-1 rounded-full"
+                              style={{
+                                background: `linear-gradient(135deg, ${config.accentHex}18, ${config.accentHex}06)`,
+                                border: `1px solid ${config.accentHex}35`,
+                                boxShadow: `0 0 10px ${config.accentHex}12`,
+                              }}
+                              initial={{ scale: 0 }}
+                              animate={{ scale: 1 }}
+                              transition={{ delay: 0.5, type: 'spring' }}
+                            >
+                              <Shield className="w-3 h-3" style={{ color: config.accentHex }} />
+                              <span className="text-[8px] font-display tracking-[0.15em]" style={{ color: config.accentHex }}>U86 CERTIFIED</span>
+                            </motion.div>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    );
+                  })()}
 
                   {/* PB Value display — centered big number (replaces icon for PB cards) */}
                   {(isPBPersonal || isPBGlobal) && card.pb_value && (
@@ -1467,8 +1551,87 @@ export function AchievementCardStatic({
         {card.rarity === 'diamond' && <DiamondHolo />}
         {card.rarity === 'platinum' && <PlatinumChrome />}
 
+        {/* ═══ Programme trophy — Unbreakable/LWL branded with stats ═══ */}
+        {isProgramme && (() => {
+          const ps = (card.programme_stats || {}) as Record<string, any>;
+          const isSm = size === 'sm';
+          return (
+            <div className="absolute inset-0 flex flex-col">
+              {/* Unbreakable branding top-left */}
+              <div className="absolute top-2 left-2 flex items-center gap-1 z-10">
+                <img src="/unbreakable-shield.png" alt=""
+                  className={cn(isSm ? 'w-3 h-3' : 'w-4 h-4', 'object-contain')}
+                  style={{ filter: `drop-shadow(0 0 3px ${config.accentHex}30)` }} />
+                <div>
+                  <p className={cn('font-display tracking-[0.15em] text-white/50', isSm ? 'text-[4px]' : 'text-[6px]')}>UNBREAKABLE</p>
+                  <p className={cn('font-mono tracking-[0.1em] text-white/30', isSm ? 'text-[3px]' : 'text-[4px]')}>LIVE WITHOUT LIMITS</p>
+                </div>
+              </div>
+
+              {/* Centre — icon + stats */}
+              <div className={cn('flex-1 flex flex-col items-center justify-center', isSm ? 'px-2 pt-8 pb-14' : 'px-3 pt-10 pb-20')}>
+                {/* Programme icon */}
+                <div
+                  className={cn(isSm ? 'w-8 h-8 mb-1' : 'w-10 h-10 mb-2', 'rounded-lg flex items-center justify-center')}
+                  style={{
+                    background: `linear-gradient(145deg, ${config.accentHex}12, ${config.accentHex}04)`,
+                    border: `1.5px solid ${config.accentHex}22`,
+                    boxShadow: `0 0 16px ${config.accentHex}12`,
+                  }}
+                >
+                  {card.programme_type === 'u86' ? (
+                    <img src="/unbreakable-shield.png" alt="U86"
+                      className={cn(isSm ? 'w-5 h-5' : 'w-6 h-6', 'object-contain')}
+                      style={{ filter: `drop-shadow(0 0 4px ${config.accentHex}40)` }} />
+                  ) : (
+                    <Icon className={cn(isSm ? 'w-4 h-4' : 'w-5 h-5')} style={{ color: config.accentHex }} />
+                  )}
+                </div>
+
+                {/* Stats mini-panel */}
+                {(ps.weeks_completed || ps.workouts_completed || ps.total_volume) && (
+                  <div
+                    className={cn('w-full rounded-lg', isSm ? 'p-1.5 space-y-0.5' : 'p-2 space-y-1')}
+                    style={{ background: `${config.accentHex}06`, border: `1px solid ${config.accentHex}12` }}
+                  >
+                    {ps.weeks_completed && (
+                      <div className="flex items-center justify-between">
+                        <span className={cn('font-mono uppercase opacity-40', config.textColor, isSm ? 'text-[5px]' : 'text-[7px]')}>WEEKS</span>
+                        <span className={cn('font-display', config.textColor, isSm ? 'text-[8px]' : 'text-[10px]')}>{ps.weeks_completed}</span>
+                      </div>
+                    )}
+                    {ps.workouts_completed && (
+                      <div className="flex items-center justify-between">
+                        <span className={cn('font-mono uppercase opacity-40', config.textColor, isSm ? 'text-[5px]' : 'text-[7px]')}>SESSIONS</span>
+                        <span className={cn('font-display', config.textColor, isSm ? 'text-[8px]' : 'text-[10px]')}>{ps.workouts_completed}</span>
+                      </div>
+                    )}
+                    {ps.total_volume && (
+                      <div className="flex items-center justify-between">
+                        <span className={cn('font-mono uppercase opacity-40', config.textColor, isSm ? 'text-[5px]' : 'text-[7px]')}>KG</span>
+                        <span className={cn('font-display', config.textColor, isSm ? 'text-[8px]' : 'text-[10px]')}>
+                          {ps.total_volume >= 1000 ? `${(ps.total_volume / 1000).toFixed(1)}K` : ps.total_volume}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* U86 cert badge */}
+                {card.programme_type === 'u86' && (
+                  <div className={cn('flex items-center gap-1 rounded-full', isSm ? 'mt-1 px-1.5 py-0.5' : 'mt-1.5 px-2 py-0.5')}
+                    style={{ background: `${config.accentHex}10`, border: `1px solid ${config.accentHex}25` }}>
+                    <Shield className={cn(isSm ? 'w-2 h-2' : 'w-2.5 h-2.5')} style={{ color: config.accentHex }} />
+                    <span className={cn('font-display tracking-[0.1em]', config.textColor, isSm ? 'text-[5px]' : 'text-[6px]')}>U86 CERTIFIED</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        })()}
+
         {/* PB Value — centered on card (no icon watermark) */}
-        {card.pb_value && (
+        {card.pb_value && !isProgramme && (
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             <span className={cn('font-display tracking-wider', config.textColor, size === 'sm' ? 'text-lg' : 'text-2xl')}
               style={{ textShadow: `0 0 16px ${config.accentHex}50` }}>

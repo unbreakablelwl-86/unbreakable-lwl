@@ -212,8 +212,8 @@ export function useAchievementIntegration() {
         .eq('id', cardId)
         .single();
 
-      const rarity = card?.rarity || 'bronze';
-      toast.success(`🏆 ${rarity.toUpperCase()} Trophy Card: ${programmeName}`, {
+      const rarity = card?.rarity || 'gold';
+      toast.success(`🏆 GOLD Trophy Card: ${programmeName}`, {
         duration: 5000,
       });
 

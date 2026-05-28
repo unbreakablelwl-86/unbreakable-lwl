@@ -36,7 +36,7 @@ const RARITY_CONFIG: Record<AchievementRarity, {
   platinum: { label: 'Platinum', textColor: 'text-slate-200',  bgClass: 'bg-slate-200/10',    borderClass: 'border-slate-300/30',  color: '#e2e8f0', icon: Sparkles },
 };
 
-type TabType = 'all' | 'strength' | 'cardio' | 'global';
+type TabType = 'all' | 'programmes' | 'strength' | 'cardio' | 'global';
 type SortType = 'newest' | 'rarity' | 'exercise';
 
 /* ═══ Generate shareable card image (same as UN-TUNES) ═══ */
@@ -397,6 +397,7 @@ export function AchievementCollection() {
 
   const filteredCards = useMemo(() => {
     let result = [...cards];
+    if (activeTab === 'programmes') result = result.filter(c => c.card_type === 'programme_trophy');
     const CARDIO_CATEGORIES = ['run', 'cycle', 'row', 'swim'];
     if (activeTab === 'strength') result = result.filter(c => c.card_type === 'pb_personal' && !CARDIO_CATEGORIES.includes(c.activity_category || ''));
     if (activeTab === 'cardio') result = result.filter(c => c.card_type === 'pb_personal' && CARDIO_CATEGORIES.includes(c.activity_category || ''));
@@ -470,19 +471,22 @@ export function AchievementCollection() {
         </Card>
       </motion.div>
 
-      {/* Tabs — 4 categories: All / Strength / Cardio / Global */}
+      {/* Tabs — 5 categories: All / Programmes / Strength / Cardio / Global */}
       <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as TabType)}>
-        <TabsList className="grid w-full grid-cols-4 bg-background border border-border">
-          <TabsTrigger value="all" className="font-display tracking-wide text-[10px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+        <TabsList className="grid w-full grid-cols-5 bg-background border border-border">
+          <TabsTrigger value="all" className="font-display tracking-wide text-[9px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
             ALL ({counts.total})
           </TabsTrigger>
-          <TabsTrigger value="strength" className="font-display tracking-wide text-[10px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+          <TabsTrigger value="programmes" className="font-display tracking-wide text-[9px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+            <Award className="w-3 h-3 mr-0.5" /> PROG ({counts.trophies})
+          </TabsTrigger>
+          <TabsTrigger value="strength" className="font-display tracking-wide text-[9px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
             <Dumbbell className="w-3 h-3 mr-0.5" /> STR ({strengthCount})
           </TabsTrigger>
-          <TabsTrigger value="cardio" className="font-display tracking-wide text-[10px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+          <TabsTrigger value="cardio" className="font-display tracking-wide text-[9px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
             <Activity className="w-3 h-3 mr-0.5" /> CARDIO ({cardioCount})
           </TabsTrigger>
-          <TabsTrigger value="global" className="font-display tracking-wide text-[10px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+          <TabsTrigger value="global" className="font-display tracking-wide text-[9px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
             <Globe className="w-3 h-3 mr-0.5" /> GLOBAL ({counts.pbGlobal})
           </TabsTrigger>
         </TabsList>
@@ -517,7 +521,8 @@ export function AchievementCollection() {
         <Card className="border-border p-8 bg-card text-center">
           <Trophy className="w-12 h-12 text-muted-foreground mx-auto mb-3 opacity-30" />
           <p className="text-muted-foreground font-display tracking-wider text-sm">
-            {activeTab === 'strength' ? 'Hit a strength PB to earn your first lifting card'
+            {activeTab === 'programmes' ? 'Complete a programme to earn your gold trophy card'
+              : activeTab === 'strength' ? 'Hit a strength PB to earn your first lifting card'
               : activeTab === 'cardio' ? 'Set a cardio PB (run, cycle, row, swim) to earn your first card'
               : activeTab === 'global' ? 'Reach top 5% in your age group for a global card'
               : 'No achievement cards yet — keep grinding!'}

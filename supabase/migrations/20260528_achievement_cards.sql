@@ -208,14 +208,8 @@ BEGIN
   WHERE user_id = p_user_id
     AND card_type = 'programme_trophy';
   
-  -- Rarity based on total programmes completed
-  v_rarity := CASE
-    WHEN v_count >= 20 THEN 'platinum'  -- 20+ programmes = platinum trophy
-    WHEN v_count >= 10 THEN 'diamond'   -- 10+ = diamond
-    WHEN v_count >= 5  THEN 'gold'      -- 5+ = gold
-    WHEN v_count >= 2  THEN 'silver'    -- 2+ = silver
-    ELSE 'bronze'                        -- First completion = bronze
-  END;
+  -- All programme completions earn gold
+  v_rarity := 'gold';
   
   INSERT INTO achievement_cards (
     user_id, card_type, rarity, programme_type, programme_name,

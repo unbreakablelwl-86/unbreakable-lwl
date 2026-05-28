@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { AchievementCardReveal } from '@/components/achievements/AchievementCardReveal';
+import { U86Certificate } from '@/components/achievements/U86Certificate';
 import type { AchievementCard } from '@/hooks/useAchievementCards';
 
 interface AchievementUnlockOverlayProps {
@@ -22,7 +23,7 @@ interface AchievementUnlockOverlayProps {
 const UNLOCK_MESSAGES: Record<string, { title: string; subtitle: string }> = {
   programme_trophy: {
     title: 'PROGRAMME COMPLETE',
-    subtitle: 'You earned a trophy card!',
+    subtitle: 'You earned a gold trophy card!',
   },
   pb_personal: {
     title: 'NEW PERSONAL BEST',
@@ -37,12 +38,20 @@ const UNLOCK_MESSAGES: Record<string, { title: string; subtitle: string }> = {
 export function AchievementUnlockOverlay({ cards, onComplete }: AchievementUnlockOverlayProps) {
   const [currentIndex, setCurrentIndex] = useState(-1); // -1 = intro screen
   const [isVisible, setIsVisible] = useState(true);
+  const [showU86Cert, setShowU86Cert] = useState(false);
 
   if (!isVisible || cards.length === 0) return null;
+
+  // Check if any card is a U86 programme completion
+  const hasU86 = cards.some(c => c.card_type === 'programme_trophy' && c.programme_type === 'u86');
+  const u86Card = cards.find(c => c.card_type === 'programme_trophy' && c.programme_type === 'u86');
 
   const handleNext = () => {
     if (currentIndex < cards.length - 1) {
       setCurrentIndex(prev => prev + 1);
+    } else if (hasU86 && !showU86Cert) {
+      // Show U86 certificate after all cards revealed
+      setShowU86Cert(true);
     } else {
       // Done — close overlay
       setIsVisible(false);
@@ -169,6 +178,21 @@ export function AchievementUnlockOverlay({ cards, onComplete }: AchievementUnloc
                   </Button>
                 </motion.div>
               </motion.div>
+            ) : showU86Cert && u86Card ? (
+              /* ── U86 Completion Certificate ── */
+              <U86Certificate
+                displayName={u86Card.owner_display_name || 'Athlete'}
+                completionDate={u86Card.earned_at}
+                stats={{
+                  weeksCompleted: (u86Card.programme_stats as any)?.weeks_completed,
+                  workoutsCompleted: (u86Card.programme_stats as any)?.workouts_completed,
+                  totalVolume: (u86Card.programme_stats as any)?.total_volume,
+                }}
+                onClose={() => {
+                  setIsVisible(false);
+                  onComplete();
+                }}
+              />
             ) : currentCard ? (
               /* ── Card reveal ── */
               <AchievementCardReveal
