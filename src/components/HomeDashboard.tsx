@@ -109,8 +109,10 @@ export function HomeDashboard() {
   const { profile } = useProfile();
   const tokenState = useTokenBalance();
   const { streak: loginStreak } = useLoginStreak();
+  const { unreadCount } = useNotifications();
   const [activeActions, setActiveActions] = useState<string[]>(loadSavedActions);
   const [editing, setEditing] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
 
   const tierLabel = tokenState.tierDisplayName || 'Free';
 
