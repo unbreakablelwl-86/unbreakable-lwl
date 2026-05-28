@@ -18,11 +18,11 @@ import { useUserRole } from '@/hooks/useUserRole';
 import { useTokenBalance } from '@/hooks/useTokenBalance';
 import { useAlbums, useAllTracks } from '@/hooks/useUnTunes';
 import type { Track, Album } from '@/hooks/useUnTunes';
-import { PackOpening, type PackCard } from './PackOpening';
+import { PackOpening, PACK_TIERS, type PackCard, type PackTier } from './PackOpening';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 
-// Pricing in tokens
+// Pricing in tokens (single/album/bundle remain the same)
 const SINGLE_COST = 3;   // ≈ £1
 const ALBUM_COST = 30;   // ≈ £10
 const BUNDLE_COST = 50;  // All albums — price of 2
@@ -41,7 +41,8 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
   const [purchasing, setPurchasing] = useState<string | null>(null);
   const [packCards, setPackCards] = useState<PackCard[] | null>(null);
   const [packType, setPackType] = useState<'single' | 'album' | 'bundle'>('single');
-  const [storeView, setStoreView] = useState<'main' | 'singles'>('main');
+  const [storeView, setStoreView] = useState<'main' | 'singles' | 'packs'>('main');
+  const [selectedPackTierId, setSelectedPackTierId] = useState<string>('standard');
 
   // ── Pending (unopened) packs ──
   const [pendingPacks, setPendingPacks] = useState<any[]>([]);
@@ -81,24 +82,17 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
   const handleOpenPendingPacks = useCallback(() => {
     if (pendingPacks.length === 0) return;
     // Convert pending DB cards into PackCard format for the opening animation
-    // The RPC now returns cover_url and card_title directly via JOIN
     const cards: PackCard[] = pendingPacks.map(p => {
-      // Use cover_url/card_title from RPC if available, fall back to hook lookup
-      const directCover = p.cover_url || '';
-      const directTitle = p.card_title || '';
       const track = tracks.find(t => t.id === p.track_id);
       const album = albums.find(a => a.id === p.album_id);
-      const coverUrl = directCover || track?.cover_url || album?.cover_url || '';
-      const title = directTitle || track?.title || album?.title || '';
-      
       return {
         id: p.id,
         rarity: p.rarity || 'standard',
         track_id: p.track_id,
         album_id: p.album_id,
         edition_number: p.edition_number || 0,
-        un_tunes_tracks: p.track_id ? { title, cover_url: coverUrl } : null,
-        un_tunes_albums: p.album_id && !p.track_id ? { title, cover_url: coverUrl } : null,
+        un_tunes_tracks: track ? { title: track.title, cover_url: track.cover_url || '' } : null,
+        un_tunes_albums: album ? { title: album.title, cover_url: album.cover_url || '' } : null,
       };
     });
     setPackType('bundle');
@@ -147,26 +141,9 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
         return;
       }
 
-      // Success — map purchase cards with cover art then show pack opening
+      // Success — show pack opening
       setPackType(type);
-      const rawCards = data.cards || [];
-      const mapped: PackCard[] = rawCards.map((c: any) => {
-        const track = tracks.find(t => t.id === c.track_id);
-        const album = albums.find(a => a.id === c.album_id);
-        const coverUrl = track?.cover_url || album?.cover_url || '';
-        const title = track?.title || album?.title || '';
-        return {
-          id: c.id,
-          rarity: c.rarity || 'standard',
-          track_id: c.track_id || null,
-          album_id: c.album_id || null,
-          brand_card_id: c.brand_card_id || null,
-          edition_number: c.edition || c.edition_number || 0,
-          un_tunes_tracks: c.track_id ? { title, cover_url: coverUrl } : null,
-          un_tunes_albums: c.album_id && !c.track_id ? { title, cover_url: coverUrl } : null,
-        };
-      });
-      setPackCards(mapped);
+      setPackCards(data.cards || []);
       refreshBalance();
       toast.success(`${data.tokensSpent || 0} tokens spent`);
     } catch (err) {
@@ -321,6 +298,99 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
                 </div>
               </Card>
             </motion.div>
+
+            {/* ═══ CARD PACKS ═══ */}
+            <div>
+              <h3 className="font-display text-sm tracking-wider text-white mb-3 flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-primary" />
+                CARD PACKS
+              </h3>
+              <div className="space-y-3">
+                {PACK_TIERS.map((tier) => {
+                  const tierColors: Record<string, { border: string; bg: string; text: string; glow: string }> = {
+                    standard: { border: 'border-primary/30', bg: 'from-zinc-900 via-zinc-800/50 to-zinc-900', text: 'text-primary', glow: 'rgba(255,107,0,0.1)' },
+                    premium: { border: 'border-yellow-500/30', bg: 'from-zinc-900 via-yellow-950/20 to-zinc-900', text: 'text-yellow-400', glow: 'rgba(251,191,36,0.1)' },
+                    elite: { border: 'border-violet-500/30', bg: 'from-zinc-900 via-violet-950/20 to-zinc-900', text: 'text-violet-400', glow: 'rgba(139,92,246,0.12)' },
+                  };
+                  const tc = tierColors[tier.id] || tierColors.standard;
+                  return (
+                    <motion.div key={tier.id} whileTap={{ scale: 0.98 }}>
+                      <Card className={cn('relative overflow-hidden', tc.border, `bg-gradient-to-br ${tc.bg}`)}>
+                        <div className="absolute inset-0" style={{ background: `radial-gradient(circle at 30% 20%, ${tc.glow}, transparent 50%)` }} />
+                        <div className="relative p-4">
+                          <div className="flex items-center justify-between mb-2">
+                            <div>
+                              <p className={cn('font-display text-sm tracking-wider', tc.text)}>{tier.name}</p>
+                              <p className="text-[10px] text-muted-foreground mt-0.5">{tier.cards} cards per pack</p>
+                            </div>
+                            {tier.id === 'elite' && (
+                              <Badge className="bg-violet-500/20 text-violet-300 border-violet-500/30 text-[9px] font-display">
+                                BEST VALUE
+                              </Badge>
+                            )}
+                            {tier.id === 'premium' && (
+                              <Badge className="bg-yellow-500/20 text-yellow-300 border-yellow-500/30 text-[9px] font-display">
+                                POPULAR
+                              </Badge>
+                            )}
+                          </div>
+
+                          <div className="flex gap-2 mb-3 flex-wrap">
+                            {tier.guaranteedGold > 0 && (
+                              <span className="text-[9px] px-2 py-0.5 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 font-display tracking-wider">
+                                <Crown className="w-2.5 h-2.5 inline mr-0.5" />{tier.guaranteedGold} GOLD GUARANTEED
+                              </span>
+                            )}
+                            {tier.guaranteedDiamond > 0 && (
+                              <span className="text-[9px] px-2 py-0.5 rounded-full bg-violet-500/10 border border-violet-500/20 text-violet-300 font-display tracking-wider">
+                                <Diamond className="w-2.5 h-2.5 inline mr-0.5" />{tier.guaranteedDiamond} DIAMOND GUARANTEED
+                              </span>
+                            )}
+                            {tier.platinumBoost > 1 && (
+                              <span className="text-[9px] px-2 py-0.5 rounded-full bg-slate-200/10 border border-slate-300/20 text-slate-300 font-display tracking-wider">
+                                {tier.platinumBoost}× PLAT CHANCE
+                              </span>
+                            )}
+                          </div>
+
+                          <div className="flex items-center gap-3">
+                            <div className="flex-1">
+                              <div className="flex items-baseline gap-1">
+                                <span className={cn('text-xl font-display', tc.text)}>{tier.cost}</span>
+                                <Coins className="w-3 h-3 text-primary" />
+                              </div>
+                            </div>
+                            <Button
+                              size="sm"
+                              className={cn(
+                                'font-display tracking-wider text-xs text-white',
+                                tier.id === 'elite' ? 'bg-gradient-to-r from-violet-600 to-purple-600' :
+                                tier.id === 'premium' ? 'bg-gradient-to-r from-yellow-600 to-amber-600' :
+                                'bg-gradient-to-r from-primary to-orange-600',
+                              )}
+                              disabled={!!purchasing || (!hasFullAccess && balance < tier.cost)}
+                              onClick={() => {
+                                setSelectedPackTierId(tier.id);
+                                handlePurchase('bundle');
+                              }}
+                            >
+                              {purchasing ? (
+                                <Loader2 className="w-3 h-3 animate-spin" />
+                              ) : (
+                                <>
+                                  <Zap className="w-3 h-3 mr-1" />
+                                  BUY PACK
+                                </>
+                              )}
+                            </Button>
+                          </div>
+                        </div>
+                      </Card>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            </div>
 
             {/* ═══ ALBUMS ═══ */}
             <div>
@@ -485,14 +555,9 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
           <PackOpening
             cards={packCards}
             purchaseType={packType}
+            packTierId={selectedPackTierId}
             onClose={handlePackClose}
             onMarkOpened={handleMarkOpened}
-            onDiscardCard={async (cardId: string) => {
-              try {
-                await (supabase as any).rpc('discard_card', { _card_id: cardId, _uid: user?.id });
-                toast.success('Duplicate discarded');
-              } catch { /* silent */ }
-            }}
           />
         )}
       </AnimatePresence>

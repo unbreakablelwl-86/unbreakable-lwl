@@ -25,7 +25,7 @@ function formatTime(seconds: number): string {
  * Tapping opens the expanded full-screen player.
  */
 export function FloatingMiniPlayer() {
-  const { state, togglePlay, nextTrack, prevTrack, seekTo, setVolume, toggleShuffle, toggleRepeat, stop, hasFullAccess, ownedTrackIds } = usePlayer();
+  const { state, togglePlay, nextTrack, prevTrack, seekTo, setVolume, toggleShuffle, toggleRepeat, stop, hasFullAccess, ownedTrackIds, locked } = usePlayer();
   const { isLiked, toggleLike } = useLikeTrack();
   const [expanded, setExpanded] = useState(false);
   const [showVolume, setShowVolume] = useState(false);
@@ -61,12 +61,13 @@ export function FloatingMiniPlayer() {
   const progress = state.duration > 0 ? (state.currentTime / state.duration) * 100 : 0;
 
   const handlePillTap = () => {
-    if (isDragging) return;
+    if (isDragging || locked) return; // Can't expand during pack opening
     setExpanded(true);
   };
 
   const handleDismiss = (e: React.MouseEvent) => {
     e.stopPropagation();
+    if (locked) return; // Can't dismiss during pack opening
     stop();
     setDismissed(true);
   };
@@ -205,22 +206,41 @@ export function FloatingMiniPlayer() {
 
                 {/* Controls */}
                 <div className="flex items-center gap-1 shrink-0" onClick={e => e.stopPropagation()}>
-                  <button
-                    onClick={togglePlay}
-                    className="w-8 h-8 rounded-full bg-primary flex items-center justify-center shadow-[0_0_12px_rgba(255,85,0,0.3)] active:scale-90 transition-transform"
-                  >
-                    {state.isPlaying ? (
-                      <Pause className="w-3.5 h-3.5 text-primary-foreground" />
-                    ) : (
-                      <Play className="w-3.5 h-3.5 text-primary-foreground ml-0.5" />
-                    )}
-                  </button>
-                  <button onClick={nextTrack} className="p-1 text-muted-foreground active:text-foreground">
-                    <SkipForward className="w-3.5 h-3.5" />
-                  </button>
-                  <button onClick={handleDismiss} className="p-1 text-muted-foreground/50 active:text-foreground">
-                    <X className="w-3 h-3" />
-                  </button>
+                  {locked ? (
+                    /* Locked during pack opening — just show a "playing" indicator, no controls */
+                    <div className="flex items-center gap-1.5 px-2">
+                      <div className="flex gap-0.5 items-end h-4">
+                        {[0.15, 0.3, 0.2, 0.35, 0.25].map((delay, i) => (
+                          <motion.div
+                            key={i}
+                            className="w-0.5 bg-primary rounded-full"
+                            animate={{ height: ['4px', '14px', '4px'] }}
+                            transition={{ duration: 0.8, delay, repeat: Infinity, ease: 'easeInOut' }}
+                          />
+                        ))}
+                      </div>
+                      <span className="text-[9px] font-display tracking-widest text-primary/70 uppercase">LOCKED</span>
+                    </div>
+                  ) : (
+                    <>
+                      <button
+                        onClick={togglePlay}
+                        className="w-8 h-8 rounded-full bg-primary flex items-center justify-center shadow-[0_0_12px_rgba(255,85,0,0.3)] active:scale-90 transition-transform"
+                      >
+                        {state.isPlaying ? (
+                          <Pause className="w-3.5 h-3.5 text-primary-foreground" />
+                        ) : (
+                          <Play className="w-3.5 h-3.5 text-primary-foreground ml-0.5" />
+                        )}
+                      </button>
+                      <button onClick={nextTrack} className="p-1 text-muted-foreground active:text-foreground">
+                        <SkipForward className="w-3.5 h-3.5" />
+                      </button>
+                      <button onClick={handleDismiss} className="p-1 text-muted-foreground/50 active:text-foreground">
+                        <X className="w-3 h-3" />
+                      </button>
+                    </>
+                  )}
                 </div>
               </div>
             </div>

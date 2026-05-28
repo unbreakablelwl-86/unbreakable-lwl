@@ -3,14 +3,15 @@
  * Shows ALL possible cards (every track + album × rarities).
  * Owned cards are lit up, unowned are greyed/silhouetted.
  * Swipe/tap each card to cycle between Standard → Gold → Diamond → Platinum variants.
- * Includes DUPLICATES tab with discard functionality.
+ * Stat boxes ARE clickable filters by rarity.
+ * DUPLICATES tab with discard + auction listing.
  */
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence, PanInfo } from 'framer-motion';
 import {
   Diamond, Crown, Music, Disc3, X, Download, ArrowLeft,
-  Lock, Trash2, Share2, Sparkles,
+  Lock, Trash2, Share2, Sparkles, Gavel,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -86,6 +87,7 @@ function SwipeableCard({
   coverUrl,
   ownedByRarity,
   onOpenFullView,
+  forcedRarity,
 }: {
   itemId: string;
   itemType: 'track' | 'album' | 'brand';
@@ -93,14 +95,24 @@ function SwipeableCard({
   coverUrl: string | null;
   ownedByRarity: Record<Rarity, OwnedCard | null>;
   onOpenFullView: (itemId: string, rarity: Rarity) => void;
+  forcedRarity?: Rarity | null;
 }) {
-  const [currentRarityIdx, setCurrentRarityIdx] = useState(0);
+  const [currentRarityIdx, setCurrentRarityIdx] = useState(() =>
+    forcedRarity ? RARITIES.indexOf(forcedRarity) : 0,
+  );
+
+  // Sync when forcedRarity changes
+  useEffect(() => {
+    if (forcedRarity) setCurrentRarityIdx(RARITIES.indexOf(forcedRarity));
+  }, [forcedRarity]);
+
   const rarity = RARITIES[currentRarityIdx];
   const config = RARITY_CONFIG[rarity];
   const owned = ownedByRarity[rarity];
   const ownedCount = RARITIES.filter(r => ownedByRarity[r]).length;
 
   const handleDragEnd = (_: any, info: PanInfo) => {
+    if (forcedRarity) return; // locked to one rarity
     if (Math.abs(info.offset.x) > 30) {
       if (info.offset.x < 0) {
         setCurrentRarityIdx(prev => (prev + 1) % RARITIES.length);
@@ -119,7 +131,7 @@ function SwipeableCard({
         owned && rarity !== 'standard' && config.glow,
       )}
       whileTap={{ scale: 0.95 }}
-      drag="x"
+      drag={forcedRarity ? false : 'x'}
       dragConstraints={{ left: 0, right: 0 }}
       dragElastic={0.3}
       onDragEnd={handleDragEnd}
@@ -176,37 +188,41 @@ function SwipeableCard({
           <p className={cn('text-[10px] font-display tracking-wider truncate', owned ? 'text-white' : 'text-zinc-600')}>
             {title}
           </p>
-          <div className="flex gap-1 mt-1">
-            {RARITIES.map((r, i) => (
-              <div
-                key={r}
-                className="w-1.5 h-1.5 rounded-full transition-all"
-                style={{
-                  backgroundColor:
-                    i === currentRarityIdx && ownedByRarity[r]
-                      ? RARITY_CONFIG[r].color
-                      : i === currentRarityIdx
-                        ? '#71717a'
-                        : ownedByRarity[r]
-                          ? '#52525b'
-                          : '#27272a',
-                }}
-              />
-            ))}
-          </div>
+          {!forcedRarity && (
+            <div className="flex gap-1 mt-1">
+              {RARITIES.map((r, i) => (
+                <div
+                  key={r}
+                  className="w-1.5 h-1.5 rounded-full transition-all"
+                  style={{
+                    backgroundColor:
+                      i === currentRarityIdx && ownedByRarity[r]
+                        ? RARITY_CONFIG[r].color
+                        : i === currentRarityIdx
+                          ? '#71717a'
+                          : ownedByRarity[r]
+                            ? '#52525b'
+                            : '#27272a',
+                  }}
+                />
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Owned count */}
-        <div className="absolute top-1 left-1">
-          <span className={cn(
-            'text-[8px] font-display tracking-wider px-1 py-0.5 rounded',
-            ownedCount === RARITIES.length ? 'bg-primary/20 text-primary' :
-            ownedCount > 0 ? 'bg-zinc-800/80 text-zinc-400' :
-            'bg-zinc-900/60 text-zinc-700',
-          )}>
-            {ownedCount}/{RARITIES.length}
-          </span>
-        </div>
+        {!forcedRarity && (
+          <div className="absolute top-1 left-1">
+            <span className={cn(
+              'text-[8px] font-display tracking-wider px-1 py-0.5 rounded',
+              ownedCount === RARITIES.length ? 'bg-primary/20 text-primary' :
+              ownedCount > 0 ? 'bg-zinc-800/80 text-zinc-400' :
+              'bg-zinc-900/60 text-zinc-700',
+            )}>
+              {ownedCount}/{RARITIES.length}
+            </span>
+          </div>
+        )}
       </div>
     </motion.div>
   );
@@ -219,15 +235,17 @@ function DuplicateCardRow({
   rarity,
   cards,
   onDiscard,
+  onAuction,
 }: {
   itemTitle: string;
   coverUrl: string | null;
   rarity: string;
   cards: OwnedCard[];
   onDiscard: (cardId: string) => void;
+  onAuction: (cardId: string, title: string, rarity: string) => void;
 }) {
   const config = RARITY_CONFIG[rarity as Rarity] || RARITY_CONFIG.standard;
-  const dupeCount = cards.length - 1; // first is the "keeper"
+  const dupeCount = cards.length - 1;
 
   return (
     <div className={cn('flex items-center gap-3 p-3 rounded-xl border', config.border, config.bg)}>
@@ -253,19 +271,31 @@ function DuplicateCardRow({
         </p>
       </div>
 
-      {/* Discard one duplicate */}
-      <Button
-        variant="outline"
-        size="sm"
-        className="text-red-400 border-red-500/30 hover:bg-red-500/10 text-xs font-display tracking-wider"
-        onClick={() => {
-          // Discard the last duplicate (keep the first)
-          const dupeToRemove = cards[cards.length - 1];
-          onDiscard(dupeToRemove.id);
-        }}
-      >
-        <Trash2 className="w-3 h-3 mr-1" /> BIN
-      </Button>
+      {/* Actions */}
+      <div className="flex flex-col gap-1">
+        <Button
+          variant="outline"
+          size="sm"
+          className="text-primary border-primary/30 hover:bg-primary/10 text-[10px] font-display tracking-wider h-7"
+          onClick={() => {
+            const cardToSell = cards[cards.length - 1];
+            onAuction(cardToSell.id, itemTitle, rarity);
+          }}
+        >
+          <Gavel className="w-3 h-3 mr-1" /> SELL
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          className="text-red-400 border-red-500/30 hover:bg-red-500/10 text-[10px] font-display tracking-wider h-7"
+          onClick={() => {
+            const dupeToRemove = cards[cards.length - 1];
+            onDiscard(dupeToRemove.id);
+          }}
+        >
+          <Trash2 className="w-3 h-3 mr-1" /> BIN
+        </Button>
+      </div>
     </div>
   );
 }
@@ -279,7 +309,11 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
   const [brandCards, setBrandCards] = useState<BrandCard[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<FilterKey>('all');
+  const [rarityFilter, setRarityFilter] = useState<Rarity | null>(null);
   const [fullViewItem, setFullViewItem] = useState<{ id: string; rarity: Rarity } | null>(null);
+  const [auctionModal, setAuctionModal] = useState<{ cardId: string; title: string; rarity: string } | null>(null);
+  const [auctionPrice, setAuctionPrice] = useState('1.0');
+  const [auctionLoading, setAuctionLoading] = useState(false);
   const { toast } = useToast();
 
   const fetchCards = useCallback(async () => {
@@ -311,13 +345,11 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
 
   useEffect(() => { fetchCards(); }, [fetchCards]);
 
-  // Only count opened cards for collection display
   const openedCards = useMemo(() => ownedCards.filter(c => c.is_opened), [ownedCards]);
 
-  // Build ownership map: { itemId: { standard: card|null, gold: ..., diamond: ..., platinum: ... } }
+  // Build ownership map
   const ownershipMap = useMemo(() => {
     const map: Record<string, Record<Rarity, OwnedCard | null>> = {};
-
     for (const track of tracks) {
       map[track.id] = { standard: null, gold: null, diamond: null, platinum: null };
     }
@@ -327,8 +359,6 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
     for (const bc of brandCards) {
       map[bc.id] = { standard: null, gold: null, diamond: null, platinum: null };
     }
-
-    // Fill in — first card per (item, rarity) wins the slot
     for (const card of openedCards) {
       const itemId = card.track_id || card.album_id || card.brand_card_id;
       if (!itemId) continue;
@@ -338,11 +368,9 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
         map[itemId][r] = card;
       }
     }
-
     return map;
   }, [tracks, albums, brandCards, openedCards]);
 
-  // Duplicates: cards where more than 1 exist for the same (item, rarity)
   const duplicateGroups = useMemo(() => {
     const groups: Record<string, OwnedCard[]> = {};
     for (const card of openedCards) {
@@ -352,7 +380,6 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
       if (!groups[key]) groups[key] = [];
       groups[key].push(card);
     }
-    // Only keep groups with duplicates (>1)
     return Object.fromEntries(Object.entries(groups).filter(([, cards]) => cards.length > 1));
   }, [openedCards]);
 
@@ -361,7 +388,6 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
     [duplicateGroups],
   );
 
-  // Stats — count unique (item, rarity) slots owned, not raw card count
   const uniqueOwned = useMemo(() => {
     const seen = new Set<string>();
     for (const card of openedCards) {
@@ -393,18 +419,29 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
     [ownershipMap],
   );
 
-  // All collection items
   const allItems = useMemo(() => [
     ...tracks.map(t => ({ id: t.id, type: 'track' as const, title: t.title, coverUrl: t.cover_url })),
     ...albums.map(a => ({ id: a.id, type: 'album' as const, title: a.title, coverUrl: a.cover_url })),
     ...brandCards.map(bc => ({ id: bc.id, type: 'brand' as const, title: bc.title, coverUrl: bc.artwork_url })),
   ], [tracks, albums, brandCards]);
 
-  // Filter items
+  // Filter items — ownership filter + rarity filter combined
   const filteredItems = useMemo(() => {
-    if (filter === 'duplicates') return []; // handled separately
+    if (filter === 'duplicates') return [];
     return allItems.filter(item => {
       const m = ownershipMap[item.id];
+
+      // Rarity filter: if active, only show items that have (or are missing) this rarity
+      if (rarityFilter) {
+        const ownsThisRarity = m?.[rarityFilter] != null;
+        // Ownership sub-filter
+        if (filter === 'owned') return ownsThisRarity;
+        if (filter === 'missing') return !ownsThisRarity;
+        // 'all' and 'complete' just show everything, but card will display at forced rarity
+        return true;
+      }
+
+      // No rarity filter — standard ownership filters
       if (!m) return filter === 'all' || filter === 'missing';
       const ownedCount = RARITIES.filter(r => m[r]).length;
       if (filter === 'owned') return ownedCount > 0;
@@ -412,7 +449,7 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
       if (filter === 'complete') return ownedCount === RARITIES.length;
       return true; // 'all'
     });
-  }, [allItems, ownershipMap, filter]);
+  }, [allItems, ownershipMap, filter, rarityFilter]);
 
   const completionPct = totalPossible > 0 ? Math.round((uniqueOwned / totalPossible) * 100) : 0;
 
@@ -423,12 +460,36 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
       if (error) throw error;
       if (data?.error) { toast({ title: 'Error', description: data.error, variant: 'destructive' }); return; }
       toast({ title: 'Card discarded', description: 'Duplicate removed from your collection.' });
-      // Remove from local state
       setOwnedCards(prev => prev.filter(c => c.id !== cardId));
     } catch (err) {
       console.error('Discard error:', err);
       toast({ title: 'Error', description: 'Could not discard card.', variant: 'destructive' });
     }
+  }, [toast]);
+
+  // Auction listing handler
+  const handleListForAuction = useCallback(async (cardId: string, startingPrice: number) => {
+    setAuctionLoading(true);
+    try {
+      const { data, error } = await (supabase as any).rpc('list_card_for_auction', {
+        _card_id: cardId,
+        _starting_price: startingPrice,
+        _bid_increment: 0.1,
+      });
+      if (error) throw error;
+      if (data?.error) {
+        toast({ title: 'Error', description: data.error, variant: 'destructive' });
+      } else {
+        toast({ title: 'Listed!', description: `Card listed for auction starting at ${startingPrice} tokens.` });
+        // Remove from local state (it's now in auction)
+        setOwnedCards(prev => prev.filter(c => c.id !== cardId));
+      }
+    } catch (err) {
+      console.error('Auction listing error:', err);
+      toast({ title: 'Error', description: 'Could not list card for auction.', variant: 'destructive' });
+    }
+    setAuctionLoading(false);
+    setAuctionModal(null);
   }, [toast]);
 
   // Download card image
@@ -465,13 +526,24 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
     link.href = canvas.toDataURL('image/png'); link.click();
   };
 
-  // Resolve title/cover for a duplicate group key
   const resolveItem = (key: string) => {
     const itemId = key.split('::')[0];
     return allItems.find(i => i.id === itemId);
   };
 
   const itemCount = tracks.length + albums.length + brandCards.length;
+
+  // Handle stat box tap: toggle rarity filter
+  const handleRarityStatTap = (rarity: Rarity) => {
+    if (rarityFilter === rarity) {
+      // Un-toggle: go back to no rarity filter
+      setRarityFilter(null);
+    } else {
+      setRarityFilter(rarity);
+      // Auto-switch to 'all' or 'owned' view (not duplicates)
+      if (filter === 'duplicates') setFilter('all');
+    }
+  };
 
   return (
     <div className="space-y-4">
@@ -502,7 +574,7 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
         <span className="absolute right-2 -top-5 text-[10px] text-muted-foreground font-display">{completionPct}%</span>
       </div>
 
-      {/* Stats */}
+      {/* Stats — CLICKABLE rarity filters */}
       <div className="grid grid-cols-5 gap-1.5">
         {([
           { rarity: 'platinum' as Rarity, count: byRarity.platinum || 0 },
@@ -512,26 +584,63 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
         ]).map(({ rarity, count }) => {
           const config = RARITY_CONFIG[rarity];
           const Icon = config.icon;
+          const isActive = rarityFilter === rarity;
           return (
-            <motion.div
+            <motion.button
               key={rarity}
-              className={cn('rounded-xl border p-2 text-center', config.border, config.bg)}
-              whileTap={{ scale: 0.95 }}
+              className={cn(
+                'rounded-xl border p-2 text-center transition-all',
+                isActive
+                  ? `${config.border} ${config.bg} ring-2 ring-offset-1 ring-offset-black`
+                  : `${config.border} ${config.bg}`,
+                isActive && rarity === 'platinum' && 'ring-slate-300/60',
+                isActive && rarity === 'diamond' && 'ring-violet-400/60',
+                isActive && rarity === 'gold' && 'ring-yellow-400/60',
+                isActive && rarity === 'standard' && 'ring-zinc-400/60',
+              )}
+              whileTap={{ scale: 0.92 }}
+              onClick={() => handleRarityStatTap(rarity)}
             >
               <Icon className={cn('w-3 h-3 mx-auto mb-0.5', config.text)} />
               <p className={cn('text-sm font-display', config.text)}>
                 {count}<span className="text-[9px] text-muted-foreground">/{itemCount}</span>
               </p>
               <p className="text-[7px] text-muted-foreground tracking-wider">{config.label.toUpperCase()}</p>
-            </motion.div>
+            </motion.button>
           );
         })}
-        <motion.div className="rounded-xl border border-primary/30 bg-primary/5 p-2 text-center" whileTap={{ scale: 0.95 }}>
+        <motion.button
+          className={cn(
+            'rounded-xl border border-primary/30 bg-primary/5 p-2 text-center transition-all',
+            filter === 'complete' && !rarityFilter && 'ring-2 ring-primary/60 ring-offset-1 ring-offset-black',
+          )}
+          whileTap={{ scale: 0.92 }}
+          onClick={() => {
+            setRarityFilter(null);
+            setFilter(prev => prev === 'complete' ? 'all' : 'complete');
+          }}
+        >
           <span className="text-[10px]">⭐</span>
           <p className="text-sm font-display text-primary">{completeItems}</p>
           <p className="text-[7px] text-muted-foreground tracking-wider">COMPLETE</p>
-        </motion.div>
+        </motion.button>
       </div>
+
+      {/* Active rarity filter indicator */}
+      {rarityFilter && (
+        <motion.div
+          className={cn('flex items-center justify-between px-3 py-1.5 rounded-lg', RARITY_CONFIG[rarityFilter].bg, RARITY_CONFIG[rarityFilter].border, 'border')}
+          initial={{ opacity: 0, y: -5 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          <p className={cn('text-xs font-display tracking-wider', RARITY_CONFIG[rarityFilter].text)}>
+            SHOWING {RARITY_CONFIG[rarityFilter].label.toUpperCase()} CARDS
+          </p>
+          <button onClick={() => setRarityFilter(null)} className="text-zinc-400 hover:text-white">
+            <X className="w-3.5 h-3.5" />
+          </button>
+        </motion.div>
+      )}
 
       {/* Filter pills */}
       <div className="flex gap-1.5 overflow-x-auto pb-1">
@@ -544,12 +653,17 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
         ]).map((f) => (
           <button
             key={f.key}
-            onClick={() => setFilter(f.key)}
+            onClick={() => {
+              setFilter(f.key);
+              if (f.key === 'duplicates') setRarityFilter(null);
+            }}
             className={cn(
               'px-3 py-1 rounded-full text-[11px] font-display tracking-wider border whitespace-nowrap transition-all',
-              filter === f.key
+              filter === f.key && !rarityFilter
                 ? 'bg-primary/20 border-primary/40 text-primary'
-                : 'border-border text-muted-foreground hover:border-primary/20',
+                : filter === f.key && rarityFilter
+                  ? 'bg-primary/10 border-primary/30 text-primary/70'
+                  : 'border-border text-muted-foreground hover:border-primary/20',
               f.key === 'duplicates' && totalDuplicates > 0 && filter !== 'duplicates' && 'border-red-500/30 text-red-400',
             )}
           >
@@ -558,8 +672,8 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
         ))}
       </div>
 
-      {/* Swipe hint (not on duplicates tab) */}
-      {filter !== 'duplicates' && (
+      {/* Swipe hint */}
+      {filter !== 'duplicates' && !rarityFilter && (
         <p className="text-[10px] text-muted-foreground/60 text-center font-display tracking-wider">
           ← SWIPE CARDS TO SEE VARIANTS →
         </p>
@@ -579,7 +693,6 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
                 <p className="text-xs text-muted-foreground">
                   {totalDuplicates} duplicate{totalDuplicates !== 1 ? 's' : ''} across {Object.keys(duplicateGroups).length} cards
                 </p>
-                {/* Bin all duplicates */}
                 <Button
                   variant="outline"
                   size="sm"
@@ -587,7 +700,6 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
                   onClick={async () => {
                     const dupeIds: string[] = [];
                     for (const cards of Object.values(duplicateGroups)) {
-                      // Keep first, discard rest
                       for (let i = 1; i < cards.length; i++) dupeIds.push(cards[i].id);
                     }
                     for (const id of dupeIds) {
@@ -608,6 +720,7 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
                     rarity={key.split('::')[1]}
                     cards={cards}
                     onDiscard={handleDiscard}
+                    onAuction={(cardId, title, rarity) => setAuctionModal({ cardId, title, rarity })}
                   />
                 );
               })}
@@ -616,7 +729,7 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
         </div>
       )}
 
-      {/* ── Card grid (non-duplicate views) ── */}
+      {/* ── Card grid ── */}
       {filter !== 'duplicates' && (
         <>
           {(loading || tracksLoading || albumsLoading) ? (
@@ -625,20 +738,25 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
             <div className="text-center py-12">
               <Music className="w-12 h-12 text-zinc-700 mx-auto mb-3" />
               <p className="text-sm text-muted-foreground">
-                {filter === 'all' ? 'No cards yet — purchase tracks to start collecting!' : 'No cards match this filter'}
+                {filter === 'all' && !rarityFilter
+                  ? 'No cards yet — purchase tracks to start collecting!'
+                  : rarityFilter
+                    ? `No ${RARITY_CONFIG[rarityFilter].label.toLowerCase()} cards match this filter`
+                    : 'No cards match this filter'}
               </p>
             </div>
           ) : (
             <div className="grid grid-cols-3 gap-2">
               {filteredItems.map((item) => (
                 <SwipeableCard
-                  key={item.id}
+                  key={`${item.id}-${rarityFilter || 'all'}`}
                   itemId={item.id}
                   itemType={item.type}
                   title={item.title}
                   coverUrl={item.coverUrl}
                   ownedByRarity={ownershipMap[item.id] || { standard: null, gold: null, diamond: null, platinum: null }}
                   onOpenFullView={(id, rarity) => setFullViewItem({ id, rarity })}
+                  forcedRarity={rarityFilter}
                 />
               ))}
             </div>
@@ -655,7 +773,6 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
           const config = RARITY_CONFIG[rarity];
           const owned = ownershipMap[item.id]?.[rarity];
 
-          // Count duplicates for this specific (item, rarity)
           const dupeKey = `${item.id}::${rarity}`;
           const dupeCards = duplicateGroups[dupeKey];
           const dupeCount = dupeCards ? dupeCards.length - 1 : 0;
@@ -747,7 +864,7 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
                     </p>
                     {owned && (rarity === 'diamond' || rarity === 'platinum') && owned.edition_number > 0 && (
                       <p className={cn('text-sm font-mono', rarity === 'platinum' ? 'text-slate-200' : 'text-violet-300')}>
-                        Edition #{String(owned.edition_number).padStart(3, '0')} / 100
+                        Edition #{String(owned.edition_number).padStart(3, '0')} / {rarity === 'platinum' ? '100' : '∞'}
                       </p>
                     )}
                     {owned && (
@@ -760,6 +877,8 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
                         {dupeCount} DUPLICATE{dupeCount !== 1 ? 'S' : ''}
                       </p>
                     )}
+
+                    {/* Action buttons */}
                     <div className="flex gap-2 pt-2">
                       <Button variant="outline" size="sm" className="flex-1 text-xs font-display tracking-wider" onClick={() => setFullViewItem(null)}>
                         CLOSE
@@ -774,6 +893,18 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
                         </Button>
                       )}
                     </div>
+
+                    {/* Auction + Bin row */}
+                    {owned && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="w-full text-primary border-primary/30 hover:bg-primary/10 text-xs font-display tracking-wider"
+                        onClick={() => setAuctionModal({ cardId: owned.id, title: item.title, rarity })}
+                      >
+                        <Gavel className="w-3 h-3 mr-1" /> LIST FOR AUCTION
+                      </Button>
+                    )}
                     {dupeCount > 0 && (
                       <Button
                         variant="outline"
@@ -793,6 +924,86 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
             </motion.div>
           );
         })()}
+      </AnimatePresence>
+
+      {/* Auction listing modal */}
+      <AnimatePresence>
+        {auctionModal && (
+          <motion.div
+            className="fixed inset-0 z-[200] bg-black/90 backdrop-blur-xl flex items-center justify-center p-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setAuctionModal(null)}
+          >
+            <motion.div
+              className="max-w-xs w-full bg-zinc-900 rounded-2xl border border-primary/30 p-5 space-y-4"
+              initial={{ scale: 0.9 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.9 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="text-center">
+                <Gavel className="w-8 h-8 text-primary mx-auto mb-2" />
+                <h3 className="font-display text-white tracking-wider text-sm">LIST FOR AUCTION</h3>
+                <p className="text-xs text-muted-foreground mt-1">
+                  {auctionModal.title} · {RARITY_CONFIG[auctionModal.rarity as Rarity]?.label || auctionModal.rarity}
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[10px] text-muted-foreground font-display tracking-wider">
+                  STARTING PRICE (TOKENS)
+                </label>
+                <div className="flex items-center gap-2">
+                  <button
+                    className="w-8 h-8 rounded-lg border border-zinc-700 text-white flex items-center justify-center hover:bg-zinc-800"
+                    onClick={() => setAuctionPrice(p => String(Math.max(0.1, parseFloat(p) - 0.1).toFixed(1)))}
+                  >
+                    −
+                  </button>
+                  <input
+                    type="number"
+                    step="0.1"
+                    min="0.1"
+                    value={auctionPrice}
+                    onChange={(e) => setAuctionPrice(e.target.value)}
+                    className="flex-1 bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-center text-white font-display text-sm focus:outline-none focus:border-primary/50"
+                  />
+                  <button
+                    className="w-8 h-8 rounded-lg border border-zinc-700 text-white flex items-center justify-center hover:bg-zinc-800"
+                    onClick={() => setAuctionPrice(p => String((parseFloat(p) + 0.1).toFixed(1)))}
+                  >
+                    +
+                  </button>
+                </div>
+                <p className="text-[9px] text-zinc-600 text-center font-display tracking-wider">
+                  BID INCREMENTS: 0.1 TOKENS
+                </p>
+              </div>
+
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="flex-1 text-xs font-display tracking-wider"
+                  onClick={() => setAuctionModal(null)}
+                  disabled={auctionLoading}
+                >
+                  CANCEL
+                </Button>
+                <Button
+                  size="sm"
+                  className="flex-1 bg-gradient-to-r from-primary to-orange-600 text-white text-xs font-display tracking-wider"
+                  disabled={auctionLoading || parseFloat(auctionPrice) < 0.1}
+                  onClick={() => handleListForAuction(auctionModal.cardId, parseFloat(auctionPrice))}
+                >
+                  {auctionLoading ? 'LISTING…' : 'LIST NOW'}
+                </Button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
       </AnimatePresence>
     </div>
   );

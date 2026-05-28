@@ -109,6 +109,10 @@ interface PlayerContextType {
   ownedTrackIds: Set<string>;
   /** Full access (dev account) */
   hasFullAccess: boolean;
+  /** Whether mini player is locked (during pack opening — no skip/close/pause) */
+  locked: boolean;
+  /** Lock the mini player (used during pack opening) */
+  setLocked: (locked: boolean) => void;
 }
 
 export const PlayerContext = createContext<PlayerContextType>({
@@ -126,6 +130,8 @@ export const PlayerContext = createContext<PlayerContextType>({
   isPreview: false,
   ownedTrackIds: new Set(),
   hasFullAccess: false,
+  locked: false,
+  setLocked: () => {},
 });
 
 export function usePlayer() {
@@ -172,6 +178,7 @@ export function usePlayerProvider() {
   const { isDev, isCoach, loading: roleLoading } = useUserRole();
   const ownedTrackIds = useOwnedTracks();
   const [state, setState] = useState<PlayerState>(defaultPlayerState);
+  const [locked, setLocked] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const previewFadingRef = useRef(false);
   // Refs for Media Session action handlers (stable references)
@@ -278,51 +285,10 @@ export function usePlayerProvider() {
     }
   }, [Math.floor(state.currentTime), state.duration, state.isPlaying]);
 
-  // ─── Track end handler (must be declared before effects that use it) ───
-  const handleTrackEnd = useCallback(() => {
-    setState(prev => {
-      const audio = audioRef.current;
-      if (!audio) return { ...prev, isPlaying: false };
-
-      // Repeat ONE → restart same track
-      if (prev.repeat === 'one') {
-        audio.currentTime = 0;
-        audio.play().catch(() => {});
-        return prev;
-      }
-
-      // Compute next index
-      const nextIdx = prev.shuffle
-        ? Math.floor(Math.random() * prev.queue.length)
-        : prev.queueIndex + 1;
-
-      // End of queue
-      if (nextIdx >= prev.queue.length) {
-        if (prev.repeat === 'all' && prev.queue.length > 0) {
-          // Loop back to start
-          const track = prev.queue[0];
-          setTimeout(() => {
-            audio.src = track.audio_url;
-            audio.play().catch(() => {});
-          }, 0);
-          return { ...prev, currentTrack: track, queueIndex: 0, isPlaying: true };
-        }
-        // Repeat off + end of queue → stop
-        return { ...prev, isPlaying: false };
-      }
-
-      // Normal advance to next track
-      const track = prev.queue[nextIdx];
-      setTimeout(() => {
-        audio.src = track.audio_url;
-        audio.play().catch(() => {});
-      }, 0);
-      return { ...prev, currentTrack: track, queueIndex: nextIdx, isPlaying: true };
-    });
-  }, []);
-
   // ─── 30s preview enforcement ───
   useEffect(() => {
+    // Belt-and-suspenders: always skip enforcement for hardcoded dev IDs
+    // even if role-based hasFullAccess has a timing gap
     const DEV_BYPASS = ['3a61bd9e-785b-4512-abab-e61b87496c54'];
     if (user?.id && DEV_BYPASS.includes(user.id)) return;
     if (!isPreview || !audioRef.current) return;
@@ -331,6 +297,7 @@ export function usePlayerProvider() {
     const checkPreview = () => {
       if (audio.currentTime >= PREVIEW_DURATION && !previewFadingRef.current) {
         previewFadingRef.current = true;
+        // Fade out over 2 seconds
         const startVol = audio.volume;
         const fadeSteps = 20;
         const fadeInterval = 100; // 2s total
@@ -341,10 +308,9 @@ export function usePlayerProvider() {
           if (step >= fadeSteps) {
             clearInterval(fade);
             audio.pause();
-            audio.volume = startVol;
+            audio.volume = startVol; // restore for next track
             previewFadingRef.current = false;
-            // Auto-advance to next track's 30s preview
-            handleTrackEnd();
+            setState(s => ({ ...s, isPlaying: false }));
           }
         }, fadeInterval);
       }
@@ -352,12 +318,46 @@ export function usePlayerProvider() {
 
     audio.addEventListener('timeupdate', checkPreview);
     return () => audio.removeEventListener('timeupdate', checkPreview);
-  }, [isPreview, user?.id, handleTrackEnd]);
+  }, [isPreview, user?.id]);
 
   // Reset preview fade flag on track change
   useEffect(() => {
     previewFadingRef.current = false;
   }, [state.currentTrack?.id]);
+
+  const handleTrackEnd = useCallback(() => {
+    setState(prev => {
+      if (prev.repeat === 'one') {
+        if (audioRef.current) {
+          audioRef.current.currentTime = 0;
+          audioRef.current.play();
+        }
+        return prev;
+      }
+      const nextIdx = prev.shuffle
+        ? Math.floor(Math.random() * prev.queue.length)
+        : prev.queueIndex + 1;
+
+      if (nextIdx >= prev.queue.length) {
+        if (prev.repeat === 'all' && prev.queue.length > 0) {
+          const track = prev.queue[0];
+          if (audioRef.current) {
+            audioRef.current.src = track.audio_url;
+            audioRef.current.play();
+          }
+          return { ...prev, currentTrack: track, queueIndex: 0, isPlaying: true };
+        }
+        return { ...prev, isPlaying: false };
+      }
+
+      const track = prev.queue[nextIdx];
+      if (audioRef.current) {
+        audioRef.current.src = track.audio_url;
+        audioRef.current.play();
+      }
+      return { ...prev, currentTrack: track, queueIndex: nextIdx, isPlaying: true };
+    });
+  }, []);
 
   const playTrack = useCallback((track: Track, queue?: Track[]) => {
     const q = queue || [track];
@@ -471,6 +471,8 @@ export function usePlayerProvider() {
     isPreview,
     ownedTrackIds,
     hasFullAccess,
+    locked,
+    setLocked,
   };
 }
 

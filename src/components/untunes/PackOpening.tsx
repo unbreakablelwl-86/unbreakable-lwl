@@ -8,12 +8,13 @@
 
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Sparkles, Crown, Diamond, Music, Disc3, Share2, Trash2 } from 'lucide-react';
+import { X, Sparkles, Crown, Diamond, Music, Disc3, Share2, Trash2, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
+import { usePlayer, useAllTracks, type Track } from '@/hooks/useUnTunes';
 
 export interface PackCard {
   id: string;
@@ -31,6 +32,7 @@ export interface PackCard {
 interface PackOpeningProps {
   cards: PackCard[];
   purchaseType: 'single' | 'album' | 'bundle';
+  packTierId?: string;
   onClose: () => void;
   onMarkOpened?: (cardIds: string[]) => void;
   onDiscardCard?: (cardId: string) => void;
@@ -82,6 +84,43 @@ const RARITY_CONFIG = {
 /* ═══ Shared CSS-in-JS keyframes ═══ */
 const pulseGlowKF = `@keyframes pulseGlow { 0%,100% { opacity: 0.3; } 50% { opacity: 0.8; } }`;
 const scanlineKF = `@keyframes scanMove { 0% { transform: translateY(-100%); } 100% { transform: translateY(100%); } }`;
+
+/* ── Bespoke pack & card back CSS ── */
+const bespokeCSS = `
+@keyframes hexPulse {
+  0%, 100% { stroke-opacity: 0.06; }
+  50% { stroke-opacity: 0.18; }
+}
+@keyframes circuitFlow {
+  0% { stroke-dashoffset: 200; }
+  100% { stroke-dashoffset: 0; }
+}
+@keyframes energyOrbit {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+@keyframes coreBreath {
+  0%, 100% { r: 30; opacity: 0.15; }
+  50% { r: 42; opacity: 0.35; }
+}
+@keyframes cardBackSweep {
+  0% { transform: translateX(-200%) rotate(30deg); }
+  100% { transform: translateX(400%) rotate(30deg); }
+}
+@keyframes shieldFloat {
+  0%, 100% { transform: translateY(0) scale(1); filter: drop-shadow(0 0 12px rgba(255,107,0,0.4)); }
+  50% { transform: translateY(-4px) scale(1.03); filter: drop-shadow(0 0 24px rgba(255,107,0,0.6)); }
+}
+@keyframes runeRotate {
+  0% { transform: rotate(0deg); opacity: 0.06; }
+  50% { opacity: 0.12; }
+  100% { transform: rotate(360deg); opacity: 0.06; }
+}
+@keyframes packShimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+`;
 
 const cardEffectsCSS = `
 @keyframes goldSweep {
@@ -437,89 +476,202 @@ function BrandedCardBack() {
       key="cardback"
       className="absolute inset-0 overflow-hidden rounded-2xl"
       style={{
-        background: 'linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 50%, #1a1a1a 100%)',
+        background: 'radial-gradient(ellipse at 50% 30%, #1c1208 0%, #0a0806 40%, #060404 100%)',
       }}
       exit={{ rotateY: 90, opacity: 0 }}
       transition={{ duration: 0.3 }}
     >
-      <style>{pulseGlowKF}{scanlineKF}</style>
+      <style>{bespokeCSS}</style>
 
-      {/* Diagonal stripe pattern */}
-      <div
-        className="absolute inset-0 opacity-[0.06]"
-        style={{
-          backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(255,107,0,0.3) 8px, rgba(255,107,0,0.3) 9px)',
-        }}
-      />
-
-      {/* Corner brackets */}
-      <svg className="absolute top-3 left-3 w-6 h-6 text-primary/60" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="M4 4 L4 10 M4 4 L10 4" />
-      </svg>
-      <svg className="absolute top-3 right-3 w-6 h-6 text-primary/60" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="M20 4 L20 10 M20 4 L14 4" />
-      </svg>
-      <svg className="absolute bottom-3 left-3 w-6 h-6 text-primary/60" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="M4 20 L4 14 M4 20 L10 20" />
-      </svg>
-      <svg className="absolute bottom-3 right-3 w-6 h-6 text-primary/60" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="M20 20 L20 14 M20 20 L14 20" />
+      {/* ── Layer 1: Hexagonal grid pattern ── */}
+      <svg className="absolute inset-0 w-full h-full" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <pattern id="hexGrid" width="28" height="48" patternUnits="userSpaceOnUse" patternTransform="scale(1.2)">
+            <path d="M14 0 L28 8 L28 24 L14 32 L0 24 L0 8 Z" fill="none" stroke="#FF6B00" strokeWidth="0.5" style={{ animation: 'hexPulse 3s ease-in-out infinite' }} />
+            <path d="M14 16 L28 24 L28 40 L14 48 L0 40 L0 24 Z" fill="none" stroke="#FF6B00" strokeWidth="0.5" style={{ animation: 'hexPulse 3s ease-in-out infinite', animationDelay: '1.5s' }} />
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#hexGrid)" />
       </svg>
 
-      {/* Central logo area */}
-      <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
-        {/* Pulsing glow ring */}
-        <motion.div
-          className="absolute w-28 h-28 rounded-full"
-          style={{
-            background: 'radial-gradient(circle, rgba(255,107,0,0.15) 0%, transparent 70%)',
-            animation: 'pulseGlow 2s ease-in-out infinite',
-          }}
-        />
+      {/* ── Layer 2: Circuit energy lines ── */}
+      <svg className="absolute inset-0 w-full h-full opacity-20" viewBox="0 0 300 420" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="circuitGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#FF6B00" stopOpacity="0" />
+            <stop offset="50%" stopColor="#FF6B00" stopOpacity="1" />
+            <stop offset="100%" stopColor="#FF6B00" stopOpacity="0" />
+          </linearGradient>
+        </defs>
+        {/* Vertical lines */}
+        <line x1="50" y1="0" x2="50" y2="420" stroke="url(#circuitGrad)" strokeWidth="0.5" strokeDasharray="4 8" style={{ animation: 'circuitFlow 4s linear infinite' }} />
+        <line x1="150" y1="0" x2="150" y2="420" stroke="url(#circuitGrad)" strokeWidth="0.5" strokeDasharray="4 8" style={{ animation: 'circuitFlow 5s linear infinite', animationDelay: '1s' }} />
+        <line x1="250" y1="0" x2="250" y2="420" stroke="url(#circuitGrad)" strokeWidth="0.5" strokeDasharray="4 8" style={{ animation: 'circuitFlow 4.5s linear infinite', animationDelay: '2s' }} />
+        {/* Horizontal lines */}
+        <line x1="0" y1="100" x2="300" y2="100" stroke="url(#circuitGrad)" strokeWidth="0.5" strokeDasharray="4 8" style={{ animation: 'circuitFlow 6s linear infinite' }} />
+        <line x1="0" y1="210" x2="300" y2="210" stroke="url(#circuitGrad)" strokeWidth="0.5" strokeDasharray="4 8" style={{ animation: 'circuitFlow 5s linear infinite', animationDelay: '1.5s' }} />
+        <line x1="0" y1="320" x2="300" y2="320" stroke="url(#circuitGrad)" strokeWidth="0.5" strokeDasharray="4 8" style={{ animation: 'circuitFlow 4s linear infinite', animationDelay: '0.5s' }} />
+        {/* Diagonal accents */}
+        <line x1="0" y1="0" x2="150" y2="210" stroke="#FF6B00" strokeWidth="0.3" strokeOpacity="0.15" />
+        <line x1="300" y1="0" x2="150" y2="210" stroke="#FF6B00" strokeWidth="0.3" strokeOpacity="0.15" />
+        <line x1="0" y1="420" x2="150" y2="210" stroke="#FF6B00" strokeWidth="0.3" strokeOpacity="0.15" />
+        <line x1="300" y1="420" x2="150" y2="210" stroke="#FF6B00" strokeWidth="0.3" strokeOpacity="0.15" />
+        {/* Circuit node dots */}
+        {[[50,100],[150,100],[250,100],[50,210],[250,210],[50,320],[150,320],[250,320]].map(([cx,cy], i) => (
+          <circle key={i} cx={cx} cy={cy} r="2" fill="#FF6B00" opacity="0.3">
+            <animate attributeName="opacity" values="0.15;0.5;0.15" dur={`${2 + i * 0.3}s`} repeatCount="indefinite" />
+          </circle>
+        ))}
+      </svg>
 
-        {/* Unbreakable shield logo */}
-        <motion.div
-          animate={{ rotate: [0, 5, -5, 0], scale: [1, 1.05, 1] }}
-          transition={{ duration: 4, repeat: Infinity }}
+      {/* ── Layer 3: Rotating rune ring ── */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <svg
+          className="w-52 h-52"
+          viewBox="0 0 200 200"
+          style={{ animation: 'runeRotate 30s linear infinite' }}
         >
-          <img
-            src="/unbreakable-shield.png"
-            alt="Unbreakable"
-            className="w-20 h-20 object-contain drop-shadow-[0_0_15px_rgba(255,107,0,0.4)]"
-            onError={(e) => {
-              (e.target as HTMLImageElement).style.display = 'none';
-            }}
-          />
-        </motion.div>
+          <circle cx="100" cy="100" r="85" fill="none" stroke="#FF6B00" strokeWidth="0.5" strokeOpacity="0.1" strokeDasharray="3 6" />
+          <circle cx="100" cy="100" r="70" fill="none" stroke="#FF6B00" strokeWidth="0.3" strokeOpacity="0.08" strokeDasharray="2 10" />
+          {/* Rune marks around outer ring */}
+          {Array.from({ length: 12 }).map((_, i) => {
+            const angle = (i * 30 * Math.PI) / 180;
+            const x1 = 100 + 78 * Math.cos(angle);
+            const y1 = 100 + 78 * Math.sin(angle);
+            const x2 = 100 + 90 * Math.cos(angle);
+            const y2 = 100 + 90 * Math.sin(angle);
+            return <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke="#FF6B00" strokeWidth="1" strokeOpacity="0.2" />;
+          })}
+        </svg>
+      </div>
+
+      {/* ── Layer 4: Orbiting energy particles ── */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        {[0, 120, 240].map((offset, i) => (
+          <div
+            key={i}
+            className="absolute w-48 h-48"
+            style={{ animation: `energyOrbit ${8 + i * 2}s linear infinite`, animationDelay: `${i * 0.5}s` }}
+          >
+            <div
+              className="absolute rounded-full"
+              style={{
+                width: 4 + i,
+                height: 4 + i,
+                top: 0,
+                left: '50%',
+                transform: 'translateX(-50%)',
+                background: '#FF6B00',
+                boxShadow: '0 0 8px 3px rgba(255,107,0,0.5), 0 0 20px rgba(255,107,0,0.2)',
+              }}
+            />
+          </div>
+        ))}
+      </div>
+
+      {/* ── Layer 5: Central core glow ── */}
+      <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 300 420">
+        <circle cx="150" cy="210" fill="none" stroke="#FF6B00" strokeWidth="1" opacity="0.1">
+          <animate attributeName="r" values="30;42;30" dur="3s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.15;0.35;0.15" dur="3s" repeatCount="indefinite" />
+        </circle>
+      </svg>
+
+      {/* ── Layer 6: Shield emblem (CSS-built, no image) ── */}
+      <div className="absolute inset-0 flex flex-col items-center justify-center" style={{ animation: 'shieldFloat 3s ease-in-out infinite' }}>
+        {/* Shield shape */}
+        <div className="relative w-20 h-24">
+          <svg viewBox="0 0 80 96" className="w-full h-full">
+            <defs>
+              <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#FF8C00" />
+                <stop offset="50%" stopColor="#FF5500" />
+                <stop offset="100%" stopColor="#CC4400" />
+              </linearGradient>
+              <linearGradient id="shieldInner" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#1a0f00" />
+                <stop offset="100%" stopColor="#0d0800" />
+              </linearGradient>
+            </defs>
+            {/* Outer shield */}
+            <path d="M40 4 L72 18 L72 50 Q72 78 40 92 Q8 78 8 50 L8 18 Z" fill="url(#shieldGrad)" stroke="#FFB366" strokeWidth="1" />
+            {/* Inner shield */}
+            <path d="M40 10 L66 22 L66 48 Q66 73 40 86 Q14 73 14 48 L14 22 Z" fill="url(#shieldInner)" stroke="#FF6B00" strokeWidth="0.5" strokeOpacity="0.4" />
+            {/* Inner emblem: U letter */}
+            <text x="40" y="58" textAnchor="middle" fill="#FF6B00" fontSize="28" fontFamily="system-ui" fontWeight="800" opacity="0.9">U</text>
+            {/* Crown accent on top */}
+            <path d="M28 28 L34 22 L40 26 L46 22 L52 28" fill="none" stroke="#FF6B00" strokeWidth="1.5" strokeLinecap="round" opacity="0.7" />
+          </svg>
+        </div>
 
         {/* Brand text */}
-        <div className="text-center mt-2">
-          <p className="font-display text-base tracking-[0.3em] text-white/90">UNBREAKABLE</p>
-          <p className="font-display text-[10px] tracking-[0.4em] text-primary/70 mt-0.5">UN-TUNES</p>
+        <div className="text-center mt-3 relative z-10">
+          <p
+            className="font-display text-sm tracking-[0.35em] text-white/95 uppercase"
+            style={{ textShadow: '0 0 15px rgba(255,107,0,0.5), 0 2px 4px rgba(0,0,0,0.8)' }}
+          >
+            Unbreakable
+          </p>
+          <div className="flex items-center justify-center gap-2 mt-1.5">
+            <div className="w-6 h-[1px] bg-gradient-to-r from-transparent to-primary/50" />
+            <p
+              className="font-display text-[8px] tracking-[0.5em] text-primary/80 uppercase"
+              style={{ textShadow: '0 0 8px rgba(255,107,0,0.4)' }}
+            >
+              Un-Tunes
+            </p>
+            <div className="w-6 h-[1px] bg-gradient-to-l from-transparent to-primary/50" />
+          </div>
         </div>
       </div>
 
-      {/* Moving scanline */}
+      {/* ── Layer 7: Premium metallic sweep ── */}
       <div
-        className="absolute left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent pointer-events-none"
-        style={{ animation: 'scanMove 3s linear infinite' }}
+        className="absolute top-0 h-full pointer-events-none"
+        style={{
+          width: '40%',
+          background: 'linear-gradient(90deg, transparent 0%, rgba(255,200,150,0.03) 30%, rgba(255,180,120,0.08) 50%, rgba(255,200,150,0.03) 70%, transparent 100%)',
+          animation: 'cardBackSweep 5s ease-in-out infinite',
+        }}
       />
 
-      {/* Bottom text */}
+      {/* ── Layer 8: Double border frame ── */}
+      <div className="absolute inset-2 rounded-xl pointer-events-none" style={{ border: '1px solid rgba(255,107,0,0.12)' }} />
+      <motion.div
+        className="absolute inset-0 rounded-2xl pointer-events-none"
+        style={{ border: '2px solid rgba(255,107,0,0.2)' }}
+        animate={{ borderColor: ['rgba(255,107,0,0.15)', 'rgba(255,107,0,0.4)', 'rgba(255,107,0,0.15)'] }}
+        transition={{ duration: 2.5, repeat: Infinity }}
+      />
+
+      {/* Corner accents */}
+      {[
+        { t: 6, l: 6 },
+        { t: 6, r: 6 },
+        { b: 6, l: 6 },
+        { b: 6, r: 6 },
+      ].map((pos, i) => (
+        <div
+          key={i}
+          className="absolute w-4 h-4 pointer-events-none"
+          style={{
+            top: pos.t, bottom: pos.b, left: pos.l, right: pos.r,
+            borderTop: pos.t !== undefined ? '2px solid rgba(255,107,0,0.5)' : 'none',
+            borderBottom: pos.b !== undefined ? '2px solid rgba(255,107,0,0.5)' : 'none',
+            borderLeft: pos.l !== undefined ? '2px solid rgba(255,107,0,0.5)' : 'none',
+            borderRight: pos.r !== undefined ? '2px solid rgba(255,107,0,0.5)' : 'none',
+          }}
+        />
+      ))}
+
+      {/* TAP TO REVEAL */}
       <motion.p
-        className="absolute bottom-6 left-0 right-0 text-center text-[10px] text-primary/40 font-display tracking-[0.25em]"
+        className="absolute bottom-5 left-0 right-0 text-center text-[9px] text-primary/50 font-display tracking-[0.3em]"
         animate={{ opacity: [0.3, 0.7, 0.3] }}
         transition={{ duration: 1.5, repeat: Infinity }}
       >
         TAP TO REVEAL
       </motion.p>
-
-      {/* Pulsing border */}
-      <motion.div
-        className="absolute inset-0 border border-primary/20 rounded-2xl pointer-events-none"
-        animate={{ borderColor: ['rgba(255,107,0,0.1)', 'rgba(255,107,0,0.35)', 'rgba(255,107,0,0.1)'] }}
-        transition={{ duration: 2, repeat: Infinity }}
-      />
     </motion.div>
   );
 }
@@ -531,12 +683,14 @@ function CardReveal({
   onNext,
   onShare,
   onDiscard,
+  onRequestConfirmDiscard,
 }: {
   card: PackCard;
   index: number;
   onNext: () => void;
   onShare?: (card: PackCard) => void;
   onDiscard?: (card: PackCard) => void;
+  onRequestConfirmDiscard?: (card: PackCard) => void;
 }) {
   const [revealed, setRevealed] = useState(false);
   const [showParticles, setShowParticles] = useState(false);
@@ -769,7 +923,7 @@ function CardReveal({
               className="font-display tracking-wider text-xs border-red-500/30 text-red-400 hover:bg-red-500/10"
               onClick={(e) => {
                 e.stopPropagation();
-                onDiscard(card);
+                if (onRequestConfirmDiscard) onRequestConfirmDiscard(card);
               }}
             >
               <Trash2 className="w-4 h-4 mr-2" /> BIN
@@ -781,17 +935,81 @@ function CardReveal({
   );
 }
 
+/* ═══ Pack tier config ═══ */
+export interface PackTier {
+  id: string;
+  name: string;
+  cards: number;
+  cost: number;          // tokens
+  accentColor: string;   // primary colour
+  accentGlow: string;    // glow rgba
+  bgGrad: string;        // background gradient
+  borderColor: string;
+  guaranteedGold: number;
+  guaranteedDiamond: number;
+  platinumBoost: number; // multiplier on base 1% chance
+  description: string;
+}
+
+export const PACK_TIERS: PackTier[] = [
+  {
+    id: 'standard',
+    name: 'STANDARD PACK',
+    cards: 10,
+    cost: 3,
+    accentColor: '#FF6B00',
+    accentGlow: 'rgba(255,107,0,0.3)',
+    bgGrad: 'radial-gradient(ellipse at 50% 30%, #1c1208 0%, #0a0806 40%, #060404 100%)',
+    borderColor: 'rgba(255,107,0,0.3)',
+    guaranteedGold: 0,
+    guaranteedDiamond: 0,
+    platinumBoost: 1,
+    description: '10 CARDS • STANDARD ODDS',
+  },
+  {
+    id: 'premium',
+    name: 'PREMIUM PACK',
+    cards: 20,
+    cost: 8,
+    accentColor: '#FBBF24',
+    accentGlow: 'rgba(251,191,36,0.35)',
+    bgGrad: 'radial-gradient(ellipse at 50% 30%, #1c1608 0%, #0d0a04 40%, #060504 100%)',
+    borderColor: 'rgba(251,191,36,0.35)',
+    guaranteedGold: 3,
+    guaranteedDiamond: 0,
+    platinumBoost: 2,
+    description: '20 CARDS • 3 GOLD GUARANTEED • 2× PLAT CHANCE',
+  },
+  {
+    id: 'elite',
+    name: 'ELITE PACK',
+    cards: 20,
+    cost: 15,
+    accentColor: '#A78BFA',
+    accentGlow: 'rgba(167,139,250,0.35)',
+    bgGrad: 'radial-gradient(ellipse at 50% 30%, #14101c 0%, #0a080d 40%, #050406 100%)',
+    borderColor: 'rgba(167,139,250,0.35)',
+    guaranteedGold: 5,
+    guaranteedDiamond: 2,
+    platinumBoost: 5,
+    description: '20 CARDS • 5 GOLD + 2 DIAMOND GUARANTEED • 5× PLAT',
+  },
+];
+
 /* ═══ Branded Sealed Pack (intro phase) ═══ */
-function SealedPack({ cardCount, onOpen }: { cardCount: number; onOpen: () => void }) {
+function SealedPack({ cardCount, onOpen, packTier }: { cardCount: number; onOpen: () => void; packTier?: PackTier }) {
+  const tier = packTier || PACK_TIERS[0];
+  const ac = tier.accentColor;
+  const ag = tier.accentGlow;
+
   return (
     <motion.div
       key="intro"
       className="flex-1 flex flex-col items-center justify-center px-6"
       exit={{ opacity: 0, scale: 1.1 }}
     >
-      <style>{pulseGlowKF}{scanlineKF}</style>
+      <style>{bespokeCSS}</style>
 
-      {/* Pack container */}
       <motion.div
         className="relative cursor-pointer select-none"
         onClick={onOpen}
@@ -801,127 +1019,197 @@ function SealedPack({ cardCount, onOpen }: { cardCount: number; onOpen: () => vo
       >
         {/* Outer glow */}
         <motion.div
-          className="absolute -inset-6 rounded-3xl blur-2xl"
-          style={{ background: 'radial-gradient(ellipse, rgba(255,107,0,0.2) 0%, transparent 70%)' }}
-          animate={{ opacity: [0.4, 0.8, 0.4] }}
-          transition={{ duration: 2, repeat: Infinity }}
+          className="absolute -inset-8 rounded-3xl blur-3xl"
+          style={{ background: `radial-gradient(ellipse, ${ag} 0%, transparent 70%)` }}
+          animate={{ opacity: [0.3, 0.7, 0.3] }}
+          transition={{ duration: 2.5, repeat: Infinity }}
         />
 
-        {/* Pack card */}
+        {/* Pack body */}
         <div
           className="relative w-72 h-[440px] rounded-2xl overflow-hidden"
           style={{
-            background: 'linear-gradient(160deg, #1a1a1a 0%, #0a0a0a 40%, #151515 100%)',
-            border: '2px solid rgba(255,107,0,0.3)',
-            boxShadow: '0 0 40px rgba(255,107,0,0.15), inset 0 1px 0 rgba(255,255,255,0.05)',
+            background: tier.bgGrad,
+            border: `2px solid ${tier.borderColor}`,
+            boxShadow: `0 0 40px ${ag}, inset 0 1px 0 rgba(255,255,255,0.05)`,
           }}
         >
-          {/* Diagonal stripes */}
-          <div
-            className="absolute inset-0 opacity-[0.04]"
-            style={{
-              backgroundImage:
-                'repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,107,0,0.4) 10px, rgba(255,107,0,0.4) 11px)',
-            }}
-          />
+          {/* Hexagonal grid */}
+          <svg className="absolute inset-0 w-full h-full" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <pattern id="packHex" width="32" height="56" patternUnits="userSpaceOnUse" patternTransform="scale(1.4)">
+                <path d="M16 0 L32 9 L32 28 L16 37 L0 28 L0 9 Z" fill="none" stroke={ac} strokeWidth="0.4" strokeOpacity="0.08" />
+                <path d="M16 19 L32 28 L32 47 L16 56 L0 47 L0 28 Z" fill="none" stroke={ac} strokeWidth="0.4" strokeOpacity="0.08" />
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#packHex)" />
+          </svg>
 
-          {/* Corner brackets — larger */}
-          {[
-            'top-4 left-4',
-            'top-4 right-4 scale-x-[-1]',
-            'bottom-4 left-4 scale-y-[-1]',
-            'bottom-4 right-4 scale-x-[-1] scale-y-[-1]',
-          ].map((pos, i) => (
-            <svg
-              key={i}
-              className={`absolute w-8 h-8 text-primary/50 ${pos}`}
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-            >
-              <path d="M4 4 L4 12 M4 4 L12 4" />
+          {/* Energy circuit lines */}
+          <svg className="absolute inset-0 w-full h-full opacity-15" viewBox="0 0 288 440">
+            {/* Radial lines from center */}
+            {Array.from({ length: 8 }).map((_, i) => {
+              const angle = (i * 45 * Math.PI) / 180;
+              const cx = 144, cy = 220;
+              return (
+                <line key={i}
+                  x1={cx} y1={cy}
+                  x2={cx + 180 * Math.cos(angle)} y2={cy + 180 * Math.sin(angle)}
+                  stroke={ac} strokeWidth="0.4"
+                  strokeDasharray="3 9"
+                  style={{ animation: `circuitFlow ${4 + i * 0.5}s linear infinite` }}
+                />
+              );
+            })}
+            {/* Concentric octagons */}
+            {[50, 90, 130].map((r, i) => {
+              const points = Array.from({ length: 8 }).map((_, j) => {
+                const a = ((j * 45 - 22.5) * Math.PI) / 180;
+                return `${144 + r * Math.cos(a)},${220 + r * Math.sin(a)}`;
+              }).join(' ');
+              return <polygon key={i} points={points} fill="none" stroke={ac} strokeWidth="0.5" strokeOpacity={0.08 + i * 0.03} />;
+            })}
+          </svg>
+
+          {/* Rotating rune ring */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <svg className="w-56 h-56" viewBox="0 0 200 200" style={{ animation: 'runeRotate 25s linear infinite' }}>
+              <circle cx="100" cy="100" r="90" fill="none" stroke={ac} strokeWidth="0.5" strokeOpacity="0.1" strokeDasharray="4 8" />
+              <circle cx="100" cy="100" r="75" fill="none" stroke={ac} strokeWidth="0.3" strokeOpacity="0.07" strokeDasharray="2 12" />
+              {Array.from({ length: 16 }).map((_, i) => {
+                const a = (i * 22.5 * Math.PI) / 180;
+                return <line key={i} x1={100 + 82 * Math.cos(a)} y1={100 + 82 * Math.sin(a)} x2={100 + 94 * Math.cos(a)} y2={100 + 94 * Math.sin(a)} stroke={ac} strokeWidth="1" strokeOpacity="0.15" />;
+              })}
             </svg>
-          ))}
-
-          {/* Centre content */}
-          <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
-            {/* Pulsing ring */}
-            <motion.div
-              className="absolute w-36 h-36 rounded-full"
-              style={{
-                background: 'radial-gradient(circle, rgba(255,107,0,0.12) 0%, transparent 65%)',
-                animation: 'pulseGlow 2.5s ease-in-out infinite',
-              }}
-            />
-
-            {/* Unbreakable shield logo */}
-            <motion.div
-              animate={{ rotate: [0, 4, -4, 0], scale: [1, 1.06, 1] }}
-              transition={{ duration: 4, repeat: Infinity }}
-            >
-              <img
-                src="/unbreakable-shield.png"
-                alt="Unbreakable"
-                className="w-24 h-24 object-contain drop-shadow-[0_0_20px_rgba(255,107,0,0.4)]"
-                onError={(e) => {
-                  // Fallback to icon if image missing
-                  (e.target as HTMLImageElement).style.display = 'none';
-                  (e.target as HTMLImageElement).parentElement!.innerHTML = '<div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary to-orange-700 flex items-center justify-center shadow-xl shadow-primary/25"><svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/></svg></div>';
-                }}
-              />
-            </motion.div>
-
-            {/* Brand text */}
-            <div className="text-center mt-1">
-              <p
-                className="font-display text-xl tracking-[0.25em] text-white"
-                style={{ textShadow: '0 0 20px rgba(255,107,0,0.3)' }}
-              >
-                UN-TUNES
-              </p>
-              <p className="font-display text-[10px] tracking-[0.35em] text-primary/60 mt-1">
-                COLLECTIBLE CARDS
-              </p>
-            </div>
-
-            {/* Card count badge */}
-            <motion.div
-              className="mt-2 px-5 py-1.5 rounded-full border border-primary/30 bg-primary/5"
-              animate={{ borderColor: ['rgba(255,107,0,0.2)', 'rgba(255,107,0,0.5)', 'rgba(255,107,0,0.2)'] }}
-              transition={{ duration: 2, repeat: Infinity }}
-            >
-              <p className="font-display text-xs tracking-[0.3em] text-primary/80">
-                {cardCount} CARDS
-              </p>
-            </motion.div>
           </div>
 
-          {/* Moving scanline */}
+          {/* Orbiting particles */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            {[0, 90, 180, 270].map((_, i) => (
+              <div key={i} className="absolute w-52 h-52" style={{ animation: `energyOrbit ${6 + i * 1.5}s linear infinite` }}>
+                <div
+                  className="absolute rounded-full"
+                  style={{
+                    width: 4, height: 4, top: 0, left: '50%', transform: 'translateX(-50%)',
+                    background: ac,
+                    boxShadow: `0 0 8px 3px ${ag}, 0 0 18px ${ag}`,
+                  }}
+                />
+              </div>
+            ))}
+          </div>
+
+          {/* Shield emblem */}
+          <div className="absolute inset-0 flex flex-col items-center justify-center" style={{ animation: 'shieldFloat 3s ease-in-out infinite' }}>
+            <div className="relative w-24 h-28">
+              <svg viewBox="0 0 80 96" className="w-full h-full">
+                <defs>
+                  <linearGradient id="packShieldG" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor={ac} />
+                    <stop offset="100%" stopColor={tier.id === 'elite' ? '#7C3AED' : tier.id === 'premium' ? '#D97706' : '#CC4400'} />
+                  </linearGradient>
+                  <linearGradient id="packShieldI" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stopColor="#1a0f00" />
+                    <stop offset="100%" stopColor="#0d0800" />
+                  </linearGradient>
+                </defs>
+                <path d="M40 4 L72 18 L72 50 Q72 78 40 92 Q8 78 8 50 L8 18 Z" fill="url(#packShieldG)" stroke="rgba(255,255,255,0.15)" strokeWidth="1" />
+                <path d="M40 10 L66 22 L66 48 Q66 73 40 86 Q14 73 14 48 L14 22 Z" fill="url(#packShieldI)" stroke={ac} strokeWidth="0.5" strokeOpacity="0.4" />
+                <text x="40" y="58" textAnchor="middle" fill={ac} fontSize="28" fontFamily="system-ui" fontWeight="800" opacity="0.9">U</text>
+                <path d="M28 28 L34 22 L40 26 L46 22 L52 28" fill="none" stroke={ac} strokeWidth="1.5" strokeLinecap="round" opacity="0.7" />
+              </svg>
+            </div>
+
+            {/* Brand text */}
+            <div className="text-center mt-3">
+              <p
+                className="font-display text-lg tracking-[0.3em] text-white/95"
+                style={{ textShadow: `0 0 18px ${ag}, 0 2px 4px rgba(0,0,0,0.8)` }}
+              >
+                {tier.name}
+              </p>
+              <div className="flex items-center justify-center gap-2 mt-1.5">
+                <div className="w-8 h-[1px]" style={{ background: `linear-gradient(to right, transparent, ${ac}80)` }} />
+                <p className="font-display text-[8px] tracking-[0.5em] uppercase" style={{ color: `${ac}CC`, textShadow: `0 0 6px ${ag}` }}>
+                  Un-Tunes
+                </p>
+                <div className="w-8 h-[1px]" style={{ background: `linear-gradient(to left, transparent, ${ac}80)` }} />
+              </div>
+            </div>
+
+            {/* Pack info badges */}
+            <div className="flex gap-2 mt-4">
+              <motion.div
+                className="px-3 py-1 rounded-full text-[9px] font-display tracking-[0.2em]"
+                style={{ border: `1px solid ${ac}50`, background: `${ac}10`, color: `${ac}CC` }}
+                animate={{ borderColor: [`${ac}30`, `${ac}70`, `${ac}30`] }}
+                transition={{ duration: 2, repeat: Infinity }}
+              >
+                {tier.cards} CARDS
+              </motion.div>
+              <motion.div
+                className="px-3 py-1 rounded-full text-[9px] font-display tracking-[0.2em]"
+                style={{ border: `1px solid ${ac}50`, background: `${ac}10`, color: `${ac}CC` }}
+                animate={{ borderColor: [`${ac}30`, `${ac}70`, `${ac}30`] }}
+                transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
+              >
+                {tier.cost} TOKENS
+              </motion.div>
+            </div>
+          </div>
+
+          {/* Shimmer sweep */}
           <div
-            className="absolute left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-primary/15 to-transparent pointer-events-none"
-            style={{ animation: 'scanMove 4s linear infinite' }}
+            className="absolute top-0 h-full pointer-events-none"
+            style={{
+              width: '35%',
+              background: `linear-gradient(90deg, transparent 0%, ${ac}06 30%, ${ac}12 50%, ${ac}06 70%, transparent 100%)`,
+              animation: 'cardBackSweep 4.5s ease-in-out infinite',
+            }}
           />
 
-          {/* Pulsing border */}
+          {/* Double frame */}
+          <div className="absolute inset-2.5 rounded-xl pointer-events-none" style={{ border: `1px solid ${ac}18` }} />
           <motion.div
             className="absolute inset-0 rounded-2xl pointer-events-none"
-            style={{ border: '1px solid rgba(255,107,0,0.15)' }}
-            animate={{
-              borderColor: [
-                'rgba(255,107,0,0.1)',
-                'rgba(255,107,0,0.3)',
-                'rgba(255,107,0,0.1)',
-              ],
-            }}
+            style={{ border: `2px solid ${ac}30` }}
+            animate={{ borderColor: [`${ac}20`, `${ac}55`, `${ac}20`] }}
             transition={{ duration: 2.5, repeat: Infinity }}
           />
+
+          {/* Corner accents */}
+          {[
+            { top: 8, left: 8 },
+            { top: 8, right: 8 },
+            { bottom: 8, left: 8 },
+            { bottom: 8, right: 8 },
+          ].map((pos, i) => (
+            <div
+              key={i}
+              className="absolute w-5 h-5 pointer-events-none"
+              style={{
+                ...pos,
+                borderTop: pos.top !== undefined ? `2px solid ${ac}70` : 'none',
+                borderBottom: pos.bottom !== undefined ? `2px solid ${ac}70` : 'none',
+                borderLeft: pos.left !== undefined ? `2px solid ${ac}70` : 'none',
+                borderRight: pos.right !== undefined ? `2px solid ${ac}70` : 'none',
+              }}
+            />
+          ))}
         </div>
       </motion.div>
 
-      {/* Tap to open text */}
+      {/* Tier description */}
       <motion.p
-        className="text-xs text-muted-foreground/60 mt-6 font-display tracking-[0.3em]"
+        className="text-[10px] mt-4 font-display tracking-[0.15em] text-center"
+        style={{ color: `${ac}99` }}
+      >
+        {tier.description}
+      </motion.p>
+
+      {/* Tap to open */}
+      <motion.p
+        className="text-xs text-muted-foreground/60 mt-3 font-display tracking-[0.3em]"
         animate={{ opacity: [0.3, 0.7, 0.3] }}
         transition={{ duration: 2, repeat: Infinity }}
       >
@@ -931,18 +1219,290 @@ function SealedPack({ cardCount, onOpen }: { cardCount: number; onOpen: () => vo
   );
 }
 
+/* ═══ Share card image generator ═══ */
+async function generateCardImage(card: PackCard): Promise<Blob | null> {
+  try {
+    const isTrack = !!card.track_id;
+    const title = card.card_title || (isTrack ? card.un_tunes_tracks?.title : card.un_tunes_albums?.title) || 'Unknown';
+    const coverUrl = card.cover_url || (isTrack ? card.un_tunes_tracks?.cover_url : card.un_tunes_albums?.cover_url);
+    const colors: Record<string, string> = { standard: '#a1a1aa', gold: '#fbbf24', diamond: '#8b5cf6', platinum: '#e2e8f0' };
+    const color = colors[card.rarity] || '#a1a1aa';
+
+    const canvas = document.createElement('canvas');
+    canvas.width = 1080; canvas.height = 1350; // Instagram story size
+    const ctx = canvas.getContext('2d')!;
+
+    // Background
+    ctx.fillStyle = '#0a0a0a'; ctx.fillRect(0, 0, 1080, 1350);
+    // Gradient overlay
+    const grad = ctx.createRadialGradient(540, 500, 0, 540, 500, 600);
+    grad.addColorStop(0, `${color}15`);
+    grad.addColorStop(1, 'transparent');
+    ctx.fillStyle = grad; ctx.fillRect(0, 0, 1080, 1350);
+
+    // Border
+    ctx.strokeStyle = color; ctx.lineWidth = 4;
+    ctx.strokeRect(40, 40, 1000, 1270);
+    ctx.strokeStyle = `${color}40`; ctx.lineWidth = 1;
+    ctx.strokeRect(52, 52, 976, 1246);
+
+    // Cover art
+    if (coverUrl) {
+      try {
+        const img = new Image(); img.crossOrigin = 'anonymous';
+        await new Promise<void>((res, rej) => { img.onload = () => res(); img.onerror = rej; img.src = coverUrl; });
+        ctx.drawImage(img, 140, 120, 800, 800);
+      } catch { /* skip */ }
+    }
+
+    // Text
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#FF5500'; ctx.font = '600 24px system-ui';
+    ctx.fillText('UN-TUNES COLLECTIBLE', 540, 1000);
+    ctx.fillStyle = '#ffffff'; ctx.font = '700 44px system-ui';
+    ctx.fillText(title.substring(0, 30), 540, 1060);
+    ctx.fillStyle = color; ctx.font = '600 28px system-ui';
+    ctx.fillText(`${card.rarity.toUpperCase()} EDITION`, 540, 1110);
+    if ((card.rarity === 'diamond' || card.rarity === 'platinum') && card.edition_number > 0) {
+      ctx.font = '400 32px monospace';
+      ctx.fillText(`#${String(card.edition_number).padStart(3, '0')} / 100`, 540, 1160);
+    }
+    ctx.fillStyle = '#52525b'; ctx.font = '300 18px system-ui';
+    ctx.fillText('UNBREAKABLE • UN-TUNES', 540, 1260);
+
+    return new Promise((resolve) => canvas.toBlob(resolve, 'image/png'));
+  } catch { return null; }
+}
+
+/* ═══ Confirm Discard Modal ═══ */
+function ConfirmDiscardModal({
+  card,
+  onConfirm,
+  onCancel,
+}: {
+  card: PackCard;
+  onConfirm: () => void;
+  onCancel: () => void;
+}) {
+  const isTrack = !!card.track_id;
+  const title = card.card_title || (isTrack ? card.un_tunes_tracks?.title : card.un_tunes_albums?.title) || 'Unknown';
+  const config = RARITY_CONFIG[card.rarity];
+
+  return (
+    <motion.div
+      className="fixed inset-0 z-[250] bg-black/80 backdrop-blur-sm flex items-center justify-center p-6"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      onClick={onCancel}
+    >
+      <motion.div
+        className="max-w-xs w-full bg-zinc-900 rounded-2xl border border-red-500/30 p-5 space-y-4"
+        initial={{ scale: 0.9 }}
+        animate={{ scale: 1 }}
+        exit={{ scale: 0.9 }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="text-center">
+          <div className="w-14 h-14 rounded-full bg-red-500/10 border border-red-500/30 flex items-center justify-center mx-auto mb-3">
+            <Trash2 className="w-7 h-7 text-red-400" />
+          </div>
+          <h3 className="font-display text-white tracking-wider text-sm">DISCARD THIS CARD?</h3>
+          <p className="text-xs text-muted-foreground mt-2">
+            You're about to permanently destroy your{' '}
+            <span className={config.textColor}>{config.label}</span> "{title}" card.
+          </p>
+          <p className="text-[10px] text-red-400/70 mt-1">This cannot be undone.</p>
+        </div>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            className="flex-1 text-xs font-display tracking-wider"
+            onClick={onCancel}
+          >
+            KEEP IT
+          </Button>
+          <Button
+            size="sm"
+            className="flex-1 bg-red-600 hover:bg-red-700 text-white text-xs font-display tracking-wider"
+            onClick={onConfirm}
+          >
+            <Trash2 className="w-3 h-3 mr-1" /> DESTROY
+          </Button>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+/* ═══ Share Menu Modal ═══ */
+function ShareMenu({
+  card,
+  onShareFeed,
+  onClose,
+}: {
+  card: PackCard;
+  onShareFeed: () => void;
+  onClose: () => void;
+}) {
+  const { toast } = useToast();
+  const isTrack = !!card.track_id;
+  const title = card.card_title || (isTrack ? card.un_tunes_tracks?.title : card.un_tunes_albums?.title) || 'Unknown';
+  const config = RARITY_CONFIG[card.rarity];
+
+  const handleShareSocials = async () => {
+    const blob = await generateCardImage(card);
+    const shareText = `🃏 Just pulled a ${config.label} card — ${title}! #UnTunes #Unbreakable`;
+
+    if (blob && navigator.share && navigator.canShare?.({ files: [new File([blob], 'card.png', { type: 'image/png' })] })) {
+      try {
+        const file = new File([blob], `untunes-${card.rarity}-${title.replace(/\s+/g, '-').toLowerCase()}.png`, { type: 'image/png' });
+        await navigator.share({
+          title: `UN-TUNES ${config.label} Card`,
+          text: shareText,
+          files: [file],
+        });
+        toast({ title: 'Shared!', description: 'Card shared to socials.' });
+        onClose();
+        return;
+      } catch (err) {
+        if ((err as Error).name === 'AbortError') { onClose(); return; }
+      }
+    }
+
+    // Fallback: copy to clipboard
+    try {
+      if (blob) {
+        await navigator.clipboard.write([
+          new ClipboardItem({ 'image/png': blob }),
+        ]);
+        toast({ title: 'Copied!', description: 'Card image copied to clipboard. Paste it to share!' });
+      } else {
+        await navigator.clipboard.writeText(shareText);
+        toast({ title: 'Copied!', description: 'Share text copied to clipboard.' });
+      }
+    } catch {
+      toast({ title: 'Share text', description: shareText });
+    }
+    onClose();
+  };
+
+  const handleDownload = async () => {
+    const blob = await generateCardImage(card);
+    if (blob) {
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `untunes-${card.rarity}-${title.replace(/\s+/g, '-').toLowerCase()}.png`;
+      link.click();
+      URL.revokeObjectURL(url);
+      toast({ title: 'Downloaded!', description: 'Card saved to your device.' });
+    }
+    onClose();
+  };
+
+  return (
+    <motion.div
+      className="fixed inset-0 z-[250] bg-black/80 backdrop-blur-sm flex items-center justify-center p-6"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      onClick={onClose}
+    >
+      <motion.div
+        className="max-w-xs w-full bg-zinc-900 rounded-2xl border border-primary/30 p-5 space-y-3"
+        initial={{ scale: 0.9, y: 20 }}
+        animate={{ scale: 1, y: 0 }}
+        exit={{ scale: 0.9, y: 20 }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="text-center mb-1">
+          <Share2 className="w-6 h-6 text-primary mx-auto mb-2" />
+          <h3 className="font-display text-white tracking-wider text-sm">SHARE CARD</h3>
+          <p className="text-[10px] text-muted-foreground mt-1">
+            {config.label} — {title}
+          </p>
+        </div>
+
+        <Button
+          variant="outline"
+          size="sm"
+          className="w-full text-xs font-display tracking-wider border-primary/30 text-primary hover:bg-primary/10"
+          onClick={(e) => { e.stopPropagation(); onShareFeed(); }}
+        >
+          <Sparkles className="w-3 h-3 mr-2" /> POST TO MY FEED
+        </Button>
+
+        <Button
+          variant="outline"
+          size="sm"
+          className="w-full text-xs font-display tracking-wider border-blue-500/30 text-blue-400 hover:bg-blue-500/10"
+          onClick={(e) => { e.stopPropagation(); handleShareSocials(); }}
+        >
+          <Share2 className="w-3 h-3 mr-2" /> SHARE TO SOCIALS
+        </Button>
+
+        <Button
+          variant="outline"
+          size="sm"
+          className="w-full text-xs font-display tracking-wider border-zinc-600 text-zinc-300 hover:bg-zinc-800"
+          onClick={(e) => { e.stopPropagation(); handleDownload(); }}
+        >
+          <Download className="w-3 h-3 mr-2" /> SAVE IMAGE
+        </Button>
+
+        <Button
+          variant="ghost"
+          size="sm"
+          className="w-full text-xs font-display tracking-wider text-muted-foreground"
+          onClick={onClose}
+        >
+          CANCEL
+        </Button>
+      </motion.div>
+    </motion.div>
+  );
+}
+
 /* ═══ Main Pack Opening Component ═══ */
-export function PackOpening({ cards, purchaseType, onClose, onMarkOpened, onDiscardCard }: PackOpeningProps) {
+export function PackOpening({ cards, purchaseType, packTierId, onClose, onMarkOpened, onDiscardCard }: PackOpeningProps) {
   const [phase, setPhase] = useState<'intro' | 'revealing' | 'summary'>('intro');
   const [currentIndex, setCurrentIndex] = useState(0);
   const [revealedCards, setRevealedCards] = useState<PackCard[]>([]);
+  const [confirmDiscard, setConfirmDiscard] = useState<PackCard | null>(null);
+  const [shareMenu, setShareMenu] = useState<PackCard | null>(null);
   const { user } = useAuth();
   const { toast } = useToast();
+  const { playTrack, setLocked, stop: stopPlayer } = usePlayer();
+  const { tracks: allTracks } = useAllTracks();
 
-  // Sort: standard first → gold → diamond (save best for last)
+  const activeTier = PACK_TIERS.find(t => t.id === packTierId) || PACK_TIERS[0];
+
+  // ═══ Music overlay: play random song when pack opens, lock mini player ═══
+  const musicStartedRef = useRef(false);
+  useEffect(() => {
+    if (musicStartedRef.current || !allTracks || allTracks.length === 0) return;
+    // Pick a random track and play it
+    const randomTrack = allTracks[Math.floor(Math.random() * allTracks.length)];
+    if (randomTrack?.audio_url) {
+      playTrack(randomTrack);
+      setLocked(true);
+      musicStartedRef.current = true;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allTracks]);
+
+  // Unlock mini player when pack opening closes
+  const handleClose = useCallback(() => {
+    setLocked(false);
+    onClose();
+  }, [onClose, setLocked]);
+
+  // Sort: standard first → gold → diamond → platinum (save best for last)
   const orderedCards = useMemo(() => {
     const sorted = [...cards].sort((a, b) => {
-      const order = { standard: 0, gold: 1, diamond: 2 };
+      const order: Record<string, number> = { standard: 0, gold: 1, diamond: 2, platinum: 3 };
       return (order[a.rarity] ?? 0) - (order[b.rarity] ?? 0);
     });
     return sorted;
@@ -964,7 +1524,7 @@ export function PackOpening({ cards, purchaseType, onClose, onMarkOpened, onDisc
     }
   };
 
-  const handleShareCard = async (card: PackCard) => {
+  const handleShareCardToFeed = async (card: PackCard) => {
     if (!user) return;
     const isTrack = !!card.track_id;
     const title = card.card_title || (isTrack ? card.un_tunes_tracks?.title : card.un_tunes_albums?.title) || 'Unknown';
@@ -980,8 +1540,22 @@ export function PackOpening({ cards, purchaseType, onClose, onMarkOpened, onDisc
         comments_enabled: true,
       });
       toast({ title: 'Shared!', description: 'Card posted to your timeline.' });
+      setShareMenu(null);
     } catch {
       toast({ title: 'Error', description: 'Could not share card.', variant: 'destructive' });
+    }
+  };
+
+  const handleConfirmedDiscard = async (card: PackCard) => {
+    try {
+      const { data, error } = await (supabase as any).rpc('discard_card', { _card_id: card.id });
+      if (error) throw error;
+      toast({ title: 'Card destroyed', description: 'Card has been permanently removed.' });
+      setConfirmDiscard(null);
+      handleNextCard();
+    } catch {
+      toast({ title: 'Error', description: 'Could not discard card.', variant: 'destructive' });
+      setConfirmDiscard(null);
     }
   };
 
@@ -998,7 +1572,7 @@ export function PackOpening({ cards, purchaseType, onClose, onMarkOpened, onDisc
           variant="ghost"
           size="icon"
           className="absolute top-4 right-4 z-10 text-white/60 hover:text-white"
-          onClick={onClose}
+          onClick={handleClose}
         >
           <X className="w-6 h-6" />
         </Button>
@@ -1007,7 +1581,7 @@ export function PackOpening({ cards, purchaseType, onClose, onMarkOpened, onDisc
       <AnimatePresence mode="wait">
         {/* ── Sealed Pack Intro ── */}
         {phase === 'intro' && (
-          <SealedPack cardCount={cards.length} onOpen={handleStartOpening} />
+          <SealedPack cardCount={cards.length} onOpen={handleStartOpening} packTier={activeTier} />
         )}
 
         {/* ── Card Reveals ── */}
@@ -1017,17 +1591,9 @@ export function PackOpening({ cards, purchaseType, onClose, onMarkOpened, onDisc
             card={orderedCards[currentIndex]}
             index={currentIndex}
             onNext={handleNextCard}
-            onShare={handleShareCard}
-            onDiscard={async (card) => {
-              try {
-                const { data, error } = await (supabase as any).rpc('discard_card', { _card_id: card.id });
-                if (error) throw error;
-                toast({ title: 'Card binned', description: 'Duplicate removed.' });
-                handleNextCard();
-              } catch {
-                toast({ title: 'Error', description: 'Could not discard card.', variant: 'destructive' });
-              }
-            }}
+            onShare={(card) => setShareMenu(card)}
+            onDiscard={(card) => setConfirmDiscard(card)}
+            onRequestConfirmDiscard={(card) => setConfirmDiscard(card)}
           />
         )}
 
@@ -1115,14 +1681,14 @@ export function PackOpening({ cards, purchaseType, onClose, onMarkOpened, onDisc
                 <Button
                   variant="outline"
                   className="flex-1 font-display tracking-wider text-xs"
-                  onClick={onClose}
+                  onClick={handleClose}
                 >
                   CLOSE
                 </Button>
                 <Button
                   className="flex-1 bg-gradient-to-r from-primary to-orange-600 text-white font-display tracking-wider text-xs"
                   onClick={() => {
-                    onClose();
+                    handleClose();
                     window.location.hash = '#collection';
                   }}
                 >
@@ -1131,6 +1697,28 @@ export function PackOpening({ cards, purchaseType, onClose, onMarkOpened, onDisc
               </div>
             </div>
           </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Confirm discard modal */}
+      <AnimatePresence>
+        {confirmDiscard && (
+          <ConfirmDiscardModal
+            card={confirmDiscard}
+            onConfirm={() => handleConfirmedDiscard(confirmDiscard)}
+            onCancel={() => setConfirmDiscard(null)}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Share menu modal */}
+      <AnimatePresence>
+        {shareMenu && (
+          <ShareMenu
+            card={shareMenu}
+            onShareFeed={() => handleShareCardToFeed(shareMenu)}
+            onClose={() => setShareMenu(null)}
+          />
         )}
       </AnimatePresence>
     </motion.div>
