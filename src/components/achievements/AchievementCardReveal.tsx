@@ -191,7 +191,7 @@ const achievementCardStyles = `
 /* ═══ Rarity overlay effects — 5-tier system ═══ */
 
 /** Bronze: fine grain texture + warm copper ambient glow + slow pulse */
-function BronzeShimmer() {
+export function BronzeShimmer() {
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-xl">
       {/* Fine grain texture */}
@@ -222,7 +222,7 @@ function BronzeShimmer() {
 }
 
 /** Silver: brushed metal horizontal lines + chrome sweep left-to-right */
-function SilverShimmer() {
+export function SilverShimmer() {
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl">
       {/* Brushed metal horizontal lines texture */}
@@ -253,7 +253,7 @@ function SilverShimmer() {
 }
 
 /** Gold: foil tilt effect + shimmer sweep + particle sparkles + diamond-cut border texture */
-function GoldShimmer() {
+export function GoldShimmer() {
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl">
       {/* Gold foil base gradient */}
@@ -292,7 +292,7 @@ function GoldShimmer() {
 }
 
 /** Diamond: prismatic holographic border — full spectrum colour shift on tilt + geometric facet texture */
-function DiamondHolo() {
+export function DiamondHolo() {
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl">
       {/* Geometric facet texture */}
@@ -333,7 +333,7 @@ function DiamondHolo() {
 }
 
 /** Platinum: directional grain + linen-like surface + rose-gold thread + crown emblem */
-function PlatinumChrome() {
+export function PlatinumChrome() {
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl">
       {/* Directional grain, linen-like surface texture */}
@@ -380,13 +380,13 @@ function PlatinumChrome() {
 }
 
 /** Dumbbell sparkle watermark — Unbreakable "like" logo in each tier's metal/stone finish */
-function DumbbellSparkle({ tier }: { tier: string }) {
+export function DumbbellSparkle({ tier }: { tier: string }) {
   const colors: Record<string, { fill: string; stroke: string; sparkle: string; opacity: number }> = {
-    bronze:   { fill: 'rgba(205,127,50,0.25)',  stroke: 'rgba(205,127,50,0.6)',   sparkle: 'rgba(210,160,80,0.8)',   opacity: 0.07 },
-    silver:   { fill: 'rgba(192,192,192,0.25)',  stroke: 'rgba(200,200,210,0.6)',  sparkle: 'rgba(230,230,240,0.8)', opacity: 0.07 },
-    gold:     { fill: 'rgba(255,215,0,0.25)',    stroke: 'rgba(255,215,0,0.6)',    sparkle: 'rgba(255,235,100,0.9)', opacity: 0.08 },
-    diamond:  { fill: 'rgba(139,92,246,0.2)',    stroke: 'rgba(139,92,246,0.5)',   sparkle: 'rgba(200,180,255,0.9)', opacity: 0.08 },
-    platinum: { fill: 'rgba(229,228,226,0.25)',  stroke: 'rgba(229,228,226,0.6)',  sparkle: 'rgba(255,255,255,0.8)', opacity: 0.07 },
+    bronze:   { fill: 'rgba(205,127,50,0.35)',  stroke: 'rgba(205,127,50,0.7)',   sparkle: 'rgba(210,160,80,0.9)',   opacity: 0.18 },
+    silver:   { fill: 'rgba(192,192,192,0.35)',  stroke: 'rgba(200,200,210,0.7)',  sparkle: 'rgba(230,230,240,0.9)', opacity: 0.18 },
+    gold:     { fill: 'rgba(255,215,0,0.35)',    stroke: 'rgba(255,215,0,0.7)',    sparkle: 'rgba(255,235,100,1.0)', opacity: 0.22 },
+    diamond:  { fill: 'rgba(139,92,246,0.3)',    stroke: 'rgba(139,92,246,0.6)',   sparkle: 'rgba(200,180,255,1.0)', opacity: 0.22 },
+    platinum: { fill: 'rgba(229,228,226,0.35)',  stroke: 'rgba(229,228,226,0.7)',  sparkle: 'rgba(255,255,255,0.9)', opacity: 0.20 },
   };
   const c = colors[tier] || colors.bronze;
   return (

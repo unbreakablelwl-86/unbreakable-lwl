@@ -200,8 +200,12 @@ export function StrengthPBTracker() {
       {/* Header */}
       <div className="p-4 pb-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center">
-            <Dumbbell className="w-4.5 h-4.5 text-red-400" />
+          <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{
+            background: 'rgba(255,85,0,0.12)',
+            border: '1px solid rgba(255,85,0,0.25)',
+            boxShadow: '0 0 12px rgba(255,85,0,0.25), 0 0 24px rgba(255,85,0,0.1), inset 0 0 8px rgba(255,85,0,0.1)',
+          }}>
+            <Dumbbell className="w-4.5 h-4.5" style={{ color: '#FF5500', filter: 'drop-shadow(0 0 6px rgba(255,85,0,0.6))' }} />
           </div>
           <div>
             <h3 className="font-display text-sm tracking-wider text-foreground">STRENGTH PBs</h3>
@@ -273,8 +277,12 @@ export function CardioPBTracker() {
     <Card className="border-border bg-card overflow-hidden">
       <div className="p-4 pb-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
-            <Footprints className="w-4.5 h-4.5 text-blue-400" />
+          <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{
+            background: 'rgba(255,85,0,0.12)',
+            border: '1px solid rgba(255,85,0,0.25)',
+            boxShadow: '0 0 12px rgba(255,85,0,0.25), 0 0 24px rgba(255,85,0,0.1), inset 0 0 8px rgba(255,85,0,0.1)',
+          }}>
+            <Footprints className="w-4.5 h-4.5" style={{ color: '#FF5500', filter: 'drop-shadow(0 0 6px rgba(255,85,0,0.6))' }} />
           </div>
           <div>
             <h3 className="font-display text-sm tracking-wider text-foreground">CARDIO PBs</h3>

@@ -20,6 +20,9 @@ import { useAuth } from '@/hooks/useAuth';
 import { useAllTracks, useAlbums } from '@/hooks/useUnTunes';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import {
+  BronzeShimmer, SilverShimmer, GoldShimmer, DiamondHolo, PlatinumChrome, DumbbellSparkle,
+} from '@/components/achievements/AchievementCardReveal';
 
 interface OwnedCard {
   id: string;
@@ -692,7 +695,9 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
           }}
         >
           <span className="text-[10px]">⭐</span>
-          <p className="text-sm font-display text-primary">{completeItems}</p>
+          <p className="text-sm font-display text-primary">
+            {completeItems}<span className="text-[9px] text-muted-foreground">/{itemCount}</span>
+          </p>
           <p className="text-[7px] text-muted-foreground tracking-wider">COMPLETE</p>
         </motion.button>
       </div>
@@ -908,67 +913,11 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
                         </div>
                       </div>
                     )}
-                    {/* Gold — metallic shimmer overlay */}
-                    {owned && rarity === 'gold' && (
-                      <>
-                        <motion.div className="absolute inset-0 pointer-events-none"
-                          style={{ background: 'linear-gradient(135deg, rgba(251,191,36,0.2) 0%, transparent 40%, transparent 60%, rgba(217,119,6,0.18) 100%)' }}
-                          animate={{ opacity: [0.3, 0.7, 0.3] }} transition={{ duration: 3, repeat: Infinity }} />
-                        <motion.div className="absolute inset-0 pointer-events-none overflow-hidden">
-                          <motion.div className="absolute w-[300%] h-[2px] bg-gradient-to-r from-transparent via-yellow-300/60 to-transparent"
-                            style={{ top: '35%', left: '-150%', rotate: '-40deg' }}
-                            animate={{ left: ['-150%', '150%'] }}
-                            transition={{ duration: 3.5, repeat: Infinity, repeatDelay: 2 }}
-                          />
-                        </motion.div>
-                        {/* Gold corner accents */}
-                        <div className="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-yellow-400/30 rounded-tl-xl pointer-events-none" />
-                        <div className="absolute top-0 right-0 w-8 h-8 border-t-2 border-r-2 border-yellow-400/30 rounded-tr-xl pointer-events-none" />
-                        <div className="absolute bottom-0 left-0 w-8 h-8 border-b-2 border-l-2 border-yellow-400/30 rounded-bl-xl pointer-events-none" />
-                        <div className="absolute bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 border-yellow-400/30 rounded-br-xl pointer-events-none" />
-                      </>
-                    )}
-                    {/* Diamond — prismatic holographic */}
-                    {owned && rarity === 'diamond' && (
-                      <>
-                        <motion.div className="absolute inset-0 pointer-events-none"
-                          style={{ background: 'linear-gradient(135deg, rgba(6,182,212,0.18) 0%, rgba(139,92,246,0.15) 50%, rgba(236,72,153,0.15) 100%)' }}
-                          animate={{ opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 2, repeat: Infinity }} />
-                        <motion.div className="absolute inset-0 pointer-events-none"
-                          style={{ background: 'conic-gradient(from 0deg at 50% 50%, rgba(6,182,212,0.1), rgba(139,92,246,0.1), rgba(236,72,153,0.1), rgba(6,182,212,0.1))' }}
-                          animate={{ rotate: [0, 360] }}
-                          transition={{ duration: 10, repeat: Infinity, ease: 'linear' }}
-                        />
-                        {/* Diamond sparkle dots */}
-                        <motion.div className="absolute w-1 h-1 bg-violet-300 rounded-full pointer-events-none" style={{ top: '15%', right: '20%' }}
-                          animate={{ opacity: [0, 1, 0], scale: [0.5, 1.2, 0.5] }} transition={{ duration: 2, repeat: Infinity, delay: 0 }} />
-                        <motion.div className="absolute w-1 h-1 bg-cyan-300 rounded-full pointer-events-none" style={{ top: '45%', left: '12%' }}
-                          animate={{ opacity: [0, 1, 0], scale: [0.5, 1.2, 0.5] }} transition={{ duration: 2, repeat: Infinity, delay: 0.7 }} />
-                        <motion.div className="absolute w-1 h-1 bg-pink-300 rounded-full pointer-events-none" style={{ bottom: '25%', right: '15%' }}
-                          animate={{ opacity: [0, 1, 0], scale: [0.5, 1.2, 0.5] }} transition={{ duration: 2, repeat: Infinity, delay: 1.3 }} />
-                      </>
-                    )}
-                    {/* Platinum — liquid chrome */}
-                    {owned && rarity === 'platinum' && (
-                      <>
-                        <motion.div className="absolute inset-0 pointer-events-none"
-                          style={{ background: 'linear-gradient(135deg, rgba(226,232,240,0.15) 0%, transparent 30%, transparent 70%, rgba(148,163,184,0.12) 100%)' }}
-                          animate={{ opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 2, repeat: Infinity }} />
-                        {/* Chrome sweep lines */}
-                        <motion.div className="absolute inset-0 pointer-events-none overflow-hidden">
-                          <motion.div className="absolute w-[300%] h-[3px] bg-gradient-to-r from-transparent via-white/50 to-transparent"
-                            style={{ top: '30%', left: '-150%', rotate: '-25deg' }}
-                            animate={{ left: ['-150%', '150%'] }}
-                            transition={{ duration: 3, repeat: Infinity, repeatDelay: 2 }}
-                          />
-                          <motion.div className="absolute w-[300%] h-[1px] bg-gradient-to-r from-transparent via-slate-200/30 to-transparent"
-                            style={{ top: '60%', left: '150%', rotate: '-25deg' }}
-                            animate={{ left: ['150%', '-150%'] }}
-                            transition={{ duration: 3, repeat: Infinity, repeatDelay: 3, delay: 1 }}
-                          />
-                        </motion.div>
-                      </>
-                    )}
+                    {/* ═══ Metallic/stone finishes — same as PB cards ═══ */}
+                    {owned && rarity === 'gold' && <GoldShimmer />}
+                    {owned && rarity === 'diamond' && <DiamondHolo />}
+                    {owned && rarity === 'platinum' && <PlatinumChrome />}
+                    {owned && <DumbbellSparkle tier={rarity} />}
                   </div>
 
                   {/* Card info area — rarity-themed base */}

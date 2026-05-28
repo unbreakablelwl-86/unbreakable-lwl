@@ -492,26 +492,26 @@ export default function UserProfileCard() {
 
           {/* ═══ CARDIO PB Dropdown ═══ */}
           <div className="rounded-lg mb-1.5 overflow-hidden" style={{
-            background: 'rgba(0,200,255,0.03)',
-            border: '1px solid rgba(0,200,255,0.10)',
+            background: 'rgba(255,85,0,0.04)',
+            border: '1px solid rgba(255,85,0,0.12)',
           }}>
             <button
               onClick={() => setShowCardioDropdown(!showCardioDropdown)}
               className="w-full flex items-center justify-between px-2 py-1.5"
             >
               <div className="flex items-center gap-1.5">
-                <svg className="w-3 h-3" style={{ color: '#00C8FF' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg className="w-3 h-3" style={{ color: '#FF5500', filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.6))' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
                 </svg>
                 <span className="text-[7px] font-mono tracking-[0.2em] uppercase"
-                  style={{ color: '#00C8FF', textShadow: '0 0 6px rgba(0,200,255,0.3)' }}>
+                  style={{ color: '#FF5500', textShadow: '0 0 6px rgba(255,85,0,0.4)' }}>
                   CARDIO PBs
                 </span>
                 <span className="text-[8px] font-display text-white/40">({cardioPBs.length})</span>
               </div>
               <motion.span
                 animate={{ rotate: showCardioDropdown ? 180 : 0 }}
-                className="text-[8px]" style={{ color: '#00C8FF' }}
+                className="text-[8px]" style={{ color: '#FF5500' }}
               >▼</motion.span>
             </button>
 
@@ -533,7 +533,7 @@ export default function UserProfileCard() {
                           value={pb.value}
                           unit={pb.unit}
                           maxValue={getMaxForExercise(pb.exerciseName, pb.unit)}
-                          color="#00C8FF"
+                          color="#FF5500"
                           delay={i * 0.05}
                         />
                       ))
