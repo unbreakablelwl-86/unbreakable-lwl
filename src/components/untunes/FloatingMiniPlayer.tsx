@@ -25,7 +25,7 @@ function formatTime(seconds: number): string {
  * Tapping opens the expanded full-screen player.
  */
 export function FloatingMiniPlayer() {
-  const { state, togglePlay, nextTrack, prevTrack, seekTo, setVolume, toggleShuffle, toggleRepeat, stop, hasFullAccess, ownedTrackIds, locked } = usePlayer();
+  const { state, togglePlay, nextTrack, prevTrack, seekTo, setVolume, toggleShuffle, toggleRepeat, stop, hasFullAccess, ownedTrackIds, locked, hidden } = usePlayer();
   const { isLiked, toggleLike } = useLikeTrack();
   const [expanded, setExpanded] = useState(false);
   const [showVolume, setShowVolume] = useState(false);
@@ -55,7 +55,7 @@ export function FloatingMiniPlayer() {
     return () => window.removeEventListener('game-exit', handler);
   }, [state.isPlaying, stop]);
 
-  if (!state.currentTrack || dismissed) return null;
+  if (!state.currentTrack || dismissed || hidden) return null;
 
   const track = state.currentTrack;
   const progress = state.duration > 0 ? (state.currentTime / state.duration) * 100 : 0;

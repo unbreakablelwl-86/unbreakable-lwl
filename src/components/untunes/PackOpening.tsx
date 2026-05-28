@@ -1474,7 +1474,7 @@ export function PackOpening({ cards, purchaseType, packTierId, onClose, onMarkOp
   const [shareMenu, setShareMenu] = useState<PackCard | null>(null);
   const { user } = useAuth();
   const { toast } = useToast();
-  const { playTrack, setLocked, stop: stopPlayer } = usePlayer();
+  const { playTrack, setHidden, stop: stopPlayer } = usePlayer();
   const { tracks: allTracks } = useAllTracks();
 
   const activeTier = PACK_TIERS.find(t => t.id === packTierId) || PACK_TIERS[0];
@@ -1487,7 +1487,7 @@ export function PackOpening({ cards, purchaseType, packTierId, onClose, onMarkOp
     const randomTrack = allTracks[Math.floor(Math.random() * allTracks.length)];
     if (randomTrack?.audio_url) {
       playTrack(randomTrack);
-      setLocked(true);
+      setHidden(true);
       musicStartedRef.current = true;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -1495,9 +1495,10 @@ export function PackOpening({ cards, purchaseType, packTierId, onClose, onMarkOp
 
   // Unlock mini player when pack opening closes
   const handleClose = useCallback(() => {
-    setLocked(false);
+    setHidden(false);
+    stopPlayer();
     onClose();
-  }, [onClose, setLocked]);
+  }, [onClose, setHidden, stopPlayer]);
 
   // Sort: standard first → gold → diamond → platinum (save best for last)
   const orderedCards = useMemo(() => {

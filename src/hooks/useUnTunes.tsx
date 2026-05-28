@@ -113,6 +113,10 @@ interface PlayerContextType {
   locked: boolean;
   /** Lock the mini player (used during pack opening) */
   setLocked: (locked: boolean) => void;
+  /** Whether mini player is completely hidden (during pack opening) */
+  hidden: boolean;
+  /** Hide/show the mini player */
+  setHidden: (hidden: boolean) => void;
 }
 
 export const PlayerContext = createContext<PlayerContextType>({
@@ -132,6 +136,8 @@ export const PlayerContext = createContext<PlayerContextType>({
   hasFullAccess: false,
   locked: false,
   setLocked: () => {},
+  hidden: false,
+  setHidden: () => {},
 });
 
 export function usePlayer() {
@@ -179,6 +185,7 @@ export function usePlayerProvider() {
   const ownedTrackIds = useOwnedTracks();
   const [state, setState] = useState<PlayerState>(defaultPlayerState);
   const [locked, setLocked] = useState(false);
+  const [hidden, setHidden] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const previewFadingRef = useRef(false);
   // Refs for Media Session action handlers (stable references)
@@ -473,6 +480,8 @@ export function usePlayerProvider() {
     hasFullAccess,
     locked,
     setLocked,
+    hidden,
+    setHidden,
   };
 }
 
