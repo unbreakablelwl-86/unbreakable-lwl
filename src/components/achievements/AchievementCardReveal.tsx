@@ -1111,6 +1111,8 @@ export function formatPBValue(value: number, unit: string): string {
   }
   if (unit === 'km') return `${value}km`;
   if (unit === 'm') return `${value}m`;
+  if (unit === 'km') return `${value}km`;
+  if (unit === 'm') return `${value}m`;
   return `${value}`;
 }
 
@@ -1209,33 +1211,44 @@ export function AchievementCardReveal({
           {/* The card */}
           <motion.div
             className={cn(
-              'relative w-64 h-96 rounded-2xl overflow-hidden',
+              'relative w-64 h-96 rounded-2xl',
               revealed ? config.glow : '',
             )}
             style={{
-              perspective: 1000,
+              perspective: 1200,
+              transformStyle: 'preserve-3d' as any,
               border: revealed
                 ? `2px solid ${config.borderHex}`
                 : '2px solid rgba(255,107,0,0.25)',
             }}
             animate={
-              revealed ? {} : { rotateY: [0, 5, -5, 0], scale: [1, 1.02, 1] }
+              revealed
+                ? { rotateY: 180, scale: 1 }
+                : { rotateY: [0, 5, -5, 0], scale: [1, 1.02, 1] }
             }
-            transition={revealed ? {} : { duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+            transition={
+              revealed
+                ? { duration: 0.6, ease: [0.23, 1, 0.32, 1] }
+                : { duration: 2, repeat: Infinity, ease: 'easeInOut' }
+            }
           >
-            <AnimatePresence mode="wait">
-              {!revealed ? (
-                <AchievementCardBack cardType={card.card_type} />
-              ) : (
-                /* ── Revealed card front ── */
-                <motion.div
-                  key="revealed"
-                  className="absolute inset-0"
-                  style={{ background: cardBg }}
-                  initial={{ rotateY: -90, opacity: 0 }}
-                  animate={{ rotateY: 0, opacity: 1 }}
-                  transition={{ duration: 0.3 }}
-                >
+            {/* ── BACK FACE — always mounted ── */}
+            <div
+              className="absolute inset-0 rounded-2xl overflow-hidden"
+              style={{ backfaceVisibility: 'hidden' }}
+            >
+              <AchievementCardBack cardType={card.card_type} />
+            </div>
+
+            {/* ── FRONT FACE — always mounted, rotated 180deg ── */}
+            <div
+              className="absolute inset-0 rounded-2xl overflow-hidden"
+              style={{
+                backfaceVisibility: 'hidden',
+                transform: 'rotateY(180deg)',
+                background: cardBg,
+              }}
+            >
                   {/* Pokémon-style PB card artwork overlay */}
                   {(isPBPersonal || isPBGlobal) && (
                     <PBCardArtwork card={card} accentColor={config.accentHex} size="md" />
@@ -1716,8 +1729,7 @@ export function AchievementCardReveal({
                     </motion.div>
                   )}
                 </motion.div>
-              )}
-            </AnimatePresence>
+            </div>
           </motion.div>
 
           {/* Particle burst on reveal */}
