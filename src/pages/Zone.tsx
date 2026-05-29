@@ -5,9 +5,9 @@ import { ArrowLeft } from "lucide-react";
 const FocusTimerGame = lazy(() => import("@/components/mindset/FocusTimerGame"));
 
 /**
- * ZONE — Unbreakable Switch-Off Timer
- * Standalone page accessible from bottom nav (retro Casio watch icon).
- * Lives under /zone, also linked from mindset meditation section.
+ * ZONE — Universal Timer
+ * Countdown timer & stopwatch for rest times, tracking, anything.
+ * Standalone page accessible from bottom nav.
  */
 const Zone = () => {
   const navigate = useNavigate();
@@ -27,7 +27,7 @@ const Zone = () => {
           fallback={
             <div className="flex items-center justify-center py-20">
               <p className="font-display text-primary tracking-wide animate-pulse">
-                SWITCHING OFF...
+                LOADING TIMER...
               </p>
             </div>
           }

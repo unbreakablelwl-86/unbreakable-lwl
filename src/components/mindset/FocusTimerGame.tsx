@@ -1,463 +1,353 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
-import { Play, Pause, RotateCcw, Volume2, VolumeX, Flame, Trophy, Target, Clock } from "lucide-react";
+import { Play, Pause, RotateCcw, Clock, Timer, ChevronUp, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useGameAudio } from "@/hooks/useGameAudio";
-import { useAuth } from "@/hooks/useAuth";
-import { useUserRole } from "@/hooks/useUserRole";
-import { useFocusTimerScores } from "@/hooks/useFocusTimerScores";
-import { GameLeaderboard } from "./GameLeaderboard";
 
 // ═══════════════════════════════════════════════════════════════
-// ZONE — FOCUS TIMER · POMODORO+
-// Visual interactive timer · Missions & streaks
+// ZONE — UNIVERSAL TIMER
+// Simple countdown & stopwatch for rest times, tracking, anything.
 // Premium build · UNBREAKABLE · 2026
 // ═══════════════════════════════════════════════════════════════
 
-const DURATION_OPTIONS = [
-  { label: "5 MIN", value: 5 * 60, desc: "Quick burst" },
-  { label: "15 MIN", value: 15 * 60, desc: "Short session" },
-  { label: "25 MIN", value: 25 * 60, desc: "Classic Pomodoro" },
-  { label: "45 MIN", value: 45 * 60, desc: "Deep work" },
-  { label: "60 MIN", value: 60 * 60, desc: "Marathon" },
-  { label: "90 MIN", value: 90 * 60, desc: "Flow state" },
+type TimerMode = "countdown" | "stopwatch";
+
+const REST_PRESETS = [
+  { label: "30s", value: 30 },
+  { label: "60s", value: 60 },
+  { label: "90s", value: 90 },
+  { label: "2 min", value: 120 },
+  { label: "3 min", value: 180 },
+  { label: "5 min", value: 300 },
 ];
 
-const BREAK_DURATIONS = [
-  { label: "5 MIN", value: 5 * 60 },
-  { label: "10 MIN", value: 10 * 60 },
-  { label: "15 MIN", value: 15 * 60 },
-];
-
-const STREAK_KEY = "unbreakable_focus_streak";
-const SESSIONS_KEY = "unbreakable_focus_sessions";
-const TOTAL_KEY = "unbreakable_focus_total_mins";
-const LAST_DATE_KEY = "unbreakable_focus_last_date";
+const NEON_ORANGE = "#FF5500";
+const NEON_GLOW = "0 0 30px rgba(255,85,0,0.5), 0 0 60px rgba(255,85,0,0.25)";
 
 const FocusTimerGame = () => {
-  const [gameState, setGameState] = useState<"setup" | "focus" | "break" | "done" | "leaderboard">("setup");
-  const [duration, setDuration] = useState(25 * 60);
-  const [remaining, setRemaining] = useState(25 * 60);
+  const [mode, setMode] = useState<TimerMode>("countdown");
+  const [seconds, setSeconds] = useState(60); // countdown starting value
+  const [elapsed, setElapsed] = useState(0);   // stopwatch elapsed
+  const [remaining, setRemaining] = useState(60);
   const [isRunning, setIsRunning] = useState(false);
-  const [sessions, setSessions] = useState(0);
-  const [totalSessions, setTotalSessions] = useState(() => {
-    const saved = localStorage.getItem(SESSIONS_KEY);
-    return saved ? parseInt(saved, 10) : 0;
-  });
-  const [totalMinutes, setTotalMinutes] = useState(() => {
-    const saved = localStorage.getItem(TOTAL_KEY);
-    return saved ? parseInt(saved, 10) : 0;
-  });
-  const [streak, setStreak] = useState(() => {
-    const saved = localStorage.getItem(STREAK_KEY);
-    const lastDate = localStorage.getItem(LAST_DATE_KEY);
-    const today = new Date().toDateString();
-    const yesterday = new Date(Date.now() - 86400000).toDateString();
-    if (lastDate === today || lastDate === yesterday) return saved ? parseInt(saved, 10) : 0;
-    return 0;
-  });
-  const [breakDuration, setBreakDuration] = useState(5 * 60);
-  const [showBreakPicker, setShowBreakPicker] = useState(false);
-  const [pulseRing, setPulseRing] = useState(false);
+  const [isDone, setIsDone] = useState(false);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const audioRef = useRef<AudioContext | null>(null);
+  const startTimeRef = useRef<number>(0);
 
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const remainingRef = useRef(remaining);
-  remainingRef.current = remaining;
+  // ── Vibrate + beep on countdown complete ──
+  const playAlert = useCallback(() => {
+    try {
+      if (navigator.vibrate) navigator.vibrate([200, 100, 200, 100, 400]);
+      const ctx = new AudioContext();
+      audioRef.current = ctx;
+      // Triple beep
+      [0, 0.3, 0.6].forEach((delay) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.frequency.value = 880;
+        osc.type = "square";
+        gain.gain.setValueAtTime(0.15, ctx.currentTime + delay);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + delay + 0.2);
+        osc.start(ctx.currentTime + delay);
+        osc.stop(ctx.currentTime + delay + 0.2);
+      });
+    } catch {
+      // silent fail
+    }
+  }, []);
 
-  // Boot
-  const [screenLocked, setScreenLocked] = useState(false);
-
-  const { user } = useAuth();
-  const { isDev, isCoach } = useUserRole();
-  const canBypassLock = isDev || isCoach;
-  const { saveScore: saveDbScore, topScores, userBest, refetch } = useFocusTimerScores();
-  const { playHit, playLevelUp, playGameOver, startMusic, stopMusic, toggleMute, isMuted } = useGameAudio("focus");
-// Timer logic
+  // ── Timer tick ──
   useEffect(() => {
     if (!isRunning) {
-      if (timerRef.current) clearInterval(timerRef.current);
+      if (intervalRef.current) clearInterval(intervalRef.current);
       return;
     }
-    timerRef.current = setInterval(() => {
-      setRemaining(prev => {
-        if (prev <= 1) {
-          setIsRunning(false);
-          if (timerRef.current) clearInterval(timerRef.current);
-          // Session complete
-          if (gameState === "focus") {
-            playLevelUp();
-            const mins = Math.ceil(duration / 60);
-            const newTotal = totalSessions + 1;
-            const newMins = totalMinutes + mins;
-            setTotalSessions(newTotal);
-            setTotalMinutes(newMins);
-            setSessions(s => s + 1);
-            localStorage.setItem(SESSIONS_KEY, String(newTotal));
-            localStorage.setItem(TOTAL_KEY, String(newMins));
-            // Update streak
-            const today = new Date().toDateString();
-            const lastDate = localStorage.getItem(LAST_DATE_KEY);
-            let newStreak = streak;
-            if (lastDate !== today) {
-              newStreak = streak + 1;
-              setStreak(newStreak);
-              localStorage.setItem(STREAK_KEY, String(newStreak));
-              localStorage.setItem(LAST_DATE_KEY, today);
-            }
-            setShowBreakPicker(true);
-            setGameState("done");
-            setScreenLocked(false);
-            // Save to leaderboard: score = total minutes focused × total sessions
-            saveDbScore(newMins * newTotal, newMins, newTotal);
-          } else if (gameState === "break") {
-            playHit();
-            setGameState("done");
-            setShowBreakPicker(false);
+
+    const tick = () => {
+      if (mode === "countdown") {
+        setRemaining((prev) => {
+          if (prev <= 1) {
+            setIsRunning(false);
+            setIsDone(true);
+            playAlert();
+            return 0;
           }
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-    return () => { if (timerRef.current) clearInterval(timerRef.current); };
-  }, [isRunning, gameState, duration, totalSessions, totalMinutes, streak, playLevelUp, playHit]);
+          return prev - 1;
+        });
+      } else {
+        setElapsed((prev) => prev + 1);
+      }
+    };
 
-  const startFocus = useCallback(() => {
-    setRemaining(duration);
-    setIsRunning(true);
-    setGameState("focus");
-    setScreenLocked(true);
-    startMusic();
-    setPulseRing(true);
-  }, [duration, startMusic]);
+    intervalRef.current = setInterval(tick, 1000);
+    return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
+  }, [isRunning, mode, playAlert]);
 
-  const startBreak = useCallback((dur: number) => {
-    setBreakDuration(dur);
-    setRemaining(dur);
-    setIsRunning(true);
-    setGameState("break");
-    setShowBreakPicker(false);
-    stopMusic();
-  }, [stopMusic]);
-
-  const togglePause = useCallback(() => {
-    if (isRunning) {
-      setIsRunning(false);
-      stopMusic();
-    } else {
-      setIsRunning(true);
-      if (gameState === "focus") startMusic();
+  // ── Format time ──
+  const formatTime = (totalSecs: number): string => {
+    const mins = Math.floor(totalSecs / 60);
+    const secs = totalSecs % 60;
+    if (mins >= 60) {
+      const hrs = Math.floor(mins / 60);
+      const m = mins % 60;
+      return `${hrs}:${String(m).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
     }
-  }, [isRunning, gameState, startMusic, stopMusic]);
-
-  const resetTimer = useCallback(() => {
-    setIsRunning(false);
-    stopMusic();
-    setRemaining(duration);
-    setGameState("setup");
-    setShowBreakPicker(false);
-    setPulseRing(false);
-    setScreenLocked(false);
-  }, [duration, stopMusic]);
-
-  const formatTime = (secs: number) => {
-    const m = Math.floor(secs / 60);
-    const s = secs % 60;
-    return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+    return `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
   };
 
-  const progress = duration > 0 ? (duration - remaining) / duration : 0;
-  const circumference = 2 * Math.PI * 140;
-  const strokeDashoffset = circumference * (1 - (gameState === "break" ? (breakDuration - remaining) / breakDuration : progress));
+  // ── Progress for countdown ring ──
+  const progress = mode === "countdown" && seconds > 0 ? remaining / seconds : 0;
 
-  // ─── Leaderboard ───
-  if (gameState === "leaderboard") {
-    return <GameLeaderboard scores={topScores} userBest={userBest} currentUserId={user?.id} gameName="ZONE" onClose={() => setGameState("done")} onRefetch={refetch} getSubLabel={(e) => `${e.total_minutes}min · ${e.sessions_completed} sessions`} />;
-  }
+  // ── Controls ──
+  const handleStart = () => {
+    if (mode === "countdown" && remaining === 0) {
+      setRemaining(seconds);
+      setIsDone(false);
+    }
+    setIsRunning(true);
+    startTimeRef.current = Date.now();
+  };
 
-  // ─── Setup ───
-  if (gameState === "setup") {
-    return (
-      <div className="w-full max-w-lg mx-auto">
-        <div className="relative rounded-xl overflow-hidden border-2 border-primary/40 p-6" style={{ background: "#0a0a0a", minHeight: 420 }}>
-          <div className="absolute inset-0 pointer-events-none z-30" style={{ background: "repeating-linear-gradient(0deg, rgba(255,85,0,0.04) 0px, transparent 1px, transparent 2px)" }} />
-          <div className="relative z-10">
-            <h2 className="font-display text-3xl text-primary tracking-wider text-center mb-1" style={{ textShadow: "0 0 20px rgba(255,85,0,0.5)" }}>ZONE</h2>
-            <p className="font-display text-sm text-foreground tracking-wider text-center mb-6">FOCUS TIMER</p>
+  const handlePause = () => setIsRunning(false);
 
-            {/* Stats bar */}
-            <div className="flex justify-between mb-6 px-2">
-              <div className="text-center">
-                <div className="flex items-center justify-center gap-1 mb-0.5">
-                  <Flame className="w-3.5 h-3.5 text-primary" />
-                  <p className="font-display text-lg text-primary">{streak}</p>
-                </div>
-                <p className="text-[9px] font-display tracking-wider text-muted-foreground">DAY STREAK</p>
-              </div>
-              <div className="text-center">
-                <div className="flex items-center justify-center gap-1 mb-0.5">
-                  <Trophy className="w-3.5 h-3.5 text-primary" />
-                  <p className="font-display text-lg text-primary">{totalSessions}</p>
-                </div>
-                <p className="text-[9px] font-display tracking-wider text-muted-foreground">SESSIONS</p>
-              </div>
-              <div className="text-center">
-                <div className="flex items-center justify-center gap-1 mb-0.5">
-                  <Clock className="w-3.5 h-3.5 text-primary" />
-                  <p className="font-display text-lg text-primary">{totalMinutes}</p>
-                </div>
-                <p className="text-[9px] font-display tracking-wider text-muted-foreground">TOTAL MINS</p>
-              </div>
-            </div>
+  const handleReset = () => {
+    setIsRunning(false);
+    setIsDone(false);
+    if (mode === "countdown") {
+      setRemaining(seconds);
+    } else {
+      setElapsed(0);
+    }
+  };
 
-            <p className="text-xs font-display tracking-wider text-muted-foreground mb-3 text-center">SELECT DURATION</p>
+  const handlePreset = (val: number) => {
+    setMode("countdown");
+    setSeconds(val);
+    setRemaining(val);
+    setIsRunning(false);
+    setIsDone(false);
+  };
 
-            <div className="grid grid-cols-3 gap-2 mb-6">
-              {DURATION_OPTIONS.map(opt => (
-                <button
-                  key={opt.value}
-                  onClick={() => { setDuration(opt.value); setRemaining(opt.value); }}
-                  className={`py-3 rounded-xl border text-center transition-all active:scale-95 ${
-                    duration === opt.value
-                      ? "border-primary bg-primary/10 shadow-[0_0_12px_rgba(255,85,0,0.2)]"
-                      : "border-white/10 bg-white/[0.02] hover:border-white/20"
-                  }`}
-                >
-                  <p className={`font-display text-sm tracking-wider ${duration === opt.value ? "text-primary" : "text-foreground"}`}>{opt.label}</p>
-                  <p className="text-[9px] text-muted-foreground mt-0.5">{opt.desc}</p>
-                </button>
-              ))}
-            </div>
+  const adjustCountdown = (delta: number) => {
+    if (isRunning) return;
+    const next = Math.max(5, Math.min(3600, seconds + delta));
+    setSeconds(next);
+    setRemaining(next);
+    setIsDone(false);
+  };
 
-            <Button onClick={startFocus} className="w-full font-display text-lg tracking-wider py-5 bg-primary hover:bg-primary/80" style={{ boxShadow: "0 0 20px rgba(255,85,0,0.4)" }}>
-              <Target className="w-5 h-5 mr-2" /> LOCK IN
-            </Button>
+  const switchMode = (m: TimerMode) => {
+    setIsRunning(false);
+    setIsDone(false);
+    setMode(m);
+    if (m === "countdown") {
+      setRemaining(seconds);
+    } else {
+      setElapsed(0);
+    }
+  };
 
-            {/* Today's sessions */}
-            {sessions > 0 && (
-              <p className="text-center text-muted-foreground text-xs mt-3 font-display tracking-wider">
-                TODAY: {sessions} SESSION{sessions !== 1 ? "S" : ""} COMPLETE
-              </p>
-            )}
-          </div>
-        </div>
-      </div>
-    );
-  }
+  // ── Ring geometry ──
+  const RING_R = 110;
+  const RING_C = 2 * Math.PI * RING_R;
 
-  // ─── Focus / Break / Done ───
+  const displayTime = mode === "countdown" ? remaining : elapsed;
+
   return (
-    <div className="w-full max-w-lg mx-auto">
-      <div className="relative rounded-xl overflow-hidden border-2 border-primary/40 p-6" style={{ background: "#0a0a0a", minHeight: 500 }}>
-        {/* CRT */}
-        <div className="absolute inset-0 pointer-events-none z-30" style={{ background: "repeating-linear-gradient(0deg, rgba(255,85,0,0.035) 0px, transparent 1px, transparent 2px)" }} />
+    <div className="flex flex-col items-center gap-6 max-w-md mx-auto select-none">
+      {/* ── Header ── */}
+      <div className="text-center">
+        <h2
+          className="font-display text-3xl tracking-wider mb-1"
+          style={{ color: NEON_ORANGE, textShadow: NEON_GLOW }}
+        >
+          ZONE
+        </h2>
+        <p className="text-muted-foreground text-xs tracking-widest uppercase">
+          {mode === "countdown" ? "countdown timer" : "stopwatch"}
+        </p>
+      </div>
 
-        <div className="relative z-10 flex flex-col items-center">
-          {/* Header */}
-          <div className="flex items-center justify-between w-full mb-4">
-            <div>
-              <p className="font-display text-[10px] tracking-wider text-muted-foreground">
-                {gameState === "break" ? "BREAK TIME" : gameState === "done" ? "SESSION COMPLETE" : "FOCUS SESSION"}
-              </p>
-              <p className="font-display text-sm tracking-wider text-foreground">
-                {gameState === "break" ? "RECHARGE" : gameState === "done" ? "WELL DONE" : "ZONE"}
-              </p>
-            </div>
-            <div className="flex items-center gap-2">
-              {streak > 0 && (
-                <div className="flex items-center gap-1 bg-primary/10 px-2 py-1 rounded-lg">
-                  <Flame className="w-3 h-3 text-primary" />
-                  <p className="font-display text-xs text-primary">{streak}</p>
-                </div>
-              )}
-              <Button variant="ghost" size="sm" onClick={toggleMute} className="h-8 w-8 p-0 text-muted-foreground hover:text-primary">
-                {isMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
-              </Button>
-            </div>
-          </div>
+      {/* ── Mode toggle ── */}
+      <div className="flex gap-2 bg-card/50 rounded-full p-1 border border-border/30">
+        <button
+          onClick={() => switchMode("countdown")}
+          className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-display tracking-wider transition-all ${
+            mode === "countdown"
+              ? "bg-primary text-primary-foreground"
+              : "text-muted-foreground hover:text-foreground"
+          }`}
+        >
+          <Timer className="w-3.5 h-3.5" /> COUNTDOWN
+        </button>
+        <button
+          onClick={() => switchMode("stopwatch")}
+          className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-display tracking-wider transition-all ${
+            mode === "stopwatch"
+              ? "bg-primary text-primary-foreground"
+              : "text-muted-foreground hover:text-foreground"
+          }`}
+        >
+          <Clock className="w-3.5 h-3.5" /> STOPWATCH
+        </button>
+      </div>
 
-          {/* Timer ring */}
-          <div className="relative w-[300px] h-[300px] flex items-center justify-center mb-6">
-            <svg width="300" height="300" className="absolute">
-              {/* BG ring */}
-              <circle cx="150" cy="150" r="140" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="6" />
-              {/* Progress ring */}
-              <circle
-                cx="150" cy="150" r="140"
-                fill="none"
-                stroke={gameState === "break" ? "#FF7733" : "#FF5500"}
-                strokeWidth="6"
-                strokeLinecap="round"
-                strokeDasharray={circumference}
-                strokeDashoffset={strokeDashoffset}
-                transform="rotate(-90 150 150)"
-                className="transition-all duration-1000 ease-linear"
-                style={{
-                  filter: `drop-shadow(0 0 8px ${gameState === "break" ? "rgba(34,197,94,0.4)" : "rgba(255,85,0,0.4)"})`,
-                }}
-              />
-              {/* Tick marks */}
-              {Array.from({ length: 60 }).map((_, i) => {
-                const angle = (i / 60) * Math.PI * 2 - Math.PI / 2;
-                const isMajor = i % 5 === 0;
-                const r1 = isMajor ? 125 : 130;
-                const r2 = 135;
-                return (
-                  <line
-                    key={i}
-                    x1={150 + Math.cos(angle) * r1}
-                    y1={150 + Math.sin(angle) * r1}
-                    x2={150 + Math.cos(angle) * r2}
-                    y2={150 + Math.sin(angle) * r2}
-                    stroke={isMajor ? "rgba(255,255,255,0.15)" : "rgba(255,255,255,0.05)"}
-                    strokeWidth={isMajor ? 2 : 1}
-                  />
-                );
-              })}
-            </svg>
+      {/* ── Timer Ring ── */}
+      <div className="relative w-64 h-64 flex items-center justify-center">
+        {/* Background ring */}
+        <svg className="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 240 240">
+          <circle
+            cx="120" cy="120" r={RING_R}
+            fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="6"
+          />
+          {mode === "countdown" && (
+            <motion.circle
+              cx="120" cy="120" r={RING_R}
+              fill="none"
+              stroke={isDone ? "#22c55e" : NEON_ORANGE}
+              strokeWidth="6"
+              strokeLinecap="round"
+              strokeDasharray={RING_C}
+              strokeDashoffset={RING_C * (1 - progress)}
+              style={{
+                filter: isDone
+                  ? "drop-shadow(0 0 8px rgba(34,197,94,0.6))"
+                  : "drop-shadow(0 0 8px rgba(255,85,0,0.5))",
+                transition: "stroke-dashoffset 0.3s linear, stroke 0.3s",
+              }}
+            />
+          )}
+          {mode === "stopwatch" && isRunning && (
+            <motion.circle
+              cx="120" cy="120" r={RING_R}
+              fill="none"
+              stroke={NEON_ORANGE}
+              strokeWidth="6"
+              strokeLinecap="round"
+              strokeDasharray={RING_C}
+              animate={{
+                strokeDashoffset: [RING_C, 0],
+              }}
+              transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
+              style={{ filter: "drop-shadow(0 0 8px rgba(255,85,0,0.5))" }}
+            />
+          )}
+        </svg>
 
-            {/* Pulse animation when running */}
-            {isRunning && pulseRing && (
-              <div
-                className="absolute w-[280px] h-[280px] rounded-full animate-pulse"
-                style={{
-                  border: `1px solid ${gameState === "break" ? "rgba(34,197,94,0.1)" : "rgba(255,85,0,0.1)"}`,
-                }}
-              />
-            )}
-
-            {/* Center content */}
-            <div className="relative z-10 text-center">
-              <p className="font-display text-6xl tracking-wider text-foreground" style={{ textShadow: "0 0 20px rgba(255,255,255,0.1)" }}>
-                {formatTime(remaining)}
-              </p>
-              <p className="font-display text-xs tracking-wider text-muted-foreground mt-1">
-                {gameState === "break" ? "BREAK" : gameState === "done" ? "COMPLETE" : isRunning ? "FOCUSED" : "PAUSED"}
-              </p>
-            </div>
-          </div>
-
-          {/* Controls */}
-          {gameState !== "done" && (
-            <div className="flex items-center gap-3">
-              <Button
-                variant="outline"
-                size="lg"
-                onClick={resetTimer}
-                className="font-display tracking-wide border-white/10 text-muted-foreground hover:text-foreground"
-              >
-                <RotateCcw className="w-4 h-4 mr-1.5" /> RESET
-              </Button>
-              <Button
-                size="lg"
-                onClick={togglePause}
-                className={`font-display tracking-wide px-8 py-5 ${
-                  isRunning
-                    ? "bg-white/10 text-foreground hover:bg-white/20"
-                    : "bg-primary text-primary-foreground hover:bg-primary/90"
-                }`}
-                style={!isRunning ? { boxShadow: "0 0 20px rgba(255,85,0,0.4)" } : {}}
-              >
-                {isRunning ? <><Pause className="w-5 h-5 mr-1.5" /> PAUSE</> : <><Play className="w-5 h-5 mr-1.5" /> RESUME</>}
-              </Button>
-            </div>
+        {/* Time display */}
+        <div className="flex flex-col items-center z-10">
+          {mode === "countdown" && !isRunning && !isDone && (
+            <button
+              onClick={() => adjustCountdown(15)}
+              className="text-muted-foreground hover:text-primary transition-colors mb-1"
+            >
+              <ChevronUp className="w-6 h-6" />
+            </button>
           )}
 
-          {/* Done state — break picker or go again */}
-          {gameState === "done" && (
-            <div className="w-full space-y-4">
-              {showBreakPicker ? (
-                <>
-                  <p className="text-center font-display text-sm tracking-wider text-foreground mb-2">TAKE A BREAK?</p>
-                  <div className="flex gap-2 justify-center">
-                    {BREAK_DURATIONS.map(bd => (
-                      <Button
-                        key={bd.value}
-                        variant="outline"
-                        onClick={() => startBreak(bd.value)}
-                        className="font-display tracking-wider border-green-500/30 text-green-400 hover:bg-green-500/10"
-                      >
-                        {bd.label}
-                      </Button>
-                    ))}
-                  </div>
-                  <div className="text-center">
-                    <button
-                      onClick={() => { setShowBreakPicker(false); }}
-                      className="text-xs font-display tracking-wider text-muted-foreground hover:text-foreground mt-2"
-                    >
-                      SKIP BREAK →
-                    </button>
-                  </div>
-                </>
-              ) : (
-                <div className="flex flex-col items-center gap-3">
-                  <div className="grid grid-cols-3 gap-2 w-full max-w-[280px]">
-                    <div className="bg-white/5 rounded-lg p-2 text-center">
-                      <p className="font-display text-lg text-primary">{sessions}</p>
-                      <p className="text-[8px] text-muted-foreground font-display tracking-wider">TODAY</p>
-                    </div>
-                    <div className="bg-white/5 rounded-lg p-2 text-center">
-                      <p className="font-display text-lg text-primary">{streak}</p>
-                      <p className="text-[8px] text-muted-foreground font-display tracking-wider">DAY STREAK</p>
-                    </div>
-                    <div className="bg-white/5 rounded-lg p-2 text-center">
-                      <p className="font-display text-lg text-primary">{totalMinutes}</p>
-                      <p className="text-[8px] text-muted-foreground font-display tracking-wider">TOTAL MINS</p>
-                    </div>
-                  </div>
-                  <div className="flex gap-2">
-                    <Button onClick={startFocus} size="lg" className="font-display tracking-wide gap-2 bg-primary text-primary-foreground hover:bg-primary/90 px-6 py-5">
-                      <Target className="w-5 h-5" /> ANOTHER SESSION
-                    </Button>
-                    <Button onClick={() => { refetch(); setGameState("leaderboard"); }} variant="outline" className="font-display tracking-wide gap-2 border-primary/30 px-4 py-5">
-                      <Trophy className="w-4 h-4" /> TOP 50
-                    </Button>
-                  </div>
-                  <button onClick={resetTimer} className="text-xs font-display tracking-wider text-muted-foreground hover:text-foreground">
-                    CHANGE DURATION →
-                  </button>
-                </div>
-              )}
-            </div>
+          <AnimatePresence mode="wait">
+            <motion.span
+              key={displayTime}
+              initial={{ opacity: 0.7, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="font-mono text-5xl font-bold tracking-wide"
+              style={{
+                color: isDone ? "#22c55e" : "#fff",
+                textShadow: isDone
+                  ? "0 0 20px rgba(34,197,94,0.6)"
+                  : isRunning
+                  ? NEON_GLOW
+                  : "none",
+              }}
+            >
+              {formatTime(displayTime)}
+            </motion.span>
+          </AnimatePresence>
+
+          {isDone && (
+            <motion.span
+              initial={{ opacity: 0, y: 5 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-green-400 font-display text-sm tracking-widest mt-1"
+            >
+              TIME&apos;S UP
+            </motion.span>
+          )}
+
+          {mode === "countdown" && !isRunning && !isDone && (
+            <button
+              onClick={() => adjustCountdown(-15)}
+              className="text-muted-foreground hover:text-primary transition-colors mt-1"
+            >
+              <ChevronDown className="w-6 h-6" />
+            </button>
           )}
         </div>
       </div>
 
-      {/* ═══ Screen Lock Overlay ═══ */}
-      <AnimatePresence>
-        {screenLocked && !canBypassLock && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-xl flex flex-col items-center justify-center"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <motion.div
-              animate={{ opacity: [0.4, 1, 0.4] }}
-              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-              className="text-center"
-            >
-              <div className="w-20 h-20 rounded-full border-2 border-primary/30 flex items-center justify-center mx-auto mb-6">
-                <Target className="w-10 h-10 text-primary" />
-              </div>
-              <p className="font-display text-2xl tracking-wider text-primary mb-2">STAY FOCUSED</p>
-              <p className="font-display text-4xl tracking-wider text-white mb-4">{formatTime(remaining)}</p>
-              <p className="text-xs text-muted-foreground font-display tracking-wider">
-                SESSION IN PROGRESS • DON'T BREAK THE CHAIN
-              </p>
-            </motion.div>
-            {/* Mute toggle on lock screen */}
-            <button
-              onClick={(e) => { e.stopPropagation(); toggleMute(); }}
-              className="mt-8 h-12 w-12 rounded-full border border-white/10 flex items-center justify-center text-muted-foreground hover:text-primary transition-colors"
-            >
-              {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
-            </button>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* ── Controls ── */}
+      <div className="flex items-center gap-4">
+        <Button
+          variant="outline"
+          size="icon"
+          className="rounded-full w-12 h-12 border-border/50"
+          onClick={handleReset}
+        >
+          <RotateCcw className="w-5 h-5" />
+        </Button>
+
+        <Button
+          size="icon"
+          className="rounded-full w-16 h-16"
+          style={{
+            background: isRunning
+              ? "rgba(255,85,0,0.15)"
+              : `linear-gradient(135deg, ${NEON_ORANGE}, #cc4400)`,
+            border: `2px solid ${NEON_ORANGE}`,
+            boxShadow: isRunning ? "none" : NEON_GLOW,
+          }}
+          onClick={isRunning ? handlePause : handleStart}
+        >
+          {isRunning ? (
+            <Pause className="w-7 h-7 text-primary" />
+          ) : (
+            <Play className="w-7 h-7 text-white ml-0.5" />
+          )}
+        </Button>
+
+        <div className="w-12 h-12" /> {/* spacer for symmetry */}
+      </div>
+
+      {/* ── Quick rest presets (countdown mode only) ── */}
+      {mode === "countdown" && (
+        <div className="w-full">
+          <p className="text-xs text-muted-foreground font-display tracking-widest text-center mb-3 uppercase">
+            Quick Rest
+          </p>
+          <div className="grid grid-cols-3 gap-2">
+            {REST_PRESETS.map((preset) => (
+              <button
+                key={preset.value}
+                onClick={() => handlePreset(preset.value)}
+                className={`py-2.5 px-3 rounded-lg border text-sm font-display tracking-wider transition-all ${
+                  seconds === preset.value && !isRunning
+                    ? "border-primary bg-primary/10 text-primary"
+                    : "border-border/30 text-muted-foreground hover:border-primary/50 hover:text-foreground"
+                }`}
+              >
+                {preset.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ── Branding ── */}
+      <p className="text-[10px] text-muted-foreground/40 font-display tracking-[0.3em] mt-4">
+        UNBREAKABLE · LIVE WITHOUT LIMITS™
+      </p>
     </div>
   );
 };
