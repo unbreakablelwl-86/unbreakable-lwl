@@ -220,6 +220,12 @@ export function usePlayerProvider() {
       handleTrackEnd();
     });
 
+    // Handle audio errors — auto-skip to next track on load failure
+    audio.addEventListener('error', () => {
+      console.warn('[UnTunes] Audio error, skipping to next track');
+      handleTrackEnd();
+    });
+
     audio.addEventListener('loadedmetadata', () => {
       setState(s => ({ ...s, duration: audio.duration }));
     });
@@ -333,14 +339,22 @@ export function usePlayerProvider() {
   }, [state.currentTrack?.id]);
 
   const handleTrackEnd = useCallback(() => {
+    // Read state synchronously via ref to avoid side effects inside setState
     setState(prev => {
       if (prev.repeat === 'one') {
-        if (audioRef.current) {
-          audioRef.current.currentTime = 0;
-          audioRef.current.play();
-        }
-        return prev;
+        // Repeat-one: restart same track
+        setTimeout(() => {
+          if (audioRef.current) {
+            audioRef.current.currentTime = 0;
+            audioRef.current.play().catch(() => {
+              // Autoplay blocked — set state to paused so UI stays consistent
+              setState(s => ({ ...s, isPlaying: false }));
+            });
+          }
+        }, 0);
+        return { ...prev, isPlaying: true };
       }
+
       const nextIdx = prev.shuffle
         ? Math.floor(Math.random() * prev.queue.length)
         : prev.queueIndex + 1;
@@ -348,20 +362,30 @@ export function usePlayerProvider() {
       if (nextIdx >= prev.queue.length) {
         if (prev.repeat === 'all' && prev.queue.length > 0) {
           const track = prev.queue[0];
-          if (audioRef.current) {
-            audioRef.current.src = track.audio_url;
-            audioRef.current.play();
-          }
+          // Play first track in queue outside setState
+          setTimeout(() => {
+            if (audioRef.current) {
+              audioRef.current.src = track.audio_url;
+              audioRef.current.play().catch(() => {
+                setState(s => ({ ...s, isPlaying: false }));
+              });
+            }
+          }, 0);
           return { ...prev, currentTrack: track, queueIndex: 0, isPlaying: true };
         }
         return { ...prev, isPlaying: false };
       }
 
       const track = prev.queue[nextIdx];
-      if (audioRef.current) {
-        audioRef.current.src = track.audio_url;
-        audioRef.current.play();
-      }
+      // Play next track outside setState
+      setTimeout(() => {
+        if (audioRef.current) {
+          audioRef.current.src = track.audio_url;
+          audioRef.current.play().catch(() => {
+            setState(s => ({ ...s, isPlaying: false }));
+          });
+        }
+      }, 0);
       return { ...prev, currentTrack: track, queueIndex: nextIdx, isPlaying: true };
     });
   }, []);
@@ -371,7 +395,9 @@ export function usePlayerProvider() {
     const idx = q.findIndex(t => t.id === track.id);
     if (audioRef.current) {
       audioRef.current.src = track.audio_url;
-      audioRef.current.play();
+      audioRef.current.play().catch(() => {
+        setState(s => ({ ...s, isPlaying: false }));
+      });
     }
     setState(s => ({
       ...s,
@@ -394,10 +420,13 @@ export function usePlayerProvider() {
     if (!audioRef.current || !state.currentTrack) return;
     if (state.isPlaying) {
       audioRef.current.pause();
+      setState(s => ({ ...s, isPlaying: false }));
     } else {
-      audioRef.current.play();
+      audioRef.current.play().catch(() => {
+        setState(s => ({ ...s, isPlaying: false }));
+      });
+      setState(s => ({ ...s, isPlaying: true }));
     }
-    setState(s => ({ ...s, isPlaying: !s.isPlaying }));
   }, [state.isPlaying, state.currentTrack]);
 
   const nextTrack = useCallback(() => {
