@@ -1504,7 +1504,7 @@ function AZRarityDropdownView({
                           initial={{ opacity: 0, scale: 0.9 }}
                           animate={{ opacity: 1, scale: 1 }}
                           transition={{ delay: i * 0.04 }}
-                          className="relative group"
+                          className="relative group aspect-[3/4] rarity-gpu-hint rounded-2xl p-1"
                         >
                           <AchievementCardStatic card={card} size="sm" onClick={() => onSelectCard(card)} />
                           <div className="absolute bottom-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -1604,7 +1604,7 @@ function RarityDropdownGrid({
                           initial={{ opacity: 0, scale: 0.9 }}
                           animate={{ opacity: 1, scale: 1 }}
                           transition={{ delay: i * 0.04 }}
-                          className="relative group"
+                          className="relative group aspect-[3/4] rarity-gpu-hint rounded-2xl p-1"
                         >
                           <AchievementCardStatic card={card} size="sm" onClick={() => onSelectCard(card)} />
                           <div className="absolute bottom-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
