@@ -9,8 +9,9 @@ import { useAuth } from '@/hooks/useAuth';
 import {
   ArrowLeft, Music, Disc, Sparkles, Crown, Gem, Award,
   Star, Filter, Grid3X3, List, ChevronDown, Share2,
-  Hash, Calendar, Copy,
+  Hash, Calendar, Copy, Trash2, Gavel,
 } from 'lucide-react';
+import { toast } from 'sonner';
 import { Card } from '@/components/ui/card';
 
 /* ─── Shimmer overlay keyframes ─── */
@@ -141,6 +142,37 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
   const [collapsedGroups, setCollapsedGroups] = useState<Set<string> | 'all'>('all');
   const [selectedCard, setSelectedCard] = useState<UserCard | null>(null);
   const [shareCard, setShareCard] = useState<UserCard | null>(null);
+  const [deleting, setDeleting] = useState(false);
+
+  // Delete a card (duplicates only)
+  const handleDeleteCard = async (card: UserCard) => {
+    if (!user || deleting) return;
+    setDeleting(true);
+    try {
+      const { error } = await (supabase as any)
+        .from('un_tunes_user_cards')
+        .delete()
+        .eq('id', card.id)
+        .eq('user_id', user.id);
+      if (error) throw error;
+      setCards(prev => prev.filter(c => c.id !== card.id));
+      setSelectedCard(null);
+      toast.success('Card deleted');
+    } catch (err) {
+      console.error('Delete card error:', err);
+      toast.error('Failed to delete card');
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+  // List a card on the auction marketplace
+  const handleListCard = (card: UserCard) => {
+    // Navigate to auction with pre-filled card data
+    setSelectedCard(null);
+    window.location.hash = `#auction-list-${card.id}`;
+    toast.success('Opening auction listing...');
+  };
 
   /** Map Un-Tunes card → AchievementCard shape for CardShareSheet */
   const toShareableCard = (c: UserCard): AchievementCard => ({
@@ -753,27 +785,52 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
                     </div>
 
                     {/* Actions */}
-                    <div className="p-4 bg-card flex items-center gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="flex-1 font-display tracking-wider text-xs"
-                        onClick={() => {
-                          setShareCard(card);
-                          setSelectedCard(null);
-                        }}
-                      >
-                        <Share2 size={14} className="mr-1.5" />
-                        SHARE
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="flex-1 font-display tracking-wider text-xs"
-                        onClick={() => setSelectedCard(null)}
-                      >
-                        CLOSE
-                      </Button>
+                    <div className="p-4 bg-card space-y-2">
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="flex-1 font-display tracking-wider text-xs"
+                          onClick={() => {
+                            setShareCard(card);
+                            setSelectedCard(null);
+                          }}
+                        >
+                          <Share2 size={14} className="mr-1.5" />
+                          SHARE
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="flex-1 font-display tracking-wider text-xs border-primary/30 text-primary hover:bg-primary/10"
+                          onClick={() => handleListCard(card)}
+                        >
+                          <Gavel size={14} className="mr-1.5" />
+                          LIST
+                        </Button>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {duplicateIds.has(card.id) && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="flex-1 font-display tracking-wider text-xs border-red-500/30 text-red-400 hover:bg-red-500/10"
+                            onClick={() => handleDeleteCard(card)}
+                            disabled={deleting}
+                          >
+                            <Trash2 size={14} className="mr-1.5" />
+                            {deleting ? 'DELETING...' : 'DELETE'}
+                          </Button>
+                        )}
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className={`${duplicateIds.has(card.id) ? 'flex-1' : 'w-full'} font-display tracking-wider text-xs`}
+                          onClick={() => setSelectedCard(null)}
+                        >
+                          CLOSE
+                        </Button>
+                      </div>
                     </div>
                   </Card>
                 );
