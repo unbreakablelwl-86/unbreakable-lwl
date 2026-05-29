@@ -98,7 +98,7 @@ const TETROMINOES = [
 // ─── Constants ───
 const COLS = 10;
 const ROWS = 20;
-const CELL_SIZE = 18;  // smaller blocks to fit mobile screens better
+const CELL_SIZE = 22;  // slightly larger for better visibility
 const CANVAS_WIDTH = COLS * CELL_SIZE;
 const CANVAS_HEIGHT = ROWS * CELL_SIZE;
 const THEME_SHIFT_INTERVAL = 15;
@@ -265,7 +265,7 @@ const TetrisGame = () => {
   useEffect(() => {
     const updateScale = () => {
       const maxW = Math.min(window.innerWidth - 32, 500);
-      setScale(Math.min(maxW / CANVAS_WIDTH, 1.2));
+      setScale(Math.min(maxW / CANVAS_WIDTH, 1.4));
     };
     updateScale();
     window.addEventListener("resize", updateScale);

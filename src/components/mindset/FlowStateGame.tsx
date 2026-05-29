@@ -116,7 +116,7 @@ const FlowStateGame = () => {
 
   // Live elapsed timer
   useEffect(() => {
-    if (view === "playing") {
+    if (gameState === "playing") {
       timerStartRef.current = Date.now();
       setElapsedSecs(0);
       timerIntervalRef.current = setInterval(() => {
@@ -126,7 +126,7 @@ const FlowStateGame = () => {
       clearInterval(timerIntervalRef.current);
     }
     return () => clearInterval(timerIntervalRef.current);
-  }, [view]);
+  }, [gameState]);
 
   useEffect(() => {
     const upd = () => setScale(Math.min((Math.min(window.innerWidth - 24, 560)) / W, 1.3));

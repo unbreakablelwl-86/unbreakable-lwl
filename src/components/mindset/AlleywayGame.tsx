@@ -212,7 +212,7 @@ const AlleywayGame = () => {
 
   // Live elapsed timer
   useEffect(() => {
-    if (gameState === "playing") {
+    if (view === "playing") {
       timerStartRef.current = Date.now();
       setElapsedSecs(0);
       timerIntervalRef.current = setInterval(() => {
@@ -222,7 +222,7 @@ const AlleywayGame = () => {
       clearInterval(timerIntervalRef.current);
     }
     return () => clearInterval(timerIntervalRef.current);
-  }, [gameState]);
+  }, [view]);
 
   useEffect(() => {
     const updateScale = () => {
