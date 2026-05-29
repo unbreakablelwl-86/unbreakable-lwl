@@ -6,7 +6,7 @@
  */
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Music, Sparkles, ChevronRight, X, Share2, Trash2, Crown, Gem, Award, Star } from 'lucide-react';
+import { Music, ChevronRight, X, Share2, Trash2, Crown, Gem, Award, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import confetti from 'canvas-confetti';
 import shieldLogo from '@/assets/unbreakable-shield.png';
@@ -697,8 +697,11 @@ export function PackOpening({ cards, purchaseType, packTierId, onClose, onMarkOp
                       transition={{ duration: 2, repeat: Infinity }}
                       className="text-center"
                     >
-                      <div className="w-16 h-16 rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center mx-auto mb-3" style={{ boxShadow: '0 0 30px rgba(255,85,0,0.2)' }}>
-                        <Sparkles className="w-6 h-6 text-primary" />
+                      <div className="w-14 h-14 rounded-full bg-primary/10 border border-primary/25 flex items-center justify-center mx-auto mb-3" style={{ boxShadow: '0 0 25px rgba(255,85,0,0.15)' }}>
+                        <svg className="w-6 h-6 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M12 2L12 6M12 18L12 22M6 12L2 12M22 12L18 12" opacity="0.4" />
+                          <circle cx="12" cy="12" r="3" fill="currentColor" opacity="0.6" />
+                        </svg>
                       </div>
                       <p className="font-display text-[10px] tracking-widest text-primary/80">TAP TO REVEAL</p>
                     </motion.div>
@@ -723,7 +726,7 @@ export function PackOpening({ cards, purchaseType, packTierId, onClose, onMarkOp
               transition={{ delay: 0.2, duration: 0.5 }}
               className="w-16 h-16 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto mb-4"
             >
-              <Sparkles className="w-7 h-7 text-primary" />
+              <Award className="w-7 h-7 text-primary" />
             </motion.div>
 
             <h2 className="font-display text-lg tracking-widest text-white mb-2">
