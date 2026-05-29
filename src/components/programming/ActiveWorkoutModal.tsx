@@ -46,7 +46,9 @@ import {
   Users,
   Lock,
   Target,
+  Timer,
 } from 'lucide-react';
+import { openZoneTimer } from '@/components/timer/FloatingZoneTimer';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getExerciseDetails } from '@/lib/exerciseLibrary';
 import { findCoachingDataByName } from '@/lib/exerciseCoachingData';
@@ -264,12 +266,21 @@ export function ActiveWorkoutModal({
                 <span className="text-sm text-muted-foreground">Elapsed</span>
                 <span className="font-display text-lg text-primary tabular-nums">{formatElapsed(elapsed)}</span>
               </div>
-              <button
-                onClick={() => setShowDurationEdit(!showDurationEdit)}
-                className="text-xs text-primary hover:text-primary/80 font-display tracking-wide"
-              >
-                {showDurationEdit ? 'HIDE' : 'EDIT TIME'}
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => openZoneTimer()}
+                  className="flex items-center gap-1 text-xs text-muted-foreground hover:text-primary font-display tracking-wide transition-colors"
+                  title="Pop out rest timer"
+                >
+                  <Timer className="w-3.5 h-3.5" /> REST
+                </button>
+                <button
+                  onClick={() => setShowDurationEdit(!showDurationEdit)}
+                  className="text-xs text-primary hover:text-primary/80 font-display tracking-wide"
+                >
+                  {showDurationEdit ? 'HIDE' : 'EDIT TIME'}
+                </button>
+              </div>
             </div>
             {showDurationEdit && (
               <div className="flex items-center gap-2 mb-3 p-2 rounded bg-muted/30 border border-border">

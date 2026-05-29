@@ -15,6 +15,7 @@ import { SplashScreen } from "@/components/SplashScreen";
 import AppLayout from "@/layouts/AppLayout";
 import { FloatingMiniPlayer } from "@/components/untunes/FloatingMiniPlayer";
 import { FloatingSessionTracker } from "@/components/tracker/FloatingSessionTracker";
+import { FloatingZoneTimer } from "@/components/timer/FloatingZoneTimer";
 import Index from "./pages/Index";
 import Social from "./pages/Social";
 import Calculators from "./pages/Calculators";
@@ -295,6 +296,7 @@ const App = () => {
           </BrowserRouter>
           <FloatingMiniPlayer />
           <FloatingSessionTracker />
+          <FloatingZoneTimer />
         </div>
       </TooltipProvider>
       </UniversityAdminProvider>

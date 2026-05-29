@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
-import { Play, Pause, RotateCcw, Clock, Timer, ChevronUp, ChevronDown } from "lucide-react";
+import { Play, Pause, RotateCcw, Clock, Timer, ChevronUp, ChevronDown, Minimize2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { openZoneTimer } from "@/components/timer/FloatingZoneTimer";
 
 // ═══════════════════════════════════════════════════════════════
 // ZONE — UNIVERSAL TIMER
@@ -343,6 +344,14 @@ const FocusTimerGame = () => {
           </div>
         </div>
       )}
+
+      {/* ── Pop-out mini button ── */}
+      <button
+        onClick={() => openZoneTimer()}
+        className="flex items-center gap-2 px-4 py-2 rounded-full border border-border/30 text-muted-foreground hover:text-primary hover:border-primary/50 transition-all text-xs font-display tracking-wider"
+      >
+        <Minimize2 className="w-3.5 h-3.5" /> POP OUT MINI
+      </button>
 
       {/* ── Branding ── */}
       <p className="text-[10px] text-muted-foreground/40 font-display tracking-[0.3em] mt-4">
