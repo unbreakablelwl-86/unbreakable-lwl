@@ -2078,9 +2078,9 @@ export function AchievementCardStatic({
 
         {/* ═══ FIFA CARD LAYOUT — Static version ═══ */}
 
-        {/* Unbreakable shield branding — all PB cards */}
+        {/* Unbreakable shield branding — all PB cards — sits BELOW shimmer (z-10 < z-12 shimmer) */}
         {!isProgramme && (
-          <div className={cn('absolute z-[14] flex items-center gap-1', size === 'sm' ? 'top-1.5 left-1.5' : 'top-2 left-2')}>
+          <div className={cn('absolute z-[10] flex items-center gap-1', size === 'sm' ? 'top-1.5 left-1.5' : 'top-2 left-2')}>
             <img src="/unbreakable-shield.png" alt=""
               className={cn(size === 'sm' ? 'w-3 h-3' : 'w-4 h-4', 'object-contain')}
               style={{ filter: `drop-shadow(0 0 3px ${config.accentHex}40)`, opacity: 0.55 }} />
