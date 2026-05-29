@@ -572,6 +572,32 @@ function AchievementFullViewer({
   const imageInputRef = useRef<HTMLInputElement>(null);
   const videoInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
+  const [viewMode, setViewMode] = useState<'animated' | 'share'>('animated');
+  const sharePreviewRef = useRef<HTMLCanvasElement>(null);
+
+  // Generate static share preview when switching to share mode
+  useEffect(() => {
+    if (viewMode !== 'share') return;
+    let cancelled = false;
+    (async () => {
+      const blob = await generateAchievementCardImage(card);
+      if (cancelled || !blob || !sharePreviewRef.current) return;
+      const url = URL.createObjectURL(blob);
+      const img = new Image();
+      img.onload = () => {
+        const canvas = sharePreviewRef.current;
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0);
+        URL.revokeObjectURL(url);
+      };
+      img.src = url;
+    })();
+    return () => { cancelled = true; };
+  }, [viewMode, card]);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -698,35 +724,88 @@ function AchievementFullViewer({
       <input ref={imageInputRef} type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
       <input ref={videoInputRef} type="file" accept="video/*" className="hidden" onChange={handleVideoUpload} />
 
-      {/* Card — shows static (already revealed) in library view */}
-      {/* If card has video, show auto-playing video instead of static card */}
+      {/* View mode toggle — Animated / Share Preview */}
+      <div className="absolute top-14 left-1/2 -translate-x-1/2 flex gap-1 bg-zinc-900/80 rounded-full p-0.5 z-10">
+        <button
+          className={cn(
+            'px-3 py-1 text-[10px] font-display tracking-wider rounded-full transition-all',
+            viewMode === 'animated' ? 'bg-primary text-black font-bold' : 'text-zinc-400 hover:text-white'
+          )}
+          onClick={() => setViewMode('animated')}
+        >
+          CARD
+        </button>
+        <button
+          className={cn(
+            'px-3 py-1 text-[10px] font-display tracking-wider rounded-full transition-all',
+            viewMode === 'share' ? 'bg-primary text-black font-bold' : 'text-zinc-400 hover:text-white'
+          )}
+          onClick={() => setViewMode('share')}
+        >
+          SHARE
+        </button>
+      </div>
+
+      {/* Card views — swipe between animated and static share preview */}
       <div className="flex-1 flex items-center justify-center px-8 w-full max-w-sm">
-        {card.video_url && card.media_type === 'video' ? (
-          <div className="relative w-72 h-[28rem] rounded-2xl overflow-hidden"
-            style={{ boxShadow: RARITY_GLOW[card.rarity as RarityTier]?.boxShadow }}>
-            <video
-              src={card.video_url}
-              autoPlay
-              loop
-              muted
-              playsInline
-              className="absolute inset-0 w-full h-full object-cover rounded-2xl"
-            />
-            {/* Overlay card info at bottom */}
-            <div className="absolute bottom-0 left-0 right-0 p-3 z-10" style={{
-              background: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 60%, transparent 100%)',
-            }}>
-              <p className="text-white font-display text-sm tracking-wider uppercase font-black" style={{ textShadow: '0 2px 8px rgba(0,0,0,0.8)' }}>
-                {card.owner_display_name || 'ATHLETE'}
+        <AnimatePresence mode="wait">
+          {viewMode === 'animated' ? (
+            <motion.div
+              key="animated"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.2 }}
+            >
+              {card.video_url && card.media_type === 'video' ? (
+                <div className="relative w-72 h-[28rem] rounded-2xl overflow-hidden"
+                  style={{ boxShadow: RARITY_GLOW[card.rarity as RarityTier]?.boxShadow }}>
+                  <video
+                    src={card.video_url}
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    className="absolute inset-0 w-full h-full object-cover rounded-2xl"
+                  />
+                  <div className="absolute bottom-0 left-0 right-0 p-3 z-10" style={{
+                    background: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 60%, transparent 100%)',
+                  }}>
+                    <p className="text-white font-display text-sm tracking-wider uppercase font-black" style={{ textShadow: '0 2px 8px rgba(0,0,0,0.8)' }}>
+                      {card.owner_display_name || 'ATHLETE'}
+                    </p>
+                    <p className="text-[10px] font-display tracking-wider" style={{ color: '#FF5500' }}>
+                      {card.exercise_name} · {formatPBValue(card.pb_value || 0, card.pb_unit || 'kg')}
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <AchievementCardStatic card={card} size="lg" />
+              )}
+            </motion.div>
+          ) : (
+            <motion.div
+              key="share-preview"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 20 }}
+              transition={{ duration: 0.2 }}
+              className="flex flex-col items-center gap-2"
+            >
+              <canvas
+                ref={sharePreviewRef}
+                className="w-56 h-72 rounded-xl object-contain"
+                style={{
+                  boxShadow: RARITY_GLOW[card.rarity as RarityTier]?.boxShadow,
+                  border: `1px solid ${RARITY_GLOW[card.rarity as RarityTier]?.primary}30`,
+                }}
+              />
+              <p className="text-[9px] text-zinc-500 font-display tracking-wider">
+                SHARE PREVIEW — THIS IS WHAT OTHERS SEE
               </p>
-              <p className="text-[10px] font-display tracking-wider" style={{ color: '#FF5500' }}>
-                {card.exercise_name} · {formatPBValue(card.pb_value || 0, card.pb_unit || 'kg')}
-              </p>
-            </div>
-          </div>
-        ) : (
-          <AchievementCardStatic card={card} size="lg" />
-        )}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* Card details + actions */}

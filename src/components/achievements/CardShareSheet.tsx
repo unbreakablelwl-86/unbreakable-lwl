@@ -39,104 +39,286 @@ const EXPORT_H = 2700;
 
 function drawRarityBackground(ctx: CanvasRenderingContext2D, tier: RarityTier) {
   const cfg = RARITY_GLOW[tier];
+  const W = EXPORT_W, H = EXPORT_H;
 
-  // Base fill
+  // ── Base fill ──
   ctx.fillStyle = cfg.cardBg;
-  ctx.fillRect(0, 0, EXPORT_W, EXPORT_H);
+  ctx.fillRect(0, 0, W, H);
 
-  // Radial glow centre
-  const grad = ctx.createRadialGradient(EXPORT_W / 2, EXPORT_H * 0.35, 0, EXPORT_W / 2, EXPORT_H * 0.35, EXPORT_W * 0.6);
-  grad.addColorStop(0, `${cfg.primary}20`);
-  grad.addColorStop(0.6, `${cfg.primary}08`);
-  grad.addColorStop(1, 'transparent');
-  ctx.fillStyle = grad;
-  ctx.fillRect(0, 0, EXPORT_W, EXPORT_H);
-
-  // Border with gradient
-  ctx.strokeStyle = cfg.primary;
-  ctx.lineWidth = 8;
-  ctx.strokeRect(60, 60, EXPORT_W - 120, EXPORT_H - 120);
-  // Inner border
-  ctx.strokeStyle = `${cfg.primary}40`;
-  ctx.lineWidth = 2;
-  ctx.strokeRect(80, 80, EXPORT_W - 160, EXPORT_H - 160);
-
-  // Tier-specific textures
+  // ── Tier-specific metallic/stone material finishes ──
   if (tier === 'bronze') {
-    // Fine grain overlay
-    for (let i = 0; i < 300; i++) {
-      const x = Math.random() * EXPORT_W;
-      const y = Math.random() * EXPORT_H;
-      ctx.fillStyle = `rgba(205,127,50,${Math.random() * 0.03})`;
-      ctx.fillRect(x, y, 2, 2);
+    // BRONZE — hammered stone with warm copper patina
+    // Deep copper radial hotspot
+    const g1 = ctx.createRadialGradient(W * 0.3, H * 0.2, 0, W * 0.3, H * 0.2, W * 0.7);
+    g1.addColorStop(0, 'rgba(205,127,50,0.18)');
+    g1.addColorStop(0.5, 'rgba(139,69,19,0.08)');
+    g1.addColorStop(1, 'transparent');
+    ctx.fillStyle = g1;
+    ctx.fillRect(0, 0, W, H);
+    // Stone grain texture — heavy
+    for (let i = 0; i < 2000; i++) {
+      const x = Math.random() * W;
+      const y = Math.random() * H;
+      const size = Math.random() * 4 + 1;
+      ctx.fillStyle = `rgba(205,127,50,${Math.random() * 0.06 + 0.01})`;
+      ctx.fillRect(x, y, size, size * 0.5);
+    }
+    // Vertical patina streaks
+    for (let i = 0; i < 40; i++) {
+      const x = Math.random() * W;
+      const streakH = Math.random() * H * 0.4 + H * 0.1;
+      const startY = Math.random() * (H - streakH);
+      const sg = ctx.createLinearGradient(x, startY, x, startY + streakH);
+      sg.addColorStop(0, 'transparent');
+      sg.addColorStop(0.3, `rgba(139,69,19,${Math.random() * 0.04})`);
+      sg.addColorStop(0.7, `rgba(205,127,50,${Math.random() * 0.03})`);
+      sg.addColorStop(1, 'transparent');
+      ctx.fillStyle = sg;
+      ctx.fillRect(x - 3, startY, 6, streakH);
     }
   } else if (tier === 'silver') {
-    // Brushed metal horizontal lines
-    for (let y = 100; y < EXPORT_H - 100; y += 4) {
-      ctx.strokeStyle = `rgba(192,192,192,${0.02 + Math.random() * 0.02})`;
+    // SILVER — brushed chrome with directional polish
+    // Chrome highlight sweep across upper third
+    const g1 = ctx.createLinearGradient(0, 0, W, H * 0.4);
+    g1.addColorStop(0, 'rgba(192,192,192,0.02)');
+    g1.addColorStop(0.3, 'rgba(232,232,232,0.12)');
+    g1.addColorStop(0.5, 'rgba(255,255,255,0.08)');
+    g1.addColorStop(0.7, 'rgba(192,192,192,0.04)');
+    g1.addColorStop(1, 'transparent');
+    ctx.fillStyle = g1;
+    ctx.fillRect(0, 0, W, H);
+    // Brushed horizontal lines — dense, fine
+    for (let y = 60; y < H - 60; y += 2) {
+      const alpha = 0.02 + Math.random() * 0.04;
+      const offset = Math.sin(y * 0.005) * 30;
+      ctx.strokeStyle = `rgba(200,200,200,${alpha})`;
       ctx.lineWidth = 1;
       ctx.beginPath();
-      ctx.moveTo(100, y);
-      ctx.lineTo(EXPORT_W - 100, y);
+      ctx.moveTo(60 + offset, y);
+      ctx.lineTo(W - 60 + offset, y);
       ctx.stroke();
     }
-  } else if (tier === 'gold') {
-    // Gold dust particles
-    for (let i = 0; i < 200; i++) {
-      const x = Math.random() * EXPORT_W;
-      const y = Math.random() * EXPORT_H;
-      const r = Math.random() * 3 + 1;
+    // Chrome specular dots
+    for (let i = 0; i < 400; i++) {
+      const x = Math.random() * W;
+      const y = Math.random() * H;
+      const r = Math.random() * 2 + 0.5;
       ctx.beginPath();
       ctx.arc(x, y, r, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(255,215,0,${Math.random() * 0.06})`;
+      ctx.fillStyle = `rgba(232,232,232,${Math.random() * 0.05})`;
       ctx.fill();
     }
-  } else if (tier === 'diamond') {
-    // Geometric facets
-    for (let i = 0; i < 20; i++) {
-      const cx = Math.random() * EXPORT_W;
-      const cy = Math.random() * EXPORT_H;
+  } else if (tier === 'gold') {
+    // GOLD — liquid gold foil with embossed lustre
+    // Multiple gold radial hotspots for depth
+    const spots = [[0.25, 0.15], [0.75, 0.3], [0.4, 0.7], [0.6, 0.9]];
+    for (const [sx, sy] of spots) {
+      const g = ctx.createRadialGradient(W * sx, H * sy, 0, W * sx, H * sy, W * 0.5);
+      g.addColorStop(0, 'rgba(255,215,0,0.14)');
+      g.addColorStop(0.4, 'rgba(184,134,11,0.06)');
+      g.addColorStop(1, 'transparent');
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, W, H);
+    }
+    // Foil shimmer — diagonal light bands
+    for (let i = 0; i < 8; i++) {
+      const startX = Math.random() * W * 1.5 - W * 0.25;
+      const bandW = 60 + Math.random() * 120;
+      const bg = ctx.createLinearGradient(startX, 0, startX + bandW, H);
+      bg.addColorStop(0, 'transparent');
+      bg.addColorStop(0.3, `rgba(255,215,0,${0.03 + Math.random() * 0.05})`);
+      bg.addColorStop(0.5, `rgba(255,245,200,${0.02 + Math.random() * 0.04})`);
+      bg.addColorStop(0.7, `rgba(184,134,11,${0.02 + Math.random() * 0.03})`);
+      bg.addColorStop(1, 'transparent');
+      ctx.fillStyle = bg;
+      ctx.fillRect(startX, 0, bandW, H);
+    }
+    // Gold dust particles — larger, more visible
+    for (let i = 0; i < 500; i++) {
+      const x = Math.random() * W;
+      const y = Math.random() * H;
+      const r = Math.random() * 3 + 0.5;
       ctx.beginPath();
-      ctx.moveTo(cx, cy - 40);
-      ctx.lineTo(cx + 30, cy);
-      ctx.lineTo(cx, cy + 40);
-      ctx.lineTo(cx - 30, cy);
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(255,215,0,${Math.random() * 0.08 + 0.02})`;
+      ctx.fill();
+    }
+    // Diamond-cut border texture
+    ctx.strokeStyle = '#FFD70040';
+    ctx.lineWidth = 1;
+    for (let i = 0; i < 200; i++) {
+      const bx = 55 + Math.random() * (W - 110);
+      const by = 55 + Math.random() * (H - 110);
+      if (bx < 70 || bx > W - 70 || by < 70 || by > H - 70) {
+        ctx.beginPath();
+        ctx.moveTo(bx - 4, by);
+        ctx.lineTo(bx, by - 4);
+        ctx.lineTo(bx + 4, by);
+        ctx.lineTo(bx, by + 4);
+        ctx.closePath();
+        ctx.stroke();
+      }
+    }
+  } else if (tier === 'diamond') {
+    // DIAMOND — prismatic holographic with crystalline facets
+    // Multi-colour prismatic gradient background
+    const g1 = ctx.createLinearGradient(0, 0, W, H);
+    g1.addColorStop(0, 'rgba(0,191,255,0.06)');
+    g1.addColorStop(0.2, 'rgba(191,95,255,0.08)');
+    g1.addColorStop(0.4, 'rgba(0,206,209,0.06)');
+    g1.addColorStop(0.6, 'rgba(125,249,255,0.10)');
+    g1.addColorStop(0.8, 'rgba(191,95,255,0.06)');
+    g1.addColorStop(1, 'rgba(0,191,255,0.04)');
+    ctx.fillStyle = g1;
+    ctx.fillRect(0, 0, W, H);
+    // Holographic light bars — diagonal rainbow streaks
+    for (let i = 0; i < 12; i++) {
+      const x = Math.random() * W * 1.2 - W * 0.1;
+      const bw = 40 + Math.random() * 100;
+      const colors = ['rgba(125,249,255,', 'rgba(191,95,255,', 'rgba(0,206,209,', 'rgba(240,248,255,'];
+      const c = colors[Math.floor(Math.random() * colors.length)];
+      const bg = ctx.createLinearGradient(x, 0, x + bw, H);
+      bg.addColorStop(0, 'transparent');
+      bg.addColorStop(0.4, `${c}${(0.03 + Math.random() * 0.05).toFixed(2)})`);
+      bg.addColorStop(0.6, `${c}${(0.02 + Math.random() * 0.04).toFixed(2)})`);
+      bg.addColorStop(1, 'transparent');
+      ctx.fillStyle = bg;
+      ctx.fillRect(x, 0, bw, H);
+    }
+    // Crystalline facet overlay — geometric diamonds
+    for (let i = 0; i < 50; i++) {
+      const cx = Math.random() * W;
+      const cy = Math.random() * H;
+      const s = 20 + Math.random() * 60;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy - s);
+      ctx.lineTo(cx + s * 0.6, cy);
+      ctx.lineTo(cx, cy + s);
+      ctx.lineTo(cx - s * 0.6, cy);
       ctx.closePath();
-      ctx.strokeStyle = `rgba(125,249,255,${Math.random() * 0.05})`;
+      const fc = Math.random() > 0.5 ? '125,249,255' : '191,95,255';
+      ctx.strokeStyle = `rgba(${fc},${(Math.random() * 0.06 + 0.02).toFixed(2)})`;
       ctx.lineWidth = 1;
       ctx.stroke();
     }
+    // Spectral scatter dots
+    for (let i = 0; i < 300; i++) {
+      const x = Math.random() * W;
+      const y = Math.random() * H;
+      const r = Math.random() * 2 + 0.5;
+      const sc = ['125,249,255', '191,95,255', '0,206,209', '240,248,255'][Math.floor(Math.random() * 4)];
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(${sc},${(Math.random() * 0.08 + 0.02).toFixed(2)})`;
+      ctx.fill();
+    }
   } else if (tier === 'platinum') {
-    // Directional grain
-    for (let y = 100; y < EXPORT_H - 100; y += 3) {
-      const offset = Math.sin(y * 0.01) * 20;
-      ctx.strokeStyle = `rgba(229,228,226,${0.015 + Math.random() * 0.015})`;
+    // PLATINUM — brushed platinum with rose-gold inlay threads
+    // Platinum base gradient — subtle warmth
+    const g1 = ctx.createLinearGradient(0, 0, W, H);
+    g1.addColorStop(0, 'rgba(229,228,226,0.06)');
+    g1.addColorStop(0.3, 'rgba(183,110,121,0.04)');
+    g1.addColorStop(0.6, 'rgba(229,228,226,0.08)');
+    g1.addColorStop(1, 'rgba(183,110,121,0.03)');
+    ctx.fillStyle = g1;
+    ctx.fillRect(0, 0, W, H);
+    // Directional grain — sinuous platinum lines
+    for (let y = 50; y < H - 50; y += 2) {
+      const offset = Math.sin(y * 0.008) * 25 + Math.sin(y * 0.003) * 15;
+      const alpha = 0.02 + Math.random() * 0.03;
+      ctx.strokeStyle = `rgba(229,228,226,${alpha})`;
       ctx.lineWidth = 1;
       ctx.beginPath();
-      ctx.moveTo(100 + offset, y);
-      ctx.lineTo(EXPORT_W - 100 + offset, y);
+      ctx.moveTo(50 + offset, y);
+      ctx.lineTo(W - 50 + offset, y);
+      ctx.stroke();
+    }
+    // Rose-gold thread inlays — thin vertical accent lines
+    for (let i = 0; i < 15; i++) {
+      const x = 100 + Math.random() * (W - 200);
+      const sg = ctx.createLinearGradient(x, 0, x, H);
+      sg.addColorStop(0, 'transparent');
+      sg.addColorStop(0.2, `rgba(183,110,121,${0.03 + Math.random() * 0.04})`);
+      sg.addColorStop(0.5, `rgba(229,228,226,${0.02 + Math.random() * 0.03})`);
+      sg.addColorStop(0.8, `rgba(183,110,121,${0.02 + Math.random() * 0.03})`);
+      sg.addColorStop(1, 'transparent');
+      ctx.fillStyle = sg;
+      ctx.fillRect(x - 1, 0, 2, H);
+    }
+    // Crown/shield emblem watermark — top centre
+    ctx.save();
+    ctx.globalAlpha = 0.035;
+    ctx.font = '900 200px system-ui';
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#E5E4E2';
+    ctx.fillText('♛', W / 2, 280);
+    ctx.restore();
+    // Linen micro-texture
+    for (let i = 0; i < 800; i++) {
+      const x = Math.random() * W;
+      const y = Math.random() * H;
+      ctx.fillStyle = `rgba(229,228,226,${Math.random() * 0.015})`;
+      ctx.fillRect(x, y, 3, 1);
+    }
+  }
+
+  // ── Border system (all tiers) ──
+  // Outer border — tier primary colour
+  ctx.strokeStyle = cfg.primary;
+  ctx.lineWidth = tier === 'platinum' ? 10 : tier === 'diamond' ? 8 : 6;
+  ctx.beginPath();
+  ctx.roundRect(50, 50, W - 100, H - 100, 24);
+  ctx.stroke();
+
+  // Inner accent border
+  ctx.strokeStyle = `${cfg.accent || cfg.primary}30`;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.roundRect(70, 70, W - 140, H - 140, 20);
+  ctx.stroke();
+
+  // Corner accents for Gold+ tiers
+  if (['gold', 'diamond', 'platinum'].includes(tier)) {
+    const cornerSize = 40;
+    const corners = [[50, 50], [W - 50, 50], [50, H - 50], [W - 50, H - 50]];
+    ctx.strokeStyle = `${cfg.primary}60`;
+    ctx.lineWidth = 3;
+    for (const [cx, cy] of corners) {
+      const dx = cx < W / 2 ? 1 : -1;
+      const dy = cy < H / 2 ? 1 : -1;
+      ctx.beginPath();
+      ctx.moveTo(cx + dx * cornerSize, cy);
+      ctx.lineTo(cx, cy);
+      ctx.lineTo(cx, cy + dy * cornerSize);
       ctx.stroke();
     }
   }
 }
 
-function drawWatermark(ctx: CanvasRenderingContext2D) {
-  // Shield watermark (centre, low opacity)
+function drawWatermark(ctx: CanvasRenderingContext2D, tier: RarityTier) {
+  const cfg = RARITY_GLOW[tier];
+
+  // Shield watermark (centre, low opacity — tinted to tier colour)
   ctx.save();
-  ctx.globalAlpha = 0.04;
-  ctx.font = '900 300px system-ui';
+  ctx.globalAlpha = 0.03;
+  ctx.font = '900 280px system-ui';
   ctx.textAlign = 'center';
-  ctx.fillStyle = '#FFFFFF';
-  ctx.fillText('🛡️', EXPORT_W / 2, EXPORT_H * 0.4);
+  ctx.fillStyle = cfg.primary;
+  ctx.fillText('🛡️', EXPORT_W / 2, EXPORT_H * 0.42);
   ctx.restore();
 
-  // "Live Without Limits™" bottom watermark
+  // "UNBREAKABLE · LIVE WITHOUT LIMITS™" bottom watermark
   ctx.save();
-  ctx.globalAlpha = 0.35;
-  ctx.font = '400 28px system-ui';
+  ctx.globalAlpha = 0.4;
+  ctx.font = '500 30px system-ui';
   ctx.textAlign = 'center';
+  ctx.fillStyle = cfg.primary;
+  ctx.letterSpacing = '4px';
+  ctx.fillText('UNBREAKABLE', EXPORT_W / 2, EXPORT_H - 120);
+  ctx.globalAlpha = 0.25;
+  ctx.font = '300 22px system-ui';
   ctx.fillStyle = '#FFFFFF';
-  ctx.fillText('UNBREAKABLE · LIVE WITHOUT LIMITS™', EXPORT_W / 2, EXPORT_H - 100);
+  ctx.fillText('LIVE WITHOUT LIMITS™', EXPORT_W / 2, EXPORT_H - 85);
   ctx.restore();
 }
 
@@ -572,7 +754,7 @@ async function generateShareImage(
     }
 
     // Watermark
-    drawWatermark(ctx);
+    drawWatermark(ctx, tier);
 
     return new Promise((resolve) => canvas.toBlob(resolve, 'image/png'));
   } catch (err) {
@@ -757,40 +939,26 @@ export function CardShareSheet({
   const RARITY_RANK: Record<string, number> = { platinum: 5, diamond: 4, gold: 3, silver: 2, bronze: 1, standard: 0 };
   const isAnimated = (RARITY_RANK[tier] || 0) >= 3;
 
-  // Share via native share sheet — animated for Gold+, static for others
+  // Share via native share sheet — always static PNG with premium metallic/stone finish
   const handleNativeShare = useCallback(async () => {
     setIsExporting(true);
     try {
-      let blob: Blob | null = null;
-      let ext = 'png';
-      let mime = 'image/png';
-
-      // Gold+ cards get animated share asset (webm with shimmer/effects)
-      if (isAnimated) {
-        const asset = await generateAnimatedShareAsset(card, cardSystem);
-        if (asset) {
-          blob = asset.blob;
-          ext = asset.ext;
-          mime = asset.mime;
-        }
-      }
-
-      // Static fallback for Bronze/Silver or if animation failed
-      if (!blob) {
-        blob = await captureCardImage();
-      }
+      const blob = await captureCardImage();
 
       if (!blob) {
         toast({ title: 'Error', description: 'Could not generate card image.' });
         return;
       }
 
+      const ext = 'png';
+      const mime = 'image/png';
+
       const fileName = `unbreakable-${tier}-${(card.title || 'card').replace(/\s+/g, '-').toLowerCase()}.${ext}`;
       const file = new File([blob], fileName, { type: mime });
 
       if (navigator.share && navigator.canShare?.({ files: [file] })) {
         await navigator.share({ files: [file] });
-        toast({ title: 'Shared!', description: `${isAnimated ? 'Animated card' : 'Card'} shared.` });
+        toast({ title: 'Shared!', description: 'Card shared.' });
       } else {
         // Fallback: download — use `blob` not `asset.blob` (asset may be undefined)
         const url = URL.createObjectURL(blob);
@@ -799,7 +967,7 @@ export function CardShareSheet({
         link.download = fileName;
         link.click();
         URL.revokeObjectURL(url);
-        toast({ title: 'Downloaded!', description: `${isAnimated ? 'Animated card' : 'Card image'} saved.` });
+        toast({ title: 'Downloaded!', description: 'Card image saved.' });
       }
       onOpenChange(false);
     } catch (err) {
@@ -809,43 +977,27 @@ export function CardShareSheet({
     } finally {
       setIsExporting(false);
     }
-  }, [card, cardSystem, tier, caption, toast, onOpenChange, isAnimated, captureCardImage]);
+  }, [card, cardSystem, tier, caption, toast, onOpenChange, captureCardImage]);
 
-  // Download (animated webm for Gold+, static PNG for others)
+  // Download — always static PNG with premium metallic/stone finish
   const handleDownload = useCallback(async () => {
     setIsExporting(true);
     try {
-      let blob: Blob | null = null;
-      let ext = 'png';
-
-      // Gold+ cards get animated share asset
-      if (isAnimated) {
-        const asset = await generateAnimatedShareAsset(card, cardSystem);
-        if (asset) {
-          blob = asset.blob;
-          ext = asset.ext;
-        }
-      }
-
-      // Static fallback for Bronze/Silver or if animation failed
-      if (!blob) {
-        blob = await captureCardImage();
-        ext = 'png';
-      }
+      const blob = await captureCardImage();
 
       if (blob) {
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        link.download = `unbreakable-${tier}-${(card.title || 'card').replace(/\s+/g, '-').toLowerCase()}.${ext}`;
+        link.download = `unbreakable-${tier}-${(card.title || 'card').replace(/\s+/g, '-').toLowerCase()}.png`;
         link.click();
         URL.revokeObjectURL(url);
-        toast({ title: 'Downloaded!', description: `${isAnimated ? 'Animated card' : 'Card image'} saved to your device.` });
+        toast({ title: 'Downloaded!', description: 'Card image saved to your device.' });
       }
     } finally {
       setIsExporting(false);
     }
-  }, [card, cardSystem, tier, toast, captureCardImage, isAnimated]);
+  }, [card, tier, toast, captureCardImage]);
   // Copy deep link
   const handleCopyLink = useCallback(async () => {
     const deepLink = `${window.location.origin}/cards/${card.id}`;
@@ -944,21 +1096,8 @@ export function CardShareSheet({
             disabled={isExporting}
           >
             {isExporting ? <Loader2 className="w-3 h-3 mr-2 animate-spin" /> : <Download className="w-3 h-3 mr-2" />}
-            {isAnimated ? 'SAVE ANIMATED CARD' : 'SAVE IMAGE'}
+            SAVE IMAGE
           </Button>
-
-          {isAnimated && (
-            <Button
-              variant="outline"
-              size="sm"
-              className="w-full text-xs font-display tracking-wider border-zinc-600 text-zinc-300 hover:bg-zinc-800"
-              onClick={handleDownload}
-              disabled={isExporting}
-            >
-              {isExporting ? <Loader2 className="w-3 h-3 mr-2 animate-spin" /> : <Camera className="w-3 h-3 mr-2" />}
-              SAVE AS IMAGE
-            </Button>
-          )}
         </div>
 
         {/* Footer */}
