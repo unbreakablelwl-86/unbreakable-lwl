@@ -349,10 +349,90 @@ async function generateShareImage(
     // Draw rarity background
     drawRarityBackground(ctx, tier);
 
-    // Card type label
-    ctx.textAlign = 'center';
+    // Try to load hero image first
+    let heroImg: HTMLImageElement | null = null;
+    const heroUrl = card.image_url;
+    if (heroUrl) {
+      try {
+        heroImg = await new Promise<HTMLImageElement>((resolve, reject) => {
+          const img = new Image();
+          img.crossOrigin = 'anonymous';
+          img.onload = () => resolve(img);
+          img.onerror = () => reject(new Error('Image load failed'));
+          img.src = heroUrl;
+          setTimeout(() => reject(new Error('Image load timeout')), 4000);
+        });
+      } catch {
+        heroImg = null;
+      }
+    }
+
+    // Draw hero image as background if available
+    if (heroImg) {
+      const imgRatio = heroImg.width / heroImg.height;
+      const canvasRatio = EXPORT_W / EXPORT_H;
+      let drawW: number, drawH: number, drawX: number, drawY: number;
+      if (imgRatio > canvasRatio) {
+        drawH = EXPORT_H;
+        drawW = drawH * imgRatio;
+        drawX = (EXPORT_W - drawW) / 2;
+        drawY = 0;
+      } else {
+        drawW = EXPORT_W;
+        drawH = drawW / imgRatio;
+        drawX = 0;
+        drawY = 0; // top-aligned for athlete photos
+      }
+      ctx.globalAlpha = 0.6;
+      ctx.drawImage(heroImg, drawX, drawY, drawW, drawH);
+      ctx.globalAlpha = 1;
+      // Dark gradient overlay so text is readable
+      const overlay = ctx.createLinearGradient(0, 0, 0, EXPORT_H);
+      overlay.addColorStop(0, 'rgba(0,0,0,0.3)');
+      overlay.addColorStop(0.4, 'rgba(0,0,0,0.5)');
+      overlay.addColorStop(0.7, 'rgba(0,0,0,0.85)');
+      overlay.addColorStop(1, 'rgba(0,0,0,0.95)');
+      ctx.fillStyle = overlay;
+      ctx.fillRect(0, 0, EXPORT_W, EXPORT_H);
+    }
+
+    // Rarity badge — top right
+    ctx.textAlign = 'right';
+    ctx.font = '900 56px system-ui';
+    ctx.fillStyle = cfg.primary;
+    ctx.save();
+    ctx.shadowColor = `${cfg.primary}80`;
+    ctx.shadowBlur = cfg.intensity * 10 + 10;
+    ctx.fillText(cfg.label, EXPORT_W - 100, 120);
+    ctx.restore();
+
+    // Overall rating — top left, large
+    if (card.overall_rating) {
+      ctx.textAlign = 'left';
+      ctx.font = '900 120px system-ui';
+      ctx.fillStyle = cfg.primary;
+      ctx.save();
+      ctx.shadowColor = `${cfg.primary}80`;
+      ctx.shadowBlur = 25;
+      ctx.fillText(String(card.overall_rating), 80, 180);
+      ctx.restore();
+      ctx.font = '600 28px system-ui';
+      ctx.fillStyle = `${cfg.primary}90`;
+      ctx.fillText('OVR', 80, 215);
+    }
+
+    // Category badge — below OVR
+    const catLabel = card.category_label ||
+      (['run', 'cycle', 'row', 'swim'].includes(card.activity_category || '') ? 'CARDIO' : 'STRENGTH');
+    ctx.textAlign = 'left';
+    ctx.font = '700 32px system-ui';
     ctx.fillStyle = `${cfg.primary}CC`;
-    ctx.font = '600 40px system-ui';
+    ctx.fillText(catLabel, 80, 260);
+
+    // Card type label — small
+    ctx.textAlign = 'center';
+    ctx.fillStyle = `${cfg.primary}80`;
+    ctx.font = '600 28px system-ui';
     const typeLabel = card.card_type === 'programme_trophy'
       ? 'PROGRAMME TROPHY'
       : card.card_type === 'pb_global'
@@ -360,75 +440,46 @@ async function generateShareImage(
         : type === 'untunes'
           ? 'UN-TUNES CARD'
           : 'PERSONAL BEST CARD';
-    ctx.fillText(typeLabel, EXPORT_W / 2, 220);
+    ctx.fillText(typeLabel, EXPORT_W / 2, EXPORT_H * 0.42);
 
-    // Rarity badge
-    ctx.font = '900 56px system-ui';
+    // Athlete name — large
+    if (card.owner_display_name) {
+      ctx.textAlign = 'left';
+      ctx.font = '900 64px system-ui';
+      ctx.fillStyle = '#FFFFFF';
+      ctx.save();
+      ctx.shadowColor = `${cfg.primary}50`;
+      ctx.shadowBlur = 15;
+      ctx.fillText(card.owner_display_name.toUpperCase(), 80, EXPORT_H * 0.55);
+      ctx.restore();
+    }
+
+    // Title (exercise name)
+    ctx.textAlign = 'left';
     ctx.fillStyle = cfg.primary;
-    ctx.save();
-    ctx.shadowColor = `${cfg.primary}80`;
-    ctx.shadowBlur = cfg.intensity * 10 + 10;
-    ctx.fillText(cfg.label, EXPORT_W / 2, 310);
-    ctx.restore();
-
-    // Icon circle
-    ctx.beginPath();
-    ctx.arc(EXPORT_W / 2, 700, 250, 0, Math.PI * 2);
-    ctx.fillStyle = `${cfg.primary}10`;
-    ctx.fill();
-    ctx.strokeStyle = `${cfg.primary}40`;
-    ctx.lineWidth = 4;
-    ctx.stroke();
-
-    // Exercise icon
-    ctx.font = '200px system-ui';
-    ctx.textAlign = 'center';
-    ctx.fillStyle = cfg.primary;
-    const icon = card.card_type === 'programme_trophy' ? '🏆'
-      : (card.exercise_name?.toLowerCase().includes('run') || card.activity_category === 'run') ? '🏃'
-      : type === 'untunes' ? '🎵'
-      : '💪';
-    ctx.fillText(icon, EXPORT_W / 2, 770);
-
-    // Title
-    ctx.fillStyle = '#FFFFFF';
-    ctx.font = '900 80px system-ui';
+    ctx.font = '900 52px system-ui';
     const title = (card.title || card.exercise_name || 'Achievement').toUpperCase();
     // Truncate long titles
-    const maxWidth = EXPORT_W - 240;
+    const maxWidth = EXPORT_W - 200;
     let displayTitle = title;
     while (ctx.measureText(displayTitle).width > maxWidth && displayTitle.length > 10) {
       displayTitle = displayTitle.slice(0, -3) + '…';
     }
-    ctx.fillText(displayTitle, EXPORT_W / 2, 1100);
+    // Exercise name + weight + date line
+    const pbLine = card.pb_value
+      ? `${displayTitle} · ${card.pb_value}${card.pb_unit || 'KG'}`
+      : displayTitle;
+    ctx.fillText(pbLine, 80, EXPORT_H * 0.62);
 
-    // Subtitle (lift stat)
-    if (card.subtitle || (card.record_value && card.record_unit)) {
-      ctx.font = '600 52px system-ui';
-      ctx.fillStyle = `${cfg.primary}DD`;
-      ctx.save();
-      ctx.shadowColor = `${cfg.primary}60`;
-      ctx.shadowBlur = 15;
-      const sub = card.subtitle || `${card.record_value}${card.record_unit}`;
-      ctx.fillText(sub, EXPORT_W / 2, 1190);
-      ctx.restore();
+    // Date line
+    if (card.earned_at) {
+      ctx.font = '500 32px system-ui';
+      ctx.fillStyle = `${cfg.primary}AA`;
+      const dateStr = new Date(card.earned_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase();
+      ctx.fillText(dateStr, 80, EXPORT_H * 0.66);
     }
 
-    // Overall rating (large number)
-    if (card.overall_rating) {
-      ctx.font = '900 160px system-ui';
-      ctx.fillStyle = '#FFFFFF';
-      ctx.save();
-      ctx.shadowColor = `${cfg.primary}80`;
-      ctx.shadowBlur = 30;
-      ctx.fillText(String(card.overall_rating), EXPORT_W / 2, 1440);
-      ctx.restore();
-      ctx.font = '600 32px system-ui';
-      ctx.fillStyle = '#FFFFFF80';
-      ctx.fillText('OVERALL RATING', EXPORT_W / 2, 1490);
-    }
-
-    // 6-stat bar — use correct per-type keys
+    // 6-stat grid — horizontal bars like the in-app card
     if (card.athlete_stats) {
       const stats = card.athlete_stats as Record<string, number>;
       const isCardio = ['run', 'cycle', 'row', 'swim'].includes(card.activity_category || '');
@@ -436,84 +487,88 @@ async function generateShareImage(
         ? ['spd', 'end', 'con', 'dst', 'elv', 'rnk']
         : ['str', 'pwr', 'con', 'pgs', 'exp', 'rnk'];
       const statLabels = isCardio
-        ? ['SPD', 'END', 'CON', 'DST', 'ELV', 'RNK']
-        : ['STR', 'PWR', 'CON', 'PGS', 'EXP', 'RNK'];
-      const barY = card.overall_rating ? 1560 : 1400;
-      const barW = (EXPORT_W - 320) / 6;
+        ? ['SPEED', 'ENDURANCE', 'CONSISTENCY', 'DISTANCE', 'ELEVATION', 'GLOBAL RANK']
+        : ['STRENGTH', 'POWER', 'CONSISTENCY', 'PROGRESSION', 'EXPERIENCE', 'GLOBAL RANK'];
+      const statColors = ['#FF5500', '#FF2200', '#22C55E', '#FACC15', '#3B82F6', '#A855F7'];
 
+      // Rounded panel background
+      const panelX = 60, panelY = EXPORT_H * 0.69;
+      const panelW = EXPORT_W - 120, panelH = 340;
+      ctx.fillStyle = `${cfg.primary}08`;
+      ctx.strokeStyle = `${cfg.primary}18`;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.roundRect(panelX, panelY, panelW, panelH, 16);
+      ctx.fill();
+      ctx.stroke();
+
+      // 3x2 grid of stats
+      const colW = (panelW - 60) / 3;
+      const rowH = panelH / 2;
       statKeys.forEach((key, i) => {
         const val = stats[key] || 0;
-        const x = 160 + i * barW + barW / 2;
+        const col = i % 3;
+        const row = Math.floor(i / 3);
+        const x = panelX + 30 + col * colW;
+        const y = panelY + 30 + row * rowH;
 
-        // Stat value
-        ctx.font = '900 44px system-ui';
-        ctx.fillStyle = cfg.primary;
-        ctx.textAlign = 'center';
+        // Label + value on same line
+        ctx.textAlign = 'left';
+        ctx.font = '900 22px system-ui';
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillText(statLabels[i], x, y + 24);
+
+        ctx.textAlign = 'right';
+        ctx.font = '900 32px system-ui';
+        ctx.fillStyle = statColors[i];
         ctx.save();
-        ctx.shadowColor = `${cfg.primary}50`;
-        ctx.shadowBlur = 8;
-        ctx.fillText(String(val), x, barY);
+        ctx.shadowColor = `${statColors[i]}40`;
+        ctx.shadowBlur = 6;
+        ctx.fillText(String(val), x + colW - 20, y + 26);
         ctx.restore();
 
-        // Stat label
-        ctx.font = '400 24px system-ui';
-        ctx.fillStyle = '#FFFFFF60';
-        ctx.fillText(statLabels[i], x, barY + 36);
+        // Horizontal bar
+        const barX = x, barY2 = y + 36, barW = colW - 20, barH = 8;
+        ctx.fillStyle = 'rgba(255,85,0,0.10)';
+        ctx.beginPath();
+        ctx.roundRect(barX, barY2, barW, barH, 4);
+        ctx.fill();
 
-        // Bar background
-        ctx.fillStyle = '#FFFFFF10';
-        ctx.fillRect(x - 16, barY + 48, 32, 100);
-        // Bar fill
-        ctx.fillStyle = `${cfg.primary}CC`;
-        const fillH = (val / 99) * 100;
-        ctx.fillRect(x - 16, barY + 48 + (100 - fillH), 32, fillH);
+        const fillW = Math.max(4, (val / 99) * barW);
+        const barGrad = ctx.createLinearGradient(barX, 0, barX + fillW, 0);
+        barGrad.addColorStop(0, `${statColors[i]}60`);
+        barGrad.addColorStop(1, statColors[i]);
+        ctx.fillStyle = barGrad;
+        ctx.beginPath();
+        ctx.roundRect(barX, barY2, fillW, barH, 4);
+        ctx.fill();
       });
     }
 
     // Bio line
     if (card.bio_line) {
-      ctx.font = 'italic 36px system-ui';
-      ctx.fillStyle = '#FFFFFF90';
-      ctx.textAlign = 'center';
-      const bioY = card.athlete_stats ? 1850 : card.overall_rating ? 1560 : 1400;
-      // Word wrap
-      const words = card.bio_line.split(' ');
-      let line = '';
-      let y = bioY;
-      for (const word of words) {
-        const test = line + word + ' ';
-        if (ctx.measureText(test).width > EXPORT_W - 300) {
-          ctx.fillText(`"${line.trim()}"`, EXPORT_W / 2, y);
-          line = word + ' ';
-          y += 44;
-        } else {
-          line = test;
-        }
-      }
-      if (line.trim()) ctx.fillText(`"${line.trim()}"`, EXPORT_W / 2, y);
+      ctx.font = 'italic 32px system-ui';
+      ctx.fillStyle = '#FFFFFFCC';
+      ctx.textAlign = 'left';
+      const bioY = EXPORT_H * 0.91;
+      ctx.fillText(`"${card.bio_line}"`, 80, bioY);
     }
 
-    // Category badge
-    const catLabel = card.category_label ||
-      (['run', 'cycle', 'row', 'swim'].includes(card.activity_category || '') ? 'CARDIO' : 'STRENGTH');
-    ctx.font = '700 28px system-ui';
-    ctx.fillStyle = `${cfg.primary}AA`;
-    ctx.fillText(catLabel, EXPORT_W / 2, EXPORT_H - 300);
-
-    // Date stamp
-    const dateStr = card.earned_at
-      ? new Date(card.earned_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+    // Bottom row: AWARDED date + card number + rank badge
+    ctx.textAlign = 'left';
+    ctx.font = '400 22px monospace';
+    ctx.fillStyle = '#FFFFFF40';
+    const awardedDate = card.earned_at
+      ? new Date(card.earned_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase()
       : '';
-    ctx.font = '400 26px system-ui';
-    ctx.fillStyle = '#FFFFFF50';
-    ctx.fillText(dateStr, EXPORT_W / 2, EXPORT_H - 260);
+    ctx.fillText(`AWARDED  ${awardedDate}`, 80, EXPORT_H - 100);
 
-    // Card number
+    // Card number — bottom right
     if (card.card_number) {
-      ctx.font = '400 24px monospace';
-      ctx.fillStyle = tier === 'platinum' ? '#B76E7990' : '#FFFFFF30';
       ctx.textAlign = 'right';
-      ctx.fillText(card.card_number, EXPORT_W - 120, EXPORT_H - 140);
+      ctx.font = '400 22px monospace';
+      ctx.fillStyle = tier === 'platinum' ? '#B76E7990' : '#FFFFFF30';
+      ctx.fillText(card.card_number, EXPORT_W - 80, EXPORT_H - 100);
     }
 
     // Watermark
@@ -561,47 +616,13 @@ export function CardShareSheet({
   const [copied, setCopied] = useState(false);
   const cardCaptureRef = useRef<HTMLDivElement>(null);
 
-  /** Capture the actual rendered card via html2canvas */
+  /** Generate a share image using the canvas fallback (always reliable) */
   const captureCardImage = useCallback(async (): Promise<Blob | null> => {
-    if (!cardCaptureRef.current) return null;
-    try {
-      const el = cardCaptureRef.current;
-
-      // Move on-screen so html2canvas can paint it — keep it out of viewport but not display:none
-      el.style.left = '0px';
-      el.style.top = '-9999px';
-      el.style.opacity = '1';
-      el.style.pointerEvents = 'none';
-
-      // Wait two animation frames so React can commit and CSS can paint
-      await new Promise<void>((r) => requestAnimationFrame(() => requestAnimationFrame(() => r())));
-      // Extra 120ms for shimmer/gradient CSS animations to settle
-      await new Promise<void>((r) => setTimeout(r, 120));
-
-      const { default: html2canvas } = await import('html2canvas');
-      const canvas = await html2canvas(el, {
-        backgroundColor: '#000000',
-        scale: 3,        // 3x for crisp exports
-        useCORS: true,
-        allowTaint: true,
-        logging: false,
-        width: 360,
-        height: 500,
-        // Ensure shimmer overlays are composited correctly
-        foreignObjectRendering: false,
-      });
-
-      // Restore off-screen
-      el.style.left = '-9999px';
-      el.style.top = '0px';
-      el.style.opacity = '0';
-
-      return new Promise((resolve) => canvas.toBlob(resolve, 'image/png'));
-    } catch (err) {
-      console.error('Card capture failed:', err);
-      return null;
-    }
-  }, []);
+    // Use the canvas-drawn approach directly — html2canvas is unreliable
+    // for off-screen elements with complex CSS animations and cross-origin images.
+    // generateShareImage draws the full card from data (OVR, stats, title, etc.)
+    return generateShareImage(card, cardSystem);
+  }, [card, cardSystem]);
 
   // Auto-generate caption
   useEffect(() => {
@@ -835,7 +856,7 @@ export function CardShareSheet({
         <div
           ref={cardCaptureRef}
           className="fixed pointer-events-none"
-          style={{ left: '-9999px', top: 0, width: 360, height: 500, zIndex: -1, opacity: 0 }}
+          style={{ left: '-9999px', top: 0, width: 288, height: 448, zIndex: -1, opacity: 0, overflow: 'visible' }}
           aria-hidden="true"
         >
           <AchievementCardStatic card={card} size="lg" forExport />
