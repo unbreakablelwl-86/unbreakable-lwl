@@ -184,8 +184,8 @@ const RARITY_RANK: Record<string, number> = { platinum: 5, diamond: 4, gold: 3, 
 
 function PackBackDesign({ tier }: { tier: string }) {
   const tierColors = {
-    elite: { from: '#FFD700', to: '#B8860B', label: 'ELITE', accent: '#FFD700' },
-    premium: { from: '#BF5FFF', to: '#7C3AED', label: 'PREMIUM', accent: '#BF5FFF' },
+    elite: { from: '#BF5FFF', to: '#7C3AED', label: 'ELITE', accent: '#BF5FFF' },
+    premium: { from: '#FFD700', to: '#B8860B', label: 'PREMIUM', accent: '#FFD700' },
     standard: { from: '#FF5500', to: '#CC4400', label: 'STANDARD', accent: '#FF5500' },
   };
   const c = tierColors[tier as keyof typeof tierColors] || tierColors.standard;

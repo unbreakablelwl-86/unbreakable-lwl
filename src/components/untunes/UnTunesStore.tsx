@@ -44,6 +44,9 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
   const [storeView, setStoreView] = useState<'main' | 'singles' | 'packs'>('main');
   const [selectedPackTierId, setSelectedPackTierId] = useState<string>('standard');
 
+  // ── Confirm pack purchase ──
+  const [confirmPackTier, setConfirmPackTier] = useState<PackTier | null>(null);
+
   // ── Confirm purchase modal state ──
   const [confirmPurchase, setConfirmPurchase] = useState<{
     type: 'single' | 'album' | 'bundle';
@@ -301,29 +304,14 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
         return 'standard';
       };
 
-      // 4. Create a purchase record to get a valid purchase_id FK
-      let purchaseId: string | null = null;
-      try {
-        const { data: purchaseRow, error: purchaseErr } = await supabase
-          .from('un_tunes_purchases')
-          .insert({
-            user_id: user.id,
-            purchase_type: 'pack',
-            tokens_spent: hasFullAccess ? 0 : tier.cost,
-          })
-          .select('id')
-          .single();
-        if (!purchaseErr && purchaseRow) purchaseId = purchaseRow.id;
-      } catch (_) { /* purchase table might not exist — continue without FK */ }
-
-      // 5. Insert cards into DB
+      // 4. Insert cards directly — no purchase_id FK needed
+      const batchTag = `pack-${Date.now()}`;
       const cardInserts = selected.map((t: any, i: number) => ({
         user_id: user.id,
         track_id: t.id,
         rarity: assignRarity(i),
         card_type: 'track',
         is_opened: false,
-        ...(purchaseId ? { purchase_id: purchaseId } : {}),
       }));
 
       const { data: insertedCards, error: insertErr } = await supabase
@@ -576,8 +564,7 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
                               )}
                               disabled={!!purchasing || (!hasFullAccess && balance < tier.cost)}
                               onClick={() => {
-                                setSelectedPackTierId(tier.id);
-                                handlePackPurchase(tier);
+                                setConfirmPackTier(tier);
                               }}
                             >
                               {purchasing ? (
@@ -821,6 +808,90 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
               <Button variant="ghost" size="sm"
                 className="w-full text-xs font-display tracking-wider text-muted-foreground"
                 onClick={() => setConfirmPurchase(null)}>
+                CANCEL
+              </Button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Pack purchase confirmation modal */}
+      <AnimatePresence>
+        {confirmPackTier && (
+          <motion.div
+            className="fixed inset-0 z-[200] bg-black/85 backdrop-blur-sm flex items-center justify-center p-6"
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            onClick={() => setConfirmPackTier(null)}
+          >
+            <motion.div
+              className="max-w-sm w-full bg-zinc-900 rounded-2xl border border-[#FF5500]/30 p-5 space-y-4"
+              initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9, y: 20 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="text-center">
+                <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-3"
+                  style={{ background: 'rgba(255,85,0,0.1)', border: '1px solid rgba(255,85,0,0.3)' }}>
+                  <Package className="w-7 h-7 text-[#FF5500]" />
+                </div>
+                <h3 className="font-display text-white tracking-wider text-sm">CONFIRM PACK PURCHASE</h3>
+                <p className="text-xs text-muted-foreground mt-2">
+                  {confirmPackTier.name} · {confirmPackTier.cards} cards
+                </p>
+              </div>
+
+              <div className="bg-card rounded-lg p-3 border border-border space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-muted-foreground">Cost:</span>
+                  <div className="flex items-center gap-1.5">
+                    <Coins className="w-3.5 h-3.5 text-yellow-400" />
+                    <span className="text-sm font-display text-yellow-400 font-bold">{confirmPackTier.cost} tokens</span>
+                  </div>
+                </div>
+                {confirmPackTier.guaranteedGold > 0 && (
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-muted-foreground">Guaranteed Gold:</span>
+                    <span className="text-sm font-display text-yellow-400">{confirmPackTier.guaranteedGold}</span>
+                  </div>
+                )}
+                {confirmPackTier.guaranteedDiamond > 0 && (
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-muted-foreground">Guaranteed Diamond:</span>
+                    <span className="text-sm font-display text-violet-400">{confirmPackTier.guaranteedDiamond}</span>
+                  </div>
+                )}
+                <div className="border-t border-border pt-2 flex items-center justify-between">
+                  <span className="text-xs text-muted-foreground">Your balance:</span>
+                  <span className="text-sm font-display text-white">{balance}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-muted-foreground">After purchase:</span>
+                  <span className={cn("text-sm font-display", balance >= confirmPackTier.cost ? "text-green-400" : "text-red-400")}>
+                    {balance - confirmPackTier.cost}
+                  </span>
+                </div>
+              </div>
+
+              <Button
+                size="sm"
+                className="w-full text-xs font-display tracking-wider bg-[#FF5500] hover:bg-[#FF5500]/90 text-white"
+                style={{ boxShadow: '0 0 20px rgba(255,85,0,0.3)' }}
+                disabled={!hasFullAccess && balance < confirmPackTier.cost}
+                onClick={() => {
+                  const tier = confirmPackTier;
+                  setConfirmPackTier(null);
+                  setSelectedPackTierId(tier.id);
+                  handlePackPurchase(tier);
+                }}
+              >
+                <Coins className="w-3 h-3 mr-1" />
+                {!hasFullAccess && balance < confirmPackTier.cost
+                  ? 'NOT ENOUGH TOKENS'
+                  : `CONFIRM · ${confirmPackTier.cost} TOKENS`}
+              </Button>
+
+              <Button variant="ghost" size="sm"
+                className="w-full text-xs font-display tracking-wider text-muted-foreground"
+                onClick={() => setConfirmPackTier(null)}>
                 CANCEL
               </Button>
             </motion.div>
