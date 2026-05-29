@@ -392,12 +392,12 @@ export default function AppLayout() {
     <div className="min-h-screen bg-background">
       {/* Theme toggle moved to More panel — no longer floating on every page */}
 
-      <main className={hideBottomNav ? '' : isFreeUser ? 'pb-32' : 'pb-20'}>
+      <main className={hideBottomNav ? '' : 'pb-32'}>
         <Outlet />
       </main>
 
-      {/* ━━━ Scrolling Promo Banner (free users only) ━━━ */}
-      {!hideBottomNav && isFreeUser && (
+      {/* ━━━ Scrolling Promo Banner — visible on ALL pages above nav ━━━ */}
+      {!hideBottomNav && (
         <Link
           to="/ai-tokens?coupon=LAUNCH50"
           className="fixed left-0 right-0 z-[49] overflow-hidden py-2"
