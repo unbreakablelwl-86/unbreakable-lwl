@@ -2194,21 +2194,25 @@ export function AchievementCardStatic({
               return (
               <div className={cn('rounded mt-1', size === 'sm' ? 'p-1' : 'p-1.5')}
                 style={{ background: `${config.accentHex}06`, border: `1px solid ${config.accentHex}12` }}>
-                <div className={cn('grid grid-cols-3', size === 'sm' ? 'gap-x-2 gap-y-0.5' : 'gap-x-2.5 gap-y-1')}>
+                <div className={cn('grid grid-cols-3', size === 'sm' ? 'gap-x-1 gap-y-0.5' : 'gap-x-2.5 gap-y-1')}>
                   {cStatOrder.map((statKey) => {
                     const statVal = (card.athlete_stats as Record<string, number>)?.[statKey] || 0;
                     const statInfo = cStatLabels[statKey];
                     return (
-                      <div key={statKey} className="flex items-center gap-1">
-                        <span className={cn('font-display tracking-wider shrink-0 font-black', size === 'sm' ? 'text-[5px] w-[2.5rem]' : 'text-[7px] w-14')}
-                          style={{ color: '#FFFFFF', textShadow: '0 1px 2px rgba(0,0,0,0.5)' }}>
-                          {statInfo.fullLabel.toUpperCase()}
-                        </span>
-                        <span className={cn('font-display font-bold tracking-wider shrink-0', size === 'sm' ? 'text-[6px] w-4 text-right' : 'text-[8px] w-5 text-right')}
-                          style={{ color: statInfo.color, textShadow: `0 0 6px ${statInfo.color}40` }}>
-                          {statVal}
-                        </span>
-                        <div className={cn('flex-1 rounded-full overflow-hidden', size === 'sm' ? 'h-[2.5px]' : 'h-[3px]')}
+                      <div key={statKey} className="flex flex-col">
+                        {/* Label row */}
+                        <div className="flex items-center justify-between">
+                          <span className={cn('font-display tracking-wider shrink-0 font-black truncate', size === 'sm' ? 'text-[5px]' : 'text-[7px]')}
+                            style={{ color: '#FFFFFF', textShadow: '0 1px 2px rgba(0,0,0,0.5)', maxWidth: size === 'sm' ? '65%' : '70%' }}>
+                            {statInfo.fullLabel.toUpperCase()}
+                          </span>
+                          <span className={cn('font-display font-bold tracking-wider shrink-0', size === 'sm' ? 'text-[7px]' : 'text-[9px]')}
+                            style={{ color: statInfo.color, textShadow: `0 0 6px ${statInfo.color}40` }}>
+                            {statVal}
+                          </span>
+                        </div>
+                        {/* Bar underneath */}
+                        <div className={cn('w-full rounded-full overflow-hidden', size === 'sm' ? 'h-[3px] mt-[1px]' : 'h-[4px] mt-0.5')}
                           style={{ background: 'rgba(255,85,0,0.10)' }}>
                           <div className="h-full rounded-full" style={{
                             width: `${Math.max(4, statVal)}%`,

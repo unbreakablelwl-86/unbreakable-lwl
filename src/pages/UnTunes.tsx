@@ -473,7 +473,7 @@ export default function UnTunes() {
                     <Mic2 className="w-10 h-10 text-primary/20 mx-auto mb-3 drop-shadow-[0_0_8px_rgba(255,85,0,0.2)]" />
                     <p className="text-sm text-muted-foreground mb-1">No artists yet</p>
                     <p className="text-xs text-muted-foreground/60 mb-4">
-                      {'Join as an artist for £5/month and share your music — you keep 80%'}
+                      {'Join as an artist for a one-time 50 token sign-up and share your music — you keep 80%'}
                     </p>
                     <Button
                       size="sm"

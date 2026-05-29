@@ -15,7 +15,7 @@ const sections = [
   {
     icon: Shield,
     title: '2. Artist Accounts',
-    content: `Artists must subscribe at £5/month to upload content to Un-Tunes. By signing up, you confirm that:
+    content: `Artists must pay a one-time sign-up fee of 50 tokens to upload content to Un-Tunes. By signing up, you confirm that:
 • You are at least 18 years old
 • You own or have the rights to distribute all content you upload
 • Your content does not infringe any third-party copyrights, trademarks, or other rights
@@ -32,7 +32,7 @@ We reserve the right to remove content or suspend artist accounts that violate t
 
 Payouts are processed monthly via Stripe for earnings above £10. Earnings below the threshold roll over to the next month.
 
-The £5/month artist subscription is billed separately from any revenue earned. It covers platform access, unlimited uploads, analytics, and promotional features.`,
+The 50-token artist sign-up is a one-time fee separate from any revenue earned. It covers lifetime platform access, unlimited uploads, analytics, and promotional features.`,
   },
   {
     icon: FileText,

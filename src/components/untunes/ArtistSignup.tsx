@@ -93,9 +93,9 @@ export function UnTunesArtistSignup() {
               <div>
                 <div className="flex items-center gap-2 mb-1">
                   <Sparkles className="w-4 h-4 text-primary drop-shadow-[0_0_4px_rgba(255,85,0,0.5)]" />
-                  <span className="font-display text-sm tracking-wider text-primary">ARTIST SUBSCRIPTION</span>
+                  <span className="font-display text-sm tracking-wider text-primary">ARTIST SIGN-UP</span>
                 </div>
-                <p className="text-2xl font-bold text-foreground">£5<span className="text-sm font-normal text-muted-foreground">/month</span></p>
+                <p className="text-2xl font-bold text-foreground">50 <span className="text-sm font-normal text-muted-foreground">tokens · one-time</span></p>
                 <p className="text-xs text-muted-foreground mt-1">80/20 revenue split — you keep 80%</p>
               </div>
               <div className="text-right">

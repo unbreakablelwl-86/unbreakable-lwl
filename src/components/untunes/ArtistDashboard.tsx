@@ -382,7 +382,7 @@ export function UnTunesArtistDashboard({ artist }: ArtistDashboardProps) {
 
           <Card className="p-4 border-border/50 bg-card/30">
             <h3 className="font-display text-xs tracking-wider text-muted-foreground mb-2">SUBSCRIPTION</h3>
-            <p className="text-sm text-foreground">£5/month — Artist Account</p>
+            <p className="text-sm text-foreground">50 Tokens — One-Time Artist Sign-Up</p>
             <p className="text-[10px] text-muted-foreground mt-1">Status: <span className="text-green-400">Active</span></p>
           </Card>
 

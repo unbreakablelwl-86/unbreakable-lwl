@@ -1167,26 +1167,12 @@ export function AchievementCollection() {
           })}
         </motion.div>
       ) : sort === 'newest' ? (
-        /* Flat sorted grid — when user picks NEWEST, show cards in order */
-        <motion.div className="grid grid-cols-2 gap-4 sm:grid-cols-3" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-          {filteredCards.map((card, i) => {
-            const glow = RARITY_GLOW[card.rarity as RarityTier] || RARITY_GLOW.bronze;
-            const containerBg = CONTAINER_REFLECTIVE_BG[card.rarity] || CONTAINER_REFLECTIVE_BG.bronze;
-            return (
-              <motion.div key={card.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.03 }}
-                className="relative group aspect-[3/4] rarity-gpu-hint rounded-2xl p-1.5"
-                style={{ background: containerBg, boxShadow: glow.boxShadow }}
-              >
-                <AchievementCardStatic card={card} size="sm" onClick={() => setSelectedIndex(i)} />
-                <button onClick={(e) => { e.stopPropagation(); setSelectedIndex(filteredCards.indexOf(card)); }}
-                  className="absolute top-2 right-2 w-6 h-6 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center border border-white/15 z-20">
-                  <Camera className="w-2.5 h-2.5 text-white/60" />
-                </button>
-              </motion.div>
-            );
-          })}
-        </motion.div>
+        /* NEWEST — grouped by date period dropdown */
+        <NewestDropdownView
+          cards={filteredCards}
+          onSelectCard={(card) => setSelectedIndex(filteredCards.findIndex(c => c.id === card.id))}
+          onShareCard={(card) => setShareCard(card)}
+        />
       ) : sort === 'exercise' ? (
         /* A-Z view — grouped by rarity finish, each containing exercises alphabetically */
         <AZRarityDropdownView
@@ -1260,6 +1246,123 @@ export function AchievementCollection() {
           />
         )}
       </AnimatePresence>
+    </div>
+  );
+}
+
+/* ═══ Newest dropdown view — cards grouped by date period ═══ */
+function NewestDropdownView({
+  cards,
+  onSelectCard,
+  onShareCard,
+}: {
+  cards: AchievementCard[];
+  onSelectCard: (card: AchievementCard) => void;
+  onShareCard: (card: AchievementCard) => void;
+}) {
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+
+  const grouped = useMemo(() => {
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const weekAgo = new Date(today.getTime() - 7 * 86400000);
+    const monthAgo = new Date(today.getTime() - 30 * 86400000);
+
+    const groups: { label: string; key: string; cards: AchievementCard[]; icon: typeof Trophy }[] = [
+      { label: 'Today', key: 'today', cards: [], icon: Zap },
+      { label: 'This Week', key: 'week', cards: [], icon: TrendingUp },
+      { label: 'This Month', key: 'month', cards: [], icon: Trophy },
+      { label: 'Older', key: 'older', cards: [], icon: Award },
+    ];
+
+    // Sort newest first
+    const sorted = [...cards].sort((a, b) =>
+      new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    );
+
+    sorted.forEach(card => {
+      const d = new Date(card.created_at);
+      if (d >= today) groups[0].cards.push(card);
+      else if (d >= weekAgo) groups[1].cards.push(card);
+      else if (d >= monthAgo) groups[2].cards.push(card);
+      else groups[3].cards.push(card);
+    });
+
+    return groups.filter(g => g.cards.length > 0);
+  }, [cards]);
+
+  // Auto-expand first group on mount
+  useEffect(() => {
+    if (grouped.length > 0 && Object.keys(expanded).length === 0) {
+      setExpanded({ [grouped[0].key]: true });
+    }
+  }, [grouped]);
+
+  return (
+    <div className="space-y-2">
+      {grouped.map(group => {
+        const isExpanded = expanded[group.key] ?? false;
+        return (
+          <motion.div key={group.key} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+            <Card className="border border-orange-500/20 bg-orange-500/5 overflow-hidden transition-all">
+              <button
+                onClick={() => setExpanded(prev => ({ ...prev, [group.key]: !prev[group.key] }))}
+                className="w-full flex items-center justify-between p-3 hover:bg-white/5 transition-colors"
+              >
+                <div className="flex items-center gap-2.5">
+                  <group.icon className="w-5 h-5 text-primary" />
+                  <span className="font-display tracking-wider text-sm text-primary">
+                    {group.label.toUpperCase()}
+                  </span>
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-display tracking-wider text-primary bg-white/5 border border-orange-500/20">
+                    {group.cards.length}
+                  </span>
+                </div>
+                <motion.div animate={{ rotate: isExpanded ? 180 : 0 }} transition={{ duration: 0.2 }}>
+                  <ChevronDown className="w-4 h-4 text-primary opacity-60" />
+                </motion.div>
+              </button>
+
+              <AnimatePresence initial={false}>
+                {isExpanded && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.25, ease: 'easeInOut' }}
+                    className="overflow-hidden"
+                  >
+                    <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 p-3 pt-0">
+                      {group.cards.map((card, i) => {
+                        const containerBg = CONTAINER_REFLECTIVE_BG[card.rarity] || CONTAINER_REFLECTIVE_BG.bronze;
+                        return (
+                          <motion.div
+                            key={card.id}
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ delay: i * 0.04 }}
+                            className="relative group aspect-[3/4] rarity-gpu-hint rounded-2xl p-1"
+                          >
+                            <AchievementCardStatic card={card} size="sm" onClick={() => onSelectCard(card)} />
+                            <div className="absolute bottom-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                              <button
+                                onClick={(e) => { e.stopPropagation(); onShareCard(card); }}
+                                className="w-7 h-7 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center border border-white/10 hover:border-white/30 transition-colors"
+                              >
+                                <Share2 className="w-3 h-3 text-white/70" />
+                              </button>
+                            </div>
+                          </motion.div>
+                        );
+                      })}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </Card>
+          </motion.div>
+        );
+      })}
     </div>
   );
 }
