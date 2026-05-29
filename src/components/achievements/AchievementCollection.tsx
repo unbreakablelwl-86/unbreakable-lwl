@@ -1218,7 +1218,12 @@ export function AchievementCollection() {
           open={!!shareCard}
           onOpenChange={(open) => !open && setShareCard(null)}
           card={shareCard}
-          cardSystem="pb"
+          cardSystem={
+            shareCard.card_type === 'pb_personal' || shareCard.card_type === 'pb_global'
+              ? 'pb'
+              : 'untunes'
+          }
+          displayName={shareCard.owner_display_name || undefined}
         />
       )}
 

@@ -565,12 +565,18 @@ export function CardShareSheet({
   const captureCardImage = useCallback(async (): Promise<Blob | null> => {
     if (!cardCaptureRef.current) return null;
     try {
-      // Temporarily make capture div visible for html2canvas
       const el = cardCaptureRef.current;
-      const prevLeft = el.style.left;
-      const prevOpacity = el.style.opacity;
+
+      // Move on-screen so html2canvas can paint it — keep it out of viewport but not display:none
       el.style.left = '0px';
+      el.style.top = '-9999px';
       el.style.opacity = '1';
+      el.style.pointerEvents = 'none';
+
+      // Wait two animation frames so React can commit and CSS can paint
+      await new Promise<void>((r) => requestAnimationFrame(() => requestAnimationFrame(() => r())));
+      // Extra 120ms for shimmer/gradient CSS animations to settle
+      await new Promise<void>((r) => setTimeout(r, 120));
 
       const { default: html2canvas } = await import('html2canvas');
       const canvas = await html2canvas(el, {
@@ -581,11 +587,14 @@ export function CardShareSheet({
         logging: false,
         width: 360,
         height: 500,
+        // Ensure shimmer overlays are composited correctly
+        foreignObjectRendering: false,
       });
 
       // Restore off-screen
-      el.style.left = prevLeft;
-      el.style.opacity = prevOpacity;
+      el.style.left = '-9999px';
+      el.style.top = '0px';
+      el.style.opacity = '0';
 
       return new Promise((resolve) => canvas.toBlob(resolve, 'image/png'));
     } catch (err) {
@@ -628,13 +637,22 @@ export function CardShareSheet({
       // Upload image to storage if possible
       if (blob) {
         const { supabase } = await import('@/integrations/supabase/client');
-        const path = `shared-cards/${user.id}/${card.id}-${Date.now()}.png`;
+        const path = `${user.id}/${card.id}-${Date.now()}.png`;
         const { error: uploadErr } = await supabase.storage
-          .from('avatars')
+          .from('card-shares')
           .upload(path, blob, { contentType: 'image/png', upsert: true });
         if (!uploadErr) {
-          const { data } = supabase.storage.from('avatars').getPublicUrl(path);
+          const { data } = supabase.storage.from('card-shares').getPublicUrl(path);
           imageUrl = data?.publicUrl;
+        } else {
+          // Fallback: try avatars bucket if card-shares doesn't exist yet
+          const { error: fbErr } = await supabase.storage
+            .from('avatars')
+            .upload(`shared-cards/${path}`, blob, { contentType: 'image/png', upsert: true });
+          if (!fbErr) {
+            const { data } = supabase.storage.from('avatars').getPublicUrl(`shared-cards/${path}`);
+            imageUrl = data?.publicUrl;
+          }
         }
       }
 
@@ -668,13 +686,22 @@ export function CardShareSheet({
 
       if (blob) {
         const { supabase } = await import('@/integrations/supabase/client');
-        const path = `shared-cards/${user.id}/story-${card.id}-${Date.now()}.png`;
+        const path = `${user.id}/story-${card.id}-${Date.now()}.png`;
         const { error: uploadErr } = await supabase.storage
-          .from('avatars')
+          .from('card-shares')
           .upload(path, blob, { contentType: 'image/png', upsert: true });
         if (!uploadErr) {
-          const { data } = supabase.storage.from('avatars').getPublicUrl(path);
+          const { data } = supabase.storage.from('card-shares').getPublicUrl(path);
           imageUrl = data?.publicUrl;
+        } else {
+          // Fallback to avatars bucket
+          const { error: fbErr } = await supabase.storage
+            .from('avatars')
+            .upload(`shared-cards/story-${path}`, blob, { contentType: 'image/png', upsert: true });
+          if (!fbErr) {
+            const { data } = supabase.storage.from('avatars').getPublicUrl(`shared-cards/story-${path}`);
+            imageUrl = data?.publicUrl;
+          }
         }
       }
 
@@ -714,7 +741,7 @@ export function CardShareSheet({
     setIsExporting(true);
     try {
       // Try actual card capture first (html2canvas)
-      let blob = await captureCardImage();
+      let blob: Blob | null = await captureCardImage();
       let ext = 'png';
       let mime = 'image/png';
 
@@ -734,13 +761,11 @@ export function CardShareSheet({
       const file = new File([blob], fileName, { type: mime });
 
       if (navigator.share && navigator.canShare?.({ files: [file] })) {
-        await navigator.share({
-          files: [file],
-        });
+        await navigator.share({ files: [file] });
         toast({ title: 'Shared!', description: `${isAnimated ? 'Animated card' : 'Card'} shared.` });
       } else {
-        // Fallback: download
-        const url = URL.createObjectURL(asset.blob);
+        // Fallback: download — use `blob` not `asset.blob` (asset may be undefined)
+        const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
         link.download = fileName;
@@ -756,7 +781,7 @@ export function CardShareSheet({
     } finally {
       setIsExporting(false);
     }
-  }, [card, cardSystem, tier, cfg.label, caption, toast, onOpenChange, isAnimated, captureCardImage]);
+  }, [card, cardSystem, tier, caption, toast, onOpenChange, isAnimated, captureCardImage]);
 
   // Download (animated for Gold+, static for others)
   const handleDownload = useCallback(async () => {
@@ -811,6 +836,7 @@ export function CardShareSheet({
           ref={cardCaptureRef}
           className="fixed pointer-events-none"
           style={{ left: '-9999px', top: 0, width: 360, height: 500, zIndex: -1, opacity: 0 }}
+          aria-hidden="true"
         >
           <AchievementCardStatic card={card} size="lg" forExport />
         </div>
