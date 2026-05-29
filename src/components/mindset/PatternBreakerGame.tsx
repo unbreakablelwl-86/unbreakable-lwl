@@ -74,9 +74,9 @@ const PADS: PadConfig[] = [
 
 type GameState = "ready" | "countdown" | "watching" | "input" | "success" | "fail" | "gameover" | "leaderboard";
 
-const INITIAL_PLAY_SPEED = 850;
-const MIN_PLAY_SPEED = 300;
-const SPEED_DECREASE_PER_LEVEL = 15;
+const INITIAL_PLAY_SPEED = 1200;   // much slower start — easy first levels
+const MIN_PLAY_SPEED = 350;
+const SPEED_DECREASE_PER_LEVEL = 12; // gentler ramp
 
 // ─── Particle type ─────────────────────────────────────────
 interface Particle {

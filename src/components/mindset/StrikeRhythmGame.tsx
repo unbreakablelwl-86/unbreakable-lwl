@@ -27,8 +27,8 @@ const CANVAS_H = 560;
 const LANE_W = CANVAS_W / LANES;
 const STRIKE_Y = CANVAS_H - 80;
 const NOTE_SIZE = 32;
-const NOTE_SPEED_BASE = 1.8;       // slow start — easy to react
-const NOTE_SPEED_INC = 0.001;      // gentle ramp over time
+const NOTE_SPEED_BASE = 1.2;       // very gentle start
+const NOTE_SPEED_INC = 0.0006;     // slow ramp — takes ~60s to feel fast
 
 // Timing windows (px from perfect)
 const PERFECT_WINDOW = 18;
@@ -235,7 +235,8 @@ const StrikeRhythmGame = () => {
 
     // Spawn notes on beat intervals
     // Progressive: start with wide gaps between notes, gradually tighten
-    const spawnInterval = Math.max(22, Math.round(60 - frame * 0.006));
+    // Start with wide gaps (90 frames ~1.5s), gradually tighten to 28 frames
+    const spawnInterval = Math.max(28, Math.round(90 - frame * 0.004));
     if (frame - lastSpawnFrameRef.current >= spawnInterval) {
       spawnNote(frame);
       lastSpawnFrameRef.current = frame;

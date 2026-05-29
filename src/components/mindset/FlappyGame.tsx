@@ -17,18 +17,18 @@ const CANVAS_W = 360;
 const CANVAS_H = 560;
 const BIRD_SIZE = 22;
 const PIPE_W = 52;
-// Progressive difficulty — starts easy, ramps up
-const GAP_START = 220;      // wide gap at start
-const GAP_MIN = 130;        // tightest gap at high score
-const GAP_SHRINK_RATE = 3;  // gap shrinks by this per pipe cleared
-const GRAVITY = 0.28;
-const FLAP_FORCE = -5.8;
-const BASE_SPEED = 1.4;     // gentle start speed
-const SPEED_INC = 0.06;     // ramps up per 5 pipes
-const MAX_SPEED = 4.5;
-const PIPE_SPACING_START = 280;  // wide spacing at start
-const PIPE_SPACING_MIN = 180;    // tightest spacing at high difficulty
-const PIPE_SPACING_SHRINK = 4;   // spacing shrinks per pipe cleared
+// Progressive difficulty — slow start, gradual ramp
+const GAP_START = 200;      // comfortable gap at start
+const GAP_MIN = 110;        // tight gap at high score
+const GAP_SHRINK_RATE = 2;  // gap shrinks slowly per pipe cleared
+const GRAVITY = 0.32;
+const FLAP_FORCE = -5.5;
+const BASE_SPEED = 1.6;     // gentle start speed
+const SPEED_INC = 0.08;     // noticeable ramp per 5 pipes
+const MAX_SPEED = 5.0;
+const PIPE_SPACING_START = 260;  // comfortable spacing at start
+const PIPE_SPACING_MIN = 160;    // tight spacing at high difficulty
+const PIPE_SPACING_SHRINK = 3;   // gradual tightening
 const GROUND_H = 60;
 
 interface Pipe { x: number; topH: number; scored: boolean; gap: number; }

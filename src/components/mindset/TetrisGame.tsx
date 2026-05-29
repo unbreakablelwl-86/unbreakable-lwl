@@ -98,7 +98,7 @@ const TETROMINOES = [
 // ─── Constants ───
 const COLS = 10;
 const ROWS = 20;
-const CELL_SIZE = 22;
+const CELL_SIZE = 18;  // smaller blocks to fit mobile screens better
 const CANVAS_WIDTH = COLS * CELL_SIZE;
 const CANVAS_HEIGHT = ROWS * CELL_SIZE;
 const THEME_SHIFT_INTERVAL = 15;
