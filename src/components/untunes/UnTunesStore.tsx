@@ -105,12 +105,15 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
 
     // Group by purchase_id — only open ONE purchase at a time (not all 42 cards at once)
     const firstPurchaseId = (pendingPacks[0] as any).purchase_id;
-    const batch = firstPurchaseId
+    let batch = firstPurchaseId
       ? pendingPacks.filter((p: any) => p.purchase_id === firstPurchaseId)
       : pendingPacks.slice(0, 5); // Fallback: max 5 if no purchase_id
 
+    // Cap at 10 cards per opening — split large purchases into batches
+    if (batch.length > 10) batch = batch.slice(0, 10);
+
     // Determine pack type from batch size
-    const batchType = batch.length <= 1 ? 'single' : batch.length <= 15 ? 'album' : 'bundle';
+    const batchType = batch.length <= 1 ? 'single' : batch.length <= 8 ? 'album' : 'bundle';
 
     // Convert pending DB cards into PackCard format for the opening animation
     const cards: PackCard[] = batch.map((p: any) => {
