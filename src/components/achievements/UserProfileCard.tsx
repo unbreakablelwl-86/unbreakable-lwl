@@ -415,7 +415,7 @@ export default function UserProfileCard() {
               className="w-full flex items-center justify-between px-2 py-1.5"
             >
               <div className="flex items-center gap-1.5">
-                <Dumbbell className="w-3 h-3" style={{ color: '#FF5500' }} />
+                <Zap className="w-3 h-3" style={{ color: '#FF5500' }} />
                 <span className="text-[7px] font-mono tracking-[0.2em] uppercase"
                   style={{ color: '#FF5500', textShadow: '0 0 6px rgba(255,85,0,0.3)' }}>
                   STRENGTH PBs

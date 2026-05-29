@@ -432,7 +432,7 @@ export function PBLeaderboard() {
           className="flex-1 font-display tracking-wider"
           onClick={() => { setMode('exercises'); setExercise('Bench Press'); }}
         >
-          <Dumbbell className="w-4 h-4 mr-2" /> EXERCISES
+          <Zap className="w-4 h-4 mr-2" /> EXERCISES
         </Button>
         <Button
           variant={mode === 'runs' ? 'default' : 'outline'}

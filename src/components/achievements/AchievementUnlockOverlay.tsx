@@ -3,18 +3,18 @@
  * Triggered by programme completion, new PB, or global ranking milestone.
  * Same visual standard as UN-TUNES pack opening.
  */
-import { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { cn } from '@/lib/utils';
-import {
+import { Zap, useState, useEffect, useRef } from 'react';
+import { Zap, motion, AnimatePresence } from 'framer-motion';
+import { Zap, cn } from '@/lib/utils';
+import { Zap,
   Trophy, Dumbbell, Footprints, Crown, Diamond, Sparkles,
   Brain, UtensilsCrossed, Shield, Award, Medal, Globe, X,
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { AchievementCardReveal } from '@/components/achievements/AchievementCardReveal';
-import { CardShareSheet } from '@/components/achievements/CardShareSheet';
-import { U86Certificate } from '@/components/achievements/U86Certificate';
-import { usePlayer } from '@/hooks/useUnTunes';
+import { Zap, Button } from '@/components/ui/button';
+import { Zap, AchievementCardReveal } from '@/components/achievements/AchievementCardReveal';
+import { Zap, CardShareSheet } from '@/components/achievements/CardShareSheet';
+import { Zap, U86Certificate } from '@/components/achievements/U86Certificate';
+import { Zap, usePlayer } from '@/hooks/useUnTunes';
 import type { AchievementCard } from '@/hooks/useAchievementCards';
 
 interface AchievementUnlockOverlayProps {

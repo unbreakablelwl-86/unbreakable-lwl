@@ -465,44 +465,23 @@ export function PlatinumChrome() {
   );
 }
 
-/** Dumbbell sparkle watermark — Unbreakable "like" logo in each tier's metal/stone finish */
+/** Shield watermark — Unbreakable emblem in each tier's metal/stone finish */
 export function DumbbellSparkle({ tier }: { tier: string }) {
-  const colors: Record<string, { fill: string; stroke: string; sparkle: string; opacity: number }> = {
-    bronze:   { fill: 'rgba(205,127,50,0.35)',  stroke: 'rgba(205,127,50,0.7)',   sparkle: 'rgba(210,160,80,0.9)',   opacity: 0.22 },
-    silver:   { fill: 'rgba(192,192,192,0.35)',  stroke: 'rgba(200,200,210,0.7)',  sparkle: 'rgba(230,230,240,0.9)', opacity: 0.22 },
-    gold:     { fill: 'rgba(255,215,0,0.4)',     stroke: 'rgba(255,215,0,0.8)',    sparkle: 'rgba(255,235,100,1.0)', opacity: 0.28 },
-    diamond:  { fill: 'rgba(139,92,246,0.35)',   stroke: 'rgba(139,92,246,0.7)',   sparkle: 'rgba(200,180,255,1.0)', opacity: 0.28 },
-    platinum: { fill: 'rgba(229,228,226,0.4)',   stroke: 'rgba(229,228,226,0.8)',  sparkle: 'rgba(255,255,255,0.9)', opacity: 0.26 },
+  const colors: Record<string, { fill: string; stroke: string; opacity: number }> = {
+    bronze:   { fill: 'rgba(205,127,50,0.25)',  stroke: 'rgba(205,127,50,0.5)',   opacity: 0.18 },
+    silver:   { fill: 'rgba(192,192,192,0.25)',  stroke: 'rgba(200,200,210,0.5)',  opacity: 0.18 },
+    gold:     { fill: 'rgba(255,215,0,0.3)',     stroke: 'rgba(255,215,0,0.6)',    opacity: 0.22 },
+    diamond:  { fill: 'rgba(139,92,246,0.25)',   stroke: 'rgba(139,92,246,0.5)',   opacity: 0.22 },
+    platinum: { fill: 'rgba(229,228,226,0.3)',   stroke: 'rgba(229,228,226,0.6)',  opacity: 0.20 },
   };
   const c = colors[tier] || colors.bronze;
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl flex items-center justify-center z-[15]" style={{ opacity: c.opacity }}>
-      <svg viewBox="0 0 120 50" className="w-2/3" fill="none">
-        {/* Dumbbell — Unbreakable like-button shape */}
-        {/* Left weight */}
-        <rect x="8" y="10" width="14" height="30" rx="4" fill={c.fill} stroke={c.stroke} strokeWidth="1.2" />
-        <rect x="18" y="14" width="10" height="22" rx="3" fill={c.fill} stroke={c.stroke} strokeWidth="0.8" />
-        {/* Bar */}
-        <rect x="28" y="21" width="64" height="8" rx="4" fill={c.fill} />
-        {/* Right weight */}
-        <rect x="92" y="14" width="10" height="22" rx="3" fill={c.fill} stroke={c.stroke} strokeWidth="0.8" />
-        <rect x="98" y="10" width="14" height="30" rx="4" fill={c.fill} stroke={c.stroke} strokeWidth="1.2" />
-        {/* Sparkle dots */}
-        <circle cx="30" cy="16" r="1.2" fill={c.sparkle}>
-          <animate attributeName="opacity" values="0.2;1;0.2" dur="2s" repeatCount="indefinite" />
-        </circle>
-        <circle cx="60" cy="12" r="1" fill={c.sparkle}>
-          <animate attributeName="opacity" values="0.3;1;0.3" dur="3s" repeatCount="indefinite" begin="0.5s" />
-        </circle>
-        <circle cx="90" cy="17" r="1.2" fill={c.sparkle}>
-          <animate attributeName="opacity" values="0.2;1;0.2" dur="2.5s" repeatCount="indefinite" begin="1s" />
-        </circle>
-        <circle cx="45" cy="38" r="1" fill={c.sparkle}>
-          <animate attributeName="opacity" values="0.1;0.8;0.1" dur="2.8s" repeatCount="indefinite" begin="0.3s" />
-        </circle>
-        <circle cx="75" cy="36" r="1.1" fill={c.sparkle}>
-          <animate attributeName="opacity" values="0.2;0.9;0.2" dur="2.2s" repeatCount="indefinite" begin="0.8s" />
-        </circle>
+      <svg viewBox="0 0 80 90" className="w-1/3" fill="none">
+        {/* Shield shape */}
+        <path d="M40 5 L72 20 L72 50 Q72 72 40 85 Q8 72 8 50 L8 20 Z" fill={c.fill} stroke={c.stroke} strokeWidth="1.5" />
+        {/* U letterform */}
+        <path d="M28 30 L28 52 Q28 65 40 65 Q52 65 52 52 L52 30" fill="none" stroke={c.stroke} strokeWidth="3" strokeLinecap="round" />
       </svg>
     </div>
   );
@@ -511,7 +490,7 @@ export function DumbbellSparkle({ tier }: { tier: string }) {
 /* ═══ Card type icons & backgrounds ═══ */
 
 const PROGRAMME_ICONS: Record<string, typeof Trophy> = {
-  power: Dumbbell,
+  power: Zap,
   cardio: Footprints,
   mindset: Brain,
   fuel: UtensilsCrossed,
@@ -1063,8 +1042,8 @@ function PBCardArtwork({ card, accentColor, size = 'md' }: { card: AchievementCa
   );
 }
 
-const ACTIVITY_ICONS: Record<string, typeof Dumbbell> = {
-  lift: Dumbbell,
+const ACTIVITY_ICONS: Record<string, typeof Zap> = {
+  lift: Zap,
   run: Footprints,
   cycle: Bike,
   row: Waves,
@@ -1294,7 +1273,7 @@ export function AchievementCardReveal({
 
   const Icon = isProgramme
     ? PROGRAMME_ICONS[card.programme_type || 'power'] || Trophy
-    : ACTIVITY_ICONS[card.activity_category || 'lift'] || Dumbbell;
+    : ACTIVITY_ICONS[card.activity_category || 'lift'] || Zap;
 
   // Use bespoke base colour per rarity tier
   const rarityBase = config.baseBg || '#0A0A0A';
@@ -1936,7 +1915,7 @@ export function AchievementCardStatic({
 
   const Icon = isProgramme
     ? PROGRAMME_ICONS[card.programme_type || 'power'] || Trophy
-    : ACTIVITY_ICONS[card.activity_category || 'lift'] || Dumbbell;
+    : ACTIVITY_ICONS[card.activity_category || 'lift'] || Zap;
 
   // Use bespoke base colour per rarity tier
   const rarityBase = config.baseBg || '#0A0A0A';

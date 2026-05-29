@@ -301,8 +301,20 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
         return 'standard';
       };
 
-      // 4. Generate a purchase_id
-      const purchaseId = crypto.randomUUID ? crypto.randomUUID() : `pack-${Date.now()}`;
+      // 4. Create a purchase record to get a valid purchase_id FK
+      let purchaseId: string | null = null;
+      try {
+        const { data: purchaseRow, error: purchaseErr } = await supabase
+          .from('un_tunes_purchases')
+          .insert({
+            user_id: user.id,
+            purchase_type: 'pack',
+            tokens_spent: hasFullAccess ? 0 : tier.cost,
+          })
+          .select('id')
+          .single();
+        if (!purchaseErr && purchaseRow) purchaseId = purchaseRow.id;
+      } catch (_) { /* purchase table might not exist — continue without FK */ }
 
       // 5. Insert cards into DB
       const cardInserts = selected.map((t: any, i: number) => ({
@@ -311,8 +323,7 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
         rarity: assignRarity(i),
         card_type: 'track',
         is_opened: false,
-        purchase_id: purchaseId,
-        acquired_at: new Date().toISOString(),
+        ...(purchaseId ? { purchase_id: purchaseId } : {}),
       }));
 
       const { data: insertedCards, error: insertErr } = await supabase

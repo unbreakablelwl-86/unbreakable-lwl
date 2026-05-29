@@ -697,13 +697,7 @@ export function PackOpening({ cards, purchaseType, packTierId, onClose, onMarkOp
                       transition={{ duration: 2, repeat: Infinity }}
                       className="text-center"
                     >
-                      <div className="w-14 h-14 rounded-full bg-primary/10 border border-primary/25 flex items-center justify-center mx-auto mb-3" style={{ boxShadow: '0 0 25px rgba(255,85,0,0.15)' }}>
-                        <svg className="w-6 h-6 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M12 2L12 6M12 18L12 22M6 12L2 12M22 12L18 12" opacity="0.4" />
-                          <circle cx="12" cy="12" r="3" fill="currentColor" opacity="0.6" />
-                        </svg>
-                      </div>
-                      <p className="font-display text-[10px] tracking-widest text-primary/80">TAP TO REVEAL</p>
+                      <p className="font-display text-sm tracking-[0.3em] text-primary animate-pulse">TAP TO REVEAL</p>
                     </motion.div>
                   </div>
                 </div>

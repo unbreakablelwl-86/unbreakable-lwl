@@ -1093,7 +1093,7 @@ export function AchievementCollection() {
             ALL ({counts.total})
           </TabsTrigger>
           <TabsTrigger value="strength" className="font-display tracking-wide text-[9px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-            <Dumbbell className="w-3 h-3 mr-0.5" /> STR ({strengthCount})
+            <Zap className="w-3 h-3 mr-0.5" /> STR ({strengthCount})
           </TabsTrigger>
           <TabsTrigger value="cardio" className="font-display tracking-wide text-[9px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
             <Activity className="w-3 h-3 mr-0.5" /> CARDIO ({cardioCount})
