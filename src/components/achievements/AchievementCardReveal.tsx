@@ -11,7 +11,7 @@ import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import {
-  Trophy, Dumbbell, Footprints, Crown, Diamond, Sparkles,
+  Trophy, Footprints, Crown, Diamond, Sparkles,
   Flame, Zap, Brain, UtensilsCrossed, Medal, TrendingUp,
   Globe, Users, Timer, Share2, ChevronRight,
   Bike, Waves, Award, Star, Shield,
@@ -193,7 +193,7 @@ export const achievementCardStyles = `
 /** Bronze: stone/metal grain + warm copper ambient + metallic border band */
 export function BronzeShimmer() {
   return (
-    <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl z-[12]">
+    <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl z-[12]" style={{ opacity: 0.45 }}>
       {/* Full metallic base tint */}
       <div
         className="absolute inset-0"
@@ -243,7 +243,7 @@ export function BronzeShimmer() {
 /** Silver: brushed chrome metal + heavy sweep + visible metallic border */
 export function SilverShimmer() {
   return (
-    <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl z-[12]">
+    <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl z-[12]" style={{ opacity: 0.45 }}>
       {/* Full metallic chrome base */}
       <div
         className="absolute inset-0"
@@ -289,7 +289,7 @@ export function SilverShimmer() {
 /** Gold: heavy foil treatment + bold shimmer sweep + sparkle particles + Unbreakable orange-gold accent */
 export function GoldShimmer() {
   return (
-    <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl z-[12]">
+    <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl z-[12]" style={{ opacity: 0.45 }}>
       {/* Dark gold metallic base */}
       <div
         className="absolute inset-0"
@@ -350,7 +350,7 @@ export function GoldShimmer() {
 /** Diamond: full prismatic holographic — heavy rainbow shift + crystalline facets + Unbreakable ice-blue accent */
 export function DiamondHolo() {
   return (
-    <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl z-[12]">
+    <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl z-[12]" style={{ opacity: 0.45 }}>
       {/* Geometric facet texture — visible crystalline */}
       <div
         className="absolute inset-0"
@@ -406,7 +406,7 @@ export function DiamondHolo() {
 /** Platinum: premium brushed platinum + rose-gold thread + crown emblem + Unbreakable signature */
 export function PlatinumChrome() {
   return (
-    <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl z-[12]">
+    <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl z-[12]" style={{ opacity: 0.45 }}>
       {/* Platinum base tint */}
       <div
         className="absolute inset-0"
@@ -1371,24 +1371,7 @@ export function AchievementCardReveal({
                     <PBCardArtwork card={card} accentColor={config.accentHex} size="md" />
                   )}
 
-                  {/* Unbreakable shield watermark — all cards */}
-                  <motion.div
-                    className="absolute top-3 left-3 flex items-center gap-1.5 z-20"
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.15 }}
-                  >
-                    <img
-                      src="/unbreakable-shield.png"
-                      alt=""
-                      className="w-5 h-5 object-contain"
-                      style={{ filter: `drop-shadow(0 0 4px ${config.accentHex}40)`, opacity: 0.6 }}
-                    />
-                    <div>
-                      <p className="text-[6px] font-display tracking-[0.2em] text-white/40">UNBREAKABLE</p>
-                      <p className="text-[5px] font-mono tracking-[0.12em] text-white/25">LIVE WITHOUT LIMITS™</p>
-                    </div>
-                  </motion.div>
+                  {/* Shield watermark removed per John's request */}
 
                   {/* ═══ Programme trophy — Unbreakable/LWL branded card with stats ═══ */}
                   {isProgramme && (() => {
@@ -1513,8 +1496,7 @@ export function AchievementCardReveal({
                   {card.rarity === 'gold' && <GoldShimmer />}
                   {card.rarity === 'diamond' && <DiamondHolo />}
                   {card.rarity === 'platinum' && <PlatinumChrome />}
-                  {/* Dumbbell sparkle watermark — all tiers in their metal/stone */}
-                  <DumbbellSparkle tier={card.rarity} />
+                  {/* Watermark removed — clean card face */}
 
                   {/* ── TOP-LEFT: Overall Rating (FIFA-style big number) ── */}
                   {(isPBPersonal || isPBGlobal) && (
@@ -2013,7 +1995,7 @@ export function AchievementCardStatic({
         {card.rarity === 'gold' && <GoldShimmer />}
         {card.rarity === 'diamond' && <DiamondHolo />}
         {card.rarity === 'platinum' && <PlatinumChrome />}
-        <DumbbellSparkle tier={card.rarity} />
+        {/* Watermark removed — clean card face */}
 
         {/* ═══ Programme trophy — Unbreakable/LWL branded with stats ═══ */}
         {isProgramme && (() => {

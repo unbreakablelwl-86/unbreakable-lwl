@@ -11,7 +11,7 @@ import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import {
-  Trophy, Dumbbell, Activity, Crown, Diamond, Sparkles,
+  Trophy, Zap, Activity, Crown, Diamond, Sparkles,
   Medal, Award, Globe, Users, Filter, TrendingUp,
   ChevronDown, Loader2, User, Flame, Search, X,
 } from 'lucide-react';

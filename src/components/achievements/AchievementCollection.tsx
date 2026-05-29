@@ -9,7 +9,7 @@ import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import {
-  Trophy, Dumbbell, Activity, Crown, Diamond, Sparkles,
+  Trophy, Zap, Activity, Crown, Diamond, Sparkles,
   Shield, Medal, Award, Globe, TrendingUp, X, Share2,
   Download, Trash2, Loader2, ChevronLeft, ChevronRight,
   ChevronDown, AlertCircle, Camera, Coins, Lock, Image, Video, ShoppingCart,

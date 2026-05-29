@@ -7,7 +7,7 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Dumbbell, Trophy, Camera, Upload, X, Plus, Minus, Edit3, Check, Search,
+  Zap, Trophy, Camera, Upload, X, Plus, Minus, Edit3, Check, Search,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
