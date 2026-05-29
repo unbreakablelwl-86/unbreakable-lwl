@@ -20,6 +20,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sh
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { usePosts } from '@/hooks/usePosts';
+import { useStories } from '@/hooks/useStories';
 import { useAuth } from '@/hooks/useAuth';
 import {
   Share2, Send, Download, Link2, BookOpen, Sparkles,
@@ -543,6 +544,7 @@ export function CardShareSheet({
 }: CardShareSheetProps) {
   const { user } = useAuth();
   const { createPost } = usePosts();
+  const { createStory } = useStories();
   const { toast } = useToast();
   const tier = (card.rarity || 'bronze') as RarityTier;
   const cfg = RARITY_GLOW[tier];
@@ -634,7 +636,55 @@ export function CardShareSheet({
     } finally {
       setIsPosting(false);
     }
-  }, [user, card, caption, cardSystem, createPost, toast, onOpenChange]);
+  }, [user, card, caption, cardSystem, createPost, toast, onOpenChange, captureCardImage]);
+
+  // Share to story — full-screen card with rarity frame
+  const [isPostingStory, setIsPostingStory] = useState(false);
+  const handleShareStory = useCallback(async () => {
+    if (!user) return;
+    setIsPostingStory(true);
+    try {
+      const blob = await captureCardImage() || await generateShareImage(card, cardSystem);
+      let imageUrl: string | undefined;
+
+      if (blob) {
+        const { supabase } = await import('@/integrations/supabase/client');
+        const path = `shared-cards/${user.id}/story-${card.id}-${Date.now()}.png`;
+        const { error: uploadErr } = await supabase.storage
+          .from('avatars')
+          .upload(path, blob, { contentType: 'image/png', upsert: true });
+        if (!uploadErr) {
+          const { data } = supabase.storage.from('avatars').getPublicUrl(path);
+          imageUrl = data?.publicUrl;
+        }
+      }
+
+      const { error } = await createStory({
+        content: caption,
+        image_url: imageUrl || null,
+        visibility: 'public',
+        background_color: '#080808',
+        text_overlays: caption ? [{
+          text: caption,
+          x: 50, y: 85,
+          fontSize: 16,
+          color: '#FFFFFF',
+          fontFamily: 'display',
+        }] : [],
+      });
+
+      if (error) {
+        toast({ title: 'Failed', description: 'Could not add to your story.' });
+      } else {
+        toast({ title: 'Story posted! 🔥', description: 'Card added to your story.' });
+        onOpenChange(false);
+      }
+    } catch {
+      toast({ title: 'Error', description: 'Something went wrong.' });
+    } finally {
+      setIsPostingStory(false);
+    }
+  }, [user, card, caption, cardSystem, createStory, toast, onOpenChange, captureCardImage]);
 
   // Determine if this card gets animated export
   const RARITY_RANK: Record<string, number> = { platinum: 5, diamond: 4, gold: 3, silver: 2, bronze: 1, standard: 0 };
@@ -742,43 +792,10 @@ export function CardShareSheet({
           </SheetTitle>
         </SheetHeader>
 
-        {/* Card preview — show actual card artwork */}
-        <div
-          className="flex items-center gap-3 p-3 rounded-xl border mb-4"
-          style={{
-            background: `${cfg.cardBg}CC`,
-            borderColor: `${cfg.primary}30`,
-            boxShadow: cfg.boxShadow,
-          }}
-        >
-          {card.image_url ? (
-            <img
-              src={card.image_url}
-              alt={card.title || ''}
-              className="w-14 h-14 rounded-lg object-cover shrink-0"
-              style={{ boxShadow: `0 0 8px ${cfg.primary}30` }}
-            />
-          ) : (
-            <div
-              className="w-14 h-14 rounded-lg flex items-center justify-center shrink-0"
-              style={{ background: `${cfg.primary}15` }}
-            >
-              <span className="text-2xl">
-                {card.card_type === 'programme_trophy' ? '🏆' : cardSystem === 'untunes' ? '🎵' : '💪'}
-              </span>
-            </div>
-          )}
-          <div className="min-w-0 flex-1">
-            <p className="font-medium text-sm text-foreground truncate">{card.title}</p>
-            <p className="text-xs text-muted-foreground truncate">
-              {card.subtitle || (card.record_value ? `${card.record_value}${card.record_unit}` : '')}
-            </p>
-            <p
-              className="text-[10px] font-display tracking-[0.2em] mt-0.5"
-              style={{ color: cfg.primary, textShadow: cfg.textShadow }}
-            >
-              {cfg.label}
-            </p>
+        {/* Card preview — mini version of actual rendered card */}
+        <div className="flex justify-center mb-4">
+          <div className="w-48 aspect-[3/4]">
+            <AchievementCardStatic card={card} size="sm" />
           </div>
         </div>
 
@@ -825,10 +842,10 @@ export function CardShareSheet({
             variant="outline"
             size="sm"
             className="w-full text-xs font-display tracking-wider border-primary/30 text-primary hover:bg-primary/10"
-            onClick={handleShareFeed}
-            disabled={isPosting}
+            onClick={handleShareStory}
+            disabled={isPostingStory}
           >
-            {isPosting ? <Loader2 className="w-3 h-3 mr-2 animate-spin" /> : <BookOpen className="w-3 h-3 mr-2" />}
+            {isPostingStory ? <Loader2 className="w-3 h-3 mr-2 animate-spin" /> : <BookOpen className="w-3 h-3 mr-2" />}
             ADD TO MY STORY
           </Button>
 

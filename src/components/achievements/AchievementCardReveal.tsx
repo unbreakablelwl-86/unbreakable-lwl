@@ -1682,24 +1682,24 @@ export function AchievementCardReveal({
                             return (
                               <div key={statKey} className="flex items-center gap-1.5">
                                 <span
-                                  className="text-[7px] font-display font-black tracking-wider w-14 shrink-0 truncate"
-                                  style={{ color: '#FFFFFF' }}
+                                  className="text-[8px] font-display font-black tracking-wider w-[4.5rem] shrink-0"
+                                  style={{ color: '#FFFFFF', textShadow: '0 1px 2px rgba(0,0,0,0.5)' }}
                                 >
                                   {statInfo.fullLabel.toUpperCase()}
                                 </span>
                                 <span
-                                  className="text-[9px] font-display tracking-wider shrink-0"
+                                  className="text-[10px] font-display font-bold tracking-wider shrink-0 w-6 text-right"
                                   style={{ color: '#FF5500', textShadow: '0 0 6px rgba(255,85,0,0.4)' }}
                                 >
                                   {statVal}
                                 </span>
-                                <div className="flex-1 h-[3px] rounded-full overflow-hidden" style={{ background: 'rgba(255,85,0,0.10)' }}>
+                                <div className="flex-1 h-[4px] rounded-full overflow-hidden" style={{ background: 'rgba(255,85,0,0.12)' }}>
                                   <div
-                                    className="h-full rounded-full transition-all duration-500"
+                                    className="h-full rounded-full transition-all duration-700"
                                     style={{
-                                      width: `${Math.max(3, statVal)}%`,
-                                      background: 'linear-gradient(90deg, #FF550080, #FF5500)',
-                                      boxShadow: '0 0 4px rgba(255,85,0,0.3)',
+                                      width: `${Math.max(4, statVal)}%`,
+                                      background: `linear-gradient(90deg, ${statInfo.color}60, ${statInfo.color})`,
+                                      boxShadow: `0 0 6px ${statInfo.color}40`,
                                     }}
                                   />
                                 </div>
@@ -2196,20 +2196,20 @@ export function AchievementCardStatic({
                     const statInfo = cStatLabels[statKey];
                     return (
                       <div key={statKey} className="flex items-center gap-1">
-                        <span className={cn('font-display tracking-wider shrink-0 font-black truncate', size === 'sm' ? 'text-[4px] w-8' : 'text-[6px] w-12')}
-                          style={{ color: '#FFFFFF' }}>
+                        <span className={cn('font-display tracking-wider shrink-0 font-black', size === 'sm' ? 'text-[5px] w-[2.5rem]' : 'text-[7px] w-14')}
+                          style={{ color: '#FFFFFF', textShadow: '0 1px 2px rgba(0,0,0,0.5)' }}>
                           {statInfo.fullLabel.toUpperCase()}
                         </span>
-                        <span className={cn('font-display tracking-wider shrink-0', size === 'sm' ? 'text-[6px]' : 'text-[8px]')}
-                          style={{ color: '#FF5500', textShadow: '0 0 6px rgba(255,85,0,0.4)' }}>
+                        <span className={cn('font-display font-bold tracking-wider shrink-0', size === 'sm' ? 'text-[6px] w-4 text-right' : 'text-[8px] w-5 text-right')}
+                          style={{ color: statInfo.color, textShadow: `0 0 6px ${statInfo.color}40` }}>
                           {statVal}
                         </span>
-                        <div className={cn('flex-1 rounded-full overflow-hidden', size === 'sm' ? 'h-[2px]' : 'h-[3px]')}
+                        <div className={cn('flex-1 rounded-full overflow-hidden', size === 'sm' ? 'h-[2.5px]' : 'h-[3px]')}
                           style={{ background: 'rgba(255,85,0,0.10)' }}>
                           <div className="h-full rounded-full" style={{
-                            width: `${Math.max(3, statVal)}%`,
-                            background: 'linear-gradient(90deg, #FF550070, #FF5500)',
-                            boxShadow: '0 0 4px rgba(255,85,0,0.3)',
+                            width: `${Math.max(4, statVal)}%`,
+                            background: `linear-gradient(90deg, ${statInfo.color}60, ${statInfo.color})`,
+                            boxShadow: `0 0 5px ${statInfo.color}35`,
                           }} />
                         </div>
                       </div>
