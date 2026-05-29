@@ -26,6 +26,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useUserRole } from '@/hooks/useUserRole';
 import { useNavigate, Link } from 'react-router-dom';
 import { CoachStripeConnect } from '@/components/coaching/CoachStripeConnect';
+import { CoachProgrammeThreads } from '@/components/coaching/CoachProgrammeThreads';
 import { AthleteDataViewer } from '@/components/coaching/AthleteDataViewer';
 import { ClientSearchPanel } from '@/components/coaching/ClientSearchPanel';
 import { CheckInsTab } from '@/components/coaching/CheckInsTab';
@@ -684,6 +685,8 @@ const CoachDashboard = ({ embedded = false }: { embedded?: boolean }) => {
           stripeOnboarded={(profile as any)?.stripe_onboarded}
         />
         {content}
+        {/* Programme Threads */}
+        <CoachProgrammeThreads />
       </div>
       {confirmDialog}
     </div>

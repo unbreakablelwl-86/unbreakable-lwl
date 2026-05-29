@@ -31,6 +31,7 @@ import {
   Music,
   LogOut,
   Bell,
+  MessageSquare,
 } from 'lucide-react';
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useConversations } from '@/hooks/useConversations';
@@ -159,6 +160,15 @@ const ALL_NAV_ITEMS: NavItemDef[] = [
     activeMatch: ['/help'],
     color: '#FF5500',
     description: 'Unbreakable AI Coach',
+  },
+  {
+    id: 'threads',
+    icon: MessageSquare,
+    label: 'Threads',
+    path: '/coach?tab=threads',
+    activeMatch: [],
+    color: '#FF5500',
+    description: 'Programme builder threads (coaches/devs)',
   },
   {
     id: 'notifications',

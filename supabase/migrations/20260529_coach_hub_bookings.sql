@@ -145,3 +145,49 @@ BEGIN
   RETURN booking_count < 2;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- ══════════════════════════════════════════════════════════════
+-- Programme Threads (Coach collaboration)
+-- ══════════════════════════════════════════════════════════════
+
+CREATE TABLE IF NOT EXISTS programme_threads (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  coach_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  title TEXT NOT NULL,
+  description TEXT,
+  programme_type TEXT NOT NULL DEFAULT 'strength',
+  status TEXT NOT NULL DEFAULT 'draft' CHECK (status IN ('draft', 'active', 'completed', 'archived')),
+  assigned_users UUID[] DEFAULT '{}',
+  weeks INTEGER NOT NULL DEFAULT 4,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+ALTER TABLE programme_threads ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "coaches_own_threads" ON programme_threads
+  FOR ALL USING (auth.uid() = coach_id OR auth.uid() = ANY(assigned_users));
+
+CREATE TABLE IF NOT EXISTS programme_thread_messages (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  thread_id UUID NOT NULL REFERENCES programme_threads(id) ON DELETE CASCADE,
+  sender_id TEXT NOT NULL,
+  sender_name TEXT NOT NULL,
+  content TEXT NOT NULL,
+  message_type TEXT NOT NULL DEFAULT 'text' CHECK (message_type IN ('text', 'session_plan', 'ai_suggestion', 'schedule', 'feedback')),
+  data JSONB,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+ALTER TABLE programme_thread_messages ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "thread_members_see_messages" ON programme_thread_messages
+  FOR ALL USING (
+    EXISTS (
+      SELECT 1 FROM programme_threads t 
+      WHERE t.id = thread_id 
+      AND (t.coach_id = auth.uid() OR auth.uid() = ANY(t.assigned_users))
+    )
+  );
+
+CREATE INDEX IF NOT EXISTS idx_thread_messages ON programme_thread_messages(thread_id, created_at);
