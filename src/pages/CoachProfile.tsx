@@ -1,8 +1,13 @@
+import { useState, useEffect, useCallback } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { useCoachPublicProfile } from '@/hooks/useCoachPublicProfile';
+import { useCoachAvailability } from '@/hooks/useCoachAvailability';
 import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
+import { CoachBookingFlow } from '@/components/coaching/CoachBookingFlow';
 import {
   Loader2, Award, Clock, PoundSterling,
   Instagram, Globe, MessageSquare, UserCheck,
@@ -14,6 +19,57 @@ export default function CoachProfile() {
   const { profile, loading } = useCoachPublicProfile(userId);
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [isUnlocked, setIsUnlocked] = useState(false);
+  const [unlockLoading, setUnlockLoading] = useState(true);
+  const [availSlots, setAvailSlots] = useState<any[]>([]);
+
+  // Check if user has unlocked this coach
+  useEffect(() => {
+    if (!user || !userId) { setUnlockLoading(false); return; }
+    // Coach always unlocked to themselves
+    if (user.id === userId) { setIsUnlocked(true); setUnlockLoading(false); return; }
+    (async () => {
+      const { data } = await (supabase as any)
+        .from('coach_unlocks')
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('coach_id', userId)
+        .maybeSingle();
+      setIsUnlocked(!!data);
+      setUnlockLoading(false);
+    })();
+  }, [user, userId]);
+
+  // Fetch coach availability slots
+  useEffect(() => {
+    if (!userId) return;
+    (async () => {
+      const { data } = await (supabase as any)
+        .from('coach_availability_slots')
+        .select('*')
+        .eq('coach_id', userId);
+      setAvailSlots(data || []);
+    })();
+  }, [userId]);
+
+  const handleUnlock = useCallback(async () => {
+    if (!user || !userId) return;
+    try {
+      // Deduct tokens
+      const { data: bal } = await (supabase as any).rpc('get_token_balance', { p_user_id: user.id });
+      if ((bal || 0) < 5) {
+        toast.error('Not enough tokens. You need 5 tokens to unlock this coach.');
+        return;
+      }
+      // Deduct and create unlock
+      await (supabase as any).rpc('deduct_tokens', { p_user_id: user.id, p_amount: 5, p_reason: `Unlock coach: ${userId}` });
+      await (supabase as any).from('coach_unlocks').insert({ user_id: user.id, coach_id: userId, tokens_spent: 5 });
+      setIsUnlocked(true);
+      toast.success('Coach unlocked! You can now book sessions.');
+    } catch (err) {
+      toast.error('Failed to unlock coach. Please try again.');
+    }
+  }, [user, userId]);
 
   if (loading) {
     return (
@@ -240,18 +296,29 @@ export default function CoachProfile() {
           </div>
         )}
 
-        {/* CTA */}
-        {profile.accepting_clients && (
+        {/* Booking Flow */}
+        {profile.accepting_clients && user && !unlockLoading && (
+          <div className="rounded-xl border border-primary/20 bg-card p-5">
+            <h2 className="font-display tracking-wider text-sm text-primary text-center mb-4">BOOK A SESSION</h2>
+            <CoachBookingFlow
+              coach={profile}
+              isUnlocked={isUnlocked}
+              onUnlock={handleUnlock}
+              availableSlots={availSlots}
+            />
+          </div>
+        )}
+
+        {/* CTA for non-logged-in */}
+        {profile.accepting_clients && !user && (
           <div className="rounded-xl border border-primary/20 bg-primary/5 p-6 text-center space-y-3">
             <h2 className="font-display tracking-wide text-lg text-foreground">READY TO START?</h2>
             <p className="text-sm text-muted-foreground">
-              {profile.online_monthly_rate
-                ? `Online 1-2-1 coaching from £${profile.online_monthly_rate}/month — includes ${freqLabel.toLowerCase()} check-ins, bespoke programming & ongoing support.`
-                : `1-2-1 coaching with ${freqLabel.toLowerCase()} check-ins, bespoke programming & ongoing support.`}
+              Sign in to unlock this coach and book your first session.
             </p>
             <Link to="/my-coaching">
               <button className="flex items-center gap-2 mx-auto px-5 py-2.5 rounded-xl bg-primary text-white font-display text-xs tracking-wider hover:bg-primary/80 transition-colors">
-                {user ? <><MessageSquare className="w-4 h-4" /> REQUEST COACHING</> : <><UserCheck className="w-4 h-4" /> SIGN IN TO REQUEST</>}
+                <UserCheck className="w-4 h-4" /> SIGN IN TO BOOK
               </button>
             </Link>
           </div>

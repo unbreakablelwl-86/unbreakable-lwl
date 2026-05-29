@@ -25,6 +25,7 @@ import { useCoachingAssignments } from '@/hooks/useCoachingAssignments';
 import { useAuth } from '@/hooks/useAuth';
 import { useUserRole } from '@/hooks/useUserRole';
 import { useNavigate, Link } from 'react-router-dom';
+import { CoachStripeConnect } from '@/components/coaching/CoachStripeConnect';
 import { AthleteDataViewer } from '@/components/coaching/AthleteDataViewer';
 import { ClientSearchPanel } from '@/components/coaching/ClientSearchPanel';
 import { CheckInsTab } from '@/components/coaching/CheckInsTab';
@@ -676,7 +677,12 @@ const CoachDashboard = ({ embedded = false }: { embedded?: boolean }) => {
         </motion.div>
       </div>
 
-      <div className="px-4">
+      <div className="px-4 space-y-4">
+        {/* Stripe Connect for coaches */}
+        <CoachStripeConnect
+          stripeAccountId={(profile as any)?.stripe_connect_id}
+          stripeOnboarded={(profile as any)?.stripe_onboarded}
+        />
         {content}
       </div>
       {confirmDialog}
