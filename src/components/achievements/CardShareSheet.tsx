@@ -428,11 +428,16 @@ async function generateShareImage(
       ctx.fillText('OVERALL RATING', EXPORT_W / 2, 1490);
     }
 
-    // 6-stat bar
+    // 6-stat bar — use correct per-type keys
     if (card.athlete_stats) {
       const stats = card.athlete_stats as Record<string, number>;
-      const statKeys = ['str', 'pwr', 'spd', 'end', 'agi', 'rec'];
-      const statLabels = ['STR', 'PWR', 'SPD', 'END', 'AGI', 'REC'];
+      const isCardio = ['run', 'cycle', 'row', 'swim'].includes(card.activity_category || '');
+      const statKeys = isCardio
+        ? ['spd', 'end', 'con', 'dst', 'elv', 'rnk']
+        : ['str', 'pwr', 'con', 'pgs', 'exp', 'rnk'];
+      const statLabels = isCardio
+        ? ['SPD', 'END', 'CON', 'DST', 'ELV', 'RNK']
+        : ['STR', 'PWR', 'CON', 'PGS', 'EXP', 'RNK'];
       const barY = card.overall_rating ? 1560 : 1400;
       const barW = (EXPORT_W - 320) / 6;
 
@@ -560,14 +565,28 @@ export function CardShareSheet({
   const captureCardImage = useCallback(async (): Promise<Blob | null> => {
     if (!cardCaptureRef.current) return null;
     try {
+      // Temporarily make capture div visible for html2canvas
+      const el = cardCaptureRef.current;
+      const prevLeft = el.style.left;
+      const prevOpacity = el.style.opacity;
+      el.style.left = '0px';
+      el.style.opacity = '1';
+
       const { default: html2canvas } = await import('html2canvas');
-      const canvas = await html2canvas(cardCaptureRef.current, {
+      const canvas = await html2canvas(el, {
         backgroundColor: '#000000',
-        scale: 2,
+        scale: 3,        // 3x for crisp exports
         useCORS: true,
         allowTaint: true,
         logging: false,
+        width: 360,
+        height: 500,
       });
+
+      // Restore off-screen
+      el.style.left = prevLeft;
+      el.style.opacity = prevOpacity;
+
       return new Promise((resolve) => canvas.toBlob(resolve, 'image/png'));
     } catch (err) {
       console.error('Card capture failed:', err);
@@ -690,18 +709,29 @@ export function CardShareSheet({
   const RARITY_RANK: Record<string, number> = { platinum: 5, diamond: 4, gold: 3, silver: 2, bronze: 1, standard: 0 };
   const isAnimated = (RARITY_RANK[tier] || 0) >= 3;
 
-  // Share via native share sheet (animated for Gold+, static for others)
+  // Share via native share sheet — try html2canvas card capture first, then canvas fallback
   const handleNativeShare = useCallback(async () => {
     setIsExporting(true);
     try {
-      const asset = await generateAnimatedShareAsset(card, cardSystem);
-      if (!asset) {
-        toast({ title: 'Error', description: 'Could not generate card image.' });
-        return;
+      // Try actual card capture first (html2canvas)
+      let blob = await captureCardImage();
+      let ext = 'png';
+      let mime = 'image/png';
+
+      // Fallback to canvas-drawn asset if capture fails
+      if (!blob) {
+        const asset = await generateAnimatedShareAsset(card, cardSystem);
+        if (!asset) {
+          toast({ title: 'Error', description: 'Could not generate card image.' });
+          return;
+        }
+        blob = asset.blob;
+        ext = asset.ext;
+        mime = asset.mime;
       }
 
-      const fileName = `unbreakable-${tier}-${(card.title || 'card').replace(/\s+/g, '-').toLowerCase()}.${asset.ext}`;
-      const file = new File([asset.blob], fileName, { type: asset.mime });
+      const fileName = `unbreakable-${tier}-${(card.title || 'card').replace(/\s+/g, '-').toLowerCase()}.${ext}`;
+      const file = new File([blob], fileName, { type: mime });
 
       if (navigator.share && navigator.canShare?.({ files: [file] })) {
         await navigator.share({
@@ -726,7 +756,7 @@ export function CardShareSheet({
     } finally {
       setIsExporting(false);
     }
-  }, [card, cardSystem, tier, cfg.label, caption, toast, onOpenChange, isAnimated]);
+  }, [card, cardSystem, tier, cfg.label, caption, toast, onOpenChange, isAnimated, captureCardImage]);
 
   // Download (animated for Gold+, static for others)
   const handleDownload = useCallback(async () => {
@@ -776,13 +806,13 @@ export function CardShareSheet({
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="bottom" className="rounded-t-2xl border-border bg-card max-h-[85vh] overflow-y-auto">
-        {/* Hidden rendered card for html2canvas capture */}
+        {/* Hidden rendered card for html2canvas capture — forExport reduces shimmer overlay */}
         <div
           ref={cardCaptureRef}
-          className="absolute pointer-events-none"
-          style={{ left: '-9999px', top: 0, width: 360, height: 500, zIndex: -1 }}
+          className="fixed pointer-events-none"
+          style={{ left: '-9999px', top: 0, width: 360, height: 500, zIndex: -1, opacity: 0 }}
         >
-          <AchievementCardStatic card={card} size="lg" />
+          <AchievementCardStatic card={card} size="lg" forExport />
         </div>
 
         <SheetHeader className="text-left pb-2">

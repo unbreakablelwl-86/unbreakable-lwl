@@ -1886,10 +1886,12 @@ export function AchievementCardStatic({
   card,
   size = 'md',
   onClick,
+  forExport = false,
 }: {
   card: AchievementCard;
   size?: 'sm' | 'md' | 'lg';
   onClick?: (card: AchievementCard) => void;
+  forExport?: boolean;
 }) {
   const config = ACHIEVEMENT_RARITY_CONFIG[card.rarity];
   const isProgramme = card.card_type === 'programme_trophy';
@@ -1989,12 +1991,14 @@ export function AchievementCardStatic({
           <PBCardArtwork card={card} accentColor={config.accentHex} size={size} />
         )}
 
-        {/* Rarity effects — spec textures */}
-        {card.rarity === 'bronze' && <BronzeShimmer />}
-        {card.rarity === 'silver' && <SilverShimmer />}
-        {card.rarity === 'gold' && <GoldShimmer />}
-        {card.rarity === 'diamond' && <DiamondHolo />}
-        {card.rarity === 'platinum' && <PlatinumChrome />}
+        {/* Rarity effects — spec textures (toned down for export to avoid html2canvas gold wash) */}
+        <div style={{ opacity: forExport ? 0.12 : 1 }}>
+          {card.rarity === 'bronze' && <BronzeShimmer />}
+          {card.rarity === 'silver' && <SilverShimmer />}
+          {card.rarity === 'gold' && <GoldShimmer />}
+          {card.rarity === 'diamond' && <DiamondHolo />}
+          {card.rarity === 'platinum' && <PlatinumChrome />}
+        </div>
         {/* Watermark removed — clean card face */}
 
         {/* ═══ Programme trophy — Unbreakable/LWL branded with stats ═══ */}
