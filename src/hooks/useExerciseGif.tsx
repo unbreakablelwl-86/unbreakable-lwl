@@ -107,9 +107,12 @@ function findInMap(map: Map<string, string>, exerciseName: string): string | nul
 
 /**
  * Hook: returns artwork URL for exercise.
- * Priority: bespoke artwork cache → ExerciseDB GIF → null
+ * @param exerciseName — name of exercise
+ * @param allowGifFallback — if false (default), only bespoke artwork is returned.
+ *   Set true for exercise library / workout screens where ExerciseDB GIFs are fine.
+ *   Achievement cards should NEVER show anatomical demo GIFs.
  */
-export function useExerciseGif(exerciseName: string | undefined): string | null {
+export function useExerciseGif(exerciseName: string | undefined, allowGifFallback = false): string | null {
   const [artworkUrl, setArtworkUrl] = useState<string | null>(null);
 
   useEffect(() => {
@@ -117,21 +120,26 @@ export function useExerciseGif(exerciseName: string | undefined): string | null 
     let cancelled = false;
 
     (async () => {
-      // 1. Try bespoke artwork cache first
+      // 1. Try bespoke artwork cache first (curated card-quality art only)
       const artworkMap = await loadArtworkCache();
       if (cancelled) return;
       const bespoke = findInMap(artworkMap, exerciseName);
       if (bespoke) { setArtworkUrl(bespoke); return; }
 
-      // 2. Fall back to ExerciseDB GIF
-      const gifMap = await loadGifCache();
-      if (cancelled) return;
-      const gif = findInMap(gifMap, exerciseName);
-      setArtworkUrl(gif);
+      // 2. Optionally fall back to ExerciseDB GIF (exercise library, workout screens)
+      //    Achievement cards should NOT use these — they're anatomical demos, not card art.
+      if (allowGifFallback) {
+        const gifMap = await loadGifCache();
+        if (cancelled) return;
+        const gif = findInMap(gifMap, exerciseName);
+        setArtworkUrl(gif);
+      } else {
+        setArtworkUrl(null);
+      }
     })();
 
     return () => { cancelled = true; };
-  }, [exerciseName]);
+  }, [exerciseName, allowGifFallback]);
 
   return artworkUrl;
 }

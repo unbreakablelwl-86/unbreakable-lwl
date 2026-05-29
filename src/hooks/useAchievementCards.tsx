@@ -172,19 +172,29 @@ export function useAchievementCards() {
       const pbVal = c.pb_value ?? c.record_value;
       const exName = c.exercise_name || '';
 
-      // Calculate Wilks/IPF overall rating if not already in DB
+      // Always recalculate overall rating from Wilks/IPF engine
+      // (DB value may be stale or unset)
       let overallRating = c.overall_rating;
 
       if ((c.card_type === 'pb_personal' || c.card_type === 'pb_global') && pbVal) {
-        if (!overallRating) {
-          overallRating = calculateOverallRating({
-            exerciseName: exName,
-            liftKg: pbVal,
-            bodyweightKg,
-            sex: isMale ? 'male' : 'female',
-            age: userAge,
-          });
-        }
+        overallRating = calculateOverallRating({
+          exerciseName: exName,
+          liftKg: pbVal,
+          bodyweightKg,
+          sex: isMale ? 'male' : 'female',
+          age: userAge,
+        });
+      }
+
+      // Derive rarity FROM overall rating so they always correlate
+      // Platinum (85-99) > Diamond (70-84) > Gold (50-69) > Silver (30-49) > Bronze (1-29)
+      let derivedRarity: AchievementRarity = c.rarity;
+      if (overallRating && (c.card_type === 'pb_personal' || c.card_type === 'pb_global')) {
+        if (overallRating >= 85) derivedRarity = 'platinum';
+        else if (overallRating >= 70) derivedRarity = 'diamond';
+        else if (overallRating >= 50) derivedRarity = 'gold';
+        else if (overallRating >= 30) derivedRarity = 'silver';
+        else derivedRarity = 'bronze';
       }
 
       return {
@@ -195,6 +205,7 @@ export function useAchievementCards() {
         pb_unit: c.pb_unit ?? c.record_unit,
         activity_category: actCat,
         overall_rating: overallRating,
+        rarity: derivedRarity,
         athlete_stats: c.athlete_stats || userSixStats,
       };
     });
