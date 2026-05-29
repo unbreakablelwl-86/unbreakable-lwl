@@ -72,7 +72,7 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
         // Fallback: direct query
         const { data, error } = await (supabase as any)
           .from('un_tunes_user_cards')
-          .select('id, track_id, album_id, rarity, card_type, brand_card_id, edition_number, created_at, date_stamped')
+          .select('id, track_id, album_id, rarity, card_type, brand_card_id, edition_number, created_at, date_stamped, un_tunes_tracks(title,cover_url,artist), un_tunes_albums(title,cover_url), un_tunes_brand_cards(title,artwork_url,image_url)')
           .eq('user_id', user.id)
           .eq('is_opened', false)
           .order('created_at', { ascending: true });
@@ -104,17 +104,24 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
     }
 
     // Convert pending DB cards into PackCard format for the opening animation
-    const cards: PackCard[] = pendingPacks.map(p => {
-      const track = trackList.find((t: any) => t.id === p.track_id);
-      const album = albumList.find((a: any) => a.id === p.album_id);
+    const cards: PackCard[] = pendingPacks.map((p: any) => {
+      // Use PostgREST joins if available, otherwise fallback to manual lookup
+      const trackJoin = p.un_tunes_tracks;
+      const albumJoin = p.un_tunes_albums;
+      const brandJoin = p.un_tunes_brand_cards;
+      const track = trackJoin || trackList.find((t: any) => t.id === p.track_id);
+      const album = albumJoin || albumList.find((a: any) => a.id === p.album_id);
       return {
         id: p.id,
         rarity: p.rarity || 'standard',
         track_id: p.track_id,
         album_id: p.album_id,
+        brand_card_id: p.brand_card_id,
+        card_type: p.card_type,
         edition_number: p.edition_number || 0,
-        un_tunes_tracks: track ? { title: track.title, cover_url: (track as any).cover_url || '' } : null,
-        un_tunes_albums: album ? { title: album.title, cover_url: (album as any).cover_url || '' } : null,
+        un_tunes_tracks: track ? { title: track.title, artist: track.artist || 'Unbreakable', cover_url: track.cover_url || '' } : null,
+        un_tunes_albums: album ? { title: album.title, cover_url: album.cover_url || '' } : null,
+        un_tunes_brand_cards: brandJoin || null,
       };
     });
     setPackType('bundle');
