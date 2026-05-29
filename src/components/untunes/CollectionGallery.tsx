@@ -137,7 +137,8 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
   const [filter, setFilter] = useState<string>('all');
   const [typeFilter, setTypeFilter] = useState<string>('all');
   const [viewMode, setViewMode] = useState<'grid' | 'list' | 'grouped'>('grouped');
-  const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(new Set());
+  // All groups start collapsed (John: "All drop down menus to be in closed position when pages load")
+  const [collapsedGroups, setCollapsedGroups] = useState<Set<string> | 'all'>('all');
   const [selectedCard, setSelectedCard] = useState<UserCard | null>(null);
   const [shareCard, setShareCard] = useState<UserCard | null>(null);
 
@@ -216,11 +217,12 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
     load();
   }, [user]);
 
-  // Identify duplicates (same track/album owned more than once)
+  // Identify true duplicates (same track/album AND same rarity owned more than once)
+  // Different rarities of the same track are NOT duplicates — they're different cards
   const duplicateIds = useMemo(() => {
     const seen = new Map<string, string[]>();
     cards.forEach(c => {
-      const key = c.track_id || c.album_id || c.brand_card_id || c.id;
+      const key = `${c.track_id || c.album_id || c.brand_card_id || c.id}__${c.rarity}`;
       if (!seen.has(key)) seen.set(key, []);
       seen.get(key)!.push(c.id);
     });
@@ -267,14 +269,40 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
     });
 
     const groups: { id: string; name: string; cover: string | null; cards: typeof filtered }[] = [];
-    albumGroups.forEach((val, key) => groups.push({ id: key, name: val.name, cover: val.cover, cards: val.cards }));
-    if (trackOnly.length > 0) groups.push({ id: '_tracks', name: 'Singles & Tracks', cover: null, cards: trackOnly });
-    if (brandCards.length > 0) groups.push({ id: '_brand', name: 'Brand Cards', cover: null, cards: brandCards });
+    // Sort cards within each group by rarity (platinum first) then by edition number
+    const sortByRarity = (a: typeof filtered[0], b: typeof filtered[0]) => {
+      const ri = RARITY_ORDER.indexOf(a.rarity) - RARITY_ORDER.indexOf(b.rarity);
+      if (ri !== 0) return ri;
+      return (a.edition_number || 999) - (b.edition_number || 999);
+    };
+    albumGroups.forEach((val, key) => {
+      val.cards.sort(sortByRarity);
+      groups.push({ id: key, name: val.name, cover: val.cover, cards: val.cards });
+    });
+    if (trackOnly.length > 0) {
+      trackOnly.sort(sortByRarity);
+      groups.push({ id: '_tracks', name: 'Singles & Tracks', cover: null, cards: trackOnly });
+    }
+    if (brandCards.length > 0) {
+      brandCards.sort(sortByRarity);
+      groups.push({ id: '_brand', name: 'Brand Cards', cover: null, cards: brandCards });
+    }
     return groups;
   }, [filtered]);
 
+  const isGroupCollapsed = (id: string) => {
+    if (collapsedGroups === 'all') return true; // All collapsed by default
+    return collapsedGroups.has(id);
+  };
+
   const toggleGroup = (id: string) => {
     setCollapsedGroups(prev => {
+      if (prev === 'all') {
+        // First interaction: switch from 'all collapsed' to explicit set with this one opened
+        const allIds = new Set(grouped.map(g => g.id));
+        allIds.delete(id); // This one is now open
+        return allIds;
+      }
       const next = new Set(prev);
       if (next.has(id)) next.delete(id); else next.add(id);
       return next;
@@ -436,7 +464,7 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
         /* ═══ GROUPED VIEW — collapsible album/track sections ═══ */
         <div className="space-y-4">
           {grouped.map(group => {
-            const isCollapsed = collapsedGroups.has(group.id);
+            const isCollapsed = isGroupCollapsed(group.id);
             return (
               <div key={group.id} className="rounded-xl border border-border overflow-hidden bg-card/30">
                 {/* Group header — tap to collapse/expand */}
@@ -451,9 +479,22 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
                       {group.id === '_brand' ? <Sparkles size={16} className="text-primary" /> : <Music size={16} className="text-primary" />}
                     </div>
                   )}
-                  <div className="flex-1 text-left">
-                    <p className="font-display text-[11px] tracking-wider text-foreground">{group.name}</p>
-                    <p className="text-[9px] text-muted-foreground">{group.cards.length} card{group.cards.length !== 1 ? 's' : ''}</p>
+                  <div className="flex-1 text-left min-w-0">
+                    <p className="font-display text-[11px] tracking-wider text-foreground truncate">{group.name}</p>
+                    <div className="flex items-center gap-1.5 mt-0.5">
+                      <span className="text-[9px] text-muted-foreground">{group.cards.length} card{group.cards.length !== 1 ? 's' : ''}</span>
+                      {/* Rarity breakdown dots */}
+                      {RARITY_ORDER.map(r => {
+                        const count = group.cards.filter(c => c.rarity === r).length;
+                        if (!count) return null;
+                        const s = rarityStyle(r);
+                        return (
+                          <span key={r} className={`text-[8px] font-display tracking-wide ${s.text}`}>
+                            {count}×{r.charAt(0).toUpperCase()}
+                          </span>
+                        );
+                      })}
+                    </div>
                   </div>
                   <ChevronDown
                     size={16}

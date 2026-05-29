@@ -1437,7 +1437,7 @@ function AZRarityDropdownView({
   onShareCard: (card: AchievementCard) => void;
 }) {
   const [expanded, setExpanded] = useState<Record<AchievementRarity, boolean>>({
-    platinum: true, diamond: true, gold: true, silver: false, bronze: false,
+    platinum: false, diamond: false, gold: false, silver: false, bronze: false,
   });
 
   const grouped = useMemo(() => {
@@ -1539,7 +1539,7 @@ function RarityDropdownGrid({
   onShareCard: (card: AchievementCard) => void;
 }) {
   const [expanded, setExpanded] = useState<Record<AchievementRarity, boolean>>({
-    platinum: true, diamond: true, gold: true, silver: false, bronze: false,
+    platinum: false, diamond: false, gold: false, silver: false, bronze: false,
   });
 
   const grouped = useMemo(() => {
