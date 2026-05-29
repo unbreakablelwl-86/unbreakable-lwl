@@ -51,7 +51,7 @@ const FlappyGame = () => {
 
   // Live elapsed timer
   useEffect(() => {
-    if (state === "playing") {
+    if (gameState === "playing") {
       timerStartRef.current = Date.now();
       setElapsedSecs(0);
       timerIntervalRef.current = setInterval(() => {
@@ -61,7 +61,7 @@ const FlappyGame = () => {
       clearInterval(timerIntervalRef.current);
     }
     return () => clearInterval(timerIntervalRef.current);
-  }, [state]);
+  }, [gameState]);
 
 
   const canvasRef = useRef<HTMLCanvasElement>(null);

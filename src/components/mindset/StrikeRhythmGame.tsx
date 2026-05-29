@@ -305,17 +305,17 @@ const StrikeRhythmGame = () => {
         ctx.fillRect(i * LANE_W, STRIKE_Y - 30, LANE_W, 60);
       }
 
-      // Button circle
+      // Button circle — big & bright
       ctx.beginPath();
-      ctx.arc(cx, STRIKE_Y, 20, 0, Math.PI * 2);
-      ctx.fillStyle = pressed ? LANE_COLORS[i] + "60" : "rgba(255,255,255,0.05)";
+      ctx.arc(cx, STRIKE_Y, 28, 0, Math.PI * 2);
+      ctx.fillStyle = pressed ? LANE_COLORS[i] + "90" : LANE_COLORS[i] + "25";
       ctx.fill();
-      ctx.strokeStyle = pressed ? LANE_COLORS[i] : "rgba(255,255,255,0.15)";
-      ctx.lineWidth = 2;
+      ctx.strokeStyle = pressed ? LANE_COLORS[i] : LANE_COLORS[i] + "60";
+      ctx.lineWidth = 3;
       ctx.stroke();
 
       // Key label
-      ctx.fillStyle = pressed ? LANE_COLORS[i] : "rgba(255,255,255,0.3)";
+      ctx.fillStyle = pressed ? "#FFFFFF" : LANE_COLORS[i] + "90";
       ctx.font = "bold 14px monospace";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
@@ -864,12 +864,13 @@ const StrikeRhythmGame = () => {
           {LANE_COLORS.map((color, i) => (
             <button
               key={i}
-              className="flex-1 py-4 rounded-lg font-display text-sm tracking-wider transition-all active:scale-95"
+              className="flex-1 py-6 rounded-xl font-display text-base tracking-wider transition-all active:scale-95"
               style={{
-                background: lanePressed[i] ? color + "40" : "rgba(255,255,255,0.03)",
-                border: `1px solid ${color}40`,
+                background: lanePressed[i] ? color + "70" : color + "20",
+                border: `2px solid ${lanePressed[i] ? color : color + "80"}`,
                 color: color,
-                textShadow: `0 0 8px ${color}60`,
+                textShadow: `0 0 12px ${color}`,
+                boxShadow: lanePressed[i] ? `0 0 20px ${color}60, inset 0 0 15px ${color}30` : `0 0 8px ${color}30`,
               }}
               onTouchStart={(e) => {
                 e.preventDefault();
