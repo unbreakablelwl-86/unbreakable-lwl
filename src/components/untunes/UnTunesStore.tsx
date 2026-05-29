@@ -72,7 +72,7 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
         // Fallback: direct query
         const { data, error } = await (supabase as any)
           .from('un_tunes_user_cards')
-          .select('id, track_id, album_id, rarity, card_type, brand_card_id, edition_number, created_at, date_stamped, un_tunes_tracks(title,cover_url,artist), un_tunes_albums(title,cover_url), un_tunes_brand_cards(title,artwork_url,image_url)')
+          .select('id, track_id, album_id, rarity, card_type, brand_card_id, edition_number, purchase_id, created_at, date_stamped, un_tunes_tracks(title,cover_url,artist), un_tunes_albums(title,cover_url), un_tunes_brand_cards(title,artwork_url,image_url)')
           .eq('user_id', user.id)
           .eq('is_opened', false)
           .order('created_at', { ascending: true });
@@ -103,8 +103,17 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
       if (aRes.data && albumList.length === 0) albumList = aRes.data as any;
     }
 
+    // Group by purchase_id — only open ONE purchase at a time (not all 42 cards at once)
+    const firstPurchaseId = (pendingPacks[0] as any).purchase_id;
+    const batch = firstPurchaseId
+      ? pendingPacks.filter((p: any) => p.purchase_id === firstPurchaseId)
+      : pendingPacks.slice(0, 5); // Fallback: max 5 if no purchase_id
+
+    // Determine pack type from batch size
+    const batchType = batch.length <= 1 ? 'single' : batch.length <= 15 ? 'album' : 'bundle';
+
     // Convert pending DB cards into PackCard format for the opening animation
-    const cards: PackCard[] = pendingPacks.map((p: any) => {
+    const cards: PackCard[] = batch.map((p: any) => {
       // Use PostgREST joins if available, otherwise fallback to manual lookup
       const trackJoin = p.un_tunes_tracks;
       const albumJoin = p.un_tunes_albums;
@@ -124,7 +133,7 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
         un_tunes_brand_cards: brandJoin || null,
       };
     });
-    setPackType('bundle');
+    setPackType(batchType);
     setPackCards(cards);
   }, [pendingPacks, tracks, albums]);
 

@@ -479,6 +479,54 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
         ))}
       </div>
 
+      {/* Bin All Duplicates button when on duplicates tab */}
+      {typeFilter === 'duplicates' && duplicateIds.size > 0 && (
+        <div className="flex items-center justify-between bg-red-500/5 border border-red-500/20 rounded-xl px-4 py-2.5">
+          <span className="text-xs font-display tracking-wider text-red-300">
+            {duplicateIds.size} duplicate{duplicateIds.size !== 1 ? 's' : ''} found
+          </span>
+          <Button
+            variant="outline"
+            size="sm"
+            className="font-display tracking-wider text-[10px] border-red-500/30 text-red-400 hover:bg-red-500/10"
+            disabled={deleting}
+            onClick={async () => {
+              if (!user) return;
+              setDeleting(true);
+              try {
+                // Keep the BEST card per track+rarity combo, delete the rest
+                const dupeArray = cards.filter(c => duplicateIds.has(c.id));
+                // Group by track_id+rarity — keep the first (oldest), delete the rest
+                const seen = new Map<string, string>();
+                const toDelete: string[] = [];
+                for (const c of cards) {
+                  const key = `${c.track_id || c.album_id || c.brand_card_id}-${c.rarity}`;
+                  if (!seen.has(key)) { seen.set(key, c.id); }
+                  else if (duplicateIds.has(c.id)) { toDelete.push(c.id); }
+                }
+                if (toDelete.length === 0) { toast.info('No duplicates to remove'); return; }
+                const { error } = await (supabase as any)
+                  .from('un_tunes_user_cards')
+                  .delete()
+                  .in('id', toDelete)
+                  .eq('user_id', user.id);
+                if (error) throw error;
+                setCards(prev => prev.filter(c => !toDelete.includes(c.id)));
+                toast.success(`Deleted ${toDelete.length} duplicate card${toDelete.length !== 1 ? 's' : ''}`);
+              } catch (err) {
+                console.error('Bin all dupes error:', err);
+                toast.error('Failed to delete duplicates');
+              } finally {
+                setDeleting(false);
+              }
+            }}
+          >
+            <Trash2 size={12} className="mr-1" />
+            {deleting ? 'DELETING...' : 'BIN ALL DUPLICATES'}
+          </Button>
+        </div>
+      )}
+
       {/* Cards Grid/List */}
       {filtered.length === 0 ? (
         <Card className="p-8 border-border text-center">
@@ -739,6 +787,9 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
                         </div>
                       )}
 
+                      {/* Shimmer overlay — full rarity effect on detail view */}
+                      <CardShimmer rarity={card.rarity} />
+
                       {/* Rarity overlay */}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20" />
 
@@ -810,22 +861,20 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
                         </Button>
                       </div>
                       <div className="flex items-center gap-2">
-                        {duplicateIds.has(card.id) && (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="flex-1 font-display tracking-wider text-xs border-red-500/30 text-red-400 hover:bg-red-500/10"
-                            onClick={() => handleDeleteCard(card)}
-                            disabled={deleting}
-                          >
-                            <Trash2 size={14} className="mr-1.5" />
-                            {deleting ? 'DELETING...' : 'DELETE'}
-                          </Button>
-                        )}
                         <Button
                           variant="outline"
                           size="sm"
-                          className={`${duplicateIds.has(card.id) ? 'flex-1' : 'w-full'} font-display tracking-wider text-xs`}
+                          className="flex-1 font-display tracking-wider text-xs border-red-500/30 text-red-400 hover:bg-red-500/10"
+                          onClick={() => handleDeleteCard(card)}
+                          disabled={deleting}
+                        >
+                          <Trash2 size={14} className="mr-1.5" />
+                          {deleting ? 'DELETING...' : 'DELETE'}
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="flex-1 font-display tracking-wider text-xs"
                           onClick={() => setSelectedCard(null)}
                         >
                           CLOSE

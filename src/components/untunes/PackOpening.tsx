@@ -66,6 +66,8 @@ const shimmerKeyframes = `
 @keyframes utPlatSweep { 0%,100% { transform: translateX(-130%); } 50% { transform: translateX(130%); } }
 @keyframes utPulse { 0%,100% { opacity: 0.7; } 50% { opacity: 1; } }
 @keyframes utGrainShift { 0% { transform: translate(0,0); } 25% { transform: translate(-2px,1px); } 50% { transform: translate(1px,-1px); } 75% { transform: translate(-1px,2px); } 100% { transform: translate(0,0); } }
+@keyframes packPulse { 0%,100% { opacity: 0.5; transform: scale(1); } 50% { opacity: 1; transform: scale(1.05); } }
+@keyframes packSweep { 0%,100% { transform: translateX(-150%); } 50% { transform: translateX(150%); } }
 `;
 
 function GoldShimmerOverlay() {
@@ -180,45 +182,114 @@ const RARITY_RANK: Record<string, number> = { platinum: 5, diamond: 4, gold: 3, 
 
 function PackBackDesign({ tier }: { tier: string }) {
   const tierColors = {
-    elite: { from: '#FFD700', to: '#B8860B', label: 'ELITE' },
-    premium: { from: '#BF5FFF', to: '#7C3AED', label: 'PREMIUM' },
-    standard: { from: '#FF5500', to: '#CC4400', label: 'STANDARD' },
+    elite: { from: '#FFD700', to: '#B8860B', accent: '#FFF8DC', label: 'ELITE' },
+    premium: { from: '#BF5FFF', to: '#7C3AED', accent: '#E8D5FF', label: 'PREMIUM' },
+    standard: { from: '#FF5500', to: '#CC4400', accent: '#FFD4B8', label: 'STANDARD' },
   };
   const c = tierColors[tier as keyof typeof tierColors] || tierColors.standard;
 
   return (
-    <div className="w-full h-full rounded-2xl overflow-hidden relative" style={{ background: 'linear-gradient(160deg, #080808 0%, #0A0A0A 50%, #080808 100%)' }}>
-      {/* Geometric pattern */}
-      <div className="absolute inset-0" style={{
-        backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0L60 30L30 60L0 30Z' fill='none' stroke='rgba(255,85,0,0.08)' stroke-width='0.5'/%3E%3C/svg%3E")`,
-        backgroundSize: '30px 30px',
-      }} />
-      {/* Center emblem */}
-      <div className="absolute inset-0 flex items-center justify-center">
+    <div className="w-full h-full rounded-2xl overflow-hidden relative" style={{ background: 'radial-gradient(ellipse at 50% 40%, #141414 0%, #080808 60%, #050505 100%)' }}>
+      {/* ── Animated diagonal lines ── */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute inset-0" style={{
+          backgroundImage: `repeating-linear-gradient(135deg, transparent, transparent 18px, ${c.from}08 18px, ${c.from}08 19px)`,
+        }} />
+        <div className="absolute inset-0" style={{
+          backgroundImage: `repeating-linear-gradient(45deg, transparent, transparent 24px, ${c.from}05 24px, ${c.from}05 25px)`,
+        }} />
+      </div>
+
+      {/* ── Ornate double border ── */}
+      <div className="absolute inset-[6px] rounded-[14px]" style={{ border: `1px solid ${c.from}25` }} />
+      <div className="absolute inset-[10px] rounded-xl" style={{ border: `1.5px solid ${c.from}35`, boxShadow: `inset 0 0 30px ${c.from}08` }} />
+      <div className="absolute inset-[14px] rounded-[10px]" style={{ border: `0.5px solid ${c.from}15` }} />
+
+      {/* ── Corner ornaments ── */}
+      {[{ top: 18, left: 18 }, { top: 18, right: 18 }, { bottom: 18, left: 18 }, { bottom: 18, right: 18 }].map((pos, i) => (
+        <div key={i} className="absolute w-6 h-6" style={{ ...pos as any }}>
+          <div className="w-full h-full" style={{
+            borderTop: i < 2 ? `2px solid ${c.from}50` : 'none',
+            borderBottom: i >= 2 ? `2px solid ${c.from}50` : 'none',
+            borderLeft: i % 2 === 0 ? `2px solid ${c.from}50` : 'none',
+            borderRight: i % 2 === 1 ? `2px solid ${c.from}50` : 'none',
+            borderRadius: '2px',
+          }} />
+        </div>
+      ))}
+
+      {/* ── Top branding ── */}
+      <div className="absolute top-7 left-0 right-0 text-center z-10">
+        <p className="font-display text-[9px] tracking-[0.35em] uppercase" style={{ color: `${c.from}90`, textShadow: `0 0 12px ${c.from}30` }}>
+          UNBREAKABLE
+        </p>
+        <div className="w-10 h-[1px] mx-auto mt-1.5" style={{ background: `linear-gradient(90deg, transparent, ${c.from}50, transparent)` }} />
+        <p className="font-display text-[6px] tracking-[0.25em] mt-1" style={{ color: `${c.from}50` }}>
+          UN·TUNES
+        </p>
+      </div>
+
+      {/* ── Center shield emblem with glow rings ── */}
+      <div className="absolute inset-0 flex items-center justify-center z-10">
         <div className="relative">
-          {/* Glow ring */}
-          <div className="w-28 h-28 rounded-full border border-primary/20" style={{ boxShadow: `0 0 40px ${c.from}20, 0 0 80px ${c.from}10` }} />
-          {/* Shield */}
-          <div className="absolute inset-0 flex items-center justify-center">
-            <img src={shieldLogo} alt="" className="w-14 h-14 object-contain" style={{ filter: `drop-shadow(0 0 15px ${c.from}40)` }} />
+          {/* Outer pulse ring */}
+          <div className="absolute -inset-6 rounded-full" style={{
+            border: `1px solid ${c.from}15`,
+            boxShadow: `0 0 40px ${c.from}10, inset 0 0 20px ${c.from}05`,
+            animation: 'packPulse 3s ease-in-out infinite',
+          }} />
+          {/* Middle ring */}
+          <div className="absolute -inset-2 rounded-full" style={{
+            border: `1.5px solid ${c.from}30`,
+            boxShadow: `0 0 20px ${c.from}15`,
+          }} />
+          {/* Shield container */}
+          <div className="w-24 h-24 rounded-full flex items-center justify-center" style={{
+            background: `radial-gradient(circle, ${c.from}12 0%, transparent 70%)`,
+            boxShadow: `0 0 50px ${c.from}20, 0 0 100px ${c.from}08`,
+          }}>
+            <img
+              src={shieldLogo}
+              alt=""
+              className="w-16 h-16 object-contain"
+              style={{ filter: `drop-shadow(0 0 20px ${c.from}50) drop-shadow(0 0 40px ${c.from}25)` }}
+            />
           </div>
         </div>
       </div>
-      {/* Tier label */}
-      <div className="absolute bottom-8 left-0 right-0 text-center">
-        <p className="font-display text-[10px] tracking-[0.3em]" style={{ color: c.from, textShadow: `0 0 10px ${c.from}40` }}>
-          {c.label} PACK
+
+      {/* ── Light sweep animation ── */}
+      <div className="absolute inset-0 overflow-hidden rounded-2xl">
+        <div className="absolute -inset-y-4 w-32" style={{
+          background: `linear-gradient(90deg, transparent, ${c.from}12 40%, ${c.accent}18 50%, ${c.from}12 60%, transparent)`,
+          animation: 'packSweep 4s ease-in-out infinite',
+        }} />
+      </div>
+
+      {/* ── Tier badge ── */}
+      <div className="absolute bottom-12 left-0 right-0 text-center z-10">
+        <div className="inline-block px-5 py-1.5 rounded-lg" style={{
+          background: `linear-gradient(135deg, ${c.from}15, ${c.to}15)`,
+          border: `1px solid ${c.from}35`,
+          boxShadow: `0 0 15px ${c.from}10`,
+        }}>
+          <p className="font-display text-[10px] tracking-[0.35em]" style={{ color: c.from, textShadow: `0 0 8px ${c.from}50` }}>
+            {c.label} PACK
+          </p>
+        </div>
+      </div>
+
+      {/* ── Bottom branding ── */}
+      <div className="absolute bottom-5 left-0 right-0 text-center z-10">
+        <p className="text-[6px] font-mono tracking-[0.25em]" style={{ color: `${c.from}35` }}>
+          LIVE WITHOUT LIMITS™
         </p>
-        <p className="text-[7px] font-mono tracking-[0.2em] text-white/25 mt-1">LIVE WITHOUT LIMITS™</p>
       </div>
-      {/* Top branding */}
-      <div className="absolute top-6 left-0 right-0 text-center">
-        <p className="font-display text-[8px] tracking-[0.25em] text-white/30">UNBREAKABLE</p>
-        <p className="font-display text-[6px] tracking-[0.15em] text-white/15 mt-0.5">UN·TUNES</p>
-      </div>
-      {/* Edge lines */}
-      <div className="absolute inset-4 rounded-xl border border-white/[0.04]" />
-      <div className="absolute inset-6 rounded-lg border border-white/[0.02]" />
+
+      {/* ── Subtle radial gradient overlay ── */}
+      <div className="absolute inset-0 rounded-2xl" style={{
+        background: `radial-gradient(ellipse at 50% 35%, ${c.from}06 0%, transparent 55%)`,
+      }} />
     </div>
   );
 }
