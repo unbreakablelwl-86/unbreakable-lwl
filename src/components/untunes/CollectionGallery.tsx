@@ -313,11 +313,22 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
     });
     if (trackOnly.length > 0) {
       trackOnly.sort(sortByRarity);
-      groups.push({ id: '_tracks', name: 'Singles & Tracks', cover: null, cards: trackOnly });
+      // Use the first track's cover art as group icon (matches album style)
+      const trackCover = trackOnly.find(c => c.track_cover)?.track_cover
+        || trackOnly.find(c => c.image_url)?.image_url
+        || null;
+      groups.push({ id: '_tracks', name: 'Singles & Tracks', cover: trackCover, cards: trackOnly });
     }
     if (brandCards.length > 0) {
       brandCards.sort(sortByRarity);
-      groups.push({ id: '_brand', name: 'Brand Cards', cover: null, cards: brandCards });
+      // Use the UNBREAKABLE cassette tape brand card artwork as group icon
+      const brandCover = brandCards.find(c =>
+        c.brand_artwork && (c.brand_title || '').toUpperCase().includes('UNBREAKABLE')
+      )?.brand_artwork
+        || brandCards.find(c => c.brand_artwork)?.brand_artwork
+        || brandCards.find(c => c.image_url)?.image_url
+        || null;
+      groups.push({ id: '_brand', name: 'Brand Cards', cover: brandCover, cards: brandCards });
     }
     return groups;
   }, [filtered]);
