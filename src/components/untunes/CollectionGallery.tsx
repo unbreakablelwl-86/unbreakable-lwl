@@ -9,9 +9,46 @@ import { useAuth } from '@/hooks/useAuth';
 import {
   ArrowLeft, Music, Disc, Sparkles, Crown, Gem, Award,
   Star, Filter, Grid3X3, List, ChevronDown, Share2,
-  Hash, Calendar,
+  Hash, Calendar, Copy,
 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
+
+/* ─── Shimmer overlay keyframes ─── */
+const SHIMMER_STYLES = `
+@keyframes cgGoldSweep { 0%,100% { transform: translateX(-120%); } 50% { transform: translateX(120%); } }
+@keyframes cgDiamondHolo { 0%,100% { transform: translateX(-130%); } 50% { transform: translateX(130%); } }
+@keyframes cgPrismaticShift { 0% { background-position: 0% 0%; } 50% { background-position: 100% 100%; } 100% { background-position: 0% 0%; } }
+@keyframes cgHueRotate { 0% { filter: hue-rotate(0deg); } 100% { filter: hue-rotate(360deg); } }
+@keyframes cgPlatSweep { 0%,100% { transform: translateX(-130%); } 50% { transform: translateX(130%); } }
+@keyframes cgPulse { 0%,100% { opacity: 0.7; } 50% { opacity: 1; } }
+`;
+
+function CardShimmer({ rarity }: { rarity: string }) {
+  if (rarity === 'gold') return (
+    <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-xl z-[5]">
+      <div className="absolute inset-0" style={{ background: 'linear-gradient(145deg, rgba(255,215,0,0.35) 0%, rgba(184,134,11,0.4) 30%, rgba(255,215,0,0.25) 50%, rgba(218,165,32,0.4) 70%, rgba(255,215,0,0.35) 100%)' }} />
+      <div className="absolute inset-0 rounded-xl" style={{ boxShadow: 'inset 0 0 30px rgba(255,215,0,0.4), 0 0 15px rgba(255,215,0,0.2)' }} />
+      <div className="absolute -inset-y-4 w-24" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,215,0,0.7) 40%, rgba(255,240,180,0.9) 50%, rgba(255,215,0,0.7) 60%, transparent)', animation: 'cgGoldSweep 3.8s ease-in-out infinite' }} />
+    </div>
+  );
+  if (rarity === 'diamond') return (
+    <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-xl z-[5]">
+      <div className="absolute inset-0" style={{ background: 'linear-gradient(125deg, rgba(125,249,255,0.4) 0%, rgba(191,95,255,0.4) 25%, rgba(0,206,209,0.4) 50%, rgba(192,192,192,0.35) 75%, rgba(125,249,255,0.4) 100%)', backgroundSize: '200% 200%', animation: 'cgPrismaticShift 4s ease-in-out infinite' }} />
+      <div className="absolute inset-0 rounded-xl" style={{ boxShadow: 'inset 0 0 40px rgba(125,249,255,0.4), 0 0 20px rgba(125,249,255,0.25)' }} />
+      <div className="absolute -inset-y-4 w-28" style={{ background: 'linear-gradient(90deg, transparent, rgba(125,249,255,0.8) 35%, rgba(255,255,255,0.9) 50%, rgba(191,95,255,0.8) 65%, transparent)', animation: 'cgDiamondHolo 4.5s ease-in-out infinite' }} />
+      <div className="absolute inset-0" style={{ background: 'linear-gradient(45deg, rgba(125,249,255,0.1), rgba(191,95,255,0.1))', animation: 'cgHueRotate 8s linear infinite' }} />
+    </div>
+  );
+  if (rarity === 'platinum') return (
+    <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-xl z-[5]">
+      <div className="absolute inset-0" style={{ background: 'linear-gradient(155deg, rgba(229,228,226,0.4) 0%, rgba(212,208,204,0.45) 25%, rgba(255,255,255,0.3) 50%, rgba(183,110,121,0.4) 75%, rgba(229,228,226,0.4) 100%)' }} />
+      <div className="absolute inset-0 rounded-xl" style={{ boxShadow: 'inset 0 0 40px rgba(229,228,226,0.4), 0 0 20px rgba(229,228,226,0.25)' }} />
+      <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at 30% 40%, rgba(229,228,226,0.35) 0%, transparent 45%), radial-gradient(ellipse at 70% 60%, rgba(183,110,121,0.3) 0%, transparent 45%)', animation: 'cgPulse 4s ease-in-out infinite' }} />
+      <div className="absolute -inset-y-4 w-32" style={{ background: 'linear-gradient(90deg, transparent, rgba(229,228,226,0.85) 40%, rgba(255,255,255,0.95) 50%, rgba(229,228,226,0.85) 60%, transparent)', animation: 'cgPlatSweep 5s ease-in-out infinite' }} />
+    </div>
+  );
+  return null;
+}
 import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns';
@@ -99,7 +136,8 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<string>('all');
   const [typeFilter, setTypeFilter] = useState<string>('all');
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [viewMode, setViewMode] = useState<'grid' | 'list' | 'grouped'>('grouped');
+  const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(new Set());
   const [selectedCard, setSelectedCard] = useState<UserCard | null>(null);
   const [shareCard, setShareCard] = useState<UserCard | null>(null);
 
@@ -178,6 +216,19 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
     load();
   }, [user]);
 
+  // Identify duplicates (same track/album owned more than once)
+  const duplicateIds = useMemo(() => {
+    const seen = new Map<string, string[]>();
+    cards.forEach(c => {
+      const key = c.track_id || c.album_id || c.brand_card_id || c.id;
+      if (!seen.has(key)) seen.set(key, []);
+      seen.get(key)!.push(c.id);
+    });
+    const dupes = new Set<string>();
+    seen.forEach(ids => { if (ids.length > 1) ids.forEach(id => dupes.add(id)); });
+    return dupes;
+  }, [cards]);
+
   // Filter cards
   const filtered = useMemo(() => {
     let result = cards;
@@ -189,11 +240,46 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
         if (typeFilter === 'track') return c.track_id && !c.brand_card_id;
         if (typeFilter === 'album') return c.album_id && !c.track_id && !c.brand_card_id;
         if (typeFilter === 'brand') return c.brand_card_id;
+        if (typeFilter === 'duplicates') return duplicateIds.has(c.id);
         return true;
       });
     }
     return result;
-  }, [cards, filter, typeFilter]);
+  }, [cards, filter, typeFilter, duplicateIds]);
+
+  // Grouped by album/track for collapsible view
+  const grouped = useMemo(() => {
+    // Group by album first, then standalone tracks, then brand cards
+    const albumGroups = new Map<string, { name: string; cover: string | null; cards: typeof filtered }>();
+    const trackOnly: typeof filtered = [];
+    const brandCards: typeof filtered = [];
+
+    filtered.forEach(card => {
+      if (card.brand_card_id) {
+        brandCards.push(card);
+      } else if (card.album_id && card.album_title) {
+        const key = card.album_id;
+        if (!albumGroups.has(key)) albumGroups.set(key, { name: card.album_title, cover: card.album_cover || null, cards: [] });
+        albumGroups.get(key)!.cards.push(card);
+      } else {
+        trackOnly.push(card);
+      }
+    });
+
+    const groups: { id: string; name: string; cover: string | null; cards: typeof filtered }[] = [];
+    albumGroups.forEach((val, key) => groups.push({ id: key, name: val.name, cover: val.cover, cards: val.cards }));
+    if (trackOnly.length > 0) groups.push({ id: '_tracks', name: 'Singles & Tracks', cover: null, cards: trackOnly });
+    if (brandCards.length > 0) groups.push({ id: '_brand', name: 'Brand Cards', cover: null, cards: brandCards });
+    return groups;
+  }, [filtered]);
+
+  const toggleGroup = (id: string) => {
+    setCollapsedGroups(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
 
   // Stats
   const stats = useMemo(() => {
@@ -248,6 +334,8 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
 
   return (
     <div className="px-4 py-6 pb-24">
+      {/* Shimmer keyframes */}
+      <style>{SHIMMER_STYLES}</style>
       {/* Header */}
       <button onClick={onBack} className="flex items-center gap-1 text-muted-foreground text-sm mb-4 hover:text-foreground transition-colors">
         <ArrowLeft size={16} /> Back to Store
@@ -258,13 +346,25 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
           <h2 className="font-display text-lg tracking-wider text-foreground">MY COLLECTION</h2>
           <p className="text-xs text-muted-foreground">{stats.total} cards collected</p>
         </div>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setViewMode(viewMode === 'grid' ? 'list' : 'grid')}
-            className="w-8 h-8 rounded-lg bg-card border border-border flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
-          >
-            {viewMode === 'grid' ? <List size={14} /> : <Grid3X3 size={14} />}
-          </button>
+        <div className="flex items-center gap-1">
+          {([
+            { mode: 'grouped' as const, icon: ChevronDown, tip: 'Grouped' },
+            { mode: 'grid' as const, icon: Grid3X3, tip: 'Grid' },
+            { mode: 'list' as const, icon: List, tip: 'List' },
+          ]).map(({ mode, icon: Icon, tip }) => (
+            <button
+              key={mode}
+              onClick={() => setViewMode(mode)}
+              title={tip}
+              className={`w-8 h-8 rounded-lg border flex items-center justify-center transition-colors ${
+                viewMode === mode
+                  ? 'bg-primary/10 border-primary/30 text-primary'
+                  : 'bg-card border-border text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              <Icon size={14} />
+            </button>
+          ))}
         </div>
       </div>
 
@@ -302,6 +402,7 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
           { key: 'track', label: 'Tracks', icon: Music },
           { key: 'album', label: 'Albums', icon: Disc },
           { key: 'brand', label: 'Brand', icon: Sparkles },
+          ...(duplicateIds.size > 0 ? [{ key: 'duplicates', label: `Duplicates (${duplicateIds.size})`, icon: Copy }] : []),
         ].map(({ key, label, icon: Icon }) => (
           <button
             key={key}
@@ -331,6 +432,87 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
               : 'Try adjusting your filters.'}
           </p>
         </Card>
+      ) : viewMode === 'grouped' ? (
+        /* ═══ GROUPED VIEW — collapsible album/track sections ═══ */
+        <div className="space-y-4">
+          {grouped.map(group => {
+            const isCollapsed = collapsedGroups.has(group.id);
+            return (
+              <div key={group.id} className="rounded-xl border border-border overflow-hidden bg-card/30">
+                {/* Group header — tap to collapse/expand */}
+                <button
+                  onClick={() => toggleGroup(group.id)}
+                  className="w-full flex items-center gap-3 p-3 hover:bg-card/60 transition-colors"
+                >
+                  {group.cover ? (
+                    <img src={group.cover} alt="" className="w-10 h-10 rounded-lg object-cover shrink-0" />
+                  ) : (
+                    <div className="w-10 h-10 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
+                      {group.id === '_brand' ? <Sparkles size={16} className="text-primary" /> : <Music size={16} className="text-primary" />}
+                    </div>
+                  )}
+                  <div className="flex-1 text-left">
+                    <p className="font-display text-[11px] tracking-wider text-foreground">{group.name}</p>
+                    <p className="text-[9px] text-muted-foreground">{group.cards.length} card{group.cards.length !== 1 ? 's' : ''}</p>
+                  </div>
+                  <ChevronDown
+                    size={16}
+                    className={`text-muted-foreground transition-transform duration-200 ${isCollapsed ? '-rotate-90' : ''}`}
+                  />
+                </button>
+                {/* Collapsible card grid */}
+                {!isCollapsed && (
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 p-3 pt-0">
+                    {group.cards.map(card => {
+                      const style = rarityStyle(card.rarity);
+                      const image = getCardImage(card);
+                      return (
+                        <div
+                          key={card.id}
+                          onClick={() => setSelectedCard(card)}
+                          className={`relative rounded-xl border overflow-hidden cursor-pointer transition-all hover:scale-[1.02] ${style.border} ${style.glow}`}
+                        >
+                          <div className="aspect-square bg-card relative">
+                            {image ? (
+                              <img src={image} alt="" className="w-full h-full object-cover" />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-card to-muted/30">
+                                <Music size={24} className="text-muted-foreground/30" />
+                              </div>
+                            )}
+                            <CardShimmer rarity={card.rarity} />
+                            <div className={`absolute top-1.5 right-1.5 z-10 px-1.5 py-0.5 rounded-md ${style.bg} backdrop-blur-sm`}>
+                              <span className={`text-[7px] font-display tracking-wider ${style.text}`}>
+                                {card.rarity.toUpperCase()}
+                              </span>
+                            </div>
+                            {card.edition_number != null && card.edition_number > 0 && (card.rarity === 'platinum' || card.rarity === 'diamond') && (
+                              <div className="absolute bottom-1.5 left-1.5 z-10 px-1 py-0.5 rounded bg-black/60 backdrop-blur-sm">
+                                <span className="text-[7px] font-display text-white/80">
+                                  #{String(card.edition_number).padStart(3, '0')}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                          <div className="p-2 bg-card/90">
+                            <p className="font-display text-[10px] tracking-wider text-foreground truncate">
+                              {getCardName(card)}
+                            </p>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+          {grouped.length === 0 && (
+            <Card className="p-8 border-border text-center">
+              <p className="text-xs text-muted-foreground">No groups to display</p>
+            </Card>
+          )}
+        </div>
       ) : viewMode === 'grid' ? (
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           <AnimatePresence mode="popLayout">
@@ -357,24 +539,32 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
                         <Music size={32} className="text-muted-foreground/30" />
                       </div>
                     )}
+                    {/* Shimmer overlay — gold/diamond/platinum get metallic effects */}
+                    <CardShimmer rarity={card.rarity} />
                     {/* Unbreakable branding — top-left */}
                     <div className="absolute top-1.5 left-1.5 z-10 flex items-center gap-1">
                       <img src="/unbreakable-shield.png" alt="" className="w-3 h-3 object-contain" style={{ opacity: 0.5 }} />
                       <span className="text-[5px] font-display tracking-[0.15em] text-white/40">UNBREAKABLE</span>
                     </div>
                     {/* Rarity badge */}
-                    <div className={`absolute top-2 right-2 px-1.5 py-0.5 rounded-md ${style.bg} backdrop-blur-sm`}>
+                    <div className={`absolute top-2 right-2 z-10 px-1.5 py-0.5 rounded-md ${style.bg} backdrop-blur-sm`}>
                       <span className={`text-[8px] font-display tracking-wider ${style.text}`}>
                         {card.rarity.toUpperCase()}
                       </span>
                     </div>
-                    {/* Edition number */}
-                    {card.edition_number != null && card.edition_number > 0 && (
-                      <div className="absolute bottom-2 left-2 px-1.5 py-0.5 rounded-md bg-black/60 backdrop-blur-sm">
+                    {/* Edition number (platinum/diamond only) */}
+                    {card.edition_number != null && card.edition_number > 0 && (card.rarity === 'platinum' || card.rarity === 'diamond') && (
+                      <div className="absolute bottom-2 left-2 z-10 px-1.5 py-0.5 rounded-md bg-black/60 backdrop-blur-sm">
                         <span className="text-[8px] font-display tracking-wider text-white/80">
                           #{String(card.edition_number).padStart(3, '0')}
-                          {card.rarity === 'platinum' ? '/250' : card.rarity === 'diamond' ? '/1000' : ''}
+                          {card.rarity === 'platinum' ? '/250' : '/1000'}
                         </span>
+                      </div>
+                    )}
+                    {/* Duplicate indicator */}
+                    {duplicateIds.has(card.id) && (
+                      <div className="absolute bottom-2 right-2 z-10 px-1.5 py-0.5 rounded-md bg-orange-500/20 backdrop-blur-sm border border-orange-500/30">
+                        <span className="text-[7px] font-display tracking-wider text-orange-300">DUPE</span>
                       </div>
                     )}
                   </div>

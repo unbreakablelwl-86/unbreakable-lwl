@@ -2,15 +2,14 @@
  * PackOpening — Un-Tunes card pack reveal animation.
  *
  * Flow: shake pack → glow → tear → reveal cards one by one →
- *       flip each card → burst on Gold+ → Un-Tunes track plays → share to Stories
- *
- * Exports: PackOpening component, PACK_TIERS config, PackCard + PackTier types.
+ *       flip each card → burst on Gold+ → Un-Tunes track plays → share/bin
  */
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Music, Sparkles, ChevronRight, X, Share2, Crown, Gem, Award, Star } from 'lucide-react';
+import { Music, Sparkles, ChevronRight, X, Share2, Trash2, Crown, Gem, Award, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import confetti from 'canvas-confetti';
+import shieldLogo from '@/assets/unbreakable-shield.png';
 
 /* ═══════════════════════════════════════════════════ */
 /*  TYPES & CONFIG                                    */
@@ -24,11 +23,17 @@ export interface PackCard {
   rarity: string;
   edition_number?: number | null;
   is_bonus?: boolean;
-  un_tunes_tracks?: { title: string; artist?: string; cover_url: string } | null;
-  un_tunes_albums?: { title: string; cover_url: string } | null;
-  un_tunes_brand_cards?: { title: string; artwork_url: string } | null;
+  un_tunes_tracks?: { title: string; artist?: string; cover_url?: string; image_url?: string } | null;
+  un_tunes_albums?: { title: string; cover_url?: string; image_url?: string } | null;
+  un_tunes_brand_cards?: { title: string; artwork_url?: string; image_url?: string } | null;
   brand_title?: string;
   brand_artwork?: string;
+  // Flat fields from edge function
+  image_url?: string;
+  artwork_url?: string;
+  cover_url?: string;
+  title?: string;
+  artist?: string;
 }
 
 export interface PackTier {
@@ -46,6 +51,75 @@ export const PACK_TIERS: PackTier[] = [
   { id: 'premium', name: 'PREMIUM PACK', cards: 8, cost: 120, guaranteedGold: 1, guaranteedDiamond: 0, platinumBoost: 2 },
   { id: 'elite', name: 'ELITE PACK', cards: 12, cost: 250, guaranteedGold: 2, guaranteedDiamond: 1, platinumBoost: 5 },
 ];
+
+/* ═══════════════════════════════════════════════════ */
+/*  SHIMMER OVERLAY COMPONENTS (matching PB card quality) */
+/* ═══════════════════════════════════════════════════ */
+
+const shimmerKeyframes = `
+@keyframes utGoldSweep { 0%,100% { transform: translateX(-120%); } 50% { transform: translateX(120%); } }
+@keyframes utSilverSweep { 0%,100% { transform: translateX(-110%); } 50% { transform: translateX(110%); } }
+@keyframes utBronzePulse { 0%,100% { opacity: 0.7; } 50% { opacity: 1; } }
+@keyframes utDiamondHolo { 0%,100% { transform: translateX(-130%); } 50% { transform: translateX(130%); } }
+@keyframes utPrismaticShift { 0% { background-position: 0% 0%; } 50% { background-position: 100% 100%; } 100% { background-position: 0% 0%; } }
+@keyframes utHueRotate { 0% { filter: hue-rotate(0deg); } 100% { filter: hue-rotate(360deg); } }
+@keyframes utPlatSweep { 0%,100% { transform: translateX(-130%); } 50% { transform: translateX(130%); } }
+@keyframes utPulse { 0%,100% { opacity: 0.7; } 50% { opacity: 1; } }
+@keyframes utGrainShift { 0% { transform: translate(0,0); } 25% { transform: translate(-2px,1px); } 50% { transform: translate(1px,-1px); } 75% { transform: translate(-1px,2px); } 100% { transform: translate(0,0); } }
+`;
+
+function GoldShimmerOverlay() {
+  return (
+    <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl z-[12]">
+      <div className="absolute inset-0" style={{ background: 'linear-gradient(145deg, rgba(255,215,0,0.4) 0%, rgba(184,134,11,0.5) 30%, rgba(255,215,0,0.3) 50%, rgba(218,165,32,0.5) 70%, rgba(255,215,0,0.4) 100%)' }} />
+      <div className="absolute inset-0 rounded-2xl" style={{ boxShadow: 'inset 0 0 50px rgba(255,215,0,0.5), inset 0 0 90px rgba(255,215,0,0.25), 0 0 25px rgba(255,215,0,0.3)' }} />
+      <div className="absolute inset-0" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 0L40 20L20 40L0 20Z' fill='none' stroke='rgba(255,215,0,0.12)' stroke-width='0.5'/%3E%3C/svg%3E")`, backgroundSize: '20px 20px' }} />
+      <div className="absolute -inset-y-4 w-36" style={{ background: 'linear-gradient(90deg, transparent 0%, rgba(255,215,0,0.2) 15%, rgba(255,215,0,0.8) 40%, rgba(255,240,180,0.95) 50%, rgba(255,215,0,0.8) 60%, rgba(255,215,0,0.2) 85%, transparent 100%)', animation: 'utGoldSweep 3.8s ease-in-out infinite' }} />
+      <div className="absolute inset-0" style={{ background: 'radial-gradient(circle at 20% 20%, rgba(255,215,0,0.5) 0%, transparent 12%), radial-gradient(circle at 80% 30%, rgba(255,240,180,0.45) 0%, transparent 10%), radial-gradient(circle at 50% 85%, rgba(255,215,0,0.4) 0%, transparent 15%)', animation: 'utBronzePulse 2.5s ease-in-out infinite' }} />
+    </div>
+  );
+}
+
+function DiamondHoloOverlay() {
+  return (
+    <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl z-[12]">
+      <div className="absolute inset-0" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0L60 30L30 60L0 30Z' fill='none' stroke='rgba(125,249,255,0.15)' stroke-width='0.5'/%3E%3C/svg%3E")`, backgroundSize: '30px 30px' }} />
+      <div className="absolute inset-0" style={{ background: 'linear-gradient(125deg, rgba(125,249,255,0.5) 0%, rgba(191,95,255,0.5) 25%, rgba(0,206,209,0.5) 50%, rgba(192,192,192,0.45) 75%, rgba(125,249,255,0.5) 100%)', backgroundSize: '200% 200%', animation: 'utPrismaticShift 4s ease-in-out infinite' }} />
+      <div className="absolute inset-0 rounded-2xl" style={{ boxShadow: 'inset 0 0 60px rgba(125,249,255,0.5), inset 0 0 100px rgba(191,95,255,0.25), 0 0 30px rgba(125,249,255,0.35)' }} />
+      <div className="absolute -inset-y-4 w-40" style={{ background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.2) 20%, rgba(125,249,255,0.85) 35%, rgba(255,255,255,0.95) 50%, rgba(191,95,255,0.85) 65%, rgba(255,255,255,0.2) 80%, transparent 100%)', animation: 'utDiamondHolo 4.5s ease-in-out infinite' }} />
+      <div className="absolute inset-0" style={{ background: 'linear-gradient(45deg, rgba(125,249,255,0.15), rgba(191,95,255,0.15), rgba(0,255,136,0.1))', animation: 'utHueRotate 8s linear infinite' }} />
+    </div>
+  );
+}
+
+function PlatinumChromeOverlay() {
+  return (
+    <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl z-[12]">
+      <div className="absolute inset-0" style={{ backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 1px, rgba(229,228,226,0.06) 1px, rgba(229,228,226,0.06) 2px), repeating-linear-gradient(-45deg, transparent, transparent 1px, rgba(183,110,121,0.04) 1px, rgba(183,110,121,0.04) 2px)', backgroundSize: '4px 4px' }} />
+      <div className="absolute inset-0" style={{ background: 'linear-gradient(155deg, rgba(229,228,226,0.45) 0%, rgba(212,208,204,0.5) 25%, rgba(255,255,255,0.35) 50%, rgba(183,110,121,0.45) 75%, rgba(229,228,226,0.45) 100%)' }} />
+      <div className="absolute inset-0 rounded-2xl" style={{ boxShadow: 'inset 0 0 60px rgba(229,228,226,0.5), inset 0 0 100px rgba(183,110,121,0.25), 0 0 30px rgba(229,228,226,0.3)' }} />
+      <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at 30% 40%, rgba(229,228,226,0.45) 0%, transparent 45%), radial-gradient(ellipse at 70% 60%, rgba(183,110,121,0.4) 0%, transparent 45%)', animation: 'utPulse 4s ease-in-out infinite' }} />
+      <div className="absolute -inset-y-4 w-44" style={{ background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.15) 15%, rgba(229,228,226,0.9) 40%, rgba(255,255,255,1) 50%, rgba(229,228,226,0.9) 60%, rgba(255,255,255,0.15) 85%, transparent 100%)', animation: 'utPlatSweep 5s ease-in-out infinite' }} />
+    </div>
+  );
+}
+
+function StandardOverlay() {
+  return (
+    <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl z-[12]">
+      <div className="absolute inset-0" style={{ background: 'linear-gradient(160deg, rgba(63,63,70,0.15) 0%, transparent 50%, rgba(63,63,70,0.15) 100%)' }} />
+    </div>
+  );
+}
+
+function getShimmerOverlay(rarity: string) {
+  switch (rarity) {
+    case 'platinum': return <PlatinumChromeOverlay />;
+    case 'diamond': return <DiamondHoloOverlay />;
+    case 'gold': return <GoldShimmerOverlay />;
+    default: return <StandardOverlay />;
+  }
+}
 
 /* ═══════════════════════════════════════════════════ */
 /*  RARITY VISUAL CONFIG                              */
@@ -86,26 +160,6 @@ const RARITY_VFX: Record<string, {
     icon: Award,
     confettiColors: ['#FFD700', '#B8860B', '#FFA500', '#FFDF00'],
   },
-  silver: {
-    bg: 'bg-gradient-to-br from-gray-300/15 via-gray-400/10 to-gray-200/15',
-    border: 'border-gray-300/40',
-    text: 'text-gray-300',
-    glow: '0 0 20px rgba(192,192,192,0.25)',
-    gradient: 'from-gray-300 via-gray-400 to-gray-200',
-    label: 'SILVER',
-    icon: Star,
-    confettiColors: ['#C0C0C0', '#E8E8E8', '#808080'],
-  },
-  bronze: {
-    bg: 'bg-gradient-to-br from-amber-700/15 via-amber-800/10 to-amber-600/15',
-    border: 'border-amber-600/40',
-    text: 'text-amber-500',
-    glow: '0 0 20px rgba(205,127,50,0.25)',
-    gradient: 'from-amber-600 via-amber-700 to-amber-500',
-    label: 'BRONZE',
-    icon: Star,
-    confettiColors: ['#CD7F32', '#8B4513', '#D2691E'],
-  },
   standard: {
     bg: 'bg-gradient-to-br from-zinc-800 via-zinc-700/50 to-zinc-800',
     border: 'border-zinc-600/40',
@@ -118,7 +172,56 @@ const RARITY_VFX: Record<string, {
   },
 };
 
-const RARITY_RANK: Record<string, number> = { platinum: 5, diamond: 4, gold: 3, silver: 2, bronze: 1, standard: 0 };
+const RARITY_RANK: Record<string, number> = { platinum: 5, diamond: 4, gold: 3, standard: 0 };
+
+/* ═══════════════════════════════════════════════════ */
+/*  PACK BACK DESIGN                                  */
+/* ═══════════════════════════════════════════════════ */
+
+function PackBackDesign({ tier }: { tier: string }) {
+  const tierColors = {
+    elite: { from: '#FFD700', to: '#B8860B', label: 'ELITE' },
+    premium: { from: '#BF5FFF', to: '#7C3AED', label: 'PREMIUM' },
+    standard: { from: '#FF5500', to: '#CC4400', label: 'STANDARD' },
+  };
+  const c = tierColors[tier as keyof typeof tierColors] || tierColors.standard;
+
+  return (
+    <div className="w-full h-full rounded-2xl overflow-hidden relative" style={{ background: 'linear-gradient(160deg, #080808 0%, #0A0A0A 50%, #080808 100%)' }}>
+      {/* Geometric pattern */}
+      <div className="absolute inset-0" style={{
+        backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0L60 30L30 60L0 30Z' fill='none' stroke='rgba(255,85,0,0.08)' stroke-width='0.5'/%3E%3C/svg%3E")`,
+        backgroundSize: '30px 30px',
+      }} />
+      {/* Center emblem */}
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div className="relative">
+          {/* Glow ring */}
+          <div className="w-28 h-28 rounded-full border border-primary/20" style={{ boxShadow: `0 0 40px ${c.from}20, 0 0 80px ${c.from}10` }} />
+          {/* Shield */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            <img src={shieldLogo} alt="" className="w-14 h-14 object-contain" style={{ filter: `drop-shadow(0 0 15px ${c.from}40)` }} />
+          </div>
+        </div>
+      </div>
+      {/* Tier label */}
+      <div className="absolute bottom-8 left-0 right-0 text-center">
+        <p className="font-display text-[10px] tracking-[0.3em]" style={{ color: c.from, textShadow: `0 0 10px ${c.from}40` }}>
+          {c.label} PACK
+        </p>
+        <p className="text-[7px] font-mono tracking-[0.2em] text-white/25 mt-1">LIVE WITHOUT LIMITS™</p>
+      </div>
+      {/* Top branding */}
+      <div className="absolute top-6 left-0 right-0 text-center">
+        <p className="font-display text-[8px] tracking-[0.25em] text-white/30">UNBREAKABLE</p>
+        <p className="font-display text-[6px] tracking-[0.15em] text-white/15 mt-0.5">UN·TUNES</p>
+      </div>
+      {/* Edge lines */}
+      <div className="absolute inset-4 rounded-xl border border-white/[0.04]" />
+      <div className="absolute inset-6 rounded-lg border border-white/[0.02]" />
+    </div>
+  );
+}
 
 /* ═══════════════════════════════════════════════════ */
 /*  COMPONENT                                         */
@@ -130,15 +233,18 @@ interface PackOpeningProps {
   packTierId: string;
   onClose: () => void;
   onMarkOpened: (cardIds: string[]) => void;
+  onShareCard?: (card: PackCard) => void;
+  onBinCard?: (card: PackCard) => void;
 }
 
-type Phase = 'shake' | 'reveal' | 'done';
+type Phase = 'intro' | 'shake' | 'reveal' | 'done';
 
-export function PackOpening({ cards, purchaseType, packTierId, onClose, onMarkOpened }: PackOpeningProps) {
-  const [phase, setPhase] = useState<Phase>('shake');
+export function PackOpening({ cards, purchaseType, packTierId, onClose, onMarkOpened, onShareCard, onBinCard }: PackOpeningProps) {
+  const [phase, setPhase] = useState<Phase>('intro');
   const [currentIndex, setCurrentIndex] = useState(0);
   const [flipped, setFlipped] = useState(false);
   const markedRef = useRef(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   // Sort cards: lowest rarity first, highest last (save best for last)
   const sortedCards = [...cards].sort((a, b) => (RARITY_RANK[a.rarity] || 0) - (RARITY_RANK[b.rarity] || 0));
@@ -146,32 +252,66 @@ export function PackOpening({ cards, purchaseType, packTierId, onClose, onMarkOp
   const currentCard = sortedCards[currentIndex];
   const vfx = currentCard ? RARITY_VFX[currentCard.rarity] || RARITY_VFX.standard : RARITY_VFX.standard;
 
-  // Auto-advance from shake to reveal
+  // ── Auto-play music on pack opening ──
   useEffect(() => {
+    // Try to play first available track
+    const firstTrackWithAudio = cards.find(c => c.un_tunes_tracks);
+    if (firstTrackWithAudio?.track_id) {
+      try {
+        // Create audio element for ambient pack music
+        const audio = new Audio();
+        audio.volume = 0.3;
+        audio.loop = true;
+        // We'll try the sample URL pattern
+        audio.src = `/api/track-sample/${firstTrackWithAudio.track_id}`;
+        audio.play().catch(() => {}); // Silently fail if autoplay blocked
+        audioRef.current = audio;
+      } catch {}
+    }
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+    };
+  }, []);
+
+  // ── Intro → Shake → Reveal flow ──
+  useEffect(() => {
+    if (phase === 'intro') {
+      const t = setTimeout(() => setPhase('shake'), 800);
+      return () => clearTimeout(t);
+    }
     if (phase === 'shake') {
-      const t = setTimeout(() => setPhase('reveal'), 1800);
+      const t = setTimeout(() => setPhase('reveal'), 2200);
       return () => clearTimeout(t);
     }
   }, [phase]);
 
-  // Confetti burst for Gold+
+  // ── Confetti burst for Gold+ ──
   useEffect(() => {
     if (phase === 'reveal' && flipped && currentCard) {
       const rank = RARITY_RANK[currentCard.rarity] || 0;
       if (rank >= 3) {
-        const intensity = rank >= 5 ? 0.9 : rank >= 4 ? 0.7 : 0.5;
+        const intensity = rank >= 5 ? 1.0 : rank >= 4 ? 0.8 : 0.6;
         confetti({
-          particleCount: Math.floor(80 * intensity),
-          spread: 70,
-          origin: { y: 0.6 },
+          particleCount: Math.floor(100 * intensity),
+          spread: 80,
+          origin: { y: 0.5 },
           colors: (RARITY_VFX[currentCard.rarity] || RARITY_VFX.standard).confettiColors,
           disableForReducedMotion: true,
         });
+        // Platinum gets a second burst
+        if (rank >= 5) {
+          setTimeout(() => {
+            confetti({ particleCount: 60, spread: 120, origin: { y: 0.4 }, colors: ['#E5E4E2', '#B76E79', '#FFFFFF'], disableForReducedMotion: true });
+          }, 400);
+        }
       }
     }
   }, [phase, flipped, currentIndex]);
 
-  // Mark cards as opened
+  // ── Mark cards as opened ──
   useEffect(() => {
     if (phase === 'reveal' && !markedRef.current) {
       markedRef.current = true;
@@ -190,26 +330,40 @@ export function PackOpening({ cards, purchaseType, packTierId, onClose, onMarkOp
       setFlipped(false);
     } else {
       setPhase('done');
+      // Stop music
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
     }
   }, [currentIndex, sortedCards.length]);
 
+  // ── Resolve card name/image with fallback chain ──
   function getCardName(card: PackCard): string {
-    if (card.brand_title || card.un_tunes_brand_cards?.title) return card.brand_title || card.un_tunes_brand_cards!.title;
-    if (card.un_tunes_tracks?.title) return card.un_tunes_tracks.title;
-    if (card.un_tunes_albums?.title) return card.un_tunes_albums.title;
-    return 'Mystery Card';
+    return card.brand_title
+      || card.un_tunes_brand_cards?.title
+      || card.un_tunes_tracks?.title
+      || card.un_tunes_albums?.title
+      || card.title
+      || 'Track Card';
   }
 
   function getCardImage(card: PackCard): string | null {
-    if (card.brand_artwork || card.un_tunes_brand_cards?.artwork_url) return card.brand_artwork || card.un_tunes_brand_cards!.artwork_url;
-    if (card.un_tunes_tracks?.cover_url) return card.un_tunes_tracks.cover_url;
-    if (card.un_tunes_albums?.cover_url) return card.un_tunes_albums.cover_url;
-    return null;
+    return card.brand_artwork
+      || card.un_tunes_brand_cards?.artwork_url
+      || card.un_tunes_brand_cards?.image_url
+      || card.un_tunes_tracks?.cover_url
+      || card.un_tunes_tracks?.image_url
+      || card.un_tunes_albums?.cover_url
+      || card.un_tunes_albums?.image_url
+      || card.image_url
+      || card.artwork_url
+      || card.cover_url
+      || null;
   }
 
   function getCardArtist(card: PackCard): string {
-    if (card.un_tunes_tracks?.artist) return card.un_tunes_tracks.artist;
-    return 'Unbreakable';
+    return card.un_tunes_tracks?.artist || card.artist || 'Unbreakable';
   }
 
   return (
@@ -219,16 +373,19 @@ export function PackOpening({ cards, purchaseType, packTierId, onClose, onMarkOp
       exit={{ opacity: 0 }}
       className="fixed inset-0 z-[100] bg-black flex items-center justify-center"
     >
+      {/* Inject shimmer keyframes */}
+      <style>{shimmerKeyframes}</style>
+
       {/* Close */}
       <button
-        onClick={onClose}
+        onClick={() => { if (audioRef.current) audioRef.current.pause(); onClose(); }}
         className="absolute top-4 right-4 z-50 w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white/60 hover:bg-white/20 transition-colors"
       >
         <X size={18} />
       </button>
 
       {/* Progress */}
-      {phase !== 'shake' && (
+      {(phase === 'reveal' || phase === 'done') && (
         <div className="absolute top-4 left-4 right-16 z-50">
           <div className="flex gap-1">
             {sortedCards.map((_, i) => (
@@ -243,74 +400,94 @@ export function PackOpening({ cards, purchaseType, packTierId, onClose, onMarkOp
             ))}
           </div>
           <p className="text-[10px] text-white/40 mt-1 font-display tracking-wider">
-            {currentIndex + 1} / {sortedCards.length}
+            {Math.min(currentIndex + 1, sortedCards.length)} / {sortedCards.length}
           </p>
         </div>
       )}
 
       <AnimatePresence mode="wait">
-        {/* ─── SHAKE PHASE ─── */}
-        {phase === 'shake' && (
+        {/* ─── INTRO: Pack appears ─── */}
+        {phase === 'intro' && (
           <motion.div
-            key="shake"
-            initial={{ scale: 0.5, opacity: 0 }}
-            animate={{
-              scale: [0.5, 1, 1.02, 0.98, 1.01, 0.99, 1],
-              opacity: 1,
-              rotate: [0, -3, 3, -2, 2, -1, 0],
-            }}
-            exit={{ scale: 1.5, opacity: 0, filter: 'blur(20px)' }}
-            transition={{ duration: 1.5, ease: 'easeInOut' }}
-            className="relative"
+            key="intro"
+            initial={{ scale: 0, opacity: 0, rotateZ: -10 }}
+            animate={{ scale: 1, opacity: 1, rotateZ: 0 }}
+            exit={{ scale: 1.05, opacity: 1 }}
+            transition={{ duration: 0.6, ease: 'easeOut' }}
+            className="w-64 h-80"
           >
-            {/* Pack visual */}
-            <div className="w-56 h-72 rounded-2xl bg-gradient-to-br from-primary/20 via-orange-600/15 to-primary/20 border-2 border-primary/40 flex flex-col items-center justify-center gap-3 relative overflow-hidden">
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_30%,rgba(255,107,0,0.15),transparent_60%)]" />
-              <Sparkles className="w-10 h-10 text-primary animate-pulse" />
-              <p className="font-display text-sm tracking-widest text-primary">
-                {packTierId === 'elite' ? 'ELITE' : packTierId === 'premium' ? 'PREMIUM' : 'STANDARD'}
-              </p>
-              <p className="text-[10px] text-white/40 font-display tracking-wider">
-                {sortedCards.length} CARDS
-              </p>
-              {/* Animated glow ring */}
-              <motion.div
-                className="absolute inset-0 rounded-2xl"
-                animate={{
-                  boxShadow: [
-                    '0 0 20px rgba(255,107,0,0.1)',
-                    '0 0 40px rgba(255,107,0,0.3)',
-                    '0 0 20px rgba(255,107,0,0.1)',
-                  ],
-                }}
-                transition={{ duration: 1, repeat: Infinity }}
-              />
-            </div>
+            <PackBackDesign tier={packTierId} />
           </motion.div>
         )}
 
-        {/* ─── REVEAL PHASE ─── */}
+        {/* ─── SHAKE: Pack shakes + glows → tears open ─── */}
+        {phase === 'shake' && (
+          <motion.div
+            key="shake"
+            animate={{
+              rotate: [0, -4, 4, -3, 3, -2, 2, -1, 0],
+              scale: [1, 1.02, 0.98, 1.03, 0.97, 1.02, 0.99, 1.01, 1],
+            }}
+            exit={{
+              scale: [1, 1.15, 0],
+              opacity: [1, 1, 0],
+              filter: ['blur(0px)', 'blur(0px)', 'blur(30px)'],
+            }}
+            transition={{
+              duration: 2,
+              ease: 'easeInOut',
+              exit: { duration: 0.5 },
+            }}
+            className="relative w-64 h-80"
+          >
+            <PackBackDesign tier={packTierId} />
+            {/* Pulsing glow ring */}
+            <motion.div
+              className="absolute -inset-2 rounded-3xl"
+              animate={{
+                boxShadow: [
+                  '0 0 20px rgba(255,85,0,0.1), 0 0 40px rgba(255,85,0,0.05)',
+                  '0 0 40px rgba(255,85,0,0.3), 0 0 80px rgba(255,85,0,0.15)',
+                  '0 0 60px rgba(255,85,0,0.5), 0 0 120px rgba(255,85,0,0.25)',
+                  '0 0 40px rgba(255,85,0,0.3), 0 0 80px rgba(255,85,0,0.15)',
+                  '0 0 20px rgba(255,85,0,0.1), 0 0 40px rgba(255,85,0,0.05)',
+                ],
+              }}
+              transition={{ duration: 2, ease: 'easeInOut' }}
+            />
+            {/* Tear line */}
+            <motion.div
+              className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-1 bg-gradient-to-r from-transparent via-primary to-transparent"
+              initial={{ scaleX: 0, opacity: 0 }}
+              animate={{ scaleX: [0, 0, 0.5, 1], opacity: [0, 0, 0.5, 1] }}
+              transition={{ duration: 2, ease: 'easeIn' }}
+            />
+          </motion.div>
+        )}
+
+        {/* ─── REVEAL: Card flip one by one ─── */}
         {phase === 'reveal' && currentCard && (
           <motion.div
             key={`card-${currentIndex}`}
-            initial={{ scale: 0.3, rotateY: 180, opacity: 0 }}
-            animate={{ scale: 1, rotateY: flipped ? 0 : 180, opacity: 1 }}
-            exit={{ scale: 0.8, opacity: 0, x: 200 }}
+            initial={{ scale: 0.3, opacity: 0, y: 50 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.8, opacity: 0, x: 200, rotateZ: 5 }}
             transition={{ type: 'spring', stiffness: 200, damping: 25 }}
             onClick={handleFlip}
-            className="cursor-pointer perspective-1000 w-72"
-            style={{ perspective: '1000px' }}
+            className="cursor-pointer w-72"
+            style={{ perspective: '1200px' }}
           >
             <div
-              className="relative w-full transition-transform duration-500"
+              className="relative w-full transition-transform duration-600"
               style={{
                 transformStyle: 'preserve-3d',
                 transform: flipped ? 'rotateY(0deg)' : 'rotateY(180deg)',
+                transition: 'transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)',
               }}
             >
-              {/* FRONT (revealed) */}
+              {/* ══ FRONT (revealed face) ══ */}
               <div
-                className={`w-full rounded-2xl overflow-hidden border-2 ${vfx.border}`}
+                className={`w-full rounded-2xl overflow-hidden border-2 ${vfx.border} relative`}
                 style={{
                   backfaceVisibility: 'hidden',
                   boxShadow: vfx.glow,
@@ -323,6 +500,7 @@ export function PackOpening({ cards, purchaseType, packTierId, onClose, onMarkOp
                       src={getCardImage(currentCard)!}
                       alt=""
                       className="w-full h-full object-cover"
+                      onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
                     />
                   ) : (
                     <div className={`w-full h-full flex items-center justify-center ${vfx.bg}`}>
@@ -330,12 +508,15 @@ export function PackOpening({ cards, purchaseType, packTierId, onClose, onMarkOp
                     </div>
                   )}
 
+                  {/* SHIMMER OVERLAY — the key fix! */}
+                  {getShimmerOverlay(currentCard.rarity)}
+
                   {/* Gradient overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent z-[15]" />
 
                   {/* Unbreakable branding — top-left watermark */}
-                  <div className="absolute top-2.5 left-3 z-10 flex items-center gap-1.5">
-                    <img src="/unbreakable-shield.png" alt="" className="w-4 h-4 object-contain" style={{ filter: 'drop-shadow(0 0 3px rgba(255,255,255,0.15))', opacity: 0.55 }} />
+                  <div className="absolute top-2.5 left-3 z-[20] flex items-center gap-1.5">
+                    <img src={shieldLogo} alt="" className="w-4 h-4 object-contain" style={{ filter: 'drop-shadow(0 0 3px rgba(255,255,255,0.15))', opacity: 0.55 }} />
                     <div>
                       <p className="text-[6px] font-display tracking-[0.15em] text-white/45">UNBREAKABLE</p>
                       <p className="text-[4px] font-mono tracking-[0.1em] text-white/30">LIVE WITHOUT LIMITS™</p>
@@ -343,7 +524,7 @@ export function PackOpening({ cards, purchaseType, packTierId, onClose, onMarkOp
                   </div>
 
                   {/* Rarity badge */}
-                  <div className="absolute top-3 right-3">
+                  <div className="absolute top-3 right-3 z-[20]">
                     <div className={`flex items-center gap-1 px-2.5 py-1 rounded-lg ${vfx.bg} backdrop-blur-md border ${vfx.border}`}>
                       <vfx.icon size={10} className={vfx.text} />
                       <span className={`text-[9px] font-display tracking-widest ${vfx.text}`}>
@@ -352,29 +533,20 @@ export function PackOpening({ cards, purchaseType, packTierId, onClose, onMarkOp
                     </div>
                   </div>
 
-                  {/* Edition badge */}
-                  {currentCard.edition_number != null && currentCard.edition_number > 0 && (
-                    <div className="absolute top-3 left-3">
+                  {/* Edition badge (platinum/diamond only) */}
+                  {currentCard.edition_number != null && currentCard.edition_number > 0 && (currentCard.rarity === 'platinum' || currentCard.rarity === 'diamond') && (
+                    <div className="absolute top-12 right-3 z-[20]">
                       <div className="px-2 py-1 rounded-lg bg-black/60 backdrop-blur-sm border border-white/10">
                         <span className="text-[9px] font-display tracking-wider text-white/70">
                           #{String(currentCard.edition_number).padStart(3, '0')}
-                          {currentCard.rarity === 'platinum' ? '/250' : currentCard.rarity === 'diamond' ? '/1000' : ''}
+                          {currentCard.rarity === 'platinum' ? '/250' : '/1000'}
                         </span>
                       </div>
                     </div>
                   )}
 
-                  {/* Bonus badge */}
-                  {currentCard.is_bonus && (
-                    <div className="absolute top-14 right-3">
-                      <div className="px-2 py-0.5 rounded-md bg-violet-500/20 border border-violet-400/30">
-                        <span className="text-[8px] font-display tracking-wider text-violet-300">BONUS</span>
-                      </div>
-                    </div>
-                  )}
-
                   {/* Card info bottom */}
-                  <div className="absolute bottom-0 left-0 right-0 p-4">
+                  <div className="absolute bottom-0 left-0 right-0 p-4 z-[20]">
                     <h3 className="font-display text-xl tracking-wider text-white mb-0.5 truncate">
                       {getCardName(currentCard)}
                     </h3>
@@ -384,40 +556,76 @@ export function PackOpening({ cards, purchaseType, packTierId, onClose, onMarkOp
                   </div>
                 </div>
 
-                {/* Bottom action */}
-                <div className="bg-card p-4 flex items-center justify-between">
+                {/* Bottom bar: type + share/bin + next */}
+                <div className="bg-card p-3 flex items-center justify-between">
                   <span className={`text-[10px] font-display tracking-wider ${vfx.text}`}>
                     {currentCard.brand_card_id || currentCard.brand_title ? 'BRAND CARD' :
                      currentCard.album_id ? 'ALBUM CARD' : 'TRACK CARD'}
                   </span>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={(e) => { e.stopPropagation(); handleNext(); }}
-                    className="font-display tracking-wider text-xs text-white/60 hover:text-white"
-                  >
-                    {currentIndex < sortedCards.length - 1 ? (
-                      <>NEXT <ChevronRight size={14} /></>
-                    ) : (
-                      'FINISH'
+
+                  <div className="flex items-center gap-1.5">
+                    {/* Share button */}
+                    {flipped && (
+                      <motion.button
+                        initial={{ opacity: 0, scale: 0 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: 0.3 }}
+                        onClick={(e) => { e.stopPropagation(); onShareCard?.(currentCard); }}
+                        className="w-8 h-8 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center text-primary hover:bg-primary/20 transition-colors"
+                      >
+                        <Share2 size={13} />
+                      </motion.button>
                     )}
-                  </Button>
+                    {/* Bin button */}
+                    {flipped && (
+                      <motion.button
+                        initial={{ opacity: 0, scale: 0 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: 0.4 }}
+                        onClick={(e) => { e.stopPropagation(); onBinCard?.(currentCard); handleNext(); }}
+                        className="w-8 h-8 rounded-lg bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-400 hover:bg-red-500/20 transition-colors"
+                      >
+                        <Trash2 size={13} />
+                      </motion.button>
+                    )}
+                    {/* Next / Finish */}
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={(e) => { e.stopPropagation(); if (flipped) handleNext(); else handleFlip(); }}
+                      className="font-display tracking-wider text-xs text-white/60 hover:text-white ml-1"
+                    >
+                      {!flipped ? 'FLIP' : currentIndex < sortedCards.length - 1 ? (
+                        <>NEXT <ChevronRight size={14} /></>
+                      ) : 'FINISH'}
+                    </Button>
+                  </div>
                 </div>
               </div>
 
-              {/* BACK (card back) */}
+              {/* ══ BACK (card back — tap to reveal) ══ */}
               <div
-                className="absolute inset-0 w-full rounded-2xl overflow-hidden border-2 border-primary/30 bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 flex items-center justify-center"
+                className="absolute inset-0 w-full rounded-2xl overflow-hidden border-2 border-primary/30"
                 style={{
                   backfaceVisibility: 'hidden',
                   transform: 'rotateY(180deg)',
                 }}
               >
-                <div className="text-center">
-                  <div className="w-16 h-16 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto mb-3">
-                    <Sparkles className="w-6 h-6 text-primary" />
+                <div className="w-full h-full">
+                  <PackBackDesign tier={packTierId} />
+                  {/* Tap prompt overlay */}
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+                    <motion.div
+                      animate={{ scale: [1, 1.1, 1] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                      className="text-center"
+                    >
+                      <div className="w-16 h-16 rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center mx-auto mb-3" style={{ boxShadow: '0 0 30px rgba(255,85,0,0.2)' }}>
+                        <Sparkles className="w-6 h-6 text-primary" />
+                      </div>
+                      <p className="font-display text-[10px] tracking-widest text-primary/80">TAP TO REVEAL</p>
+                    </motion.div>
                   </div>
-                  <p className="font-display text-[10px] tracking-widest text-primary/60">TAP TO REVEAL</p>
                 </div>
               </div>
             </div>
@@ -473,7 +681,7 @@ export function PackOpening({ cards, purchaseType, packTierId, onClose, onMarkOp
             </div>
 
             <Button
-              onClick={onClose}
+              onClick={() => { if (audioRef.current) audioRef.current.pause(); onClose(); }}
               className="font-display tracking-wider bg-gradient-to-r from-primary to-orange-600 text-white px-8"
             >
               DONE
