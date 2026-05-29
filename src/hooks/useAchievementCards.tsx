@@ -186,8 +186,23 @@ export function useAchievementCards() {
         });
       }
 
-      // Rarity comes from the DB — set by award_pb_card based on global percentile ranking
-      // OVR is a performance score; rarity reflects competitive standing
+      // Scale OVR into rarity tier bands so the number always reflects the card tier:
+      // Platinum 90-99 | Diamond 75-89 | Gold 55-74 | Silver 35-54 | Bronze 15-34
+      // Raw Wilks score determines position within the band (higher raw = higher OVR within tier)
+      const tierBands: Record<string, [number, number]> = {
+        platinum: [90, 99],
+        diamond: [75, 89],
+        gold: [55, 74],
+        silver: [35, 54],
+        bronze: [15, 34],
+      };
+      const band = tierBands[c.rarity] || tierBands.bronze;
+      const rawOvr = overallRating ?? 0;
+      // Normalize raw score (0-100) into the tier band range
+      const bandRange = band[1] - band[0];
+      const scaledOvr = Math.round(band[0] + (Math.min(rawOvr, 100) / 100) * bandRange);
+      const finalOvr = Math.max(band[0], Math.min(band[1], scaledOvr));
+
       return {
         ...c,
         owner_display_name: ownerName,
@@ -195,7 +210,7 @@ export function useAchievementCards() {
         pb_value: pbVal,
         pb_unit: c.pb_unit ?? c.record_unit,
         activity_category: actCat,
-        overall_rating: overallRating,
+        overall_rating: finalOvr,
         rarity: c.rarity,
         athlete_stats: c.athlete_stats || userSixStats,
       };
