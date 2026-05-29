@@ -569,10 +569,12 @@ export default function UserProfileCard() {
             card_type: 'pb_personal',
             rarity: 'gold',
             overall_rating: 0,
-            owner_display_name: profile.display_name || profile.username || 'Athlete',
+            owner_display_name: profile?.display_name || profile?.username || 'Athlete',
           }}
-          isOpen={showShareSheet}
-          onClose={() => setShowShareSheet(false)}
+          open={showShareSheet}
+          onOpenChange={(open) => !open && setShowShareSheet(false)}
+          cardSystem="pb"
+          displayName={profile?.display_name || profile?.username}
         />
       )}
 
