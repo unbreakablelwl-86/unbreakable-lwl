@@ -1,7 +1,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2.57.2";
 
 /**
- * AUTO-SHARE TO META — Cron Edge Function
+ * AUTO-SHARE TO META, Cron Edge Function
  * 
  * Runs on a schedule (e.g. every 15 minutes).
  * Finds new Unbreakable timeline posts that haven't been shared to connected
@@ -193,8 +193,8 @@ Deno.serve(async (req) => {
 
       // Add Unbreakable branding to the post
       const brandedContent = content
-        ? `${content}\n\n🧱 Posted via Unbreakable — Live Without Limits™`
-        : "🧱 Posted via Unbreakable — Live Without Limits™";
+        ? `${content}\n\n🧱 Posted via Unbreakable, Live Without Limits™`
+        : "🧱 Posted via Unbreakable, Live Without Limits™";
 
       const result: (typeof results)[number] = { post_id: post.id };
 

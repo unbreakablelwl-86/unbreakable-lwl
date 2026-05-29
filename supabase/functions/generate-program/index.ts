@@ -29,7 +29,7 @@ interface ProgramRequest {
   gender?: string;
 }
 
-// Compact exercise name list — coaching cues live client-side
+// Compact exercise name list, coaching cues live client-side
 const EXERCISE_NAMES = `ONLY use exercises from this list. No invented names.
 CHEST: Flat Bench Press,Incline Bench Press,Decline Bench Press,Close Grip Bench Press,Floor Press,Dumbbell Bench Press,Incline Dumbbell Press,Decline Dumbbell Press,Dumbbell Flyes,Incline Dumbbell Flyes,Squeeze Press,Dumbbell Pullovers,Push Ups,Wide Push Ups,Decline Push Ups,Diamond Push Ups,Archer Push Ups,Chest Dips,Cable Flyes,High Cable Flyes,Low Cable Flyes,Cable Crossovers,Chest Press Machine,Pec Deck,Smith Machine Bench Press
 BACK: Conventional Deadlift,Sumo Deadlift,Bent Over Row,Pendlay Row,Barbell Shrug,Single Arm Dumbbell Row,Dumbbell Bent Over Row,Dumbbell Pullovers,Dumbbell Shrug,Pull Ups,Chin Ups,Inverted Rows,Scapular Pull Ups,Lat Pulldown,Seated Cable Row,Face Pulls,Straight Arm Pulldown,Single Arm Cable Row,Machine Lat Pulldown,Seated Row Machine,T-Bar Row,Assisted Pull Up Machine

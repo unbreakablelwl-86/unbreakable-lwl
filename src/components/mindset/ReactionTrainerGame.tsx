@@ -4,6 +4,7 @@ import { RotateCcw, Play, Trophy, Volume2, VolumeX } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { GameLeaderboard } from "./GameLeaderboard";
 import { GameAudioControls } from "./GameAudioControls";
+import { GameCountdown } from "./GameCountdown";
 import { useAuth } from "@/hooks/useAuth";
 import { useReactionScores } from "@/hooks/useReactionScores";
 
@@ -66,7 +67,7 @@ interface Target {
   lifetime: number;
 }
 
-type GameView = "ready" | "playing" | "gameover" | "leaderboard";
+type GameView = "ready" | "countdown" | "playing" | "gameover" | "leaderboard";
 
 // ─── Constants ───────────────────────────────────────────────
 const GAME_DURATION = 30_000;
@@ -370,6 +371,13 @@ const ReactionTrainerGame = () => {
   }
 
   // ═══════════════════════════════════════════════════════════
+  // ─── COUNTDOWN ────────────────────────────────────────────
+  // ═══════════════════════════════════════════════════════════
+  if (view === "countdown") {
+    return <GameCountdown onComplete={startGame} />;
+  }
+
+  // ═══════════════════════════════════════════════════════════
   // ─── READY SCREEN ─────────────────────────────────────────
   // ═══════════════════════════════════════════════════════════
   if (view === "ready") {
@@ -393,7 +401,7 @@ const ReactionTrainerGame = () => {
               <p className="text-muted-foreground text-sm"><span className="text-primary font-bold">▸</span> 30 seconds — every millisecond counts</p>
             </div>
 
-            <Button onClick={startGame} className="font-display text-lg tracking-wider px-8 py-4 bg-primary hover:bg-primary/80" style={{ boxShadow: "0 0 20px rgba(255,85,0,0.4)" }}>
+            <Button onClick={() => setView("countdown")} className="font-display text-lg tracking-wider px-8 py-4 bg-primary hover:bg-primary/80" style={{ boxShadow: "0 0 20px rgba(255,85,0,0.4)" }}>
               <Play className="w-5 h-5 mr-2" /> START STRIKE
             </Button>
 
@@ -476,7 +484,7 @@ const ReactionTrainerGame = () => {
             </div>
 
             <div className="flex gap-3 justify-center">
-              <Button onClick={startGame} className="font-display tracking-wider px-6 bg-primary hover:bg-primary/80 gap-2">
+              <Button onClick={() => setView("countdown")} className="font-display tracking-wider px-6 bg-primary hover:bg-primary/80 gap-2">
                 <RotateCcw className="w-4 h-4" /> STRIKE AGAIN
               </Button>
               <Button onClick={() => { refetch(); setView("leaderboard"); }} variant="outline" className="font-display tracking-wider px-6 gap-2 border-primary/30">

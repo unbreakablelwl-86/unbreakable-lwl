@@ -135,7 +135,9 @@ Respond in JSON format:
     const analysis = JSON.parse(analysisData.content[0].text);
 
     // Update video with analysis result
-    const updateResponse = await fetch(`${supabaseUrl}/rest/v1/exercise_videos?id=eq.${videoId}`, {
+    const updateResponse = await fetch(
+
+IMPORTANT FORMATTING RULE: Never use dashes or hyphens (— – -) as punctuation in your response. Use commas instead. Write naturally flowing sentences with commas, not dash-separated clauses.`${supabaseUrl}/rest/v1/exercise_videos?id=eq.${videoId}`, {
       method: 'PATCH',
       headers: {
         'Authorization': `Bearer ${supabaseKey}`,

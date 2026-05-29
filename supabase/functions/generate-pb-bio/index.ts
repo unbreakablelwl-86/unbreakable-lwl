@@ -79,7 +79,7 @@ serve(async (req) => {
     const overallRating = card.overall_rating || 0;
     const rank = card.pb_rank || 0;
 
-    const prompt = `You write ultra-short, punchy one-line bios for collectable athlete cards in a fitness app called Unbreakable. The tone is intense, motivational, and premium — like a FIFA Ultimate Team card description crossed with a boxing walkout intro.
+    const prompt = `You write ultra-short, punchy one-line bios for collectable athlete cards in a fitness app called Unbreakable. The tone is intense, motivational, and premium, like a FIFA Ultimate Team card description crossed with a boxing walkout intro.
 
 Rules:
 - Exactly ONE sentence, max 12 words
@@ -90,7 +90,9 @@ Rules:
 
 Context:
 - Athlete: ${displayName}
-- Achievement: ${cardType === "programme_trophy" ? `Completed ${exerciseName} programme` : `${exerciseName} PB — ${pbValue}`}
+- Achievement: ${cardType === "programme_trophy" ? 
+
+IMPORTANT FORMATTING RULE: Never use dashes or hyphens (— – -) as punctuation in your response. Use commas instead. Write naturally flowing sentences with commas, not dash-separated clauses.`Completed ${exerciseName} programme` : `${exerciseName} PB, ${pbValue}`}
 - Rarity: ${rarity.toUpperCase()}
 - Overall Rating: ${overallRating}/99
 - Age: ${age ? `${age} years old` : "Unknown"}

@@ -91,7 +91,7 @@ serve(async (req) => {
     }).length;
 
     // Build prompt for AI feedback
-    const prompt = `You are the Unbreakable AI Coach — a knowledgeable, encouraging strength coach. Provide real coaching feedback, not just stats.
+    const prompt = `You are the Unbreakable AI Coach, a knowledgeable, encouraging strength coach. Provide real coaching feedback, not just stats.
 
 Workout Summary:
 - Completed ${completedSets.length} of ${totalSets} total sets (${Math.round(completionRate * 100)}% completion)
@@ -100,11 +100,13 @@ Workout Summary:
 
 Exercises performed:
 ${completedSets.map((l: any) => 
-  `- ${l.exercise_name}: Set ${l.set_number} - ${l.actual_reps || 0} reps @ ${l.weight_kg || 0}kg (Target: ${l.target_reps || 'N/A'}, RPE: ${l.rpe || 'N/A'})`
+  
+
+IMPORTANT FORMATTING RULE: Never use dashes or hyphens (— – -) as punctuation in your response. Use commas instead. Write naturally flowing sentences with commas, not dash-separated clauses.`- ${l.exercise_name}: Set ${l.set_number} - ${l.actual_reps || 0} reps @ ${l.weight_kg || 0}kg (Target: ${l.target_reps || 'N/A'}, RPE: ${l.rpe || 'N/A'})`
 ).join('\n')}
 
 Provide:
-1. "content" — 3-4 sentences of actual coaching insight. Don't just repeat the numbers. Analyse patterns: Did weight drop across sets? Did they grind through reps? Were they pushing hard enough (RPE)? What does completion rate tell you? End with a question inviting them to continue the conversation.
+1. "content", 3-4 sentences of actual coaching insight. Don't just repeat the numbers. Analyse patterns: Did weight drop across sets? Did they grind through reps? Were they pushing hard enough (RPE)? What does completion rate tell you? End with a question inviting them to continue the conversation.
 2. "performance_rating" — one of: excellent, good, average, below_average, poor
 3. "fatigue_score" — 1-10 based on RPE pattern and completion
 4. "suggestions" — 2-3 specific, actionable coaching tips for next session (not generic advice)

@@ -94,7 +94,7 @@ serve(async (req) => {
         JSON.stringify({
           success: true,
           already_purchased: true,
-          message: "Card already purchased — download available",
+          message: "Card already purchased, download available",
         }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
@@ -186,7 +186,7 @@ serve(async (req) => {
         amount: -CARD_COST,
         balance_after: newBalance,
         type: "untunes_card_purchase",
-        description: `Un-Tunes card purchase — ${cardTitle} [${card.rarity}]`,
+        description: `Un-Tunes card purchase, ${cardTitle} [${card.rarity}]`,
       });
     }
 
@@ -211,7 +211,7 @@ serve(async (req) => {
           amount: CARD_COST,
           balance_after: currentBalance,
           type: "refund",
-          description: "Refund — Un-Tunes card purchase failed",
+          description: "Refund, Un-Tunes card purchase failed",
         });
       }
       return new Response(

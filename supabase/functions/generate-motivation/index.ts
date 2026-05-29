@@ -64,16 +64,16 @@ RULES:
 - EXACTLY 1-2 short sentences. Never more. Keep it under 25 words total.
 - Start with one emoji that fits the vibe.
 - End with #UNBREAKABLE
-- Be witty, raw, funny, or savage — never generic motivational poster energy.
+- Be witty, raw, funny, or savage, never generic motivational poster energy.
 - Use unexpected metaphors or dark humour that sticks.
 - NO quotation marks around the message.
 
 GOOD EXAMPLES (match this energy and length):
-- 🦍 Somewhere out there, the old you is watching from the sofa — make them jealous. #UNBREAKABLE
-- ⚡ Gravity just filed a complaint about you — keep lifting, let it cry. #UNBREAKABLE
+- 🦍 Somewhere out there, the old you is watching from the sofa, make them jealous. #UNBREAKABLE
+- ⚡ Gravity just filed a complaint about you, keep lifting, let it cry. #UNBREAKABLE
 - 🏴 Nobody's coming to save you, and that's the best news you'll hear all day. #UNBREAKABLE
-- 🧠 The battle between your ears is the hardest fight — and you're winning it. #UNBREAKABLE
-- 💀 Comfort zones are where dreams go to decompose — you chose to build instead. #UNBREAKABLE
+- 🧠 The battle between your ears is the hardest fight, and you're winning it. #UNBREAKABLE
+- 💀 Comfort zones are where dreams go to decompose, you chose to build instead. #UNBREAKABLE
 
 BAD EXAMPLES (never do this):
 - Anything over 2 sentences
@@ -84,7 +84,9 @@ Return ONLY the message text, nothing else.`,
         messages: [
           {
             role: "user",
-            content: `${triggerContext}${context ? ` Context: ${context}` : ''}\n\nGenerate a unique, branded Unbreakable motivational message.`
+            content: `${triggerContext}${context ? ` Context: ${context}` : ''}\n\nGenerate a unique, branded Unbreakable motivational message.
+
+IMPORTANT FORMATTING RULE: Never use dashes or hyphens (— – -) as punctuation in your response. Use commas instead. Write naturally flowing sentences with commas, not dash-separated clauses.`
           }
         ],
       }),
@@ -105,14 +107,14 @@ Return ONLY the message text, nothing else.`,
   } catch (e) {
     console.error("generate-motivation error:", e);
     const fallbacks = [
-      "🦍 Somewhere out there, the old you is watching from the sofa — make them jealous. #UNBREAKABLE",
-      "🔥 Your alarm went off and you chose war instead of snooze — that's a different breed. #UNBREAKABLE",
-      "⚡ Gravity just filed a complaint about you — keep lifting, let it cry. #UNBREAKABLE",
+      "🦍 Somewhere out there, the old you is watching from the sofa, make them jealous. #UNBREAKABLE",
+      "🔥 Your alarm went off and you chose war instead of snooze, that's a different breed. #UNBREAKABLE",
+      "⚡ Gravity just filed a complaint about you, keep lifting, let it cry. #UNBREAKABLE",
       "🧠 The battle between your ears is the hardest fight you'll ever win, and you're winning it right now. #UNBREAKABLE",
-      "🥩 You didn't come this far to eat beige food and live a beige life — fuel the machine. #UNBREAKABLE",
+      "🥩 You didn't come this far to eat beige food and live a beige life, fuel the machine. #UNBREAKABLE",
       "🏴 Nobody's coming to save you, and that's the best news you'll hear all day. #UNBREAKABLE",
-      "💀 Comfort zones are where dreams go to decompose — you chose to build instead. #UNBREAKABLE",
-      "🫀 Your heart pumps the same blood as every champion who ever lived — act like it. #UNBREAKABLE",
+      "💀 Comfort zones are where dreams go to decompose, you chose to build instead. #UNBREAKABLE",
+      "🫀 Your heart pumps the same blood as every champion who ever lived, act like it. #UNBREAKABLE",
     ];
     const quote = fallbacks[Math.floor(Math.random() * fallbacks.length)];
     return new Response(JSON.stringify({ quote }), {

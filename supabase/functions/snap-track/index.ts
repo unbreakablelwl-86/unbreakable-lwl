@@ -8,14 +8,14 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-const systemPrompt = `You are the UNBREAKABLE NUTRITION SCANNER — an AI food identification engine for a fitness coaching app.
+const systemPrompt = `You are the UNBREAKABLE NUTRITION SCANNER, an AI food identification engine for a fitness coaching app.
 
 Given a photo of food/meal/snack/drink, you MUST:
 1. Identify every distinct food item visible
 2. Estimate portion sizes based on visual cues (plate size, utensils, hands, packaging)
 3. Estimate macronutrient breakdown for each item
 
-RESPOND WITH VALID JSON ONLY — no markdown, no explanation, no wrapping. Return this exact structure:
+RESPOND WITH VALID JSON ONLY, no markdown, no explanation, no wrapping. Return this exact structure:
 
 {
   "items": [
@@ -40,7 +40,7 @@ RESPOND WITH VALID JSON ONLY — no markdown, no explanation, no wrapping. Retur
 RULES:
 - confidence: "high" (clear packaged food/common dish), "medium" (can identify but portion uncertain), "low" (hard to tell)
 - Macros in grams, calories in kcal
-- Be realistic with portions — don't overestimate
+- Be realistic with portions, don't overestimate
 - If the image is NOT food, return: {"items":[],"meal_summary":"No food detected","total_calories":0,"total_protein":0,"total_carbs":0,"total_fat":0,"coach_note":"Snap your meal to get instant macro tracking!"}
 - Round all numbers to integers
 - UK food names preferred (crisps not chips, aubergine not eggplant, etc.)`;
@@ -55,7 +55,7 @@ serve(async (req) => {
     const authHeader = req.headers.get("Authorization");
     if (!authHeader?.startsWith("Bearer ")) {
       return new Response(
-        JSON.stringify({ error: "Unauthorized — sign in to use Snap & Track" }),
+        JSON.stringify({ error: "Unauthorized, sign in to use Snap & Track" }),
         { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -71,7 +71,7 @@ serve(async (req) => {
 
     if (authError || !claimsData?.claims) {
       return new Response(
-        JSON.stringify({ error: "Unauthorized — invalid session" }),
+        JSON.stringify({ error: "Unauthorized, invalid session" }),
         { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -104,7 +104,7 @@ serve(async (req) => {
     // Validate image size (max ~10MB base64)
     if (image.length > 14_000_000) {
       return new Response(
-        JSON.stringify({ error: "Image too large — try a smaller photo" }),
+        JSON.stringify({ error: "Image too large, try a smaller photo" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -163,7 +163,7 @@ serve(async (req) => {
 
       if (response.status === 429) {
         return new Response(
-          JSON.stringify({ error: "Scanner is busy — try again in a moment!" }),
+          JSON.stringify({ error: "Scanner is busy, try again in a moment!" }),
           { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
@@ -185,7 +185,7 @@ serve(async (req) => {
       parsed = JSON.parse(cleaned);
     } catch {
       console.error("Failed to parse AI response:", content);
-      throw new Error("Scanner returned invalid data — try again");
+      throw new Error("Scanner returned invalid data, try again");
     }
 
     return new Response(
@@ -200,7 +200,7 @@ serve(async (req) => {
     console.error("snap-track error:", e);
     return new Response(
       JSON.stringify({
-        error: e instanceof Error ? e.message : "Scan failed — try again",
+        error: e instanceof Error ? e.message : "Scan failed, try again",
       }),
       {
         status: 500,

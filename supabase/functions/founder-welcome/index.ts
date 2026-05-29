@@ -4,7 +4,7 @@ import { createClient } from "npm:@supabase/supabase-js@2.57.2";
 const FOUNDER_ID = "c219f448-c05a-4fe3-ae11-793222b7dced"; // John's user ID
 
 const WELCOME_MESSAGES = [
-  "Welcome to UNBREAKABLE! 🔥 I'm John, the founder. Glad to have you on board — this platform is built for real people who want real results. Have a look around, set up your profile, and don't hesitate to reach out if you need anything. Let's go! 💪",
+  "Welcome to UNBREAKABLE! 🔥 I'm John, the founder. Glad to have you on board, this platform is built for real people who want real results. Have a look around, set up your profile, and don't hesitate to reach out if you need anything. Let's go! 💪",
 ];
 
 serve(async (req) => {
@@ -79,7 +79,7 @@ serve(async (req) => {
         .eq("id", convo.id);
     }
 
-    // 3. Like their first post (if any exists already — usually won't at signup)
+    // 3. Like their first post (if any exists already, usually won't at signup)
     const { data: firstPost } = await supabase
       .from("posts")
       .select("id")
@@ -140,7 +140,7 @@ serve(async (req) => {
 <title>UNBREAKABLE</title>
 </head>
 <body style="margin:0;padding:0;background:#0a0a0a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#e5e5e5;-webkit-text-size-adjust:100%">
-<div style="display:none;max-height:0;overflow:hidden">Welcome to UNBREAKABLE — everything's ready for you.&#8199;&#65279;&#847;</div>
+<div style="display:none;max-height:0;overflow:hidden">Welcome to UNBREAKABLE, everything's ready for you.&#8199;&#65279;&#847;</div>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#0a0a0a">
 <tr><td align="center" style="padding:24px 16px">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;margin:0 auto">
@@ -155,7 +155,7 @@ serve(async (req) => {
     Welcome to the community, <span style="color:#f97316">${displayName}</span>.
   </h1>
   <p style="color:#a3a3a3;font-size:15px;line-height:1.7;margin:0 0 20px">
-    You've just joined Unbreakable — and everything on the platform is yours to explore. No paywall. No trial countdown. No pressure.
+    You've just joined Unbreakable, and everything on the platform is yours to explore. No paywall. No trial countdown. No pressure.
   </p>
   <p style="color:#e5e5e5;font-size:15px;line-height:1.7;margin:0 0 20px"><strong>Here's what you've got access to:</strong></p>
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 14px">
@@ -168,10 +168,10 @@ serve(async (req) => {
     <tr><td width="36" valign="top" style="font-size:20px;padding:2px 12px 0 0">🧠</td><td><strong style="color:#e5e5e5;font-size:14px">Mindset</strong><br/><span style="color:#a3a3a3;font-size:13px">Breathing exercises, journaling & mental wellness tools</span></td></tr>
   </table>
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 14px">
-    <tr><td width="36" valign="top" style="font-size:20px;padding:2px 12px 0 0">👥</td><td><strong style="color:#e5e5e5;font-size:14px">Community</strong><br/><span style="color:#a3a3a3;font-size:13px">Social feed, posts, follows — your people</span></td></tr>
+    <tr><td width="36" valign="top" style="font-size:20px;padding:2px 12px 0 0">👥</td><td><strong style="color:#e5e5e5;font-size:14px">Community</strong><br/><span style="color:#a3a3a3;font-size:13px">Social feed, posts, follows, your people</span></td></tr>
   </table>
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 14px">
-    <tr><td width="36" valign="top" style="font-size:20px;padding:2px 12px 0 0">🤖</td><td><strong style="color:#e5e5e5;font-size:14px">Unbreakable Coach</strong><br/><span style="color:#a3a3a3;font-size:13px">AI-powered coaching — programmes, nutrition plans & more</span></td></tr>
+    <tr><td width="36" valign="top" style="font-size:20px;padding:2px 12px 0 0">🤖</td><td><strong style="color:#e5e5e5;font-size:14px">Unbreakable Coach</strong><br/><span style="color:#a3a3a3;font-size:13px">AI-powered coaching, programmes, nutrition plans & more</span></td></tr>
   </table>
   <hr style="border:none;border-top:1px solid #262626;margin:24px 0"/>
   <p style="color:#a3a3a3;font-size:13px;line-height:1.6;margin:0 0 20px">
@@ -246,7 +246,7 @@ serve(async (req) => {
         console.error("Founder email notification error (non-critical):", emailErr);
       }
     } else {
-      console.error("RESEND_API_KEY not set — skipping all emails");
+      console.error("RESEND_API_KEY not set, skipping all emails");
     }
 
     return new Response(

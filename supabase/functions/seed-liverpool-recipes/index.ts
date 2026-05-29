@@ -426,7 +426,7 @@ const RECIPES = [
   },
   {
     name: 'Blind Scouse',
-    description: 'The meatless classic — a veggie stew packed with root veg and lentils for protein. What you eat when the fridge is bare and you still show up.',
+    description: 'The meatless classic, a veggie stew packed with root veg and lentils for protein. What you eat when the fridge is bare and you still show up.',
     instructions: '1. Dice onion, carrot, swede, turnip and potato.\n2. Heat a large pot with spray oil. Cook onions until softened.\n3. Add all veg and red lentils.\n4. Pour in vegetable stock, add thyme and bay leaf.\n5. Bring to a boil then simmer for 1 hour until thick and veg is tender.\n6. The lentils and potatoes will naturally thicken the stew.\n7. Season generously. Serve with crusty bread and pickled beetroot.',
     calories_per_serving: 320,
     protein_g: 18,

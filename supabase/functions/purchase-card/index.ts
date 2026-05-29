@@ -108,7 +108,7 @@ serve(async (req) => {
         JSON.stringify({
           success: true,
           already_purchased: true,
-          message: "Card already purchased — download available",
+          message: "Card already purchased, download available",
         }),
         {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -185,7 +185,7 @@ serve(async (req) => {
         amount: -cost,
         balance_after: newBalance,
         type: "card_purchase",
-        description: `PB Card purchase (${mediaType}) — ${card.exercise_name || card.title} [${card.rarity}]`,
+        description: `PB Card purchase (${mediaType}), ${card.exercise_name || card.title} [${card.rarity}]`,
       });
     }
 
@@ -210,7 +210,7 @@ serve(async (req) => {
           amount: cost,
           balance_after: currentBalance,
           type: "refund",
-          description: "Refund — card purchase failed",
+          description: "Refund, card purchase failed",
         });
       }
       return new Response(

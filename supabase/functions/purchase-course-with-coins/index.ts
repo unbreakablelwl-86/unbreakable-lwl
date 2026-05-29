@@ -117,7 +117,7 @@ serve(async (req) => {
       }
       expectedCost = bundle.coinCost;
     } else {
-      // Calculate cost per item — guides cost GUIDE_COIN_COST, courses cost COURSE_COIN_COST
+      // Calculate cost per item, guides cost GUIDE_COIN_COST, courses cost COURSE_COIN_COST
       expectedCost = courseKeys.reduce((sum: number, key: string) => {
         return sum + (GUIDE_KEYS.has(key) ? GUIDE_COIN_COST : COURSE_COIN_COST);
       }, 0);
@@ -221,7 +221,7 @@ serve(async (req) => {
         amount: expectedCost,
         balance_after: currentBalance,
         action: "refund",
-        description: `Refund — course purchase failed: ${newCourses.join(", ")}`,
+        description: `Refund, course purchase failed: ${newCourses.join(", ")}`,
       });
 
       return new Response(JSON.stringify({ error: "Failed to grant course access. Coins refunded." }), {

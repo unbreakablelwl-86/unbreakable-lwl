@@ -56,7 +56,9 @@ FOR BARCODE/FOOD ANALYSIS, PROVIDE:
 6. **Timing Tip** - Best time to eat this relative to training
 
 Keep responses concise but impactful. Use emoji sparingly for visual clarity.
-End with motivation: "KEEP SHOWING UP" or similar UNBREAKABLE energy.`;
+End with motivation: "KEEP SHOWING UP" or similar UNBREAKABLE energy.
+
+IMPORTANT FORMATTING RULE: Never use dashes or hyphens (— – -) as punctuation in your response. Use commas instead. Write naturally flowing sentences with commas, not dash-separated clauses.`;
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -178,7 +180,7 @@ serve(async (req) => {
 
     if (!response.ok) {
       if (response.status === 429) {
-        return new Response(JSON.stringify({ error: "Coach is busy — try again shortly!" }), {
+        return new Response(JSON.stringify({ error: "Coach is busy, try again shortly!" }), {
           status: 429,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });

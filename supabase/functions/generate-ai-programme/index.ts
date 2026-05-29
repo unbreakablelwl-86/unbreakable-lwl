@@ -1696,7 +1696,7 @@ serve(async (req) => {
       );
     }
 
-    // Token guard — deduct 1 AI token
+    // Token guard, deduct 1 AI token
     const userId = (claimsData.claims as any).sub;
     const serviceClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
@@ -1790,16 +1790,16 @@ serve(async (req) => {
 
     const userName = userContext.profile?.displayName || 'User';
 
-    const systemPrompt = `You are an elite S&C coach. Grounded, direct, no hype. Measured wit — never theatrical.
+    const systemPrompt = `You are an elite S&C coach. Grounded, direct, no hype. Measured wit, never theatrical.
 
 TONE FOR programName: Direct and purposeful. E.g. "12-Week Strength Foundation", "Upper/Lower Power Block", "Hypertrophy Phase 1". Never generic like "Your Custom Programme".
-TONE FOR overview: Write like you're talking to your athlete face-to-face. E.g. "Right, here's the plan. We're building a solid foundation over 12 weeks — nothing fancy, just honest work that gets results. Stick with it." Keep it 2-3 sentences, grounded, no motivational fluff.
+TONE FOR overview: Write like you're talking to your athlete face-to-face. E.g. "Right, here's the plan. We're building a solid foundation over 12 weeks, nothing fancy, just honest work that gets results. Stick with it." Keep it 2-3 sentences, grounded, no motivational fluff.
 
 ${EXERCISE_NAMES_PROMPT}
 
-Rules: Match equipment+experience. Periodize for goals. Account for injuries. Include warmup/cooldown. Use EXACT exercise names from the list above. If the user has a Sport Preference, tailor the programme with sport-specific conditioning, movement patterns, and energy system work relevant to that sport — but ONLY use exercises from the list above.
+Rules: Match equipment+experience. Periodize for goals. Account for injuries. Include warmup/cooldown. Use EXACT exercise names from the list above. If the user has a Sport Preference, tailor the programme with sport-specific conditioning, movement patterns, and energy system work relevant to that sport, but ONLY use exercises from the list above.
 
-MANDATORY: Every programme MUST include 2 x 30-minute cardio sessions per week (steady-state walk, run, cycle, row, or swim). Schedule these on non-lifting days or after lighter sessions. Label them clearly in the weekly schedule as "Cardio – 30 min steady state" with the recommended activity type.
+MANDATORY: Every programme MUST include 2 x 30-minute cardio sessions per week (steady-state walk, run, cycle, row, or swim). Schedule these on non-lifting days or after lighter sessions. Label them clearly in the weekly schedule as "Cardio, 30 min steady state" with the recommended activity type.
 
 Return ONLY valid JSON:
 {"programName":"string","overview":"string","weeklySchedule":[{"day":"Monday","focus":"string","type":"strength|running|rest|active_recovery"}],"phases":[{"name":"string","weeks":"1-4","focus":"string","notes":"string"}],"templateWeek":{"days":[{"day":"Monday","sessionType":"string","duration":"60 mins","warmup":"string","exercises":[{"name":"Flat Barbell Bench Press","equipment":"barbell","sets":4,"reps":"6-8","intensity":"RPE 7","rest":"3 min","notes":"string"}],"cooldown":"string"}]},"phaseProgressions":[{"phase":"string","adjustments":"string"}],"progressionRules":["string"],"nutritionTips":["string"],"metadata":{"origin":"ai_chat","createdFor":"${userName}"}}`;
@@ -1887,7 +1887,7 @@ If the user hasn't provided enough information, make intelligent assumptions bas
     // Enrich exercises with library IDs, bodyPart, and equipment
     program = enrichProgramWithLibraryData(program);
 
-    // Return programme for user review — do NOT auto-save
+    // Return programme for user review, do NOT auto-save
     return new Response(
       JSON.stringify({ program, savedToHub: false }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }

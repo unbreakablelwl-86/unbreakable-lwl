@@ -3,7 +3,7 @@ import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "npm:@supabase/supabase-js@2.57.2";
 
 const log = (step: string, details?: any) =>
-  console.log(`[STRIPE-WEBHOOK] ${step}${details ? ` — ${JSON.stringify(details)}` : ""}`);
+  console.log(`[STRIPE-WEBHOOK] ${step}${details ? `, ${JSON.stringify(details)}` : ""}`);
 
 // ── Price ID → course key mapping (one-time purchases) ──
 // Updated 2026-05-26 to match current Stripe products
@@ -86,7 +86,7 @@ serve(async (req) => {
       event = await stripe.webhooks.constructEventAsync(body, signature, webhookSecret);
     } else {
       event = JSON.parse(body) as Stripe.Event;
-      log("WARNING: No webhook secret — parsing without verification");
+      log("WARNING: No webhook secret, parsing without verification");
     }
   } catch (err: any) {
     log("Signature verification failed", { error: err.message });
@@ -145,8 +145,8 @@ serve(async (req) => {
     isRenewal: boolean,
   ) {
     const description = isRenewal
-      ? `Monthly ${tierName} tier renewal — ${monthlyTokens} tokens`
-      : `${tierName} tier activated — ${monthlyTokens} tokens`;
+      ? `Monthly ${tierName} tier renewal, ${monthlyTokens} tokens`
+      : `${tierName} tier activated, ${monthlyTokens} tokens`;
 
     // Update token_balances: set tier, add tokens, record subscription
     const { data: existing } = await serviceClient
@@ -366,7 +366,7 @@ serve(async (req) => {
 
         // Skip the first invoice (that's the checkout.session.completed event)
         if (invoice.billing_reason === "subscription_create") {
-          log("First invoice (subscription_create) — skipping (handled by checkout)");
+          log("First invoice (subscription_create), skipping (handled by checkout)");
           break;
         }
 
@@ -464,7 +464,7 @@ serve(async (req) => {
           ? new Date(subscription.current_period_end * 1000).toISOString()
           : null;
 
-        // Update tier (don't add tokens — that happens on invoice.payment_succeeded)
+        // Update tier (don't add tokens, that happens on invoice.payment_succeeded)
         await serviceClient
           .from("token_balances")
           .upsert(
@@ -506,7 +506,7 @@ serve(async (req) => {
 
         if (!userId) { log("Cannot resolve user for cancellation"); break; }
 
-        // Downgrade to free — keep existing balance (they earned those tokens)
+        // Downgrade to free, keep existing balance (they earned those tokens)
         await serviceClient
           .from("token_balances")
           .upsert(
@@ -524,9 +524,9 @@ serve(async (req) => {
         await serviceClient.from("token_transactions").insert({
           user_id: userId,
           amount: 0,
-          balance_after: 0, // We don't zero balance — they keep what they have
+          balance_after: 0, // We don't zero balance, they keep what they have
           type: "tier_cancelled",
-          description: "Subscription cancelled — downgraded to Free tier",
+          description: "Subscription cancelled, downgraded to Free tier",
           metadata: { subscription_id: subscription.id },
         });
 
@@ -539,7 +539,7 @@ serve(async (req) => {
           data: { subscription_id: subscription.id },
         }).catch(() => {});
 
-        log("Subscription cancelled — downgraded to free", { userId });
+        log("Subscription cancelled, downgraded to free", { userId });
 
         break;
       }

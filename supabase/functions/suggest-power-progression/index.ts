@@ -81,7 +81,7 @@ Rules:
 - If RPE is consistently high (8+), maintain or slightly reduce
 - If confidence ratings are low or pain flags exist, suggest deload
 - Maximum 4 suggestions per request
-- Be conservative — progressive overload should be gradual
+- Be conservative, progressive overload should be gradual
 
 Return ONLY this JSON (no markdown):
 {
@@ -142,7 +142,9 @@ Analyze the logged weight, reps, RPE, confidence, and pain flags. Suggest progre
     }
 
     let cleanedContent = content.trim();
-    if (cleanedContent.includes("```json")) {
+    if (cleanedContent.includes("
+
+IMPORTANT FORMATTING RULE: Never use dashes or hyphens (— – -) as punctuation in your response. Use commas instead. Write naturally flowing sentences with commas, not dash-separated clauses.```json")) {
       cleanedContent = cleanedContent.substring(cleanedContent.indexOf("```json") + 7);
     } else if (cleanedContent.includes("```")) {
       cleanedContent = cleanedContent.substring(cleanedContent.indexOf("```") + 3);

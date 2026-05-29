@@ -19,10 +19,10 @@ function extractJsonFromResponse(response: string): unknown {
   }
 }
 
-const BREATHING_PATTERNS = `Focus (4-7-8): Inhale 4s, hold 7s, exhale 8s — calming
-Box Breathing (4-4-4-4): Inhale 4s, hold 4s, exhale 4s, hold 4s — military-grade control
-Tactical Calm (4-2-6): Inhale 4s, hold 2s, exhale 6s — pre-performance
-Deep Reset (4-4-6-2): Inhale 4s, hold 4s, exhale 6s, hold 2s — recovery`;
+const BREATHING_PATTERNS = `Focus (4-7-8): Inhale 4s, hold 7s, exhale 8s, calming
+Box Breathing (4-4-4-4): Inhale 4s, hold 4s, exhale 4s, hold 4s, military-grade control
+Tactical Calm (4-2-6): Inhale 4s, hold 2s, exhale 6s, pre-performance
+Deep Reset (4-4-6-2): Inhale 4s, hold 4s, exhale 6s, hold 2s, recovery`;
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -91,19 +91,19 @@ SESSION TYPES you can prescribe:
 - meditation: Guided or unguided meditation with a specific focus (body scan, visualisation, gratitude, awareness)
 - mental_drill: Cognitive exercises (visualisation, focus drills, positive self-talk scripts, reframing exercises)
 - reflection: End-of-day review and self-assessment
-- focus_game: "Switch Off" time — casual gaming for mental decompression, NOT competitive score-chasing. Available games: "Snake", "Alleyway", "Tetris". Prescribe a specific game and a duration (e.g. 10 minutes). Do NOT set targetScore — these are relaxation tools, not performance tests.
-- retention: Unbreakable Breathwork retention challenge — 3 rounds of 30 power breaths followed by max breath hold. Include target retention times that progress across weeks.
+- focus_game: "Switch Off" time, casual gaming for mental decompression, NOT competitive score-chasing. Available games: "Snake", "Alleyway", "Tetris". Prescribe a specific game and a duration (e.g. 10 minutes). Do NOT set targetScore, these are relaxation tools, not performance tests.
+- retention: Unbreakable Breathwork retention challenge, 3 rounds of 30 power breaths followed by max breath hold. Include target retention times that progress across weeks.
 - exposure: Cold or sauna exposure protocol. Sub-types: "cold_shower", "ice_bath", "sauna". Include progressive duration targets and safety guidance.
 
-MANDATORY DAILY STRUCTURE — EVERY DAY MUST INCLUDE EXACTLY THESE 2 ELEMENTS:
+MANDATORY DAILY STRUCTURE, EVERY DAY MUST INCLUDE EXACTLY THESE 2 ELEMENTS:
 1. SWITCH OFF activity: One of breathwork, sauna, ice shower/cold exposure, OR a focus game. This is dedicated decompression time. Vary across the week.
-2. DAILY 5 CHECK: A reminder to complete the Daily 5 Habits Tracker (Train, Learn Daily, 3L Water, Hit Your Numbers, 150-word Journal). Do NOT generate journal prompts or guided bullet points — the journal is free-form, minimum 150 words. The activity type for this should be "daily_habits_check" with instructions reminding the athlete to complete all 5 habits including their 150-word free journal.
+2. DAILY 5 CHECK: A reminder to complete the Daily 5 Habits Tracker (Train, Learn Daily, 3L Water, Hit Your Numbers, 150-word Journal). Do NOT generate journal prompts or guided bullet points, the journal is free-form, minimum 150 words. The activity type for this should be "daily_habits_check" with instructions reminding the athlete to complete all 5 habits including their 150-word free journal.
 
 CRITICAL RULES:
 - REMOVED: "journaling" as a standalone activity type. Journaling is ONLY done through the Daily 5 Habits Tracker.
 - Generate a COMPLETE programme with daily sessions for EVERY day across ALL weeks requested
 - Each day MUST have the 2 mandatory elements above, plus optional extras fitting the user's daily time budget
-- Vary the switch-off activity across the week — mix breathwork, exposure, and gaming
+- Vary the switch-off activity across the week, mix breathwork, exposure, and gaming
 - Progress difficulty/depth across weeks (Week 1 = foundation, later weeks = deeper work)
 - Include a clear weekly theme or focus area
 - Be specific with durations and instructions
@@ -171,7 +171,7 @@ Return ONLY valid JSON matching this structure:
     });
 
     if (!response.ok) {
-      if (response.status === 429) return new Response(JSON.stringify({ error: "Rate limit — try again shortly." }), { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      if (response.status === 429) return new Response(JSON.stringify({ error: "Rate limit, try again shortly." }), { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } });
       if (response.status === 402) return new Response(JSON.stringify({ error: "Payment required." }), { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } });
       throw new Error("AI service unavailable");
     }

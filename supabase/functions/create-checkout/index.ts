@@ -102,7 +102,7 @@ serve(async (req) => {
         metadata: { user_id: user.id },
       };
     } else {
-      // One-time payment — attach user_id for webhook processing
+      // One-time payment, attach user_id for webhook processing
       sessionConfig.payment_intent_data = {
         metadata: { user_id: user.id, price_id: priceId },
       };
@@ -117,7 +117,7 @@ serve(async (req) => {
 
     // If Tier 2 (121 coaching), notify all dev users
     if (COACHING_121_PRICES.has(priceId)) {
-      logStep("121 coaching selected — notifying devs");
+      logStep("121 coaching selected, notifying devs");
       try {
         const { data: profileData } = await serviceClient
           .from("profiles")

@@ -156,17 +156,17 @@ serve(async (req) => {
             return `${i.food_name}${qty}`;
           });
         if (inStock.length > 0) {
-          inventorySection = `\n\nATHLETE'S STORE CUPBOARD (ingredients they already own — PRIORITISE recipes using these):\n${inStock.join(', ')}`;
+          inventorySection = `\n\nATHLETE'S STORE CUPBOARD (ingredients they already own, PRIORITISE recipes using these):\n${inStock.join(', ')}`;
         }
       }
     }
 
-    // Compact recipe catalogue — name,category,macros,ID only to minimize tokens
+    // Compact recipe catalogue, name,category,macros,ID only to minimize tokens
     const recipeCatalogue = (libraryRecipes || []).map(r => 
       `${r.name}|${r.category}|${r.calories_per_serving}kcal|P${r.protein_g}C${r.carbs_g}F${r.fat_g}|${r.id}`
     ).join('\n');
 
-    const systemPrompt = `UNBREAKABLE NUTRITION COACH. Build meal plans using ONLY recipes from the library below. Do NOT invent meals — pick from library. Include recipe ID for every selection.
+    const systemPrompt = `UNBREAKABLE NUTRITION COACH. Build meal plans using ONLY recipes from the library below. Do NOT invent meals, pick from library. Include recipe ID for every selection.
 
 RECIPE LIBRARY (format: Name|Category|Cals|Macros|ID):
 ${recipeCatalogue}${inventorySection}
@@ -177,7 +177,7 @@ CRITICAL RULES:
 - Prioritize library recipes. Use the exact recipe ID from the library.
 - When the athlete has a STORE CUPBOARD, STRONGLY PREFER recipes whose ingredients overlap with what they already own. This reduces waste and shopping.
 - Adjust calories for training vs rest days. Higher carbs on training days.
-- Vary meals across the week — avoid repeating the same recipe on consecutive days.
+- Vary meals across the week, avoid repeating the same recipe on consecutive days.
 
 Return ONLY JSON matching this EXACT structure with 7 day objects:
 {"planName":"string","overview":"string","weeklyCalories":0,"weeklyProtein":0,"days":[{"dayNumber":1,"dayName":"Monday","isTrainingDay":true,"totalCalories":0,"totalProtein":0,"totalCarbs":0,"totalFat":0,"meals":{"breakfast":{"name":"string","recipeId":"uuid","calories":0,"protein":0,"carbs":0,"fat":0,"prepNotes":"string"},"lunch":{"name":"string","recipeId":"uuid","calories":0,"protein":0,"carbs":0,"fat":0,"prepNotes":"string"},"dinner":{"name":"string","recipeId":"uuid","calories":0,"protein":0,"carbs":0,"fat":0,"prepNotes":"string"},"snacks":[{"name":"string","recipeId":"uuid","calories":0,"protein":0,"carbs":0,"fat":0}]}}],"shoppingList":["string"],"mealPrepTips":["string"],"coachNotes":"string"}
@@ -281,7 +281,7 @@ The "days" array MUST contain exactly 7 objects, dayNumber 1-7, Monday through S
       });
     }
 
-    // Return meal plan for user review — do NOT auto-save
+    // Return meal plan for user review, do NOT auto-save
     return new Response(JSON.stringify({
       type: 'plan',
       plan: mealPlan,

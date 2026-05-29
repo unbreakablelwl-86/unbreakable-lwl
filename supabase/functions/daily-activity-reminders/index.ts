@@ -35,7 +35,7 @@ Deno.serve(async (req) => {
       data: Record<string, unknown>;
     }> = [];
 
-    // ─── 0. Coach Accountability Push — all active users ───
+    // ─── 0. Coach Accountability Push, all active users ───
     // Fetch all users who logged in within the last 14 days
     const { data: activeStreaks } = await supabase
       .from("login_streaks")
@@ -88,7 +88,7 @@ Deno.serve(async (req) => {
     for (const userId of allActiveUserIds) {
       const streakData = (activeStreaks || []).find(s => s.user_id === userId);
       const streak = streakData?.current_streak || 0;
-      const streakNote = streak > 1 ? ` 🔥 ${streak}-day streak — don't break it!` : "";
+      const streakNote = streak > 1 ? ` 🔥 ${streak}-day streak, don't break it!` : "";
 
       notifications.push({
         user_id: userId,

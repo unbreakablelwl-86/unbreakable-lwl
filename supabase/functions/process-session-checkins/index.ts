@@ -51,12 +51,12 @@ Deno.serve(async (req) => {
     // Check-in messages that rotate
     const checkinMessages = [
       "How are you feeling after that session? Any soreness or tightness? Log it so your coach can adjust.",
-      "30 minutes post-workout — how's the body feeling? Drop a quick check-in while it's fresh.",
+      "30 minutes post-workout, how's the body feeling? Drop a quick check-in while it's fresh.",
       "Session done ✅ — time to check in. How's the energy? Any niggles? Your coach needs to know.",
       "Your body's talking right now. How does it feel? Quick check-in helps track your recovery.",
-      "Post-session check-in time. Rate your energy, soreness, and mood — it all matters for your progress.",
+      "Post-session check-in time. Rate your energy, soreness, and mood, it all matters for your progress.",
       "Half hour since you finished. How are you recovering? A quick note now saves guesswork later.",
-      "Still buzzing from that session? Or feeling wrecked? Either way, log it — data drives progress.",
+      "Still buzzing from that session? Or feeling wrecked? Either way, log it, data drives progress.",
     ];
 
     const dayOfYear = Math.floor(

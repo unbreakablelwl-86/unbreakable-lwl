@@ -87,7 +87,7 @@ serve(async (req) => {
     const playCount = card.play_count || 0;
     const cardType = isTrackCard ? "Track" : isAlbumCard ? "Album" : isBrandCard ? "Artist" : "Unknown";
 
-    const prompt = `You write ultra-short, punchy one-line descriptors for collectable music cards in a fitness app called Unbreakable. These cards are earned through music streaming during workouts. The tone is energetic, musical, and premium — like album liner notes meets trading card flavour text.
+    const prompt = `You write ultra-short, punchy one-line descriptors for collectable music cards in a fitness app called Unbreakable. These cards are earned through music streaming during workouts. The tone is energetic, musical, and premium, like album liner notes meets trading card flavour text.
 
 Rules:
 - Exactly ONE sentence, max 12 words
@@ -100,7 +100,9 @@ Context:
 - Card Type: ${cardType} Card
 - Title: ${cardTitle}
 - Artist: ${artistName}
-${genre ? `- Genre: ${genre}` : ""}
+${genre ? 
+
+IMPORTANT FORMATTING RULE: Never use dashes or hyphens (— – -) as punctuation in your response. Use commas instead. Write naturally flowing sentences with commas, not dash-separated clauses.`- Genre: ${genre}` : ""}
 - Category: ${categoryTag}
 - Rarity: ${rarity.toUpperCase()}
 - Play Count: ${playCount} plays

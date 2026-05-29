@@ -11,7 +11,7 @@ const corsHeaders = {
  * on-session-complete
  * Called from the frontend after a workout session is marked completed.
  * 1. Auto-fills "train" habit for today in daily_habits
- * 2. Generates rich AI coach feedback via Anthropic (no token deduction — system initiated)
+ * 2. Generates rich AI coach feedback via Anthropic (no token deduction, system initiated)
  * 3. Creates an AI coach conversation with session review + follow-up question
  * 4. Creates a notification for the user
  *
@@ -153,7 +153,7 @@ serve(async (req) => {
           const historyLines = recentSessions.map((s: any) => {
             const sv = sessionVolumes.get(s.id);
             const dateStr = s.ended_at ? new Date(s.ended_at).toLocaleDateString("en-GB", { day: "numeric", month: "short" }) : "Unknown";
-            return `- ${dateStr}: ${s.day_name || s.session_type || "Session"} — ${sv ? `${sv.volume.toFixed(0)}kg volume, ${sv.exercises.length} exercises` : "no data"}`;
+            return `- ${dateStr}: ${s.day_name || s.session_type || "Session"}, ${sv ? `${sv.volume.toFixed(0)}kg volume, ${sv.exercises.length} exercises` : "no data"}`;
           });
           recentHistory = `\nRecent sessions (last 5):\n${historyLines.join("\n")}`;
         }
@@ -226,7 +226,7 @@ serve(async (req) => {
         const fitnessLevel = userProfile?.fitness_level || "unknown";
         const goal = userProfile?.training_goal || "general fitness";
 
-        const prompt = `You are the Unbreakable AI Coach — a knowledgeable, encouraging, Scouse-rooted strength coach. You talk like a real coach: direct, warm, sometimes funny, always pushing people to be better. You're reviewing a just-completed workout session.
+        const prompt = `You are the Unbreakable AI Coach, a knowledgeable, encouraging, Scouse-rooted strength coach. You talk like a real coach: direct, warm, sometimes funny, always pushing people to be better. You're reviewing a just-completed workout session.
 
 USER CONTEXT:
 - Name: ${userName}
@@ -234,7 +234,9 @@ USER CONTEXT:
 - Goal: ${goal}
 
 SESSION: ${sessionLabel}
-- Duration: ${durationMin ? `${durationMin} minutes` : "not recorded"}
+- Duration: ${durationMin ? 
+
+IMPORTANT FORMATTING RULE: Never use dashes or hyphens (— – -) as punctuation in your response. Use commas instead. Write naturally flowing sentences with commas, not dash-separated clauses.`${durationMin} minutes` : "not recorded"}
 - Sets completed: ${completedSets}/${completedSets + skippedSets}${skippedSets > 0 ? ` (${skippedSets} skipped)` : ""}
 - Total volume: ${totalWeight > 0 ? `${totalWeight.toFixed(0)}kg` : "bodyweight/no weight logged"}
 - Average RPE: ${avgRpe > 0 ? avgRpe.toFixed(1) + "/10" : "not logged"}
@@ -249,15 +251,15 @@ ${recentHistory}
 ${session.notes ? `\nUser's session notes: "${session.notes}"` : ""}
 
 YOUR TASK:
-Write a proper coaching review. NOT just stats — actual analysis. Cover:
+Write a proper coaching review. NOT just stats, actual analysis. Cover:
 1. What they did well and why it matters for their goal
 2. Form/technique observations based on weight vs rep patterns (e.g. if weight dropped but reps stayed, good grinding; if reps dropped sharply, maybe too heavy)
-3. If pain was flagged — address it seriously with practical advice
-4. If they missed or exceeded targets — explain what that means and what to adjust
-5. Compare to recent history if available — are they progressing?
+3. If pain was flagged, address it seriously with practical advice
+4. If they missed or exceeded targets, explain what that means and what to adjust
+5. Compare to recent history if available, are they progressing?
 6. One specific, actionable coaching tip for their next session
 
-Keep it conversational — like a real coach talking after a session. Use their name. Be encouraging but honest. No bullet points, just natural coaching talk. 4-6 short paragraphs.
+Keep it conversational, like a real coach talking after a session. Use their name. Be encouraging but honest. No bullet points, just natural coaching talk. 4-6 short paragraphs.
 
 **IMPORTANT: End your response with a specific question that invites them to continue the conversation.** Something like asking how a particular exercise felt, whether they want to adjust their programme, how their recovery has been, etc. Make it relevant to what you just reviewed. This is a conversation, not a report.`;
 
@@ -278,20 +280,20 @@ Keep it conversational — like a real coach talking after a session. Use their 
         if (aiResp.ok) {
           const aiData = await aiResp.json();
           aiCoachFeedback =
-            aiData.content?.[0]?.text || "Great session — keep pushing!";
+            (aiData.content?.[0]?.text || "Great session, keep pushing!").replace(/\s*[—–-]\s*/g, ', ');
         } else {
           console.error("Anthropic API error:", aiResp.status, await aiResp.text());
           aiCoachFeedback =
-            `Solid work today, ${userName}! ${completedSets} sets across ${exercises.length} exercises${totalWeight > 0 ? `, ${totalWeight.toFixed(0)}kg total volume` : ""}. ${painFlags.length > 0 ? `Keep an eye on that ${painFlags[0].exercise_name} — if the pain sticks around, let's talk about swapping it out.` : "Keep building!"}\n\nHow did that session feel overall? Anything you want to adjust for next time?`;
+            `Solid work today, ${userName}! ${completedSets} sets across ${exercises.length} exercises${totalWeight > 0 ? `, ${totalWeight.toFixed(0)}kg total volume` : ""}. ${painFlags.length > 0 ? `Keep an eye on that ${painFlags[0].exercise_name}, if the pain sticks around, let's talk about swapping it out.` : "Keep building!"}\n\nHow did that session feel overall? Anything you want to adjust for next time?`;
         }
       } catch (aiErr) {
         console.error("AI feedback generation failed:", aiErr);
         aiCoachFeedback =
-          `Session logged — ${completedSets} sets across ${exercises.length} exercises. ${totalWeight > 0 ? `${totalWeight.toFixed(0)}kg total volume. ` : ""}Consistency is king — keep showing up!\n\nHow are you feeling after that? Anything you'd change for next time?`;
+          `Session logged, ${completedSets} sets across ${exercises.length} exercises. ${totalWeight > 0 ? `${totalWeight.toFixed(0)}kg total volume. ` : ""}Consistency is king, keep showing up!\n\nHow are you feeling after that? Anything you'd change for next time?`;
       }
     } else {
       aiCoachFeedback =
-        `Session recorded — ${completedSets} sets across ${exercises.length} exercises${totalWeight > 0 ? `, ${totalWeight.toFixed(0)}kg total volume` : ""}. Nice work!\n\nHow did that feel? Drop me a message if you want to chat about your programme.`;
+        `Session recorded, ${completedSets} sets across ${exercises.length} exercises${totalWeight > 0 ? `, ${totalWeight.toFixed(0)}kg total volume` : ""}. Nice work!\n\nHow did that feel? Drop me a message if you want to chat about your programme.`;
     }
 
     // ─── 7b. Auto-save to workout_feedback table (so AIFeedbackView can find it) ───
@@ -306,10 +308,10 @@ Keep it conversational — like a real coach talking after a session. Use their 
       const fatigueScore = Math.min(10, Math.max(1, Math.round(avgRpe > 0 ? avgRpe : 5)));
 
       const suggestions: string[] = [];
-      if (painFlags.length > 0) suggestions.push(`Monitor pain on ${painFlags.map((l: any) => l.exercise_name).join(', ')} — consider lighter weight or alternative movements.`);
-      if (missedTargets.length > 0) suggestions.push(`Missed rep targets on ${missedTargets.length} set(s) — consider reducing weight 5-10% next session.`);
-      if (exceededTargets.length > 0) suggestions.push(`Exceeded rep targets on ${exceededTargets.length} set(s) — ready to increase weight.`);
-      if (suggestions.length === 0) suggestions.push('Solid session — stay consistent and keep progressive overloading.');
+      if (painFlags.length > 0) suggestions.push(`Monitor pain on ${painFlags.map((l: any) => l.exercise_name).join(', ')}, consider lighter weight or alternative movements.`);
+      if (missedTargets.length > 0) suggestions.push(`Missed rep targets on ${missedTargets.length} set(s), consider reducing weight 5-10% next session.`);
+      if (exceededTargets.length > 0) suggestions.push(`Exceeded rep targets on ${exceededTargets.length} set(s), ready to increase weight.`);
+      if (suggestions.length === 0) suggestions.push('Solid session, stay consistent and keep progressive overloading.');
 
       await supabase.from('workout_feedback').insert({
         user_id: userId,
@@ -331,7 +333,7 @@ Keep it conversational — like a real coach talking after a session. Use their 
         .from("help_conversations")
         .insert({
           user_id: userId,
-          title: `Session Review — ${exercises.slice(0, 3).join(", ")}`,
+          title: `Session Review, ${exercises.slice(0, 3).join(", ")}`,
         })
         .select()
         .single();
@@ -339,7 +341,7 @@ Keep it conversational — like a real coach talking after a session. Use their 
       if (convo) {
         conversationId = convo.id;
 
-        // User message (session data — natural phrasing)
+        // User message (session data, natural phrasing)
         const userMsg = `I just finished my ${sessionLabel || "workout"} session. ${completedSets} sets across ${exercises.join(", ")}${totalWeight > 0 ? `. ${totalWeight.toFixed(0)}kg total volume` : ""}${durationMin ? ` in about ${durationMin} minutes` : ""}.${painFlags.length > 0 ? ` Had some pain on ${painFlags.map((l: any) => l.exercise_name).join(", ")}.` : ""}${session.notes ? ` Notes: ${session.notes}` : ""}\n\nHow did I do, coach?`;
 
         await supabase.from("help_messages").insert({

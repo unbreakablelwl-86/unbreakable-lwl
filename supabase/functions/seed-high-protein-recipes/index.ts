@@ -533,7 +533,7 @@ const HIGH_PROTEIN_RECIPES = [
     fat_g: 7,
     dietary_tags: ["GF", "V", "HP", "Q"],
     instructions:
-      "1. Brew espresso and allow to cool slightly.\n2. Blend with protein powder, almond milk and banana.\n3. Add ice and blend until frothy.\n4. Pour and serve — perfect pre-workout fuel.",
+      "1. Brew espresso and allow to cool slightly.\n2. Blend with protein powder, almond milk and banana.\n3. Add ice and blend until frothy.\n4. Pour and serve, perfect pre-workout fuel.",
     ingredients: [
       { name: "Chocolate protein powder", quantity: "30g", calories: 120, protein_g: 24, carbs_g: 3, fat_g: 1 },
       { name: "Espresso", quantity: "1 shot (30ml)", calories: 2, protein_g: 0, carbs_g: 0, fat_g: 0 },

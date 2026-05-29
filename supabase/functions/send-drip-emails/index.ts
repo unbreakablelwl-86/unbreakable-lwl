@@ -88,7 +88,7 @@ const step = (num: string, title: string, desc: string) =>
 </td></tr></table>`;
 
 /* ═══════════════════════════════════════════════════════════════════
-   8 EMAILS  (Day 0 – Day 7)
+   8 EMAILS  (Day 0, Day 7)
    ═══════════════════════════════════════════════════════════════════ */
 
 interface Email { subject: string; preheader: string; html: string; }
@@ -104,26 +104,26 @@ function getEmail(day: number, name: string): Email {
     preheader: "You just joined something real. Here's what you've got.",
     html: wrap("You just joined something real.",
       `${h1(`Welcome to the<br/>${ac("community")}, ${n}.`)}
-${p(`You've just signed up to Unbreakable — and everything on the platform is yours to explore right now. No paywall. No trial countdown. No pressure.`)}
-${pb(`<strong>Here's what you've got access to — free, forever:</strong>`)}
+${p(`You've just signed up to Unbreakable, and everything on the platform is yours to explore right now. No paywall. No trial countdown. No pressure.`)}
+${pb(`<strong>Here's what you've got access to, free, forever:</strong>`)}
 ${feat("💪","Power","Full workout tracker with exercise library and session logging")}
 ${feat("🥗","Fuel","295 recipes, meal logging, nutrition calculators")}
 ${feat("🏃","Movement & Cardio","Cardio tracking, running logs, movement analysis")}
 ${feat("🧠","Mindset","Breathing exercises, journaling, mental wellness tools")}
-${feat("👥","Community","Social feed, posts, follows — your people")}
+${feat("👥","Community","Social feed, posts, follows, your people")}
 ${feat("✅","Habits","Daily habit tracker to build consistency")}
 ${hr()}
-${ps(`Over the next week, I'll send you a quick email each day showing you a different part of the platform. Nothing spammy — just making sure you know what's here.`)}
+${ps(`Over the next week, I'll send you a quick email each day showing you a different part of the platform. Nothing spammy, just making sure you know what's here.`)}
 ${btn("Explore Your Dashboard", `${B.url}/hub`)}`)
   };
 
   /* ── DAY 1: INSTALL THE APP ── */
   case 1: return {
     subject: "Save Unbreakable to your home screen 📱",
-    preheader: "One tap access — no app store needed. Here's how.",
+    preheader: "One tap access, no app store needed. Here's how.",
     html: wrap("Install Unbreakable on your phone in 30 seconds.",
       `${h1(`Get the ${ac("full app")} experience.`)}
-${p(`Unbreakable works as a full app on your phone — no app store, no download, no storage taken up. Just add it to your home screen and it launches like any other app.`)}
+${p(`Unbreakable works as a full app on your phone, no app store, no download, no storage taken up. Just add it to your home screen and it launches like any other app.`)}
 ${pb(`<strong>It takes 30 seconds:</strong>`)}
 
 <!-- iOS Instructions -->
@@ -131,8 +131,8 @@ ${pb(`<strong>It takes 30 seconds:</strong>`)}
 <tr><td>
   <strong style="color:${B.o};font-size:12px;letter-spacing:2px;text-transform:uppercase">iPhone / iPad (Safari)</strong>
   <div style="height:12px"></div>
-  ${step("1","Open in Safari","Make sure you're using Safari — not Chrome or another browser. Go to <strong style='color:${B.tx}'>unbreakable-lwl.com</strong>")}
-  ${step("2","Tap the Share button","The square icon with the arrow pointing up — at the bottom of Safari")}
+  ${step("1","Open in Safari","Make sure you're using Safari, not Chrome or another browser. Go to <strong style='color:${B.tx}'>unbreakable-lwl.com</strong>")}
+  ${step("2","Tap the Share button","The square icon with the arrow pointing up, at the bottom of Safari")}
   ${step("3","Scroll down and tap \"Add to Home Screen\"","Give it a name (or keep UNBREAKABLE) and tap Add")}
 </td></tr></table>
 
@@ -147,9 +147,9 @@ ${pb(`<strong>It takes 30 seconds:</strong>`)}
 </td></tr></table>
 
 ${pb(`<strong>What you get:</strong>`)}
-${feat("⚡","Instant access","Opens full-screen, no browser bars — feels like a native app")}
+${feat("⚡","Instant access","Opens full-screen, no browser bars, feels like a native app")}
 ${feat("📱","Home screen icon","UNBREAKABLE icon sits right alongside your other apps")}
-${feat("🔔","Always up to date","No app store updates needed — always the latest version")}
+${feat("🔔","Always up to date","No app store updates needed, always the latest version")}
 ${feat("💾","Zero storage","Doesn't take up phone storage like a regular app")}
 ${hr()}
 ${ps(`Once it's on your home screen, you'll never need to type the URL again. One tap and you're in.`)}
@@ -159,13 +159,13 @@ ${btn("Open Unbreakable Now", B.url)}`)
   /* ── DAY 2: YOUR TOOLKIT ── */
   case 2: return {
     subject: "Your body. Your toolkit. 💪",
-    preheader: "Power, Fuel, Movement, Mindset — here's how they work together.",
-    html: wrap("Power, Fuel, Movement, Mindset — here's how they work together.",
+    preheader: "Power, Fuel, Movement, Mindset, here's how they work together.",
+    html: wrap("Power, Fuel, Movement, Mindset, here's how they work together.",
       `${h1(`Four pillars.<br/>${ac("One system.")}`)}
-${p(`Unbreakable is built around four core areas. You don't need to use all of them — but they're designed to work together.`)}
+${p(`Unbreakable is built around four core areas. You don't need to use all of them, but they're designed to work together.`)}
 ${feat("💪","Power","Log workouts, browse 290+ exercises with video demos, track sets/reps/weight. Build your training history.")}
 ${feat("🥗","Fuel","Log meals, scan barcodes, browse 295 chef-quality recipes. Understand what you're eating and why.")}
-${feat("🏃","Movement","Track cardio sessions, running routes, swimming, cycling — anything that gets you moving.")}
+${feat("🏃","Movement","Track cardio sessions, running routes, swimming, cycling, anything that gets you moving.")}
 ${feat("🧠","Mindset","Guided breathing, journaling prompts, and wellness check-ins. Your head matters as much as your body.")}
 ${hr()}
 ${pb(`<strong>Quick win for today:</strong> Log one thing. A workout, a meal, a 2-minute breathing session. Starting is the whole point.`)}
@@ -178,14 +178,14 @@ ${btn("Log Your First Session", `${B.url}/hub`)}`)
     preheader: "The community is built on real connection, not likes.",
     html: wrap("The community is built on real connection.",
       `${h1(`This isn't<br/>${ac("social media.")}`)}
-${p(`Unbreakable has a social feed — but it's not Instagram. There's no algorithm pushing content for engagement. No ads. No promoted posts. No pressure to perform.`)}
+${p(`Unbreakable has a social feed, but it's not Instagram. There's no algorithm pushing content for engagement. No ads. No promoted posts. No pressure to perform.`)}
 ${pb(`<strong>It's a space for real people sharing real progress.</strong>`)}
-${feat("📝","Post Updates","Share workouts, meals, wins, struggles — whatever you want. Use #hashtags and @mentions.")}
+${feat("📝","Post Updates","Share workouts, meals, wins, struggles, whatever you want. Use #hashtags and @mentions.")}
 ${feat("🤝","Follow People","Find and follow other members. Build your circle.")}
 ${feat("💬","Comment & Support","Leave genuine comments. Celebrate other people's consistency.")}
 ${feat("🔒","Your Privacy","Control your profile visibility. Share what you're comfortable with.")}
 ${hr()}
-${pb(`<strong>Quick win:</strong> Share your first post. Doesn't need to be a transformation — just say hello.`)}
+${pb(`<strong>Quick win:</strong> Share your first post. Doesn't need to be a transformation, just say hello.`)}
 ${btn("Visit the Community", `${B.url}/community`)}`)
   };
 
@@ -195,7 +195,7 @@ ${btn("Visit the Community", `${B.url}/community`)}`)
     preheader: "19 courses. 4,400+ quiz questions. Education that should have been free.",
     html: wrap("19 courses. 4,400+ questions. Education that changes everything.",
       `${h1(`The ${ac("University")}.`)}
-${p(`This is the heart of Unbreakable. Real qualifications content — anatomy, nutrition science, exercise programming, sport-specific training, psychology — broken into courses you can study at your own pace.`)}
+${p(`This is the heart of Unbreakable. Real qualifications content, anatomy, nutrition science, exercise programming, sport-specific training, psychology, broken into courses you can study at your own pace.`)}
 ${pb(`<strong>19 courses across 4 disciplines:</strong>`)}
 ${feat("🏋️","Power (L2–L4)","Exercise science, programming, strength & conditioning")}
 ${feat("🥗","Fuel (L2–L4)","Nutrition science, meal planning, dietary analysis")}
@@ -203,7 +203,7 @@ ${feat("🧠","Mindset (L2–L4)","Psychology, behaviour change, mental performa
 ${feat("⚽","Sport (10 courses)","Football, boxing, rugby, running, swimming, MMA, cycling, tennis, basketball, cricket")}
 ${ps(`Each course has chapter content, quizzes (80% pass mark), unit assessments, and a final exam. Complete them all to earn your Unbreakable certificate.`)}
 ${hr()}
-${ps(`Courses are unlocked with Unbreakable Tokens — or grab a bundle for better value. Either way, you're investing in understanding your own body.`)}
+${ps(`Courses are unlocked with Unbreakable Tokens, or grab a bundle for better value. Either way, you're investing in understanding your own body.`)}
 ${btn("Browse the University", `${B.url}/university`)}`)
   };
 
@@ -213,29 +213,29 @@ ${btn("Browse the University", `${B.url}/university`)}`)
     preheader: "AI-powered training partner. Programmes, meal plans, form analysis.",
     html: wrap("AI-powered training partner.",
       `${h1(`Your personal<br/>${ac("training partner.")}`)}
-${p(`The Unbreakable Coach is an AI training partner built into the platform. It knows fitness, nutrition, and programming — and it's there whenever you need it.`)}
+${p(`The Unbreakable Coach is an AI training partner built into the platform. It knows fitness, nutrition, and programming, and it's there whenever you need it.`)}
 ${pb(`<strong>What it can do:</strong>`)}
 ${feat("📋","Build Programmes","Full training programmes tailored to your goals, experience, and equipment")}
 ${feat("🍽️","Create Meal Plans","Personalised nutrition plans based on your targets and preferences")}
 ${feat("💬","Answer Questions","Ask anything about training, nutrition, recovery, or technique")}
 ${feat("📊","Analyse Progress","Get feedback on your workouts, form, and progression")}
 ${hr()}
-${ps(`The Coach runs on Unbreakable Tokens. You get 5 free tokens to try it out. Quick questions cost just 0.2 tokens — a full programme build costs 1 token.`)}
+${ps(`The Coach runs on Unbreakable Tokens. You get 5 free tokens to try it out. Quick questions cost just 0.2 tokens, a full programme build costs 1 token.`)}
 ${btn("Talk to the Coach", `${B.url}/ai-coach`)}`)
   };
 
   /* ── DAY 6: TRACKING & TOOLS ── */
   case 6: return {
     subject: "What gets tracked gets improved 📊",
-    preheader: "Habits, calculators, games, progress photos — tools you didn't know you needed.",
+    preheader: "Habits, calculators, games, progress photos, tools you didn't know you needed.",
     html: wrap("Tools you didn't know you needed.",
       `${h1(`Track ${ac("everything.")}`)}
 ${p(`Consistency beats intensity. Every time. These tools are designed to help you build the daily habits that actually move the needle.`)}
-${feat("✅","Habit Tracker","Set daily habits — water, sleep, training, stretching — and tick them off. Watch the streaks build.")}
-${feat("📸","Progress Photos","Private photo timeline. Same pose, different dates. The mirror lies — photos don't.")}
+${feat("✅","Habit Tracker","Set daily habits, water, sleep, training, stretching, and tick them off. Watch the streaks build.")}
+${feat("📸","Progress Photos","Private photo timeline. Same pose, different dates. The mirror lies, photos don't.")}
 ${feat("📏","Body Measurements","Track weight, measurements, and body composition over time.")}
-${feat("🧮","Calculators","TDEE, BMR, macro splits, 1RM estimates, BMI — all built in, no ads, no upsells.")}
-${feat("🎮","Games","Snake, Tetris, Alleyway — with leaderboards. Because sometimes you just need a break.")}
+${feat("🧮","Calculators","TDEE, BMR, macro splits, 1RM estimates, BMI, all built in, no ads, no upsells.")}
+${feat("🎮","Games","Snake, Tetris, Alleyway, with leaderboards. Because sometimes you just need a break.")}
 ${hr()}
 ${pb(`<strong>Quick win:</strong> Set up 3 daily habits. Keep them simple. Tick them off tomorrow morning.`)}
 ${btn("Set Up Your Habits", `${B.url}/habits`)}`)
@@ -247,7 +247,7 @@ ${btn("Set Up Your Habits", `${B.url}/habits`)}`)
     preheader: "One week in. Here's what matters now.",
     html: wrap("One week in. Here's what matters now.",
       `${h1(`Still here?<br/>${ac("Good.")}`)}
-${p(`It's been a week since you joined Unbreakable. Whether you've explored everything or barely scratched the surface — it doesn't matter. You're here. That's the starting point.`)}
+${p(`It's been a week since you joined Unbreakable. Whether you've explored everything or barely scratched the surface, it doesn't matter. You're here. That's the starting point.`)}
 
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 20px">
 <tr><td style="border-left:3px solid ${B.o};padding:16px 20px;background:${B.bg};border-radius:0 8px 8px 0">
@@ -257,7 +257,7 @@ ${p(`It's been a week since you joined Unbreakable. Whether you've explored ever
 </td></tr></table>
 
 ${pb(`<strong>Here's what you've got:</strong>`)}
-${feat("💪","Full fitness toolkit","Workouts, nutrition, cardio, mindset — all free, forever")}
+${feat("💪","Full fitness toolkit","Workouts, nutrition, cardio, mindset, all free, forever")}
 ${feat("👥","A real community","No algorithms, no ads, just people who get it")}
 ${feat("🎓","University courses","Education that puts you in control of your own body")}
 ${feat("🤖","AI Coach","Your training partner, whenever you need it")}

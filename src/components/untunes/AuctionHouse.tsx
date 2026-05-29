@@ -513,8 +513,17 @@ export function AuctionHouse({ onBack }: AuctionHouseProps) {
         return;
       }
       toast.success(`Bid placed: ${amount} tokens`);
+      // Anti-snipe: if bid placed in last 2 minutes, extend auction by 2 minutes
+      if (data?.anti_snipe_extended) {
+        toast.success('Anti-snipe: auction extended by 2 minutes');
+      }
       setListings(prev => prev.map(l =>
-        l.id === bidModal.id ? { ...l, current_bid: amount, current_bidder_id: user.id } : l
+        l.id === bidModal.id ? { 
+          ...l, 
+          current_bid: amount, 
+          current_bidder_id: user.id,
+          ...(data?.new_ends_at ? { ends_at: data.new_ends_at } : {}),
+        } : l
       ));
     } catch (err) {
       toast.error('Failed to place bid');

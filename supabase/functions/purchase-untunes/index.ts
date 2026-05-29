@@ -121,7 +121,7 @@ serve(async (req) => {
       trackIds = (albumTracks || []).map((t: any) => t.id);
 
     } else {
-      // Bundle — all albums
+      // Bundle, all albums
       const { data: allAlbums } = await supabase.from("un_tunes_albums").select("id");
       const { data: allTracks } = await supabase.from("un_tunes_tracks").select("id");
       cost = BUNDLE_COST;
@@ -139,7 +139,7 @@ serve(async (req) => {
     const ownedAlbumIds = new Set((existingCards || []).filter((c: any) => c.album_id && !c.track_id).map((c: any) => c.album_id));
 
     // Filter to new items only (re-purchases still roll for rare variants!)
-    // Actually, allow re-purchase — you can collect multiple rarities
+    // Actually, allow re-purchase, you can collect multiple rarities
 
     // ── Check if user is dev/coach (bypass token deduction) ──
     const { data: isDevRole } = await supabase.rpc('has_role', { _user_id: user.id, _role: 'dev' });
@@ -218,7 +218,7 @@ serve(async (req) => {
         .eq("user_id", user.id);
       await supabase.from("token_transactions").insert({
         user_id: user.id, amount: cost, balance_after: currentBalance,
-        action: "refund", description: "Refund — purchase failed",
+        action: "refund", description: "Refund, purchase failed",
       });
       return new Response(JSON.stringify({ error: "Purchase failed. Tokens refunded." }), {
         status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -236,7 +236,7 @@ serve(async (req) => {
       if (rarity === "diamond") {
         const { data: edNum } = await supabase.rpc("claim_diamond_edition", { p_album_id: albumId });
         if (edNum === -1) {
-          // No diamond editions left — downgrade to gold
+          // No diamond editions left, downgrade to gold
           cards.push({ user_id: user.id, album_id: albumId, card_type: "album", rarity: "gold", edition_number: 0, purchase_id: purchase.id });
           continue;
         }
@@ -331,7 +331,7 @@ serve(async (req) => {
 
     if (cardError) {
       console.error("Card insert error:", cardError);
-      // Purchase succeeded but cards failed — log it but don't refund
+      // Purchase succeeded but cards failed, log it but don't refund
     }
 
     return new Response(JSON.stringify({
