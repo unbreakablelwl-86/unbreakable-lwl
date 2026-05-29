@@ -698,7 +698,7 @@ export function CardShareSheet({
           </SheetTitle>
         </SheetHeader>
 
-        {/* Card preview */}
+        {/* Card preview — show actual card artwork */}
         <div
           className="flex items-center gap-3 p-3 rounded-xl border mb-4"
           style={{
@@ -707,14 +707,23 @@ export function CardShareSheet({
             boxShadow: cfg.boxShadow,
           }}
         >
-          <div
-            className="w-14 h-14 rounded-lg flex items-center justify-center shrink-0"
-            style={{ background: `${cfg.primary}15` }}
-          >
-            <span className="text-2xl">
-              {card.card_type === 'programme_trophy' ? '🏆' : cardSystem === 'untunes' ? '🎵' : '💪'}
-            </span>
-          </div>
+          {card.image_url ? (
+            <img
+              src={card.image_url}
+              alt={card.title || ''}
+              className="w-14 h-14 rounded-lg object-cover shrink-0"
+              style={{ boxShadow: `0 0 8px ${cfg.primary}30` }}
+            />
+          ) : (
+            <div
+              className="w-14 h-14 rounded-lg flex items-center justify-center shrink-0"
+              style={{ background: `${cfg.primary}15` }}
+            >
+              <span className="text-2xl">
+                {card.card_type === 'programme_trophy' ? '🏆' : cardSystem === 'untunes' ? '🎵' : '💪'}
+              </span>
+            </div>
+          )}
           <div className="min-w-0 flex-1">
             <p className="font-medium text-sm text-foreground truncate">{card.title}</p>
             <p className="text-xs text-muted-foreground truncate">
@@ -755,7 +764,7 @@ export function CardShareSheet({
           )}
         </div>
 
-        {/* Share actions */}
+        {/* Share actions — internal only (no external socials) */}
         <div className="space-y-2">
           <Button
             variant="outline"
@@ -771,12 +780,12 @@ export function CardShareSheet({
           <Button
             variant="outline"
             size="sm"
-            className="w-full text-xs font-display tracking-wider border-blue-500/30 text-blue-400 hover:bg-blue-500/10"
-            onClick={handleNativeShare}
-            disabled={isExporting}
+            className="w-full text-xs font-display tracking-wider border-primary/30 text-primary hover:bg-primary/10"
+            onClick={handleShareFeed}
+            disabled={isPosting}
           >
-            {isExporting ? <Loader2 className="w-3 h-3 mr-2 animate-spin" /> : <Share2 className="w-3 h-3 mr-2" />}
-            {isAnimated ? 'SHARE ANIMATED CARD' : 'SHARE TO SOCIALS'}
+            {isPosting ? <Loader2 className="w-3 h-3 mr-2 animate-spin" /> : <BookOpen className="w-3 h-3 mr-2" />}
+            ADD TO MY STORY
           </Button>
 
           <Button
@@ -787,18 +796,21 @@ export function CardShareSheet({
             disabled={isExporting}
           >
             {isExporting ? <Loader2 className="w-3 h-3 mr-2 animate-spin" /> : <Download className="w-3 h-3 mr-2" />}
-            {isAnimated ? 'SAVE ANIMATED CARD' : 'SAVE IMAGE (2x)'}
+            {isAnimated ? 'SAVE ANIMATED CARD' : 'SAVE IMAGE'}
           </Button>
 
-          <Button
-            variant="outline"
-            size="sm"
-            className="w-full text-xs font-display tracking-wider border-zinc-700 text-zinc-400 hover:bg-zinc-900"
-            onClick={handleCopyLink}
-          >
-            {copied ? <Check className="w-3 h-3 mr-2 text-green-400" /> : <Link2 className="w-3 h-3 mr-2" />}
-            {copied ? 'COPIED!' : 'COPY CARD LINK'}
-          </Button>
+          {isAnimated && (
+            <Button
+              variant="outline"
+              size="sm"
+              className="w-full text-xs font-display tracking-wider border-zinc-600 text-zinc-300 hover:bg-zinc-800"
+              onClick={handleDownload}
+              disabled={isExporting}
+            >
+              {isExporting ? <Loader2 className="w-3 h-3 mr-2 animate-spin" /> : <Camera className="w-3 h-3 mr-2" />}
+              SAVE AS IMAGE
+            </Button>
+          )}
         </div>
 
         {/* Footer */}

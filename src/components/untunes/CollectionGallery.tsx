@@ -7,7 +7,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import {
-  ArrowLeft, Music, Disc, Sparkles, Crown, Gem, Award,
+  ArrowLeft, Music, Disc, Disc3, Sparkles, Crown, Gem, Award,
   Star, Filter, Grid3X3, List, ChevronDown, Share2,
   Hash, Calendar, Copy, Trash2, Gavel,
 } from 'lucide-react';
@@ -554,9 +554,19 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
                 >
                   {group.cover ? (
                     <img src={group.cover} alt="" className="w-10 h-10 rounded-lg object-cover shrink-0" />
+                  ) : group.id === '_brand' ? (
+                    <div className="w-10 h-10 rounded-lg shrink-0 flex items-center justify-center overflow-hidden"
+                      style={{ background: 'linear-gradient(135deg, #1A0A00 0%, #0A0A0A 50%, #1A0500 100%)', border: '1px solid rgba(255,85,0,0.3)' }}>
+                      <img src="/unbreakable-shield.png" alt="Brand" className="w-7 h-7 object-contain" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.4))' }} />
+                    </div>
+                  ) : group.id === '_tracks' ? (
+                    <div className="w-10 h-10 rounded-lg shrink-0 flex items-center justify-center overflow-hidden"
+                      style={{ background: 'linear-gradient(135deg, #0A0800 0%, #0A0A0A 50%, #100A00 100%)', border: '1px solid rgba(255,85,0,0.25)' }}>
+                      <Disc3 size={18} className="text-primary animate-spin" style={{ animationDuration: '4s' }} />
+                    </div>
                   ) : (
                     <div className="w-10 h-10 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
-                      {group.id === '_brand' ? <Sparkles size={16} className="text-primary" /> : <Music size={16} className="text-primary" />}
+                      <Music size={16} className="text-primary" />
                     </div>
                   )}
                   <div className="flex-1 text-left min-w-0">
