@@ -10,7 +10,7 @@ import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence, useMotionValue, useTransform, PanInfo } from 'framer-motion';
 import {
   Zap, Camera, Upload, X, Plus, Minus, Edit3, Check, Search,
-  Activity, Heart, ChevronLeft, ChevronRight, Share2, ShoppingCart,
+  Activity, ChevronLeft, ChevronRight, Share2, ShoppingCart,
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -772,36 +772,33 @@ function CardioCardPanel({
   user, cardioCount, cardioPBs, showCardioDropdown, setShowCardioDropdown, onEditPBs,
 }: CardioPanelProps) {
   const heroH = compact ? 90 : 130;
-  // Neon orange accent for cardio (opposing white base)
-  const accent = '#FF6B1A';
-  const accentRgb = '255,107,26';
 
   return (
     <div
       className="relative overflow-hidden rounded-xl"
       style={{
-        border: '2px solid rgba(0,0,0,0.25)',
-        boxShadow: '0 0 20px rgba(255,85,0,0.3), 0 0 40px rgba(255,85,0,0.1), inset 0 0 20px rgba(0,0,0,0.1)',
+        border: '2px solid rgba(255,85,0,0.5)',
+        boxShadow: '0 0 20px rgba(255,85,0,0.15), 0 0 40px rgba(255,85,0,0.06), inset 0 0 20px rgba(0,0,0,0.5)',
       }}
     >
-      {/* BG — Neon orange base with black depth */}
-      <div className="absolute inset-0" style={{ background: 'linear-gradient(160deg, #FF6B1A 0%, #FF5500 40%, #E04A00 100%)' }} />
-      <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at 50% 80%, rgba(0,0,0,0.25) 0%, transparent 60%)' }} />
-      {/* White/black shimmer — opposite direction */}
-      <div className="absolute inset-0 pointer-events-none" style={{ opacity: 0.25, zIndex: 1 }}>
+      {/* BG — same dark base as strength */}
+      <div className="absolute inset-0" style={{ background: 'linear-gradient(160deg, #080200 0%, #0A0400 40%, #050505 100%)' }} />
+      <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at 50% 20%, rgba(255,85,0,0.08) 0%, transparent 60%)' }} />
+      {/* Shimmer */}
+      <div className="absolute inset-0 pointer-events-none" style={{ opacity: 0.15, zIndex: 1 }}>
         <div className="absolute -inset-y-4 w-20" style={{
-          background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.4) 40%, rgba(255,255,255,0.6) 50%, rgba(255,255,255,0.4) 60%, transparent)',
-          animation: 'cardioShimmer 4.5s ease-in-out infinite',
+          background: 'linear-gradient(90deg, transparent, rgba(255,85,0,0.25) 40%, rgba(255,255,255,0.15) 50%, rgba(255,85,0,0.25) 60%, transparent)',
+          animation: 'strShimmer 4s ease-in-out infinite',
         }} />
       </div>
-      {/* Sparkle particles — white/black on orange */}
+      {/* Sparkle particles */}
       {!compact && (
         <div className="absolute inset-0 pointer-events-none overflow-hidden z-[2]">
           {[...Array(6)].map((_, i) => (
-            <motion.div key={i} className="absolute w-[2px] h-[2px] rounded-full"
-              style={{ left: `${10 + i * 15}%`, top: `${25 + (i % 3) * 22}%`, opacity: 0, backgroundColor: i % 2 === 0 ? '#FFFFFF' : '#000000' }}
+            <motion.div key={i} className="absolute w-[2px] h-[2px] rounded-full bg-[#FF5500]"
+              style={{ left: `${15 + i * 14}%`, top: `${20 + (i % 3) * 25}%`, opacity: 0 }}
               animate={{ opacity: [0, 0.7, 0], scale: [0.5, 1.5, 0.5] }}
-              transition={{ duration: 2.2 + i * 0.3, repeat: Infinity, delay: i * 0.4, ease: 'easeInOut' }}
+              transition={{ duration: 2 + i * 0.3, repeat: Infinity, delay: i * 0.5, ease: 'easeInOut' }}
             />
           ))}
         </div>
@@ -812,13 +809,15 @@ function CardioCardPanel({
         {/* Header */}
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-1.5">
-            <Activity className={`${compact ? 'w-3.5 h-3.5' : 'w-4 h-4'}`} style={{ color: '#000000' }} />
+            <Activity className={`${compact ? 'w-3.5 h-3.5' : 'w-4 h-4'} text-[#FF5500]`} />
             <span className={`${compact ? 'text-[9px]' : 'text-[11px]'} font-display tracking-[0.15em] uppercase font-bold`}
-              style={{ color: '#000000', textShadow: '0 0 8px rgba(0,0,0,0.15)' }}>
+              style={{ color: '#FF5500', textShadow: '0 0 8px rgba(255,85,0,0.5)' }}>
               CARDIO
             </span>
           </div>
-          <span className={`${compact ? 'text-[7px]' : 'text-[8px]'} font-mono`} style={{ color: 'rgba(0,0,0,0.4)' }}>{cardioCount} cards</span>
+          <div className="flex items-center gap-1.5">
+            <span className={`${compact ? 'text-[7px]' : 'text-[8px]'} font-mono text-white/30`}>{cardioCount} cards</span>
+          </div>
         </div>
 
         {/* Hero image */}
@@ -828,65 +827,65 @@ function CardioCardPanel({
           ) : profile.avatar_url ? (
             <img src={profile.avatar_url} alt="Profile" className="absolute inset-0 w-full h-full object-cover" style={{ objectPosition: 'center 20%' }} />
           ) : (
-            <div className="absolute inset-0 flex items-center justify-center" style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.05), transparent)' }}>
-              <span className="text-4xl font-display opacity-40" style={{ color: '#000000' }}>{displayName[0]?.toUpperCase()}</span>
+            <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-b from-orange-500/5 to-transparent">
+              <span className="text-4xl font-display text-primary opacity-40">{displayName[0]?.toUpperCase()}</span>
             </div>
           )}
-          <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, transparent 30%, rgba(255,85,0,0.92) 100%)' }} />
+          <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, transparent 30%, rgba(5,5,5,0.9) 100%)' }} />
           {/* Name overlay */}
           <div className="absolute bottom-2 left-2.5">
-            <p className={`${compact ? 'text-[12px]' : 'text-[16px]'} font-display tracking-wider uppercase font-bold`}
-              style={{ color: '#FFFFFF', textShadow: '0 0 10px rgba(0,0,0,0.3)' }}>
+            <p className={`${compact ? 'text-[12px]' : 'text-[16px]'} font-display tracking-wider uppercase text-white font-bold`}
+              style={{ textShadow: '0 0 10px rgba(255,85,0,0.4)' }}>
               {displayName}
             </p>
             {!compact && profile.username && (
-              <p className="text-[9px] font-mono tracking-wider uppercase" style={{ color: '#000000' }}>
+              <p className="text-[9px] font-mono tracking-wider uppercase" style={{ color: '#FF5500' }}>
                 @{profile.username}
               </p>
             )}
           </div>
         </div>
 
-        {/* Bio stats — black/white text on orange */}
+        {/* Bio stats */}
         {(ageDisplay || heightDisplay || weightDisplay) && (
           <div className={`flex items-center gap-3 mb-2.5 ${compact ? '' : 'px-1'}`}>
             {ageDisplay && (
-              <span className={`${compact ? 'text-[8px]' : 'text-[9px]'} font-mono`}>
-                <span style={{ color: 'rgba(0,0,0,0.5)', fontSize: compact ? 7 : 8 }}>AGE </span>
-                <span className="font-bold" style={{ color: '#FFFFFF' }}>{ageDisplay}</span>
+              <span className={`${compact ? 'text-[8px]' : 'text-[9px]'} font-mono text-white/60`}>
+                <span style={{ color: 'rgba(255,85,0,0.5)', fontSize: compact ? 7 : 8 }}>AGE </span>
+                <span className="font-bold text-white">{ageDisplay}</span>
               </span>
             )}
             {heightDisplay && (
-              <span className={`${compact ? 'text-[8px]' : 'text-[9px]'} font-mono`}>
-                <span style={{ color: 'rgba(0,0,0,0.5)', fontSize: compact ? 7 : 8 }}>HT </span>
-                <span className="font-bold" style={{ color: '#FFFFFF' }}>{heightDisplay}</span>
+              <span className={`${compact ? 'text-[8px]' : 'text-[9px]'} font-mono text-white/60`}>
+                <span style={{ color: 'rgba(255,85,0,0.5)', fontSize: compact ? 7 : 8 }}>HT </span>
+                <span className="font-bold text-white">{heightDisplay}</span>
               </span>
             )}
             {weightDisplay && (
-              <span className={`${compact ? 'text-[8px]' : 'text-[9px]'} font-mono`}>
-                <span style={{ color: 'rgba(0,0,0,0.5)', fontSize: compact ? 7 : 8 }}>WT </span>
-                <span className="font-bold" style={{ color: '#FFFFFF' }}>{weightDisplay}</span>
+              <span className={`${compact ? 'text-[8px]' : 'text-[9px]'} font-mono text-white/60`}>
+                <span style={{ color: 'rgba(255,85,0,0.5)', fontSize: compact ? 7 : 8 }}>WT </span>
+                <span className="font-bold text-white">{weightDisplay}</span>
               </span>
             )}
           </div>
         )}
 
-        {/* Cardio PBs — black accents on neon orange */}
-        <div className="rounded-lg overflow-hidden" style={{ background: 'rgba(0,0,0,0.12)', border: '1px solid rgba(0,0,0,0.15)' }}>
+        {/* Cardio PBs */}
+        <div className="rounded-lg overflow-hidden" style={{ background: 'rgba(255,85,0,0.04)', border: '1px solid rgba(255,85,0,0.12)' }}>
           <button onClick={() => setShowCardioDropdown(!showCardioDropdown)}
             className="w-full flex items-center justify-between px-2.5 py-1.5">
             <div className="flex items-center gap-1">
-              <Heart className="w-3 h-3" style={{ color: '#000000' }} />
+              <Activity className="w-3 h-3" style={{ color: '#FF5500' }} />
               <span className={`${compact ? 'text-[7px]' : 'text-[8px]'} font-mono tracking-[0.15em] uppercase`}
-                style={{ color: '#000000' }}>CARDIO PBs ({cardioPBs.length})</span>
+                style={{ color: '#FF5500' }}>CARDIO PBs ({cardioPBs.length})</span>
             </div>
             <div className="flex items-center gap-1">
               <button onClick={(e) => { e.stopPropagation(); onEditPBs(); }}
-                className="w-5 h-5 rounded-full flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.1)' }}>
-                <Edit3 className="w-2.5 h-2.5" style={{ color: 'rgba(0,0,0,0.5)' }} />
+                className="w-5 h-5 rounded-full bg-white/5 flex items-center justify-center">
+                <Edit3 className="w-2.5 h-2.5 text-white/40" />
               </button>
               <motion.span animate={{ rotate: showCardioDropdown ? 180 : 0 }}
-                className="text-[8px]" style={{ color: '#000000' }}>▼</motion.span>
+                className="text-[8px]" style={{ color: '#FF5500' }}>▼</motion.span>
             </div>
           </button>
 
@@ -897,10 +896,10 @@ function CardioCardPanel({
                 <div className={`px-2.5 pb-2 ${compact ? 'space-y-[3px]' : 'space-y-1'}`}>
                   {cardioPBs.length > 0 ? cardioPBs.map((pb, i) => (
                     <StatBar key={pb.exerciseName} label={pb.exerciseName} value={pb.value} unit={pb.unit}
-                      maxValue={getMaxForExercise(pb.exerciseName, pb.unit)} color="#000000" delay={i * 0.04}
-                      compact={compact} lightMode />
+                      maxValue={getMaxForExercise(pb.exerciseName, pb.unit)} color="#FF5500" delay={i * 0.04}
+                      compact={compact} />
                   )) : (
-                    <p className="text-[9px] font-mono text-center py-3" style={{ color: 'rgba(0,0,0,0.35)' }}>No cardio PBs yet — log a 5K!</p>
+                    <p className="text-[9px] text-white/20 font-mono text-center py-3">No cardio PBs yet — log a 5K!</p>
                   )}
                 </div>
               </motion.div>
@@ -910,21 +909,21 @@ function CardioCardPanel({
 
         {/* Events count */}
         {cardioPBs.length > 0 && (
-          <div className="flex items-center justify-between mt-2.5 pt-2" style={{ borderTop: '1px solid rgba(0,0,0,0.1)' }}>
-            <span className={`${compact ? 'text-[8px]' : 'text-[9px]'} font-mono tracking-wider`} style={{ color: '#000000' }}>EVENTS</span>
+          <div className="flex items-center justify-between mt-2.5 pt-2" style={{ borderTop: '1px solid rgba(255,85,0,0.08)' }}>
+            <span className={`${compact ? 'text-[8px]' : 'text-[9px]'} font-mono tracking-wider`} style={{ color: '#FF5500' }}>EVENTS</span>
             <span className={`${compact ? 'text-sm' : 'text-base'} font-display font-black tracking-wider`}
-              style={{ color: '#FFFFFF', textShadow: '0 0 12px rgba(0,0,0,0.3)' }}>
+              style={{ color: '#FF5500', textShadow: '0 0 12px rgba(255,85,0,0.5)' }}>
               {cardioPBs.length}
             </span>
           </div>
         )}
 
         {/* Footer */}
-        <div className="flex items-center justify-between mt-2 pt-1.5" style={{ borderTop: '1px solid rgba(0,0,0,0.08)' }}>
-          <span className="text-[6px] font-mono tracking-wider uppercase" style={{ color: 'rgba(0,0,0,0.4)' }}>
-            LIVE WITHOUT LIMITS™
+        <div className="flex items-center justify-between mt-2 pt-1.5" style={{ borderTop: '1px solid rgba(255,85,0,0.06)' }}>
+          <span className="text-[6px] font-mono tracking-wider uppercase" style={{ color: 'rgba(255,85,0,0.35)' }}>
+            UNBREAKABLE · EST 2026
           </span>
-          <span className="text-[6px] font-mono" style={{ color: 'rgba(0,0,0,0.25)' }}>
+          <span className="text-[6px] font-mono" style={{ color: 'rgba(255,85,0,0.2)' }}>
             #{user.id.slice(0, 6).toUpperCase()}
           </span>
         </div>
