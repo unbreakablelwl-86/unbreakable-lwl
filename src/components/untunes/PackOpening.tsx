@@ -184,77 +184,105 @@ const RARITY_RANK: Record<string, number> = { platinum: 5, diamond: 4, gold: 3, 
 
 function PackBackDesign({ tier }: { tier: string }) {
   const tierColors = {
-    elite: { from: '#FFD700', to: '#B8860B', label: 'ELITE' },
-    premium: { from: '#BF5FFF', to: '#7C3AED', label: 'PREMIUM' },
-    standard: { from: '#FF5500', to: '#CC4400', label: 'STANDARD' },
+    elite: { from: '#FFD700', to: '#B8860B', label: 'ELITE', accent: '#FFD700' },
+    premium: { from: '#BF5FFF', to: '#7C3AED', label: 'PREMIUM', accent: '#BF5FFF' },
+    standard: { from: '#FF5500', to: '#CC4400', label: 'STANDARD', accent: '#FF5500' },
   };
   const c = tierColors[tier as keyof typeof tierColors] || tierColors.standard;
 
   return (
-    <div className="w-full h-full rounded-2xl overflow-hidden relative" style={{ background: 'linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 50%, #1a1a1a 100%)' }}>
-      {/* ── Diagonal stripe pattern (Unbreakable neon orange) ── */}
-      <div className="absolute inset-0 opacity-[0.08]" style={{
-        backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(255,107,0,0.5) 8px, rgba(255,107,0,0.5) 9px)',
+    <div className="w-full h-full rounded-2xl overflow-hidden relative" style={{ background: '#080808' }}>
+      {/* ── Carbon fibre texture ── */}
+      <div className="absolute inset-0 opacity-[0.12]" style={{
+        backgroundImage: `
+          repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.03) 2px, rgba(255,255,255,0.03) 4px),
+          repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(255,255,255,0.03) 2px, rgba(255,255,255,0.03) 4px)
+        `,
+        backgroundSize: '4px 4px',
       }} />
 
-      {/* ── Corner brackets (4 corners) ── */}
-      <svg className="absolute top-3 left-3 w-6 h-6 text-primary/60" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 4 L4 10 M4 4 L10 4" /></svg>
-      <svg className="absolute top-3 right-3 w-6 h-6 text-primary/60" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 4 L20 10 M20 4 L14 4" /></svg>
-      <svg className="absolute bottom-3 left-3 w-6 h-6 text-primary/60" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 20 L4 14 M4 20 L10 20" /></svg>
-      <svg className="absolute bottom-3 right-3 w-6 h-6 text-primary/60" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 20 L20 14 M20 20 L14 20" /></svg>
+      {/* ── Geometric diamond pattern overlay ── */}
+      <div className="absolute inset-0 opacity-[0.04]" style={{
+        backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(255,85,0,0.3) 20px, rgba(255,85,0,0.3) 21px), repeating-linear-gradient(-45deg, transparent, transparent 20px, rgba(255,85,0,0.3) 20px, rgba(255,85,0,0.3) 21px)',
+      }} />
 
-      {/* ── Central logo area ── */}
-      <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
-        {/* Pulsing glow ring */}
-        <div className="absolute w-28 h-28 rounded-full" style={{
-          background: 'radial-gradient(circle, rgba(255,107,0,0.2) 0%, transparent 70%)',
-          animation: 'packPulse 2.5s ease-in-out infinite',
+      {/* ── Outer double border frame ── */}
+      <div className="absolute inset-2 rounded-xl pointer-events-none" style={{ border: `1px solid ${c.accent}15` }} />
+      <div className="absolute inset-4 rounded-lg pointer-events-none" style={{ border: `1px solid ${c.accent}25` }} />
+
+      {/* ── Corner ornaments ── */}
+      {[
+        'top-5 left-5', 'top-5 right-5 scale-x-[-1]',
+        'bottom-5 left-5 scale-y-[-1]', 'bottom-5 right-5 scale-[-1]',
+      ].map((pos, i) => (
+        <svg key={i} className={`absolute ${pos} w-5 h-5`} viewBox="0 0 20 20" fill="none">
+          <path d="M0 0 L8 0 L8 1.5 L1.5 1.5 L1.5 8 L0 8 Z" fill={c.accent} fillOpacity="0.35" />
+          <path d="M0 0 L4 0 L0 4 Z" fill={c.accent} fillOpacity="0.15" />
+        </svg>
+      ))}
+
+      {/* ── Centre: Shield emblem (SVG, no icon library) ── */}
+      <div className="absolute inset-0 flex flex-col items-center justify-center">
+        {/* Ambient glow behind shield */}
+        <div className="absolute w-36 h-36 rounded-full" style={{
+          background: `radial-gradient(circle, ${c.accent}10 0%, transparent 70%)`,
+          animation: 'packPulse 3s ease-in-out infinite',
         }} />
 
-        {/* Neon orange icon block */}
-        <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-primary/90 to-orange-700 flex items-center justify-center shadow-lg" style={{ boxShadow: '0 0 30px rgba(255,85,0,0.4), 0 0 60px rgba(255,85,0,0.15)' }}>
-          <Sparkles className="w-8 h-8 text-white" />
-        </div>
+        {/* Shield SVG */}
+        <svg className="w-20 h-24 relative z-10" viewBox="0 0 80 96" fill="none" style={{ filter: `drop-shadow(0 0 20px ${c.accent}30)` }}>
+          <path d="M40 4 L72 18 L72 48 C72 68 58 84 40 92 C22 84 8 68 8 48 L8 18 Z"
+            stroke={c.accent} strokeWidth="1.5" fill="none" strokeOpacity="0.4" />
+          <path d="M40 10 L66 22 L66 46 C66 64 54 78 40 86 C26 78 14 64 14 46 L14 22 Z"
+            fill={`${c.accent}08`} stroke={c.accent} strokeWidth="0.5" strokeOpacity="0.2" />
+          {/* Inner "U" letterform for Unbreakable */}
+          <text x="40" y="58" textAnchor="middle" fill={c.accent} fillOpacity="0.5"
+            fontFamily="system-ui" fontWeight="700" fontSize="28" letterSpacing="2">U</text>
+        </svg>
 
         {/* Brand text */}
-        <div className="text-center mt-2">
-          <p className="font-display text-base tracking-[0.3em] text-white/90" style={{ textShadow: '0 0 10px rgba(255,85,0,0.3)' }}>UNBREAKABLE</p>
-          <p className="font-display text-[10px] tracking-[0.4em] text-primary/70 mt-0.5">UN-TUNES</p>
+        <div className="text-center mt-4 relative z-10">
+          <p className="font-display text-[11px] tracking-[0.35em] text-white/80 font-bold" style={{ textShadow: `0 0 15px ${c.accent}25` }}>UNBREAKABLE</p>
+          <p className="font-display text-[8px] tracking-[0.25em] text-primary/50 mt-1">TAP TO REVEAL</p>
         </div>
       </div>
 
       {/* ── Moving scanline ── */}
-      <div className="absolute left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-primary/25 to-transparent pointer-events-none" style={{ animation: 'packSweepVertical 3s linear infinite' }} />
+      <div className="absolute left-0 right-0 h-px pointer-events-none" style={{
+        background: `linear-gradient(90deg, transparent, ${c.accent}15, transparent)`,
+        animation: 'packSweepVertical 4s linear infinite',
+      }} />
 
-      {/* ── Light sweep ── */}
+      {/* ── Light sweep across surface ── */}
       <div className="absolute inset-0 overflow-hidden rounded-2xl">
-        <div className="absolute -inset-y-4 w-28" style={{
-          background: 'linear-gradient(90deg, transparent, rgba(255,85,0,0.06) 30%, rgba(255,85,0,0.15) 50%, rgba(255,85,0,0.06) 70%, transparent)',
-          animation: 'packSweep 4s ease-in-out infinite',
+        <div className="absolute -inset-y-full w-20" style={{
+          background: `linear-gradient(90deg, transparent, ${c.accent}04 30%, ${c.accent}10 50%, ${c.accent}04 70%, transparent)`,
+          animation: 'packSweep 5s ease-in-out infinite',
         }} />
       </div>
 
-      {/* ── Tier label ── */}
-      <div className="absolute bottom-10 left-0 right-0 text-center z-10">
-        <div className="inline-block px-5 py-1.5 rounded-lg" style={{
-          background: `linear-gradient(135deg, ${c.from}12, ${c.to}12)`,
-          border: `1px solid ${c.from}30`,
-          boxShadow: `0 0 15px ${c.from}10`,
+      {/* ── Tier label pill ── */}
+      <div className="absolute bottom-12 left-0 right-0 text-center z-10">
+        <div className="inline-block px-6 py-1 rounded-sm" style={{
+          background: `linear-gradient(90deg, transparent, ${c.from}10, transparent)`,
+          borderTop: `1px solid ${c.from}20`,
+          borderBottom: `1px solid ${c.from}20`,
         }}>
-          <p className="font-display text-[10px] tracking-[0.35em]" style={{ color: c.from, textShadow: `0 0 8px ${c.from}40` }}>
+          <p className="font-display text-[9px] tracking-[0.4em] font-semibold" style={{ color: c.from, textShadow: `0 0 6px ${c.from}30` }}>
             {c.label} PACK
           </p>
         </div>
       </div>
 
       {/* ── Bottom branding ── */}
-      <div className="absolute bottom-4 left-0 right-0 text-center z-10">
-        <p className="text-[7px] font-mono tracking-[0.2em] text-primary/30">LIVE WITHOUT LIMITS™</p>
+      <div className="absolute bottom-5 left-0 right-0 text-center z-10">
+        <p className="text-[7px] font-mono tracking-[0.2em] text-white/20">LIVE WITHOUT LIMITS™</p>
       </div>
 
-      {/* ── Pulsing border ── */}
-      <div className="absolute inset-0 border border-primary/15 rounded-2xl pointer-events-none" style={{
-        animation: 'packBorderPulse 2s ease-in-out infinite',
+      {/* ── Border glow ── */}
+      <div className="absolute inset-0 rounded-2xl pointer-events-none" style={{
+        boxShadow: `inset 0 0 40px ${c.accent}06, 0 0 1px ${c.accent}20`,
+        animation: 'packBorderPulse 3s ease-in-out infinite',
       }} />
     </div>
   );

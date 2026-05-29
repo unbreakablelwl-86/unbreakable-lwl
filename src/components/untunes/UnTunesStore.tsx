@@ -256,6 +256,94 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
     }
   }, [user, balance, refreshBalance]);
 
+  // ── Pack purchase (tier-based: random cards from track pool) ──
+  const handlePackPurchase = useCallback(async (tier: PackTier) => {
+    if (!user) { toast.error('Please sign in to purchase'); return; }
+    if (!hasFullAccess && balance < tier.cost) {
+      toast.error(`Not enough tokens. You need ${tier.cost} but have ${balance}.`);
+      return;
+    }
+    setPurchasing(tier.id);
+    try {
+      // 1. Deduct tokens
+      if (!hasFullAccess) {
+        const { error: deductErr } = await (supabase as any).rpc('deduct_tokens', { _amount: tier.cost });
+        if (deductErr) {
+          // Fallback: try direct update
+          const { error: upErr } = await supabase.from('profiles')
+            .update({ token_balance: balance - tier.cost })
+            .eq('id', user.id);
+          if (upErr) throw upErr;
+        }
+      }
+
+      // 2. Pick random tracks for the pack
+      let trackPool = tracks.length > 0 ? tracks : [];
+      if (trackPool.length === 0) {
+        const { data } = await supabase.from('un_tunes_tracks').select('id,title,cover_url,artist_id');
+        trackPool = (data || []) as any[];
+      }
+      if (trackPool.length === 0) { toast.error('No tracks available'); return; }
+
+      const shuffled = [...trackPool].sort(() => Math.random() - 0.5);
+      const selected = shuffled.slice(0, tier.cards);
+
+      // 3. Assign rarities based on tier guarantees
+      const rarities = ['standard', 'gold', 'diamond', 'platinum'];
+      const assignRarity = (index: number): string => {
+        if (index < tier.guaranteedDiamond) return 'diamond';
+        if (index < tier.guaranteedDiamond + tier.guaranteedGold) return 'gold';
+        // Random with weighted distribution
+        const roll = Math.random() * 100;
+        if (roll < 0.5 * tier.platinumBoost) return 'platinum';
+        if (roll < 3 * tier.platinumBoost) return 'diamond';
+        if (roll < 15) return 'gold';
+        return 'standard';
+      };
+
+      // 4. Generate a purchase_id
+      const purchaseId = crypto.randomUUID ? crypto.randomUUID() : `pack-${Date.now()}`;
+
+      // 5. Insert cards into DB
+      const cardInserts = selected.map((t: any, i: number) => ({
+        user_id: user.id,
+        track_id: t.id,
+        rarity: assignRarity(i),
+        card_type: 'track',
+        is_opened: false,
+        purchase_id: purchaseId,
+        acquired_at: new Date().toISOString(),
+      }));
+
+      const { data: insertedCards, error: insertErr } = await supabase
+        .from('un_tunes_user_cards')
+        .insert(cardInserts)
+        .select('*');
+
+      if (insertErr) throw insertErr;
+
+      // 6. Build PackCard array for the opening animation
+      const cards: PackCard[] = (insertedCards || []).map((c: any) => {
+        const track = trackPool.find((t: any) => t.id === c.track_id);
+        return {
+          ...c,
+          un_tunes_tracks: track ? { title: track.title, artist: (track as any).artist || 'Unbreakable', cover_url: (track as any).cover_url || '' } : null,
+        };
+      });
+
+      setSelectedPackTierId(tier.id);
+      setPackType(cards.length <= 5 ? 'single' : cards.length <= 8 ? 'album' : 'bundle');
+      setPackCards(cards);
+      refreshBalance();
+      toast.success(`${tier.cost} tokens spent — ${tier.name}!`);
+    } catch (err) {
+      console.error('Pack purchase error:', err);
+      toast.error('Pack purchase failed. Please try again.');
+    } finally {
+      setPurchasing(null);
+    }
+  }, [user, balance, hasFullAccess, tracks, refreshBalance]);
+
   const handlePackClose = () => {
     setPackCards(null);
     fetchPendingPacks(); // Refresh after opening
@@ -478,7 +566,7 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
                               disabled={!!purchasing || (!hasFullAccess && balance < tier.cost)}
                               onClick={() => {
                                 setSelectedPackTierId(tier.id);
-                                requestPurchase('bundle');
+                                handlePackPurchase(tier);
                               }}
                             >
                               {purchasing ? (
