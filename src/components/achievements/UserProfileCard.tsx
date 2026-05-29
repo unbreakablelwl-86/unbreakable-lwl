@@ -10,7 +10,7 @@ import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence, useMotionValue, useTransform, PanInfo } from 'framer-motion';
 import {
   Zap, Camera, Upload, X, Plus, Minus, Edit3, Check, Search,
-  Activity, Heart, Columns, ChevronLeft, ChevronRight, Share2, ShoppingCart,
+  Activity, Heart, ChevronLeft, ChevronRight, Share2, ShoppingCart,
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -31,7 +31,7 @@ interface CardConfig {
   customPBs: CustomPB[];
   customCardioPBs: CustomPB[];
   cardImageUrl?: string;
-  viewMode: 'strength' | 'cardio' | 'both';
+  viewMode: 'strength' | 'cardio';
 }
 
 /* ═══ Storage ═══ */
@@ -58,7 +58,7 @@ function saveCardConfig(config: CardConfig) {
 }
 
 /* ═══ View mode toggle ═══ */
-type ViewMode = 'strength' | 'cardio' | 'both';
+type ViewMode = 'strength' | 'cardio';
 
 /* ═══ Main component ═══ */
 export default function UserProfileCard() {
@@ -354,16 +354,7 @@ export default function UserProfileCard() {
         >
           <Zap className="w-2.5 h-2.5 inline mr-0.5" />STRENGTH
         </button>
-        <button
-          onClick={() => changeViewMode('both')}
-          className={`px-2.5 py-1 rounded-lg text-[8px] font-display tracking-[0.12em] uppercase transition-all ${
-            viewMode === 'both'
-              ? 'bg-white/10 text-white/80 border border-white/20'
-              : 'bg-white/[0.02] text-white/30 border border-white/5 hover:bg-white/[0.04]'
-          }`}
-        >
-          <Columns className="w-2.5 h-2.5 inline mr-0.5" />BOTH
-        </button>
+
         <button
           onClick={() => changeViewMode('cardio')}
           className={`px-2.5 py-1 rounded-lg text-[8px] font-display tracking-[0.12em] uppercase transition-all ${
@@ -378,39 +369,7 @@ export default function UserProfileCard() {
 
       {/* ═══ CARD DISPLAY ═══ */}
       <AnimatePresence mode="wait">
-        {viewMode === 'both' ? (
-          /* ═══ BOTH — side by side ═══ */
-          <motion.div
-            key="both"
-            className="grid grid-cols-2 gap-2"
-            initial={{ opacity: 0, scale: 0.97 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.97 }}
-            transition={{ duration: 0.25 }}
-          >
-            <StrengthCardPanel
-              {...sharedProps}
-              compact
-              strCount={strCount}
-              strengthPBs={strengthPBs}
-              sbdTotal={sbdTotal}
-              totalCards={totalCards}
-              showStrDropdown={showStrDropdown}
-              setShowStrDropdown={setShowStrDropdown}
-              onEditPBs={() => setShowStrEditMenu(true)}
-              onImageMenu={() => setShowImageMenu(!showImageMenu)}
-            />
-            <CardioCardPanel
-              {...sharedProps}
-              compact
-              cardioCount={cardioCount}
-              cardioPBs={cardioPBs}
-              showCardioDropdown={showCardioDropdown}
-              setShowCardioDropdown={setShowCardioDropdown}
-              onEditPBs={() => setShowCardioEditMenu(true)}
-            />
-          </motion.div>
-        ) : viewMode === 'strength' ? (
+        {viewMode === 'strength' ? (
           /* ═══ STRENGTH — full width, swipeable → cardio ═══ */
           <motion.div
             key="strength"
@@ -475,12 +434,10 @@ export default function UserProfileCard() {
       </AnimatePresence>
 
       {/* Page dots indicator */}
-      {viewMode !== 'both' && (
-        <div className="flex items-center justify-center gap-1.5 mt-1">
-          <div className={`rounded-full transition-all ${viewMode === 'strength' ? 'w-4 h-1 bg-[#FF5500]' : 'w-1 h-1 bg-white/20'}`} />
-          <div className={`rounded-full transition-all ${viewMode === 'cardio' ? 'w-4 h-1 bg-[#FF6B1A]' : 'w-1 h-1 bg-white/20'}`} />
-        </div>
-      )}
+      <div className="flex items-center justify-center gap-1.5 mt-1">
+        <div className={`rounded-full transition-all ${viewMode === 'strength' ? 'w-4 h-1 bg-[#FF5500]' : 'w-1 h-1 bg-white/20'}`} />
+        <div className={`rounded-full transition-all ${viewMode === 'cardio' ? 'w-4 h-1 bg-[#FF6B1A]' : 'w-1 h-1 bg-white/20'}`} />
+      </div>
 
       {/* Total cards count */}
       <div className="flex items-center justify-center mt-1">

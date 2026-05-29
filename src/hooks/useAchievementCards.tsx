@@ -186,17 +186,8 @@ export function useAchievementCards() {
         });
       }
 
-      // Derive rarity FROM overall rating so they always correlate
-      // Platinum (85-99) > Diamond (70-84) > Gold (50-69) > Silver (30-49) > Bronze (1-29)
-      let derivedRarity: AchievementRarity = c.rarity;
-      if (overallRating && (c.card_type === 'pb_personal' || c.card_type === 'pb_global')) {
-        if (overallRating >= 85) derivedRarity = 'platinum';
-        else if (overallRating >= 70) derivedRarity = 'diamond';
-        else if (overallRating >= 50) derivedRarity = 'gold';
-        else if (overallRating >= 30) derivedRarity = 'silver';
-        else derivedRarity = 'bronze';
-      }
-
+      // Rarity comes from the DB — set by award_pb_card based on global percentile ranking
+      // OVR is a performance score; rarity reflects competitive standing
       return {
         ...c,
         owner_display_name: ownerName,
@@ -205,7 +196,7 @@ export function useAchievementCards() {
         pb_unit: c.pb_unit ?? c.record_unit,
         activity_category: actCat,
         overall_rating: overallRating,
-        rarity: derivedRarity,
+        rarity: c.rarity,
         athlete_stats: c.athlete_stats || userSixStats,
       };
     });
