@@ -27,6 +27,7 @@ import {
 } from 'lucide-react';
 import { RARITY_GLOW, type RarityTier, generatePBShareCaption, generateUnTunesShareCaption } from '@/lib/rarityGlow';
 import type { AchievementCard } from '@/hooks/useAchievementCards';
+import { AchievementCardStatic } from '@/components/achievements/AchievementCardReveal';
 
 /* ═══════════════════════════════════════════════════ */
 /*  2x RESOLUTION CARD IMAGE GENERATOR                */
@@ -551,6 +552,26 @@ export function CardShareSheet({
   const [isPosting, setIsPosting] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
   const [copied, setCopied] = useState(false);
+  const cardCaptureRef = useRef<HTMLDivElement>(null);
+
+  /** Capture the actual rendered card via html2canvas */
+  const captureCardImage = useCallback(async (): Promise<Blob | null> => {
+    if (!cardCaptureRef.current) return null;
+    try {
+      const { default: html2canvas } = await import('html2canvas');
+      const canvas = await html2canvas(cardCaptureRef.current, {
+        backgroundColor: '#000000',
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        logging: false,
+      });
+      return new Promise((resolve) => canvas.toBlob(resolve, 'image/png'));
+    } catch (err) {
+      console.error('Card capture failed:', err);
+      return null;
+    }
+  }, []);
 
   // Auto-generate caption
   useEffect(() => {
@@ -579,7 +600,8 @@ export function CardShareSheet({
     if (!user) return;
     setIsPosting(true);
     try {
-      const blob = await generateShareImage(card, cardSystem);
+      // Capture the actual rendered card via html2canvas
+      const blob = await captureCardImage() || await generateShareImage(card, cardSystem);
       let imageUrl: string | undefined;
 
       // Upload image to storage if possible
@@ -660,20 +682,33 @@ export function CardShareSheet({
   const handleDownload = useCallback(async () => {
     setIsExporting(true);
     try {
-      const asset = await generateAnimatedShareAsset(card, cardSystem);
-      if (asset) {
-        const url = URL.createObjectURL(asset.blob);
+      // Capture the actual rendered card first, fallback to canvas draw
+      const blob = await captureCardImage();
+      if (blob) {
+        const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        link.download = `unbreakable-${tier}-${(card.title || 'card').replace(/\s+/g, '-').toLowerCase()}.${asset.ext}`;
+        link.download = `unbreakable-${tier}-${(card.title || 'card').replace(/\s+/g, '-').toLowerCase()}.png`;
         link.click();
         URL.revokeObjectURL(url);
-        toast({ title: 'Downloaded!', description: `${isAnimated ? 'Animated card video' : 'Card image'} saved to your device.` });
+        toast({ title: 'Downloaded!', description: 'Card image saved to your device.' });
+      } else {
+        // Fallback to old canvas method
+        const asset = await generateAnimatedShareAsset(card, cardSystem);
+        if (asset) {
+          const url = URL.createObjectURL(asset.blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = `unbreakable-${tier}-${(card.title || 'card').replace(/\s+/g, '-').toLowerCase()}.${asset.ext}`;
+          link.click();
+          URL.revokeObjectURL(url);
+          toast({ title: 'Downloaded!', description: 'Card saved to your device.' });
+        }
       }
     } finally {
       setIsExporting(false);
     }
-  }, [card, cardSystem, tier, toast, isAnimated]);
+  }, [card, cardSystem, tier, toast, captureCardImage]);
 
   // Copy deep link
   const handleCopyLink = useCallback(async () => {
@@ -691,6 +726,15 @@ export function CardShareSheet({
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="bottom" className="rounded-t-2xl border-border bg-card max-h-[85vh] overflow-y-auto">
+        {/* Hidden rendered card for html2canvas capture */}
+        <div
+          ref={cardCaptureRef}
+          className="absolute pointer-events-none"
+          style={{ left: '-9999px', top: 0, width: 360, height: 500, zIndex: -1 }}
+        >
+          <AchievementCardStatic card={card} size="lg" />
+        </div>
+
         <SheetHeader className="text-left pb-2">
           <SheetTitle className="font-display tracking-wider text-sm flex items-center gap-2">
             <Share2 className="w-4 h-4" style={{ color: cfg.primary }} />
