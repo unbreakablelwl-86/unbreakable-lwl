@@ -47,9 +47,9 @@ export interface PackTier {
 }
 
 export const PACK_TIERS: PackTier[] = [
-  { id: 'standard', name: 'STANDARD PACK', cards: 5, cost: 50, guaranteedGold: 0, guaranteedDiamond: 0, platinumBoost: 1 },
-  { id: 'premium', name: 'PREMIUM PACK', cards: 8, cost: 120, guaranteedGold: 1, guaranteedDiamond: 0, platinumBoost: 2 },
-  { id: 'elite', name: 'ELITE PACK', cards: 12, cost: 250, guaranteedGold: 2, guaranteedDiamond: 1, platinumBoost: 5 },
+  { id: 'standard', name: 'STANDARD PACK', cards: 5, cost: 15, guaranteedGold: 0, guaranteedDiamond: 0, platinumBoost: 1 },
+  { id: 'premium',  name: 'PREMIUM PACK',  cards: 8, cost: 35, guaranteedGold: 1, guaranteedDiamond: 0, platinumBoost: 2 },
+  { id: 'elite',    name: 'ELITE PACK',    cards: 12, cost: 75, guaranteedGold: 2, guaranteedDiamond: 1, platinumBoost: 5 },
 ];
 
 /* ═══════════════════════════════════════════════════ */
