@@ -8,6 +8,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useMemoryMatrixScores } from "@/hooks/useMemoryMatrixScores";
 
 import { useGameAudio } from "@/hooks/useGameAudio";
+import GameCountdown from "./GameCountdown";
 
 // ═══════════════════════════════════════════════════════════════
 // RECALL — TOTAL RECALL OR NOTHING.
@@ -81,7 +82,7 @@ const LEVELS: LevelConfig[] = [
   { gridSize: 8, activeCells: 14, flashDurationMs: 1100, label: "8×8 · 14 CELLS" },
 ];
 
-type GameState = "ready" | "flashing" | "input" | "result" | "gameover" | "leaderboard";
+type GameState = "ready" | "countdown" | "flashing" | "input" | "result" | "gameover" | "leaderboard";
 
 // ─── Particle type ─────────────────────────────────────────
 interface Particle {
@@ -117,6 +118,26 @@ const MemoryMatrixGame = () => {
   const [deathShake, setDeathShake] = useState(false);
   const [stageFlash, setStageFlash] = useState<string | null>(null);
   const [particles, setParticles] = useState<Particle[]>([]);
+
+  // Elapsed timer
+  const [elapsedSecs, setElapsedSecs] = useState(0);
+  const timerStartRef = useRef<number>(0);
+  const timerIntervalRef = useRef<ReturnType<typeof setInterval>>();
+
+  // Live elapsed timer
+  useEffect(() => {
+    if (gameState === "playing") {
+      timerStartRef.current = Date.now();
+      setElapsedSecs(0);
+      timerIntervalRef.current = setInterval(() => {
+        setElapsedSecs(Math.floor((Date.now() - timerStartRef.current) / 1000));
+      }, 1000);
+    } else {
+      clearInterval(timerIntervalRef.current);
+    }
+    return () => clearInterval(timerIntervalRef.current);
+  }, [gameState]);
+
   const lastStageRef = useRef(0);
   const particleIdRef = useRef(0);
   const gridRef = useRef<HTMLDivElement>(null);
@@ -176,7 +197,12 @@ const MemoryMatrixGame = () => {
     lastStageRef.current = 0;
     const now = Date.now();
     setStartTime(now);
-    // Start first round
+    setGameState("countdown");
+  }, []);
+
+  const onCountdownComplete = useCallback(() => {
+    const now = Date.now();
+    setStartTime(now);
     startRound(0, now);
     startMusic();
   }, [startMusic, startRound]);
@@ -263,6 +289,7 @@ const MemoryMatrixGame = () => {
         setGameState("gameover");
         setTimeSurvived(Math.floor((Date.now() - startTime) / 1000));
         playGameOver();
+        stopMusic();
         const finalScore = score + pattern.size * 10 + level * 5; // partial credit
         if (finalScore > 0) {
           saveScore(finalScore, {
@@ -534,6 +561,11 @@ const currentConfig = LEVELS[Math.min(level, LEVELS.length - 1)];
               LVL {level + 1}
             </p>
           </div>
+          <div className="bg-card/60 border border-border rounded px-2 py-0.5">
+            <p className="font-display text-xs text-muted-foreground tracking-wider">
+              {Math.floor(elapsedSecs / 60)}:{String(elapsedSecs % 60).padStart(2, "0")}
+            </p>
+          </div>
         </div>
         <div className="flex items-center gap-3">
           {/* Streak indicator */}
@@ -760,6 +792,13 @@ const currentConfig = LEVELS[Math.min(level, LEVELS.length - 1)];
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* 3-2-1 Countdown */}
+      {gameState === "countdown" && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
+          <GameCountdown onComplete={onCountdownComplete} gameName="RECALL" />
+        </div>
+      )}
     </div>
   );
 };

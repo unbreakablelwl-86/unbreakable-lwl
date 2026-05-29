@@ -13,6 +13,8 @@ import { useAuth } from '@/hooks/useAuth';
 import { useTokenBalance } from '@/hooks/useTokenBalance';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import { CardShareSheet } from '@/components/achievements/CardShareSheet';
+import type { AchievementCard } from '@/hooks/useAchievementCards';
 
 interface Listing {
   id: string;
@@ -87,10 +89,11 @@ function getCardTypeLabel(card: Listing['card']): string {
 }
 
 /* ── Listing Card (in grid) ── */
-function ListingCard({ listing, onBid, onBuyNow }: {
+function ListingCard({ listing, onBid, onBuyNow, onShare }: {
   listing: Listing;
   onBid: (l: Listing) => void;
   onBuyNow: (l: Listing) => void;
+  onShare?: (l: Listing) => void;
 }) {
   const config = RARITY_CONFIG[listing.card?.rarity as keyof typeof RARITY_CONFIG] || RARITY_CONFIG.standard;
   const title = getCardTitle(listing.card);
@@ -154,6 +157,14 @@ function ListingCard({ listing, onBid, onBuyNow }: {
             onClick={() => onBuyNow(listing)}
           >
             BUY NOW: {listing.buy_now_price} tokens
+          </button>
+        )}
+        {onShare && (
+          <button
+            className="w-full text-[9px] text-center text-white/40 font-display tracking-wider hover:text-white/70 transition-colors flex items-center justify-center gap-1 pt-1"
+            onClick={(e) => { e.stopPropagation(); onShare(listing); }}
+          >
+            <Share2 className="w-2.5 h-2.5" /> SHARE LISTING
           </button>
         )}
       </div>
@@ -366,12 +377,26 @@ export function AuctionHouse({ onBack }: AuctionHouseProps) {
   const { user } = useAuth();
   const { balance, refresh: refreshBalance } = useTokenBalance();
   const [listings, setListings] = useState<Listing[]>([]);
+  const [pbListings, setPbListings] = useState<Listing[]>([]);
+  const [cardTab, setCardTab] = useState<'untunes' | 'pb'>('untunes');
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'auction' | 'fixed' | 'ending_soon'>('all');
   const [rarityFilter, setRarityFilter] = useState<'all' | 'standard' | 'gold' | 'diamond'>('all');
   const [bidModal, setBidModal] = useState<Listing | null>(null);
   const [bidAmount, setBidAmount] = useState('');
   const [showSellModal, setShowSellModal] = useState(false);
+  const [shareListing, setShareListing] = useState<Listing | null>(null);
+
+  /** Map listing → AchievementCard shape for CardShareSheet */
+  const listingToShareable = (l: Listing): AchievementCard => ({
+    id: l.id,
+    card_type: 'moment' as any,
+    rarity: (l.card?.rarity || 'standard') as any,
+    title: getCardTitle(l.card),
+    subtitle: `${getCardTypeLabel(l.card)} · ${l.listing_type === 'auction' ? `${l.current_bid || l.starting_price} tokens` : `${l.starting_price} tokens`}`,
+    image_url: getCardImage(l.card) || undefined,
+    earned_at: l.created_at || new Date().toISOString(),
+  });
   const [myCards, setMyCards] = useState<OwnedCardForListing[]>([]);
 
   const fetchListings = useCallback(async () => {
@@ -393,7 +418,38 @@ export function AuctionHouse({ onBack }: AuctionHouseProps) {
     setLoading(false);
   }, []);
 
-  useEffect(() => { fetchListings(); }, [fetchListings]);
+  // Fetch PB card listings
+  const fetchPbListings = useCallback(async () => {
+    const { data, error } = await supabase
+      .from('pb_card_listings')
+      .select(`
+        *,
+        card:achievement_cards(
+          card_type, rarity, exercise_name, pb_value, pb_unit, image_url, overall_rating
+        )
+      `)
+      .eq('status', 'active')
+      .order('ends_at', { ascending: true });
+
+    if (!error && data) {
+      // Map PB listings to match the Listing interface shape
+      const mapped = (data as any[]).map((l: any) => ({
+        ...l,
+        card: l.card ? {
+          card_type: l.card.card_type,
+          rarity: l.card.rarity,
+          edition_number: 0,
+          track: { title: `${l.card.exercise_name || 'PB'} — ${l.card.pb_value || ''}${l.card.pb_unit || ''}`, cover_url: l.card.image_url || '' },
+          album: null,
+          brand_card: null,
+        } : undefined,
+        _source: 'pb' as const,
+      }));
+      setPbListings(mapped);
+    }
+  }, []);
+
+  useEffect(() => { fetchListings(); fetchPbListings(); }, [fetchListings, fetchPbListings]);
 
   const fetchMyCards = useCallback(async () => {
     if (!user) return;
@@ -430,7 +486,7 @@ export function AuctionHouse({ onBack }: AuctionHouseProps) {
   };
 
   const filteredListings = useMemo(() => {
-    let result = listings;
+    let result = cardTab === 'pb' ? pbListings : listings;
     if (filter === 'auction') result = result.filter(l => l.listing_type === 'auction');
     if (filter === 'fixed') result = result.filter(l => l.listing_type === 'fixed');
     if (filter === 'ending_soon') {
@@ -441,7 +497,7 @@ export function AuctionHouse({ onBack }: AuctionHouseProps) {
       result = result.filter(l => l.card?.rarity === rarityFilter);
     }
     return result;
-  }, [listings, filter, rarityFilter]);
+  }, [listings, pbListings, cardTab, filter, rarityFilter]);
 
   const handlePlaceBid = async () => {
     if (!bidModal || !user || !bidAmount) return;
@@ -517,6 +573,27 @@ export function AuctionHouse({ onBack }: AuctionHouseProps) {
         </Button>
       </div>
 
+      {/* Card type tabs */}
+      <div className="flex gap-1 bg-card/50 rounded-lg p-1 border border-border/50">
+        {([
+          { key: 'untunes' as const, label: '🎵 UN-TUNES CARDS' },
+          { key: 'pb' as const, label: '💪 PB CARDS' },
+        ]).map(t => (
+          <button
+            key={t.key}
+            onClick={() => setCardTab(t.key)}
+            className={cn(
+              'flex-1 py-2 rounded-md text-[10px] font-display tracking-wider transition-all',
+              cardTab === t.key
+                ? 'bg-primary/20 text-primary border border-primary/30'
+                : 'text-muted-foreground hover:text-foreground',
+            )}
+          >
+            {t.label}
+          </button>
+        ))}
+      </div>
+
       {/* Type filter */}
       <div className="flex gap-2 overflow-x-auto pb-1">
         {([
@@ -585,6 +662,7 @@ export function AuctionHouse({ onBack }: AuctionHouseProps) {
               listing={listing}
               onBid={(l) => { setBidModal(l); setBidAmount(String((l.current_bid || l.starting_price) + 1)); }}
               onBuyNow={handleBuyNow}
+              onShare={(l) => setShareListing(l)}
             />
           ))}
         </div>
@@ -662,6 +740,16 @@ export function AuctionHouse({ onBack }: AuctionHouseProps) {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Share Sheet */}
+      {shareListing && (
+        <CardShareSheet
+          open={!!shareListing}
+          onOpenChange={(open) => { if (!open) setShareListing(null); }}
+          card={listingToShareable(shareListing)}
+          cardSystem="untunes"
+        />
+      )}
     </div>
   );
 }

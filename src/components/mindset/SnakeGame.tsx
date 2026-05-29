@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { RotateCcw, Play, Pause, Trophy, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, Volume2, VolumeX, Shield, Zap, Timer } from "lucide-react";
+import GameCountdown from "./GameCountdown";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/hooks/useAuth";
 import { useSnakeScores } from "@/hooks/useSnakeScores";
@@ -11,7 +12,7 @@ import { useGameAudio } from "@/hooks/useGameAudio";
 type Direction = "UP" | "DOWN" | "LEFT" | "RIGHT";
 type Position = { x: number; y: number };
 type PowerUpKind = "shield" | "double" | "slowmo";
-type GameView = "ready" | "playing" | "paused" | "gameover" | "leaderboard";
+type GameView = "ready" | "countdown" | "playing" | "paused" | "gameover" | "leaderboard";
 
 interface Particle {
   x: number; y: number; vx: number; vy: number;
@@ -151,6 +152,7 @@ const SnakeGame = () => {
   const [deathShake, setDeathShake] = useState(false);
   const [showLeaderboard, setShowLeaderboard] = useState(false);
   const [timeSurvived, setTimeSurvived] = useState(0);
+  const [elapsedDisplay, setElapsedDisplay] = useState(0);
   const [totalEaten, setTotalEaten] = useState(0);
   const [powerUpsUsed, setPowerUpsUsed] = useState(0);
 
@@ -170,6 +172,15 @@ const SnakeGame = () => {
     return () => window.removeEventListener("resize", update);
   }, []);
   const canvasSize = cellSize * GRID;
+
+  // Live elapsed timer during gameplay
+  useEffect(() => {
+    if (view !== "playing") return;
+    const iv = setInterval(() => {
+      if (gameStartRef.current) setElapsedDisplay(Math.floor((Date.now() - gameStartRef.current) / 1000));
+    }, 1000);
+    return () => clearInterval(iv);
+  }, [view]);
 
 
 
@@ -591,12 +602,19 @@ const SnakeGame = () => {
     setPowerUpsUsed(0);
     setStageFlash(null);
     spawnFood();
-    setView("playing");
-    audio.startMusic();
+    setElapsedDisplay(0);
     draw();
+    setView("countdown");
+  }, [spawnFood, draw]);
+
+  // ─── Countdown complete → start game loop ────────────────────
+  const onCountdownComplete = useCallback(() => {
+    gameStartRef.current = Date.now();
+    audio.startMusic();
     if (gameLoopRef.current) clearInterval(gameLoopRef.current);
     gameLoopRef.current = setInterval(tick, INITIAL_SPEED);
-  }, [spawnFood, draw, tick, audio]);
+    setView("playing");
+  }, [tick, audio]);
 
   // ─── Pause / Resume ────────────────────────────────────────
   const togglePause = useCallback(() => {
@@ -709,7 +727,7 @@ const SnakeGame = () => {
               <p className="text-muted-foreground text-sm"><span className="text-primary font-bold">▸</span> Devour food — grow longer, move faster</p>
               <p className="text-muted-foreground text-sm"><span className="text-primary font-bold">▸</span> Every 10 pts = new stage with obstacles</p>
               <p className="text-muted-foreground text-sm"><span className="text-primary font-bold">▸</span> Eat fast for combo multipliers</p>
-              <p className="text-muted-foreground text-sm"><span className="text-primary font-bold">▸</span> Collect power-ups: <span className="text-cyan-400">Shield</span> · <span className="text-yellow-400">2X</span> · <span className="text-purple-400">Slow-Mo</span></p>
+              <p className="text-muted-foreground text-sm"><span className="text-primary font-bold">▸</span> Collect power-ups: <span className="text-[#CCFF00]">Shield</span> · <span className="text-[#FF5500]">2X</span> · <span className="text-[#AA44FF]">Slow-Mo</span></p>
               <p className="text-muted-foreground text-sm"><span className="text-primary font-bold">▸</span> <span className="text-yellow-400">Golden food</span> = 3x base points</p>
             </div>
 
@@ -853,9 +871,9 @@ const SnakeGame = () => {
             <div className="flex flex-col items-center">
               <p className="font-display text-[10px] tracking-wider text-muted-foreground">POWER</p>
               <div className={`flex items-center gap-1 px-2 py-0.5 rounded text-xs font-display tracking-wide ${
-                activePowerUp.kind === "shield" ? "text-cyan-400 bg-cyan-400/10" :
-                activePowerUp.kind === "double" ? "text-yellow-400 bg-yellow-400/10" :
-                "text-purple-400 bg-purple-400/10"
+                activePowerUp.kind === "shield" ? "text-[#CCFF00] bg-[#CCFF00]/10" :
+                activePowerUp.kind === "double" ? "text-[#FF5500] bg-[#FF5500]/10" :
+                "text-[#AA44FF] bg-[#AA44FF]/10"
               }`}>
                 {activePowerUp.kind === "shield" ? <Shield className="w-3 h-3" /> :
                  activePowerUp.kind === "double" ? <Zap className="w-3 h-3" /> :
@@ -873,11 +891,13 @@ const SnakeGame = () => {
           )}
         </div>
 
-        {/* Best + Mute */}
-        <div className="flex items-center gap-1 shrink-0">
+        {/* Time + Mute */}
+        <div className="flex items-center gap-2 shrink-0">
           <div className="text-right">
-            <p className="font-display text-[10px] tracking-wider text-muted-foreground">BEST</p>
-            <p className="font-display text-base sm:text-lg tracking-wide text-primary leading-none">{Math.max(highScore, userBest || 0)}</p>
+            <p className="font-display text-[10px] tracking-wider text-muted-foreground">TIME</p>
+            <p className="font-display text-base sm:text-lg tracking-wide text-foreground leading-none font-mono tabular-nums">
+              {Math.floor(elapsedDisplay / 60)}:{String(elapsedDisplay % 60).padStart(2, "0")}
+            </p>
           </div>
           <Button variant="ghost" size="sm" onClick={audio.toggleMute} className="h-8 w-8 p-0 text-muted-foreground hover:text-primary">
             {audio.isMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
@@ -897,6 +917,11 @@ const SnakeGame = () => {
 
         {/* CRT Scanline Overlay */}
         <div className="absolute inset-0 pointer-events-none rounded-lg" style={{ background: "repeating-linear-gradient(0deg, rgba(255,85,0,0.035) 0px, transparent 1px, transparent 2px)" }} />
+
+        {/* 3-2-1 Countdown */}
+        {view === "countdown" && (
+          <GameCountdown onComplete={onCountdownComplete} gameName="HUNT" />
+        )}
 
         {/* Stage Transition Flash */}
         <AnimatePresence>
@@ -944,24 +969,24 @@ const SnakeGame = () => {
       </div>
 
       {/* ─── D-Pad Controls ─── */}
-      <div className="w-full mt-4 px-1">
+      <div className="w-full mt-3 px-1 sm:hidden">
         <div className="flex items-center justify-center">
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-3 gap-1.5">
             <div />
-            <Button className="h-24 w-24 sm:h-22 sm:w-24 bg-primary text-primary-foreground hover:bg-primary/90 active:scale-95 transition-all rounded-xl shadow-md" onPointerDown={() => handleDPad("UP")} aria-label="Up">
-              <ArrowUp className="w-11 h-11" />
+            <Button className="h-14 w-14 bg-primary/90 text-primary-foreground hover:bg-primary/80 active:scale-90 transition-all rounded-lg shadow-md" onPointerDown={() => handleDPad("UP")} aria-label="Up">
+              <ArrowUp className="w-6 h-6" />
             </Button>
             <div />
-            <Button className="h-24 w-24 sm:h-22 sm:w-24 bg-primary text-primary-foreground hover:bg-primary/90 active:scale-95 transition-all rounded-xl shadow-md" onPointerDown={() => handleDPad("LEFT")} aria-label="Left">
-              <ArrowLeft className="w-11 h-11" />
+            <Button className="h-14 w-14 bg-primary/90 text-primary-foreground hover:bg-primary/80 active:scale-90 transition-all rounded-lg shadow-md" onPointerDown={() => handleDPad("LEFT")} aria-label="Left">
+              <ArrowLeft className="w-6 h-6" />
             </Button>
-            <div className="h-24 w-24 sm:h-22 sm:w-24" />
-            <Button className="h-24 w-24 sm:h-22 sm:w-24 bg-primary text-primary-foreground hover:bg-primary/90 active:scale-95 transition-all rounded-xl shadow-md" onPointerDown={() => handleDPad("RIGHT")} aria-label="Right">
-              <ArrowRight className="w-11 h-11" />
+            <div className="h-14 w-14" />
+            <Button className="h-14 w-14 bg-primary/90 text-primary-foreground hover:bg-primary/80 active:scale-90 transition-all rounded-lg shadow-md" onPointerDown={() => handleDPad("RIGHT")} aria-label="Right">
+              <ArrowRight className="w-6 h-6" />
             </Button>
             <div />
-            <Button className="h-24 w-24 sm:h-22 sm:w-24 bg-primary text-primary-foreground hover:bg-primary/90 active:scale-95 transition-all rounded-xl shadow-md" onPointerDown={() => handleDPad("DOWN")} aria-label="Down">
-              <ArrowDown className="w-11 h-11" />
+            <Button className="h-14 w-14 bg-primary/90 text-primary-foreground hover:bg-primary/80 active:scale-90 transition-all rounded-lg shadow-md" onPointerDown={() => handleDPad("DOWN")} aria-label="Down">
+              <ArrowDown className="w-6 h-6" />
             </Button>
             <div />
           </div>

@@ -6,6 +6,7 @@ import { useOnboardingCheck } from '@/hooks/useOnboardingCheck';
 import { HomeDashboard } from '@/components/HomeDashboard';
 import { AuthModal } from '@/components/tracker/AuthModal';
 import { LandingPage } from '@/components/landing/LandingPage';
+import { HomeSkeleton } from '@/components/ui/PageSkeleton';
 
 const Index = () => {
   const { user, loading } = useAuth();
@@ -29,11 +30,7 @@ const Index = () => {
   }, [user, loading, onboardingLoading, needsOnboarding, navigate]);
 
   if (loading || (user && onboardingLoading)) {
-    return (
-      <div className="min-h-screen flex items-center justify-center" >
-        <div className="w-10 h-10 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
+    return <HomeSkeleton />;
   }
 
   if (user) {

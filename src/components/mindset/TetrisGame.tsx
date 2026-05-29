@@ -8,6 +8,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useTetrisScores } from "@/hooks/useTetrisScores";
 
 import { useGameAudio } from "@/hooks/useGameAudio";
+import GameCountdown from "./GameCountdown";
 
 // ═══════════════════════════════════════════════════════════════
 // STACK — ORDER FROM CHAOS.
@@ -97,7 +98,7 @@ const TETROMINOES = [
 // ─── Constants ───
 const COLS = 10;
 const ROWS = 20;
-const CELL_SIZE = 28;
+const CELL_SIZE = 22;
 const CANVAS_WIDTH = COLS * CELL_SIZE;
 const CANVAS_HEIGHT = ROWS * CELL_SIZE;
 const THEME_SHIFT_INTERVAL = 15;
@@ -213,7 +214,7 @@ const TetrisGame = () => {
   const [linesCleared, setLinesCleared] = useState(0);
   const [level, setLevel] = useState(1);
   const [highScore, setHighScore] = useState(0);
-  const [gameState, setGameState] = useState<"ready" | "playing" | "paused" | "gameover">("ready");
+  const [gameState, setGameState] = useState<"ready" | "countdown" | "playing" | "paused" | "gameover">("ready");
   const [showLeaderboard, setShowLeaderboard] = useState(false);
 
   // Premium stats
@@ -241,6 +242,26 @@ const TetrisGame = () => {
 
   // Responsive scaling
   const [scale, setScale] = useState(1);
+
+  // Elapsed timer
+  const [elapsedSecs, setElapsedSecs] = useState(0);
+  const timerStartRef = useRef<number>(0);
+  const timerIntervalRef = useRef<ReturnType<typeof setInterval>>();
+
+  // Live elapsed timer
+  useEffect(() => {
+    if (gameState === "playing") {
+      timerStartRef.current = Date.now();
+      setElapsedSecs(0);
+      timerIntervalRef.current = setInterval(() => {
+        setElapsedSecs(Math.floor((Date.now() - timerStartRef.current) / 1000));
+      }, 1000);
+    } else {
+      clearInterval(timerIntervalRef.current);
+    }
+    return () => clearInterval(timerIntervalRef.current);
+  }, [gameState]);
+
   useEffect(() => {
     const updateScale = () => {
       const maxW = Math.min(window.innerWidth - 32, 500);
@@ -565,6 +586,10 @@ const TetrisGame = () => {
     setDeathShake(false); setStageFlash(null);
     lastNamedStageRef.current = 0;
     particlesRef.current = []; screenShakeRef.current = 0;
+    setGameState("countdown");
+  }, []);
+
+  const onCountdownComplete = useCallback(() => {
     setGameState("playing");
     startMusic();
   }, [startMusic]);
@@ -812,6 +837,10 @@ const TetrisGame = () => {
           </Button>
         </div>
 
+        <div className="text-center shrink-0">
+          <p className="font-display text-[10px] tracking-wider text-muted-foreground">TIME</p>
+          <p className="font-display text-sm tracking-wide text-foreground leading-none">{Math.floor(elapsedSecs / 60)}:{String(elapsedSecs % 60).padStart(2, "0")}</p>
+        </div>
         <div className="text-center flex-1 min-w-0">
           <p className="font-display text-[10px] tracking-wider text-muted-foreground">SCORE</p>
           <p className="font-display text-xl sm:text-2xl tracking-wide text-primary leading-none">{score}</p>
@@ -866,6 +895,11 @@ const TetrisGame = () => {
           className="absolute inset-0 pointer-events-none rounded-lg"
           style={{ background: "repeating-linear-gradient(0deg, rgba(255,85,0,0.035) 0px, transparent 1px, transparent 2px)" }}
         />
+
+        {/* 3-2-1 Countdown */}
+        {gameState === "countdown" && (
+          <GameCountdown onComplete={onCountdownComplete} gameName="STACK" />
+        )}
 
         {/* Overlays */}
         <AnimatePresence>

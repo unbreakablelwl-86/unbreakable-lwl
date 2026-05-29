@@ -569,43 +569,95 @@ function AchievementFullViewer({
   const hasNext = currentIndex < cards.length - 1;
   const date = new Date(card.earned_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
   const { toast } = useToast();
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const imageInputRef = useRef<HTMLInputElement>(null);
+  const videoInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
 
-  const handleMediaUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    const isVideo = file.type.startsWith('video/');
-    const isImage = file.type.startsWith('image/');
-    if (!isVideo && !isImage) {
-      toast({ title: 'Invalid file', description: 'Upload an image or video of your lift.' });
+    if (!file.type.startsWith('image/')) {
+      toast({ title: 'Invalid file', description: 'Please select an image file (JPG, PNG, etc.).' });
       return;
     }
-    if (file.size > 50 * 1024 * 1024) {
-      toast({ title: 'File too large', description: 'Max 50MB for card media.' });
+    if (file.size > 20 * 1024 * 1024) {
+      toast({ title: 'File too large', description: 'Max 20MB for images.' });
       return;
     }
     setUploading(true);
     try {
-      const ext = file.name.split('.').pop() || (isVideo ? 'mp4' : 'jpg');
-      const path = `card-media/${card.id}.${ext}`;
+      const ext = file.name.split('.').pop() || 'jpg';
+      const path = `card-media/${card.id}-img.${ext}`;
       const { error: uploadErr } = await supabase.storage.from('avatars').upload(path, file, { upsert: true });
       if (uploadErr) throw uploadErr;
       const { data: urlData } = supabase.storage.from('avatars').getPublicUrl(path);
       const publicUrl = urlData?.publicUrl;
       if (!publicUrl) throw new Error('No URL');
-      const updateField = isVideo
-        ? { video_url: publicUrl, media_type: 'video', image_url: card.image_url }
-        : { image_url: publicUrl, media_type: 'image', video_url: card.video_url };
-      const { error: dbErr } = await supabase.from('achievement_cards').update(updateField).eq('id', card.id);
+      const { error: dbErr } = await supabase.from('achievement_cards').update({
+        image_url: publicUrl,
+        media_type: card.video_url ? 'both' : 'image',
+      }).eq('id', card.id);
       if (dbErr) throw dbErr;
-      toast({ title: isVideo ? '🎬 Video uploaded!' : '📸 Image uploaded!', description: 'Your card has been updated. Refresh to see it.' });
+      toast({ title: '📸 Image uploaded!', description: 'Card hero image updated.' });
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Upload failed';
       toast({ title: 'Upload failed', description: msg });
     } finally {
       setUploading(false);
-      if (fileInputRef.current) fileInputRef.current.value = '';
+      if (imageInputRef.current) imageInputRef.current.value = '';
+    }
+  };
+
+  const handleVideoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith('video/')) {
+      toast({ title: 'Invalid file', description: 'Please select a video file (MP4, MOV, etc.).' });
+      return;
+    }
+    if (file.size > 50 * 1024 * 1024) {
+      toast({ title: 'File too large', description: 'Max 50MB for videos.' });
+      return;
+    }
+    // Check video duration (max 30 seconds)
+    const durationOk = await new Promise<boolean>((resolve) => {
+      const video = document.createElement('video');
+      video.preload = 'metadata';
+      video.onloadedmetadata = () => {
+        URL.revokeObjectURL(video.src);
+        if (video.duration > 30) {
+          toast({ title: 'Video too long', description: `Max 30 seconds. Your video is ${Math.round(video.duration)}s.` });
+          resolve(false);
+        } else {
+          resolve(true);
+        }
+      };
+      video.onerror = () => { resolve(true); }; // Allow if can't check
+      video.src = URL.createObjectURL(file);
+    });
+    if (!durationOk) return;
+
+    setUploading(true);
+    try {
+      const ext = file.name.split('.').pop() || 'mp4';
+      const path = `card-media/${card.id}-vid.${ext}`;
+      const { error: uploadErr } = await supabase.storage.from('avatars').upload(path, file, { upsert: true });
+      if (uploadErr) throw uploadErr;
+      const { data: urlData } = supabase.storage.from('avatars').getPublicUrl(path);
+      const publicUrl = urlData?.publicUrl;
+      if (!publicUrl) throw new Error('No URL');
+      const { error: dbErr } = await supabase.from('achievement_cards').update({
+        video_url: publicUrl,
+        media_type: 'video',
+      }).eq('id', card.id);
+      if (dbErr) throw dbErr;
+      toast({ title: '🎬 Video uploaded!', description: 'Card video clip updated (up to 30s).' });
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Upload failed';
+      toast({ title: 'Upload failed', description: msg });
+    } finally {
+      setUploading(false);
+      if (videoInputRef.current) videoInputRef.current.value = '';
     }
   };
 
@@ -642,8 +694,9 @@ function AchievementFullViewer({
         </Button>
       )}
 
-      {/* Hidden file input for media upload */}
-      <input ref={fileInputRef} type="file" accept="image/*,video/*" className="hidden" onChange={handleMediaUpload} />
+      {/* Hidden file inputs for separate image / video upload */}
+      <input ref={imageInputRef} type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
+      <input ref={videoInputRef} type="file" accept="video/*" className="hidden" onChange={handleVideoUpload} />
 
       {/* Card — shows static (already revealed) in library view */}
       {/* If card has video, show auto-playing video instead of static card */}
@@ -741,19 +794,28 @@ function AchievementFullViewer({
           </div>
         )}
 
-        <div className="flex gap-2">
+        <div className="grid grid-cols-3 gap-1.5">
           <Button variant="outline" size="sm"
-            className="flex-1 text-xs font-display tracking-wider border-primary/30 text-primary hover:bg-primary/10"
-            onClick={() => fileInputRef.current?.click()}
+            className="text-[10px] font-display tracking-wider border-primary/30 text-primary hover:bg-primary/10"
+            onClick={() => imageInputRef.current?.click()}
             disabled={uploading}>
-            <Camera className="w-3 h-3 mr-1" /> {uploading ? 'UPLOADING…' : card.image_url || card.video_url ? 'CHANGE MEDIA' : 'ADD PHOTO/VIDEO'}
+            <Camera className="w-3 h-3 mr-0.5" /> {uploading ? '…' : card.image_url ? 'EDIT IMAGE' : 'ADD IMAGE'}
           </Button>
           <Button variant="outline" size="sm"
-            className="flex-1 text-xs font-display tracking-wider border-primary/30 text-primary hover:bg-primary/10"
+            className="text-[10px] font-display tracking-wider border-purple-500/30 text-purple-400 hover:bg-purple-500/10"
+            onClick={() => videoInputRef.current?.click()}
+            disabled={uploading}>
+            <Video className="w-3 h-3 mr-0.5" /> {uploading ? '…' : card.video_url ? 'EDIT VIDEO' : 'ADD VIDEO'}
+          </Button>
+          <Button variant="outline" size="sm"
+            className="text-[10px] font-display tracking-wider border-primary/30 text-primary hover:bg-primary/10"
             onClick={() => onShare(card)}>
-            <Share2 className="w-3 h-3 mr-1" /> SHARE
+            <Share2 className="w-3 h-3 mr-0.5" /> SHARE
           </Button>
         </div>
+        <p className="text-[8px] text-center text-zinc-600 font-display tracking-wider">
+          IMAGE (MAX 20MB) · VIDEO (MAX 30s / 50MB)
+        </p>
         <Button variant="outline" size="sm"
           className="w-full text-xs font-display tracking-wider border-red-500/30 text-red-400 hover:bg-red-500/10"
           onClick={() => onDiscard(card)}>
@@ -789,6 +851,20 @@ export function AchievementCollection() {
     if (activeTab === 'cardio') result = result.filter(c => c.card_type === 'pb_personal' && CARDIO_CATEGORIES.includes(c.activity_category || ''));
     if (activeTab === 'global') result = result.filter(c => c.card_type === 'pb_global');
     if (filterRarity !== 'all') result = result.filter(c => c.rarity === filterRarity);
+
+    // Deduplicate: only show the BEST card per exercise (highest pb_value)
+    // Exercise-grouped view handles showing all PBs itself
+    if (sort !== 'exercise') {
+      const bestPerExercise = new Map<string, AchievementCard>();
+      result.forEach(c => {
+        const key = c.exercise_name || c.id;
+        const existing = bestPerExercise.get(key);
+        if (!existing || (c.pb_rank || 99) < (existing.pb_rank || 99)) {
+          bestPerExercise.set(key, c);
+        }
+      });
+      result = Array.from(bestPerExercise.values());
+    }
 
     if (sort === 'newest') result.sort((a, b) => new Date(b.earned_at).getTime() - new Date(a.earned_at).getTime());
     else if (sort === 'rarity') result.sort((a, b) => RARITY_ORDER[b.rarity] - RARITY_ORDER[a.rarity]);

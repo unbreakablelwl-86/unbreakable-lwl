@@ -35,6 +35,7 @@ import {
 import { format, formatDistanceToNow } from 'date-fns';
 import shieldLogo from '@/assets/unbreakable-shield.png';
 import { ProfileAchievements } from '@/components/profile/AchievementPBTrackers';
+import { ProfileSkeleton } from '@/components/ui/PageSkeleton';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 interface OwnPost {
@@ -516,11 +517,7 @@ export default function Profile() {
   };
 
   if (authLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center" >
-        <div className="w-10 h-10 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
+    return <ProfileSkeleton />;
   }
 
   if (!user || !profile) {

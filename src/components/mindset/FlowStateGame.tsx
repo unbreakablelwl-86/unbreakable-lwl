@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { RotateCcw, Play, Volume2, VolumeX, Trophy } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useGameAudio } from "@/hooks/useGameAudio";
+import GameCountdown from "./GameCountdown";
 import { useAuth } from "@/hooks/useAuth";
 import { useFlowScores } from "@/hooks/useFlowScores";
 import { GameLeaderboard } from "./GameLeaderboard";
@@ -44,7 +45,7 @@ const PLAYER_H = 36;
 const GRAVITY = 0.65;
 const JUMP_FORCE = -12;
 const DOUBLE_JUMP_FORCE = -10;
-const INITIAL_SPEED = 4;
+const INITIAL_SPEED = 3;
 const MAX_SPEED = 12;
 const OBSTACLE_INTERVAL_MIN = 45;
 const OBSTACLE_INTERVAL_MAX = 90;
@@ -80,7 +81,7 @@ const FlowStateGame = () => {
   const shakeRef = useRef(0);
   const lastStageRef = useRef(0);
 
-  const [gameState, setGameState] = useState<"ready" | "playing" | "gameover" | "leaderboard">("ready");
+  const [gameState, setGameState] = useState<"ready" | "countdown" | "playing" | "gameover" | "leaderboard">("ready");
   const [score, setScore] = useState(0);
   const [personalBest, setPersonalBest] = useState(() => {
     const saved = localStorage.getItem(PB_KEY);
@@ -107,6 +108,26 @@ const FlowStateGame = () => {
   const doubleJumpRef = useRef(0);
 // Responsive
   const [scale, setScale] = useState(1);
+
+  // Elapsed timer
+  const [elapsedSecs, setElapsedSecs] = useState(0);
+  const timerStartRef = useRef<number>(0);
+  const timerIntervalRef = useRef<ReturnType<typeof setInterval>>();
+
+  // Live elapsed timer
+  useEffect(() => {
+    if (view === "playing") {
+      timerStartRef.current = Date.now();
+      setElapsedSecs(0);
+      timerIntervalRef.current = setInterval(() => {
+        setElapsedSecs(Math.floor((Date.now() - timerStartRef.current) / 1000));
+      }, 1000);
+    } else {
+      clearInterval(timerIntervalRef.current);
+    }
+    return () => clearInterval(timerIntervalRef.current);
+  }, [view]);
+
   useEffect(() => {
     const upd = () => setScale(Math.min((Math.min(window.innerWidth - 24, 560)) / W, 1.3));
     upd(); window.addEventListener("resize", upd); return () => window.removeEventListener("resize", upd);
@@ -205,7 +226,7 @@ const FlowStateGame = () => {
     if (frameRef.current % 3 === 0) setScore(scoreRef.current);
 
     // Speed up
-    speedRef.current = Math.min(MAX_SPEED, INITIAL_SPEED + scoreRef.current * 0.00015);
+    speedRef.current = Math.min(MAX_SPEED, INITIAL_SPEED + scoreRef.current * 0.0001);
     if (speedRef.current > maxSpeedRef.current) maxSpeedRef.current = speedRef.current;
 
     // Stage check
@@ -493,6 +514,10 @@ const FlowStateGame = () => {
     setDeathShake(false);
     setStageFlash(null);
     setStartTime(Date.now());
+    setGameState("countdown");
+  }, []);
+
+  const onCountdownComplete = useCallback(() => {
     setGameState("playing");
     startMusic();
   }, [startMusic]);
@@ -570,8 +595,9 @@ const FlowStateGame = () => {
           <p className="font-display text-2xl tracking-wide text-primary leading-none">{score}</p>
         </div>
         <div className="text-center">
-          <p className="font-display text-[10px] tracking-wider text-muted-foreground">{stage.label}</p>
-          <p className="font-display text-sm tracking-wider text-foreground">{stage.name}</p>
+          <p className="font-display text-[10px] tracking-wider text-muted-foreground">TIME</p>
+          <p className="font-display text-sm tracking-wide text-foreground">{Math.floor(elapsedSecs / 60)}:{String(elapsedSecs % 60).padStart(2, "0")}</p>
+          <p className="font-display text-[8px] tracking-wider text-muted-foreground/50">{stage.name}</p>
         </div>
         <div className="flex items-center gap-2">
           <div className="text-right">
@@ -669,6 +695,13 @@ const FlowStateGame = () => {
       <div className="mt-3 text-center">
         <p className="text-[10px] text-muted-foreground font-display tracking-wider">TAP SCREEN OR SPACE TO JUMP</p>
       </div>
+
+      {/* 3-2-1 Countdown */}
+      {gameState === "countdown" && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
+          <GameCountdown onComplete={onCountdownComplete} gameName="FLOW" />
+        </div>
+      )}
     </div>
   );
 };

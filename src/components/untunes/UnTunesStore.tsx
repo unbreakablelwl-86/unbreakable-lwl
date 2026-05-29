@@ -44,6 +44,15 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
   const [storeView, setStoreView] = useState<'main' | 'singles' | 'packs'>('main');
   const [selectedPackTierId, setSelectedPackTierId] = useState<string>('standard');
 
+  // ── Confirm purchase modal state ──
+  const [confirmPurchase, setConfirmPurchase] = useState<{
+    type: 'single' | 'album' | 'bundle';
+    trackId?: string;
+    albumId?: string;
+    label: string;
+    cost: number;
+  } | null>(null);
+
   // ── Pending (unopened) packs ──
   const [pendingPacks, setPendingPacks] = useState<any[]>([]);
   const [pendingLoading, setPendingLoading] = useState(false);
@@ -79,25 +88,61 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
 
   useEffect(() => { fetchPendingPacks(); }, [fetchPendingPacks]);
 
-  const handleOpenPendingPacks = useCallback(() => {
+  const handleOpenPendingPacks = useCallback(async () => {
     if (pendingPacks.length === 0) return;
+
+    // Ensure we have track/album data — fetch directly if hooks haven't loaded
+    let trackList = tracks;
+    let albumList = albums;
+    if (trackList.length === 0 || albumList.length === 0) {
+      const [tRes, aRes] = await Promise.all([
+        supabase.from('un_tunes_tracks').select('id,title,cover_url,artist_id'),
+        supabase.from('un_tunes_albums').select('id,title,cover_url'),
+      ]);
+      if (tRes.data && trackList.length === 0) trackList = tRes.data as any;
+      if (aRes.data && albumList.length === 0) albumList = aRes.data as any;
+    }
+
     // Convert pending DB cards into PackCard format for the opening animation
     const cards: PackCard[] = pendingPacks.map(p => {
-      const track = tracks.find(t => t.id === p.track_id);
-      const album = albums.find(a => a.id === p.album_id);
+      const track = trackList.find((t: any) => t.id === p.track_id);
+      const album = albumList.find((a: any) => a.id === p.album_id);
       return {
         id: p.id,
         rarity: p.rarity || 'standard',
         track_id: p.track_id,
         album_id: p.album_id,
         edition_number: p.edition_number || 0,
-        un_tunes_tracks: track ? { title: track.title, cover_url: track.cover_url || '' } : null,
-        un_tunes_albums: album ? { title: album.title, cover_url: album.cover_url || '' } : null,
+        un_tunes_tracks: track ? { title: track.title, cover_url: (track as any).cover_url || '' } : null,
+        un_tunes_albums: album ? { title: album.title, cover_url: (album as any).cover_url || '' } : null,
       };
     });
     setPackType('bundle');
     setPackCards(cards);
   }, [pendingPacks, tracks, albums]);
+
+  // Show confirmation modal before purchase
+  const requestPurchase = useCallback((
+    type: 'single' | 'album' | 'bundle',
+    trackId?: string,
+    albumId?: string,
+  ) => {
+    if (!user) {
+      toast.error('Please sign in to purchase');
+      return;
+    }
+    const cost = type === 'single' ? SINGLE_COST : type === 'album' ? ALBUM_COST : BUNDLE_COST;
+    let label = type === 'bundle' ? 'Ultimate Bundle (All Albums)' : type === 'album' ? 'Album' : 'Single Track';
+    if (trackId) {
+      const t = tracks.find((tr: any) => tr.id === trackId);
+      if (t) label = `"${t.title}"`;
+    }
+    if (albumId) {
+      const a = albums.find((al: any) => al.id === albumId);
+      if (a) label = `"${a.title}" Album`;
+    }
+    setConfirmPurchase({ type, trackId, albumId, label, cost });
+  }, [user, tracks, albums]);
 
   const handlePurchase = useCallback(async (
     type: 'single' | 'album' | 'bundle',
@@ -143,13 +188,25 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
 
       // Success — show pack opening
       // Enrich cards with track/album data (RPC doesn't return PostgREST joins)
+      // Fetch directly if hooks haven't loaded yet
+      let trackList = tracks;
+      let albumList = albums;
+      if (trackList.length === 0 || albumList.length === 0) {
+        const [tRes, aRes] = await Promise.all([
+          supabase.from('un_tunes_tracks').select('id,title,cover_url,artist_id'),
+          supabase.from('un_tunes_albums').select('id,title,cover_url'),
+        ]);
+        if (tRes.data && trackList.length === 0) trackList = tRes.data as any;
+        if (aRes.data && albumList.length === 0) albumList = aRes.data as any;
+      }
+
       let cards: PackCard[] = (data.cards || []).map((c: any) => {
-        const track = c.track_id ? tracks.find(t => t.id === c.track_id) : null;
-        const album = c.album_id ? albums.find(a => a.id === c.album_id) : null;
+        const track = c.track_id ? trackList.find((t: any) => t.id === c.track_id) : null;
+        const album = c.album_id ? albumList.find((a: any) => a.id === c.album_id) : null;
         return {
           ...c,
-          un_tunes_tracks: c.un_tunes_tracks || (track ? { title: track.title, artist: (track as any).artist || 'Unbreakable', cover_url: track.cover_url || '' } : null),
-          un_tunes_albums: c.un_tunes_albums || (album ? { title: album.title, cover_url: album.cover_url || '' } : null),
+          un_tunes_tracks: c.un_tunes_tracks || (track ? { title: track.title, artist: (track as any).artist || 'Unbreakable', cover_url: (track as any).cover_url || '' } : null),
+          un_tunes_albums: c.un_tunes_albums || (album ? { title: album.title, cover_url: (album as any).cover_url || '' } : null),
         };
       });
 
@@ -314,7 +371,7 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
                     <Button
                       className="bg-gradient-to-r from-primary to-orange-600 text-white font-display tracking-wider"
                       disabled={!!purchasing || (!hasFullAccess && balance < BUNDLE_COST)}
-                      onClick={() => handlePurchase('bundle')}
+                      onClick={() => requestPurchase('bundle')}
                     >
                       {purchasing === 'bundle-bundle' ? (
                         <Loader2 className="w-4 h-4 animate-spin" />
@@ -402,7 +459,7 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
                               disabled={!!purchasing || (!hasFullAccess && balance < tier.cost)}
                               onClick={() => {
                                 setSelectedPackTierId(tier.id);
-                                handlePurchase('bundle');
+                                requestPurchase('bundle');
                               }}
                             >
                               {purchasing ? (
@@ -460,7 +517,7 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
                           variant="outline"
                           className="text-[10px] font-display tracking-wider border-primary/30 text-primary hover:bg-primary/10"
                           disabled={!!purchasing || (!hasFullAccess && balance < ALBUM_COST)}
-                          onClick={() => handlePurchase('album', undefined, album.id)}
+                          onClick={() => requestPurchase('album', undefined, album.id)}
                         >
                           {purchasing === `album-${album.id}` ? (
                             <Loader2 className="w-3 h-3 animate-spin" />
@@ -498,9 +555,9 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
               <div className="space-y-2">
                 {[
                   { rarity: 'standard', icon: Music, desc: 'Guaranteed with every purchase', color: 'text-muted-foreground' },
-                  { rarity: 'gold', icon: Crown, desc: 'Uncommon — gold-framed variant', color: 'text-yellow-400' },
-                  { rarity: 'diamond', icon: Diamond, desc: 'Rare — numbered editions', color: 'text-violet-400' },
-                  { rarity: 'platinum', icon: Sparkles, desc: 'Only 250 ever — numbered, dated, legendary', color: 'text-slate-200' },
+                  { rarity: 'gold', icon: Crown, desc: 'Uncommon — gold-framed variant with foil tilt effect', color: 'text-yellow-400' },
+                  { rarity: 'diamond', icon: Diamond, desc: 'Only 1,000 ever — numbered, prismatic holographic finish', color: 'text-violet-400' },
+                  { rarity: 'platinum', icon: Sparkles, desc: 'Only 250 ever — numbered, dated, brushed platinum with rose-gold', color: 'text-slate-200' },
                 ].map(({ rarity, icon: Icon, desc, color }) => (
                   <div key={rarity} className="flex items-center gap-3">
                     <Icon className={cn('w-4 h-4', color)} />
@@ -555,7 +612,7 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
                         variant="outline"
                         className="text-[10px] font-display tracking-wider border-primary/30 text-primary hover:bg-primary/10 ml-1"
                         disabled={!!purchasing || (!hasFullAccess && balance < SINGLE_COST)}
-                        onClick={() => handlePurchase('single', track.id)}
+                        onClick={() => requestPurchase('single', track.id)}
                       >
                         {purchasing === `single-${track.id}` ? (
                           <Loader2 className="w-3 h-3 animate-spin" />
@@ -580,6 +637,78 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
           </p>
         </div>
       </div>
+
+      {/* ── Confirm Purchase Modal ── */}
+      <AnimatePresence>
+        {confirmPurchase && (
+          <motion.div
+            className="fixed inset-0 z-[200] bg-black/85 backdrop-blur-sm flex items-center justify-center p-6"
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            onClick={() => setConfirmPurchase(null)}
+          >
+            <motion.div
+              className="max-w-sm w-full bg-zinc-900 rounded-2xl border border-[#FF5500]/30 p-5 space-y-4"
+              initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9, y: 20 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="text-center">
+                <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-3"
+                  style={{ background: 'rgba(255,85,0,0.1)', border: '1px solid rgba(255,85,0,0.3)' }}>
+                  <ShoppingBag className="w-7 h-7 text-[#FF5500]" />
+                </div>
+                <h3 className="font-display text-white tracking-wider text-sm">CONFIRM PURCHASE</h3>
+                <p className="text-xs text-muted-foreground mt-2">
+                  {confirmPurchase.label}
+                </p>
+              </div>
+
+              {/* Cost breakdown */}
+              <div className="bg-card rounded-lg p-3 border border-border space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-muted-foreground">Cost:</span>
+                  <div className="flex items-center gap-1.5">
+                    <Coins className="w-3.5 h-3.5 text-yellow-400" />
+                    <span className="text-sm font-display text-yellow-400 font-bold">{confirmPurchase.cost} tokens</span>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-muted-foreground">Your balance:</span>
+                  <span className="text-sm font-display text-white">{balance}</span>
+                </div>
+                <div className="border-t border-border pt-2 flex items-center justify-between">
+                  <span className="text-xs text-muted-foreground">After purchase:</span>
+                  <span className={cn("text-sm font-display", balance >= confirmPurchase.cost ? "text-green-400" : "text-red-400")}>
+                    {balance - confirmPurchase.cost}
+                  </span>
+                </div>
+              </div>
+
+              <Button
+                size="sm"
+                className="w-full text-xs font-display tracking-wider bg-[#FF5500] hover:bg-[#FF5500]/90 text-white"
+                style={{ boxShadow: '0 0 20px rgba(255,85,0,0.3)' }}
+                disabled={!hasFullAccess && balance < confirmPurchase.cost}
+                onClick={() => {
+                  const { type, trackId, albumId } = confirmPurchase;
+                  setConfirmPurchase(null);
+                  handlePurchase(type, trackId, albumId);
+                }}
+              >
+                <Coins className="w-3 h-3 mr-1" />
+                {!hasFullAccess && balance < confirmPurchase.cost
+                  ? 'NOT ENOUGH TOKENS'
+                  : `CONFIRM · ${confirmPurchase.cost} TOKENS`}
+              </Button>
+
+              <Button variant="ghost" size="sm"
+                className="w-full text-xs font-display tracking-wider text-muted-foreground"
+                onClick={() => setConfirmPurchase(null)}>
+                CANCEL
+              </Button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Pack opening overlay */}
       <AnimatePresence>

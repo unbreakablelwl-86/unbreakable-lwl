@@ -1022,6 +1022,13 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
                     >{dur}s</button>
                   ))}
                 </div>
+                {/* Change track button */}
+                <button
+                  className="w-full py-1.5 rounded-lg bg-white/5 text-[10px] font-display tracking-wider text-white/60 hover:text-primary hover:bg-primary/10 transition-colors border border-transparent hover:border-primary/20"
+                  onClick={() => setShowMusicPicker(true)}
+                >
+                  CHANGE TRACK
+                </button>
               </div>
             </div>
           )}
@@ -1051,7 +1058,19 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
               <button className={`w-10 h-10 rounded-xl backdrop-blur-sm flex items-center justify-center text-foreground active:scale-90 transition-transform ${showColorPicker ? 'bg-white/20' : 'bg-white/8'}`} onClick={(e) => { e.stopPropagation(); setColorTarget('bg'); setShowColorPicker(!showColorPicker); }}><Palette className="w-4.5 h-4.5" /></button>
               {hasMedia && <button className={`w-10 h-10 rounded-xl backdrop-blur-sm flex items-center justify-center text-foreground active:scale-90 transition-transform ${mediaEditMode === 'move' ? 'bg-white/20' : 'bg-white/8'}`} onClick={(e) => { e.stopPropagation(); setMediaEditMode(mediaEditMode === 'move' ? 'none' : 'move'); }}><Maximize2 className="w-4.5 h-4.5" /></button>}
               <button className={`w-10 h-10 rounded-xl backdrop-blur-sm flex items-center justify-center active:scale-90 transition-transform ${selectedTrack ? 'bg-primary/25 text-primary' : 'bg-white/8 text-foreground'}`}
-                onClick={(e) => { e.stopPropagation(); if (selectedTrack) { setShowClipTrimmer(!showClipTrimmer); } else { setShowMusicPicker(true); } }}><Music className="w-4.5 h-4.5" /></button>
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (selectedTrack) {
+                    // If trimmer already showing, reopen track picker to change track
+                    if (showClipTrimmer) {
+                      setShowMusicPicker(true);
+                    } else {
+                      setShowClipTrimmer(true);
+                    }
+                  } else {
+                    setShowMusicPicker(true);
+                  }
+                }}><Music className="w-4.5 h-4.5" /></button>
             </div>
             <button className="h-10 px-5 rounded-xl bg-primary text-primary-foreground font-display tracking-wider text-sm flex items-center gap-2 disabled:opacity-50 active:scale-95 transition-transform" onClick={handlePublish} disabled={publishing}>
               {publishing ? <><Loader2 className="w-4 h-4 animate-spin" /><span className="text-xs">{uploadProgress || 'POSTING'}</span></> : 'SHARE'}
@@ -1074,7 +1093,7 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
       <TrackPickerSheet
         open={showMusicPicker}
         onOpenChange={setShowMusicPicker}
-        onSelect={(track) => setSelectedTrack(track)}
+        onSelect={(track) => { setSelectedTrack(track); setShowClipTrimmer(true); }}
         selectedTrackId={selectedTrack?.id}
       />
     </div>

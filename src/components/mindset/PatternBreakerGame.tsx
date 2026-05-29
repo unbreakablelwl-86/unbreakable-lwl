@@ -8,6 +8,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { usePatternBreakerScores } from "@/hooks/usePatternBreakerScores";
 
 import { useGameAudio } from "@/hooks/useGameAudio";
+import GameCountdown from "./GameCountdown";
 
 // ═══════════════════════════════════════════════════════════════
 // LOCK IN — ONE WRONG MOVE, IT'S OVER.
@@ -71,11 +72,11 @@ const PADS: PadConfig[] = [
   { color: "#1a1a1a", activeColor: "#FFFFFF", glow: "rgba(255,255,255,0.5)", note: 659.25, label: "■" },
 ];
 
-type GameState = "ready" | "watching" | "input" | "success" | "fail" | "gameover" | "leaderboard";
+type GameState = "ready" | "countdown" | "watching" | "input" | "success" | "fail" | "gameover" | "leaderboard";
 
-const INITIAL_PLAY_SPEED = 600;
-const MIN_PLAY_SPEED = 200;
-const SPEED_DECREASE_PER_LEVEL = 20;
+const INITIAL_PLAY_SPEED = 850;
+const MIN_PLAY_SPEED = 300;
+const SPEED_DECREASE_PER_LEVEL = 15;
 
 // ─── Particle type ─────────────────────────────────────────
 interface Particle {
@@ -95,6 +96,7 @@ const PatternBreakerGame = () => {
   const [message, setMessage] = useState("");
   const [maxSequence, setMaxSequence] = useState(0);
   const [round, setRound] = useState(0);
+  const [lives, setLives] = useState(3);
 
   // Premium stats
   const [totalCorrectTaps, setTotalCorrectTaps] = useState(0);
@@ -108,6 +110,26 @@ const PatternBreakerGame = () => {
   const [deathShake, setDeathShake] = useState(false);
   const [stageFlash, setStageFlash] = useState<string | null>(null);
   const [particles, setParticles] = useState<Particle[]>([]);
+
+  // Elapsed timer
+  const [elapsedSecs, setElapsedSecs] = useState(0);
+  const timerStartRef = useRef<number>(0);
+  const timerIntervalRef = useRef<ReturnType<typeof setInterval>>();
+
+  // Live elapsed timer
+  useEffect(() => {
+    if (gameState === "playing") {
+      timerStartRef.current = Date.now();
+      setElapsedSecs(0);
+      timerIntervalRef.current = setInterval(() => {
+        setElapsedSecs(Math.floor((Date.now() - timerStartRef.current) / 1000));
+      }, 1000);
+    } else {
+      clearInterval(timerIntervalRef.current);
+    }
+    return () => clearInterval(timerIntervalRef.current);
+  }, [gameState]);
+
   const lastStageRef = useRef(0);
   const particleIdRef = useRef(0);
 
@@ -193,10 +215,15 @@ const PatternBreakerGame = () => {
     setTimeSurvived(0);
     setTapTimes([]);
     setLastTapTime(0);
+    setLives(3);
     lastStageRef.current = 0;
     const now = Date.now();
     setStartTime(now);
 
+    setGameState("countdown");
+  }, []);
+
+  const onCountdownComplete = useCallback(() => {
     // Start first round with one random pad
     const firstPad = Math.floor(Math.random() * PADS.length);
     const newSeq = [firstPad];
@@ -277,7 +304,9 @@ const PatternBreakerGame = () => {
         }, 800);
       }
     } else {
-      // Wrong! Game over
+      // Wrong — lose a life
+      const newLives = lives - 1;
+      setLives(newLives);
       setWrongPad(padIdx);
       setDeathShake(true);
       setGameState("fail");
@@ -287,21 +316,31 @@ const PatternBreakerGame = () => {
       setTimeout(() => {
         setDeathShake(false);
         setWrongPad(null);
-        setTimeSurvived(Math.floor((Date.now() - startTime) / 1000));
-        setGameState("gameover");
-        playGameOver();
+
+        if (newLives <= 0) {
+          // All lives gone — game over
+          setTimeSurvived(Math.floor((Date.now() - startTime) / 1000));
+          setGameState("gameover");
+          playGameOver();
+          stopMusic();
         
-        const finalScore = score + sequence.length * 5;
-        if (finalScore > 0) {
-          saveScore(finalScore, {
-            max_sequence: maxSequence,
-            total_correct_taps: totalCorrectTaps,
-            perfect_rounds: perfectRounds,
-          });
+          const finalScore = score + sequence.length * 5;
+          if (finalScore > 0) {
+            saveScore(finalScore, {
+              max_sequence: maxSequence,
+              total_correct_taps: totalCorrectTaps,
+              perfect_rounds: perfectRounds,
+            });
+          }
+        } else {
+          // Lives remaining — replay same sequence
+          setPlayerIndex(0);
+          setMessage(`${newLives} ${newLives === 1 ? 'LIFE' : 'LIVES'} LEFT — TRY AGAIN`);
+          playSequence(sequence, getPlaySpeed(sequence.length));
         }
       }, 1000);
     }
-  }, [gameState, sequence, playerIndex, score, startTime, maxSequence, totalCorrectTaps, perfectRounds, playHit, playLevelUp, playGameOver, saveScore, playTone, advanceRound]);
+  }, [gameState, sequence, playerIndex, score, startTime, maxSequence, totalCorrectTaps, perfectRounds, lives, playHit, playLevelUp, playGameOver, saveScore, playTone, advanceRound, playSequence, getPlaySpeed, stopMusic]);
 
 
 // ─── Cleanup ─────────────────────────────────────────────
@@ -382,7 +421,7 @@ const PatternBreakerGame = () => {
                 <span className="text-primary font-bold">▸</span> Speed increases as you progress
               </p>
               <p className="text-muted-foreground text-sm">
-                <span className="text-primary font-bold">▸</span> One mistake and it's over — no lives
+                <span className="text-primary font-bold">▸</span> 3 lives — wrong tap costs a life, replay the level
               </p>
             </div>
 
@@ -570,11 +609,19 @@ const PatternBreakerGame = () => {
           <div className="bg-card/60 border border-border rounded px-2 py-0.5">
             <p className="font-display text-xs text-muted-foreground tracking-wider">RND {round}</p>
           </div>
+          <div className="bg-card/60 border border-border rounded px-2 py-0.5">
+            <p className="font-display text-xs text-muted-foreground tracking-wider">{Math.floor(elapsedSecs / 60)}:{String(elapsedSecs % 60).padStart(2, "0")}</p>
+          </div>
         </div>
         <div className="flex items-center gap-3">
           {sequenceProgress && (
             <p className="font-display text-xs text-muted-foreground">{sequenceProgress}</p>
           )}
+          <div className="flex items-center gap-1">
+            {[0, 1, 2].map(i => (
+              <div key={i} className={`w-2.5 h-2.5 rounded-full ${i < lives ? "bg-primary shadow-[0_0_6px_rgba(255,85,0,0.5)]" : "bg-white/10"}`} />
+            ))}
+          </div>
           <div className="bg-card/60 border border-border rounded px-2 py-0.5">
             <p className="font-display text-xs text-primary tracking-wider">SEQ {sequence.length}</p>
           </div>
@@ -763,6 +810,13 @@ const PatternBreakerGame = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* 3-2-1 Countdown */}
+      {gameState === "countdown" && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
+          <GameCountdown onComplete={onCountdownComplete} gameName="LOCK IN" />
+        </div>
+      )}
     </div>
   );
 };

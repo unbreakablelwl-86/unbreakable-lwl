@@ -103,11 +103,46 @@ export function MovementExecutionView({ program, onClose }: MovementExecutionVie
 
   const handleConfirmComplete = async () => {
     if (!completingPlanner) return;
+    const durMinutes = actualDuration ? parseInt(actualDuration) : undefined;
+    const distKm = actualDistance ? parseFloat(actualDistance) : undefined;
+    
     markComplete.mutate({
       plannerId: completingPlanner.id,
-      actualDuration: actualDuration ? parseInt(actualDuration) : undefined,
-      actualDistance: actualDistance ? parseFloat(actualDistance) : undefined,
+      actualDuration: durMinutes,
+      actualDistance: distKm,
     });
+
+    // Auto-award PB Card for cardio session
+    try {
+      const { data: { user: currentUser } } = await supabase.auth.getUser();
+      if (currentUser && durMinutes && distKm) {
+        const sessionType = completingPlanner.session_type || 'run';
+        const distanceLabel = distKm >= 42 ? 'Marathon' : distKm >= 21 ? 'Half Marathon' : distKm >= 10 ? '10K' : distKm >= 5 ? '5K' : `${distKm}km`;
+        const timeSeconds = durMinutes * 60;
+        
+        const { data: cardId } = await supabase.rpc('award_pb_card', {
+          p_user_id: currentUser.id,
+          p_activity_category: sessionType,
+          p_exercise_name: distanceLabel,
+          p_value: timeSeconds,
+          p_unit: 'seconds',
+          p_rank: 1,
+          p_distance_type: distanceLabel,
+          p_source_run_id: null,
+          p_source_session_id: null,
+        });
+        if (cardId) {
+          const { data: cardData } = await supabase.from('achievement_cards').select('rarity').eq('id', cardId).single();
+          const rarity = cardData?.rarity || 'bronze';
+          const mins = Math.floor(timeSeconds / 60);
+          const secs = Math.round(timeSeconds % 60);
+          toast({ title: `🏃 ${rarity.toUpperCase()} PB Card`, description: `${distanceLabel} — ${mins}:${secs.toString().padStart(2, '0')}` });
+        }
+      }
+    } catch (cardErr) {
+      console.error('Cardio PB card award failed (non-blocking):', cardErr);
+    }
+    
     setCompletingPlanner(null);
 
     // Check for progression after completing a session

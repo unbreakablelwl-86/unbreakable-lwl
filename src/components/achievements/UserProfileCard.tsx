@@ -164,7 +164,7 @@ export default function UserProfileCard() {
     return cardioCards.map(c => ({
       exerciseName: c.exercise_name || 'Run',
       value: c.pb_value || 0,
-      unit: c.pb_unit || 'km',
+      unit: c.pb_unit || c.record_unit || 'seconds',
     })).sort((a, b) => a.exerciseName.localeCompare(b.exerciseName));
   }, [cards]);
 
@@ -777,6 +777,26 @@ function PBEditMenu({
 }
 
 /* ═══ Stat bar component ═══ */
+function formatStatValue(value: number, unit: string): string {
+  if (unit === 'seconds') {
+    const hours = Math.floor(value / 3600);
+    const mins = Math.floor((value % 3600) / 60);
+    const secs = Math.round(value % 60);
+    if (hours > 0) return `${hours}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+    return `${mins}:${String(secs).padStart(2, '0')}`;
+  }
+  if (unit === 'pace_per_km') {
+    const mins = Math.floor(value / 60);
+    const secs = Math.round(value % 60);
+    return `${mins}:${String(secs).padStart(2, '0')}/km`;
+  }
+  if (unit === 'kg') return `${value}KG`;
+  if (unit === 'reps') return `×${value}`;
+  if (unit === 'km') return `${value}KM`;
+  if (unit === 'm') return `${value}M`;
+  return `${value}${unit.toUpperCase()}`;
+}
+
 function StatBar({ label, value, unit, maxValue, color, delay = 0 }: {
   label: string;
   value: number | null;
@@ -810,7 +830,7 @@ function StatBar({ label, value, unit, maxValue, color, delay = 0 }: {
           color: value ? '#FFFFFF' : 'rgba(255,255,255,0.15)',
           textShadow: value ? '0 0 4px rgba(255,255,255,0.2)' : 'none',
         }}>
-        {value ? `${value}${unit.toUpperCase()}` : '—'}
+        {value ? formatStatValue(value, unit) : '—'}
       </span>
     </div>
   );
@@ -836,6 +856,16 @@ function getShortLabel(name: string): string {
 }
 
 function getMaxForExercise(name: string, unit: string): number {
+  if (unit === 'seconds') {
+    const n = name.toLowerCase();
+    if (n.includes('5k') || n.includes('5 k')) return 30 * 60;   // 30 min cap
+    if (n.includes('10k') || n.includes('10 k')) return 60 * 60;  // 60 min cap
+    if (n.includes('half') || n.includes('21k')) return 120 * 60;  // 2 hr cap
+    if (n.includes('marathon') || n.includes('42k')) return 300 * 60; // 5 hr cap
+    if (n.includes('1k') || n.includes('1 k') || n.includes('mile')) return 10 * 60; // 10 min
+    return 60 * 60; // Default 1hr for unknown cardio
+  }
+  if (unit === 'pace_per_km') return 600; // 10:00/km cap
   if (unit === 'km') return 42;
   if (unit === 'mi') return 26;
   if (unit === 'min') return 120;

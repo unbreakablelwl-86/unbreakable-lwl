@@ -9,6 +9,7 @@ import { useAuth } from '@/hooks/useAuth';
 import {
   calculateOverallRating,
   calculateSixStats,
+  overallFromSixStats,
   classifyExercise,
   percentileRank,
 } from '@/lib/wilksIpfEngine';
@@ -49,7 +50,7 @@ export interface AchievementCard {
   earned_at: string;
   // FIFA-standard fields
   overall_rating?: number;
-  athlete_stats?: { str: number; pwr: number; spd: number; end: number; agi: number; rec: number };
+  athlete_stats?: Record<string, number>;
   bio_line?: string;
   card_number?: string;
   category_label?: string;
@@ -123,6 +124,49 @@ export function useAchievementCards() {
     const CATEGORY_TO_ACTIVITY: Record<string, string> = {
       'Strength': 'lift', 'Power': 'lift', 'Cardio': 'run',
     };
+    // Pre-compute user-wide 6-stats from all cards (shared across every card)
+    const allPBCards = rawCards.filter(c =>
+      (c.card_type === 'pb_personal' || c.card_type === 'pb_global') && (c.pb_value ?? c.record_value)
+    );
+    const uniqueExNames = new Set(allPBCards.map(c => c.exercise_name));
+    const maxE1RM = allPBCards.reduce((max, c) => {
+      const v = c.pb_value ?? c.record_value ?? 0;
+      return v > max ? v : max;
+    }, 0);
+    const totalVolumeKg = allPBCards.reduce((sum, c) => sum + ((c.pb_value ?? c.record_value ?? 0) * 30), 0);
+    const cardioCards = allPBCards.filter(c =>
+      (c.activity_category || '').includes('cardio') || (c.category_label || '').includes('Cardio')
+    );
+    const bestPace = cardioCards.length > 0
+      ? Math.min(...cardioCards.map(c => c.pb_value ?? c.record_value ?? 999))
+      : undefined;
+
+    const rawSixStats = calculateSixStats({
+      totalVolumeKg,
+      maxE1RM,
+      bodyweightKg,
+      sex: isMale ? 'male' : 'female',
+      bestPaceMinPerKm: bestPace,
+      totalRunKm: cardioCards.length * 5,
+      totalSessions: allPBCards.length,
+      weeksActive: Math.max(1, Math.ceil(allPBCards.length / 3)),
+      uniqueExercises: uniqueExNames.size,
+    });
+    // Map engine output (str/pwr/spd/end/agi/rec) to display keys expected by card UI
+    const userSixStats = {
+      str: rawSixStats.str,
+      pwr: rawSixStats.pwr,
+      con: rawSixStats.rec,   // CONsistency ← RECovery (training regularity)
+      pgs: rawSixStats.agi,   // ProGresS ← AGIlity (exercise variety)
+      exp: Math.min(99, Math.max(1, allPBCards.length * 3)), // EXPerience from total cards
+      rnk: 50,                // RaNK — default, overridden by DB global percentile
+      spd: rawSixStats.spd,
+      end: rawSixStats.end,
+      dst: Math.min(99, Math.max(1, Math.round(Math.log10(Math.max(1, cardioCards.length * 5 + 1)) * 30))),
+      elv: 30, // Elevation placeholder — no elevation data in PB cards
+      overall: overallFromSixStats(rawSixStats),
+    };
+
     const mapped = rawCards.map(c => {
       const actCat = c.activity_category || (CATEGORY_TO_ACTIVITY[c.category_label || ''] as any) || 'lift';
       const pbVal = c.pb_value ?? c.record_value;
@@ -130,20 +174,16 @@ export function useAchievementCards() {
 
       // Calculate Wilks/IPF overall rating if not already in DB
       let overallRating = c.overall_rating;
-      let athleteStats = c.athlete_stats;
 
       if ((c.card_type === 'pb_personal' || c.card_type === 'pb_global') && pbVal) {
         if (!overallRating) {
-          overallRating = calculateOverallRating(
-            exName, pbVal, bodyweightKg, isMale, userAge
-          );
-        }
-        if (!athleteStats) {
-          athleteStats = calculateSixStats(
-            exName, pbVal, bodyweightKg, isMale,
-            actCat === 'lift' ? 'strength' : 'cardio',
-            c.global_rank_pct,
-          );
+          overallRating = calculateOverallRating({
+            exerciseName: exName,
+            liftKg: pbVal,
+            bodyweightKg,
+            sex: isMale ? 'male' : 'female',
+            age: userAge,
+          });
         }
       }
 
@@ -155,7 +195,7 @@ export function useAchievementCards() {
         pb_unit: c.pb_unit ?? c.record_unit,
         activity_category: actCat,
         overall_rating: overallRating,
-        athlete_stats: athleteStats,
+        athlete_stats: c.athlete_stats || userSixStats,
       };
     });
 

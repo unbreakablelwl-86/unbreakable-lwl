@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { RotateCcw, Volume2, VolumeX, Zap, Check, X as XIcon, Trophy } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useGameAudio } from "@/hooks/useGameAudio";
+import GameCountdown from "./GameCountdown";
 import { useAuth } from "@/hooks/useAuth";
 import { useMentalMathsScores } from "@/hooks/useMentalMathsScores";
 import { GameLeaderboard } from "./GameLeaderboard";
@@ -84,7 +85,7 @@ const generateQuestion = (stage: typeof NAMED_STAGES[0]): Question => {
 const PB_KEY = "unbreakable_maths_pb";
 
 const MentalMathsGame = () => {
-  const [gameState, setGameState] = useState<"ready" | "playing" | "gameover" | "leaderboard">("ready");
+  const [gameState, setGameState] = useState<"ready" | "countdown" | "playing" | "gameover" | "leaderboard">("ready");
   const [question, setQuestion] = useState<Question | null>(null);
   const [solved, setSolved] = useState(0);
   const [wrong, setWrong] = useState(0);
@@ -103,6 +104,26 @@ const MentalMathsGame = () => {
   const [startTime, setStartTime] = useState(0);
   const [responseTimesMs, setResponseTimesMs] = useState<number[]>([]);
   const [lives, setLives] = useState(3);
+
+  // Elapsed timer
+  const [elapsedSecs, setElapsedSecs] = useState(0);
+  const timerStartRef = useRef<number>(0);
+  const timerIntervalRef = useRef<ReturnType<typeof setInterval>>();
+
+  // Live elapsed timer
+  useEffect(() => {
+    if (gameState === "playing") {
+      timerStartRef.current = Date.now();
+      setElapsedSecs(0);
+      timerIntervalRef.current = setInterval(() => {
+        setElapsedSecs(Math.floor((Date.now() - timerStartRef.current) / 1000));
+      }, 1000);
+    } else {
+      clearInterval(timerIntervalRef.current);
+    }
+    return () => clearInterval(timerIntervalRef.current);
+  }, [gameState]);
+
 
   const lastStageRef = useRef(0);
   const qStartRef = useRef(0);
@@ -235,6 +256,10 @@ const nextQuestion = useCallback((solvedCount: number) => {
     setLives(3);
     lastStageRef.current = 0;
     setStartTime(Date.now());
+    setGameState("countdown");
+  }, []);
+
+  const onCountdownComplete = useCallback(() => {
     nextQuestion(0);
     setGameState("playing");
     startMusic();
@@ -297,6 +322,7 @@ const nextQuestion = useCallback((solvedCount: number) => {
               </div>
               <div className="text-center">
                 <p className="font-display text-3xl text-primary tracking-wide leading-none">{score}</p>
+                <p className="font-display text-[10px] tracking-wider text-muted-foreground">{Math.floor(elapsedSecs / 60)}:{String(elapsedSecs % 60).padStart(2, "0")}</p>
               </div>
               <div className="flex items-center gap-2">
                 {/* Lives */}
@@ -452,6 +478,13 @@ const nextQuestion = useCallback((solvedCount: number) => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* 3-2-1 Countdown */}
+      {gameState === "countdown" && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
+          <GameCountdown onComplete={onCountdownComplete} gameName="BLITZ" />
+        </div>
+      )}
     </div>
   );
 };

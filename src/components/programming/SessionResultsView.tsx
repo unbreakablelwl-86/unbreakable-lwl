@@ -33,11 +33,24 @@ interface SessionResultsViewProps {
 }
 
 export function SessionResultsView({ session, onClose, onViewFeedback }: SessionResultsViewProps) {
-  const { feedback } = useWorkoutFeedback(session.id);
+  const { feedback, generateFeedback } = useWorkoutFeedback(session.id);
   const { updateSession } = useWorkoutSessions();
   const sessionFeedback = feedback?.[0];
   const [editingDuration, setEditingDuration] = useState(false);
   const [durationHours, setDurationHours] = useState('');
+  const [autoFeedbackTriggered, setAutoFeedbackTriggered] = useState(false);
+
+  // Auto-generate feedback when session results first load (if none exists)
+  useEffect(() => {
+    if (!autoFeedbackTriggered && !sessionFeedback && session.exercise_logs?.length && !generateFeedback.isPending) {
+      setAutoFeedbackTriggered(true);
+      generateFeedback.mutate({
+        sessionId: session.id,
+        exerciseLogs: session.exercise_logs,
+      });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoFeedbackTriggered, sessionFeedback, session.id]);
   const [durationMinutes, setDurationMinutes] = useState('');
   const [showMotivation, setShowMotivation] = useState(false);
 

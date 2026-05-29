@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { RotateCcw, Volume2, VolumeX, Trophy, Type } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useGameAudio } from "@/hooks/useGameAudio";
+import GameCountdown from "./GameCountdown";
 import { useAuth } from "@/hooks/useAuth";
 import { useWordChainScores } from "@/hooks/useWordChainScores";
 import { GameLeaderboard } from "./GameLeaderboard";
@@ -243,7 +244,7 @@ const WORD_LIST = [
 // Initialize word set
 WORD_LIST.forEach(w => VALID_WORDS.add(w.toLowerCase()));
 
-type GameState = "idle" | "playing" | "gameover" | "leaderboard";
+type GameState = "idle" | "countdown" | "playing" | "gameover" | "leaderboard";
 
 const WordChainGame = () => {
   const { user } = useAuth();
@@ -274,7 +275,6 @@ const WordChainGame = () => {
     // Pick a random starting letter
     const letters = "abcdefghijklmnoprstw";
     const startLetter = letters[Math.floor(Math.random() * letters.length)];
-    setGameState("playing");
     setScore(0);
     setWordsFound(0);
     setChain(0);
@@ -287,6 +287,11 @@ const WordChainGame = () => {
     setWordHistory([]);
     setTimeLeft(15);
     setPrevStageIdx(0);
+    setGameState("countdown");
+  }, []);
+
+  const onCountdownComplete = useCallback(() => {
+    setGameState("playing");
     setTimeout(() => inputRef.current?.focus(), 100);
   }, []);
 
@@ -310,6 +315,7 @@ const WordChainGame = () => {
   useEffect(() => {
     if (gameState === "playing" && timeLeft <= 0) {
       playGameOver();
+      stopMusic();
       setGameState("gameover");
       if (user && score > 0) {
         saveScore(score, wordsFound, longestWord, maxChain);
@@ -562,6 +568,13 @@ const WordChainGame = () => {
           </div>
         )}
       </div>
+
+      {/* 3-2-1 Countdown */}
+      {gameState === "countdown" && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
+          <GameCountdown onComplete={onCountdownComplete} gameName="WORD CHAIN" />
+        </div>
+      )}
     </div>
   );
 };

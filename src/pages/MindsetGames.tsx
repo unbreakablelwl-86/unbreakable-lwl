@@ -1,16 +1,35 @@
 import { useState, useEffect, lazy, Suspense } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Gamepad2, Zap, Blocks, Shapes, Wind, Calculator, ChevronRight, ArrowLeft, Bird, Grid3X3, Timer } from "lucide-react";
-const SnakeGame = lazy(() => import("@/components/mindset/SnakeGame"));
-const AlleywayGame = lazy(() => import("@/components/mindset/AlleywayGame"));
-const TetrisGame = lazy(() => import("@/components/mindset/TetrisGame"));
-const PatternBreakerGame = lazy(() => import("@/components/mindset/PatternBreakerGame"));
-const FlowStateGame = lazy(() => import("@/components/mindset/FlowStateGame"));
-const MentalMathsGame = lazy(() => import("@/components/mindset/MentalMathsGame"));
-const FlappyGame = lazy(() => import("@/components/mindset/FlappyGame"));
-const MemoryMatrixGame = lazy(() => import("@/components/mindset/MemoryMatrixGame"));
-const ReactionTrainerGame = lazy(() => import("@/components/mindset/ReactionTrainerGame"));
+import { Gamepad2, Zap, Blocks, Shapes, Wind, Calculator, ChevronRight, ArrowLeft, Bird, Grid3X3, Timer, Music, Volume2, VolumeX } from "lucide-react";
+
+// Retry-on-fail wrapper for lazy imports — handles stale chunk hashes after deploy
+function lazyRetry<T extends React.ComponentType<any>>(
+  factory: () => Promise<{ default: T }>
+) {
+  return lazy(() =>
+    factory().catch(() => {
+      // If chunk fails (stale deploy), reload page once
+      const key = "chunk-retry";
+      if (!sessionStorage.getItem(key)) {
+        sessionStorage.setItem(key, "1");
+        window.location.reload();
+      }
+      // Return a fallback while reloading
+      return { default: (() => null) as unknown as T };
+    })
+  );
+}
+
+const SnakeGame = lazyRetry(() => import("@/components/mindset/SnakeGame"));
+const AlleywayGame = lazyRetry(() => import("@/components/mindset/AlleywayGame"));
+const TetrisGame = lazyRetry(() => import("@/components/mindset/TetrisGame"));
+const PatternBreakerGame = lazyRetry(() => import("@/components/mindset/PatternBreakerGame"));
+const FlowStateGame = lazyRetry(() => import("@/components/mindset/FlowStateGame"));
+const MentalMathsGame = lazyRetry(() => import("@/components/mindset/MentalMathsGame"));
+const FlappyGame = lazyRetry(() => import("@/components/mindset/FlappyGame"));
+const MemoryMatrixGame = lazyRetry(() => import("@/components/mindset/MemoryMatrixGame"));
+const StrikeRhythmGame = lazyRetry(() => import("@/components/mindset/StrikeRhythmGame"));
 
 type ViewState = "selection" | "snake" | "alleyway" | "tetris" | "pattern" | "flow" | "maths" | "flappy" | "memory" | "reaction";
 
@@ -23,7 +42,7 @@ const games = [
   { id: "maths" as const, name: "SOLVE", icon: Calculator, tagline: "Rapid Fire. Zero Hesitation.", desc: "Mental maths blitz — solve under countdown. Numbers grow, timer shrinks. 3 lives." },
   { id: "flappy" as const, name: "RISE", icon: Bird, tagline: "Defy Gravity.", desc: "Tap to fly through impossible gaps. One mistake and you're done. How far can you go?" },
   { id: "memory" as const, name: "RECALL", icon: Grid3X3, tagline: "Remember Everything.", desc: "Memorise the grid pattern. Tiles flash faster, grids grow bigger. Pure visual memory." },
-  { id: "reaction" as const, name: "STRIKE", icon: Timer, tagline: "Milliseconds Matter.", desc: "Test your raw reaction speed. Hit the target the instant it appears. Track your best times." },
+  { id: "reaction" as const, name: "STRIKE", icon: Timer, tagline: "Ride The Beat.", desc: "Guitar Hero meets Un-Tunes. Notes fall — tap the right lane as they hit the strike zone. Combos multiply your score." },
 ];
 
 // GameWrapper must be OUTSIDE the main component — if defined inside,
@@ -57,13 +76,23 @@ const GAME_COMPONENTS: Record<string, React.LazyExoticComponent<React.ComponentT
   maths: MentalMathsGame,
   flappy: FlappyGame,
   memory: MemoryMatrixGame,
-  reaction: ReactionTrainerGame,
+  reaction: StrikeRhythmGame,
 };
 
 const MindsetGames = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [view, setView] = useState<ViewState>("selection");
+  const [musicEnabled, setMusicEnabled] = useState(() => {
+    try { return localStorage.getItem("game-music-muted") !== "true"; } catch { return true; }
+  });
+  const toggleAutoMusic = () => {
+    setMusicEnabled(prev => {
+      const next = !prev;
+      try { localStorage.setItem("game-music-muted", String(!next)); } catch {}
+      return next;
+    });
+  };
 
   // Auto-launch game from URL param (?game=snake)
   useEffect(() => {
@@ -73,6 +102,13 @@ const MindsetGames = () => {
       // Clear the param so back button returns to selector
       setSearchParams({}, { replace: true });
     }
+  }, []);
+
+  // Stop music player on unmount (e.g. bottom nav navigation away)
+  useEffect(() => {
+    return () => {
+      try { window.dispatchEvent(new CustomEvent('game-exit')); } catch {}
+    };
   }, []);
 
   const handleBack = () => {
@@ -128,6 +164,31 @@ const MindsetGames = () => {
             always growing, never coasting. Be <span className="text-primary font-semibold">UNBREAKABLE</span>.
           </p>
           <p className="text-primary font-display text-xs tracking-wider mt-2">KEEP SHOWING UP.</p>
+        </div>
+
+        {/* Auto-Music Toggle */}
+        <div className="space-y-2">
+          <p className="text-xs font-display tracking-wider text-muted-foreground">SETTINGS</p>
+          <button
+            onClick={toggleAutoMusic}
+            className={`flex items-center gap-3 w-full px-3.5 py-3 rounded-xl border transition-all ${
+              musicEnabled
+                ? 'border-primary/30 bg-primary/5'
+                : 'border-border bg-card/30'
+            }`}
+          >
+            {musicEnabled ? (
+              <Music className="w-4 h-4 text-primary shrink-0" style={{ filter: 'drop-shadow(0 0 6px rgba(255,85,0,0.5))' }} />
+            ) : (
+              <VolumeX className="w-4 h-4 text-muted-foreground shrink-0" />
+            )}
+            <span className={`text-xs font-display tracking-wider ${musicEnabled ? 'text-foreground' : 'text-muted-foreground'}`}>
+              AUTO MUSIC {musicEnabled ? 'ON' : 'OFF'}
+            </span>
+            <span className="ml-auto text-[10px] text-muted-foreground">
+              {musicEnabled ? 'Un-Tunes plays during games' : 'Silent gameplay'}
+            </span>
+          </button>
         </div>
 
         {/* Section Header */}

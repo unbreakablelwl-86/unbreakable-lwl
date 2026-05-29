@@ -1,6 +1,6 @@
 // UNBREAKABLE Service Worker — network-first with asset caching + offline fallback
-const CACHE_NAME = 'unbreakable-v3';
-const STATIC_CACHE = 'unbreakable-static-v1';
+const CACHE_NAME = 'unbreakable-v4';
+const STATIC_CACHE = 'unbreakable-static-v2';
 
 // Static assets to pre-cache on install
 const PRE_CACHE = ['/'];
@@ -54,22 +54,18 @@ self.addEventListener('fetch', (e) => {
     return;
   }
 
-  // Static assets — stale-while-revalidate
+  // Static assets — network-first for hashed JS/CSS (prevents stale chunk errors after deploy)
   if (CACHEABLE.test(url.pathname)) {
     e.respondWith(
-      caches.match(request).then((cached) => {
-        const fetchPromise = fetch(request)
-          .then((response) => {
-            if (response.ok) {
-              const clone = response.clone();
-              caches.open(STATIC_CACHE).then((cache) => cache.put(request, clone));
-            }
-            return response;
-          })
-          .catch(() => cached);
-
-        return cached || fetchPromise;
-      })
+      fetch(request)
+        .then((response) => {
+          if (response.ok) {
+            const clone = response.clone();
+            caches.open(STATIC_CACHE).then((cache) => cache.put(request, clone));
+          }
+          return response;
+        })
+        .catch(() => caches.match(request))
     );
     return;
   }

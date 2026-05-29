@@ -52,9 +52,9 @@ const ACHIEVEMENT_RARITY_CONFIG: Record<AchievementRarity, {
     glow: 'shadow-[0_0_40px_rgba(205,127,50,0.4)]',
     particleColor: '#CD7F32',
     textColor: 'text-[#F5F5DC]',
-    borderColor: 'border-[#CD7F32]/50',
-    bgGlow: 'bg-[#CD7F32]/10',
-    borderHex: 'rgba(205,127,50,0.5)',
+    borderColor: 'border-[#CD7F32]/70',
+    bgGlow: 'bg-[#CD7F32]/15',
+    borderHex: 'rgba(205,127,50,0.8)',
     accentHex: '#CD7F32',
     baseBg: '#1A1A1A',
     textGlow: '0 0 8px #CD7F32, 0 0 16px #8B4513',
@@ -68,9 +68,9 @@ const ACHIEVEMENT_RARITY_CONFIG: Record<AchievementRarity, {
     glow: 'shadow-[0_0_50px_rgba(192,192,192,0.4)]',
     particleColor: '#C0C0C0',
     textColor: 'text-white',
-    borderColor: 'border-[#C0C0C0]/50',
-    bgGlow: 'bg-[#C0C0C0]/10',
-    borderHex: 'rgba(192,192,192,0.5)',
+    borderColor: 'border-[#C0C0C0]/70',
+    bgGlow: 'bg-[#C0C0C0]/15',
+    borderHex: 'rgba(192,192,192,0.8)',
     accentHex: '#C0C0C0',
     baseBg: '#111111',
     textGlow: '0 0 8px #C0C0C0, 0 0 20px #E8E8E8',
@@ -84,9 +84,9 @@ const ACHIEVEMENT_RARITY_CONFIG: Record<AchievementRarity, {
     glow: 'shadow-[0_0_60px_rgba(255,215,0,0.5)]',
     particleColor: '#FFD700',
     textColor: 'text-white',
-    borderColor: 'border-[#FFD700]/50',
-    bgGlow: 'bg-[#FFD700]/10',
-    borderHex: 'rgba(255,215,0,0.6)',
+    borderColor: 'border-[#FFD700]/70',
+    bgGlow: 'bg-[#FFD700]/15',
+    borderHex: 'rgba(255,215,0,0.85)',
     accentHex: '#FFD700',
     baseBg: '#080808',
     textGlow: '0 0 10px #FFD700, 0 0 25px #B8860B, 0 0 40px #FFD700',
@@ -100,9 +100,9 @@ const ACHIEVEMENT_RARITY_CONFIG: Record<AchievementRarity, {
     glow: 'shadow-[0_0_100px_rgba(125,249,255,0.6)]',
     particleColor: '#7DF9FF',
     textColor: 'text-[#F0F8FF]',
-    borderColor: 'border-[#7DF9FF]/50',
-    bgGlow: 'bg-[#7DF9FF]/10',
-    borderHex: 'rgba(125,249,255,0.6)',
+    borderColor: 'border-[#7DF9FF]/70',
+    bgGlow: 'bg-[#7DF9FF]/15',
+    borderHex: 'rgba(125,249,255,0.85)',
     accentHex: '#7DF9FF',
     baseBg: '#000000',
     textGlow: '0 0 12px #7DF9FF, 0 0 30px #BF5FFF, 0 0 50px #F0F8FF',
@@ -116,9 +116,9 @@ const ACHIEVEMENT_RARITY_CONFIG: Record<AchievementRarity, {
     glow: 'shadow-[0_0_120px_rgba(229,228,226,0.7)]',
     particleColor: '#E5E4E2',
     textColor: 'text-white',
-    borderColor: 'border-[#E5E4E2]/60',
-    bgGlow: 'bg-[#E5E4E2]/15',
-    borderHex: 'rgba(229,228,226,0.7)',
+    borderColor: 'border-[#E5E4E2]/80',
+    bgGlow: 'bg-[#E5E4E2]/20',
+    borderHex: 'rgba(229,228,226,0.9)',
     accentHex: '#E5E4E2',
     baseBg: '#0A0A0A',
     textGlow: '0 0 15px #E5E4E2, 0 0 35px #B76E79, 0 0 60px #FFFFFF',
@@ -190,61 +190,95 @@ export const achievementCardStyles = `
 
 /* ═══ Rarity overlay effects — 5-tier system ═══ */
 
-/** Bronze: fine grain texture + warm copper ambient glow + slow pulse */
+/** Bronze: stone/metal grain + warm copper ambient + metallic border band */
 export function BronzeShimmer() {
   return (
-    <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-xl z-[12]">
-      {/* Fine grain texture */}
+    <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl z-[12]">
+      {/* Full metallic base tint */}
       <div
         className="absolute inset-0"
         style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23n)' opacity='0.12'/%3E%3C/svg%3E")`,
+          background: 'linear-gradient(160deg, #3D2B1F 0%, #1A1A1A 30%, #2A1F14 60%, #1A1A1A 100%)',
+          opacity: 0.7,
+        }}
+      />
+      {/* Fine grain texture — visible */}
+      <div
+        className="absolute inset-0"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23n)' opacity='0.25'/%3E%3C/svg%3E")`,
           animation: 'achGrainShift 8s steps(4) infinite',
         }}
       />
-      {/* Warm copper ambient — bright shimmer */}
+      {/* Warm copper ambient — strong */}
       <div
         className="absolute inset-0"
         style={{
-          background: 'linear-gradient(145deg, rgba(205,127,50,0.22) 0%, rgba(139,69,19,0.28) 30%, rgba(210,105,30,0.18) 50%, rgba(205,127,50,0.28) 70%, rgba(139,69,19,0.22) 100%)',
+          background: 'linear-gradient(145deg, rgba(205,127,50,0.45) 0%, rgba(139,69,19,0.5) 30%, rgba(210,105,30,0.35) 50%, rgba(205,127,50,0.5) 70%, rgba(139,69,19,0.45) 100%)',
         }}
       />
-      {/* Warm bronze pulse glow from border — brighter */}
+      {/* Metallic border band — 3px visible bronze ring */}
       <div
-        className="absolute inset-0"
+        className="absolute inset-0 rounded-2xl"
         style={{
-          boxShadow: 'inset 0 0 50px rgba(205,127,50,0.4), inset 0 0 90px rgba(139,69,19,0.2)',
+          border: '3px solid transparent',
+          borderImage: 'linear-gradient(135deg, #CD7F32, #8B4513, #CD7F32, #DAA520, #8B4513) 1',
+          borderRadius: '16px',
+          boxShadow: 'inset 0 0 60px rgba(205,127,50,0.5), inset 0 0 100px rgba(139,69,19,0.3), 0 0 15px rgba(205,127,50,0.3)',
           animation: 'achBronzePulse 3s ease-in-out infinite',
+        }}
+      />
+      {/* Slow sweep highlight */}
+      <div
+        className="absolute -inset-y-4 w-20"
+        style={{
+          background: 'linear-gradient(90deg, transparent 0%, rgba(205,127,50,0.3) 30%, rgba(218,165,32,0.5) 50%, rgba(205,127,50,0.3) 70%, transparent 100%)',
+          animation: 'achGoldShimmer 5s ease-in-out infinite',
         }}
       />
     </div>
   );
 }
 
-/** Silver: brushed metal horizontal lines + chrome sweep left-to-right */
+/** Silver: brushed chrome metal + heavy sweep + visible metallic border */
 export function SilverShimmer() {
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl z-[12]">
-      {/* Brushed metal horizontal lines texture */}
+      {/* Full metallic chrome base */}
       <div
         className="absolute inset-0"
         style={{
-          backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(192,192,192,0.03) 2px, rgba(192,192,192,0.03) 3px)',
+          background: 'linear-gradient(160deg, #1C1C1C 0%, #111111 25%, #1A1A1A 50%, #141414 75%, #1C1C1C 100%)',
+          opacity: 0.6,
+        }}
+      />
+      {/* Brushed metal horizontal lines — visible */}
+      <div
+        className="absolute inset-0"
+        style={{
+          backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(192,192,192,0.08) 2px, rgba(192,192,192,0.08) 3px)',
           backgroundSize: '100% 3px',
         }}
       />
-      {/* Cool silver base — brighter */}
+      {/* Cool silver ambient — strong */}
       <div
         className="absolute inset-0"
         style={{
-          background: 'linear-gradient(145deg, rgba(192,192,192,0.12) 0%, rgba(232,232,232,0.2) 30%, rgba(255,255,255,0.1) 50%, rgba(192,192,192,0.2) 70%, rgba(169,169,169,0.12) 100%)',
+          background: 'linear-gradient(145deg, rgba(192,192,192,0.3) 0%, rgba(232,232,232,0.4) 30%, rgba(255,255,255,0.2) 50%, rgba(192,192,192,0.4) 70%, rgba(169,169,169,0.3) 100%)',
         }}
       />
-      {/* Silver light sweep left to right — brighter */}
+      {/* Metallic border band */}
       <div
-        className="absolute -inset-y-4 w-24"
+        className="absolute inset-0 rounded-2xl"
         style={{
-          background: 'linear-gradient(90deg, transparent 0%, rgba(232,232,232,0.15) 20%, rgba(255,255,255,0.55) 45%, rgba(232,232,232,0.65) 50%, rgba(255,255,255,0.55) 55%, rgba(232,232,232,0.15) 80%, transparent 100%)',
+          boxShadow: 'inset 0 0 50px rgba(192,192,192,0.4), inset 0 0 90px rgba(232,232,232,0.2), 0 0 20px rgba(192,192,192,0.25)',
+        }}
+      />
+      {/* Chrome light sweep — wide & bright */}
+      <div
+        className="absolute -inset-y-4 w-32"
+        style={{
+          background: 'linear-gradient(90deg, transparent 0%, rgba(232,232,232,0.2) 15%, rgba(255,255,255,0.7) 40%, rgba(232,232,232,0.85) 50%, rgba(255,255,255,0.7) 60%, rgba(232,232,232,0.2) 85%, transparent 100%)',
           animation: 'achSilverSweep 3.5s ease-in-out infinite',
         }}
       />
@@ -252,38 +286,60 @@ export function SilverShimmer() {
   );
 }
 
-/** Gold: foil tilt effect + shimmer sweep + particle sparkles + diamond-cut border texture */
+/** Gold: heavy foil treatment + bold shimmer sweep + sparkle particles + Unbreakable orange-gold accent */
 export function GoldShimmer() {
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl z-[12]">
-      {/* Gold foil base gradient — brighter */}
+      {/* Dark gold metallic base */}
       <div
         className="absolute inset-0"
         style={{
-          background: 'linear-gradient(145deg, rgba(255,215,0,0.16) 0%, rgba(184,134,11,0.24) 30%, rgba(255,215,0,0.12) 50%, rgba(218,165,32,0.24) 70%, rgba(255,215,0,0.16) 100%)',
+          background: 'linear-gradient(160deg, #1A1400 0%, #080800 25%, #151000 50%, #080800 75%, #1A1400 100%)',
+          opacity: 0.5,
         }}
       />
-      {/* Diamond-cut border texture (subtle pattern) */}
+      {/* Gold foil base — strong visible tint */}
       <div
         className="absolute inset-0"
         style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 0L40 20L20 40L0 20Z' fill='none' stroke='rgba(255,215,0,0.04)' stroke-width='0.5'/%3E%3C/svg%3E")`,
+          background: 'linear-gradient(145deg, rgba(255,215,0,0.45) 0%, rgba(184,134,11,0.55) 30%, rgba(255,215,0,0.35) 50%, rgba(218,165,32,0.55) 70%, rgba(255,215,0,0.45) 100%)',
+        }}
+      />
+      {/* Gold border inner glow — heavy */}
+      <div
+        className="absolute inset-0 rounded-2xl"
+        style={{
+          boxShadow: 'inset 0 0 50px rgba(255,215,0,0.5), inset 0 0 90px rgba(255,215,0,0.25), 0 0 25px rgba(255,215,0,0.3)',
+        }}
+      />
+      {/* Diamond-cut border texture — visible */}
+      <div
+        className="absolute inset-0"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 0L40 20L20 40L0 20Z' fill='none' stroke='rgba(255,215,0,0.12)' stroke-width='0.5'/%3E%3C/svg%3E")`,
           backgroundSize: '20px 20px',
         }}
       />
-      {/* Shimmer sweep — brighter */}
-      <div
-        className="absolute -inset-y-4 w-32"
-        style={{
-          background: 'linear-gradient(90deg, transparent 0%, rgba(255,215,0,0.1) 20%, rgba(255,215,0,0.55) 45%, rgba(255,240,180,0.7) 50%, rgba(255,215,0,0.55) 55%, rgba(255,215,0,0.1) 80%, transparent 100%)',
-          animation: 'achGoldShimmer 3.8s ease-in-out infinite',
-        }}
-      />
-      {/* Particle sparkle overlay — brighter */}
+      {/* Unbreakable orange-gold accent stripe */}
       <div
         className="absolute inset-0"
         style={{
-          background: 'radial-gradient(circle at 25% 25%, rgba(255,215,0,0.25) 0%, transparent 15%), radial-gradient(circle at 75% 35%, rgba(255,240,180,0.2) 0%, transparent 12%), radial-gradient(circle at 50% 80%, rgba(255,215,0,0.22) 0%, transparent 18%)',
+          background: 'linear-gradient(180deg, transparent 0%, rgba(255,85,0,0.08) 50%, transparent 100%)',
+        }}
+      />
+      {/* Shimmer sweep — heavy foil effect */}
+      <div
+        className="absolute -inset-y-4 w-36"
+        style={{
+          background: 'linear-gradient(90deg, transparent 0%, rgba(255,215,0,0.2) 15%, rgba(255,215,0,0.8) 40%, rgba(255,240,180,0.95) 50%, rgba(255,215,0,0.8) 60%, rgba(255,215,0,0.2) 85%, transparent 100%)',
+          animation: 'achGoldShimmer 3.8s ease-in-out infinite',
+        }}
+      />
+      {/* Sparkle particles — bright pulsing spots */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background: 'radial-gradient(circle at 20% 20%, rgba(255,215,0,0.5) 0%, transparent 12%), radial-gradient(circle at 80% 30%, rgba(255,240,180,0.45) 0%, transparent 10%), radial-gradient(circle at 50% 85%, rgba(255,215,0,0.4) 0%, transparent 15%), radial-gradient(circle at 15% 70%, rgba(218,165,32,0.35) 0%, transparent 10%), radial-gradient(circle at 85% 75%, rgba(255,215,0,0.35) 0%, transparent 12%)',
           animation: 'achBronzePulse 2.5s ease-in-out infinite',
         }}
       />
@@ -291,87 +347,117 @@ export function GoldShimmer() {
   );
 }
 
-/** Diamond: prismatic holographic border — full spectrum colour shift on tilt + geometric facet texture */
+/** Diamond: full prismatic holographic — heavy rainbow shift + crystalline facets + Unbreakable ice-blue accent */
 export function DiamondHolo() {
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl z-[12]">
-      {/* Geometric facet texture */}
+      {/* Geometric facet texture — visible crystalline */}
       <div
         className="absolute inset-0"
         style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0L60 30L30 60L0 30Z' fill='none' stroke='rgba(125,249,255,0.04)' stroke-width='0.5'/%3E%3Cpath d='M15 15L45 15L45 45L15 45Z' fill='none' stroke='rgba(191,95,255,0.03)' stroke-width='0.3'/%3E%3C/svg%3E")`,
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0L60 30L30 60L0 30Z' fill='none' stroke='rgba(125,249,255,0.15)' stroke-width='0.5'/%3E%3Cpath d='M15 15L45 15L45 45L15 45Z' fill='none' stroke='rgba(191,95,255,0.12)' stroke-width='0.3'/%3E%3C/svg%3E")`,
           backgroundSize: '30px 30px',
         }}
       />
-      {/* Rainbow hue-shifting holographic base — brighter */}
+      {/* Rainbow hue-shifting holographic base — HEAVY */}
       <div
         className="absolute inset-0"
         style={{
-          background: 'linear-gradient(125deg, rgba(125,249,255,0.2) 0%, rgba(191,95,255,0.2) 25%, rgba(0,206,209,0.2) 50%, rgba(192,192,192,0.2) 75%, rgba(125,249,255,0.2) 100%)',
+          background: 'linear-gradient(125deg, rgba(125,249,255,0.5) 0%, rgba(191,95,255,0.5) 25%, rgba(0,206,209,0.5) 50%, rgba(192,192,192,0.45) 75%, rgba(125,249,255,0.5) 100%)',
           backgroundSize: '200% 200%',
-          animation: 'achPrismaticShift 6s ease-in-out infinite',
+          animation: 'achPrismaticShift 4s ease-in-out infinite',
         }}
       />
-      {/* Prismatic light explosion sweep — brighter */}
+      {/* Inner prismatic glow — strong */}
       <div
-        className="absolute -inset-y-4 w-36"
+        className="absolute inset-0 rounded-2xl"
         style={{
-          background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.1) 25%, rgba(125,249,255,0.6) 40%, rgba(255,255,255,0.75) 50%, rgba(191,95,255,0.6) 60%, rgba(255,255,255,0.1) 75%, transparent 100%)',
+          boxShadow: 'inset 0 0 60px rgba(125,249,255,0.5), inset 0 0 100px rgba(191,95,255,0.25), 0 0 30px rgba(125,249,255,0.35)',
+        }}
+      />
+      {/* Prismatic light explosion sweep — very bright */}
+      <div
+        className="absolute -inset-y-4 w-40"
+        style={{
+          background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.2) 20%, rgba(125,249,255,0.85) 35%, rgba(255,255,255,0.95) 50%, rgba(191,95,255,0.85) 65%, rgba(255,255,255,0.2) 80%, transparent 100%)',
           animation: 'achDiamondHolo 4.5s ease-in-out infinite',
         }}
       />
-      {/* Secondary prismatic colour-shift — brighter */}
+      {/* Secondary prismatic colour-shift sweep */}
       <div
-        className="absolute -inset-y-4 w-20"
+        className="absolute -inset-y-4 w-24"
         style={{
-          background: 'linear-gradient(90deg, transparent, rgba(0,206,209,0.35), rgba(191,95,255,0.25), transparent)',
+          background: 'linear-gradient(90deg, transparent, rgba(0,206,209,0.6), rgba(191,95,255,0.5), rgba(255,85,0,0.3), transparent)',
           animation: 'achDiamondHolo 6s ease-in-out infinite 1.5s',
+        }}
+      />
+      {/* Hue-rotating full overlay for live colour shift */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background: 'linear-gradient(45deg, rgba(125,249,255,0.15), rgba(191,95,255,0.15), rgba(0,255,136,0.1))',
+          animation: 'achHueRotate 8s linear infinite',
         }}
       />
     </div>
   );
 }
 
-/** Platinum: directional grain + linen-like surface + rose-gold thread + crown emblem */
+/** Platinum: premium brushed platinum + rose-gold thread + crown emblem + Unbreakable signature */
 export function PlatinumChrome() {
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl z-[12]">
-      {/* Directional grain, linen-like surface texture */}
+      {/* Platinum base tint */}
       <div
         className="absolute inset-0"
         style={{
-          backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 1px, rgba(229,228,226,0.02) 1px, rgba(229,228,226,0.02) 2px), repeating-linear-gradient(-45deg, transparent, transparent 1px, rgba(183,110,121,0.015) 1px, rgba(183,110,121,0.015) 2px)',
+          background: 'linear-gradient(160deg, #1A1918 0%, #0A0A0A 30%, #151413 60%, #0A0A0A 100%)',
+          opacity: 0.5,
+        }}
+      />
+      {/* Directional grain — visible linen texture */}
+      <div
+        className="absolute inset-0"
+        style={{
+          backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 1px, rgba(229,228,226,0.06) 1px, rgba(229,228,226,0.06) 2px), repeating-linear-gradient(-45deg, transparent, transparent 1px, rgba(183,110,121,0.04) 1px, rgba(183,110,121,0.04) 2px)',
           backgroundSize: '4px 4px',
         }}
       />
-      {/* Brushed platinum base with rose-gold thread — brighter */}
+      {/* Brushed platinum + rose-gold — HEAVY metallic */}
       <div
         className="absolute inset-0"
         style={{
-          background: 'linear-gradient(155deg, rgba(229,228,226,0.16) 0%, rgba(212,208,204,0.22) 25%, rgba(255,255,255,0.12) 50%, rgba(183,110,121,0.16) 75%, rgba(229,228,226,0.16) 100%)',
+          background: 'linear-gradient(155deg, rgba(229,228,226,0.45) 0%, rgba(212,208,204,0.5) 25%, rgba(255,255,255,0.35) 50%, rgba(183,110,121,0.45) 75%, rgba(229,228,226,0.45) 100%)',
         }}
       />
-      {/* Liquid platinum pools with rose-gold accent — brighter */}
+      {/* Inner platinum glow — strong */}
+      <div
+        className="absolute inset-0 rounded-2xl"
+        style={{
+          boxShadow: 'inset 0 0 60px rgba(229,228,226,0.5), inset 0 0 100px rgba(183,110,121,0.25), 0 0 30px rgba(229,228,226,0.3)',
+        }}
+      />
+      {/* Liquid platinum pools with rose-gold accent — pulsing */}
       <div
         className="absolute inset-0"
         style={{
-          background: 'radial-gradient(ellipse at 30% 40%, rgba(229,228,226,0.22) 0%, transparent 50%), radial-gradient(ellipse at 70% 60%, rgba(183,110,121,0.18) 0%, transparent 50%)',
+          background: 'radial-gradient(ellipse at 30% 40%, rgba(229,228,226,0.45) 0%, transparent 45%), radial-gradient(ellipse at 70% 60%, rgba(183,110,121,0.4) 0%, transparent 45%), radial-gradient(ellipse at 50% 20%, rgba(255,255,255,0.2) 0%, transparent 35%)',
           animation: 'achPulse 4s ease-in-out infinite',
         }}
       />
-      {/* Chrome sweep — brighter */}
+      {/* Chrome sweep — VERY bright */}
       <div
-        className="absolute -inset-y-4 w-40"
+        className="absolute -inset-y-4 w-44"
         style={{
-          background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.15) 20%, rgba(229,228,226,0.65) 42%, rgba(255,255,255,0.85) 50%, rgba(229,228,226,0.65) 58%, rgba(255,255,255,0.15) 80%, transparent 100%)',
+          background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.2) 15%, rgba(229,228,226,0.8) 38%, rgba(255,255,255,0.95) 50%, rgba(229,228,226,0.8) 62%, rgba(255,255,255,0.2) 85%, transparent 100%)',
           animation: 'achPlatChrome 5s ease-in-out infinite',
         }}
       />
-      {/* Rose-gold accent wave — brighter */}
+      {/* Rose-gold accent wave — heavy */}
       <div
-        className="absolute -inset-y-4 w-24"
+        className="absolute -inset-y-4 w-28"
         style={{
-          background: 'linear-gradient(90deg, transparent, rgba(183,110,121,0.4), transparent)',
+          background: 'linear-gradient(90deg, transparent, rgba(183,110,121,0.55), rgba(255,85,0,0.15), transparent)',
           animation: 'achPlatChrome 7s ease-in-out infinite 2s',
         }}
       />
@@ -382,11 +468,11 @@ export function PlatinumChrome() {
 /** Dumbbell sparkle watermark — Unbreakable "like" logo in each tier's metal/stone finish */
 export function DumbbellSparkle({ tier }: { tier: string }) {
   const colors: Record<string, { fill: string; stroke: string; sparkle: string; opacity: number }> = {
-    bronze:   { fill: 'rgba(205,127,50,0.35)',  stroke: 'rgba(205,127,50,0.7)',   sparkle: 'rgba(210,160,80,0.9)',   opacity: 0.18 },
-    silver:   { fill: 'rgba(192,192,192,0.35)',  stroke: 'rgba(200,200,210,0.7)',  sparkle: 'rgba(230,230,240,0.9)', opacity: 0.18 },
-    gold:     { fill: 'rgba(255,215,0,0.35)',    stroke: 'rgba(255,215,0,0.7)',    sparkle: 'rgba(255,235,100,1.0)', opacity: 0.22 },
-    diamond:  { fill: 'rgba(139,92,246,0.3)',    stroke: 'rgba(139,92,246,0.6)',   sparkle: 'rgba(200,180,255,1.0)', opacity: 0.22 },
-    platinum: { fill: 'rgba(229,228,226,0.35)',  stroke: 'rgba(229,228,226,0.7)',  sparkle: 'rgba(255,255,255,0.9)', opacity: 0.20 },
+    bronze:   { fill: 'rgba(205,127,50,0.35)',  stroke: 'rgba(205,127,50,0.7)',   sparkle: 'rgba(210,160,80,0.9)',   opacity: 0.22 },
+    silver:   { fill: 'rgba(192,192,192,0.35)',  stroke: 'rgba(200,200,210,0.7)',  sparkle: 'rgba(230,230,240,0.9)', opacity: 0.22 },
+    gold:     { fill: 'rgba(255,215,0,0.4)',     stroke: 'rgba(255,215,0,0.8)',    sparkle: 'rgba(255,235,100,1.0)', opacity: 0.28 },
+    diamond:  { fill: 'rgba(139,92,246,0.35)',   stroke: 'rgba(139,92,246,0.7)',   sparkle: 'rgba(200,180,255,1.0)', opacity: 0.28 },
+    platinum: { fill: 'rgba(229,228,226,0.4)',   stroke: 'rgba(229,228,226,0.8)',  sparkle: 'rgba(255,255,255,0.9)', opacity: 0.26 },
   };
   const c = colors[tier] || colors.bronze;
   return (
@@ -1215,11 +1301,11 @@ export function AchievementCardReveal({
 
   /* ── Reflective material backgrounds per rarity ── */
   const REVEAL_MATERIAL_BG: Record<string, string> = {
-    bronze: `radial-gradient(ellipse at 30% 20%, rgba(205,127,50,0.15) 0%, transparent 50%), radial-gradient(ellipse at 70% 80%, rgba(139,69,19,0.12) 0%, transparent 50%), linear-gradient(165deg, #1A1A1A 0%, #151210 30%, #1A1610 60%, #1A1A1A 100%)`,
-    silver: `radial-gradient(ellipse at 25% 15%, rgba(232,232,232,0.12) 0%, transparent 45%), radial-gradient(ellipse at 75% 85%, rgba(192,192,192,0.08) 0%, transparent 45%), linear-gradient(155deg, #141414 0%, #181818 25%, #141416 50%, #111111 100%)`,
-    gold: `radial-gradient(ellipse at 20% 10%, rgba(255,215,0,0.18) 0%, transparent 40%), radial-gradient(ellipse at 80% 90%, rgba(184,134,11,0.12) 0%, transparent 45%), radial-gradient(circle at 50% 50%, rgba(255,215,0,0.04) 0%, transparent 70%), linear-gradient(160deg, #0C0A04 0%, #0A0800 30%, #0C0908 60%, #080808 100%)`,
-    diamond: `radial-gradient(ellipse at 20% 20%, rgba(125,249,255,0.12) 0%, transparent 40%), radial-gradient(ellipse at 80% 80%, rgba(191,95,255,0.10) 0%, transparent 40%), radial-gradient(ellipse at 50% 50%, rgba(0,206,209,0.06) 0%, transparent 60%), linear-gradient(150deg, #020208 0%, #04020A 30%, #02060A 60%, #000000 100%)`,
-    platinum: `radial-gradient(ellipse at 25% 15%, rgba(229,228,226,0.14) 0%, transparent 40%), radial-gradient(ellipse at 75% 85%, rgba(183,110,121,0.10) 0%, transparent 40%), radial-gradient(circle at 50% 40%, rgba(229,228,226,0.05) 0%, transparent 55%), linear-gradient(160deg, #0E0E0D 0%, #0C0A0B 30%, #0A0A0A 60%, #0A0A0A 100%)`,
+    bronze: `radial-gradient(ellipse at 30% 20%, rgba(205,127,50,0.35) 0%, transparent 50%), radial-gradient(ellipse at 70% 80%, rgba(139,69,19,0.3) 0%, transparent 50%), linear-gradient(165deg, #2A2015 0%, #1A1510 30%, #251C10 60%, #1A1A1A 100%)`,
+    silver: `radial-gradient(ellipse at 25% 15%, rgba(232,232,232,0.3) 0%, transparent 45%), radial-gradient(ellipse at 75% 85%, rgba(192,192,192,0.2) 0%, transparent 45%), linear-gradient(155deg, #1A1A1A 0%, #1E1E1E 25%, #181818 50%, #141414 100%)`,
+    gold: `radial-gradient(ellipse at 20% 10%, rgba(255,215,0,0.4) 0%, transparent 40%), radial-gradient(ellipse at 80% 90%, rgba(184,134,11,0.3) 0%, transparent 45%), radial-gradient(circle at 50% 50%, rgba(255,215,0,0.1) 0%, transparent 70%), linear-gradient(160deg, #151004 0%, #100C00 30%, #120E08 60%, #080808 100%)`,
+    diamond: `radial-gradient(ellipse at 20% 20%, rgba(125,249,255,0.3) 0%, transparent 40%), radial-gradient(ellipse at 80% 80%, rgba(191,95,255,0.25) 0%, transparent 40%), radial-gradient(ellipse at 50% 50%, rgba(0,206,209,0.15) 0%, transparent 60%), linear-gradient(150deg, #040410 0%, #080414 30%, #040A10 60%, #000000 100%)`,
+    platinum: `radial-gradient(ellipse at 25% 15%, rgba(229,228,226,0.3) 0%, transparent 40%), radial-gradient(ellipse at 75% 85%, rgba(183,110,121,0.25) 0%, transparent 40%), radial-gradient(circle at 50% 40%, rgba(229,228,226,0.12) 0%, transparent 55%), linear-gradient(160deg, #141413 0%, #100E0F 30%, #0A0A0A 60%, #0A0A0A 100%)`,
   };
 
   const cardBg = isProgramme
@@ -1270,7 +1356,7 @@ export function AchievementCardReveal({
               perspective: 1200,
               transformStyle: 'preserve-3d' as any,
               border: revealed
-                ? `2px solid ${config.borderHex}`
+                ? `3px solid ${config.borderHex}`
                 : '2px solid rgba(255,107,0,0.25)',
             }}
             animate={
@@ -1855,35 +1941,35 @@ export function AchievementCardStatic({
   // Use bespoke base colour per rarity tier
   const rarityBase = config.baseBg || '#0A0A0A';
 
-  /* ── Reflective material backgrounds per rarity ── */
+  /* ── Reflective material backgrounds per rarity — HEAVY metallic tints ── */
   const MATERIAL_BG: Record<string, string> = {
     bronze: `
-      radial-gradient(ellipse at 30% 20%, rgba(205,127,50,0.15) 0%, transparent 50%),
-      radial-gradient(ellipse at 70% 80%, rgba(139,69,19,0.12) 0%, transparent 50%),
-      linear-gradient(165deg, #1A1A1A 0%, #151210 30%, #1A1610 60%, #1A1A1A 100%)
+      radial-gradient(ellipse at 30% 20%, rgba(205,127,50,0.35) 0%, transparent 50%),
+      radial-gradient(ellipse at 70% 80%, rgba(139,69,19,0.3) 0%, transparent 50%),
+      linear-gradient(165deg, #2A2015 0%, #1A1510 30%, #251C10 60%, #1A1A1A 100%)
     `,
     silver: `
-      radial-gradient(ellipse at 25% 15%, rgba(232,232,232,0.12) 0%, transparent 45%),
-      radial-gradient(ellipse at 75% 85%, rgba(192,192,192,0.08) 0%, transparent 45%),
-      linear-gradient(155deg, #141414 0%, #181818 25%, #141416 50%, #111111 100%)
+      radial-gradient(ellipse at 25% 15%, rgba(232,232,232,0.3) 0%, transparent 45%),
+      radial-gradient(ellipse at 75% 85%, rgba(192,192,192,0.2) 0%, transparent 45%),
+      linear-gradient(155deg, #1A1A1A 0%, #1E1E1E 25%, #181818 50%, #141414 100%)
     `,
     gold: `
-      radial-gradient(ellipse at 20% 10%, rgba(255,215,0,0.18) 0%, transparent 40%),
-      radial-gradient(ellipse at 80% 90%, rgba(184,134,11,0.12) 0%, transparent 45%),
-      radial-gradient(circle at 50% 50%, rgba(255,215,0,0.04) 0%, transparent 70%),
-      linear-gradient(160deg, #0C0A04 0%, #0A0800 30%, #0C0908 60%, #080808 100%)
+      radial-gradient(ellipse at 20% 10%, rgba(255,215,0,0.4) 0%, transparent 40%),
+      radial-gradient(ellipse at 80% 90%, rgba(184,134,11,0.3) 0%, transparent 45%),
+      radial-gradient(circle at 50% 50%, rgba(255,215,0,0.1) 0%, transparent 70%),
+      linear-gradient(160deg, #151004 0%, #100C00 30%, #120E08 60%, #080808 100%)
     `,
     diamond: `
-      radial-gradient(ellipse at 20% 20%, rgba(125,249,255,0.12) 0%, transparent 40%),
-      radial-gradient(ellipse at 80% 80%, rgba(191,95,255,0.10) 0%, transparent 40%),
-      radial-gradient(ellipse at 50% 50%, rgba(0,206,209,0.06) 0%, transparent 60%),
-      linear-gradient(150deg, #020208 0%, #04020A 30%, #02060A 60%, #000000 100%)
+      radial-gradient(ellipse at 20% 20%, rgba(125,249,255,0.3) 0%, transparent 40%),
+      radial-gradient(ellipse at 80% 80%, rgba(191,95,255,0.25) 0%, transparent 40%),
+      radial-gradient(ellipse at 50% 50%, rgba(0,206,209,0.15) 0%, transparent 60%),
+      linear-gradient(150deg, #040410 0%, #080414 30%, #040A10 60%, #000000 100%)
     `,
     platinum: `
-      radial-gradient(ellipse at 25% 15%, rgba(229,228,226,0.14) 0%, transparent 40%),
-      radial-gradient(ellipse at 75% 85%, rgba(183,110,121,0.10) 0%, transparent 40%),
-      radial-gradient(circle at 50% 40%, rgba(229,228,226,0.05) 0%, transparent 55%),
-      linear-gradient(160deg, #0E0E0D 0%, #0C0A0B 30%, #0A0A0A 60%, #0A0A0A 100%)
+      radial-gradient(ellipse at 25% 15%, rgba(229,228,226,0.3) 0%, transparent 40%),
+      radial-gradient(ellipse at 75% 85%, rgba(183,110,121,0.25) 0%, transparent 40%),
+      radial-gradient(circle at 50% 40%, rgba(229,228,226,0.12) 0%, transparent 55%),
+      linear-gradient(160deg, #141413 0%, #100E0F 30%, #0A0A0A 60%, #0A0A0A 100%)
     `,
   };
 
@@ -1908,7 +1994,7 @@ export function AchievementCardStatic({
     diamond: 'linear-gradient(135deg, #7DF9FF 0%, #BF5FFF 20%, #00CED1 40%, #C0C0C0 60%, #BF5FFF 80%, #7DF9FF 100%)',
     platinum: 'linear-gradient(135deg, #E5E4E2 0%, #B76E79 25%, #E5E4E2 50%, #D4D0CC 75%, #B76E79 100%)',
   };
-  const borderWidth = size === 'sm' ? 2 : size === 'lg' ? 3 : 2.5;
+  const borderWidth = size === 'sm' ? 2.5 : size === 'lg' ? 4 : 3;
 
   return (
     <>
@@ -2031,9 +2117,22 @@ export function AchievementCardStatic({
 
         {/* ═══ FIFA CARD LAYOUT — Static version ═══ */}
 
-        {/* Overall Rating — top-left */}
+        {/* Unbreakable shield branding — all PB cards */}
         {!isProgramme && (
-          <div className="absolute top-2 left-2 z-10 flex flex-col items-center">
+          <div className={cn('absolute z-[14] flex items-center gap-1', size === 'sm' ? 'top-1.5 left-1.5' : 'top-2 left-2')}>
+            <img src="/unbreakable-shield.png" alt=""
+              className={cn(size === 'sm' ? 'w-3 h-3' : 'w-4 h-4', 'object-contain')}
+              style={{ filter: `drop-shadow(0 0 3px ${config.accentHex}40)`, opacity: 0.55 }} />
+            <div>
+              <p className={cn('font-display tracking-[0.15em] text-white/40', size === 'sm' ? 'text-[3px]' : 'text-[5px]')}>UNBREAKABLE</p>
+              <p className={cn('font-mono tracking-[0.1em] text-white/25', size === 'sm' ? 'text-[2px]' : 'text-[3.5px]')}>LIVE WITHOUT LIMITS™</p>
+            </div>
+          </div>
+        )}
+
+        {/* Overall Rating — below branding */}
+        {!isProgramme && (
+          <div className={cn('absolute left-2 z-10 flex flex-col items-center', size === 'sm' ? 'top-[18px]' : 'top-[26px]')}>
             <span
               className={cn('font-display leading-none tracking-tight', size === 'sm' ? 'text-xl' : 'text-2xl')}
               style={{ color: config.accentHex, fontWeight: 900, textShadow: config.textGlow }}
@@ -2049,7 +2148,7 @@ export function AchievementCardStatic({
 
         {/* Category badge — below rating */}
         {!isProgramme && (
-          <div className={cn('absolute left-2 z-10', size === 'sm' ? 'top-[32px]' : 'top-[40px]')}>
+          <div className={cn('absolute left-2 z-10', size === 'sm' ? 'top-[42px]' : 'top-[56px]')}>
             <div className={cn('rounded', size === 'sm' ? 'px-1 py-0.5 text-[5px]' : 'px-1.5 py-0.5 text-[7px]')}
               style={{
                 background: `${config.accentHex}15`,

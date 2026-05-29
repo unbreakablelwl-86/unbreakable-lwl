@@ -31,6 +31,7 @@ export function FloatingMiniPlayer() {
   const [showVolume, setShowVolume] = useState(false);
   const [showShareSheet, setShowShareSheet] = useState(false);
   const [dismissed, setDismissed] = useState(false);
+  const dismissedPathRef = useRef<string | null>(null);
   // Lyrics removed — just songs & album covers
 
   // Drag state
@@ -38,9 +39,20 @@ export function FloatingMiniPlayer() {
   const dragControls = useDragControls();
   const [isDragging, setIsDragging] = useState(false);
 
+  // Close-per-screen: reset dismissed when navigating to a different page
+  useEffect(() => {
+    if (dismissed && dismissedPathRef.current && window.location.pathname !== dismissedPathRef.current) {
+      setDismissed(false);
+      dismissedPathRef.current = null;
+    }
+  });
+
   // Reset dismissed when a new track starts
   useEffect(() => {
-    if (state.currentTrack) setDismissed(false);
+    if (state.currentTrack) {
+      setDismissed(false);
+      dismissedPathRef.current = null;
+    }
   }, [state.currentTrack?.id]);
 
   // Auto-dismiss when exiting a game
@@ -70,6 +82,7 @@ export function FloatingMiniPlayer() {
     if (locked) return; // Can't dismiss during pack opening
     stop();
     setDismissed(true);
+    dismissedPathRef.current = window.location.pathname;
   };
 
   const handleShare = async () => {
@@ -167,8 +180,9 @@ export function FloatingMiniPlayer() {
             whileDrag={{ scale: 1.05 }}
             style={{
               position: 'fixed',
-              bottom: 80,
-              right: 12,
+              ...(window.location.pathname.includes('/mindset/games')
+                ? { bottom: 6, left: 12, right: 'auto' }
+                : { bottom: 80, right: 12 }),
               zIndex: 9991,
               touchAction: 'none',
             }}

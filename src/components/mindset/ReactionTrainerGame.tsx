@@ -236,6 +236,7 @@ const ReactionTrainerGame = () => {
         setDeathShake(true);
         setTimeout(() => setDeathShake(false), 500);
         playGameOver();
+        stopMusic();
         // Save score
         const finalScore = scoreRef.current;
         if (finalScore > 0) {

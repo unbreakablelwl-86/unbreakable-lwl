@@ -562,3 +562,8 @@
   transform: translateZ(0);
   backface-visibility: hidden;
 }
+
+@keyframes marquee-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-33.33%); }
+}

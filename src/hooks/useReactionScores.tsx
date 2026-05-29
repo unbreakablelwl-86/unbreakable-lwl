@@ -74,15 +74,20 @@ export const useReactionScores = () => {
   }, [user]);
 
   const saveScore = useCallback(
-    async (score: number, bestReactionMs: number) => {
+    async (score: number, metaOrReaction?: number | { best_combo?: number; total_hits?: number; total_misses?: number; best_reaction_ms?: number; avg_reaction_ms?: number; track_id?: string; track_name?: string }) => {
       if (!user) return;
 
       try {
-        const { error } = await supabase.from("reaction_scores" as any).insert({
+        const row: Record<string, any> = {
           user_id: user.id,
           score,
-          best_reaction_ms: bestReactionMs,
-        } as any);
+          best_reaction_ms: typeof metaOrReaction === 'number' ? metaOrReaction : (metaOrReaction?.best_reaction_ms ?? 0),
+        };
+        // Store track metadata as JSON if available
+        if (typeof metaOrReaction === 'object') {
+          row.metadata = metaOrReaction;
+        }
+        const { error } = await supabase.from("reaction_scores" as any).insert(row as any);
 
         if (error) throw error;
 

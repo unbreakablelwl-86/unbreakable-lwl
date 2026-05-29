@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { RotateCcw, Play, Pause, Trophy, Volume2, VolumeX } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { GameLeaderboard } from "./GameLeaderboard";
+import GameCountdown from "./GameCountdown";
 import { GameAudioControls } from "./GameAudioControls";
 import { useAuth } from "@/hooks/useAuth";
 import { useAlleywayScores } from "@/hooks/useAlleywayScores";
@@ -123,7 +124,7 @@ const POWERUP_DURATION = 8000;
 const THEME_SHIFT_INTERVAL = 40;
 
 type PowerUpType = "multiball" | "wide" | "fireball";
-type GameView = "ready" | "playing" | "paused" | "gameover" | "leaderboard";
+type GameView = "ready" | "countdown" | "playing" | "paused" | "gameover" | "leaderboard";
 
 interface Brick {
   x: number; y: number; width: number; height: number;
@@ -203,6 +204,26 @@ const AlleywayGame = () => {
   const { playHit, playLevelUp, playGameOver, startMusic, stopMusic, toggleMute, isMuted, sfxMuted, musicMuted, toggleSfx, toggleMusic } = useGameAudio("alleyway");
 
   const [scale, setScale] = useState(1);
+
+  // Elapsed timer
+  const [elapsedSecs, setElapsedSecs] = useState(0);
+  const timerStartRef = useRef<number>(0);
+  const timerIntervalRef = useRef<ReturnType<typeof setInterval>>();
+
+  // Live elapsed timer
+  useEffect(() => {
+    if (gameState === "playing") {
+      timerStartRef.current = Date.now();
+      setElapsedSecs(0);
+      timerIntervalRef.current = setInterval(() => {
+        setElapsedSecs(Math.floor((Date.now() - timerStartRef.current) / 1000));
+      }, 1000);
+    } else {
+      clearInterval(timerIntervalRef.current);
+    }
+    return () => clearInterval(timerIntervalRef.current);
+  }, [gameState]);
+
   useEffect(() => {
     const updateScale = () => {
       const maxW = Math.min(window.innerWidth - 32, 500);
@@ -810,11 +831,15 @@ const AlleywayGame = () => {
     lastRegenRef.current = performance.now();
     lastDescentRef.current = performance.now();
 
+    draw();
+    setView("countdown");
+  }, [generateBricks, draw]);
+
+  const onCountdownComplete = useCallback(() => {
     setView("playing");
     startMusic();
-    draw();
     animFrameRef.current = requestAnimationFrame(gameLoop);
-  }, [generateBricks, draw, gameLoop, startMusic]);
+  }, [gameLoop, startMusic]);
 
   // ─── Pause / Resume ────────────────────────────────────────
   const togglePause = useCallback(() => {
@@ -1038,6 +1063,10 @@ const AlleywayGame = () => {
           <p className="font-display text-[10px] tracking-widest text-muted-foreground">SCORE</p>
           <p className="font-display text-3xl tracking-wide text-primary">{score}</p>
         </div>
+        <div className="text-center">
+          <p className="font-display text-[10px] tracking-widest text-muted-foreground">TIME</p>
+          <p className="font-display text-lg tracking-wide text-foreground">{Math.floor(elapsedSecs / 60)}:{String(elapsedSecs % 60).padStart(2, "0")}</p>
+        </div>
 
         <div className="flex items-center gap-2">
           <AnimatePresence>
@@ -1154,6 +1183,13 @@ const AlleywayGame = () => {
       <p className="text-[10px] text-muted-foreground/60 text-center font-display tracking-[0.2em]">
         SLIDE TO MOVE · CATCH DIAMONDS · BREAK EVERY WALL
       </p>
+
+      {/* 3-2-1 Countdown */}
+      {view === "countdown" && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
+          <GameCountdown onComplete={onCountdownComplete} gameName="ALLEYWAY" />
+        </div>
+      )}
     </div>
   );
 };

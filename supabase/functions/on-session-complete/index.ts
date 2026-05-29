@@ -294,6 +294,37 @@ Keep it conversational — like a real coach talking after a session. Use their 
         `Session recorded — ${completedSets} sets across ${exercises.length} exercises${totalWeight > 0 ? `, ${totalWeight.toFixed(0)}kg total volume` : ""}. Nice work!\n\nHow did that feel? Drop me a message if you want to chat about your programme.`;
     }
 
+    // ─── 7b. Auto-save to workout_feedback table (so AIFeedbackView can find it) ───
+    try {
+      // Parse performance rating from AI text (heuristic)
+      const perfRating = avgRpe >= 9 ? 'excellent'
+        : avgRpe >= 7 ? 'good'
+        : avgRpe >= 5 ? 'average'
+        : avgRpe > 0 ? 'below_average'
+        : (completedSets / (completedSets + skippedSets) > 0.9 ? 'good' : 'average');
+
+      const fatigueScore = Math.min(10, Math.max(1, Math.round(avgRpe > 0 ? avgRpe : 5)));
+
+      const suggestions: string[] = [];
+      if (painFlags.length > 0) suggestions.push(`Monitor pain on ${painFlags.map((l: any) => l.exercise_name).join(', ')} — consider lighter weight or alternative movements.`);
+      if (missedTargets.length > 0) suggestions.push(`Missed rep targets on ${missedTargets.length} set(s) — consider reducing weight 5-10% next session.`);
+      if (exceededTargets.length > 0) suggestions.push(`Exceeded rep targets on ${exceededTargets.length} set(s) — ready to increase weight.`);
+      if (suggestions.length === 0) suggestions.push('Solid session — stay consistent and keep progressive overloading.');
+
+      await supabase.from('workout_feedback').insert({
+        user_id: userId,
+        session_id: sessionId,
+        feedback_type: 'session',
+        content: aiCoachFeedback,
+        performance_rating: perfRating,
+        fatigue_score: fatigueScore,
+        suggestions,
+      });
+      console.log('Auto-saved workout_feedback for session', sessionId);
+    } catch (fbErr) {
+      console.error('workout_feedback insert failed (non-blocking):', fbErr);
+    }
+
     // ─── 8. Create AI coach conversation with the feedback ───
     try {
       const { data: convo } = await supabase
@@ -347,7 +378,67 @@ Keep it conversational — like a real coach talking after a session. Use their 
       },
     });
 
-    // ─── 10. Schedule 30-min post-session check-in ───
+    // ─── 10. Auto-award PB Cards for EVERY exercise logged ───
+    const awardedCards: Array<{ exercise: string; rarity: string; cardId: string }> = [];
+    try {
+      // Calculate best e1RM per exercise from this session
+      const bestByExercise = new Map<string, { e1rm: number; weight: number; reps: number }>();
+      for (const log of logs) {
+        if (!log.completed || !log.weight_kg || !log.actual_reps) continue;
+        const w = Number(log.weight_kg);
+        const r = Number(log.actual_reps);
+        if (w <= 0 || r <= 0) continue;
+        const e1rm = r === 1 ? w : Math.round(w * (1 + r / 30) * 10) / 10;
+        const existing = bestByExercise.get(log.exercise_name);
+        if (!existing || e1rm > existing.e1rm) {
+          bestByExercise.set(log.exercise_name, { e1rm, weight: w, reps: r });
+        }
+      }
+
+      for (const [exerciseName, { e1rm }] of bestByExercise) {
+        try {
+          const { data: cardId } = await supabase.rpc("award_pb_card", {
+            p_user_id: userId,
+            p_activity_category: "lift",
+            p_exercise_name: exerciseName,
+            p_value: e1rm,
+            p_unit: "kg",
+            p_rank: 1,
+            p_distance_type: null,
+            p_source_run_id: null,
+            p_source_session_id: sessionId,
+          });
+
+          if (cardId) {
+            const { data: cardData } = await supabase
+              .from("achievement_cards")
+              .select("rarity")
+              .eq("id", cardId)
+              .single();
+            awardedCards.push({
+              exercise: exerciseName,
+              rarity: cardData?.rarity || "bronze",
+              cardId,
+            });
+
+            // Fire-and-forget AI bio generation
+            supabase.functions.invoke("generate-pb-bio", {
+              body: { card_id: cardId, exercise_name: exerciseName, pb_value: e1rm, pb_unit: "kg" },
+            }).catch(() => {});
+          }
+        } catch (cardErr) {
+          console.error(`PB card award failed for ${exerciseName}:`, cardErr);
+        }
+      }
+
+      if (awardedCards.length > 0) {
+        console.log(`Awarded ${awardedCards.length} PB cards:`, awardedCards.map(c => `${c.exercise} (${c.rarity})`).join(", "));
+      }
+    } catch (pbErr) {
+      console.error("PB card auto-award failed (non-blocking):", pbErr);
+    }
+
+    // ─── 11. Schedule 30-min post-session check-in ───
     try {
       const checkinDue = new Date(Date.now() + 30 * 60 * 1000).toISOString();
       await supabase.from("pending_session_checkins").insert({
@@ -368,6 +459,8 @@ Keep it conversational — like a real coach talking after a session. Use their 
         sets: completedSets,
         habit_updated: true,
         feedback_generated: !!aiCoachFeedback,
+        pb_cards_awarded: awardedCards.length,
+        pb_cards: awardedCards,
       }),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );

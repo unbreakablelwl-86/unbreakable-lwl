@@ -53,6 +53,17 @@ export function useWorkoutFeedback(sessionId?: string) {
     }) => {
       if (!user) throw new Error('Must be logged in');
       
+      // Refresh and get the real user session token (NOT the anon key)
+      // refreshSession ensures token is valid even after long workouts
+      const { data: refreshedData } = await supabase.auth.refreshSession();
+      let accessToken = refreshedData?.session?.access_token;
+      if (!accessToken) {
+        // Fallback to getSession if refresh fails
+        const { data: sessionData } = await supabase.auth.getSession();
+        accessToken = sessionData?.session?.access_token ?? undefined;
+        if (!accessToken) throw new Error('Session expired — please sign in again');
+      }
+      
       // Call edge function to generate AI feedback
       const response = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-workout-feedback`,
@@ -60,7 +71,7 @@ export function useWorkoutFeedback(sessionId?: string) {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+            'Authorization': `Bearer ${accessToken}`,
           },
           body: JSON.stringify({
             sessionId,

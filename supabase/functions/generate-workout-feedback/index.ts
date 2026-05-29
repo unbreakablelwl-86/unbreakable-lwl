@@ -28,19 +28,17 @@ serve(async (req) => {
       { global: { headers: { Authorization: authHeader } } }
     );
 
-    const token = authHeader.replace('Bearer ', '');
-    const { data: claimsData, error: authError } = await supabaseClient.auth.getClaims(token);
+    const { data: { user: authUser }, error: authError } = await supabaseClient.auth.getUser();
     
-    if (authError || !claimsData?.claims) {
+    if (authError || !authUser) {
       return new Response(
         JSON.stringify({ error: 'Unauthorized - Invalid session' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-
     // --- Token guard: deduct 1 AI token ---
-    const tokenUserId = (claimsData.claims as any).sub;
+    const tokenUserId = authUser.id;
     const svcClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''

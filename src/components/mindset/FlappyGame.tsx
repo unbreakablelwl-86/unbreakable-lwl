@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { RotateCcw, Volume2, VolumeX, Trophy, Flame } from "lucide-react";
 import { useGameAudio } from "@/hooks/useGameAudio";
+import GameCountdown from "./GameCountdown";
 import { useAuth } from "@/hooks/useAuth";
 import { useFlappyScores } from "@/hooks/useFlappyScores";
 import { GameLeaderboard } from "./GameLeaderboard";
@@ -16,17 +17,23 @@ const CANVAS_W = 360;
 const CANVAS_H = 560;
 const BIRD_SIZE = 22;
 const PIPE_W = 52;
-const GAP = 150;
-const GRAVITY = 0.45;
-const FLAP_FORCE = -7;
-const BASE_SPEED = 2.5;
-const SPEED_INC = 0.08;
-const PIPE_SPACING = 200;
+// Progressive difficulty — starts easy, ramps up
+const GAP_START = 220;      // wide gap at start
+const GAP_MIN = 130;        // tightest gap at high score
+const GAP_SHRINK_RATE = 3;  // gap shrinks by this per pipe cleared
+const GRAVITY = 0.28;
+const FLAP_FORCE = -5.8;
+const BASE_SPEED = 1.4;     // gentle start speed
+const SPEED_INC = 0.06;     // ramps up per 5 pipes
+const MAX_SPEED = 4.5;
+const PIPE_SPACING_START = 280;  // wide spacing at start
+const PIPE_SPACING_MIN = 180;    // tightest spacing at high difficulty
+const PIPE_SPACING_SHRINK = 4;   // spacing shrinks per pipe cleared
 const GROUND_H = 60;
 
-interface Pipe { x: number; topH: number; scored: boolean; }
+interface Pipe { x: number; topH: number; scored: boolean; gap: number; }
 
-type GameState = "idle" | "playing" | "gameover" | "leaderboard";
+type GameState = "idle" | "countdown" | "playing" | "gameover" | "leaderboard";
 
 const FlappyGame = () => {
   const { user } = useAuth();
@@ -36,6 +43,26 @@ const FlappyGame = () => {
   const [gameState, setGameState] = useState<GameState>("idle");
   const [score, setScore] = useState(0);
   const [finalScore, setFinalScore] = useState(0);
+
+  // Elapsed timer
+  const [elapsedSecs, setElapsedSecs] = useState(0);
+  const timerStartRef = useRef<number>(0);
+  const timerIntervalRef = useRef<ReturnType<typeof setInterval>>();
+
+  // Live elapsed timer
+  useEffect(() => {
+    if (state === "playing") {
+      timerStartRef.current = Date.now();
+      setElapsedSecs(0);
+      timerIntervalRef.current = setInterval(() => {
+        setElapsedSecs(Math.floor((Date.now() - timerStartRef.current) / 1000));
+      }, 1000);
+    } else {
+      clearInterval(timerIntervalRef.current);
+    }
+    return () => clearInterval(timerIntervalRef.current);
+  }, [state]);
+
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const rafRef = useRef<number>(0);
@@ -120,7 +147,7 @@ const FlappyGame = () => {
     ctx.strokeRect(pipe.x, 0, PIPE_W, pipe.topH);
 
     // Bottom pipe
-    const botY = pipe.topH + GAP;
+    const botY = pipe.topH + pipe.gap;
     const botGrad = ctx.createLinearGradient(pipe.x, botY, pipe.x + PIPE_W, botY);
     botGrad.addColorStop(0, "#1a1a1a");
     botGrad.addColorStop(0.3, "#2a2a2a");
@@ -193,6 +220,14 @@ const FlappyGame = () => {
     ctx.shadowBlur = 20;
     ctx.fillText(String(score), CANVAS_W / 2, 70);
     ctx.shadowBlur = 0;
+    // Elapsed timer top-right
+    const mins = Math.floor(elapsedSecs / 60);
+    const secs = elapsedSecs % 60;
+    ctx.font = "bold 14px monospace";
+    ctx.textAlign = "right";
+    ctx.fillStyle = "rgba(255,255,255,0.5)";
+    ctx.fillText(`${mins}:${String(secs).padStart(2, "0")}`, CANVAS_W - 12, 24);
+    ctx.textAlign = "center";
   };
 
   const drawCRT = (ctx: CanvasRenderingContext2D) => {
@@ -209,11 +244,12 @@ const FlappyGame = () => {
     playHit();
   }, [playHit]);
 
-  const spawnPipe = (): Pipe => {
+  const spawnPipe = (gap?: number): Pipe => {
+    const g = gap ?? GAP_START;
     const minTop = 60;
-    const maxTop = CANVAS_H - GROUND_H - GAP - 60;
-    const topH = minTop + Math.random() * (maxTop - minTop);
-    return { x: CANVAS_W + 20, topH, scored: false };
+    const maxTop = CANVAS_H - GROUND_H - g - 60;
+    const topH = minTop + Math.random() * Math.max(10, maxTop - minTop);
+    return { x: CANVAS_W + 20, topH, scored: false, gap: g };
   };
 
   const gameLoop = useCallback(() => {
@@ -227,12 +263,15 @@ const FlappyGame = () => {
 
     s.frame++;
 
-    // Physics
+    // Physics (terminal velocity capped for smoother feel)
     s.birdVy += GRAVITY;
+    if (s.birdVy > 5) s.birdVy = 5;
     s.birdY += s.birdVy;
 
-    // Speed increases over time
-    s.speed = BASE_SPEED + Math.floor(s.score / 5) * SPEED_INC;
+    // Progressive difficulty — speed increases, gap & spacing shrink
+    s.speed = Math.min(BASE_SPEED + Math.floor(s.score / 5) * SPEED_INC, MAX_SPEED);
+    const currentGap = Math.max(GAP_MIN, GAP_START - s.score * GAP_SHRINK_RATE);
+    const currentSpacing = Math.max(PIPE_SPACING_MIN, PIPE_SPACING_START - s.score * PIPE_SPACING_SHRINK);
 
     // Move pipes
     for (const p of s.pipes) p.x -= s.speed;
@@ -242,8 +281,8 @@ const FlappyGame = () => {
 
     // Spawn pipes
     const lastPipe = s.pipes[s.pipes.length - 1];
-    if (!lastPipe || lastPipe.x < CANVAS_W - PIPE_SPACING) {
-      s.pipes.push(spawnPipe());
+    if (!lastPipe || lastPipe.x < CANVAS_W - currentSpacing) {
+      s.pipes.push(spawnPipe(currentGap));
     }
 
     // Score
@@ -270,7 +309,7 @@ const FlappyGame = () => {
       const birdBot = s.birdY + BIRD_SIZE * 0.7;
 
       if (birdRight > p.x && birdLeft < p.x + PIPE_W) {
-        if (birdTop < p.topH || birdBot > p.topH + GAP) {
+        if (birdTop < p.topH || birdBot > p.topH + p.gap) {
           s.alive = false;
         }
       }
@@ -287,6 +326,7 @@ const FlappyGame = () => {
     if (!s.alive) {
       // Death
       playGameOver();
+      stopMusic();
       setFinalScore(s.score);
       setGameState("gameover");
       if (user && s.score > 0) {
@@ -309,8 +349,11 @@ const FlappyGame = () => {
     s.alive = true;
     s.started = true;
     setScore(0);
-    setGameState("playing");
+    setGameState("countdown");
+  }, []);
 
+  const onCountdownComplete = useCallback(() => {
+    setGameState("playing");
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
     rafRef.current = requestAnimationFrame(gameLoop);
   }, [gameLoop]);
@@ -440,7 +483,7 @@ const FlappyGame = () => {
     );
   }
 
-  // ─── PLAYING ──────────────────────────────────────────────
+  // ─── COUNTDOWN / PLAYING ───────────────────────────────────
   return (
     <div className="relative rounded-2xl border border-primary/20 bg-card overflow-hidden">
       <CRTOverlay />
@@ -451,15 +494,20 @@ const FlappyGame = () => {
             {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
           </button>
         </div>
-        <canvas
-          ref={canvasRef}
-          width={CANVAS_W}
-          height={CANVAS_H}
-          className="rounded-xl border border-primary/10 cursor-pointer max-w-full touch-none"
-          style={{ maxHeight: "70vh" }}
-          onClick={flap}
-          onTouchStart={(e) => { e.preventDefault(); flap(); }}
-        />
+        <div className="relative">
+          <canvas
+            ref={canvasRef}
+            width={CANVAS_W}
+            height={CANVAS_H}
+            className="rounded-xl border border-primary/10 cursor-pointer max-w-full touch-none"
+            style={{ maxHeight: "70vh" }}
+            onClick={flap}
+            onTouchStart={(e) => { e.preventDefault(); flap(); }}
+          />
+          {gameState === "countdown" && (
+            <GameCountdown onComplete={onCountdownComplete} gameName="RISE UP" />
+          )}
+        </div>
       </div>
     </div>
   );

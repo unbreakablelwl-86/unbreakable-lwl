@@ -386,27 +386,39 @@ export default function AppLayout() {
         <Outlet />
       </main>
 
-      {/* ━━━ Sticky Purchase Banner (free users only) ━━━ */}
-      {!hideBottomNav && isFreeUser && location.pathname !== '/ai-tokens' && location.pathname !== '/plans' && (
+      {/* ━━━ Scrolling Promo Banner (free users only) ━━━ */}
+      {!hideBottomNav && isFreeUser && (
         <Link
           to="/ai-tokens?coupon=LAUNCH50"
-          className="fixed left-0 right-0 z-[49] flex items-center justify-center gap-2 py-2.5 px-4"
+          className="fixed left-0 right-0 z-[49] overflow-hidden py-2"
           style={{
             bottom: '60px',
-            background: 'linear-gradient(90deg, rgba(255,85,0,0.15) 0%, rgba(251,191,36,0.12) 50%, rgba(103,232,249,0.1) 100%)',
-            borderTop: '1px solid rgba(255,85,0,0.25)',
+            background: 'linear-gradient(90deg, rgba(255,85,0,0.18) 0%, rgba(251,191,36,0.12) 50%, rgba(255,85,0,0.18) 100%)',
+            borderTop: '1px solid rgba(255,85,0,0.3)',
             borderBottom: '1px solid rgba(255,85,0,0.15)',
             backdropFilter: 'blur(16px)',
             WebkitBackdropFilter: 'blur(16px)',
           }}
         >
-          <Sparkles className="w-3.5 h-3.5 text-primary flex-shrink-0" />
-          <span className="text-xs font-display tracking-wider text-foreground">
-            <span className="text-primary font-bold">LAUNCH50</span> — 50% off your first month
-          </span>
-          <span className="text-[10px] font-display tracking-wider text-primary border border-primary/40 rounded-full px-2.5 py-0.5 flex-shrink-0">
-            UPGRADE
-          </span>
+          <div
+            className="flex items-center gap-8 whitespace-nowrap"
+            style={{
+              animation: 'marquee-scroll 18s linear infinite',
+              width: 'max-content',
+            }}
+          >
+            {[0, 1, 2].map(i => (
+              <span key={i} className="flex items-center gap-2 text-xs font-display tracking-wider">
+                <Sparkles className="w-3 h-3 text-primary" />
+                <span className="text-primary font-bold">LAUNCH50</span>
+                <span className="text-foreground">—</span>
+                <span className="text-foreground">50% OFF YOUR FIRST MONTH</span>
+                <span className="text-[10px] text-primary border border-primary/40 rounded-full px-2 py-0.5 ml-1">
+                  UPGRADE NOW
+                </span>
+              </span>
+            ))}
+          </div>
         </Link>
       )}
 

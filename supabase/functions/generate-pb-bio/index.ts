@@ -67,6 +67,8 @@ serve(async (req) => {
     const profile = profileResult.data;
     const displayName = profile?.display_name || "Athlete";
     const gender = profile?.gender || "male";
+    const dob = profile?.date_of_birth;
+    const age = dob ? Math.floor((Date.now() - new Date(dob).getTime()) / 31557600000) : null;
 
     // Build the prompt
     const exerciseName = card.exercise_name || card.programme_name || "Unknown";
@@ -91,6 +93,7 @@ Context:
 - Achievement: ${cardType === "programme_trophy" ? `Completed ${exerciseName} programme` : `${exerciseName} PB — ${pbValue}`}
 - Rarity: ${rarity.toUpperCase()}
 - Overall Rating: ${overallRating}/99
+- Age: ${age ? `${age} years old` : "Unknown"}
 - Rank: ${rank > 0 ? `#${rank} personal best` : "N/A"}
 - Top stat: STR ${stats.str || 0} / PWR ${stats.pwr || 0} / SPD ${stats.spd || 0}
 
