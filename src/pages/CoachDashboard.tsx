@@ -24,6 +24,7 @@ import { Switch } from '@/components/ui/switch';
 import { useCoachingAssignments } from '@/hooks/useCoachingAssignments';
 import { useAuth } from '@/hooks/useAuth';
 import { useUserRole } from '@/hooks/useUserRole';
+import { useCoachPublicProfile } from '@/hooks/useCoachPublicProfile';
 import { useNavigate, Link } from 'react-router-dom';
 import { CoachStripeConnect } from '@/components/coaching/CoachStripeConnect';
 import { CoachProgrammeThreads } from '@/components/coaching/CoachProgrammeThreads';
@@ -48,6 +49,7 @@ const CoachDashboard = ({ embedded = false }: { embedded?: boolean }) => {
   const { role } = useUserRole();
   const navigate = useNavigate();
   const { myAthletes, endedAthletes, pendingRequests, loading, updateStatus, removeAssignment } = useCoachingAssignments();
+  const { profile } = useCoachPublicProfile();
   const [selectedAthleteId, setSelectedAthleteId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<Tab>('athletes');
   const [showDeactivated, setShowDeactivated] = useState(false);

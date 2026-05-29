@@ -72,7 +72,7 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
         // Fallback: direct query
         const { data, error } = await (supabase as any)
           .from('un_tunes_user_cards')
-          .select('id, track_id, album_id, rarity, card_type, brand_card_id, edition_number, purchase_id, created_at, date_stamped, un_tunes_tracks(title,cover_url,artist), un_tunes_albums(title,cover_url), un_tunes_brand_cards(title,artwork_url,image_url)')
+          .select('id, track_id, album_id, rarity, card_type, brand_card_id, edition_number, purchase_id, created_at, un_tunes_tracks(title,cover_url,artist), un_tunes_albums(title,cover_url), un_tunes_brand_cards(title,artwork_url,image_url)')
           .eq('user_id', user.id)
           .eq('is_opened', false)
           .order('created_at', { ascending: true });

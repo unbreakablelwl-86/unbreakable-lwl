@@ -68,6 +68,8 @@ const shimmerKeyframes = `
 @keyframes utGrainShift { 0% { transform: translate(0,0); } 25% { transform: translate(-2px,1px); } 50% { transform: translate(1px,-1px); } 75% { transform: translate(-1px,2px); } 100% { transform: translate(0,0); } }
 @keyframes packPulse { 0%,100% { opacity: 0.5; transform: scale(1); } 50% { opacity: 1; transform: scale(1.05); } }
 @keyframes packSweep { 0%,100% { transform: translateX(-150%); } 50% { transform: translateX(150%); } }
+@keyframes packSweepVertical { 0% { top: -2%; } 100% { top: 102%; } }
+@keyframes packBorderPulse { 0%,100% { border-color: rgba(255,107,0,0.1); } 50% { border-color: rgba(255,107,0,0.35); } }
 `;
 
 function GoldShimmerOverlay() {
@@ -182,113 +184,77 @@ const RARITY_RANK: Record<string, number> = { platinum: 5, diamond: 4, gold: 3, 
 
 function PackBackDesign({ tier }: { tier: string }) {
   const tierColors = {
-    elite: { from: '#FFD700', to: '#B8860B', accent: '#FFF8DC', label: 'ELITE' },
-    premium: { from: '#BF5FFF', to: '#7C3AED', accent: '#E8D5FF', label: 'PREMIUM' },
-    standard: { from: '#FF5500', to: '#CC4400', accent: '#FFD4B8', label: 'STANDARD' },
+    elite: { from: '#FFD700', to: '#B8860B', label: 'ELITE' },
+    premium: { from: '#BF5FFF', to: '#7C3AED', label: 'PREMIUM' },
+    standard: { from: '#FF5500', to: '#CC4400', label: 'STANDARD' },
   };
   const c = tierColors[tier as keyof typeof tierColors] || tierColors.standard;
 
   return (
-    <div className="w-full h-full rounded-2xl overflow-hidden relative" style={{ background: 'radial-gradient(ellipse at 50% 40%, #141414 0%, #080808 60%, #050505 100%)' }}>
-      {/* ── Animated diagonal lines ── */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute inset-0" style={{
-          backgroundImage: `repeating-linear-gradient(135deg, transparent, transparent 18px, ${c.from}08 18px, ${c.from}08 19px)`,
-        }} />
-        <div className="absolute inset-0" style={{
-          backgroundImage: `repeating-linear-gradient(45deg, transparent, transparent 24px, ${c.from}05 24px, ${c.from}05 25px)`,
-        }} />
-      </div>
+    <div className="w-full h-full rounded-2xl overflow-hidden relative" style={{ background: 'linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 50%, #1a1a1a 100%)' }}>
+      {/* ── Diagonal stripe pattern (Unbreakable neon orange) ── */}
+      <div className="absolute inset-0 opacity-[0.08]" style={{
+        backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(255,107,0,0.5) 8px, rgba(255,107,0,0.5) 9px)',
+      }} />
 
-      {/* ── Ornate double border ── */}
-      <div className="absolute inset-[6px] rounded-[14px]" style={{ border: `1px solid ${c.from}25` }} />
-      <div className="absolute inset-[10px] rounded-xl" style={{ border: `1.5px solid ${c.from}35`, boxShadow: `inset 0 0 30px ${c.from}08` }} />
-      <div className="absolute inset-[14px] rounded-[10px]" style={{ border: `0.5px solid ${c.from}15` }} />
+      {/* ── Corner brackets (4 corners) ── */}
+      <svg className="absolute top-3 left-3 w-6 h-6 text-primary/60" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 4 L4 10 M4 4 L10 4" /></svg>
+      <svg className="absolute top-3 right-3 w-6 h-6 text-primary/60" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 4 L20 10 M20 4 L14 4" /></svg>
+      <svg className="absolute bottom-3 left-3 w-6 h-6 text-primary/60" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 20 L4 14 M4 20 L10 20" /></svg>
+      <svg className="absolute bottom-3 right-3 w-6 h-6 text-primary/60" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 20 L20 14 M20 20 L14 20" /></svg>
 
-      {/* ── Corner ornaments ── */}
-      {[{ top: 18, left: 18 }, { top: 18, right: 18 }, { bottom: 18, left: 18 }, { bottom: 18, right: 18 }].map((pos, i) => (
-        <div key={i} className="absolute w-6 h-6" style={{ ...pos as any }}>
-          <div className="w-full h-full" style={{
-            borderTop: i < 2 ? `2px solid ${c.from}50` : 'none',
-            borderBottom: i >= 2 ? `2px solid ${c.from}50` : 'none',
-            borderLeft: i % 2 === 0 ? `2px solid ${c.from}50` : 'none',
-            borderRight: i % 2 === 1 ? `2px solid ${c.from}50` : 'none',
-            borderRadius: '2px',
-          }} />
+      {/* ── Central logo area ── */}
+      <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
+        {/* Pulsing glow ring */}
+        <div className="absolute w-28 h-28 rounded-full" style={{
+          background: 'radial-gradient(circle, rgba(255,107,0,0.2) 0%, transparent 70%)',
+          animation: 'packPulse 2.5s ease-in-out infinite',
+        }} />
+
+        {/* Neon orange icon block */}
+        <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-primary/90 to-orange-700 flex items-center justify-center shadow-lg" style={{ boxShadow: '0 0 30px rgba(255,85,0,0.4), 0 0 60px rgba(255,85,0,0.15)' }}>
+          <Sparkles className="w-8 h-8 text-white" />
         </div>
-      ))}
 
-      {/* ── Top branding ── */}
-      <div className="absolute top-7 left-0 right-0 text-center z-10">
-        <p className="font-display text-[9px] tracking-[0.35em] uppercase" style={{ color: `${c.from}90`, textShadow: `0 0 12px ${c.from}30` }}>
-          UNBREAKABLE
-        </p>
-        <div className="w-10 h-[1px] mx-auto mt-1.5" style={{ background: `linear-gradient(90deg, transparent, ${c.from}50, transparent)` }} />
-        <p className="font-display text-[6px] tracking-[0.25em] mt-1" style={{ color: `${c.from}50` }}>
-          UN·TUNES
-        </p>
-      </div>
-
-      {/* ── Center shield emblem with glow rings ── */}
-      <div className="absolute inset-0 flex items-center justify-center z-10">
-        <div className="relative">
-          {/* Outer pulse ring */}
-          <div className="absolute -inset-6 rounded-full" style={{
-            border: `1px solid ${c.from}15`,
-            boxShadow: `0 0 40px ${c.from}10, inset 0 0 20px ${c.from}05`,
-            animation: 'packPulse 3s ease-in-out infinite',
-          }} />
-          {/* Middle ring */}
-          <div className="absolute -inset-2 rounded-full" style={{
-            border: `1.5px solid ${c.from}30`,
-            boxShadow: `0 0 20px ${c.from}15`,
-          }} />
-          {/* Shield container */}
-          <div className="w-24 h-24 rounded-full flex items-center justify-center" style={{
-            background: `radial-gradient(circle, ${c.from}12 0%, transparent 70%)`,
-            boxShadow: `0 0 50px ${c.from}20, 0 0 100px ${c.from}08`,
-          }}>
-            <img
-              src={shieldLogo}
-              alt=""
-              className="w-16 h-16 object-contain"
-              style={{ filter: `drop-shadow(0 0 20px ${c.from}50) drop-shadow(0 0 40px ${c.from}25)` }}
-            />
-          </div>
+        {/* Brand text */}
+        <div className="text-center mt-2">
+          <p className="font-display text-base tracking-[0.3em] text-white/90" style={{ textShadow: '0 0 10px rgba(255,85,0,0.3)' }}>UNBREAKABLE</p>
+          <p className="font-display text-[10px] tracking-[0.4em] text-primary/70 mt-0.5">UN-TUNES</p>
         </div>
       </div>
 
-      {/* ── Light sweep animation ── */}
+      {/* ── Moving scanline ── */}
+      <div className="absolute left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-primary/25 to-transparent pointer-events-none" style={{ animation: 'packSweepVertical 3s linear infinite' }} />
+
+      {/* ── Light sweep ── */}
       <div className="absolute inset-0 overflow-hidden rounded-2xl">
-        <div className="absolute -inset-y-4 w-32" style={{
-          background: `linear-gradient(90deg, transparent, ${c.from}12 40%, ${c.accent}18 50%, ${c.from}12 60%, transparent)`,
+        <div className="absolute -inset-y-4 w-28" style={{
+          background: 'linear-gradient(90deg, transparent, rgba(255,85,0,0.06) 30%, rgba(255,85,0,0.15) 50%, rgba(255,85,0,0.06) 70%, transparent)',
           animation: 'packSweep 4s ease-in-out infinite',
         }} />
       </div>
 
-      {/* ── Tier badge ── */}
-      <div className="absolute bottom-12 left-0 right-0 text-center z-10">
+      {/* ── Tier label ── */}
+      <div className="absolute bottom-10 left-0 right-0 text-center z-10">
         <div className="inline-block px-5 py-1.5 rounded-lg" style={{
-          background: `linear-gradient(135deg, ${c.from}15, ${c.to}15)`,
-          border: `1px solid ${c.from}35`,
+          background: `linear-gradient(135deg, ${c.from}12, ${c.to}12)`,
+          border: `1px solid ${c.from}30`,
           boxShadow: `0 0 15px ${c.from}10`,
         }}>
-          <p className="font-display text-[10px] tracking-[0.35em]" style={{ color: c.from, textShadow: `0 0 8px ${c.from}50` }}>
+          <p className="font-display text-[10px] tracking-[0.35em]" style={{ color: c.from, textShadow: `0 0 8px ${c.from}40` }}>
             {c.label} PACK
           </p>
         </div>
       </div>
 
       {/* ── Bottom branding ── */}
-      <div className="absolute bottom-5 left-0 right-0 text-center z-10">
-        <p className="text-[6px] font-mono tracking-[0.25em]" style={{ color: `${c.from}35` }}>
-          LIVE WITHOUT LIMITS™
-        </p>
+      <div className="absolute bottom-4 left-0 right-0 text-center z-10">
+        <p className="text-[7px] font-mono tracking-[0.2em] text-primary/30">LIVE WITHOUT LIMITS™</p>
       </div>
 
-      {/* ── Subtle radial gradient overlay ── */}
-      <div className="absolute inset-0 rounded-2xl" style={{
-        background: `radial-gradient(ellipse at 50% 35%, ${c.from}06 0%, transparent 55%)`,
+      {/* ── Pulsing border ── */}
+      <div className="absolute inset-0 border border-primary/15 rounded-2xl pointer-events-none" style={{
+        animation: 'packBorderPulse 2s ease-in-out infinite',
       }} />
     </div>
   );
@@ -323,22 +289,34 @@ export function PackOpening({ cards, purchaseType, packTierId, onClose, onMarkOp
   const currentCard = sortedCards[currentIndex];
   const vfx = currentCard ? RARITY_VFX[currentCard.rarity] || RARITY_VFX.standard : RARITY_VFX.standard;
 
-  // ── Auto-play music on pack opening ──
+  // ── Auto-play Un-Tunes music on pack opening ──
   useEffect(() => {
-    // Try to play first available track
-    const firstTrackWithAudio = cards.find(c => c.un_tunes_tracks);
-    if (firstTrackWithAudio?.track_id) {
+    const loadAndPlayTrack = async () => {
       try {
-        // Create audio element for ambient pack music
-        const audio = new Audio();
-        audio.volume = 0.3;
-        audio.loop = true;
-        // We'll try the sample URL pattern
-        audio.src = `/api/track-sample/${firstTrackWithAudio.track_id}`;
-        audio.play().catch(() => {}); // Silently fail if autoplay blocked
-        audioRef.current = audio;
+        // Find first card with a track_id
+        const trackCard = cards.find(c => c.track_id);
+        if (!trackCard?.track_id) return;
+
+        // Fetch the actual audio_url from the DB
+        const { supabase } = await import('@/integrations/supabase/client');
+        const { data: track } = await supabase
+          .from('un_tunes_tracks')
+          .select('audio_url')
+          .eq('id', trackCard.track_id)
+          .single();
+
+        if (track?.audio_url) {
+          const audio = new Audio();
+          audio.volume = 0.25;
+          audio.loop = true;
+          audio.src = track.audio_url;
+          audio.play().catch(() => {}); // Silently fail if autoplay blocked
+          audioRef.current = audio;
+        }
       } catch {}
-    }
+    };
+    loadAndPlayTrack();
+
     return () => {
       if (audioRef.current) {
         audioRef.current.pause();
