@@ -757,25 +757,32 @@ export function CardShareSheet({
   const RARITY_RANK: Record<string, number> = { platinum: 5, diamond: 4, gold: 3, silver: 2, bronze: 1, standard: 0 };
   const isAnimated = (RARITY_RANK[tier] || 0) >= 3;
 
-  // Share via native share sheet — try html2canvas card capture first, then canvas fallback
+  // Share via native share sheet — animated for Gold+, static for others
   const handleNativeShare = useCallback(async () => {
     setIsExporting(true);
     try {
-      // Try actual card capture first (html2canvas)
-      let blob: Blob | null = await captureCardImage();
+      let blob: Blob | null = null;
       let ext = 'png';
       let mime = 'image/png';
 
-      // Fallback to canvas-drawn asset if capture fails
-      if (!blob) {
+      // Gold+ cards get animated share asset (webm with shimmer/effects)
+      if (isAnimated) {
         const asset = await generateAnimatedShareAsset(card, cardSystem);
-        if (!asset) {
-          toast({ title: 'Error', description: 'Could not generate card image.' });
-          return;
+        if (asset) {
+          blob = asset.blob;
+          ext = asset.ext;
+          mime = asset.mime;
         }
-        blob = asset.blob;
-        ext = asset.ext;
-        mime = asset.mime;
+      }
+
+      // Static fallback for Bronze/Silver or if animation failed
+      if (!blob) {
+        blob = await captureCardImage();
+      }
+
+      if (!blob) {
+        toast({ title: 'Error', description: 'Could not generate card image.' });
+        return;
       }
 
       const fileName = `unbreakable-${tier}-${(card.title || 'card').replace(/\s+/g, '-').toLowerCase()}.${ext}`;
@@ -804,38 +811,41 @@ export function CardShareSheet({
     }
   }, [card, cardSystem, tier, caption, toast, onOpenChange, isAnimated, captureCardImage]);
 
-  // Download (animated for Gold+, static for others)
+  // Download (animated webm for Gold+, static PNG for others)
   const handleDownload = useCallback(async () => {
     setIsExporting(true);
     try {
-      // Capture the actual rendered card first, fallback to canvas draw
-      const blob = await captureCardImage();
+      let blob: Blob | null = null;
+      let ext = 'png';
+
+      // Gold+ cards get animated share asset
+      if (isAnimated) {
+        const asset = await generateAnimatedShareAsset(card, cardSystem);
+        if (asset) {
+          blob = asset.blob;
+          ext = asset.ext;
+        }
+      }
+
+      // Static fallback for Bronze/Silver or if animation failed
+      if (!blob) {
+        blob = await captureCardImage();
+        ext = 'png';
+      }
+
       if (blob) {
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        link.download = `unbreakable-${tier}-${(card.title || 'card').replace(/\s+/g, '-').toLowerCase()}.png`;
+        link.download = `unbreakable-${tier}-${(card.title || 'card').replace(/\s+/g, '-').toLowerCase()}.${ext}`;
         link.click();
         URL.revokeObjectURL(url);
-        toast({ title: 'Downloaded!', description: 'Card image saved to your device.' });
-      } else {
-        // Fallback to old canvas method
-        const asset = await generateAnimatedShareAsset(card, cardSystem);
-        if (asset) {
-          const url = URL.createObjectURL(asset.blob);
-          const link = document.createElement('a');
-          link.href = url;
-          link.download = `unbreakable-${tier}-${(card.title || 'card').replace(/\s+/g, '-').toLowerCase()}.${asset.ext}`;
-          link.click();
-          URL.revokeObjectURL(url);
-          toast({ title: 'Downloaded!', description: 'Card saved to your device.' });
-        }
+        toast({ title: 'Downloaded!', description: `${isAnimated ? 'Animated card' : 'Card image'} saved to your device.` });
       }
     } finally {
       setIsExporting(false);
     }
-  }, [card, cardSystem, tier, toast, captureCardImage]);
-
+  }, [card, cardSystem, tier, toast, captureCardImage, isAnimated]);
   // Copy deep link
   const handleCopyLink = useCallback(async () => {
     const deepLink = `${window.location.origin}/cards/${card.id}`;
