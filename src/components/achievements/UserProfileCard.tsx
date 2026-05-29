@@ -10,10 +10,11 @@ import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence, useMotionValue, useTransform, PanInfo } from 'framer-motion';
 import {
   Zap, Camera, Upload, X, Plus, Minus, Edit3, Check, Search,
-  Activity, Heart, Columns, ChevronLeft, ChevronRight,
+  Activity, Heart, Columns, ChevronLeft, ChevronRight, Share2, ShoppingCart,
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { CardShareSheet } from '@/components/achievements/CardShareSheet';
 import { useProfile } from '@/hooks/useProfile';
 import { useCoachingProfile, cmToFeetInches } from '@/hooks/useCoachingProfile';
 import { useAchievementCards } from '@/hooks/useAchievementCards';
@@ -77,6 +78,9 @@ export default function UserProfileCard() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [showStrDropdown, setShowStrDropdown] = useState(true);
   const [showCardioDropdown, setShowCardioDropdown] = useState(true);
+  const [showShareSheet, setShowShareSheet] = useState(false);
+  const [shareType, setShareType] = useState<'image' | 'video'>('image');
+  const [purchasing, setPurchasing] = useState(false);
 
   // Persist view mode
   const changeViewMode = useCallback((mode: ViewMode) => {
@@ -240,6 +244,28 @@ export default function UserProfileCard() {
     setCardImageUrl(null);
     setShowImageMenu(false);
     toast({ title: 'Card image removed' });
+  };
+
+  // Purchase profile card as downloadable asset
+  const handleProfilePurchase = async (mediaType: 'image' | 'video') => {
+    if (!user || purchasing) return;
+    setPurchasing(true);
+    try {
+      const cost = mediaType === 'video' ? 5 : 3;
+      const { data, error } = await supabase.functions.invoke('purchase-card', {
+        body: {
+          card_id: 'profile_' + viewMode, // virtual profile card ID
+          media_type: mediaType,
+          user_id: user.id,
+        },
+      });
+      if (error) throw error;
+      toast({ title: `Profile card purchased! (${cost} tokens)`, description: 'Download available in your collection.' });
+    } catch (err: any) {
+      toast({ title: 'Purchase failed', description: err.message || 'Try again', variant: 'destructive' });
+    } finally {
+      setPurchasing(false);
+    }
   };
 
   // PB edit handlers
@@ -461,6 +487,40 @@ export default function UserProfileCard() {
         <span className="text-[7px] font-mono text-white/20 tracking-wider">{totalCards} EXERCISES TRACKED</span>
       </div>
 
+      {/* Share + Purchase buttons */}
+      <div className="flex items-center gap-2 mt-3 px-1">
+        <button
+          onClick={() => {
+            setShareType('image');
+            setShowShareSheet(true);
+          }}
+          className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-[10px] font-display tracking-[0.12em] uppercase"
+          style={{ background: 'rgba(255,85,0,0.12)', border: '1px solid rgba(255,85,0,0.2)', color: '#FF5500' }}
+        >
+          <Share2 className="w-3 h-3" /> SHARE
+        </button>
+        <button
+          onClick={() => handleProfilePurchase('image')}
+          className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-[10px] font-display tracking-[0.12em] uppercase"
+          style={{ background: 'rgba(255,85,0,0.12)', border: '1px solid rgba(255,85,0,0.2)', color: '#FF5500' }}
+        >
+          <ShoppingCart className="w-3 h-3" /> PURCHASE
+        </button>
+        <button
+          onClick={() => {
+            setShareType('video');
+            setShowShareSheet(true);
+          }}
+          className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-[10px] font-display tracking-[0.12em] uppercase"
+          style={{ background: 'rgba(255,85,0,0.06)', border: '1px solid rgba(255,85,0,0.12)', color: '#FF5500' }}
+        >
+          <Camera className="w-3 h-3" /> VIDEO
+        </button>
+      </div>
+      <p className="text-[7px] font-mono text-white/20 text-center mt-1 tracking-wider">
+        3 TOKENS (IMAGE) · 5 TOKENS (VIDEO)
+      </p>
+
       {/* Image menu */}
       <AnimatePresence>
         {showImageMenu && (
@@ -494,11 +554,27 @@ export default function UserProfileCard() {
       </AnimatePresence>
       <AnimatePresence>
         {showCardioEditMenu && (
-          <PBEditMenu title="Cardio PBs" accentColor="#00CCFF" maxItems={7}
+          <PBEditMenu title="Cardio PBs" accentColor="#FF6B1A" maxItems={7}
             customPBs={cardConfig.customCardioPBs} availableExercises={allCardioExercises}
             onAdd={addCardioPB} onRemove={removeCardioPB} onReset={resetCardioPBs} onClose={() => setShowCardioEditMenu(false)} />
         )}
       </AnimatePresence>
+
+      {/* Card Share Sheet */}
+      {showShareSheet && cards.length > 0 && (
+        <CardShareSheet
+          card={{
+            ...cards[0],
+            exercise_name: viewMode === 'cardio' ? 'Cardio Profile' : 'Strength Profile',
+            card_type: 'pb_personal',
+            rarity: 'gold',
+            overall_rating: 0,
+            owner_display_name: profile.display_name || profile.username || 'Athlete',
+          }}
+          isOpen={showShareSheet}
+          onClose={() => setShowShareSheet(false)}
+        />
+      )}
 
       {/* Shimmer keyframes */}
       <style>{`
