@@ -33,6 +33,7 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { MovementSessionSwapSheet } from './MovementSessionSwapSheet';
+import { CardioRouteMap } from './CardioRouteMap';
 import { MovementProgressionDialog, ProgressionSuggestion } from './MovementProgressionDialog';
 
 interface MovementExecutionViewProps {
@@ -46,6 +47,7 @@ export function MovementExecutionView({ program, onClose }: MovementExecutionVie
   const [completingPlanner, setCompletingPlanner] = useState<CardioSessionPlanner | null>(null);
   const [actualDuration, setActualDuration] = useState('');
   const [actualDistance, setActualDistance] = useState('');
+  const [routeCoordinates, setRouteCoordinates] = useState<any[]>([]);
   const { markComplete, markSkipped, swapSession, applyProgression } = useCardioSessionPlanners(program.id);
   const [viewingResultIndex, setViewingResultIndex] = useState(0);
   const { toast } = useToast();
@@ -338,6 +340,13 @@ export function MovementExecutionView({ program, onClose }: MovementExecutionVie
             </div>
           )}
         </Card>
+
+        {/* Live Route Map */}
+        <CardioRouteMap
+          isTracking={true}
+          onCoordinatesUpdate={setRouteCoordinates}
+          className="border border-primary/20"
+        />
 
         <div className="flex gap-3">
           <Button

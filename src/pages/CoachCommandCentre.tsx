@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { ChatMediaUpload, ChatMediaAttachment } from '@/components/inbox/ChatMediaUpload';
 import { PaywallGate } from '@/components/paywall';
+import { useUserPresence } from '@/hooks/usePresence';
 
 /* ─── Types ─── */
 type SidebarSection = 'clients' | 'channels';
@@ -56,6 +57,16 @@ export default function CoachCommandCentre() {
   const inputRef = useRef<HTMLInputElement>(null);
 
   /* ─── Build client list from coaching assignments + conversations ─── */
+  // Gather all athlete IDs for presence lookup
+  const allAthleteIds = useMemo(() => {
+    const ids = new Set<string>();
+    myAthletes.forEach(a => ids.add(a.athlete_id));
+    pendingRequests.forEach(r => ids.add(r.athlete_id));
+    return Array.from(ids);
+  }, [myAthletes, pendingRequests]);
+
+  const presenceMap = useUserPresence(allAthleteIds);
+
   const clients = useMemo<ClientEntry[]>(() => {
     const map = new Map<string, ClientEntry>();
 
@@ -71,7 +82,7 @@ export default function CoachCommandCentre() {
         avatar: a.athlete_profile?.avatar_url || null,
         conversationId: convo?.id || null,
         unread: convo?.unreadCount || 0,
-        isOnline: false, // TODO: presence
+        isOnline: presenceMap.get(a.athlete_id)?.isOnline ?? false,
         status: 'active',
         lastMessage: convo?.lastMessage?.content || undefined,
         lastMessageAt: convo?.lastMessage?.created_at || undefined,
@@ -88,19 +99,20 @@ export default function CoachCommandCentre() {
           avatar: r.athlete_profile?.avatar_url || null,
           conversationId: null,
           unread: 0,
-          isOnline: false,
+          isOnline: presenceMap.get(r.athlete_id)?.isOnline ?? false,
           status: 'pending',
         });
       }
     });
 
     return Array.from(map.values()).sort((a, b) => {
-      // Sort by unread first, then by last message time
+      // Online first, then by unread, then by last message time
+      if (a.isOnline !== b.isOnline) return a.isOnline ? -1 : 1;
       if (a.unread !== b.unread) return b.unread - a.unread;
       if (a.lastMessageAt && b.lastMessageAt) return new Date(b.lastMessageAt).getTime() - new Date(a.lastMessageAt).getTime();
       return a.name.localeCompare(b.name);
     });
-  }, [myAthletes, pendingRequests, conversations]);
+  }, [myAthletes, pendingRequests, conversations, presenceMap]);
 
   const filteredClients = useMemo(() => {
     if (!searchQuery) return clients;

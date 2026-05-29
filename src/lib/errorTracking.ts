@@ -2,9 +2,7 @@
  * UNBREAKABLE — Lightweight Error Tracking
  *
  * Captures unhandled errors + promise rejections and logs them
- * to the Supabase `error_logs` table (if it exists) or console.
- *
- * To upgrade to Sentry later, replace the `reportError` body.
+ * to the Supabase `error_logs` table and console.
  */
 
 interface ErrorReport {
@@ -23,7 +21,7 @@ function reportError(report: ErrorReport) {
   // Always log to console for dev visibility
   console.error('[UNBREAKABLE ERROR]', report.message, report);
 
-  // Queue for batch flush (in future: send to Supabase or Sentry)
+  // Queue for batch flush
   ERROR_QUEUE.push(report);
 
   if (!isFlushScheduled) {
@@ -39,21 +37,21 @@ async function flushErrors() {
 
   const batch = ERROR_QUEUE.splice(0, 10); // Max 10 per flush
 
-  // TODO: When `error_logs` table exists in Supabase, uncomment:
-  // try {
-  //   const { supabase } = await import('@/integrations/supabase/client');
-  //   await supabase.from('error_logs').insert(
-  //     batch.map(e => ({
-  //       message: e.message,
-  //       stack: e.stack?.substring(0, 2000),
-  //       source: e.source,
-  //       url: e.url,
-  //       user_agent: e.userAgent,
-  //     }))
-  //   );
-  // } catch (flushErr) {
-  //   console.error('[Error flush failed]', flushErr);
-  // }
+  try {
+    const { supabase } = await import('@/integrations/supabase/client');
+    await supabase.from('error_logs').insert(
+      batch.map(e => ({
+        message: e.message,
+        stack: e.stack?.substring(0, 2000),
+        source: e.source,
+        url: e.url,
+        user_agent: e.userAgent,
+      }))
+    );
+  } catch (flushErr) {
+    // Silently fail — don't recurse errors
+    console.warn('[Error flush failed]', flushErr);
+  }
 }
 
 /**

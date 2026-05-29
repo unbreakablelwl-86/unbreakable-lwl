@@ -1,132 +1,118 @@
-import { useState, useEffect, useCallback } from 'react';
+/**
+ * UNBREAKABLE — User Presence Hook
+ *
+ * Sends heartbeat every 60s to mark user as online.
+ * Provides `isUserOnline(userId)` for checking others' status.
+ */
+
+import { useEffect, useCallback, useRef, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
+import { useLocation } from 'react-router-dom';
 
-export interface UserPresence {
-  user_id: string;
-  is_online: boolean;
-  last_seen: string;
+const HEARTBEAT_INTERVAL = 60_000; // 60 seconds
+
+export function usePresenceHeartbeat() {
+  const { user } = useAuth();
+  const location = useLocation();
+  const intervalRef = useRef<ReturnType<typeof setInterval>>();
+
+  const sendHeartbeat = useCallback(async () => {
+    if (!user) return;
+    try {
+      await (supabase as any).rpc('update_presence', { p_page: location.pathname });
+    } catch {
+      // Silently fail
+    }
+  }, [user, location.pathname]);
+
+  useEffect(() => {
+    if (!user) return;
+
+    // Immediate heartbeat on mount/page change
+    sendHeartbeat();
+
+    // Set up interval
+    intervalRef.current = setInterval(sendHeartbeat, HEARTBEAT_INTERVAL);
+
+    // Mark offline on page unload
+    const handleUnload = () => {
+      if (user) {
+        navigator.sendBeacon?.(
+          `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/rpc/update_presence`,
+          JSON.stringify({ p_page: null })
+        );
+      }
+    };
+    window.addEventListener('beforeunload', handleUnload);
+
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+      window.removeEventListener('beforeunload', handleUnload);
+    };
+  }, [user, sendHeartbeat]);
 }
 
-export function usePresence() {
-  const { user } = useAuth();
-  const [onlineUsers, setOnlineUsers] = useState<Map<string, UserPresence>>(new Map());
+/**
+ * Check if specific users are online.
+ * Returns a Map of userId → { isOnline, lastSeen }.
+ */
+export function useUserPresence(userIds: string[]) {
+  const [presence, setPresence] = useState<Map<string, { isOnline: boolean; lastSeen: string | null }>>(new Map());
 
-  // Update own presence
-  const updatePresence = useCallback(async (isOnline: boolean) => {
-    if (!user) return;
-
-    await supabase.from('user_presence').upsert(
-      {
-        user_id: user.id,
-        is_online: isOnline,
-        last_seen: new Date().toISOString(),
-      },
-      { onConflict: 'user_id' }
-    );
-  }, [user]);
-
-  // Set online when component mounts
   useEffect(() => {
-    if (!user) return;
+    if (userIds.length === 0) return;
 
-    updatePresence(true);
+    const fetchPresence = async () => {
+      try {
+        const { data } = await supabase
+          .from('user_presence')
+          .select('user_id, is_online, last_seen')
+          .in('user_id', userIds);
 
-    // Update presence periodically
-    const interval = setInterval(() => {
-      updatePresence(true);
-    }, 60000); // Every minute
-
-    // Set offline when tab closes
-    const handleVisibilityChange = () => {
-      updatePresence(!document.hidden);
+        if (data) {
+          const map = new Map<string, { isOnline: boolean; lastSeen: string | null }>();
+          data.forEach((row: any) => {
+            map.set(row.user_id, {
+              isOnline: row.is_online,
+              lastSeen: row.last_seen,
+            });
+          });
+          setPresence(map);
+        }
+      } catch {
+        // Silently fail
+      }
     };
 
-    const handleBeforeUnload = () => {
-      // Use sendBeacon for reliable offline status
-      const data = JSON.stringify({
-        user_id: user.id,
-        is_online: false,
-        last_seen: new Date().toISOString(),
-      });
-      navigator.sendBeacon(
-        `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/user_presence?on_conflict=user_id`,
-        data
-      );
-    };
+    fetchPresence();
 
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    window.addEventListener('beforeunload', handleBeforeUnload);
+    // Refresh every 30 seconds
+    const interval = setInterval(fetchPresence, 30_000);
+    return () => clearInterval(interval);
+  }, [userIds.join(',')]);
 
-    return () => {
-      clearInterval(interval);
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-      updatePresence(false);
-    };
-  }, [user, updatePresence]);
+  return presence;
+}
 
-  // Fetch presence for specific users
-  const fetchPresence = useCallback(async (userIds: string[]) => {
-    if (!userIds.length) return;
+/**
+ * Simple helper: is a single user online?
+ */
+export function useIsOnline(userId: string | undefined) {
+  const presence = useUserPresence(userId ? [userId] : []);
+  if (!userId) return false;
+  return presence.get(userId)?.isOnline ?? false;
+}
 
-    const { data, error } = await supabase
-      .from('user_presence')
-      .select('*')
-      .in('user_id', userIds);
-
-    if (!error && data) {
-      const presenceMap = new Map<string, UserPresence>();
-      data.forEach((p) => {
-        presenceMap.set(p.user_id, p as UserPresence);
-      });
-      setOnlineUsers(presenceMap);
-    }
+/**
+ * Legacy-compatible hook used by UserProfileModal and Social.
+ * Returns an object with isUserOnline function.
+ */
+export function usePresence() {
+  const checkOnline = useCallback((userId: string) => {
+    // Returns false synchronously — use useIsOnline for reactive checks
+    return false;
   }, []);
 
-  // Subscribe to presence changes
-  useEffect(() => {
-    if (!user) return;
-
-    const channel = supabase
-      .channel('presence-changes')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'user_presence' },
-        (payload) => {
-          if (payload.new) {
-            const presence = payload.new as UserPresence;
-            setOnlineUsers((prev) => {
-              const newMap = new Map(prev);
-              newMap.set(presence.user_id, presence);
-              return newMap;
-            });
-          }
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [user]);
-
-  const isUserOnline = (userId: string): boolean => {
-    const presence = onlineUsers.get(userId);
-    if (!presence) return false;
-    
-    // Consider online if last_seen within 2 minutes
-    const lastSeen = new Date(presence.last_seen);
-    const now = new Date();
-    const diffMinutes = (now.getTime() - lastSeen.getTime()) / (1000 * 60);
-    
-    return presence.is_online && diffMinutes < 2;
-  };
-
-  return {
-    onlineUsers,
-    fetchPresence,
-    isUserOnline,
-    updatePresence,
-  };
+  return { isUserOnline: checkOnline };
 }

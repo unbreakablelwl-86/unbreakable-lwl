@@ -49,6 +49,8 @@ import {
   Timer,
 } from 'lucide-react';
 import { openZoneTimer } from '@/components/timer/FloatingZoneTimer';
+import { InlineRestTimer } from './InlineRestTimer';
+import { usePlayer } from '@/hooks/useUnTunes';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getExerciseDetails } from '@/lib/exerciseLibrary';
 import { findCoachingDataByName } from '@/lib/exerciseCoachingData';
@@ -90,6 +92,7 @@ export function ActiveWorkoutModal({
   open,
   onOpenChange,
 }: ActiveWorkoutModalProps) {
+  const { state: playerState, togglePlay } = usePlayer();
   const [activeTool, setActiveTool] = useState<ActiveTool>('none');
   const [timerExerciseType, setTimerExerciseType] = useState<string>('strength');
   const [sessionNotes, setSessionNotes] = useState('');
@@ -270,9 +273,9 @@ export function ActiveWorkoutModal({
                 <button
                   onClick={() => openZoneTimer()}
                   className="flex items-center gap-1 text-xs text-muted-foreground hover:text-primary font-display tracking-wide transition-colors"
-                  title="Pop out rest timer"
+                  title="Pop out rest timer (floating)"
                 >
-                  <Timer className="w-3.5 h-3.5" /> REST
+                  <Timer className="w-3.5 h-3.5" /> POP OUT
                 </button>
                 <button
                   onClick={() => setShowDurationEdit(!showDurationEdit)}
@@ -554,6 +557,14 @@ export function ActiveWorkoutModal({
               )}
             </AnimatePresence>
           </Card>
+
+          {/* Inline Rest Timer + Un-Tunes Player */}
+          <InlineRestTimer
+            currentTrack={playerState.currentTrack?.title || null}
+            currentArtist={playerState.currentTrack?.artist_name || null}
+            isMusicPlaying={playerState.isPlaying}
+            onMusicToggle={togglePlay}
+          />
 
           {/* Action Tiles */}
           <SessionActionTiles

@@ -42,6 +42,7 @@ import {
 import { supabase } from '@/integrations/supabase/client';
 import { SocialLinksCard } from './SocialLinksCard';
 import { SportPreferenceCard } from './SportPreferenceCard';
+import { usePushNotifications } from '@/hooks/usePushNotifications';
 
 export function SettingsPanel() {
   const { settings, loading, updateSettings, toggleTheme } = useUserSettings();
@@ -53,6 +54,7 @@ export function SettingsPanel() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [changingPassword, setChangingPassword] = useState(false);
   const [deletingAccount, setDeletingAccount] = useState(false);
+  const { isSupported: pushSupported, isSubscribed: pushSubscribed, subscribe: pushSubscribe, unsubscribe: pushUnsubscribe } = usePushNotifications();
   const [deleteConfirmText, setDeleteConfirmText] = useState('');
 
   if (loading || !settings) {
@@ -323,6 +325,35 @@ export function SettingsPanel() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Push Notifications */}
+      {pushSupported && (
+        <Card className="bg-card border-border">
+          <CardHeader>
+            <CardTitle className="font-heading text-xl tracking-wide flex items-center gap-2">
+              <Bell className="w-5 h-5 text-primary" />
+              NOTIFICATIONS
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label className="text-foreground font-medium flex items-center gap-2">
+                  <Bell className="w-4 h-4 text-primary" />
+                  Push Notifications
+                </Label>
+                <p className="text-sm text-muted-foreground">
+                  {pushSubscribed ? 'You will receive alerts for PBs, coaching, and drops' : 'Enable to get notified about new PBs, coaching updates, and card drops'}
+                </p>
+              </div>
+              <Switch
+                checked={pushSubscribed}
+                onCheckedChange={(checked) => checked ? pushSubscribe() : pushUnsubscribe()}
+              />
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Password Change */}
       <Card className="bg-card border-border">

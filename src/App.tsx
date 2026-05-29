@@ -16,6 +16,13 @@ import AppLayout from "@/layouts/AppLayout";
 import { FloatingMiniPlayer } from "@/components/untunes/FloatingMiniPlayer";
 import { FloatingSessionTracker } from "@/components/tracker/FloatingSessionTracker";
 import { FloatingZoneTimer } from "@/components/timer/FloatingZoneTimer";
+import { usePresenceHeartbeat } from "@/hooks/usePresence";
+
+/** Runs presence heartbeat inside BrowserRouter context */
+function PresenceTracker() {
+  usePresenceHeartbeat();
+  return null;
+}
 import Index from "./pages/Index";
 import Social from "./pages/Social";
 import Calculators from "./pages/Calculators";
@@ -105,6 +112,7 @@ const App = () => {
           <InstallPrompt />
           {!splashDone && <SplashScreen onComplete={handleSplashComplete} />}
           <BrowserRouter>
+            <PresenceTracker />
             <Routes>
               {/* Sign-in — standalone full-page (no bottom nav) */}
               <Route path="/signin" element={<SignIn />} />

@@ -1,4 +1,4 @@
-// UNBREAKABLE Service Worker — network-first with asset caching + offline fallback
+// UNBREAKABLE Service Worker — network-first with asset caching + offline fallback + push notifications
 const CACHE_NAME = 'unbreakable-v4';
 const STATIC_CACHE = 'unbreakable-static-v2';
 
@@ -69,4 +69,47 @@ self.addEventListener('fetch', (e) => {
     );
     return;
   }
+});
+
+// ━━━ Push Notifications ━━━
+self.addEventListener('push', (e) => {
+  let data = { title: 'UNBREAKABLE', body: 'You have a new notification', url: '/', icon: '/icons/icon-192x192.png' };
+  try {
+    if (e.data) {
+      const payload = e.data.json();
+      data = { ...data, ...payload };
+    }
+  } catch {
+    // Use defaults
+  }
+
+  e.waitUntil(
+    self.registration.showNotification(data.title, {
+      body: data.body,
+      icon: data.icon || '/icons/icon-192x192.png',
+      badge: '/icons/icon-72x72.png',
+      data: { url: data.url || '/' },
+      vibrate: [200, 100, 200],
+      tag: data.tag || 'unbreakable-notification',
+      renotify: true,
+    })
+  );
+});
+
+self.addEventListener('notificationclick', (e) => {
+  e.notification.close();
+  const url = e.notification.data?.url || '/';
+  e.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then((windowClients) => {
+      // Focus existing window if open
+      for (const client of windowClients) {
+        if (client.url.includes(self.location.origin) && 'focus' in client) {
+          client.navigate(url);
+          return client.focus();
+        }
+      }
+      // Open new window
+      return clients.openWindow(url);
+    })
+  );
 });
