@@ -637,20 +637,41 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
               </div>
             </div>
 
-            {/* ═══ SINGLES — teaser ═══ */}
+            {/* ═══ SINGLES — matching pack tier design ═══ */}
             <motion.div whileTap={{ scale: 0.98 }}>
               <Card
-                className="flex items-center gap-3 p-4 border-primary/15 bg-black/60 cursor-pointer hover:border-primary/30 transition-colors"
+                className="relative overflow-hidden border-primary/30 bg-gradient-to-br from-zinc-900 via-orange-950/15 to-zinc-900 cursor-pointer hover:border-primary/40 transition-colors"
                 onClick={() => setStoreView('singles')}
               >
-                <div className="w-10 h-10 rounded-xl bg-card flex items-center justify-center">
-                  <Music className="w-5 h-5 text-primary" />
+                <div className="absolute inset-0" style={{ background: 'radial-gradient(circle at 30% 20%, rgba(255,85,0,0.08), transparent 50%)' }} />
+                <div className="relative p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <div>
+                      <p className="font-display text-sm tracking-wider text-primary">BUY SINGLES</p>
+                      <p className="text-[10px] text-muted-foreground mt-0.5">{SINGLE_COST} tokens each · Choose your track</p>
+                    </div>
+                    <Badge className="bg-primary/20 text-orange-300 border-primary/30 text-[9px] font-display">
+                      PICK YOUR OWN
+                    </Badge>
+                  </div>
+                  <div className="flex items-center gap-3 mt-2">
+                    <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
+                      <Disc3 className="w-3.5 h-3.5 text-primary" />
+                      <span>Individual track cards</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
+                      <Music className="w-3.5 h-3.5 text-primary" />
+                      <span>Full library available</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between mt-3">
+                    <div className="flex items-center gap-1.5">
+                      <Coins className="w-3 h-3 text-yellow-400" />
+                      <span className="text-xs font-display text-yellow-400">{SINGLE_COST} tokens</span>
+                    </div>
+                    <ChevronRight className="w-4 h-4 text-primary" />
+                  </div>
                 </div>
-                <div className="flex-1">
-                  <p className="font-display text-sm tracking-wider text-white">BUY SINGLES</p>
-                  <p className="text-[10px] text-muted-foreground">{SINGLE_COST} tokens each • Collect individual track cards</p>
-                </div>
-                <ChevronRight className="w-5 h-5 text-muted-foreground" />
               </Card>
             </motion.div>
 
