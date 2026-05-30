@@ -1014,14 +1014,14 @@ export function CardShareSheet({
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="bottom" className="rounded-t-2xl border-border bg-card max-h-[85vh] overflow-y-auto">
-        {/* Hidden rendered card for html2canvas capture — forExport reduces shimmer overlay */}
+        {/* Hidden rendered card for html2canvas capture — shimmer removed for clean static share */}
         <div
           ref={cardCaptureRef}
           className="fixed pointer-events-none"
           style={{ left: '-9999px', top: 0, width: 288, height: 448, zIndex: -1, opacity: 0, overflow: 'visible' }}
           aria-hidden="true"
         >
-          <AchievementCardStatic card={card} size="lg" forExport />
+          <AchievementCardStatic card={card} size="lg" noShimmer />
         </div>
 
         <SheetHeader className="text-left pb-2">
