@@ -48,6 +48,20 @@ function CardShimmer({ rarity }: { rarity: string }) {
       <div className="absolute -inset-y-4 w-32" style={{ background: 'linear-gradient(90deg, transparent, rgba(229,228,226,0.85) 40%, rgba(255,255,255,0.95) 50%, rgba(229,228,226,0.85) 60%, transparent)', animation: 'cgPlatSweep 5s ease-in-out infinite' }} />
     </div>
   );
+  if (rarity === 'silver') return (
+    <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-xl z-[5]">
+      <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, rgba(192,192,192,0.2) 0%, rgba(232,232,232,0.12) 50%, rgba(192,192,192,0.15) 100%)' }} />
+      <div className="absolute inset-0 rounded-xl" style={{ boxShadow: 'inset 0 0 20px rgba(192,192,192,0.25), 0 0 10px rgba(192,192,192,0.15)' }} />
+      <div className="absolute -inset-y-4 w-20" style={{ background: 'linear-gradient(90deg, transparent, rgba(232,232,232,0.6) 40%, rgba(255,255,255,0.7) 50%, rgba(232,232,232,0.6) 60%, transparent)', animation: 'cgGoldSweep 4.5s ease-in-out infinite' }} />
+    </div>
+  );
+  if (rarity === 'bronze') return (
+    <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-xl z-[5]">
+      <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, rgba(205,127,50,0.15) 0%, rgba(139,69,19,0.08) 50%, rgba(205,127,50,0.12) 100%)' }} />
+      <div className="absolute inset-0 rounded-xl" style={{ boxShadow: 'inset 0 0 15px rgba(205,127,50,0.2), 0 0 8px rgba(205,127,50,0.1)' }} />
+      <div className="absolute -inset-y-4 w-16" style={{ background: 'linear-gradient(90deg, transparent, rgba(205,127,50,0.5) 40%, rgba(255,200,120,0.6) 50%, rgba(205,127,50,0.5) 60%, transparent)', animation: 'cgGoldSweep 5s ease-in-out infinite' }} />
+    </div>
+  );
   return null;
 }
 import { Button } from '@/components/ui/button';

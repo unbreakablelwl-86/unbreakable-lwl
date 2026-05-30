@@ -121,6 +121,18 @@ function getShimmerOverlay(rarity: string) {
     case 'platinum': return <PlatinumChromeOverlay />;
     case 'diamond': return <DiamondHoloOverlay />;
     case 'gold': return <GoldShimmerOverlay />;
+    case 'silver': return (
+      <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl z-[5]">
+        <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, rgba(192,192,192,0.15) 0%, rgba(232,232,232,0.08) 50%, rgba(192,192,192,0.12) 100%)' }} />
+        <div className="absolute -inset-y-4 w-20" style={{ background: 'linear-gradient(90deg, transparent, rgba(232,232,232,0.5) 40%, rgba(255,255,255,0.6) 50%, rgba(232,232,232,0.5) 60%, transparent)', animation: 'cgGoldSweep 4.5s ease-in-out infinite' }} />
+      </div>
+    );
+    case 'bronze': return (
+      <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl z-[5]">
+        <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, rgba(205,127,50,0.12) 0%, rgba(139,69,19,0.06) 50%, rgba(205,127,50,0.10) 100%)' }} />
+        <div className="absolute -inset-y-4 w-16" style={{ background: 'linear-gradient(90deg, transparent, rgba(205,127,50,0.4) 40%, rgba(255,200,120,0.5) 50%, rgba(205,127,50,0.4) 60%, transparent)', animation: 'cgGoldSweep 5s ease-in-out infinite' }} />
+      </div>
+    );
     default: return <StandardOverlay />;
   }
 }
@@ -164,6 +176,26 @@ const RARITY_VFX: Record<string, {
     icon: Award,
     confettiColors: ['#FFD700', '#B8860B', '#FFA500', '#FFDF00'],
   },
+  silver: {
+    bg: 'bg-gradient-to-br from-zinc-400/15 via-zinc-300/10 to-zinc-500/15',
+    border: 'border-zinc-300/50',
+    text: 'text-zinc-300',
+    glow: '0 0 20px rgba(192,192,192,0.25), 0 0 40px rgba(192,192,192,0.1)',
+    gradient: 'from-zinc-300 via-zinc-200 to-zinc-400',
+    label: 'SILVER',
+    icon: Award,
+    confettiColors: ['#C0C0C0', '#E8E8E8', '#A8A8A8', '#D0D0D0'],
+  },
+  bronze: {
+    bg: 'bg-gradient-to-br from-amber-900/15 via-orange-800/10 to-amber-800/15',
+    border: 'border-amber-700/40',
+    text: 'text-amber-600',
+    glow: '0 0 15px rgba(205,127,50,0.2), 0 0 30px rgba(139,69,19,0.1)',
+    gradient: 'from-amber-700 via-amber-600 to-amber-800',
+    label: 'BRONZE',
+    icon: Star,
+    confettiColors: ['#CD7F32', '#8B4513', '#D2691E', '#B87333'],
+  },
   standard: {
     bg: 'bg-gradient-to-br from-zinc-800 via-zinc-700/50 to-zinc-800',
     border: 'border-zinc-600/40',
@@ -176,7 +208,7 @@ const RARITY_VFX: Record<string, {
   },
 };
 
-const RARITY_RANK: Record<string, number> = { platinum: 5, diamond: 4, gold: 3, standard: 0 };
+const RARITY_RANK: Record<string, number> = { platinum: 5, diamond: 4, gold: 3, silver: 2, bronze: 1, standard: 0 };
 
 /* ═══════════════════════════════════════════════════ */
 /*  PACK BACK DESIGN                                  */
