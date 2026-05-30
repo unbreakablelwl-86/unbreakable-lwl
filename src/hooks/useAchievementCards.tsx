@@ -263,31 +263,16 @@ export function useAchievementCards() {
     return cards.filter(c => c.exercise_name === exercise);
   }, [cards]);
 
-  // Award a programme trophy after programme completion
+  // Programme trophy cards are disabled — no longer awarded for completed programmes.
+  // Kept as a no-op so existing callers don't break.
   const awardProgrammeTrophy = useCallback(async (
-    programmeType: ProgrammeType,
-    programmeName: string,
-    programmeId: string,
-    stats?: Record<string, unknown>,
+    _programmeType: ProgrammeType,
+    _programmeName: string,
+    _programmeId: string,
+    _stats?: Record<string, unknown>,
   ): Promise<AchievementCard | null> => {
-    if (!user) return null;
-
-    const { data, error } = await supabase.rpc('award_programme_trophy', {
-      p_user_id: user.id,
-      p_programme_type: programmeType,
-      p_programme_name: programmeName,
-      p_programme_id: programmeId,
-      p_stats: stats || {},
-    });
-
-    if (error) {
-      console.error('Error awarding programme trophy:', error);
-      return null;
-    }
-
-    await fetchCards();
-    return cards.find(c => c.id === data) || null;
-  }, [user, fetchCards, cards]);
+    return null;
+  }, []);
 
   // Award PB cards after a new personal best (with duplicate detection + auto bio)
   const awardPBCards = useCallback(async (

@@ -178,48 +178,17 @@ export function useAchievementIntegration() {
   }, [user]);
 
   /**
-   * Call when a user completes a programme
+   * Programme trophy cards are disabled — we no longer award cards for completed programmes.
+   * Kept as a no-op so existing callers don't break.
    */
   const awardProgrammeTrophy = useCallback(async (
-    programmeType: ProgrammeType,
-    programmeName: string,
-    programmeId: string,
-    stats?: Record<string, unknown>,
+    _programmeType: ProgrammeType,
+    _programmeName: string,
+    _programmeId: string,
+    _stats?: Record<string, unknown>,
   ): Promise<AwardedCard | null> => {
-    if (!user) return null;
-
-    try {
-      const { data: cardId, error } = await supabase.rpc('award_programme_trophy', {
-        p_user_id: user.id,
-        p_programme_type: programmeType,
-        p_programme_name: programmeName,
-        p_programme_id: programmeId,
-        p_stats: stats || {},
-      });
-
-      if (error) {
-        console.error('Error awarding programme trophy:', error);
-        return null;
-      }
-
-      // Get the rarity that was awarded (based on total completions)
-      const { data: card } = await supabase
-        .from('achievement_cards')
-        .select('rarity')
-        .eq('id', cardId)
-        .single();
-
-      const rarity = card?.rarity || 'gold';
-      toast.success(`🏆 GOLD Trophy Card: ${programmeName}`, {
-        duration: 5000,
-      });
-
-      return { cardId, rarity, type: 'programme_trophy' };
-    } catch (err) {
-      console.error('Error awarding programme trophy:', err);
-      return null;
-    }
-  }, [user]);
+    return null;
+  }, []);
 
   return {
     checkLiftPBs,
