@@ -458,17 +458,19 @@ export function PackOpening({ cards, purchaseType, packTierId, onClose, onMarkOp
   }
 
   function getCardImage(card: PackCard): string | null {
-    return card.brand_artwork
-      || card.un_tunes_brand_cards?.artwork_url
-      || card.un_tunes_brand_cards?.image_url
-      || card.un_tunes_tracks?.cover_url
-      || card.un_tunes_tracks?.image_url
-      || card.un_tunes_albums?.cover_url
-      || card.un_tunes_albums?.image_url
-      || card.image_url
-      || card.artwork_url
-      || card.cover_url
-      || null;
+    // Filter empty/whitespace strings — DB may return "" instead of null
+    const v = (s?: string | null) => s?.trim() || null;
+    return v(card.brand_artwork)
+      ?? v(card.un_tunes_brand_cards?.artwork_url)
+      ?? v(card.un_tunes_brand_cards?.image_url)
+      ?? v(card.un_tunes_tracks?.cover_url)
+      ?? v(card.un_tunes_tracks?.image_url)
+      ?? v(card.un_tunes_albums?.cover_url)
+      ?? v(card.un_tunes_albums?.image_url)
+      ?? v(card.image_url)
+      ?? v(card.artwork_url)
+      ?? v(card.cover_url)
+      ?? null;
   }
 
   function getCardArtist(card: PackCard): string {

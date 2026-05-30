@@ -101,10 +101,10 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
     let albumList = albums;
     if (trackList.length === 0 || albumList.length === 0) {
       const [tRes, aRes] = await Promise.all([
-        supabase.from('un_tunes_tracks').select('id,title,cover_url,artist_id'),
+        supabase.from('un_tunes_tracks').select('id,title,cover_url,artist_id,un_tunes_artists(artist_name)'),
         supabase.from('un_tunes_albums').select('id,title,cover_url'),
       ]);
-      if (tRes.data && trackList.length === 0) trackList = tRes.data as any;
+      if (tRes.data && trackList.length === 0) trackList = tRes.data.map((t: any) => ({ ...t, artist_name: t.un_tunes_artists?.artist_name || null })) as any;
       if (aRes.data && albumList.length === 0) albumList = aRes.data as any;
     }
 
@@ -136,8 +136,8 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
         brand_card_id: p.brand_card_id,
         card_type: p.card_type,
         edition_number: p.edition_number || 0,
-        un_tunes_tracks: track ? { title: track.title, artist: track.artist || 'Unbreakable', cover_url: track.cover_url || '' } : null,
-        un_tunes_albums: album ? { title: album.title, cover_url: album.cover_url || '' } : null,
+        un_tunes_tracks: track ? { title: track.title || 'Unknown Track', artist: track.artist_name || (track as any).artist || 'Unbreakable', cover_url: track.cover_url || null, image_url: track.cover_url || null } : null,
+        un_tunes_albums: album ? { title: album.title || 'Unknown Album', cover_url: album.cover_url || null, image_url: album.cover_url || null } : null,
         un_tunes_brand_cards: brandJoin || null,
       };
     });
@@ -224,10 +224,10 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
       let albumList = albums;
       if (trackList.length === 0 || albumList.length === 0) {
         const [tRes, aRes] = await Promise.all([
-          supabase.from('un_tunes_tracks').select('id,title,cover_url,artist_id'),
+          supabase.from('un_tunes_tracks').select('id,title,cover_url,artist_id,un_tunes_artists(artist_name)'),
           supabase.from('un_tunes_albums').select('id,title,cover_url'),
         ]);
-        if (tRes.data && trackList.length === 0) trackList = tRes.data as any;
+        if (tRes.data && trackList.length === 0) trackList = tRes.data.map((t: any) => ({ ...t, artist_name: t.un_tunes_artists?.artist_name || null })) as any;
         if (aRes.data && albumList.length === 0) albumList = aRes.data as any;
       }
 
@@ -236,8 +236,8 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
         const album = c.album_id ? albumList.find((a: any) => a.id === c.album_id) : null;
         return {
           ...c,
-          un_tunes_tracks: c.un_tunes_tracks || (track ? { title: track.title, artist: (track as any).artist || 'Unbreakable', cover_url: (track as any).cover_url || '' } : null),
-          un_tunes_albums: c.un_tunes_albums || (album ? { title: album.title, cover_url: (album as any).cover_url || '' } : null),
+          un_tunes_tracks: c.un_tunes_tracks || (track ? { title: track.title || 'Unknown Track', artist: (track as any).artist_name || (track as any).artist || 'Unbreakable', cover_url: (track as any).cover_url || null, image_url: (track as any).cover_url || null } : null),
+          un_tunes_albums: c.un_tunes_albums || (album ? { title: album.title || 'Unknown Album', cover_url: (album as any).cover_url || null, image_url: (album as any).cover_url || null } : null),
         };
       });
 
@@ -250,7 +250,7 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
           rarity: 'diamond' as const,
           edition_number: Math.floor(Math.random() * 50) + 1,
           is_bonus: true,
-          un_tunes_tracks: { title: t.title, artist: t.artist || 'Unbreakable', cover_url: t.cover_url || '' },
+          un_tunes_tracks: { title: t.title || 'Unknown Track', artist: (t as any).artist_name || (t as any).artist || 'Unbreakable', cover_url: (t as any).cover_url || null, image_url: (t as any).cover_url || null },
         }));
         cards = [...cards, ...bonusDiamondCards];
         toast.success('🎁 FREE Diamond Pack included!', { duration: 4000 });
@@ -292,8 +292,8 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
       // 2. Pick random tracks for the pack
       let trackPool = tracks.length > 0 ? tracks : [];
       if (trackPool.length === 0) {
-        const { data } = await supabase.from('un_tunes_tracks').select('id,title,cover_url,artist_id');
-        trackPool = (data || []) as any[];
+        const { data } = await supabase.from('un_tunes_tracks').select('id,title,cover_url,artist_id,un_tunes_artists(artist_name)');
+        trackPool = ((data || []).map((t: any) => ({ ...t, artist_name: t.un_tunes_artists?.artist_name || null }))) as any[];
       }
       if (trackPool.length === 0) { toast.error('No tracks available'); return; }
 
@@ -335,7 +335,7 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
         const track = trackPool.find((t: any) => t.id === c.track_id);
         return {
           ...c,
-          un_tunes_tracks: track ? { title: track.title, artist: (track as any).artist || 'Unbreakable', cover_url: (track as any).cover_url || '' } : null,
+          un_tunes_tracks: track ? { title: (track as any).title || 'Unknown Track', artist: (track as any).artist_name || (track as any).artist || 'Unbreakable', cover_url: (track as any).cover_url || null, image_url: (track as any).cover_url || null } : null,
         };
       });
 
