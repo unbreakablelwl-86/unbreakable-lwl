@@ -3,7 +3,7 @@
  * Shows all owned cards (track, album, brand) with rarity filters,
  * card detail view, and share capability.
  */
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import {
@@ -67,7 +67,7 @@ function CardShimmer({ rarity }: { rarity: string }) {
 import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns';
-import { CardShareSheet } from '@/components/achievements/CardShareSheet';
+import { CardShareSheet, generateShareImage } from '@/components/achievements/CardShareSheet';
 import type { AchievementCard } from '@/hooks/useAchievementCards';
 
 interface CollectionGalleryProps {
@@ -164,8 +164,30 @@ function UnTunesCardDetailViewer({
   toShareableCard: (c: UserCard) => AchievementCard;
 }) {
   const [detailViewMode, setDetailViewMode] = useState<'card' | 'share'>('card');
+  const [sharePreviewUrl, setSharePreviewUrl] = useState<string | null>(null);
+  const [shareLoading, setShareLoading] = useState(false);
   const style = RARITY_COLORS[card.rarity] || RARITY_COLORS.standard;
   const image = getCardImage(card);
+
+  // Generate premium static share preview when toggled
+  useEffect(() => {
+    if (detailViewMode !== 'share') return;
+    let cancelled = false;
+    setShareLoading(true);
+    (async () => {
+      try {
+        const blob = await generateShareImage(toShareableCard(card), 'untunes');
+        if (cancelled || !blob) return;
+        const url = URL.createObjectURL(blob);
+        setSharePreviewUrl(prev => { if (prev) URL.revokeObjectURL(prev); return url; });
+      } catch (e) {
+        console.error('Un-Tunes share preview failed:', e);
+      } finally {
+        if (!cancelled) setShareLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [detailViewMode, card]);
 
   return (
     <motion.div
@@ -270,55 +292,31 @@ function UnTunesCardDetailViewer({
               transition={{ duration: 0.2 }}
               className="flex flex-col items-center gap-2"
             >
-              {/* Same card but without shimmer animation */}
-              <Card className={`overflow-hidden border-2 ${style.border} ${style.glow}`}>
-                <div className="aspect-[3/4] relative bg-gradient-to-br from-card to-muted/20" style={{ width: '18rem' }}>
-                  {image ? (
-                    <img src={image} alt="" className="w-full h-full object-cover" />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <Music size={48} className="text-muted-foreground/20" />
-                    </div>
-                  )}
-                  {/* No CardShimmer — static share version */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20" />
-                  <div className="absolute top-2 left-3 z-10 flex items-center gap-1.5">
-                    <img src="/unbreakable-shield.png" alt="" className="w-4 h-4 object-contain" style={{ filter: 'drop-shadow(0 0 3px rgba(255,255,255,0.15))', opacity: 0.55 }} />
-                    <div>
-                      <p className="text-[6px] font-display tracking-[0.15em] text-white/45">UNBREAKABLE</p>
-                      <p className="text-[4px] font-mono tracking-[0.1em] text-white/30">LIVE WITHOUT LIMITS™</p>
-                    </div>
-                  </div>
-                  <div className="absolute top-8 left-3 right-3 flex items-center justify-between">
-                    <span className={`text-[10px] font-display tracking-widest px-2.5 py-1 rounded-lg ${style.bg} ${style.text} backdrop-blur-sm border ${style.border}`}>
-                      {card.rarity.toUpperCase()}
-                    </span>
-                    <span className="text-[10px] font-display tracking-wider px-2 py-1 rounded-lg bg-black/50 text-white/70 backdrop-blur-sm">
-                      {getCardType(card)}
-                    </span>
-                  </div>
-                  <div className="absolute bottom-0 left-0 right-0 p-4">
-                    <h3 className="font-display text-lg tracking-wider text-white mb-1">
-                      {getCardName(card)}
-                    </h3>
-                    <div className="flex items-center gap-3 text-white/60 text-[10px] font-display tracking-wider">
-                      {card.edition_number != null && card.edition_number > 0 && (
-                        <span className="flex items-center gap-1">
-                          <Hash size={10} />
-                          {String(card.edition_number).padStart(3, '0')}
-                          {card.rarity === 'platinum' ? '/250' : card.rarity === 'diamond' ? '/1000' : ''}
-                        </span>
-                      )}
-                      {card.date_stamped && (
-                        <span className="flex items-center gap-1">
-                          <Calendar size={10} />
-                          {format(new Date(card.date_stamped), 'dd MMM yyyy')}
-                        </span>
-                      )}
-                    </div>
+              {shareLoading ? (
+                <div className="w-72 h-[28rem] rounded-xl bg-zinc-900 flex items-center justify-center"
+                  style={{ border: '1px solid rgba(255,255,255,0.1)' }}>
+                  <div className="text-center space-y-2">
+                    <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto" />
+                    <p className="text-[10px] text-zinc-500 font-display tracking-wider">GENERATING SHARE IMAGE...</p>
                   </div>
                 </div>
-              </Card>
+              ) : sharePreviewUrl ? (
+                <img
+                  src={sharePreviewUrl}
+                  alt="Share preview"
+                  className="w-72 h-auto rounded-xl object-contain"
+                  style={{
+                    boxShadow: '0 0 16px rgba(255,255,255,0.1)',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    maxHeight: '28rem',
+                  }}
+                />
+              ) : (
+                <div className="w-72 h-[28rem] rounded-xl bg-zinc-900 flex items-center justify-center"
+                  style={{ border: '1px solid rgba(255,255,255,0.1)' }}>
+                  <p className="text-[10px] text-zinc-500 font-display tracking-wider">FAILED TO GENERATE</p>
+                </div>
+              )}
               <p className="text-[9px] text-zinc-500 font-display tracking-wider">
                 SHARE PREVIEW — THIS IS WHAT OTHERS SEE
               </p>

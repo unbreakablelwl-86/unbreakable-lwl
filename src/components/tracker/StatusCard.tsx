@@ -221,11 +221,7 @@ export function StatusCard({ post, onKudos, onDelete, onToggleComments, onUpdate
               <span className="flex items-center gap-0.5">
                 {getVisibilityIcon()}
               </span>
-              {isAutoPost && (
-                <span className="ml-1 px-1.5 py-0.5 text-[9px] font-display tracking-widest bg-orange-500/15 text-orange-400 border border-orange-500/30 rounded-full uppercase">
-                  AI Coach
-                </span>
-              )}
+              {/* AI Coach badge removed per John's request */}
             </div>
           </div>
           <PostMenu

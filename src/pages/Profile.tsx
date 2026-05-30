@@ -127,6 +127,15 @@ function PostGridItem({ post, onClick }: { post: OwnPost; onClick: () => void })
   const isVideo = post.video_url || post.media_items?.[0]?.media_type === 'video';
   const hasMultiple = (post.media_items?.length || 0) > 1;
 
+  // Detect AI auto-posts (same logic as StatusCard)
+  const isAutoPost =
+    post.metadata?.source === 'ai_coach' ||
+    /^(🏋️|💪)\s*(Session|Workout)/i.test(post.content?.trim() || '') ||
+    /streak.*\d/i.test(post.content?.trim() || '') ||
+    /^(📋|🤖|🧠)\s*(Daily|AI Coach|Habit)/i.test(post.content?.trim() || '') ||
+    (post.content || '').includes('[AI Coach]') ||
+    (post.content || '').includes('Daily 7 —');
+
   return (
     <button
       onClick={onClick}
@@ -134,6 +143,35 @@ function PostGridItem({ post, onClick }: { post: OwnPost; onClick: () => void })
     >
       {thumbnail ? (
         <img src={thumbnail} alt="" className="w-full h-full object-cover" />
+      ) : isAutoPost ? (
+        /* Branded Unbreakable card thumbnail for AI auto-posts */
+        <div className="w-full h-full relative flex items-center justify-center p-3"
+          style={{ background: 'linear-gradient(145deg, #0a0a0a 0%, #111111 30%, #080808 100%)' }}>
+          {/* Orange accent glow */}
+          <div className="absolute inset-0" style={{
+            background: 'radial-gradient(ellipse at 50% 0%, rgba(255,85,0,0.15) 0%, transparent 60%)',
+          }} />
+          {/* Shield watermark */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.06]">
+            <svg width="60" height="60" viewBox="0 0 100 100" fill="none">
+              <path d="M50 5 L90 25 L90 55 Q90 80 50 95 Q10 80 10 55 L10 25 Z" stroke="#FF5500" strokeWidth="3" fill="none" />
+            </svg>
+          </div>
+          {/* Top accent */}
+          <div className="absolute top-0 left-0 right-0 h-[2px]" style={{
+            background: 'linear-gradient(90deg, transparent 0%, #FF5500 30%, #FF5500 70%, transparent 100%)',
+          }} />
+          <div className="relative z-10 text-center">
+            <div className="mb-1.5 px-2 py-0.5 rounded-full border border-[#FF5500]/30 bg-[#FF5500]/10 inline-block">
+              <span className="text-[7px] font-display tracking-[0.15em] text-[#FF5500]">DAILY 7</span>
+            </div>
+            <p className="text-[9px] text-white/80 line-clamp-4 leading-tight">{post.content?.slice(0, 80)}</p>
+          </div>
+          {/* Bottom accent */}
+          <div className="absolute bottom-0 left-0 right-0 h-[1px]" style={{
+            background: 'linear-gradient(90deg, transparent 0%, rgba(255,85,0,0.3) 50%, transparent 100%)',
+          }} />
+        </div>
       ) : (
         <div className="w-full h-full flex items-center justify-center p-3 bg-muted">
           <p className="text-xs text-muted-foreground line-clamp-4 text-center">{post.content?.slice(0, 100)}</p>
