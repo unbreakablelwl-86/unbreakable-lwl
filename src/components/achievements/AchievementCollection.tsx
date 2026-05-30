@@ -72,7 +72,7 @@ const RARITY_CONFIG: Record<AchievementRarity, {
   platinum: { label: 'Platinum', textColor: 'text-slate-200',  bgClass: 'bg-slate-200/10',    borderClass: 'border-slate-300/30',  color: '#e2e8f0', icon: Sparkles },
 };
 
-type TabType = 'all' | 'strength' | 'cardio' | 'global';
+type TabType = 'all' | 'strength' | 'cardio' | 'global' | 'trophies';
 type SortType = 'newest' | 'rarity' | 'exercise';
 
 /* ═══ Generate shareable card image (same as UN-TUNES) ═══ */
@@ -864,11 +864,15 @@ export function AchievementCollection() {
   const filteredCards = useMemo(() => {
     let result = [...cards];
     const CARDIO_CATEGORIES = ['run', 'cycle', 'row', 'swim'];
-    // Always exclude programme trophies from PB hub — they belong in Un-Tunes
-    result = result.filter(c => c.card_type !== 'programme_trophy');
-    if (activeTab === 'strength') result = result.filter(c => c.card_type === 'pb_personal' && !CARDIO_CATEGORIES.includes(c.activity_category || ''));
-    if (activeTab === 'cardio') result = result.filter(c => c.card_type === 'pb_personal' && CARDIO_CATEGORIES.includes(c.activity_category || ''));
-    if (activeTab === 'global') result = result.filter(c => c.card_type === 'pb_global');
+    if (activeTab === 'trophies') {
+      result = result.filter(c => c.card_type === 'programme_trophy');
+    } else {
+      // Filter out programme trophies from non-trophy PB tabs
+      if (activeTab !== 'all') result = result.filter(c => c.card_type !== 'programme_trophy');
+      if (activeTab === 'strength') result = result.filter(c => c.card_type === 'pb_personal' && !CARDIO_CATEGORIES.includes(c.activity_category || ''));
+      if (activeTab === 'cardio') result = result.filter(c => c.card_type === 'pb_personal' && CARDIO_CATEGORIES.includes(c.activity_category || ''));
+      if (activeTab === 'global') result = result.filter(c => c.card_type === 'pb_global');
+    }
     if (filterRarity !== 'all') result = result.filter(c => c.rarity === filterRarity);
 
     // Deduplicate: only show the BEST card per exercise (highest rarity, then newest)
@@ -1109,9 +1113,9 @@ export function AchievementCollection() {
         </Card>
       </motion.div>
 
-      {/* Tabs — 4 categories: All / Strength / Cardio / Global */}
+      {/* Tabs — 5 categories: All / Strength / Cardio / Trophies / Global */}
       <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as TabType)}>
-        <TabsList className="grid w-full grid-cols-4 bg-background border border-border">
+        <TabsList className="grid w-full grid-cols-5 bg-background border border-border">
           <TabsTrigger value="all" className="font-display tracking-wide text-[9px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
             ALL ({counts.total})
           </TabsTrigger>
@@ -1120,6 +1124,9 @@ export function AchievementCollection() {
           </TabsTrigger>
           <TabsTrigger value="cardio" className="font-display tracking-wide text-[9px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
             <Activity className="w-3 h-3 mr-0.5" /> CARDIO ({cardioCount})
+          </TabsTrigger>
+          <TabsTrigger value="trophies" className="font-display tracking-wide text-[9px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+            🏆 TROPHIES
           </TabsTrigger>
           <TabsTrigger value="global" className="font-display tracking-wide text-[9px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
             <Globe className="w-3 h-3 mr-0.5" /> GLOBAL ({counts.pbGlobal})
