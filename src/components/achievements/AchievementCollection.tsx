@@ -817,89 +817,15 @@ function AchievementFullViewer({
           <p className="text-[10px] text-zinc-500 mt-1">Earned {date}</p>
         </div>
 
-        {/* ── Purchase / Download section ── */}
-        {card.purchased ? (
-          /* Already purchased — show download buttons */
-          <div className="space-y-2">
-            <div className="flex items-center justify-center gap-1.5 mb-1">
-              <Sparkles className="w-3 h-3 text-green-400" />
-              <span className="text-[10px] font-display tracking-wider text-green-400">PURCHASED — TAP TO DOWNLOAD</span>
-            </div>
-            <div className="flex gap-2">
-              <Button variant="outline" size="sm"
-                className="flex-1 text-xs font-display tracking-wider border-green-500/30 text-green-400 hover:bg-green-500/10"
-                onClick={async () => {
-                  const blob = await generateAchievementCardImage(card);
-                  if (blob) {
-                    const url = URL.createObjectURL(blob);
-                    const link = document.createElement('a');
-                    link.href = url;
-                    link.download = `PB-${card.rarity}-${(card.exercise_name || card.title).replace(/\s+/g, '-')}.png`;
-                    link.click();
-                    URL.revokeObjectURL(url);
-                  }
-                }}>
-                <Download className="w-3 h-3 mr-1" /> DOWNLOAD IMAGE
-              </Button>
-              {card.video_url && (
-                <Button variant="outline" size="sm"
-                  className="flex-1 text-xs font-display tracking-wider border-green-500/30 text-green-400 hover:bg-green-500/10"
-                  onClick={() => {
-                    if (card.video_url) {
-                      const link = document.createElement('a');
-                      link.href = card.video_url;
-                      link.download = `PB-${card.rarity}-${(card.exercise_name || card.title).replace(/\s+/g, '-')}.mp4`;
-                      link.target = '_blank';
-                      link.click();
-                    }
-                  }}>
-                  <Download className="w-3 h-3 mr-1" /> DOWNLOAD VIDEO
-                </Button>
-              )}
-            </div>
-          </div>
-        ) : (
-          /* Not purchased — show buy button */
-          <div className="space-y-1.5">
-            <Button size="sm"
-              className="w-full text-xs font-display tracking-wider bg-[#FF5500] hover:bg-[#FF5500]/90 text-white"
-              style={{ boxShadow: '0 0 20px rgba(255,85,0,0.3), 0 0 40px rgba(255,85,0,0.1)' }}
-              onClick={() => onPurchase(card)}>
-              <ShoppingCart className="w-3 h-3 mr-1" /> PURCHASE CARD DOWNLOAD
-            </Button>
-            <p className="text-[9px] text-center text-zinc-500 font-display tracking-wider">
-              3 TOKENS (IMAGE) · 5 TOKENS (VIDEO)
-            </p>
-          </div>
-        )}
-
-        <div className="grid grid-cols-3 gap-1.5">
-          <Button variant="outline" size="sm"
-            className="text-[10px] font-display tracking-wider border-primary/30 text-primary hover:bg-primary/10"
-            onClick={() => imageInputRef.current?.click()}
-            disabled={uploading}>
-            <Camera className="w-3 h-3 mr-0.5" /> {uploading ? '…' : card.image_url ? 'EDIT IMAGE' : 'ADD IMAGE'}
-          </Button>
-          <Button variant="outline" size="sm"
-            className="text-[10px] font-display tracking-wider border-purple-500/30 text-purple-400 hover:bg-purple-500/10"
-            onClick={() => videoInputRef.current?.click()}
-            disabled={uploading}>
-            <Video className="w-3 h-3 mr-0.5" /> {uploading ? '…' : card.video_url ? 'EDIT VIDEO' : 'ADD VIDEO'}
-          </Button>
-          <Button variant="outline" size="sm"
-            className="text-[10px] font-display tracking-wider border-primary/30 text-primary hover:bg-primary/10"
+        {/* ── Actions ── */}
+        <div className="flex items-center gap-2">
+          <Button size="sm"
+            className="flex-1 text-xs font-display tracking-wider bg-[#FF5500] hover:bg-[#FF5500]/90 text-white"
+            style={{ boxShadow: '0 0 20px rgba(255,85,0,0.3), 0 0 40px rgba(255,85,0,0.1)' }}
             onClick={() => onShare(card)}>
-            <Share2 className="w-3 h-3 mr-0.5" /> SHARE
+            <Share2 className="w-3 h-3 mr-1.5" /> SHARE
           </Button>
         </div>
-        <p className="text-[8px] text-center text-zinc-600 font-display tracking-wider">
-          IMAGE (MAX 20MB) · VIDEO (MAX 30s / 50MB)
-        </p>
-        <Button variant="outline" size="sm"
-          className="w-full text-xs font-display tracking-wider border-red-500/30 text-red-400 hover:bg-red-500/10"
-          onClick={() => onDiscard(card)}>
-          <Trash2 className="w-3 h-3 mr-2" /> DISCARD
-        </Button>
       </div>
     </motion.div>
   );
@@ -931,19 +857,23 @@ export function AchievementCollection() {
     if (activeTab === 'global') result = result.filter(c => c.card_type === 'pb_global');
     if (filterRarity !== 'all') result = result.filter(c => c.rarity === filterRarity);
 
-    // Deduplicate: only show the BEST card per exercise (highest pb_value)
-    // Exercise-grouped view handles showing all PBs itself
-    if (sort !== 'exercise') {
-      const bestPerExercise = new Map<string, AchievementCard>();
-      result.forEach(c => {
-        const key = c.exercise_name || c.id;
-        const existing = bestPerExercise.get(key);
-        if (!existing || (c.pb_rank || 99) < (existing.pb_rank || 99)) {
+    // Deduplicate: only show the BEST card per exercise (highest rarity, then newest)
+    const bestPerExercise = new Map<string, AchievementCard>();
+    const RARITY_RANK: Record<string, number> = { platinum: 5, diamond: 4, gold: 3, silver: 2, bronze: 1, standard: 0 };
+    result.forEach(c => {
+      const key = c.exercise_name || c.id;
+      const existing = bestPerExercise.get(key);
+      if (!existing) {
+        bestPerExercise.set(key, c);
+      } else {
+        const newRank = RARITY_RANK[c.rarity] ?? 0;
+        const oldRank = RARITY_RANK[existing.rarity] ?? 0;
+        if (newRank > oldRank || (newRank === oldRank && new Date(c.earned_at) > new Date(existing.earned_at))) {
           bestPerExercise.set(key, c);
         }
-      });
-      result = Array.from(bestPerExercise.values());
-    }
+      }
+    });
+    result = Array.from(bestPerExercise.values());
 
     if (sort === 'newest') result.sort((a, b) => new Date(b.earned_at).getTime() - new Date(a.earned_at).getTime());
     else if (sort === 'rarity') result.sort((a, b) => RARITY_ORDER[b.rarity] - RARITY_ORDER[a.rarity]);
