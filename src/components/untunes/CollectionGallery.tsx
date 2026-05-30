@@ -164,7 +164,8 @@ function UnTunesCardDetailViewer({
   toShareableCard: (c: UserCard) => AchievementCard;
 }) {
   const [detailViewMode, setDetailViewMode] = useState<'card' | 'share'>('card');
-  const shareCanvasRef = useRef<HTMLCanvasElement>(null);
+  const [sharePreviewUrl, setSharePreviewUrl] = useState<string | null>(null);
+  const [shareLoading, setShareLoading] = useState(false);
   const style = RARITY_COLORS[card.rarity] || RARITY_COLORS.standard;
   const image = getCardImage(card);
 
@@ -172,22 +173,18 @@ function UnTunesCardDetailViewer({
   useEffect(() => {
     if (detailViewMode !== 'share') return;
     let cancelled = false;
+    setShareLoading(true);
     (async () => {
-      const blob = await generateShareImage(toShareableCard(card), 'untunes');
-      if (cancelled || !blob || !shareCanvasRef.current) return;
-      const url = URL.createObjectURL(blob);
-      const img = new Image();
-      img.onload = () => {
-        const canvas = shareCanvasRef.current;
-        if (!canvas) return;
-        const ctx = canvas.getContext('2d');
-        if (!ctx) return;
-        canvas.width = img.width;
-        canvas.height = img.height;
-        ctx.drawImage(img, 0, 0);
-        URL.revokeObjectURL(url);
-      };
-      img.src = url;
+      try {
+        const blob = await generateShareImage(toShareableCard(card), 'untunes');
+        if (cancelled || !blob) return;
+        const url = URL.createObjectURL(blob);
+        setSharePreviewUrl(prev => { if (prev) URL.revokeObjectURL(prev); return url; });
+      } catch (e) {
+        console.error('Un-Tunes share preview failed:', e);
+      } finally {
+        if (!cancelled) setShareLoading(false);
+      }
     })();
     return () => { cancelled = true; };
   }, [detailViewMode, card]);
@@ -295,14 +292,31 @@ function UnTunesCardDetailViewer({
               transition={{ duration: 0.2 }}
               className="flex flex-col items-center gap-2"
             >
-              <canvas
-                ref={shareCanvasRef}
-                className="w-56 h-72 rounded-xl object-contain"
-                style={{
-                  boxShadow: `0 0 16px ${RARITY_COLORS[card.rarity]?.glow ? 'rgba(255,255,255,0.1)' : 'transparent'}`,
-                  border: `1px solid rgba(255,255,255,0.1)`,
-                }}
-              />
+              {shareLoading ? (
+                <div className="w-72 h-[28rem] rounded-xl bg-zinc-900 flex items-center justify-center"
+                  style={{ border: '1px solid rgba(255,255,255,0.1)' }}>
+                  <div className="text-center space-y-2">
+                    <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto" />
+                    <p className="text-[10px] text-zinc-500 font-display tracking-wider">GENERATING SHARE IMAGE...</p>
+                  </div>
+                </div>
+              ) : sharePreviewUrl ? (
+                <img
+                  src={sharePreviewUrl}
+                  alt="Share preview"
+                  className="w-72 h-auto rounded-xl object-contain"
+                  style={{
+                    boxShadow: '0 0 16px rgba(255,255,255,0.1)',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    maxHeight: '28rem',
+                  }}
+                />
+              ) : (
+                <div className="w-72 h-[28rem] rounded-xl bg-zinc-900 flex items-center justify-center"
+                  style={{ border: '1px solid rgba(255,255,255,0.1)' }}>
+                  <p className="text-[10px] text-zinc-500 font-display tracking-wider">FAILED TO GENERATE</p>
+                </div>
+              )}
               <p className="text-[9px] text-zinc-500 font-display tracking-wider">
                 SHARE PREVIEW — THIS IS WHAT OTHERS SEE
               </p>
