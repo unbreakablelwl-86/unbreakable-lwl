@@ -83,11 +83,11 @@ export function useAchievementCards() {
     // Fetch cards + profile in parallel
     const [cardsResult, profileResult] = await Promise.all([
       supabase.rpc('get_achievement_collection', { p_user_id: user.id }),
-      supabase.from('profiles').select('display_name, gender').eq('user_id', user.id).single(),
+      supabase.from('profiles').select('display_name, sex').eq('user_id', user.id).single(),
     ]);
 
     const ownerName = profileResult.data?.display_name || user.user_metadata?.full_name || null;
-    const ownerGender = profileResult.data?.gender || null;
+    const ownerGender = profileResult.data?.sex || null;
 
     let rawCards: AchievementCard[];
     if (cardsResult.error) {
@@ -108,10 +108,10 @@ export function useAchievementCards() {
     try {
       const { data: profile } = await supabase
         .from('profiles')
-        .select('weight_kg, date_of_birth')
+        .select('bodyweight_kg, date_of_birth')
         .eq('user_id', user.id)
         .single();
-      if (profile?.weight_kg) bodyweightKg = profile.weight_kg;
+      if (profile?.bodyweight_kg) bodyweightKg = profile.bodyweight_kg;
       if (profile?.date_of_birth) {
         const dob = new Date(profile.date_of_birth);
         userAge = Math.floor((Date.now() - dob.getTime()) / (365.25 * 86400000));

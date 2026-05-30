@@ -1629,17 +1629,28 @@ export function AchievementCardReveal({
                       {card.owner_display_name || 'ATHLETE'}
                     </motion.h3>
 
-                    {/* ── EXERCISE + PB STAT LINE ("Deadlift · 180kg · 28 May 2026") ── */}
+                    {/* ── EXERCISE NAME — always visible, prominent ── */}
                     {(isPBPersonal || isPBGlobal) && (
                       <motion.p
-                        className="text-[11px] font-display tracking-wider mt-0.5"
-                        style={{ color: config.accentHex, textShadow: `0 0 8px ${config.accentHex}40` }}
+                        className="text-[13px] font-display tracking-wider font-bold uppercase mt-0.5"
+                        style={{ color: config.accentHex, textShadow: `0 0 10px ${config.accentHex}50` }}
                         initial={{ y: 20, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
                         transition={{ delay: 0.25 }}
                       >
                         {title}
-                        {card.pb_value ? ` · ${formatPBValue(card.pb_value, card.pb_unit || 'kg')}` : ''}
+                      </motion.p>
+                    )}
+                    {/* ── PB VALUE + DATE ── */}
+                    {(isPBPersonal || isPBGlobal) && (card.pb_value || card.record_value) && (
+                      <motion.p
+                        className="text-[10px] font-display tracking-wider"
+                        style={{ color: `${config.accentHex}CC`, textShadow: `0 0 6px ${config.accentHex}25` }}
+                        initial={{ y: 20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        transition={{ delay: 0.28 }}
+                      >
+                        {formatPBValue(card.pb_value || card.record_value || 0, card.pb_unit || card.record_unit || 'kg')}
                         {' · '}
                         {new Date(card.earned_at).toLocaleDateString('en-GB', {
                           day: '2-digit', month: 'short', year: 'numeric',
@@ -2169,13 +2180,21 @@ export function AchievementCardStatic({
               {card.owner_display_name || 'ATHLETE'}
             </p>
 
-            {/* Exercise · Weight · Date line */}
-            {card.pb_value && (
-              <p className={cn('font-display tracking-wider mt-0.5', size === 'sm' ? 'text-[7px]' : 'text-[9px]')}
-                style={{ color: config.accentHex, textShadow: `0 0 6px ${config.accentHex}30` }}>
+            {/* Exercise name — always visible on PB cards */}
+            {!isProgramme && (
+              <p className={cn('font-display tracking-wider uppercase font-bold mt-0.5', size === 'sm' ? 'text-[9px]' : 'text-[11px]')}
+                style={{ color: config.accentHex, textShadow: `0 0 8px ${config.accentHex}50` }}>
                 {title}
-                {` · ${formatPBValue(card.pb_value, card.pb_unit || 'kg')}`}
-                {` · ${new Date(card.earned_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase()}`}
+              </p>
+            )}
+
+            {/* PB value + date line */}
+            {!isProgramme && (card.pb_value || card.record_value) && (
+              <p className={cn('font-display tracking-wider', size === 'sm' ? 'text-[6px]' : 'text-[8px]')}
+                style={{ color: `${config.accentHex}CC`, textShadow: `0 0 4px ${config.accentHex}20` }}>
+                {formatPBValue(card.pb_value || card.record_value || 0, card.pb_unit || card.record_unit || 'kg')}
+                {' · '}
+                {new Date(card.earned_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase()}
               </p>
             )}
 
