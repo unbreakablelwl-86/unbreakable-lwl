@@ -53,6 +53,16 @@ export default {
           DEFAULT: "hsl(var(--locked))",
           foreground: "hsl(var(--locked-foreground))",
         },
+        // Rarity design tokens
+        rarity: {
+          bronze: "#CD7F32",
+          silver: "#C0C0C0",
+          gold: "#FFD700",
+          diamond: "#7DF9FF",
+          platinum: "#E5E4E2",
+          "diamond-accent": "#BF5FFF",
+          "platinum-rose": "#B76E79",
+        },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",

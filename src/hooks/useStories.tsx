@@ -63,11 +63,11 @@ export function useStories() {
     const profileMap = (profiles || []).reduce((acc, p) => {
       acc[p.user_id] = p;
       return acc;
-    }, {} as Record<string, any>);
+    }, {} as Record<string, { user_id: string; display_name: string | null; username: string | null; avatar_url: string | null }>);
 
     const storiesWithProfiles = (data || []).map(s => ({
       ...s,
-      media_items: Array.isArray((s as any).media_items) ? (s as any).media_items : [],
+      media_items: Array.isArray((s as Record<string, unknown>).media_items) ? (s as Record<string, unknown>).media_items as StoryMediaItem[] : [],
       profiles: profileMap[s.user_id] || null,
     }));
 
@@ -111,17 +111,17 @@ export function useStories() {
         image_url: story.image_url || null,
         video_url: story.video_url || null,
         visibility: story.visibility || 'public',
-        text_overlays: (story.text_overlays || []) as any,
+        text_overlays: story.text_overlays || [],
         background_color: story.background_color || null,
-        media_items: (story.media_items || []) as any,
-      } as any)
+        media_items: story.media_items || [],
+      } as Record<string, unknown>)
       .select()
       .single();
 
     if (!error && data) {
-      const allText = (story.text_overlays || []).map((o: any) => o.text || '').join(' ');
+      const allText = (story.text_overlays || []).map((o: { text?: string }) => o.text || '').join(' ');
       if (allText) {
-        notifyMentionedUsers(allText, user.id, 'story', (data as any).id);
+        notifyMentionedUsers(allText, user.id, 'story', (data as Record<string, unknown>).id as string);
       }
       await fetchStories();
     }

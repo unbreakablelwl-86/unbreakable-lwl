@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
 import { generateVideoThumbnail, compressVideo } from '@/lib/videoUtils';
@@ -39,53 +39,69 @@ export interface PostWithProfile extends Post {
   media_items?: PostMediaItem[];
 }
 
+const PAGE_SIZE = 20;
+
 export function usePosts() {
   const { user } = useAuth();
   const [posts, setPosts] = useState<PostWithProfile[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const offsetRef = useRef(0);
 
-  const fetchPosts = useCallback(async () => {
-    setLoading(true);
-
-    const { data, error } = await supabase
-      .from('posts')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .limit(50);
-
-    if (error) {
-      console.error('Error fetching posts:', error);
-      setPosts([]);
-    } else if (data) {
-      // Get kudos counts, profiles, and user kudos status
-      const postsWithCounts = await Promise.all(
-        data.map(async (post) => {
-          const [kudosResult, commentsResult, hasKudosResult, profileResult, mediaResult] = await Promise.all([
-            supabase.from('post_kudos').select('id', { count: 'exact', head: true }).eq('post_id', post.id),
-            supabase.from('post_comments').select('id', { count: 'exact', head: true }).eq('post_id', post.id),
-            user
-              ? supabase.from('post_kudos').select('id').eq('post_id', post.id).eq('user_id', user.id).maybeSingle()
-              : Promise.resolve({ data: null }),
-            supabase.from('profiles').select('display_name, avatar_url, username').eq('user_id', post.user_id).maybeSingle(),
-            supabase.from('post_media').select('id, media_type, media_url, thumbnail_url, sort_order, width, height, duration_seconds').eq('post_id', post.id).order('sort_order'),
-          ]);
-
-          return {
-            ...post,
-            visibility: (post.visibility || 'public') as 'public' | 'friends' | 'private',
-            profiles: profileResult.data || undefined,
-            kudos_count: kudosResult.count || 0,
-            comments_count: commentsResult.count || 0,
-            has_kudos: !!hasKudosResult.data,
-            media_items: (mediaResult.data as PostMediaItem[]) || [],
-          };
-        })
-      );
-
-      setPosts(postsWithCounts);
+  const fetchPosts = useCallback(async (reset = true) => {
+    if (reset) {
+      setLoading(true);
+      offsetRef.current = 0;
+    } else {
+      setLoadingMore(true);
     }
-    setLoading(false);
+
+    try {
+      // Single RPC call replaces 5 * N separate queries (was 250+ queries for 50 posts)
+      const { data, error } = await (supabase as any).rpc('get_feed_posts', {
+        p_user_id: user?.id || null,
+        p_limit: PAGE_SIZE,
+        p_offset: offsetRef.current,
+      });
+
+      if (error) {
+        console.error('Error fetching posts:', error);
+        if (reset) setPosts([]);
+      } else {
+        const feedPosts: PostWithProfile[] = (data || []).map((post: any) => ({
+          ...post,
+          visibility: (post.visibility || 'public') as 'public' | 'friends' | 'private',
+          profiles: post.profiles || undefined,
+          kudos_count: post.kudos_count || 0,
+          comments_count: post.comments_count || 0,
+          has_kudos: !!post.has_kudos,
+          media_items: (post.media_items || []) as PostMediaItem[],
+        }));
+
+        if (reset) {
+          setPosts(feedPosts);
+        } else {
+          setPosts(prev => [...prev, ...feedPosts]);
+        }
+
+        setHasMore(feedPosts.length === PAGE_SIZE);
+        offsetRef.current += feedPosts.length;
+      }
+    } catch (err) {
+      console.error('Feed fetch error:', err);
+      if (reset) setPosts([]);
+    } finally {
+      setLoading(false);
+      setLoadingMore(false);
+    }
   }, [user]);
+
+  const loadMore = useCallback(() => {
+    if (!loadingMore && hasMore) {
+      fetchPosts(false);
+    }
+  }, [fetchPosts, loadingMore, hasMore]);
 
   useEffect(() => {
     fetchPosts();
@@ -124,7 +140,7 @@ export function usePosts() {
       .eq('id', postId);
 
     if (!error) {
-      await fetchPosts();
+      setPosts(prev => prev.filter(p => p.id !== postId));
     }
 
     return { error };
@@ -165,6 +181,17 @@ export function usePosts() {
     const post = posts.find((p) => p.id === postId);
     if (!post) return;
 
+    // Optimistic update
+    setPosts(prev => prev.map(p =>
+      p.id === postId
+        ? {
+            ...p,
+            has_kudos: !p.has_kudos,
+            kudos_count: (p.kudos_count || 0) + (p.has_kudos ? -1 : 1),
+          }
+        : p
+    ));
+
     if (post.has_kudos) {
       await supabase.from('post_kudos').delete().eq('post_id', postId).eq('user_id', user.id);
     } else {
@@ -189,8 +216,6 @@ export function usePosts() {
         });
       }
     }
-
-    await fetchPosts();
   };
 
   const toggleCommentsEnabled = async (postId: string) => {
@@ -291,6 +316,9 @@ export function usePosts() {
   return {
     posts,
     loading,
+    loadingMore,
+    hasMore,
+    loadMore,
     refetch: fetchPosts,
     createPost,
     deletePost,

@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, lazy, Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -8,6 +8,7 @@ import { AuthProvider } from "@/hooks/useAuth";
 import { PlayerContext, usePlayerProvider } from "@/hooks/useUnTunes";
 import { UniversityAdminProvider } from "@/hooks/useUniversityAdmin";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { AdminRoute } from "@/components/AdminRoute";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { RouteErrorBoundary } from "@/components/RouteErrorBoundary";
 import { InstallPrompt } from "@/components/pwa/InstallPrompt";
@@ -23,64 +24,73 @@ function PresenceTracker() {
   usePresenceHeartbeat();
   return null;
 }
-import Index from "./pages/Index";
-import Social from "./pages/Social";
-import Calculators from "./pages/Calculators";
-import Tracker from "./pages/Tracker";
-import Mindset from "./pages/Mindset";
-import MindsetBreathing from "./pages/MindsetBreathing";
-import MindsetGames from "./pages/MindsetGames";
-import Zone from "./pages/Zone";
-import Programming from "./pages/Programming";
-import Fuel from "./pages/Fuel";
-import Help from "./pages/Help";
-import Inbox from "./pages/Inbox";
-import NotFound from "./pages/NotFound";
-import Admin from "./pages/Admin";
-import University from "./pages/University";
-import UniversityLevel from "./pages/UniversityLevel";
-import UniversityChapter from "./pages/UniversityChapter";
-import UniversityAssessment from "./pages/UniversityAssessment";
-import UniversityChapterQuiz from "./pages/UniversityChapterQuiz";
-import UniversityCertificate from "./pages/UniversityCertificate";
 
-// New modular sub-pages
-import Profile from "./pages/Profile";
-import ProgrammingLogs from "./pages/ProgrammingLogs";
-import ProgrammingMyProgrammes from "./pages/ProgrammingMyProgrammes";
-import ProgrammingCreate from "./pages/ProgrammingCreate";
-import ExerciseLibrary from "./pages/ExerciseLibrary";
-import FuelHistory from "./pages/FuelHistory";
-import FuelRecipes from "./pages/FuelRecipes";
-import FuelPlanning from "./pages/FuelPlanning";
-import FuelFoods from "./pages/FuelFoods";
-import FuelMyFuel from "./pages/FuelMyFuel";
-import TrackerMyProgrammes from "./pages/TrackerMyProgrammes";
-import TrackerCreate from "./pages/TrackerCreate";
-import UserProfile from "./pages/UserProfile";
-import Onboarding from "./pages/Onboarding";
-import Habits from "./pages/Habits";
-import CoachDashboard from "./pages/CoachDashboard";
-import MyCoaching from "./pages/MyCoaching";
-import CoachProfileEdit from "./pages/CoachProfileEdit";
-import CoachProfile from "./pages/CoachProfile";
-import Coaches from "./pages/Coaches";
-import CoachCommandCentre from "./pages/CoachCommandCentre";
-// Plans removed — /plans redirects inline to /ai-tokens
-import Founder from "./pages/Founder";
-import Privacy from "./pages/Privacy";
-import Terms from "./pages/Terms";
-import FAQ from "./pages/FAQ";
-import Explore from "./pages/Explore";
-import AITokens from "./pages/AITokens";
+/** Lazy-loading spinner shown while route chunks load */
+function LazyFallback() {
+  return (
+    <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="w-12 h-12 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+    </div>
+  );
+}
+
+// ─── Eagerly loaded (needed on first paint) ──────────────────────────
+import Index from "./pages/Index";
 import SignIn from "./pages/SignIn";
-import ForgotPassword from "./pages/ForgotPassword";
-import ResetPassword from "./pages/ResetPassword";
-import Unbreakable86 from "./pages/Unbreakable86";
-import UnTunes from "./pages/UnTunes";
-import UnTunesTerms from "./pages/UnTunesTerms";
-import AchievementsPage from "./pages/AchievementsPage";
-// import SpotifyCallback from "./pages/SpotifyCallback"; // parked
+import NotFound from "./pages/NotFound";
+
+// ─── Lazy-loaded routes (code-split per chunk) ───────────────────────
+const Social = lazy(() => import("./pages/Social"));
+const Calculators = lazy(() => import("./pages/Calculators"));
+const Tracker = lazy(() => import("./pages/Tracker"));
+const Mindset = lazy(() => import("./pages/Mindset"));
+const MindsetBreathing = lazy(() => import("./pages/MindsetBreathing"));
+const MindsetGames = lazy(() => import("./pages/MindsetGames"));
+const Zone = lazy(() => import("./pages/Zone"));
+const Programming = lazy(() => import("./pages/Programming"));
+const Fuel = lazy(() => import("./pages/Fuel"));
+const Help = lazy(() => import("./pages/Help"));
+const Inbox = lazy(() => import("./pages/Inbox"));
+const Admin = lazy(() => import("./pages/Admin"));
+const University = lazy(() => import("./pages/University"));
+const UniversityLevel = lazy(() => import("./pages/UniversityLevel"));
+const UniversityChapter = lazy(() => import("./pages/UniversityChapter"));
+const UniversityAssessment = lazy(() => import("./pages/UniversityAssessment"));
+const UniversityChapterQuiz = lazy(() => import("./pages/UniversityChapterQuiz"));
+const UniversityCertificate = lazy(() => import("./pages/UniversityCertificate"));
+const Profile = lazy(() => import("./pages/Profile"));
+const ProgrammingLogs = lazy(() => import("./pages/ProgrammingLogs"));
+const ProgrammingMyProgrammes = lazy(() => import("./pages/ProgrammingMyProgrammes"));
+const ProgrammingCreate = lazy(() => import("./pages/ProgrammingCreate"));
+const ExerciseLibrary = lazy(() => import("./pages/ExerciseLibrary"));
+const FuelHistory = lazy(() => import("./pages/FuelHistory"));
+const FuelRecipes = lazy(() => import("./pages/FuelRecipes"));
+const FuelPlanning = lazy(() => import("./pages/FuelPlanning"));
+const FuelFoods = lazy(() => import("./pages/FuelFoods"));
+const FuelMyFuel = lazy(() => import("./pages/FuelMyFuel"));
+const TrackerMyProgrammes = lazy(() => import("./pages/TrackerMyProgrammes"));
+const TrackerCreate = lazy(() => import("./pages/TrackerCreate"));
+const UserProfile = lazy(() => import("./pages/UserProfile"));
+const Onboarding = lazy(() => import("./pages/Onboarding"));
+const Habits = lazy(() => import("./pages/Habits"));
+const CoachDashboard = lazy(() => import("./pages/CoachDashboard"));
+const MyCoaching = lazy(() => import("./pages/MyCoaching"));
+const CoachProfileEdit = lazy(() => import("./pages/CoachProfileEdit"));
+const CoachProfile = lazy(() => import("./pages/CoachProfile"));
+const Coaches = lazy(() => import("./pages/Coaches"));
+const CoachCommandCentre = lazy(() => import("./pages/CoachCommandCentre"));
+const Founder = lazy(() => import("./pages/Founder"));
+const Privacy = lazy(() => import("./pages/Privacy"));
+const Terms = lazy(() => import("./pages/Terms"));
+const FAQ = lazy(() => import("./pages/FAQ"));
+const Explore = lazy(() => import("./pages/Explore"));
+const AITokens = lazy(() => import("./pages/AITokens"));
+const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
+const ResetPassword = lazy(() => import("./pages/ResetPassword"));
+const Unbreakable86 = lazy(() => import("./pages/Unbreakable86"));
+const UnTunes = lazy(() => import("./pages/UnTunes"));
+const UnTunesTerms = lazy(() => import("./pages/UnTunesTerms"));
+const AchievementsPage = lazy(() => import("./pages/AchievementsPage"));
 
 const queryClient = new QueryClient();
 
@@ -113,6 +123,7 @@ const App = () => {
           {!splashDone && <SplashScreen onComplete={handleSplashComplete} />}
           <BrowserRouter>
             <PresenceTracker />
+            <Suspense fallback={<LazyFallback />}>
             <Routes>
               {/* Sign-in — standalone full-page (no bottom nav) */}
               <Route path="/signin" element={<SignIn />} />
@@ -270,7 +281,6 @@ const App = () => {
                 <Route path="/untunes" element={<RouteErrorBoundary section="Un-Tunes"><UnTunes /></RouteErrorBoundary>} />
                 <Route path="/untunes/terms" element={<UnTunesTerms />} />
                 <Route path="/achievements" element={<RouteErrorBoundary section="Achievements"><AchievementsPage /></RouteErrorBoundary>} />
-                {/* <Route path="/callback/spotify" element={<SpotifyCallback />} /> */}
                 
                 {/* Coach Dashboard - role-protected + subscribed */}
                 <Route path="/coach" element={
@@ -278,29 +288,24 @@ const App = () => {
                 } />
                 
                 {/* Athlete coaching page */}
-                <Route path="/my-coaching" element={
-                  <MyCoaching />
-                } />
+                <Route path="/my-coaching" element={<MyCoaching />} />
                 <Route path="/coach-profile-edit" element={
                   <ProtectedRoute><CoachProfileEdit /></ProtectedRoute>
                 } />
-                <Route path="/coach/:userId" element={
-                  <CoachProfile />
-                } />
-                <Route path="/coaches" element={
-                  <Coaches />
-                } />
+                <Route path="/coach/:userId" element={<CoachProfile />} />
+                <Route path="/coaches" element={<Coaches />} />
                 <Route path="/command-centre" element={
                   <ProtectedRoute><CoachCommandCentre /></ProtectedRoute>
                 } />
                 
-                {/* Admin Dashboard - Hidden, role-protected */}
-                <Route path="/admin" element={<Admin />} />
+                {/* Admin Dashboard - role-protected (dev only) */}
+                <Route path="/admin" element={<AdminRoute><Admin /></AdminRoute>} />
                 
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Route>
             </Routes>
+            </Suspense>
           </BrowserRouter>
           <FloatingMiniPlayer />
           <FloatingSessionTracker />

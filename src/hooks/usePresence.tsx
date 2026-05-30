@@ -20,7 +20,7 @@ export function usePresenceHeartbeat() {
   const sendHeartbeat = useCallback(async () => {
     if (!user) return;
     try {
-      await (supabase as any).rpc('update_presence', { p_page: location.pathname });
+      await supabase.rpc('update_presence' as string, { p_page: location.pathname });
     } catch {
       // Silently fail
     }
@@ -72,7 +72,7 @@ export function useUserPresence(userIds: string[]) {
 
         if (data) {
           const map = new Map<string, { isOnline: boolean; lastSeen: string | null }>();
-          data.forEach((row: any) => {
+          data.forEach((row: { user_id: string; is_online: boolean; last_seen: string | null }) => {
             map.set(row.user_id, {
               isOnline: row.is_online,
               lastSeen: row.last_seen,

@@ -16,18 +16,31 @@ export function useOnboardingCheck() {
         return;
       }
 
-      const { data, error } = await supabase
-        .from('coaching_profiles')
-        .select('onboarding_completed')
-        .eq('user_id', user.id)
-        .maybeSingle();
+      try {
+        const { data, error } = await supabase
+          .from('coaching_profiles')
+          .select('onboarding_completed')
+          .eq('user_id', user.id)
+          .maybeSingle();
 
-      if (error && error.code !== 'PGRST116') {
-        console.error('Onboarding check error:', error);
+        if (error) {
+          // On DB error, let users through — don't lock them out
+          console.error('Onboarding check error:', error);
+          setNeedsOnboarding(false);
+          setLoading(false);
+          return;
+        }
+
+        // Only require onboarding if we got a definitive "not completed" answer
+        // No profile row → needs onboarding. Profile with onboarding_completed=false → needs it.
+        setNeedsOnboarding(data ? !data.onboarding_completed : true);
+      } catch (err) {
+        // Network / unexpected error — let users through
+        console.error('Onboarding check unexpected error:', err);
+        setNeedsOnboarding(false);
+      } finally {
+        setLoading(false);
       }
-
-      setNeedsOnboarding(!data?.onboarding_completed);
-      setLoading(false);
     };
 
     check();
