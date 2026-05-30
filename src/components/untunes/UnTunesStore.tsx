@@ -22,8 +22,9 @@ import { PackOpening, PACK_TIERS, type PackCard, type PackTier } from './PackOpe
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 
-// Pricing in tokens (single/album/bundle remain the same)
-const SINGLE_COST = 3;   // ≈ £1
+// Pricing in tokens
+const STANDARD_SINGLE_COST = 2;  // Standard rarity single
+const GOLD_SINGLE_COST = 3;     // Guaranteed gold rarity single
 const ALBUM_COST = 30;   // ≈ £10
 const BUNDLE_COST = 50;  // All albums — price of 2
 
@@ -54,6 +55,7 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
     albumId?: string;
     label: string;
     cost: number;
+    goldTier?: boolean;
   } | null>(null);
 
   // ── Pending (unopened) packs ──
@@ -148,35 +150,41 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
     type: 'single' | 'album' | 'bundle',
     trackId?: string,
     albumId?: string,
+    goldTier?: boolean,
   ) => {
     if (!user) {
       toast.error('Please sign in to purchase');
       return;
     }
-    const cost = type === 'single' ? SINGLE_COST : type === 'album' ? ALBUM_COST : BUNDLE_COST;
-    let label = type === 'bundle' ? 'Ultimate Bundle (All Albums)' : type === 'album' ? 'Album' : 'Single Track';
+    const cost = type === 'single'
+      ? (goldTier ? GOLD_SINGLE_COST : STANDARD_SINGLE_COST)
+      : type === 'album' ? ALBUM_COST : BUNDLE_COST;
+    let label = type === 'bundle' ? 'Ultimate Bundle (All Albums)' : type === 'album' ? 'Album' : (goldTier ? 'Gold Single' : 'Standard Single');
     if (trackId) {
       const t = tracks.find((tr: any) => tr.id === trackId);
-      if (t) label = `"${t.title}"`;
+      if (t) label = `"${t.title}"${goldTier ? ' (Gold)' : ''}`;
     }
     if (albumId) {
       const a = albums.find((al: any) => al.id === albumId);
       if (a) label = `"${a.title}" Album`;
     }
-    setConfirmPurchase({ type, trackId, albumId, label, cost });
+    setConfirmPurchase({ type, trackId, albumId, label, cost, goldTier });
   }, [user, tracks, albums]);
 
   const handlePurchase = useCallback(async (
     type: 'single' | 'album' | 'bundle',
     trackId?: string,
     albumId?: string,
+    goldTier?: boolean,
   ) => {
     if (!user) {
       toast.error('Please sign in to purchase');
       return;
     }
 
-    const cost = type === 'single' ? SINGLE_COST : type === 'album' ? ALBUM_COST : BUNDLE_COST;
+    const cost = type === 'single'
+      ? (goldTier ? GOLD_SINGLE_COST : STANDARD_SINGLE_COST)
+      : type === 'album' ? ALBUM_COST : BUNDLE_COST;
     // Dev/coach accounts bypass token balance check
     if (!hasFullAccess && balance < cost) {
       toast.error(`Not enough tokens. You need ${cost} but have ${balance}.`);
@@ -196,6 +204,7 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
         _type: type,
         _track_id: trackId || null,
         _album_id: albumId || null,
+        _gold_tier: goldTier || false,
       });
 
       if (error) throw error;
@@ -637,7 +646,7 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
               </div>
             </div>
 
-            {/* ═══ SINGLES — matching pack tier design ═══ */}
+            {/* ═══ SINGLES — Standard + Gold tiers ═══ */}
             <motion.div whileTap={{ scale: 0.98 }}>
               <Card
                 className="relative overflow-hidden border-primary/30 bg-gradient-to-br from-zinc-900 via-orange-950/15 to-zinc-900 cursor-pointer hover:border-primary/40 transition-colors"
@@ -648,27 +657,23 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
                   <div className="flex items-center justify-between mb-2">
                     <div>
                       <p className="font-display text-sm tracking-wider text-primary">BUY SINGLES</p>
-                      <p className="text-[10px] text-muted-foreground mt-0.5">{SINGLE_COST} tokens each · Choose your track</p>
+                      <p className="text-[10px] text-muted-foreground mt-0.5">Choose your track · Standard or Gold</p>
                     </div>
                     <Badge className="bg-primary/20 text-orange-300 border-primary/30 text-[9px] font-display">
                       PICK YOUR OWN
                     </Badge>
                   </div>
-                  <div className="flex items-center gap-3 mt-2">
-                    <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
-                      <Disc3 className="w-3.5 h-3.5 text-primary" />
-                      <span>Individual track cards</span>
+                  <div className="flex items-center gap-4 mt-2">
+                    <div className="flex items-center gap-1.5">
+                      <Coins className="w-3 h-3 text-zinc-400" />
+                      <span className="text-xs font-display text-yellow-400">Standard · {STANDARD_SINGLE_COST} tokens</span>
                     </div>
-                    <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
-                      <Music className="w-3.5 h-3.5 text-primary" />
-                      <span>Full library available</span>
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-between mt-3">
                     <div className="flex items-center gap-1.5">
                       <Coins className="w-3 h-3 text-yellow-400" />
-                      <span className="text-xs font-display text-yellow-400">{SINGLE_COST} tokens</span>
+                      <span className="text-xs font-display text-yellow-400">Gold · {GOLD_SINGLE_COST} tokens</span>
                     </div>
+                  </div>
+                  <div className="flex items-center justify-end mt-2">
                     <ChevronRight className="w-4 h-4 text-primary" />
                   </div>
                 </div>
@@ -710,7 +715,7 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
 
             <h3 className="font-display text-sm tracking-wider text-white flex items-center gap-2">
               <Music className="w-4 h-4 text-primary" />
-              BUY SINGLES — {SINGLE_COST} tokens each
+              BUY SINGLES
             </h3>
 
             <div className="space-y-2">
@@ -730,20 +735,40 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
                       <p className="text-sm text-white truncate">{track.title}</p>
                       <p className="text-[10px] text-muted-foreground">{track.genre || 'Original'}</p>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-display text-white">{SINGLE_COST}</span>
-                      <Coins className="w-3 h-3 text-primary" />
+                    <div className="flex items-center gap-1.5">
+                      {/* Standard purchase — gold text, 2 tokens */}
                       <Button
                         size="sm"
                         variant="outline"
-                        className="text-[10px] font-display tracking-wider border-primary/30 text-primary hover:bg-primary/10 ml-1"
-                        disabled={!!purchasing || (!hasFullAccess && balance < SINGLE_COST)}
-                        onClick={() => requestPurchase('single', track.id)}
+                        className="text-[10px] font-display tracking-wider border-yellow-500/30 text-yellow-400 hover:bg-yellow-500/10 px-2"
+                        disabled={!!purchasing || (!hasFullAccess && balance < STANDARD_SINGLE_COST)}
+                        onClick={() => requestPurchase('single', track.id, undefined, false)}
                       >
                         {purchasing === `single-${track.id}` ? (
                           <Loader2 className="w-3 h-3 animate-spin" />
                         ) : (
-                          'BUY'
+                          <span className="flex items-center gap-1">
+                            <span>{STANDARD_SINGLE_COST}</span>
+                            <Coins className="w-2.5 h-2.5" />
+                          </span>
+                        )}
+                      </Button>
+                      {/* Gold purchase — gold text, 3 tokens */}
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="text-[10px] font-display tracking-wider border-yellow-400/40 text-yellow-400 hover:bg-yellow-400/10 bg-yellow-400/5 px-2"
+                        disabled={!!purchasing || (!hasFullAccess && balance < GOLD_SINGLE_COST)}
+                        onClick={() => requestPurchase('single', track.id, undefined, true)}
+                      >
+                        {purchasing === `single-${track.id}-gold` ? (
+                          <Loader2 className="w-3 h-3 animate-spin" />
+                        ) : (
+                          <span className="flex items-center gap-1">
+                            <Crown className="w-2.5 h-2.5" />
+                            <span>{GOLD_SINGLE_COST}</span>
+                            <Coins className="w-2.5 h-2.5" />
+                          </span>
                         )}
                       </Button>
                     </div>
@@ -815,9 +840,9 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
                 style={{ boxShadow: '0 0 20px rgba(255,85,0,0.3)' }}
                 disabled={!hasFullAccess && balance < confirmPurchase.cost}
                 onClick={() => {
-                  const { type, trackId, albumId } = confirmPurchase;
+                  const { type, trackId, albumId, goldTier } = confirmPurchase;
                   setConfirmPurchase(null);
-                  handlePurchase(type, trackId, albumId);
+                  handlePurchase(type, trackId, albumId, goldTier);
                 }}
               >
                 <Coins className="w-3 h-3 mr-1" />
