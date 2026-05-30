@@ -30,24 +30,19 @@ const BUNDLE_COST = 50; // All albums for price of 2 minus discount
 
 // ── Rarity odds ──
 const RARITY_ODDS = {
-  single: { diamond: 0.01, gold: 0.06, silver: 0.18, bronze: 0.30 },  // 1% diamond, 6% gold, 18% silver, 30% bronze, 45% standard
-  album:  { diamond: 0.015, gold: 0.08, silver: 0.20, bronze: 0.28 }, // better odds for album packs
-  bundle: { diamond: 0.03, gold: 0.12, silver: 0.25, bronze: 0.25 },  // best odds for bundles
+  single: { platinum: 0.005, diamond: 0.01, gold: 0.10 },  // 0.5% platinum, 1% diamond, 10% gold, 88.5% standard
+  album:  { platinum: 0.008, diamond: 0.015, gold: 0.12 }, // better odds for album packs
+  bundle: { platinum: 0.015, diamond: 0.03, gold: 0.18 },  // best odds for bundles
 };
 const MAX_DIAMOND_EDITIONS = 100;
+const MAX_PLATINUM_EDITIONS = 50;
 
-function rollRarity(type: "single" | "album" | "bundle"): "standard" | "bronze" | "silver" | "gold" | "diamond" {
+function rollRarity(type: "single" | "album" | "bundle"): "standard" | "gold" | "diamond" | "platinum" {
   const roll = Math.random();
   const odds = RARITY_ODDS[type];
-  let cumulative = 0;
-  cumulative += odds.diamond;
-  if (roll < cumulative) return "diamond";
-  cumulative += odds.gold;
-  if (roll < cumulative) return "gold";
-  cumulative += odds.silver;
-  if (roll < cumulative) return "silver";
-  cumulative += odds.bronze;
-  if (roll < cumulative) return "bronze";
+  if (roll < odds.platinum) return "platinum";
+  if (roll < odds.platinum + odds.diamond) return "diamond";
+  if (roll < odds.platinum + odds.diamond + odds.gold) return "gold";
   return "standard";
 }
 

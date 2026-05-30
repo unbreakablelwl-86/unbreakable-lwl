@@ -3,7 +3,7 @@
  * Shows all owned cards (track, album, brand) with rarity filters,
  * card detail view, and share capability.
  */
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import {
@@ -67,7 +67,7 @@ function CardShimmer({ rarity }: { rarity: string }) {
 import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns';
-import { CardShareSheet } from '@/components/achievements/CardShareSheet';
+import { CardShareSheet, generateShareImage } from '@/components/achievements/CardShareSheet';
 import type { AchievementCard } from '@/hooks/useAchievementCards';
 
 interface CollectionGalleryProps {
@@ -144,6 +144,219 @@ const RARITY_COLORS: Record<string, { bg: string; border: string; text: string; 
     icon: Star,
   },
 };
+
+/* ═══════════════════════════════════════════════════════════════ */
+/*  Un-Tunes Card Detail Viewer — CARD / SHARE dual view         */
+/* ═══════════════════════════════════════════════════════════════ */
+function UnTunesCardDetailViewer({
+  card, onClose, onShare, onList, onDelete, deleting,
+  getCardImage, getCardName, getCardType, toShareableCard,
+}: {
+  card: UserCard;
+  onClose: () => void;
+  onShare: (c: UserCard) => void;
+  onList: (c: UserCard) => void;
+  onDelete: (c: UserCard) => void;
+  deleting: boolean;
+  getCardImage: (c: UserCard) => string | null;
+  getCardName: (c: UserCard) => string;
+  getCardType: (c: UserCard) => string;
+  toShareableCard: (c: UserCard) => AchievementCard;
+}) {
+  const [detailViewMode, setDetailViewMode] = useState<'card' | 'share'>('card');
+  const shareCanvasRef = useRef<HTMLCanvasElement>(null);
+  const style = RARITY_COLORS[card.rarity] || RARITY_COLORS.standard;
+  const image = getCardImage(card);
+
+  // Generate premium static share preview when toggled
+  useEffect(() => {
+    if (detailViewMode !== 'share') return;
+    let cancelled = false;
+    (async () => {
+      const blob = await generateShareImage(toShareableCard(card), 'untunes');
+      if (cancelled || !blob || !shareCanvasRef.current) return;
+      const url = URL.createObjectURL(blob);
+      const img = new Image();
+      img.onload = () => {
+        const canvas = shareCanvasRef.current;
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0);
+        URL.revokeObjectURL(url);
+      };
+      img.src = url;
+    })();
+    return () => { cancelled = true; };
+  }, [detailViewMode, card]);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/90 backdrop-blur-sm p-4"
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ scale: 0.85, y: 20 }}
+        animate={{ scale: 1, y: 0 }}
+        exit={{ scale: 0.85, y: 20 }}
+        onClick={e => e.stopPropagation()}
+        className="w-full max-w-sm flex flex-col items-center gap-3"
+      >
+        {/* CARD / SHARE toggle */}
+        <div className="flex gap-1 bg-zinc-900/80 rounded-full p-0.5">
+          <button
+            className={`px-4 py-1.5 text-[10px] font-display tracking-wider rounded-full transition-all ${
+              detailViewMode === 'card' ? 'bg-primary text-black font-bold' : 'text-zinc-400 hover:text-white'
+            }`}
+            onClick={() => setDetailViewMode('card')}
+          >
+            CARD
+          </button>
+          <button
+            className={`px-4 py-1.5 text-[10px] font-display tracking-wider rounded-full transition-all ${
+              detailViewMode === 'share' ? 'bg-primary text-black font-bold' : 'text-zinc-400 hover:text-white'
+            }`}
+            onClick={() => setDetailViewMode('share')}
+          >
+            SHARE
+          </button>
+        </div>
+
+        {/* Animated card vs static share preview */}
+        <AnimatePresence mode="wait">
+          {detailViewMode === 'card' ? (
+            <motion.div
+              key="ut-animated"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.2 }}
+            >
+              <Card className={`overflow-hidden border-2 ${style.border} ${style.glow}`}>
+                <div className="aspect-[3/4] relative bg-gradient-to-br from-card to-muted/20" style={{ width: '18rem' }}>
+                  {image ? (
+                    <img src={image} alt="" className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <Music size={48} className="text-muted-foreground/20" />
+                    </div>
+                  )}
+                  <CardShimmer rarity={card.rarity} />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20" />
+                  <div className="absolute top-2 left-3 z-10 flex items-center gap-1.5">
+                    <img src="/unbreakable-shield.png" alt="" className="w-4 h-4 object-contain" style={{ filter: 'drop-shadow(0 0 3px rgba(255,255,255,0.15))', opacity: 0.55 }} />
+                    <div>
+                      <p className="text-[6px] font-display tracking-[0.15em] text-white/45">UNBREAKABLE</p>
+                      <p className="text-[4px] font-mono tracking-[0.1em] text-white/30">LIVE WITHOUT LIMITS™</p>
+                    </div>
+                  </div>
+                  <div className="absolute top-8 left-3 right-3 flex items-center justify-between">
+                    <span className={`text-[10px] font-display tracking-widest px-2.5 py-1 rounded-lg ${style.bg} ${style.text} backdrop-blur-sm border ${style.border}`}>
+                      {card.rarity.toUpperCase()}
+                    </span>
+                    <span className="text-[10px] font-display tracking-wider px-2 py-1 rounded-lg bg-black/50 text-white/70 backdrop-blur-sm">
+                      {getCardType(card)}
+                    </span>
+                  </div>
+                  <div className="absolute bottom-0 left-0 right-0 p-4">
+                    <h3 className="font-display text-lg tracking-wider text-white mb-1">
+                      {getCardName(card)}
+                    </h3>
+                    <div className="flex items-center gap-3 text-white/60 text-[10px] font-display tracking-wider">
+                      {card.edition_number != null && card.edition_number > 0 && (
+                        <span className="flex items-center gap-1">
+                          <Hash size={10} />
+                          {String(card.edition_number).padStart(3, '0')}
+                          {card.rarity === 'platinum' ? '/250' : card.rarity === 'diamond' ? '/1000' : ''}
+                        </span>
+                      )}
+                      {card.date_stamped && (
+                        <span className="flex items-center gap-1">
+                          <Calendar size={10} />
+                          {format(new Date(card.date_stamped), 'dd MMM yyyy')}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            </motion.div>
+          ) : (
+            <motion.div
+              key="ut-share-preview"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 20 }}
+              transition={{ duration: 0.2 }}
+              className="flex flex-col items-center gap-2"
+            >
+              <canvas
+                ref={shareCanvasRef}
+                className="w-56 h-72 rounded-xl object-contain"
+                style={{
+                  boxShadow: `0 0 16px ${RARITY_COLORS[card.rarity]?.glow ? 'rgba(255,255,255,0.1)' : 'transparent'}`,
+                  border: `1px solid rgba(255,255,255,0.1)`,
+                }}
+              />
+              <p className="text-[9px] text-zinc-500 font-display tracking-wider">
+                SHARE PREVIEW — THIS IS WHAT OTHERS SEE
+              </p>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Actions */}
+        <div className="w-full space-y-2 pt-1">
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex-1 font-display tracking-wider text-xs"
+              onClick={() => onShare(card)}
+            >
+              <Share2 size={14} className="mr-1.5" />
+              SHARE
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex-1 font-display tracking-wider text-xs border-primary/30 text-primary hover:bg-primary/10"
+              onClick={() => onList(card)}
+            >
+              <Gavel size={14} className="mr-1.5" />
+              LIST
+            </Button>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex-1 font-display tracking-wider text-xs border-red-500/30 text-red-400 hover:bg-red-500/10"
+              onClick={() => onDelete(card)}
+              disabled={deleting}
+            >
+              <Trash2 size={14} className="mr-1.5" />
+              {deleting ? 'DELETING...' : 'DELETE'}
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex-1 font-display tracking-wider text-xs"
+              onClick={onClose}
+            >
+              CLOSE
+            </Button>
+          </div>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
 
 export function CollectionGallery({ onBack }: CollectionGalleryProps) {
   const { user } = useAuth();
@@ -792,135 +1005,18 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
       {/* Card Detail Modal */}
       <AnimatePresence>
         {selectedCard && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
-            onClick={() => setSelectedCard(null)}
-          >
-            <motion.div
-              initial={{ scale: 0.85, y: 20 }}
-              animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.85, y: 20 }}
-              onClick={e => e.stopPropagation()}
-              className="w-full max-w-sm"
-            >
-              {(() => {
-                const card = selectedCard;
-                const style = rarityStyle(card.rarity);
-                const image = getCardImage(card);
-                return (
-                  <Card className={`overflow-hidden border-2 ${style.border} ${style.glow}`}>
-                    {/* Card Image */}
-                    <div className="aspect-[3/4] relative bg-gradient-to-br from-card to-muted/20">
-                      {image ? (
-                        <img src={image} alt="" className="w-full h-full object-cover" />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center">
-                          <Music size={48} className="text-muted-foreground/20" />
-                        </div>
-                      )}
-
-                      {/* Shimmer overlay — full rarity effect on detail view */}
-                      <CardShimmer rarity={card.rarity} />
-
-                      {/* Rarity overlay */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20" />
-
-                      {/* Unbreakable branding — top-left watermark */}
-                      <div className="absolute top-2 left-3 z-10 flex items-center gap-1.5">
-                        <img src="/unbreakable-shield.png" alt="" className="w-4 h-4 object-contain" style={{ filter: 'drop-shadow(0 0 3px rgba(255,255,255,0.15))', opacity: 0.55 }} />
-                        <div>
-                          <p className="text-[6px] font-display tracking-[0.15em] text-white/45">UNBREAKABLE</p>
-                          <p className="text-[4px] font-mono tracking-[0.1em] text-white/30">LIVE WITHOUT LIMITS™</p>
-                        </div>
-                      </div>
-
-                      {/* Top badges */}
-                      <div className="absolute top-8 left-3 right-3 flex items-center justify-between">
-                        <span className={`text-[10px] font-display tracking-widest px-2.5 py-1 rounded-lg ${style.bg} ${style.text} backdrop-blur-sm border ${style.border}`}>
-                          {card.rarity.toUpperCase()}
-                        </span>
-                        <span className="text-[10px] font-display tracking-wider px-2 py-1 rounded-lg bg-black/50 text-white/70 backdrop-blur-sm">
-                          {getCardType(card)}
-                        </span>
-                      </div>
-
-                      {/* Bottom info */}
-                      <div className="absolute bottom-0 left-0 right-0 p-4">
-                        <h3 className="font-display text-lg tracking-wider text-white mb-1">
-                          {getCardName(card)}
-                        </h3>
-                        <div className="flex items-center gap-3 text-white/60 text-[10px] font-display tracking-wider">
-                          {card.edition_number != null && card.edition_number > 0 && (
-                            <span className="flex items-center gap-1">
-                              <Hash size={10} />
-                              {String(card.edition_number).padStart(3, '0')}
-                              {card.rarity === 'platinum' ? '/250' : card.rarity === 'diamond' ? '/1000' : ''}
-                            </span>
-                          )}
-                          {card.date_stamped && (
-                            <span className="flex items-center gap-1">
-                              <Calendar size={10} />
-                              {format(new Date(card.date_stamped), 'dd MMM yyyy')}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Actions */}
-                    <div className="p-4 bg-card space-y-2">
-                      <div className="flex items-center gap-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="flex-1 font-display tracking-wider text-xs"
-                          onClick={() => {
-                            setShareCard(card);
-                            setSelectedCard(null);
-                          }}
-                        >
-                          <Share2 size={14} className="mr-1.5" />
-                          SHARE
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="flex-1 font-display tracking-wider text-xs border-primary/30 text-primary hover:bg-primary/10"
-                          onClick={() => handleListCard(card)}
-                        >
-                          <Gavel size={14} className="mr-1.5" />
-                          LIST
-                        </Button>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="flex-1 font-display tracking-wider text-xs border-red-500/30 text-red-400 hover:bg-red-500/10"
-                          onClick={() => handleDeleteCard(card)}
-                          disabled={deleting}
-                        >
-                          <Trash2 size={14} className="mr-1.5" />
-                          {deleting ? 'DELETING...' : 'DELETE'}
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="flex-1 font-display tracking-wider text-xs"
-                          onClick={() => setSelectedCard(null)}
-                        >
-                          CLOSE
-                        </Button>
-                      </div>
-                    </div>
-                  </Card>
-                );
-              })()}
-            </motion.div>
-          </motion.div>
+          <UnTunesCardDetailViewer
+            card={selectedCard}
+            onClose={() => setSelectedCard(null)}
+            onShare={(c) => { setShareCard(c); setSelectedCard(null); }}
+            onList={handleListCard}
+            onDelete={handleDeleteCard}
+            deleting={deleting}
+            getCardImage={getCardImage}
+            getCardName={getCardName}
+            getCardType={getCardType}
+            toShareableCard={toShareableCard}
+          />
         )}
       </AnimatePresence>
 

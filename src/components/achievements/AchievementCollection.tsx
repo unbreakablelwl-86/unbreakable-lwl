@@ -12,10 +12,10 @@ import {
   Trophy, Zap, Activity, Crown, Diamond, Sparkles,
   Shield, Medal, Award, Globe, TrendingUp, X, Share2,
   Download, Trash2, Loader2, ChevronLeft, ChevronRight,
-  ChevronDown, AlertCircle, Camera, Coins, Lock, Image, ShoppingCart,
+  ChevronDown, AlertCircle, Camera, Coins, Lock, Image, Video, ShoppingCart,
 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
-import { CardShareSheet } from '@/components/achievements/CardShareSheet';
+import { CardShareSheet, generateShareImage } from '@/components/achievements/CardShareSheet';
 import { RarityBadge } from '@/components/achievements/RarityBadge';
 import { RARITY_GLOW, type RarityTier } from '@/lib/rarityGlow';
 import { Button } from '@/components/ui/button';
@@ -354,7 +354,7 @@ function AchievementShareMenu({
   );
 }
 
-/* ═══ Card Purchase Modal — 5 tokens (static image) ═══ */
+/* ═══ Card Purchase Modal — 3 tokens (image) / 5 tokens (video) ═══ */
 function CardPurchaseModal({
   card, onClose, onPurchased,
 }: {
@@ -362,17 +362,18 @@ function CardPurchaseModal({
 }) {
   const config = RARITY_CONFIG[card.rarity];
   const [purchasing, setPurchasing] = useState(false);
+  const [selectedType, setSelectedType] = useState<'image' | 'video'>('image');
   const { toast } = useToast();
   const { balance, refresh: refreshTokens } = useTokenBalance();
 
-  const cost = 5;
+  const cost = selectedType === 'video' ? 5 : 3;
   const canAfford = balance >= cost;
 
   const handlePurchase = async () => {
     setPurchasing(true);
     try {
       const { data, error } = await supabase.functions.invoke('purchase-card', {
-        body: { cardId: card.id, mediaType: 'image' },
+        body: { cardId: card.id, mediaType: selectedType },
       });
       if (error) throw error;
       if (data?.error) {
@@ -383,7 +384,7 @@ function CardPurchaseModal({
         }
         return;
       }
-      toast({ title: '🎉 Card Purchased!', description: `Card download unlocked. ${data.tokensSpent} tokens spent.` });
+      toast({ title: '🎉 Card Purchased!', description: `${selectedType === 'video' ? 'Video' : 'Image'} download unlocked. ${data.tokensSpent} tokens spent.` });
       await refreshTokens();
       onPurchased();
       onClose();
@@ -418,16 +419,46 @@ function CardPurchaseModal({
           </p>
         </div>
 
-        {/* Card preview info */}
-        <div className="flex items-center justify-center gap-2 p-3 rounded-xl border border-[#FF5500]/30 bg-[#FF5500]/5">
-          <Image className="w-5 h-5 text-white" />
-          <div className="text-center">
-            <p className="text-[10px] font-display tracking-wider text-white">STATIC CARD IMAGE</p>
-            <div className="flex items-center justify-center gap-1 mt-0.5">
+        {/* Type selector */}
+        <div className="grid grid-cols-2 gap-2">
+          <button
+            onClick={() => setSelectedType('image')}
+            className={cn(
+              "relative p-3 rounded-xl border transition-all text-center",
+              selectedType === 'image'
+                ? "border-[#FF5500] bg-[#FF5500]/10"
+                : "border-border hover:border-border/60 bg-card"
+            )}
+          >
+            <Image className="w-5 h-5 mx-auto mb-1.5 text-white" />
+            <p className="text-[10px] font-display tracking-wider text-white">IMAGE</p>
+            <div className="flex items-center justify-center gap-1 mt-1">
               <Coins className="w-3 h-3 text-yellow-400" />
-              <span className="text-xs font-display text-yellow-400">5 TOKENS</span>
+              <span className="text-xs font-display text-yellow-400">3</span>
             </div>
-          </div>
+            {selectedType === 'image' && (
+              <motion.div layoutId="purchase-select" className="absolute inset-0 rounded-xl border-2 border-[#FF5500]" />
+            )}
+          </button>
+          <button
+            onClick={() => setSelectedType('video')}
+            className={cn(
+              "relative p-3 rounded-xl border transition-all text-center",
+              selectedType === 'video'
+                ? "border-[#FF5500] bg-[#FF5500]/10"
+                : "border-border hover:border-border/60 bg-card"
+            )}
+          >
+            <Video className="w-5 h-5 mx-auto mb-1.5 text-white" />
+            <p className="text-[10px] font-display tracking-wider text-white">VIDEO</p>
+            <div className="flex items-center justify-center gap-1 mt-1">
+              <Coins className="w-3 h-3 text-yellow-400" />
+              <span className="text-xs font-display text-yellow-400">5</span>
+            </div>
+            {selectedType === 'video' && (
+              <motion.div layoutId="purchase-select" className="absolute inset-0 rounded-xl border-2 border-[#FF5500]" />
+            )}
+          </button>
         </div>
 
         {/* Balance + buy */}
@@ -450,7 +481,7 @@ function CardPurchaseModal({
           disabled={purchasing || !canAfford}
         >
           {purchasing ? <Loader2 className="w-3 h-3 mr-1 animate-spin" /> : <ShoppingCart className="w-3 h-3 mr-1" />}
-          {purchasing ? 'PURCHASING…' : 'BUY CARD · 5 TOKENS'}
+          {purchasing ? 'PURCHASING…' : `BUY ${selectedType.toUpperCase()} · ${cost} TOKENS`}
         </Button>
 
         {!canAfford && (
@@ -539,7 +570,34 @@ function AchievementFullViewer({
   const date = new Date(card.earned_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
   const { toast } = useToast();
   const imageInputRef = useRef<HTMLInputElement>(null);
+  const videoInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
+  const [viewMode, setViewMode] = useState<'animated' | 'share'>('animated');
+  const sharePreviewRef = useRef<HTMLCanvasElement>(null);
+
+  // Generate static share preview when switching to share mode
+  useEffect(() => {
+    if (viewMode !== 'share') return;
+    let cancelled = false;
+    (async () => {
+      const blob = await generateShareImage(card, 'pb');
+      if (cancelled || !blob || !sharePreviewRef.current) return;
+      const url = URL.createObjectURL(blob);
+      const img = new Image();
+      img.onload = () => {
+        const canvas = sharePreviewRef.current;
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0);
+        URL.revokeObjectURL(url);
+      };
+      img.src = url;
+    })();
+    return () => { cancelled = true; };
+  }, [viewMode, card]);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -555,17 +613,15 @@ function AchievementFullViewer({
     setUploading(true);
     try {
       const ext = file.name.split('.').pop() || 'jpg';
-      // Use card-shares bucket with user_id prefix for RLS compliance
-      const userId = card.owner_display_name ? card.id.split('-')[0] : card.id;
-      const path = `${(await supabase.auth.getUser()).data.user?.id || 'unknown'}/${card.id}.${ext}`;
-      const { error: uploadErr } = await supabase.storage.from('card-shares').upload(path, file, { upsert: true });
+      const path = `card-media/${card.id}-img.${ext}`;
+      const { error: uploadErr } = await supabase.storage.from('avatars').upload(path, file, { upsert: true });
       if (uploadErr) throw uploadErr;
-      const { data: urlData } = supabase.storage.from('card-shares').getPublicUrl(path);
+      const { data: urlData } = supabase.storage.from('avatars').getPublicUrl(path);
       const publicUrl = urlData?.publicUrl;
       if (!publicUrl) throw new Error('No URL');
       const { error: dbErr } = await supabase.from('achievement_cards').update({
         image_url: publicUrl,
-        media_type: 'image',
+        media_type: card.video_url ? 'both' : 'image',
       }).eq('id', card.id);
       if (dbErr) throw dbErr;
       toast({ title: '📸 Image uploaded!', description: 'Card hero image updated.' });
@@ -575,6 +631,59 @@ function AchievementFullViewer({
     } finally {
       setUploading(false);
       if (imageInputRef.current) imageInputRef.current.value = '';
+    }
+  };
+
+  const handleVideoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith('video/')) {
+      toast({ title: 'Invalid file', description: 'Please select a video file (MP4, MOV, etc.).' });
+      return;
+    }
+    if (file.size > 50 * 1024 * 1024) {
+      toast({ title: 'File too large', description: 'Max 50MB for videos.' });
+      return;
+    }
+    // Check video duration (max 30 seconds)
+    const durationOk = await new Promise<boolean>((resolve) => {
+      const video = document.createElement('video');
+      video.preload = 'metadata';
+      video.onloadedmetadata = () => {
+        URL.revokeObjectURL(video.src);
+        if (video.duration > 30) {
+          toast({ title: 'Video too long', description: `Max 30 seconds. Your video is ${Math.round(video.duration)}s.` });
+          resolve(false);
+        } else {
+          resolve(true);
+        }
+      };
+      video.onerror = () => { resolve(true); }; // Allow if can't check
+      video.src = URL.createObjectURL(file);
+    });
+    if (!durationOk) return;
+
+    setUploading(true);
+    try {
+      const ext = file.name.split('.').pop() || 'mp4';
+      const path = `card-media/${card.id}-vid.${ext}`;
+      const { error: uploadErr } = await supabase.storage.from('avatars').upload(path, file, { upsert: true });
+      if (uploadErr) throw uploadErr;
+      const { data: urlData } = supabase.storage.from('avatars').getPublicUrl(path);
+      const publicUrl = urlData?.publicUrl;
+      if (!publicUrl) throw new Error('No URL');
+      const { error: dbErr } = await supabase.from('achievement_cards').update({
+        video_url: publicUrl,
+        media_type: 'video',
+      }).eq('id', card.id);
+      if (dbErr) throw dbErr;
+      toast({ title: '🎬 Video uploaded!', description: 'Card video clip updated (up to 30s).' });
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Upload failed';
+      toast({ title: 'Upload failed', description: msg });
+    } finally {
+      setUploading(false);
+      if (videoInputRef.current) videoInputRef.current.value = '';
     }
   };
 
@@ -611,12 +720,92 @@ function AchievementFullViewer({
         </Button>
       )}
 
-      {/* Hidden file input for image upload */}
+      {/* Hidden file inputs for separate image / video upload */}
       <input ref={imageInputRef} type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
+      <input ref={videoInputRef} type="file" accept="video/*" className="hidden" onChange={handleVideoUpload} />
 
-      {/* Card view — static card only */}
+      {/* View mode toggle — Animated / Share Preview */}
+      <div className="absolute top-14 left-1/2 -translate-x-1/2 flex gap-1 bg-zinc-900/80 rounded-full p-0.5 z-10">
+        <button
+          className={cn(
+            'px-3 py-1 text-[10px] font-display tracking-wider rounded-full transition-all',
+            viewMode === 'animated' ? 'bg-primary text-black font-bold' : 'text-zinc-400 hover:text-white'
+          )}
+          onClick={() => setViewMode('animated')}
+        >
+          CARD
+        </button>
+        <button
+          className={cn(
+            'px-3 py-1 text-[10px] font-display tracking-wider rounded-full transition-all',
+            viewMode === 'share' ? 'bg-primary text-black font-bold' : 'text-zinc-400 hover:text-white'
+          )}
+          onClick={() => setViewMode('share')}
+        >
+          SHARE
+        </button>
+      </div>
+
+      {/* Card views — swipe between animated and static share preview */}
       <div className="flex-1 flex items-center justify-center px-8 w-full max-w-sm">
-        <AchievementCardStatic card={card} size="lg" />
+        <AnimatePresence mode="wait">
+          {viewMode === 'animated' ? (
+            <motion.div
+              key="animated"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.2 }}
+            >
+              {card.video_url && card.media_type === 'video' ? (
+                <div className="relative w-72 h-[28rem] rounded-2xl overflow-hidden"
+                  style={{ boxShadow: RARITY_GLOW[card.rarity as RarityTier]?.boxShadow }}>
+                  <video
+                    src={card.video_url}
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    className="absolute inset-0 w-full h-full object-cover rounded-2xl"
+                  />
+                  <div className="absolute bottom-0 left-0 right-0 p-3 z-10" style={{
+                    background: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 60%, transparent 100%)',
+                  }}>
+                    <p className="text-white font-display text-sm tracking-wider uppercase font-black" style={{ textShadow: '0 2px 8px rgba(0,0,0,0.8)' }}>
+                      {card.owner_display_name || 'ATHLETE'}
+                    </p>
+                    <p className="text-[10px] font-display tracking-wider" style={{ color: '#FF5500' }}>
+                      {card.exercise_name} · {formatPBValue(card.pb_value || 0, card.pb_unit || 'kg')}
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <AchievementCardStatic card={card} size="lg" />
+              )}
+            </motion.div>
+          ) : (
+            <motion.div
+              key="share-preview"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 20 }}
+              transition={{ duration: 0.2 }}
+              className="flex flex-col items-center gap-2"
+            >
+              <canvas
+                ref={sharePreviewRef}
+                className="w-56 h-72 rounded-xl object-contain"
+                style={{
+                  boxShadow: RARITY_GLOW[card.rarity as RarityTier]?.boxShadow,
+                  border: `1px solid ${RARITY_GLOW[card.rarity as RarityTier]?.primary}30`,
+                }}
+              />
+              <p className="text-[9px] text-zinc-500 font-display tracking-wider">
+                SHARE PREVIEW — THIS IS WHAT OTHERS SEE
+              </p>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* Card details + actions */}
@@ -630,27 +819,44 @@ function AchievementFullViewer({
 
         {/* ── Purchase / Download section ── */}
         {card.purchased ? (
-          /* Already purchased — show download button */
+          /* Already purchased — show download buttons */
           <div className="space-y-2">
             <div className="flex items-center justify-center gap-1.5 mb-1">
               <Sparkles className="w-3 h-3 text-green-400" />
               <span className="text-[10px] font-display tracking-wider text-green-400">PURCHASED — TAP TO DOWNLOAD</span>
             </div>
-            <Button variant="outline" size="sm"
-              className="w-full text-xs font-display tracking-wider border-green-500/30 text-green-400 hover:bg-green-500/10"
-              onClick={async () => {
-                const blob = await generateAchievementCardImage(card);
-                if (blob) {
-                  const url = URL.createObjectURL(blob);
-                  const link = document.createElement('a');
-                  link.href = url;
-                  link.download = `PB-${card.rarity}-${(card.exercise_name || card.title).replace(/\s+/g, '-')}.png`;
-                  link.click();
-                  URL.revokeObjectURL(url);
-                }
-              }}>
-              <Download className="w-3 h-3 mr-1" /> DOWNLOAD CARD IMAGE
-            </Button>
+            <div className="flex gap-2">
+              <Button variant="outline" size="sm"
+                className="flex-1 text-xs font-display tracking-wider border-green-500/30 text-green-400 hover:bg-green-500/10"
+                onClick={async () => {
+                  const blob = await generateAchievementCardImage(card);
+                  if (blob) {
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = `PB-${card.rarity}-${(card.exercise_name || card.title).replace(/\s+/g, '-')}.png`;
+                    link.click();
+                    URL.revokeObjectURL(url);
+                  }
+                }}>
+                <Download className="w-3 h-3 mr-1" /> DOWNLOAD IMAGE
+              </Button>
+              {card.video_url && (
+                <Button variant="outline" size="sm"
+                  className="flex-1 text-xs font-display tracking-wider border-green-500/30 text-green-400 hover:bg-green-500/10"
+                  onClick={() => {
+                    if (card.video_url) {
+                      const link = document.createElement('a');
+                      link.href = card.video_url;
+                      link.download = `PB-${card.rarity}-${(card.exercise_name || card.title).replace(/\s+/g, '-')}.mp4`;
+                      link.target = '_blank';
+                      link.click();
+                    }
+                  }}>
+                  <Download className="w-3 h-3 mr-1" /> DOWNLOAD VIDEO
+                </Button>
+              )}
+            </div>
           </div>
         ) : (
           /* Not purchased — show buy button */
@@ -662,17 +868,23 @@ function AchievementFullViewer({
               <ShoppingCart className="w-3 h-3 mr-1" /> PURCHASE CARD DOWNLOAD
             </Button>
             <p className="text-[9px] text-center text-zinc-500 font-display tracking-wider">
-              5 TOKENS
+              3 TOKENS (IMAGE) · 5 TOKENS (VIDEO)
             </p>
           </div>
         )}
 
-        <div className="grid grid-cols-2 gap-1.5">
+        <div className="grid grid-cols-3 gap-1.5">
           <Button variant="outline" size="sm"
             className="text-[10px] font-display tracking-wider border-primary/30 text-primary hover:bg-primary/10"
             onClick={() => imageInputRef.current?.click()}
             disabled={uploading}>
             <Camera className="w-3 h-3 mr-0.5" /> {uploading ? '…' : card.image_url ? 'EDIT IMAGE' : 'ADD IMAGE'}
+          </Button>
+          <Button variant="outline" size="sm"
+            className="text-[10px] font-display tracking-wider border-purple-500/30 text-purple-400 hover:bg-purple-500/10"
+            onClick={() => videoInputRef.current?.click()}
+            disabled={uploading}>
+            <Video className="w-3 h-3 mr-0.5" /> {uploading ? '…' : card.video_url ? 'EDIT VIDEO' : 'ADD VIDEO'}
           </Button>
           <Button variant="outline" size="sm"
             className="text-[10px] font-display tracking-wider border-primary/30 text-primary hover:bg-primary/10"
@@ -681,7 +893,7 @@ function AchievementFullViewer({
           </Button>
         </div>
         <p className="text-[8px] text-center text-zinc-600 font-display tracking-wider">
-          IMAGE (MAX 20MB)
+          IMAGE (MAX 20MB) · VIDEO (MAX 30s / 50MB)
         </p>
         <Button variant="outline" size="sm"
           className="w-full text-xs font-display tracking-wider border-red-500/30 text-red-400 hover:bg-red-500/10"
@@ -868,13 +1080,22 @@ export function AchievementCollection() {
               </div>
               <div>
                 <h4 className="font-display text-sm tracking-wider text-foreground">OWN YOUR CARDS</h4>
-                <p className="text-[10px] text-muted-foreground">Download your PB cards as premium card images</p>
+                <p className="text-[10px] text-muted-foreground">Download your PB cards as premium image or video files</p>
               </div>
             </div>
-            <div className="flex justify-center">
-              <div className="rounded-lg bg-zinc-800/50 border border-zinc-700/50 p-2.5 text-center w-40">
+            <div className="grid grid-cols-2 gap-2">
+              <div className="rounded-lg bg-zinc-800/50 border border-zinc-700/50 p-2.5 text-center">
                 <Image className="w-4 h-4 mx-auto mb-1 text-white/70" />
-                <p className="text-[9px] font-display tracking-wider text-white/80">CARD IMAGE</p>
+                <p className="text-[9px] font-display tracking-wider text-white/80">IMAGE CARD</p>
+                <div className="flex items-center justify-center gap-1 mt-0.5">
+                  <Coins className="w-2.5 h-2.5 text-yellow-400" />
+                  <span className="text-xs font-display text-yellow-400 font-bold">3</span>
+                  <span className="text-[8px] text-muted-foreground">tokens</span>
+                </div>
+              </div>
+              <div className="rounded-lg bg-zinc-800/50 border border-zinc-700/50 p-2.5 text-center">
+                <Video className="w-4 h-4 mx-auto mb-1 text-white/70" />
+                <p className="text-[9px] font-display tracking-wider text-white/80">VIDEO CARD</p>
                 <div className="flex items-center justify-center gap-1 mt-0.5">
                   <Coins className="w-2.5 h-2.5 text-yellow-400" />
                   <span className="text-xs font-display text-yellow-400 font-bold">5</span>
@@ -883,7 +1104,7 @@ export function AchievementCollection() {
               </div>
             </div>
             <p className="text-[10px] text-muted-foreground text-center leading-relaxed">
-              Tap any card → <span className="text-[#FF5500] font-semibold">Buy</span> → download instantly.
+              Tap any card → <span className="text-[#FF5500] font-semibold">Buy</span> → choose image or video → download instantly.
               <br />All lift categories · All rarity tiers · Your card, your file.
             </p>
           </div>
