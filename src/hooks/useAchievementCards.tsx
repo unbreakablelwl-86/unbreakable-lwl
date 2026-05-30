@@ -287,16 +287,21 @@ export function useAchievementCards() {
   ): Promise<string | null> => {
     if (!user) return null;
 
-    // Duplicate detection — skip if identical card exists (same exercise + value + unit)
-    const existing = cards.find(
-      c => c.card_type === 'pb_personal'
-        && c.exercise_name === exerciseName
-        && c.record_value === value
-        && c.record_unit === unit
-    );
-    if (existing) {
-      // Duplicate detected — skip
-      return existing.id;
+    // Smart PB detection — skip if not a genuine improvement
+    // One card per exercise: only call RPC if value beats current best
+    const existingBest = cards
+      .filter(c => c.card_type === 'pb_personal' && c.exercise_name === exerciseName)
+      .sort((a, b) => (Number(b.pb_value) || 0) - (Number(a.pb_value) || 0))[0];
+
+    if (existingBest) {
+      const existingVal = Number(existingBest.pb_value) || 0;
+      if (unit === 'seconds' || unit === 'pace_per_km') {
+        // Cardio: lower is better
+        if (value >= existingVal) return existingBest.id;
+      } else {
+        // Lifts: higher is better
+        if (value <= existingVal) return existingBest.id;
+      }
     }
 
     const { data, error } = await supabase.rpc('award_pb_card', {

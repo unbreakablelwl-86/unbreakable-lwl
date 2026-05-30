@@ -798,12 +798,62 @@ export function CardShareSheet({
   const [copied, setCopied] = useState(false);
   const cardCaptureRef = useRef<HTMLDivElement>(null);
 
-  /** Generate a share image using the canvas fallback (always reliable) */
+  /** Capture the actual rendered card component — exact replica of in-app card */
   const captureCardImage = useCallback(async (): Promise<Blob | null> => {
-    // Use the canvas-drawn approach directly — html2canvas is unreliable
-    // for off-screen elements with complex CSS animations and cross-origin images.
-    // generateShareImage draws the full card from data (OVR, stats, title, etc.)
-    return generateShareImage(card, cardSystem);
+    const el = cardCaptureRef.current;
+    if (!el) {
+      // Fallback: canvas-drawn card
+      return generateShareImage(card, cardSystem);
+    }
+
+    try {
+      // Temporarily make the off-screen card visible for capture
+      el.style.position = 'fixed';
+      el.style.left = '0px';
+      el.style.top = '0px';
+      el.style.opacity = '1';
+      el.style.zIndex = '9999';
+      el.style.pointerEvents = 'none';
+
+      // Wait for React paint + fonts + shimmer CSS to settle
+      await document.fonts.ready;
+      await new Promise<void>(r => requestAnimationFrame(() => requestAnimationFrame(() => r())));
+      await new Promise<void>(r => setTimeout(r, 200));
+
+      const { default: html2canvas } = await import('html2canvas');
+      const canvas = await html2canvas(el, {
+        backgroundColor: null,
+        scale: 3,
+        useCORS: true,
+        allowTaint: true,
+        logging: false,
+        width: el.offsetWidth,
+        height: el.offsetHeight,
+        foreignObjectRendering: false,
+        ignoreElements: (elem) => elem.tagName === 'VIDEO',
+      });
+
+      // Restore off-screen
+      el.style.left = '-9999px';
+      el.style.top = '0px';
+      el.style.opacity = '0';
+      el.style.zIndex = '-1';
+
+      return new Promise<Blob | null>(resolve =>
+        canvas.toBlob(blob => resolve(blob), 'image/png', 1.0)
+      );
+    } catch (err) {
+      console.warn('html2canvas capture failed, falling back to canvas draw:', err);
+      // Restore off-screen on error
+      if (el) {
+        el.style.left = '-9999px';
+        el.style.top = '0px';
+        el.style.opacity = '0';
+        el.style.zIndex = '-1';
+      }
+      // Fallback: canvas-drawn card
+      return generateShareImage(card, cardSystem);
+    }
   }, [card, cardSystem]);
 
   // Auto-generate caption
@@ -1018,10 +1068,10 @@ export function CardShareSheet({
         <div
           ref={cardCaptureRef}
           className="fixed pointer-events-none"
-          style={{ left: '-9999px', top: 0, width: 288, height: 448, zIndex: -1, opacity: 0, overflow: 'visible' }}
+          style={{ left: '-9999px', top: 0, width: 360, height: 500, zIndex: -1, opacity: 0, overflow: 'visible' }}
           aria-hidden="true"
         >
-          <AchievementCardStatic card={card} size="lg" forExport />
+          <AchievementCardStatic card={card} size="lg" forExport noShimmer={false} />
         </div>
 
         <SheetHeader className="text-left pb-2">
