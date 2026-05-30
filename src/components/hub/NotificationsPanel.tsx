@@ -19,6 +19,13 @@ import {
   Brain,
   Flame,
   ClipboardCheck,
+  Zap,
+  GraduationCap,
+  CreditCard,
+  Bot,
+  AlertTriangle,
+  Apple,
+  Package,
 } from 'lucide-react';
 
 interface NotificationsPanelProps {
@@ -81,6 +88,35 @@ function getNotificationLink(notification: Notification): string | null {
   // Fuel
   if (t === 'meal_plan_updated') return '/fuel/planning';
 
+  // AI autopilot
+  if (t === 'coaching_checkin') return '/my-coaching';
+  if (t === 'habit_nudge') return '/';
+  if (t === 'athlete_flag') return d.flagged_user_id ? `/coach?athlete=${d.flagged_user_id}` : '/coach';
+
+  // Tokens & billing
+  if (t === 'token_renewal' || t === 'token_tier_activated' || t === 'token_top_up') return '/ai-tokens';
+  if (t === 'subscription_cancelled') return '/ai-tokens';
+
+  // University
+  if (t === 'course_purchased') return '/university';
+
+  // Weekly pack
+  if (t === 'weekly_pack') return '/programming/my-programmes';
+
+  // AI daily auto-fill
+  if (t === 'ai_tracker_autofilled') return d.link ? String(d.link) : '/';
+
+  // PB unlocked
+  if (t === 'pb_unlocked') return '/programming/my-programmes';
+
+  // AI programme / meal plan generated
+  if (t === 'ai_programme') return '/programming/my-programmes';
+  if (t === 'ai_meal_plan') return '/fuel/planning';
+
+  // Coach plan update
+  if (t === 'coach_plan') return '/my-coaching';
+  if (t === 'coach_message') return '/my-coaching';
+
   // Fallback — if there's any data with a path hint, use it
   if (d.link) return String(d.link);
 
@@ -124,7 +160,34 @@ function getNotificationIcon(type: string) {
     case 'daily_reminder':
       return <Flame className="w-4 h-4" />;
     case 'post_session_checkin':
+    case 'coaching_checkin':
       return <ClipboardCheck className="w-4 h-4" />;
+    case 'habit_nudge':
+      return <Flame className="w-4 h-4" />;
+    case 'athlete_flag':
+      return <AlertTriangle className="w-4 h-4" />;
+    case 'token_renewal':
+    case 'token_tier_activated':
+    case 'token_top_up':
+      return <Zap className="w-4 h-4" />;
+    case 'course_purchased':
+      return <GraduationCap className="w-4 h-4" />;
+    case 'subscription_cancelled':
+      return <CreditCard className="w-4 h-4" />;
+    case 'weekly_pack':
+      return <Package className="w-4 h-4" />;
+    case 'ai_tracker_autofilled':
+    case 'ai_programme':
+    case 'ai_meal_plan':
+      return <Bot className="w-4 h-4" />;
+    case 'pb_unlocked':
+      return <Trophy className="w-4 h-4" />;
+    case 'coach_plan':
+    case 'coach_message':
+    case 'plan_update':
+      return <UserPlus className="w-4 h-4" />;
+    case 'meal_plan_updated':
+      return <Apple className="w-4 h-4" />;
     default:
       return <Bell className="w-4 h-4" />;
   }

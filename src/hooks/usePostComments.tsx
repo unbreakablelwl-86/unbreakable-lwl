@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
 import { commentSchema, getValidationError } from '@/lib/validations';
+import { canNotify } from '@/lib/notificationPrefs';
 
 export interface PostComment {
   id: string;
@@ -110,13 +111,15 @@ export function usePostComments(postId: string) {
 
       if (post && post.user_id !== user.id) {
         const myName = profile?.display_name || profile?.username || 'Someone';
-        await supabase.from('notifications').insert({
-          user_id: post.user_id,
-          type: 'post_comment',
-          title: 'New Comment',
-          body: `${myName} commented on your post`,
-          data: { commenter_id: user.id, post_id: postId, post_user_id: post.user_id, comment_id: data.id },
-        });
+        if (await canNotify(post.user_id, 'post_comment')) {
+          await supabase.from('notifications').insert({
+            user_id: post.user_id,
+            type: 'post_comment',
+            title: 'New Comment',
+            body: `${myName} commented on your post`,
+            data: { commenter_id: user.id, post_id: postId, post_user_id: post.user_id, comment_id: data.id },
+          });
+        }
       }
 
       // Also notify mentioned users in the comment

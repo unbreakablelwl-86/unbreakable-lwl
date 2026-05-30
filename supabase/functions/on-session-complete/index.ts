@@ -96,7 +96,7 @@ serve(async (req) => {
         type: "session_complete_self",
         title: "💪 Session Logged",
         body: "Your workout session has been recorded. Keep building!",
-        data: { session_id: sessionId },
+        data: { session_id: sessionId, link: "/programming/my-programmes" },
       });
 
       return new Response(
@@ -377,6 +377,7 @@ Keep it conversational, like a real coach talking after a session. Use their nam
       data: {
         session_id: sessionId,
         conversation_id: conversationId,
+        link: "/coach",
       },
     });
 

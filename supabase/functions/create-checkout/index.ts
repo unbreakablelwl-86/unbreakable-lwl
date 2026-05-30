@@ -138,7 +138,7 @@ serve(async (req) => {
             type: "tier2_signup",
             title: "New 121 Coaching Signup",
             body: `${displayName} has started checkout for Unbreakable 1-to-1 coaching (7-day trial). Review in your coaching dashboard.`,
-            data: { athlete_id: user.id, price_id: priceId },
+            data: { athlete_id: user.id, price_id: priceId, link: "/coach?tab=requests" },
           }));
 
           await serviceClient.from("notifications").insert(notifications);

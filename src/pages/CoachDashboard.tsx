@@ -25,7 +25,7 @@ import { useCoachingAssignments } from '@/hooks/useCoachingAssignments';
 import { useAuth } from '@/hooks/useAuth';
 import { useUserRole } from '@/hooks/useUserRole';
 import { useCoachPublicProfile } from '@/hooks/useCoachPublicProfile';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { CoachStripeConnect } from '@/components/coaching/CoachStripeConnect';
 import { CoachProgrammeThreads } from '@/components/coaching/CoachProgrammeThreads';
 import { AthleteDataViewer } from '@/components/coaching/AthleteDataViewer';
@@ -48,12 +48,25 @@ const CoachDashboard = ({ embedded = false }: { embedded?: boolean }) => {
   const { user } = useAuth();
   const { role } = useUserRole();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { myAthletes, endedAthletes, pendingRequests, loading, updateStatus, removeAssignment } = useCoachingAssignments();
   const { profile } = useCoachPublicProfile();
   const [selectedAthleteId, setSelectedAthleteId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<Tab>('athletes');
   const [showDeactivated, setShowDeactivated] = useState(false);
   const [confirmRemoveId, setConfirmRemoveId] = useState<string | null>(null);
+
+  /* ── Read URL params on mount ── */
+  useEffect(() => {
+    const tab = searchParams.get('tab') as Tab | null;
+    const athlete = searchParams.get('athlete');
+    if (tab && ['athletes', 'checkins', 'calendar', 'clients', 'requests'].includes(tab)) {
+      setActiveTab(tab);
+    }
+    if (athlete) {
+      setSelectedAthleteId(athlete);
+    }
+  }, [searchParams]);
 
   /* ── Calendar state ── */
   const [calMonth, setCalMonth] = useState(new Date());

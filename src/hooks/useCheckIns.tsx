@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
+import { canNotify } from '@/lib/notificationPrefs';
 
 export interface CheckIn {
   id: string;
@@ -119,14 +120,16 @@ export function useCheckIns(filterByAthleteId?: string) {
       return;
     }
 
-    // Notify athlete
-    await supabase.from('notifications').insert({
-      user_id: athleteId,
-      type: 'coaching_feedback',
-      title: `Check-in #${nextNumber} Ready`,
-      body: 'Your coach has sent you a new check-in to complete.',
-      data: { assignment_id: assignmentId },
-    });
+    // Notify athlete (respect preferences)
+    if (await canNotify(athleteId, 'coaching_feedback')) {
+      await supabase.from('notifications').insert({
+        user_id: athleteId,
+        type: 'coaching_feedback',
+        title: `Check-in #${nextNumber} Ready`,
+        body: 'Your coach has sent you a new check-in to complete.',
+        data: { assignment_id: assignmentId, link: '/my-coaching' },
+      });
+    }
 
     toast.success(`Check-in #${nextNumber} created`);
     fetchCheckIns();
@@ -156,7 +159,7 @@ export function useCheckIns(filterByAthleteId?: string) {
         type: 'coaching_feedback',
         title: 'Check-in Submitted',
         body: `${checkIn.athlete_profile?.display_name || 'An athlete'} submitted check-in #${checkIn.check_in_number}.`,
-        data: { check_in_id: checkInId },
+        data: { check_in_id: checkInId, link: '/coach?tab=checkins' },
       });
     }
 
@@ -180,15 +183,15 @@ export function useCheckIns(filterByAthleteId?: string) {
       return;
     }
 
-    // Notify athlete
+    // Notify athlete (respect preferences)
     const checkIn = checkIns.find(c => c.id === checkInId);
-    if (checkIn) {
+    if (checkIn && await canNotify(checkIn.athlete_id, 'feedback_response')) {
       await supabase.from('notifications').insert({
         user_id: checkIn.athlete_id,
         type: 'feedback_response',
         title: 'Coach Reviewed Your Check-in',
         body: 'Your coach has reviewed your latest check-in.',
-        data: { check_in_id: checkInId },
+        data: { check_in_id: checkInId, link: '/my-coaching' },
       });
     }
 

@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
+import { canNotify } from '@/lib/notificationPrefs';
 
 export interface FollowUser {
   user_id: string;
@@ -87,13 +88,15 @@ export function useFollow(targetUserId: string | undefined) {
 
         const myName = myProfile?.display_name || myProfile?.username || 'Someone';
 
-        await supabase.from('notifications').insert({
-          user_id: targetUserId,
-          type: 'follow',
-          title: 'New Follower',
-          body: `${myName} started following you`,
-          data: { follower_id: user.id },
-        });
+        if (await canNotify(targetUserId, 'follow')) {
+          await supabase.from('notifications').insert({
+            user_id: targetUserId,
+            type: 'follow',
+            title: 'New Follower',
+            body: `${myName} started following you`,
+            data: { follower_id: user.id },
+          });
+        }
       }
     } catch (err) {
       console.error('Follow toggle failed:', err);

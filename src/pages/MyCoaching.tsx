@@ -60,7 +60,7 @@ export default function MyCoaching() {
         if (error.code === '23505') toast.error('You already have a pending request');
         else { toast.error('Failed to send request'); console.error(error); }
       } else {
-        await supabase.from('notifications').insert({ user_id: devUserId, type: 'coaching_request', title: 'New Coaching Request', body: 'A user has requested 121 coaching.', data: { athlete_id: user.id } });
+        await supabase.from('notifications').insert({ user_id: devUserId, type: 'coaching_request', title: 'New Coaching Request', body: 'A user has requested 121 coaching.', data: { athlete_id: user.id, link: '/coach?tab=requests' } });
         toast.success("Coaching request sent! We'll be in touch.");
         refetch();
       }

@@ -183,12 +183,13 @@ serve(async (req) => {
           user_id: userId,
           type: "weekly_pack",
           title: "Weekly Progress Pack Ready! 🔥",
-          message: `${improved.length} lift${improved.length > 1 ? "s" : ""} improved this week — your pack is waiting!`,
-          metadata: {
+          body: `${improved.length} lift${improved.length > 1 ? "s" : ""} improved this week — your pack is waiting!`,
+          data: {
             exercises_improved: improved,
             pbs_broken: pbsBroken,
             week_start: weekStartDate,
             week_end: weekEndDate,
+            link: "/programming/my-programmes",
           },
         });
       } catch (notifErr) {

@@ -36,6 +36,7 @@ import { format, formatDistanceToNow } from 'date-fns';
 import shieldLogo from '@/assets/unbreakable-shield.png';
 import { ProfileAchievements } from '@/components/profile/AchievementPBTrackers';
 import { ProfileSkeleton } from '@/components/ui/PageSkeleton';
+import { NotificationPreferences } from '@/components/profile/NotificationPreferences';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 interface OwnPost {
@@ -765,6 +766,7 @@ export default function Profile() {
           </div>
           <AthleteCoachSection />
           <ProfileView />
+          <NotificationPreferences />
           <PasswordChangeCard />
         </section>
       )}

@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { canNotify } from '@/lib/notificationPrefs';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -207,13 +208,13 @@ export function InlineProgramEditor({ programId, programData, onClose, onSaved }
           .eq('id', programId)
           .single();
 
-        if (program && program.user_id) {
+        if (program && program.user_id && await canNotify(program.user_id, 'programme_updated')) {
           await supabase.from('notifications').insert({
             user_id: program.user_id,
             type: 'programme_updated',
             title: 'Programme Updated',
             body: `Your coach has updated your programme: "${program.name || 'Untitled'}"`,
-            data: { program_id: programId },
+            data: { program_id: programId, link: '/programming/my-programmes' },
           });
         }
       } catch (notifErr) {

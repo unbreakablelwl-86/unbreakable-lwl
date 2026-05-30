@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
 import { generateVideoThumbnail, compressVideo } from '@/lib/videoUtils';
 import { notifyMentionedUsers } from '@/lib/mentionNotifications';
+import { canNotify } from '@/lib/notificationPrefs';
 
 export interface Post {
   id: string;
@@ -207,13 +208,15 @@ export function usePosts() {
 
         const myName = myProfile?.display_name || myProfile?.username || 'Someone';
 
-        await supabase.from('notifications').insert({
-          user_id: post.user_id,
-          type: 'post_like',
-          title: 'Post Liked',
-          body: `${myName} liked your post`,
-          data: { liker_id: user.id, post_id: postId, post_user_id: post.user_id },
-        });
+        if (await canNotify(post.user_id, 'post_like')) {
+          await supabase.from('notifications').insert({
+            user_id: post.user_id,
+            type: 'post_like',
+            title: 'Post Liked',
+            body: `${myName} liked your post`,
+            data: { liker_id: user.id, post_id: postId, post_user_id: post.user_id },
+          });
+        }
       }
     }
   };

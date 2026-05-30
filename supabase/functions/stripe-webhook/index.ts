@@ -203,7 +203,7 @@ serve(async (req) => {
       body: isRenewal
         ? `Your monthly ${monthlyTokens} Unbreakable Tokens have been added. Balance: ${newBalance}.`
         : `Welcome to ${tierName}! ${monthlyTokens} Unbreakable Tokens added to your balance.`,
-      data: { tier: tierName, tokens_added: monthlyTokens, new_balance: newBalance },
+      data: { tier: tierName, tokens_added: monthlyTokens, new_balance: newBalance, link: "/ai-tokens" },
     }).then(() => log("Notification sent")).catch(() => log("Notification error (non-fatal)"));
   }
 
@@ -261,7 +261,7 @@ serve(async (req) => {
               type: "token_top_up",
               title: "Tokens Added! 💰",
               body: `${topUp.tokens} Unbreakable Tokens have been added to your balance. New balance: ${newBalance}.`,
-              data: { tokens_added: topUp.tokens, new_balance: newBalance },
+              data: { tokens_added: topUp.tokens, new_balance: newBalance, link: "/ai-tokens" },
             }).catch(() => {});
 
             log("Top-up processed", { userId, tokensAdded: topUp.tokens, newBalance });
@@ -308,7 +308,7 @@ serve(async (req) => {
               type: "course_purchased",
               title: "Course Unlocked! 🎓",
               body: `You now have full access to ${courseNames}. Head to University to start learning.`,
-              data: { course_keys: courseKeys },
+              data: { course_keys: courseKeys, link: "/university" },
             });
           } catch (e) { log("Notification error (non-fatal)", { error: String(e) }); }
         }
@@ -536,7 +536,7 @@ serve(async (req) => {
           type: "subscription_cancelled",
           title: "Subscription Cancelled",
           body: "Your Unbreakable Token subscription has ended. Your remaining tokens are still available. You can resubscribe anytime.",
-          data: { subscription_id: subscription.id },
+          data: { subscription_id: subscription.id, link: "/ai-tokens" },
         }).catch(() => {});
 
         log("Subscription cancelled, downgraded to free", { userId });

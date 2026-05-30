@@ -77,7 +77,7 @@ serve(async (req) => {
             type: "coaching_checkin",
             title: "Weekly Check-in",
             body: message,
-            data: { coach_id: assignment.coach_id, sessions: sessionCount, habit_rate: habitRate },
+            data: { coach_id: assignment.coach_id, sessions: sessionCount, habit_rate: habitRate, link: "/my-coaching" },
           });
 
           checkIns.push({ user_id: assignment.user_id, sessions: sessionCount, habits: habitRate });
@@ -120,6 +120,7 @@ serve(async (req) => {
                 type: "habit_nudge",
                 title: "Daily Habits",
                 body: "Don't forget to log your habits today. Small wins, big results. Keep showing up.",
+                data: { link: "/" },
               });
               nudgeCount++;
             }
@@ -157,7 +158,7 @@ serve(async (req) => {
               type: "athlete_flag",
               title: "Plateau Detected",
               body: `One of your athletes hasn't hit a new PB in 3+ weeks. Consider adjusting their programme, adding variation, or checking recovery.`,
-              data: { flagged_user_id: user_id, flag_type: "plateau" },
+              data: { flagged_user_id: user_id, flag_type: "plateau", link: "/coach" },
             });
           }
         }
