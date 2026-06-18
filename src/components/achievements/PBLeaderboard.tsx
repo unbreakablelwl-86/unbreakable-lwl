@@ -75,7 +75,7 @@ function normaliseExerciseName(name: string): string {
   return name
     .split(/[\s-]+/)
     .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
-    .join(w => name.includes('-') ? '-' : ' ');
+    .join(name.includes('-') ? '-' : ' ');
 }
 
 /** Title-case helper: "barbell bench press" → "Barbell Bench Press" */

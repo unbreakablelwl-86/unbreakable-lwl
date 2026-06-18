@@ -41,8 +41,6 @@ export default function UnTunes() {
   const { isDev, isCoach } = useUserRole();
   const { currentTier, balance, monthlyTokens } = useTokenBalance();
   const [activeTab, setActiveTab] = useState<UnTunesTab>('browse');
-  
-  // const spotify = useSpotify(); // parked
   const { tracks: featured, loading: featuredLoading } = useFeaturedTracks();
   const { tracks: allTracks, loading: allTracksLoading } = useAllTracks();
   const { artists, loading: artistsLoading } = useArtists();
