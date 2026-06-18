@@ -58,7 +58,7 @@ FOR BARCODE/FOOD ANALYSIS, PROVIDE:
 Keep responses concise but impactful. Use emoji sparingly for visual clarity.
 End with motivation: "KEEP SHOWING UP" or similar UNBREAKABLE energy.
 
-IMPORTANT FORMATTING RULE: Never use dashes or hyphens (— – -) as punctuation in your response. Use commas instead. Write naturally flowing sentences with commas, not dash-separated clauses.`;
+`;
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {

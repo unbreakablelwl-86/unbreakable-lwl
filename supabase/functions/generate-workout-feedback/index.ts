@@ -102,7 +102,7 @@ Exercises performed:
 ${completedSets.map((l: any) => 
   
 
-IMPORTANT FORMATTING RULE: Never use dashes or hyphens (— – -) as punctuation in your response. Use commas instead. Write naturally flowing sentences with commas, not dash-separated clauses.`- ${l.exercise_name}: Set ${l.set_number} - ${l.actual_reps || 0} reps @ ${l.weight_kg || 0}kg (Target: ${l.target_reps || 'N/A'}, RPE: ${l.rpe || 'N/A'})`
+`- ${l.exercise_name}: Set ${l.set_number} - ${l.actual_reps || 0} reps @ ${l.weight_kg || 0}kg (Target: ${l.target_reps || 'N/A'}, RPE: ${l.rpe || 'N/A'})`
 ).join('\n')}
 
 Provide:

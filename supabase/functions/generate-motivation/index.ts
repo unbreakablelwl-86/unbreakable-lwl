@@ -86,7 +86,7 @@ Return ONLY the message text, nothing else.`,
             role: "user",
             content: `${triggerContext}${context ? ` Context: ${context}` : ''}\n\nGenerate a unique, branded Unbreakable motivational message.
 
-IMPORTANT FORMATTING RULE: Never use dashes or hyphens (— – -) as punctuation in your response. Use commas instead. Write naturally flowing sentences with commas, not dash-separated clauses.`
+`
           }
         ],
       }),

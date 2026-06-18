@@ -338,7 +338,7 @@ serve(async (req) => {
       if (coachMode && targetAthleteName) {
         enhancedSystemPrompt += `\n\nROLE AWARENESS: You are speaking with a ${roleLabel}. They are currently building plans for their athlete: ${targetAthleteName}. All programme/meal plan/mindset builds should be tailored to this athlete's data provided below. When you reference "you" or give coaching advice, you are advising the ${roleLabel} about their athlete. Saved plans will go to the athlete's account.
 
-IMPORTANT FORMATTING RULE: Never use dashes or hyphens (— – -) as punctuation in your response. Use commas instead. Write naturally flowing sentences with commas, not dash-separated clauses.`;
+`;
       } else {
         enhancedSystemPrompt += `\n\nROLE AWARENESS: You are speaking with a ${roleLabel}. They have authority to build and manage plans for their athletes. If they have not specified who they're building for, ask whether they're building something for themselves or for one of their athletes. If they mention a specific athlete by name or @mention, all plans should be built using that athlete's data.`;
       }

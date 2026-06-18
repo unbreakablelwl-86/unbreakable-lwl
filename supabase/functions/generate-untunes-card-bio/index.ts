@@ -102,7 +102,7 @@ Context:
 - Artist: ${artistName}
 ${genre ? 
 
-IMPORTANT FORMATTING RULE: Never use dashes or hyphens (— – -) as punctuation in your response. Use commas instead. Write naturally flowing sentences with commas, not dash-separated clauses.`- Genre: ${genre}` : ""}
+`- Genre: ${genre}` : ""}
 - Category: ${categoryTag}
 - Rarity: ${rarity.toUpperCase()}
 - Play Count: ${playCount} plays

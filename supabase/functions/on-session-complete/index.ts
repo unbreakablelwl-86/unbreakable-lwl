@@ -236,7 +236,7 @@ USER CONTEXT:
 SESSION: ${sessionLabel}
 - Duration: ${durationMin ? 
 
-IMPORTANT FORMATTING RULE: Never use dashes or hyphens (— – -) as punctuation in your response. Use commas instead. Write naturally flowing sentences with commas, not dash-separated clauses.`${durationMin} minutes` : "not recorded"}
+`${durationMin} minutes` : "not recorded"}
 - Sets completed: ${completedSets}/${completedSets + skippedSets}${skippedSets > 0 ? ` (${skippedSets} skipped)` : ""}
 - Total volume: ${totalWeight > 0 ? `${totalWeight.toFixed(0)}kg` : "bodyweight/no weight logged"}
 - Average RPE: ${avgRpe > 0 ? avgRpe.toFixed(1) + "/10" : "not logged"}

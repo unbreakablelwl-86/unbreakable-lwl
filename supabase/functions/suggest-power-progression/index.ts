@@ -144,7 +144,7 @@ Analyze the logged weight, reps, RPE, confidence, and pain flags. Suggest progre
     let cleanedContent = content.trim();
     if (cleanedContent.includes("
 
-IMPORTANT FORMATTING RULE: Never use dashes or hyphens (— – -) as punctuation in your response. Use commas instead. Write naturally flowing sentences with commas, not dash-separated clauses.```json")) {
+```json")) {
       cleanedContent = cleanedContent.substring(cleanedContent.indexOf("```json") + 7);
     } else if (cleanedContent.includes("```")) {
       cleanedContent = cleanedContent.substring(cleanedContent.indexOf("```") + 3);

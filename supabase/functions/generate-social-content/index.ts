@@ -226,7 +226,7 @@ Content type: ${contentTypeGuides[contentType] || contentType}
 Tone: ${toneGuides[tone] || tone || "motivational"}
 ${context ? 
 
-IMPORTANT FORMATTING RULE: Never use dashes or hyphens (— – -) as punctuation in your response. Use commas instead. Write naturally flowing sentences with commas, not dash-separated clauses.`Topic/context: ${context}` : ""}
+`Topic/context: ${context}` : ""}
 ${inspiration ? `Style inspiration / reference:\n${inspiration}` : ""}
 ${featuredTrack ? `\n🎵 FEATURED TRACK FROM UN-TUNES LIBRARY:\nTitle: "${featuredTrack.title}" by ${featuredTrack.artist || 'Unbreakable'}\nGenre: ${featuredTrack.genre}\nDuration: ${Math.floor((featuredTrack.duration || 0) / 60)}:${String((featuredTrack.duration || 0) % 60).padStart(2, '0')}\n\nWeave this track naturally into the post, mention it as the featured training track, workout anthem, or session soundtrack. Reference it by name. This is from our own Un-Tunes music library inside the Unbreakable app.\n` : ""}
 Requirements:

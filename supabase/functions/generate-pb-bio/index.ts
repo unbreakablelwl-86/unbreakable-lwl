@@ -92,7 +92,7 @@ Context:
 - Athlete: ${displayName}
 - Achievement: ${cardType === "programme_trophy" ? 
 
-IMPORTANT FORMATTING RULE: Never use dashes or hyphens (— – -) as punctuation in your response. Use commas instead. Write naturally flowing sentences with commas, not dash-separated clauses.`Completed ${exerciseName} programme` : `${exerciseName} PB, ${pbValue}`}
+`Completed ${exerciseName} programme` : `${exerciseName} PB, ${pbValue}`}
 - Rarity: ${rarity.toUpperCase()}
 - Overall Rating: ${overallRating}/99
 - Age: ${age ? `${age} years old` : "Unknown"}
