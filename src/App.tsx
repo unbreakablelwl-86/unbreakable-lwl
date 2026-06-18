@@ -18,6 +18,7 @@ import { FloatingMiniPlayer } from "@/components/untunes/FloatingMiniPlayer";
 import { FloatingSessionTracker } from "@/components/tracker/FloatingSessionTracker";
 import { FloatingZoneTimer } from "@/components/timer/FloatingZoneTimer";
 import { usePresenceHeartbeat } from "@/hooks/usePresence";
+import CookieConsent from "@/components/CookieConsent";
 
 /** Runs presence heartbeat inside BrowserRouter context */
 function PresenceTracker() {
@@ -120,6 +121,7 @@ const App = () => {
           <Toaster />
           <Sonner />
           <InstallPrompt />
+          <CookieConsent />
           {!splashDone && <SplashScreen onComplete={handleSplashComplete} />}
           <BrowserRouter>
             <PresenceTracker />
