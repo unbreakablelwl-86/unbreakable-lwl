@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.57.2";
 import { requireToken } from "../_shared/token-guard.ts";
+import { checkRateLimit } from "../_shared/rate-limit.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -42,7 +43,16 @@ serve(async (req) => {
     const svcClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    );
+    );    // --- Rate limit check ---
+    const rateLimited = await checkRateLimit(svcClient, tokenUserId, 'generate-workout-feedback');
+    if (rateLimited) {
+      return new Response(JSON.stringify({ error: 'rate_limited', message: 'Too many requests. Please wait a moment.' }), {
+        status: 429,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json', 'Retry-After': '60' },
+      });
+    }
+
+
     const tokenGuard = await requireToken(svcClient, tokenUserId, 'generate-workout-feedback');
     if (tokenGuard.error) {
       return new Response(JSON.stringify(tokenGuard.error), {
