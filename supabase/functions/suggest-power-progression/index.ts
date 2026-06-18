@@ -142,9 +142,7 @@ Analyze the logged weight, reps, RPE, confidence, and pain flags. Suggest progre
     }
 
     let cleanedContent = content.trim();
-    if (cleanedContent.includes("
-
-```json")) {
+    if (cleanedContent.includes("```json")) {
       cleanedContent = cleanedContent.substring(cleanedContent.indexOf("```json") + 7);
     } else if (cleanedContent.includes("```")) {
       cleanedContent = cleanedContent.substring(cleanedContent.indexOf("```") + 3);
