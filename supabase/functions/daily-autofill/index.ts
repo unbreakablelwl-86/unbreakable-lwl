@@ -184,7 +184,7 @@ Deno.serve(async (req) => {
                 "anthropic-version": "2023-06-01",
               },
               body: JSON.stringify({
-                model: "claude-sonnet-4-20250514",
+                model: "claude-sonnet-4-6",
                 max_tokens: 100,
                 system: "You write journal entries in the exact voice and tone of the user. Short. Direct. No fluff.",
                 messages: [{

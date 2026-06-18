@@ -195,7 +195,7 @@ Create a TEMPLATE WEEK with ${availability} training days that will be repeated 
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
+          model: "claude-sonnet-4-6",
           system: systemPrompt,
           messages: [
             { role: "user", content: userPrompt },
