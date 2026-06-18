@@ -66,7 +66,7 @@ export function CoachProgrammeThreads() {
     if (!user) return;
     setLoading(true);
     try {
-      const { data, error } = await (supabase as any)
+      const { data, error } = await supabase
         .from('programme_threads')
         .select('*')
         .or(`coach_id.eq.${user.id},assigned_users.cs.{${user.id}}`)
@@ -89,7 +89,7 @@ export function CoachProgrammeThreads() {
     if (!user || !newTitle.trim()) return;
     setCreating(true);
     try {
-      const { data, error } = await (supabase as any)
+      const { data, error } = await supabase
         .from('programme_threads')
         .insert({
           coach_id: user.id,
@@ -106,7 +106,7 @@ export function CoachProgrammeThreads() {
       if (error) throw error;
 
       // Add initial AI message
-      await (supabase as any).from('programme_thread_messages').insert({
+      await supabase.from('programme_thread_messages').insert({
         thread_id: data.id,
         sender_id: 'ai',
         sender_name: 'Unbreakable AI',
@@ -139,7 +139,7 @@ export function CoachProgrammeThreads() {
 
       const senderName = profile?.display_name || profile?.username || 'Coach';
 
-      const { data, error } = await (supabase as any)
+      const { data, error } = await supabase
         .from('programme_thread_messages')
         .insert({
           thread_id: activeThread.id,
@@ -161,7 +161,7 @@ export function CoachProgrammeThreads() {
       setNewMessage('');
 
       // Update thread's updated_at
-      await (supabase as any)
+      await supabase
         .from('programme_threads')
         .update({ updated_at: new Date().toISOString() })
         .eq('id', activeThread.id);
@@ -175,7 +175,7 @@ export function CoachProgrammeThreads() {
 
   const loadMessages = async (thread: Thread) => {
     try {
-      const { data } = await (supabase as any)
+      const { data } = await supabase
         .from('programme_thread_messages')
         .select('*')
         .eq('thread_id', thread.id)

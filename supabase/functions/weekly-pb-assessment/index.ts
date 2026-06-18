@@ -44,9 +44,6 @@ serve(async (req) => {
     const weekEndStr = weekEnd.toISOString();
     const weekStartDate = weekStart.toISOString().slice(0, 10);
     const weekEndDate = weekEnd.toISOString().slice(0, 10);
-
-    console.log(`Weekly PB assessment: ${weekStartDate} → ${weekEndDate}`);
-
     // 1. Find all users who logged exercises this week
     const { data: activeUsers, error: usersErr } = await supabase
       .from("exercise_logs")
@@ -65,8 +62,6 @@ serve(async (req) => {
 
     // Unique user IDs
     const userIds = [...new Set((activeUsers || []).map((r: { user_id: string }) => r.user_id))];
-    console.log(`Found ${userIds.length} active users this week`);
-
     const results: Array<{
       userId: string;
       sessionsCompleted: number;
@@ -203,14 +198,7 @@ serve(async (req) => {
         pbsBroken: pbsBroken,
         totalVolumeKg: totalVolume,
       });
-
-      console.log(
-        `User ${userId}: ${improved.length} improved, ${pbsBroken.length} PBs, ${sessionIds.size} sessions`
-      );
     }
-
-    console.log(`Weekly assessment complete: ${results.length} users got packs`);
-
     return new Response(
       JSON.stringify({
         success: true,

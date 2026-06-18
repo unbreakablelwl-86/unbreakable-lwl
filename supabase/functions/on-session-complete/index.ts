@@ -64,7 +64,6 @@ serve(async (req) => {
             hit_your_numbers: false,
           });
       }
-      console.log("Habit auto-fill: train=true for", today);
     } catch (habitErr) {
       console.error("Habit auto-fill failed (non-blocking):", habitErr);
     }
@@ -322,7 +321,6 @@ Keep it conversational, like a real coach talking after a session. Use their nam
         fatigue_score: fatigueScore,
         suggestions,
       });
-      console.log('Auto-saved workout_feedback for session', sessionId);
     } catch (fbErr) {
       console.error('workout_feedback insert failed (non-blocking):', fbErr);
     }
@@ -435,7 +433,6 @@ Keep it conversational, like a real coach talking after a session. Use their nam
       }
 
       if (awardedCards.length > 0) {
-        console.log(`Awarded ${awardedCards.length} PB cards:`, awardedCards.map(c => `${c.exercise} (${c.rarity})`).join(", "));
       }
     } catch (pbErr) {
       console.error("PB card auto-award failed (non-blocking):", pbErr);
@@ -449,7 +446,6 @@ Keep it conversational, like a real coach talking after a session. Use their nam
         session_id: sessionId,
         checkin_due_at: checkinDue,
       });
-      console.log("Scheduled 30-min check-in for", checkinDue);
     } catch (checkinErr) {
       console.error("Check-in scheduling failed (non-blocking):", checkinErr);
     }

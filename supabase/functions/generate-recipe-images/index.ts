@@ -115,7 +115,6 @@ Deno.serve(async (req) => {
         }
 
         processed++;
-        console.log(`✅ Generated image for: ${recipe.name}`);
       } catch (e) {
         errors.push(`${recipe.name}: ${e instanceof Error ? e.message : "Unknown error"}`);
       }

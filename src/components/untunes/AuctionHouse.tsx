@@ -190,7 +190,7 @@ function SellCardModal({ cards, onClose, onListCreated }: {
     if (!user || !selectedCard) return;
     setSubmitting(true);
     try {
-      const { data, error } = await (supabase as any).rpc('list_card_for_auction', {
+      const { data, error } = await supabase.rpc('list_card_for_auction', {
         p_card_id: selectedCard.id,
         p_listing_type: listingType,
         p_starting_price: parseFloat(startingPrice) || 1,
@@ -503,7 +503,7 @@ export function AuctionHouse({ onBack }: AuctionHouseProps) {
     if (!bidModal || !user || !bidAmount) return;
     const amount = parseInt(bidAmount);
     try {
-      const { data, error } = await (supabase as any).rpc('place_bid', {
+      const { data, error } = await supabase.rpc('place_bid', {
         p_listing_id: bidModal.id,
         p_amount: amount,
       });
@@ -537,7 +537,7 @@ export function AuctionHouse({ onBack }: AuctionHouseProps) {
     const price = listing.buy_now_price || listing.starting_price;
     if (!confirm(`Buy now for ${price} tokens?`)) return;
     try {
-      const { data, error } = await (supabase as any).rpc('buy_now_card', {
+      const { data, error } = await supabase.rpc('buy_now_card', {
         p_listing_id: listing.id,
       });
       if (error) throw error;

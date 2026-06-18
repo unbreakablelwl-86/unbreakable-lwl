@@ -390,7 +390,7 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
     if (!user || deleting) return;
     setDeleting(true);
     try {
-      const { error } = await (supabase as any)
+      const { error } = await supabase
         .from('un_tunes_user_cards')
         .delete()
         .eq('id', card.id)
@@ -757,7 +757,7 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
                   else if (duplicateIds.has(c.id)) { toDelete.push(c.id); }
                 }
                 if (toDelete.length === 0) { toast.info('No duplicates to remove'); return; }
-                const { error } = await (supabase as any)
+                const { error } = await supabase
                   .from('un_tunes_user_cards')
                   .delete()
                   .in('id', toDelete)

@@ -126,7 +126,7 @@ export function CoachBookingFlow({ coach, isUnlocked, onUnlock, availableSlots }
     setBooking(true);
     try {
       // Create booking via RPC
-      const { data, error } = await (supabase as any).rpc('create_coaching_booking', {
+      const { data, error } = await supabase.rpc('create_coaching_booking', {
         p_coach_id: coach.user_id,
         p_service_type: selectedService,
         p_block_type: selectedBlock,

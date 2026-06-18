@@ -2,8 +2,7 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "npm:@supabase/supabase-js@2.57.2";
 
-const log = (step: string, details?: any) =>
-  console.log(`[STRIPE-WEBHOOK] ${step}${details ? `, ${JSON.stringify(details)}` : ""}`);
+const log = (_step: string, _details?: any) => {};
 
 // ── Price ID → course key mapping (one-time purchases) ──
 // Updated 2026-05-26 to match current Stripe products

@@ -29,7 +29,7 @@ export default function CoachProfile() {
     // Coach always unlocked to themselves
     if (user.id === userId) { setIsUnlocked(true); setUnlockLoading(false); return; }
     (async () => {
-      const { data } = await (supabase as any)
+      const { data } = await supabase
         .from('coach_unlocks')
         .select('id')
         .eq('user_id', user.id)
@@ -44,7 +44,7 @@ export default function CoachProfile() {
   useEffect(() => {
     if (!userId) return;
     (async () => {
-      const { data } = await (supabase as any)
+      const { data } = await supabase
         .from('coach_availability_slots')
         .select('*')
         .eq('coach_id', userId);
@@ -56,14 +56,14 @@ export default function CoachProfile() {
     if (!user || !userId) return;
     try {
       // Deduct tokens
-      const { data: bal } = await (supabase as any).rpc('get_token_balance', { p_user_id: user.id });
+      const { data: bal } = await supabase.rpc('get_token_balance', { p_user_id: user.id });
       if ((bal || 0) < 5) {
         toast.error('Not enough tokens. You need 5 tokens to unlock this coach.');
         return;
       }
       // Deduct and create unlock
-      await (supabase as any).rpc('deduct_tokens', { p_user_id: user.id, p_amount: 5, p_reason: `Unlock coach: ${userId}` });
-      await (supabase as any).from('coach_unlocks').insert({ user_id: user.id, coach_id: userId, tokens_spent: 5 });
+      await supabase.rpc('deduct_tokens', { p_user_id: user.id, p_amount: 5, p_reason: `Unlock coach: ${userId}` });
+      await supabase.from('coach_unlocks').insert({ user_id: user.id, coach_id: userId, tokens_spent: 5 });
       setIsUnlocked(true);
       toast.success('Coach unlocked! You can now book sessions.');
     } catch (err) {

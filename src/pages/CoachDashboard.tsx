@@ -88,7 +88,7 @@ const CoachDashboard = ({ embedded = false }: { embedded?: boolean }) => {
     const start = format(startOfMonth(calMonth), 'yyyy-MM-dd');
     const end = format(endOfMonth(calMonth), 'yyyy-MM-dd');
     try {
-      const { data, error } = await (supabase as any).rpc('get_coach_calendar', {
+      const { data, error } = await supabase.rpc('get_coach_calendar', {
         _coach_id: user.id, _start: start, _end: end
       });
       if (data && !error) {
@@ -110,7 +110,7 @@ const CoachDashboard = ({ embedded = false }: { embedded?: boolean }) => {
     if (!user) return;
     setAutoFilling(true);
     try {
-      const { data, error } = await (supabase as any).rpc('auto_fill_daily_habits', { _user_id: user.id });
+      const { data, error } = await supabase.rpc('auto_fill_daily_habits', { _user_id: user.id });
       if (data?.success) {
         (await import('sonner')).toast.success('Daily habits auto-filled ✓');
         fetchCalendar();

@@ -183,7 +183,6 @@ Create a TEMPLATE WEEK with ${availability} training days that will be repeated 
       if (attempt > 0) {
         // Exponential backoff: 2s, 4s, 8s
         const delayMs = Math.pow(2, attempt) * 1000;
-        console.log(`Retry attempt ${attempt + 1}, waiting ${delayMs}ms`);
         await new Promise(resolve => setTimeout(resolve, delayMs));
       }
 

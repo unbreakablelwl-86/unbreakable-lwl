@@ -204,7 +204,6 @@ serve(async (req) => {
 
           const welcomeResult = await welcomeRes.json();
           if (welcomeRes.ok) {
-            console.log("Welcome email sent to user:", userEmail);
           } else {
             console.error("Welcome email failed:", JSON.stringify(welcomeResult));
           }

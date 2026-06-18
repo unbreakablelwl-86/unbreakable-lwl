@@ -176,7 +176,6 @@ Create a progressive 12-week programme with ${sessionsPerWeek} sessions per week
     for (let attempt = 0; attempt < maxRetries; attempt++) {
       if (attempt > 0) {
         const delayMs = Math.pow(2, attempt) * 1000;
-        console.log(`Retry attempt ${attempt + 1}, waiting ${delayMs}ms`);
         await new Promise(resolve => setTimeout(resolve, delayMs));
       }
 

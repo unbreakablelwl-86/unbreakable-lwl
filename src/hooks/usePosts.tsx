@@ -60,7 +60,7 @@ export function usePosts() {
 
     try {
       // Single RPC call replaces 5 * N separate queries (was 250+ queries for 50 posts)
-      const { data, error } = await (supabase as any).rpc('get_feed_posts', {
+      const { data, error } = await supabase.rpc('get_feed_posts', {
         p_user_id: user?.id || null,
         p_limit: PAGE_SIZE,
         p_offset: offsetRef.current,

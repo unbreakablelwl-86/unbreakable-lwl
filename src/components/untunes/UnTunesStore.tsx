@@ -68,14 +68,14 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
     try {
       // Use RPC first for reliability, then filter unopened
       let packData: any[] | null = null;
-      const { data: rpcData, error: rpcError } = await (supabase as any).rpc('get_my_cards', { _uid: user.id });
+      const { data: rpcData, error: rpcError } = await supabase.rpc('get_my_cards', { _uid: user.id });
       if (rpcData && !rpcError) {
         packData = rpcData
           .filter((c: any) => !c.is_opened)
           .sort((a: any, b: any) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
       } else {
         // Fallback: direct query
-        const { data, error } = await (supabase as any)
+        const { data, error } = await supabase
           .from('un_tunes_user_cards')
           .select('id, track_id, album_id, rarity, card_type, brand_card_id, edition_number, purchase_id, created_at, un_tunes_tracks(title,cover_url,artist), un_tunes_albums(title,cover_url), un_tunes_brand_cards(title,artwork_url,image_url)')
           .eq('user_id', user.id)
@@ -200,7 +200,7 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
       if (albumId) body.albumId = albumId;
 
       // Use database RPC instead of edge function for reliability
-      const { data, error } = await (supabase as any).rpc('purchase_untunes', {
+      const { data, error } = await supabase.rpc('purchase_untunes', {
         _type: type,
         _track_id: trackId || null,
         _album_id: albumId || null,
@@ -279,7 +279,7 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
     try {
       // 1. Deduct tokens
       if (!hasFullAccess) {
-        const { error: deductErr } = await (supabase as any).rpc('deduct_tokens', { _amount: tier.cost });
+        const { error: deductErr } = await supabase.rpc('deduct_tokens', { _amount: tier.cost });
         if (deductErr) {
           // Fallback: try direct update
           const { error: upErr } = await supabase.from('profiles')
@@ -360,7 +360,7 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
   const handleMarkOpened = async (cardIds: string[]) => {
     // Mark cards as opened in DB
     const now = new Date().toISOString();
-    await (supabase as any)
+    await supabase
       .from('un_tunes_user_cards')
       .update({ is_opened: true, opened_at: now })
       .in('id', cardIds);

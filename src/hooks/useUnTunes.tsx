@@ -154,13 +154,13 @@ function useOwnedTracks() {
     (async () => {
       try {
         // Use SECURITY DEFINER RPC to bypass any RLS timing issues
-        const { data, error } = await (supabase as any).rpc('get_my_owned_track_ids');
+        const { data, error } = await supabase.rpc('get_my_owned_track_ids');
         if (data && !error) {
           setOwnedIds(new Set(data.map((r: any) => r.track_id)));
           return;
         }
         // Fallback: direct table query
-        const { data: fallback } = await (supabase as any)
+        const { data: fallback } = await supabase
           .from('un_tunes_user_cards')
           .select('track_id')
           .eq('user_id', user.id)

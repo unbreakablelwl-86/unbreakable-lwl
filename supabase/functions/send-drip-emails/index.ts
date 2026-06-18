@@ -309,8 +309,6 @@ Deno.serve(async () => {
     if (!pending || pending.length === 0) {
       return new Response(JSON.stringify({ sent: 0, message: "No pending emails" }));
     }
-
-    console.log(`Processing ${pending.length} pending email(s)...`);
     let sent = 0, failed = 0;
 
     for (const row of pending) {
@@ -327,7 +325,6 @@ Deno.serve(async () => {
         if (result.ok) {
           await supabase.from("email_drip").update({ status: "sent", sent_at: new Date().toISOString() }).eq("id", row.id);
           sent++;
-          console.log(`✅ Day ${row.day_number} → ${row.email}`);
         } else {
           await supabase.from("email_drip").update({ status: "failed", error_message: result.error }).eq("id", row.id);
           failed++;

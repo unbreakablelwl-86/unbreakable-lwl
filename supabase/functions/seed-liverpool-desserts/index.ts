@@ -227,7 +227,6 @@ Deno.serve(async (req) => {
       }
 
       // Generate image
-      console.log(`🎨 Generating image for: ${recipeData.name}`);
       const imageUrl = await generateImage(image_prompt, GOOGLE_AI_API_KEY);
       if (imageUrl) {
         const publicUrl = await uploadImage(supabase, imageUrl, recipeId);
@@ -258,8 +257,6 @@ Deno.serve(async (req) => {
         results.push(`NOT FOUND: ${recipeName}`);
         continue;
       }
-
-      console.log(`🎨 Regenerating image for: ${recipeName}`);
       const imageUrl = await generateImage(prompt, GOOGLE_AI_API_KEY);
       if (imageUrl) {
         const publicUrl = await uploadImage(supabase, imageUrl, recipe.id);
