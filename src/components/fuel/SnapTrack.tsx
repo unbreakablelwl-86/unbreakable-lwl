@@ -69,13 +69,51 @@ export function SnapTrack({ isOpen, onClose, defaultMealType = 'lunch' }: SnapTr
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Start camera
+  const [showCameraPrompt, setShowCameraPrompt] = useState(false);
+
+  // Start camera with permission check
   const startCamera = useCallback(async () => {
     try {
       setCameraError(null);
       if (streamRef.current) {
         streamRef.current.getTracks().forEach((t) => t.stop());
       }
+
+      // Check permission status first
+      let permStatus: PermissionState | null = null;
+      try {
+        const result = await navigator.permissions.query({ name: 'camera' as PermissionName });
+        permStatus = result.state;
+      } catch {
+        // permissions API not supported — just try getUserMedia
+      }
+
+      if (permStatus === 'denied') {
+        setCameraError('denied');
+        setCameraActive(false);
+        return;
+      }
+
+      if (permStatus === 'prompt') {
+        // Show our own popup before triggering the browser prompt
+        setShowCameraPrompt(true);
+        return;
+      }
+
+      // Permission granted or unknown — proceed
+      await requestCameraAccess();
+    } catch (err) {
+      console.error('Camera error:', err);
+      setCameraError('denied');
+      setCameraActive(false);
+    }
+  }, [facingMode]);
+
+  // Actually request camera access
+  const requestCameraAccess = useCallback(async () => {
+    try {
+      setCameraError(null);
+      setShowCameraPrompt(false);
 
       const stream = await navigator.mediaDevices.getUserMedia({
         video: {
@@ -93,7 +131,7 @@ export function SnapTrack({ isOpen, onClose, defaultMealType = 'lunch' }: SnapTr
       setCameraActive(true);
     } catch (err) {
       console.error('Camera error:', err);
-      setCameraError('Camera access denied — use the upload button instead');
+      setCameraError('denied');
       setCameraActive(false);
     }
   }, [facingMode]);
@@ -302,18 +340,61 @@ export function SnapTrack({ isOpen, onClose, defaultMealType = 'lunch' }: SnapTr
                   className="space-y-3"
                 >
                   <div className="relative aspect-[4/3] bg-background rounded-xl overflow-hidden border-2 border-primary/20">
-                    {cameraError ? (
+                    {showCameraPrompt ? (
+                      <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center bg-background/95 z-10">
+                        <div className="w-16 h-16 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-4">
+                          <Camera className="w-8 h-8 text-primary" />
+                        </div>
+                        <p className="font-display text-sm tracking-wider text-foreground mb-2">CAMERA ACCESS NEEDED</p>
+                        <p className="text-xs text-muted-foreground mb-4 max-w-[250px]">
+                          Snap & Track uses your camera to scan meals and estimate macros instantly.
+                        </p>
+                        <Button
+                          size="sm"
+                          className="bg-primary text-primary-foreground font-display tracking-wider text-xs mb-2"
+                          onClick={requestCameraAccess}
+                        >
+                          <Camera className="w-4 h-4 mr-2" />
+                          ALLOW CAMERA
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-xs text-muted-foreground"
+                          onClick={() => { setShowCameraPrompt(false); fileInputRef.current?.click(); }}
+                        >
+                          <ImagePlus className="w-4 h-4 mr-1" />
+                          Upload photo instead
+                        </Button>
+                      </div>
+                    ) : cameraError ? (
                       <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center">
-                        <AlertCircle className="w-12 h-12 text-muted-foreground mb-3" />
-                        <p className="text-sm text-muted-foreground mb-4">{cameraError}</p>
+                        <AlertCircle className="w-12 h-12 text-primary/60 mb-3" />
+                        <p className="font-display text-sm tracking-wider text-foreground mb-2">CAMERA BLOCKED</p>
+                        <p className="text-xs text-muted-foreground mb-1 max-w-[250px]">
+                          Camera access was denied. To enable it:
+                        </p>
+                        <div className="text-[10px] text-muted-foreground/80 mb-4 max-w-[250px] text-left space-y-1">
+                          <p>📱 <strong>iPhone/iPad:</strong> Settings → Safari → Camera → Allow</p>
+                          <p>🤖 <strong>Android:</strong> Tap the 🔒 icon in your browser address bar → Permissions → Camera → Allow</p>
+                          <p>💻 <strong>Desktop:</strong> Click the camera icon in the address bar → Allow</p>
+                        </div>
+                        <Button
+                          size="sm"
+                          className="bg-primary text-primary-foreground font-display tracking-wider text-xs mb-2"
+                          onClick={() => { setCameraError(null); startCamera(); }}
+                        >
+                          <RotateCcw className="w-4 h-4 mr-2" />
+                          TRY AGAIN
+                        </Button>
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => fileInputRef.current?.click()}
-                          className="border-primary/30"
+                          className="border-primary/30 text-xs"
                         >
                           <ImagePlus className="w-4 h-4 mr-2" />
-                          Upload Photo
+                          Upload Photo Instead
                         </Button>
                       </div>
                     ) : (
