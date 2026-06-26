@@ -1,7 +1,7 @@
 import { useState, useEffect, lazy, Suspense } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Gamepad2, Zap, Blocks, Shapes, Wind, Calculator, ChevronRight, ArrowLeft, Bird, Grid3X3, Timer, Music, Volume2, VolumeX } from "lucide-react";
+import { Gamepad2, Zap, Blocks, Shapes, ChevronRight, ArrowLeft, Music, Volume2, VolumeX } from "lucide-react";
 
 // Retry-on-fail wrapper for lazy imports — handles stale chunk hashes after deploy
 function lazyRetry<T extends React.ComponentType<any>>(
@@ -25,24 +25,14 @@ const SnakeGame = lazyRetry(() => import("@/components/mindset/SnakeGame"));
 const AlleywayGame = lazyRetry(() => import("@/components/mindset/AlleywayGame"));
 const TetrisGame = lazyRetry(() => import("@/components/mindset/TetrisGame"));
 const PatternBreakerGame = lazyRetry(() => import("@/components/mindset/PatternBreakerGame"));
-const FlowStateGame = lazyRetry(() => import("@/components/mindset/FlowStateGame"));
-const MentalMathsGame = lazyRetry(() => import("@/components/mindset/MentalMathsGame"));
-const FlappyGame = lazyRetry(() => import("@/components/mindset/FlappyGame"));
-const MemoryMatrixGame = lazyRetry(() => import("@/components/mindset/MemoryMatrixGame"));
-const StrikeRhythmGame = lazyRetry(() => import("@/components/mindset/StrikeRhythmGame"));
 
-type ViewState = "selection" | "snake" | "alleyway" | "tetris" | "pattern" | "flow" | "maths" | "flappy" | "memory" | "reaction";
+type ViewState = "selection" | "snake" | "alleyway" | "tetris" | "pattern";
 
 const games = [
   { id: "snake" as const, name: "HUNT", icon: Gamepad2, tagline: "Chase. Devour. Never Stop.", desc: "Split-second decisions — react too slow and it's over. Reflexes become razor-sharp." },
   { id: "alleyway" as const, name: "SHATTER", icon: Zap, tagline: "Break Every Wall.", desc: "Walls go up, you smash them down. Precision, timing, and relentless aggression." },
   { id: "tetris" as const, name: "STACK", icon: Blocks, tagline: "Order From Chaos.", desc: "Pieces fall faster. Find clarity in the chaos — stack clean, think ahead, stay composed." },
   { id: "pattern" as const, name: "LOCK IN", icon: Shapes, tagline: "One Wrong Move, It's Over.", desc: "Watch. Listen. Repeat. Each round adds one more — break focus and you're done." },
-  { id: "flow" as const, name: "FLOW", icon: Wind, tagline: "Stay In The Zone.", desc: "Endless runner — dodge obstacles at increasing speed. Double-jump your way to immortality." },
-  { id: "maths" as const, name: "SOLVE", icon: Calculator, tagline: "Rapid Fire. Zero Hesitation.", desc: "Mental maths blitz — solve under countdown. Numbers grow, timer shrinks. 3 lives." },
-  { id: "flappy" as const, name: "RISE", icon: Bird, tagline: "Defy Gravity.", desc: "Tap to fly through impossible gaps. One mistake and you're done. How far can you go?" },
-  { id: "memory" as const, name: "RECALL", icon: Grid3X3, tagline: "Remember Everything.", desc: "Memorise the grid pattern. Tiles flash faster, grids grow bigger. Pure visual memory." },
-  { id: "reaction" as const, name: "STRIKE", icon: Timer, tagline: "Ride The Beat.", desc: "Guitar Hero meets Un-Tunes. Notes fall — tap the right lane as they hit the strike zone. Combos multiply your score." },
 ];
 
 // GameWrapper must be OUTSIDE the main component — if defined inside,
@@ -72,11 +62,6 @@ const GAME_COMPONENTS: Record<string, React.LazyExoticComponent<React.ComponentT
   alleyway: AlleywayGame,
   tetris: TetrisGame,
   pattern: PatternBreakerGame,
-  flow: FlowStateGame,
-  maths: MentalMathsGame,
-  flappy: FlappyGame,
-  memory: MemoryMatrixGame,
-  reaction: StrikeRhythmGame,
 };
 
 const MindsetGames = () => {

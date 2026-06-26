@@ -1,12 +1,12 @@
 /**
  * University course pricing — Stripe product & price IDs + token costs
  *
- * All courses (L2, L3, L4): 50 tokens (£20 equivalent) each
+ * All courses (L1, L2, L3, L4): 50 tokens each
  * L4 Sport-specific courses: 50 tokens each
- * Topic bundles (L2+L3+L4): 120 tokens (save 30)
- * Mega bundle (all 9 courses): 300 tokens (save 150)
+ * Topic bundles (L1+L2+L3+L4): 120 tokens (save 80)
+ * Mega bundle (all courses): 300 tokens (save 150+)
  *
- * Progression: must complete L(n) to unlock L(n+1). L1 is free.
+ * Free users can browse the course menu but must purchase to access content.
  */
 
 export interface CoursePriceInfo {
@@ -18,17 +18,20 @@ export interface CoursePriceInfo {
   type: 'course' | 'bundle';
 }
 
-// Individual courses — 50 tokens / £20 each
+// Individual courses — 50 tokens each
 export const COURSE_PRICES: Record<string, CoursePriceInfo> = {
   // Power (gym)
+  gym_l1: { product_id: 'prod_l1_gym', price_id: 'price_l1_gym', name: 'Power Level 1', price: 20, coinCost: 50, type: 'course' },
   gym_l2: { product_id: 'prod_UZYxDeNCxQJGDi', price_id: 'price_1TaPpuD5KOEmeWH2SgCLX7TY', name: 'Power Level 2', price: 20, coinCost: 50, type: 'course' },
   gym_l3: { product_id: 'prod_UZYxAAT0aztKBe', price_id: 'price_1TaPptD5KOEmeWH2Sqnp8zbG', name: 'Power Level 3', price: 20, coinCost: 50, type: 'course' },
   gym_l4: { product_id: 'prod_UZYxG42VXSIfCA', price_id: 'price_1TaPpzD5KOEmeWH2dKbZDJZq', name: 'Power Level 4', price: 20, coinCost: 50, type: 'course' },
   // Fuel (nutrition)
+  nutrition_l1: { product_id: 'prod_l1_nutrition', price_id: 'price_l1_nutrition', name: 'Fuel Level 1', price: 20, coinCost: 50, type: 'course' },
   nutrition_l2: { product_id: 'prod_UZYxkbtOT9l2mg', price_id: 'price_1TaPq3D5KOEmeWH2cKqTXZBC', name: 'Fuel Level 2', price: 20, coinCost: 50, type: 'course' },
   nutrition_l3: { product_id: 'prod_UZYy4JVUvnAXcu', price_id: 'price_1TaPqAD5KOEmeWH2AfXOGEM0', name: 'Fuel Level 3', price: 20, coinCost: 50, type: 'course' },
   nutrition_l4: { product_id: 'prod_UZYy11qDLIEQxX', price_id: 'price_1TaPqBD5KOEmeWH2tx9eGeCQ', name: 'Fuel Level 4', price: 20, coinCost: 50, type: 'course' },
   // Mindset
+  mindset_l1: { product_id: 'prod_l1_mindset', price_id: 'price_l1_mindset', name: 'Mindset Level 1', price: 20, coinCost: 50, type: 'course' },
   mindset_l2: { product_id: 'prod_UZYyc2eChkLGiO', price_id: 'price_1TaPqJD5KOEmeWH2bwG0iwL1', name: 'Mindset Level 2', price: 20, coinCost: 50, type: 'course' },
   mindset_l3: { product_id: 'prod_UZYyzK0gHNcAPz', price_id: 'price_1TaPqID5KOEmeWH2Dc3CNb6w', name: 'Mindset Level 3', price: 20, coinCost: 50, type: 'course' },
   mindset_l4: { product_id: 'prod_UZYydqfV7QJ6lM', price_id: 'price_1TaPqOD5KOEmeWH2aFTrPnKF', name: 'Mindset Level 4', price: 20, coinCost: 50, type: 'course' },
@@ -49,24 +52,24 @@ export const COURSE_PRICES: Record<string, CoursePriceInfo> = {
 export const BUNDLE_PRICES: Record<string, CoursePriceInfo & { courses: string[], savings: number, coinSavings: number }> = {
   power: {
     product_id: 'prod_UZYyTKThnwdyVK', price_id: 'price_1TaPqQD5KOEmeWH2XLjqBvgo',
-    name: 'Power Bundle (L2+L3+L4)', price: 48, coinCost: 120, type: 'bundle',
-    courses: ['gym_l2', 'gym_l3', 'gym_l4'], savings: 12, coinSavings: 30,
+    name: 'Power Bundle (L1–L4)', price: 48, coinCost: 120, type: 'bundle',
+    courses: ['gym_l1', 'gym_l2', 'gym_l3', 'gym_l4'], savings: 32, coinSavings: 80,
   },
   fuel: {
     product_id: 'prod_UZYyfrSSQ8uduI', price_id: 'price_1TaPqQD5KOEmeWH2eYRVS2Yd',
-    name: 'Fuel Bundle (L2+L3+L4)', price: 48, coinCost: 120, type: 'bundle',
-    courses: ['nutrition_l2', 'nutrition_l3', 'nutrition_l4'], savings: 12, coinSavings: 30,
+    name: 'Fuel Bundle (L1–L4)', price: 48, coinCost: 120, type: 'bundle',
+    courses: ['nutrition_l1', 'nutrition_l2', 'nutrition_l3', 'nutrition_l4'], savings: 32, coinSavings: 80,
   },
   mindset: {
     product_id: 'prod_UZYyi9FHKlN7R2', price_id: 'price_1TaPqQD5KOEmeWH2vNGarseX',
-    name: 'Mindset Bundle (L2+L3+L4)', price: 48, coinCost: 120, type: 'bundle',
-    courses: ['mindset_l2', 'mindset_l3', 'mindset_l4'], savings: 12, coinSavings: 30,
+    name: 'Mindset Bundle (L1–L4)', price: 48, coinCost: 120, type: 'bundle',
+    courses: ['mindset_l1', 'mindset_l2', 'mindset_l3', 'mindset_l4'], savings: 32, coinSavings: 80,
   },
   all: {
     product_id: 'prod_UZYy62q7EPCaY7', price_id: 'price_1TaPqQD5KOEmeWH29Dy4Q3kN',
     name: 'Mega Bundle (All Courses)', price: 120, coinCost: 300, type: 'bundle',
-    courses: ['gym_l2', 'gym_l3', 'gym_l4', 'nutrition_l2', 'nutrition_l3', 'nutrition_l4', 'mindset_l2', 'mindset_l3', 'mindset_l4'],
-    savings: 60, coinSavings: 150,
+    courses: ['gym_l1', 'gym_l2', 'gym_l3', 'gym_l4', 'nutrition_l1', 'nutrition_l2', 'nutrition_l3', 'nutrition_l4', 'mindset_l1', 'mindset_l2', 'mindset_l3', 'mindset_l4'],
+    savings: 120, coinSavings: 300,
   },
 };
 

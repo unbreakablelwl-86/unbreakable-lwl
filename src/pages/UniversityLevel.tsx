@@ -194,8 +194,8 @@ export default function UniversityLevel() {
                         return (
                           <motion.button
                             key={ch.number}
-                            onClick={() => accessible ? navigate(`/university/${ct}/level-${levelNum}/unit-${unit.number}/chapter-${ch.number}`) : undefined}
-                            disabled={!accessible}
+                            onClick={() => (accessible && hasAccess) ? navigate(`/university/${ct}/level-${levelNum}/unit-${unit.number}/chapter-${ch.number}`) : undefined}
+                            disabled={!accessible || !hasAccess}
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             transition={{ delay: idx * 0.08 + chIdx * 0.03 }}
@@ -243,7 +243,7 @@ export default function UniversityLevel() {
                   {hasChapters && assessment && assessment.questions.length > 0 && (
                     <div className="border-t border-border/30 p-5 bg-card/50">
                       <button
-                        onClick={() => navigate(`/university/${ct}/level-${levelNum}/unit-${unit.number}/assessment`)}
+                        onClick={() => hasAccess ? navigate(`/university/${ct}/level-${levelNum}/unit-${unit.number}/assessment`) : undefined}
                         className={`w-full flex items-center gap-3 p-3 rounded-xl border border-border/30 hover:${colors.borderActive} cursor-pointer transition-all ${colors.hoverBg} text-left`}
                       >
                         {passed ? (
@@ -330,7 +330,7 @@ export default function UniversityLevel() {
 
                   <div className="flex flex-col gap-2">
                     <Button
-                      onClick={() => navigate(`/university/${ct}/level-${levelNum}/unit-0/assessment`)}
+                      onClick={() => hasAccess ? navigate(`/university/${ct}/level-${levelNum}/unit-0/assessment`) : undefined}
                       disabled={!allQuizzesPassed}
                       className="w-full"
                       variant={allQuizzesPassed ? 'default' : 'outline'}
@@ -343,7 +343,7 @@ export default function UniversityLevel() {
                     </Button>
                     {hasPassedAssessment(levelNum, 0, ct) && (
                       <Button
-                        onClick={() => navigate(`/university/${ct}/level-${levelNum}/certificate`)}
+                        onClick={() => hasAccess ? navigate(`/university/${ct}/level-${levelNum}/certificate`) : undefined}
                         variant="outline"
                         className="w-full gap-2 border-primary/30 text-primary hover:bg-primary/5"
                       >

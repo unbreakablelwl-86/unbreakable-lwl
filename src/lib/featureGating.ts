@@ -105,8 +105,8 @@ const FEATURE_GATES: Record<FeatureId, FeatureGate> = {
   university_l1: {
     id: 'university_l1',
     name: 'University Level 1',
-    description: 'Free introductory courses',
-    requiredTier: 'free',
+    description: 'Introductory courses — requires Starter tier',
+    requiredTier: 'starter',
   },
   profile: {
     id: 'profile',
