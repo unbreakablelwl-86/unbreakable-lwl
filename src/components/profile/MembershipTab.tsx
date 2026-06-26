@@ -72,7 +72,7 @@ export function MembershipTab() {
             <h4 className="font-display text-sm tracking-wide text-foreground">WANT MORE TOKENS?</h4>
           </div>
           <p className="text-xs text-muted-foreground leading-relaxed">
-            Upgrade to Starter (50 tokens/mo), Pro (150 tokens/mo), or Elite (500 tokens/mo)
+            Upgrade to Starter (50 tokens/mo), Pro (100 tokens/mo), or Elite (200 tokens/mo)
             to unlock the full power of your Unbreakable Coach.
           </p>
           <Button

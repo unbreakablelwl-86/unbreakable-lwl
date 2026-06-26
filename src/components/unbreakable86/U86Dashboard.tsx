@@ -322,7 +322,7 @@ export function U86Dashboard({
                   <span className="font-display text-xs tracking-wider text-primary">LEVEL UP</span>
                 </div>
                 <p className="text-sm text-foreground">{phaseInfo.upsell.message}</p>
-                <p className="text-muted-foreground text-xs mt-1">Unlock {phaseInfo.upsell.course_name} — 150 tokens</p>
+                <p className="text-muted-foreground text-xs mt-1">Unlock {phaseInfo.upsell.course_name} — 50 tokens</p>
                 <Button className="mt-3 w-full h-9 rounded-lg text-xs font-display tracking-wider bg-primary/15 text-primary hover:bg-primary/25 border border-primary/20">
                   <Lock className="w-3 h-3 mr-1.5" />
                   UNLOCK COURSE

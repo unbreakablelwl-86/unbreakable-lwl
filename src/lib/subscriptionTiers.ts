@@ -2,13 +2,15 @@
  * UNBREAKABLE Subscription Tiers & Token Configuration
  *
  * Tiers:
- *   Free (£0)     — Home hub, socials, manual tools only
- *   Base (£25/mo) — Opens AI + UNBREAKABLE 86
- *   Pro  (£50/mo) — Full AI Coach, exercise library, programme generator
- *   Elite (£100/mo) — PT Hub, priority AI, coach command centre
+ *   Free (£0)       — Home hub, socials, manual tools, 30s UnTunes previews
+ *   Starter (£20/mo) — 50 tokens. Opens AI coaching, UNBREAKABLE 86, full UnTunes
+ *   Pro  (£30/mo)    — 100 tokens. Full AI Coach, programme generator, exercise library
+ *   Elite (£40/mo)   — 200 tokens. PT Hub, priority AI, coach command centre, analytics
  *
  * Hidden retention tier:
  *   Absolute Base (£7/mo) — Limited AI coaching, offered ONLY on cancel
+ *
+ * Optional top-up: £10 for 25 tokens (never expire)
  */
 
 export type TierKey = 'free' | 'absolute_base' | 'base' | 'pro' | 'elite';
@@ -24,7 +26,9 @@ export interface TierConfig {
   features: string[];
   popular?: boolean;
   hidden?: boolean; // true = only shown on cancel flow
-  rank: number; // 0 = free, 1 = abs base, 2 = base, 3 = pro, 4 = elite
+  rank: number; // 0 = free, 1 = abs base, 2 = starter, 3 = pro, 4 = elite
+  /** GBP price used for display; kept in sync with monthlyPrice */
+  price?: number;
 }
 
 export const TIERS: Record<TierKey, TierConfig> = {
@@ -40,9 +44,11 @@ export const TIERS: Record<TierKey, TierConfig> = {
     features: [
       'Home hub & dashboard',
       'Social feed & community',
+      'Profile & timeline',
       'Manual trackers & builders',
       'Calculators & habits',
-      'Browse university (L1 free)',
+      '30-second UnTunes previews',
+      'University Level 1 (free)',
     ],
   },
   absolute_base: {
@@ -50,66 +56,68 @@ export const TIERS: Record<TierKey, TierConfig> = {
     name: 'absolute_base',
     displayName: 'Absolute Base',
     monthlyPrice: 7,
-    monthlyTokens: 20,
+    monthlyTokens: 10,
     stripePriceId: 'price_1TaPmmD5KOEmeWH2Le2bNnPh',
     stripeProductId: 'prod_UZYuMTVREyACOp',
     rank: 1,
     hidden: true, // Only shown on cancel flow
     features: [
       'Limited AI coaching',
-      '20 tokens/month',
+      '10 tokens/month',
       'Basic coach chat only',
     ],
   },
   base: {
     key: 'base',
     name: 'base',
-    displayName: 'Base',
-    monthlyPrice: 25,
-    monthlyTokens: 75,
+    displayName: 'Starter',
+    monthlyPrice: 20,
+    monthlyTokens: 50,
     stripePriceId: 'price_1TaPmmD5KOEmeWH2LeANGH4k',
     stripeProductId: 'prod_UZYuPRujc7nGZN',
     rank: 2,
     features: [
-      '75 tokens/month',
+      '50 tokens/month',
       'AI coach chat',
       'UNBREAKABLE 86 access',
+      'Full UnTunes streaming',
+      'University L2+ (token purchase)',
       'Manual trackers & builders',
       'Habits & calculators',
-      'Basic programme suggestions',
     ],
   },
   pro: {
     key: 'pro',
     name: 'pro',
     displayName: 'Pro',
-    monthlyPrice: 50,
-    monthlyTokens: 200,
+    monthlyPrice: 30,
+    monthlyTokens: 100,
     stripePriceId: 'price_1TaPmsD5KOEmeWH2dO7mg9XK',
     stripeProductId: 'prod_UZYu2DeD4GRXYS',
     rank: 3,
     popular: true,
     features: [
-      '200 tokens/month',
+      '100 tokens/month',
       'Unbreakable Coach (full AI)',
       'Full exercise library (1,500+)',
       'AI programme generator',
       'AI nutrition plans',
-      'UNBREAKABLE 86 access',
-      'All Base features',
+      'AI progress reports',
+      'Full UnTunes streaming',
+      'All Starter features',
     ],
   },
   elite: {
     key: 'elite',
     name: 'elite',
     displayName: 'Elite',
-    monthlyPrice: 100,
-    monthlyTokens: 500,
+    monthlyPrice: 40,
+    monthlyTokens: 200,
     stripePriceId: 'price_1TaPmmD5KOEmeWH2bemvjYM4',
     stripeProductId: 'prod_UZYuJliRwgNO6J',
     rank: 4,
     features: [
-      '500 tokens/month',
+      '200 tokens/month',
       'PT Hub (1-to-1 coaching)',
       'Priority AI responses',
       'Coach command centre',

@@ -179,7 +179,7 @@ export default function UnTunes() {
                     🔥 <span className="text-primary font-bold">UPGRADE TO ELITE</span>
                     <span className="text-foreground"> — All 3 albums for just <span className="text-primary font-bold">£10</span> with Elite tokens (vs £16.67 top-up)</span>
                     <span className="text-muted-foreground"> &nbsp;•&nbsp; </span>
-                    <span className="text-foreground">Elite = £0.20/token &nbsp;•&nbsp; 500 tokens/month</span>
+                    <span className="text-foreground">Elite = £0.20/token &nbsp;•&nbsp; 200 tokens/month</span>
                     <span className="text-muted-foreground"> &nbsp;•&nbsp; </span>
                     <span className="text-primary font-bold">USE CODE LAUNCH50 — 50% OFF FIRST MONTH</span>
                     <span className="text-muted-foreground"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>

@@ -131,9 +131,9 @@ const freeFeatures = [
 /* ─── Token tiers ─── */
 const tokenTiers = [
   { name: 'FREE', tokens: 5, price: '£0', desc: 'Try the Coach with 5 tokens on signup', highlight: false, features: ['5 tokens on signup', 'All free tools', 'Community access'] },
-  { name: 'BASE', tokens: 75, price: '£25', period: '/mo', desc: 'Regular coaching for programmes & plans', highlight: false, features: ['75 tokens/month', 'Programme builds', 'Meal plans'] },
-  { name: 'PRO', tokens: 200, price: '£50', period: '/mo', desc: 'Full coaching across every pillar', highlight: true, features: ['200 tokens/month', 'All coaching features', 'University access'] },
-  { name: 'ELITE', tokens: 500, price: '£100', period: '/mo', desc: 'Maximum coaching — ideal for PT students', highlight: false, features: ['500 tokens/month', 'Priority coaching', 'Full course library'] },
+  { name: 'STARTER', tokens: 50, price: '£20', period: '/mo', desc: 'AI coaching, UNBREAKABLE 86 & full UnTunes', highlight: false, features: ['50 tokens/month', 'AI coach chat', 'Full UnTunes'] },
+  { name: 'PRO', tokens: 100, price: '£30', period: '/mo', desc: 'Full AI coach, programmes & exercise library', highlight: true, features: ['100 tokens/month', 'AI programme builder', 'University access'] },
+  { name: 'ELITE', tokens: 200, price: '£40', period: '/mo', desc: 'PT Hub, priority AI & coach command centre', highlight: false, features: ['200 tokens/month', 'Priority AI', 'Coach command centre'] },
 ];
 
 /* ─── What makes this different ─── */

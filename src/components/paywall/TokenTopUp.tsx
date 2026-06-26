@@ -1,12 +1,12 @@
 /**
- * TokenTopUp — Modal/section for purchasing token top-ups.
- * Tokens purchased via top-up don't expire and carry over.
+ * TokenTopUp — Simple £10 = 25 tokens top-up purchase.
+ * Top-up tokens don't expire and carry over month to month.
  * Monthly allocation resets each billing cycle.
  */
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, X, Coins, Check, Sparkles } from 'lucide-react';
+import { Plus, X, Coins, Sparkles, Zap } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
@@ -21,10 +21,11 @@ interface TokenTopUpProps {
 
 export function TokenTopUp({ asModal, onClose }: TokenTopUpProps) {
   const { user } = useAuth();
-  const [selected, setSelected] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const handlePurchase = async (topUp: TopUpType) => {
+  const topUp = TOKEN_TOPUPS[0]; // Single £10 option
+
+  const handlePurchase = async () => {
     if (!user) {
       toast.error('Please sign in first');
       return;
@@ -55,7 +56,7 @@ export function TokenTopUp({ asModal, onClose }: TokenTopUpProps) {
       <div className="text-center mb-6">
         <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 rounded-full px-3 py-1 mb-3">
           <Coins className="w-3.5 h-3.5 text-primary" />
-          <span className="text-xs font-display tracking-wider text-primary">TOKEN TOP-UPS</span>
+          <span className="text-xs font-display tracking-wider text-primary">TOKEN TOP-UP</span>
         </div>
         <h3 className="font-display text-lg tracking-wider mb-1">NEED MORE TOKENS?</h3>
         <p className="text-sm text-muted-foreground">
@@ -63,54 +64,43 @@ export function TokenTopUp({ asModal, onClose }: TokenTopUpProps) {
         </p>
       </div>
 
-      <div className="grid gap-3">
-        {TOKEN_TOPUPS.map((topUp) => (
-          <motion.button
-            key={topUp.id}
-            whileTap={{ scale: 0.98 }}
-            onClick={() => {
-              setSelected(topUp.id);
-              handlePurchase(topUp);
-            }}
-            disabled={loading}
-            className={cn(
-              'relative w-full flex items-center gap-4 p-4 rounded-xl border transition-all text-left',
-              selected === topUp.id && loading
-                ? 'border-primary bg-primary/10'
-                : 'border-border hover:border-primary/40 bg-card',
-              topUp.popular && 'ring-1 ring-primary/30'
-            )}
-          >
-            {topUp.popular && (
-              <div className="absolute -top-2.5 right-3 bg-primary text-primary-foreground text-[9px] font-display tracking-widest px-2 py-0.5 rounded-full">
-                BEST VALUE
-              </div>
-            )}
-            <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
-              <Plus className="w-6 h-6 text-primary" />
-            </div>
-            <div className="flex-1">
-              <div className="flex items-baseline gap-2 mb-0.5">
-                <span className="font-display text-lg tracking-wider text-foreground">
-                  {topUp.tokens}
-                </span>
-                <span className="text-xs text-muted-foreground">tokens</span>
-              </div>
-              <p className="text-xs text-muted-foreground">{topUp.valuePerToken}</p>
-            </div>
-            <div className="text-right">
-              <p className="font-display text-lg tracking-wider text-primary">£{topUp.price}</p>
-              <p className="text-[10px] text-muted-foreground font-display tracking-wider">ONE-TIME</p>
-            </div>
-          </motion.button>
-        ))}
-      </div>
+      <motion.button
+        whileTap={{ scale: 0.98 }}
+        onClick={handlePurchase}
+        disabled={loading}
+        className={cn(
+          'relative w-full flex items-center gap-4 p-5 rounded-xl border transition-all text-left',
+          loading
+            ? 'border-primary bg-primary/10'
+            : 'border-primary/30 hover:border-primary bg-card hover:bg-primary/5',
+          'ring-1 ring-primary/20'
+        )}
+      >
+        <div className="w-14 h-14 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
+          <Plus className="w-7 h-7 text-primary" />
+        </div>
+        <div className="flex-1">
+          <div className="flex items-baseline gap-2 mb-1">
+            <span className="font-display text-2xl tracking-wider text-foreground">
+              {topUp.tokens}
+            </span>
+            <span className="text-sm text-muted-foreground">tokens</span>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            One-time purchase · Never expires · {topUp.valuePerToken}
+          </p>
+        </div>
+        <div className="text-right">
+          <p className="font-display text-2xl tracking-wider text-primary">£{topUp.price}</p>
+          <p className="text-[10px] text-muted-foreground font-display tracking-wider">ONE-TIME</p>
+        </div>
+      </motion.button>
 
       <div className="flex items-start gap-2 px-2 pt-2">
         <Sparkles className="w-4 h-4 text-primary shrink-0 mt-0.5" />
         <p className="text-xs text-muted-foreground">
-          <span className="text-foreground font-medium">Tip:</span> Upgrading your tier gives better value.
-          Pro members get 200 tokens/mo for £50 (£0.25/token).
+          <span className="text-foreground font-medium">Better value on a plan:</span> Pro gives you
+          100 tokens/mo for £30 (£0.30/token) — Elite gives 200 tokens for £40 (£0.20/token).
         </p>
       </div>
     </div>

@@ -272,7 +272,7 @@ export function getGuideDownloadUrl(fileName: string): string {
 /** All guide keys for validation */
 export const ALL_GUIDE_KEYS = GUIDES.map(g => g.key);
 
-/** Guide bundle — all 20 for 150 tokens (save 150) */
+/** Guide bundle — all 20 for 50 tokens (save 50) */
 export const GUIDE_BUNDLE = {
   key: 'guide_bundle_all',
   name: 'Complete Guide Collection',

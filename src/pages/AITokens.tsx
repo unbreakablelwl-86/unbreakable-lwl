@@ -11,6 +11,8 @@ import {
   Coins, Plus, Package, BookOpen, ChevronDown,
   Lock, ArrowRight, Flame, Shield,
   Settings, Tag, BadgePercent,
+  Music, Bell, User, Search,
+  GraduationCap, Trophy,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { VISIBLE_TIERS, type TierConfig, type TierKey } from '@/lib/subscriptionTiers';
@@ -22,7 +24,6 @@ import { TokenTopUp } from '@/components/paywall/TokenTopUp';
 import { CancelRetention } from '@/components/paywall/CancelRetention';
 
 /* ─── Tier visual configs ─── */
-/* ─── Tier icon map ─── */
 const TIER_ICONS: Record<string, React.ElementType> = {
   free: Zap,
   base: Star,
@@ -39,7 +40,6 @@ export default function AITokens() {
   const navigate = useNavigate();
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
   const [showCancel, setShowCancel] = useState(false);
-  const [expandedSection, setExpandedSection] = useState<string | null>(null);
 
   const userTier = (currentTier || 'free') as TierKey;
   const usedTokens = monthlyTokens - balance;
@@ -77,9 +77,8 @@ export default function AITokens() {
       });
       if (error) throw error;
       if (data?.url) {
-        // Meta Pixel — track initiate checkout
         if (typeof window !== 'undefined' && (window as any).fbq) {
-          (window as any).fbq('track', 'InitiateCheckout', { content_name: tier.name, currency: 'GBP', value: tier.price });
+          (window as any).fbq('track', 'InitiateCheckout', { content_name: tier.name, currency: 'GBP', value: tier.monthlyPrice });
         }
         window.open(data.url, '_blank');
       }
@@ -264,7 +263,7 @@ export default function AITokens() {
                     )}
                   </div>
 
-                  {/* 50% off promo badge — on each paid tier */}
+                  {/* 50% off promo badge */}
                   {isPaid && (
                     <div className="flex items-center gap-1.5 mb-3 bg-primary/10 rounded-lg px-2 py-1 w-fit">
                       <BadgePercent className="w-3.5 h-3.5 text-primary" />
@@ -320,123 +319,169 @@ export default function AITokens() {
             })}
           </div>
 
-          {/* ─── Token Cost Breakdown ─── */}
-          <section className="max-w-3xl mx-auto mb-16">
-            <h2 className="text-xl font-display tracking-wider text-center mb-2">TOKEN COST BREAKDOWN</h2>
+          {/* ─── What Costs Tokens — Full Breakdown ─── */}
+          <section className="max-w-4xl mx-auto mb-16">
+            <h2 className="text-xl font-display tracking-wider text-center mb-2">WHAT COSTS TOKENS?</h2>
             <p className="text-sm text-muted-foreground text-center mb-8">
-              Know exactly what each action costs. Manual tools and browsing are always free.
+              Everything you need to know about token usage. Manual tools and social features are always free.
             </p>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-              {/* FREE actions */}
-              <div className="rounded-2xl border border-primary/20 bg-primary/5 p-4">
-                <div className="bg-primary/10 rounded-full px-3 py-1 inline-block mb-3">
-                  <span className="text-xs font-display tracking-wider text-primary">FREE</span>
+            {/* ─── Always Free ─── */}
+            <div className="rounded-2xl border border-green-500/30 bg-green-500/5 p-5 mb-4">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="bg-green-500/10 rounded-full px-3 py-1">
+                  <span className="text-xs font-display tracking-wider text-green-500">ALWAYS FREE — 0 TOKENS</span>
                 </div>
-                <ul className="space-y-2">
-                  {[
-                    'Manual tracking & logging',
-                    'Habit tracker & streaks',
-                    'Water tracker (8 glasses)',
-                    'Calculators (BMI, TDEE, 1RM)',
-                    'Social feed & community',
-                    'Browse exercise library',
-                    'University Level 1',
-                  ].map((item, i) => (
-                    <li key={i} className="flex items-center gap-2 text-xs text-muted-foreground">
-                      <Check className="w-3 h-3 text-primary shrink-0" />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
               </div>
-
-              {/* Chat / Light AI */}
-              <div className="rounded-2xl border border-primary/20 bg-primary/5 p-4">
-                <div className="bg-primary/10 rounded-full px-3 py-1 inline-block mb-3">
-                  <span className="text-xs font-display tracking-wider text-primary">0.25 – 0.5 TOKENS</span>
-                </div>
-                <ul className="space-y-2.5">
-                  {[
-                    { icon: MessageCircle, label: 'Coach chat message', cost: '0.5' },
-                    { icon: Sparkles, label: 'Motivation & mindset', cost: '0.25' },
-                    { icon: Activity, label: 'Progression tip', cost: '0.25' },
-                  ].map((item, i) => (
-                    <li key={i} className="flex items-start gap-2">
-                      <item.icon className="w-3.5 h-3.5 text-primary shrink-0 mt-0.5" />
-                      <div className="flex-1">
-                        <span className="text-xs text-foreground">{item.label}</span>
-                        <span className="text-[10px] text-primary ml-1">({item.cost})</span>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-                <p className="text-[10px] text-primary/70 mt-3 font-display tracking-wider">
-                  75 TOKENS ≈ 150 CHAT MESSAGES
-                </p>
-              </div>
-
-              {/* AI Builds */}
-              <div className="rounded-2xl border border-primary/20 bg-primary/5 p-4">
-                <div className="bg-primary/10 rounded-full px-3 py-1 inline-block mb-3">
-                  <span className="text-xs font-display tracking-wider text-primary">1 – 5 TOKENS</span>
-                </div>
-                <ul className="space-y-2.5">
-                  {[
-                    { icon: Dumbbell, label: 'AI programme build', cost: '3' },
-                    { icon: Apple, label: 'AI meal plan', cost: '3' },
-                    { icon: Flame, label: 'UNBREAKABLE 86 plan', cost: '5' },
-                    { icon: Brain, label: 'Workout review', cost: '1' },
-                    { icon: Activity, label: 'Nutrition analysis', cost: '1' },
-                    { icon: BookOpen, label: 'Progress report', cost: '2' },
-                  ].map((item, i) => (
-                    <li key={i} className="flex items-start gap-2">
-                      <item.icon className="w-3.5 h-3.5 text-primary shrink-0 mt-0.5" />
-                      <div className="flex-1">
-                        <span className="text-xs text-foreground">{item.label}</span>
-                        <span className="text-[10px] text-primary ml-1">({item.cost})</span>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2">
+                {[
+                  { icon: User, label: 'Sign up, profile & timeline' },
+                  { icon: Activity, label: 'Manual workout tracking' },
+                  { icon: Apple, label: 'Manual food & water logging' },
+                  { icon: Flame, label: 'Daily habits & streaks' },
+                  { icon: Dumbbell, label: 'Calculators (BMI, TDEE, 1RM, macros)' },
+                  { icon: MessageCircle, label: 'Social feed, posts, kudos, comments' },
+                  { icon: Bell, label: 'Notifications & messaging' },
+                  { icon: Search, label: 'Browse exercise library' },
+                  { icon: GraduationCap, label: 'University Level 1 courses' },
+                  { icon: Music, label: '30-second UnTunes previews' },
+                ].map((item, i) => (
+                  <div key={i} className="flex items-center gap-2 py-1.5">
+                    <item.icon className="w-4 h-4 text-green-500 shrink-0" />
+                    <span className="text-sm text-muted-foreground">{item.label}</span>
+                  </div>
+                ))}
               </div>
             </div>
 
-            <div className="rounded-xl border border-border bg-card/50 px-4 py-3 flex items-start gap-3 mb-8">
-              <Shield className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" />
-              <p className="text-xs text-muted-foreground">
-                <span className="text-foreground font-medium">Note:</span> The AI Coach works with text and data only.
-                It does not accept or track videos or images for assessment. All coaching is based on your logged data,
-                messages, and tracked metrics.
-              </p>
+            {/* ─── Paid Token Actions ─── */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+
+              {/* AI Coaching & Chat */}
+              <div className="rounded-2xl border border-primary/20 bg-primary/5 p-5">
+                <div className="flex items-center gap-2 mb-4">
+                  <MessageCircle className="w-4 h-4 text-primary" />
+                  <span className="text-sm font-display tracking-wider text-primary">AI COACHING & CHAT</span>
+                </div>
+                <div className="space-y-3">
+                  {[
+                    { label: 'Coach chat message', cost: '0.5', desc: 'Text-only AI coaching — ask anything' },
+                    { label: 'Progression tip', cost: '0.25', desc: 'Quick form & recovery suggestions' },
+                    { label: 'Motivation & mindset', cost: 'FREE', desc: 'Daily quotes & affirmations' },
+                  ].map((item, i) => (
+                    <div key={i} className="flex items-start justify-between gap-2">
+                      <div className="flex-1">
+                        <p className="text-sm text-foreground font-medium">{item.label}</p>
+                        <p className="text-xs text-muted-foreground">{item.desc}</p>
+                      </div>
+                      <span className={cn(
+                        'text-sm font-display tracking-wider shrink-0 mt-0.5',
+                        item.cost === 'FREE' ? 'text-green-500' : 'text-primary'
+                      )}>
+                        {item.cost === 'FREE' ? 'FREE' : `${item.cost} tk`}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-4 pt-3 border-t border-primary/10">
+                  <p className="text-[11px] text-primary/70">
+                    💬 50 tokens ≈ 100 chat messages &nbsp;|&nbsp; Elite pays just 0.3/msg
+                  </p>
+                </div>
+              </div>
+
+              {/* AI Builds & Analysis */}
+              <div className="rounded-2xl border border-primary/20 bg-primary/5 p-5">
+                <div className="flex items-center gap-2 mb-4">
+                  <Brain className="w-4 h-4 text-primary" />
+                  <span className="text-sm font-display tracking-wider text-primary">AI BUILDS & ANALYSIS</span>
+                </div>
+                <div className="space-y-3">
+                  {[
+                    { label: 'AI programme build', cost: '3', desc: 'Full personalised workout programme' },
+                    { label: 'AI meal plan', cost: '3', desc: 'Personalised nutrition plan' },
+                    { label: 'UNBREAKABLE 86 plan', cost: '5', desc: '86-day AI programme (Pro: 4, Elite: 3)' },
+                    { label: 'Workout review', cost: '1', desc: 'AI feedback on your logged session' },
+                    { label: 'Nutrition analysis', cost: '1', desc: 'AI analysis of your food log' },
+                    { label: 'Progress report', cost: '2', desc: 'Weekly/monthly AI summary (Elite: 1)' },
+                    { label: 'AI exercise search', cost: '0.5', desc: 'Smart exercise recommendations' },
+                  ].map((item, i) => (
+                    <div key={i} className="flex items-start justify-between gap-2">
+                      <div className="flex-1">
+                        <p className="text-sm text-foreground font-medium">{item.label}</p>
+                        <p className="text-xs text-muted-foreground">{item.desc}</p>
+                      </div>
+                      <span className="text-sm font-display tracking-wider text-primary shrink-0 mt-0.5">
+                        {item.cost} tk
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Notifications & Tracking note */}
+            <div className="rounded-xl border border-border bg-card/50 px-5 py-4 flex items-start gap-3 mb-4">
+              <Shield className="w-5 h-5 text-muted-foreground shrink-0 mt-0.5" />
+              <div>
+                <p className="text-sm text-foreground font-medium mb-1">What doesn't cost tokens?</p>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  <span className="text-foreground">Notifications, messaging, social interactions, manual tracking, habit logging, calculators, streaks,
+                  profile updates, and timeline browsing</span> are all free — no tokens used.
+                  Tokens are only consumed when the AI generates something for you (coaching replies, programmes, analysis).
+                  The AI Coach works with text and data only — it does not accept or track videos or images.
+                </p>
+              </div>
             </div>
           </section>
 
           {/* ─── University Courses & Bundles ─── */}
           <section className="max-w-3xl mx-auto mb-16">
             <h2 className="text-xl font-display tracking-wider text-center mb-2">UNIVERSITY COURSES</h2>
-            <p className="text-sm text-muted-foreground text-center mb-8">
+            <p className="text-sm text-muted-foreground text-center mb-2">
               Level 1 is free. Unlock advanced levels with tokens — lifetime access once purchased.
             </p>
+            <p className="text-xs text-primary text-center mb-8 font-display tracking-wider">
+              MUST COMPLETE EACH LEVEL TO UNLOCK THE NEXT: L1 → L2 → L3 → L4
+            </p>
 
-            <div className="rounded-2xl border border-border bg-card p-5 mb-4">
-              <div className="flex items-center justify-between">
+            {/* Individual course pricing */}
+            <div className="rounded-2xl border border-primary/20 bg-primary/5 p-6 mb-6">
+              <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
-                    <BookOpen className="w-5 h-5 text-primary" />
+                  <div className="w-12 h-12 rounded-xl bg-primary/15 border border-primary/25 flex items-center justify-center">
+                    <GraduationCap className="w-6 h-6 text-primary" />
                   </div>
                   <div>
-                    <p className="font-display text-sm tracking-wider">INDIVIDUAL COURSE</p>
-                    <p className="text-xs text-muted-foreground">Any single course (L2, L3, L4 or Sport)</p>
+                    <p className="font-display text-sm tracking-wider">ANY SINGLE COURSE</p>
+                    <p className="text-xs text-muted-foreground">Level 2, Level 3, Level 4, or L4 Sport-Specific</p>
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="font-display text-lg tracking-wider text-primary">150</p>
-                  <p className="text-[10px] text-muted-foreground font-display tracking-wider">TOKENS (~£50)</p>
+                  <p className="font-display text-3xl tracking-wider text-primary">50</p>
+                  <p className="text-[10px] text-muted-foreground font-display tracking-wider">TOKENS EACH</p>
                 </div>
               </div>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                {[
+                  { level: 'L2', desc: 'Foundation' },
+                  { level: 'L3', desc: 'Intermediate' },
+                  { level: 'L4', desc: 'Advanced' },
+                  { level: 'L4 Sport', desc: 'Sport-Specific' },
+                ].map((item, i) => (
+                  <div key={i} className="rounded-lg bg-background/50 border border-border/50 px-3 py-2 text-center">
+                    <p className="font-display text-xs tracking-wider text-primary">{item.level}</p>
+                    <p className="text-[10px] text-muted-foreground">{item.desc}</p>
+                  </div>
+                ))}
+              </div>
+              <p className="text-xs text-muted-foreground mt-3 text-center">
+                Lifetime access once purchased · £20 equivalent per course
+              </p>
             </div>
 
+            {/* Bundles */}
+            <h3 className="text-sm font-display tracking-wider text-center mb-4 text-muted-foreground">BUNDLES — SAVE MORE</h3>
             <div className="space-y-3">
               {COURSE_BUNDLES.map((bundle) => (
                 <div
@@ -474,7 +519,7 @@ export default function AITokens() {
                         {bundle.tokenCost}
                       </p>
                       <p className="text-[10px] text-muted-foreground font-display tracking-wider">
-                        TOKENS (~£{bundle.gbpEquivalent})
+                        TOKENS
                       </p>
                     </div>
                   </div>
@@ -488,7 +533,40 @@ export default function AITokens() {
             </div>
           </section>
 
-          {/* ─── Token Top-Ups ─── */}
+          {/* ─── UnTunes Purchases ─── */}
+          <section className="max-w-3xl mx-auto mb-16">
+            <h2 className="text-xl font-display tracking-wider text-center mb-2">UNTUNES MUSIC</h2>
+            <p className="text-sm text-muted-foreground text-center mb-8">
+              Full streaming is free for all paying members. Optional purchases to own tracks, albums &amp; collectible cards.
+            </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {[
+                { name: 'Single Track', cost: 3, desc: 'Own a track + collectible card', icon: Music },
+                { name: 'Full Album', cost: 30, desc: 'All tracks + all cards + album card', icon: Package },
+                { name: 'All Albums Bundle', cost: 50, desc: 'Every album — boosted rare card odds', icon: Sparkles },
+              ].map((item, i) => (
+                <div key={i} className="rounded-2xl border border-border bg-card p-5 text-center">
+                  <div className="w-10 h-10 rounded-xl bg-muted border border-border flex items-center justify-center mx-auto mb-3">
+                    <item.icon className="w-5 h-5 text-foreground" />
+                  </div>
+                  <p className="font-display text-sm tracking-wider mb-1">{item.name.toUpperCase()}</p>
+                  <p className="font-display text-2xl tracking-wider text-primary mb-1">{item.cost}</p>
+                  <p className="text-[10px] text-muted-foreground font-display tracking-wider mb-2">TOKENS</p>
+                  <p className="text-xs text-muted-foreground">{item.desc}</p>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-4 rounded-xl border border-border bg-card/50 px-4 py-3 text-center">
+              <p className="text-xs text-muted-foreground">
+                <span className="text-foreground font-medium">Free users</span> get 30-second previews.
+                <span className="text-foreground font-medium"> Paying members</span> (Starter+) stream everything — purchases are optional.
+              </p>
+            </div>
+          </section>
+
+          {/* ─── Token Top-Up ─── */}
           <section id="topups" className="max-w-md mx-auto mb-16">
             <TokenTopUp />
           </section>
@@ -508,13 +586,13 @@ export default function AITokens() {
                 <MessageCircle className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                 <div>
                   <span className="text-foreground font-medium">Chat is cheap.</span> A coach message costs just 0.5 tokens.
-                  75 Base tokens = ~150 chat messages. Ask your coach anything without worrying about cost.
+                  50 Starter tokens = ~100 chat messages. Ask your coach anything without worrying about cost.
                 </div>
               </div>
               <div className="flex gap-3">
                 <Plus className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                 <div>
-                  <span className="text-foreground font-medium">Top up anytime.</span> Running low? Buy extra tokens.
+                  <span className="text-foreground font-medium">Top up anytime.</span> Running low? £10 gets you 25 extra tokens.
                   They carry over and never expire — even if you downgrade or pause.
                 </div>
               </div>
@@ -526,10 +604,17 @@ export default function AITokens() {
                 </div>
               </div>
               <div className="flex gap-3">
-                <Star className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                <Crown className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                 <div>
-                  <span className="text-foreground font-medium">Elite gets priority.</span> Elite members pay less per AI action
-                  and get faster response times. The more you commit, the more you save.
+                  <span className="text-foreground font-medium">Elite saves on everything.</span> Elite members pay fewer tokens per
+                  AI action and get priority response times. 200 tokens/month = serious coaching power.
+                </div>
+              </div>
+              <div className="flex gap-3">
+                <Bell className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                <div>
+                  <span className="text-foreground font-medium">No hidden costs.</span> Notifications, messaging, social features,
+                  manual tracking, and profile management never use tokens. Only AI-generated content costs tokens.
                 </div>
               </div>
             </div>
