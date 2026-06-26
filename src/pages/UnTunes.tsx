@@ -106,8 +106,8 @@ export default function UnTunes() {
     { key: 'podcasts' as const, label: 'PODS', icon: Podcast },
     { key: 'search' as const, label: 'SEARCH', icon: Search },
     { key: 'library' as const, label: 'LIBRARY', icon: Library },
+    { key: 'store' as const, label: 'STORE', icon: ShoppingBag },
     // FIFA card system hidden — re-enable when ready
-    // { key: 'store' as const, label: 'STORE', icon: ShoppingBag },
     // { key: 'collection' as const, label: 'CARDS', icon: LayoutGrid },
     // { key: 'auction' as const, label: 'TRADE', icon: Gavel },
     { key: 'artist' as const, label: myArtist ? 'ARTIST HUB' : 'BECOME ARTIST', icon: myArtist ? Crown : UserPlus },

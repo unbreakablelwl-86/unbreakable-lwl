@@ -390,8 +390,8 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
 
         {storeView === 'main' ? (
           <>
-            {/* ═══ PENDING PACKS — Unopened cards waiting ═══ */}
-            {pendingPacks.length > 0 && (
+            {/* ═══ PENDING PACKS — Unopened cards waiting (hidden with FIFA card system) ═══ */}
+            {false && pendingPacks.length > 0 && (
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -502,8 +502,8 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
               </Card>
             </motion.div>
 
-            {/* ═══ CARD PACKS ═══ */}
-            <div>
+            {/* ═══ CARD PACKS (hidden with FIFA card system) ═══ */}
+            {false && <div>
               <h3 className="font-display text-sm tracking-wider text-white mb-3 flex items-center gap-2">
                 <Sparkles className="w-4 h-4 text-primary" />
                 CARD PACKS
@@ -592,7 +592,7 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
                   );
                 })}
               </div>
-            </div>
+            </div>}
 
             {/* ═══ ALBUMS ═══ */}
             <div>
@@ -680,8 +680,8 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
               </Card>
             </motion.div>
 
-            {/* ═══ Rarity info ═══ */}
-            <Card className="p-4 border-border/30 bg-card/20">
+            {/* ═══ Rarity info (hidden with FIFA card system) ═══ */}
+            {false && <Card className="p-4 border-border/30 bg-card/20">
               <p className="font-display text-xs tracking-wider text-muted-foreground mb-3">COLLECTIBLE RARITIES</p>
               <div className="space-y-2">
                 {[
@@ -699,7 +699,7 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
                   </div>
                 ))}
               </div>
-            </Card>
+            </Card>}
           </>
         ) : (
           /* ═══ Singles list ═══ */
