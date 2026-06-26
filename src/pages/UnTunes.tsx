@@ -181,7 +181,7 @@ export default function UnTunes() {
                     <span className="text-muted-foreground"> &nbsp;•&nbsp; </span>
                     <span className="text-foreground">Elite = £0.20/token &nbsp;•&nbsp; 200 tokens/month</span>
                     <span className="text-muted-foreground"> &nbsp;•&nbsp; </span>
-                    <span className="text-primary font-bold">USE CODE LAUNCH50 — 50% OFF FIRST MONTH</span>
+                    <span className="text-primary font-bold">🔒 FOUNDING MEMBER — PRICE LOCKED FOR LIFE</span>
                     <span className="text-muted-foreground"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
                     🔥 <span className="text-primary font-bold">UPGRADE TO ELITE</span>
                     <span className="text-foreground"> — Best value tokens for music, coaching & more</span>

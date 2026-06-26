@@ -162,11 +162,11 @@ export function FeaturePreviewCard({ featureKey, index }: FeaturePreviewCardProp
             </Link>
           </div>
 
-          {/* Promo line */}
+          {/* Founding member line */}
           <div className="flex items-center justify-center gap-1.5 pt-0.5">
             <Tag className="w-3 h-3 text-primary" />
             <span className="text-[11px] text-primary font-display tracking-wide">
-              Use <span className="font-bold underline">LAUNCH50</span> — 50% off your first month
+              🔒 <span className="font-bold">FOUNDING MEMBER</span> — price locked for life
             </span>
             <Flame className="w-3 h-3 text-primary" />
           </div>

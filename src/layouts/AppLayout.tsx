@@ -396,10 +396,10 @@ export default function AppLayout() {
         <Outlet />
       </main>
 
-      {/* ━━━ Scrolling Promo Banner — visible on ALL pages above nav ━━━ */}
+      {/* ━━━ Scrolling Founding Member Banner — visible on ALL pages above nav ━━━ */}
       {!hideBottomNav && (
         <Link
-          to="/ai-tokens?coupon=LAUNCH50"
+          to="/ai-tokens"
           className="fixed left-0 right-0 z-[49] overflow-hidden py-2"
           style={{
             bottom: '60px',
@@ -420,11 +420,11 @@ export default function AppLayout() {
             {[0, 1, 2].map(i => (
               <span key={i} className="flex items-center gap-2 text-xs font-display tracking-wider">
                 <Sparkles className="w-3 h-3 text-primary" />
-                <span className="text-primary font-bold">LAUNCH50</span>
+                <span className="text-primary font-bold">🔒 FOUNDING MEMBER</span>
                 <span className="text-foreground">—</span>
-                <span className="text-foreground">50% OFF YOUR FIRST MONTH</span>
+                <span className="text-foreground">PRICE LOCKED FOR LIFE · 100 SPOTS ONLY</span>
                 <span className="text-[10px] text-primary border border-primary/40 rounded-full px-2 py-0.5 ml-1">
-                  UPGRADE NOW
+                  JOIN NOW
                 </span>
               </span>
             ))}

@@ -262,14 +262,11 @@ export function HomeDashboard() {
       <section className="px-4 mt-8">
         <div className="flex items-center justify-between mb-4">
           <h3 className="font-display text-sm tracking-[0.2em] text-muted-foreground uppercase">Quick Actions</h3>
-          <button
-            onClick={() => setEditing(!editing)}
-            className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors"
-          >
-            {editing ? (
-              <><Check className="w-3.5 h-3.5" /> Done</>
-            ) : (
-              <><button onClick={() => setShowNotifications(true)} className="relative p-2 rounded-xl hover:bg-white/5 transition-colors">
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setShowNotifications(true)}
+              className="relative p-2 rounded-xl hover:bg-white/5 transition-colors"
+            >
               <Bell className="w-5 h-5 text-foreground" />
               {unreadCount > 0 && (
                 <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-primary text-[9px] text-white flex items-center justify-center font-display">
@@ -277,9 +274,17 @@ export function HomeDashboard() {
                 </span>
               )}
             </button>
-            <Settings className="w-3.5 h-3.5" /> Edit</>
-            )}
-          </button>
+            <button
+              onClick={() => setEditing(!editing)}
+              className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors"
+            >
+              {editing ? (
+                <><Check className="w-3.5 h-3.5" /> Done</>
+              ) : (
+                <><Settings className="w-3.5 h-3.5" /> Edit</>
+              )}
+            </button>
+          </div>
         </div>
 
         {/* Active actions grid */}
