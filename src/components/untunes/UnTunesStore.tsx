@@ -617,8 +617,8 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
                         <p className="font-display text-sm tracking-wider text-white truncate">{album.title}</p>
                         <p className="text-[10px] text-muted-foreground">{album.total_tracks || 12} tracks • Album + all track cards</p>
                         <div className="flex items-center gap-1 mt-0.5">
-                          <Diamond className="w-2.5 h-2.5 text-violet-400" />
-                          <span className="text-[9px] text-violet-300">1.5% diamond chance per card</span>
+                          <Crown className="w-2.5 h-2.5 text-yellow-400" />
+                          <span className="text-[9px] text-yellow-300">Gold cards included</span>
                         </div>
                       </div>
                       <div className="text-right">
@@ -687,8 +687,8 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
                 {[
                   { rarity: 'standard', icon: Music, desc: 'Guaranteed with every purchase', color: 'text-muted-foreground' },
                   { rarity: 'gold', icon: Crown, desc: 'Uncommon — gold-framed variant with foil tilt effect', color: 'text-yellow-400' },
-                  { rarity: 'diamond', icon: Diamond, desc: 'Only 1,000 ever — numbered, prismatic holographic finish', color: 'text-violet-400' },
-                  { rarity: 'platinum', icon: Sparkles, desc: 'Only 250 ever — numbered, dated, brushed platinum with rose-gold', color: 'text-slate-200' },
+                  { rarity: 'diamond', icon: Diamond, desc: '10% drop rate — PACK EXCLUSIVE — only 1,000 ever, numbered, prismatic holographic', color: 'text-violet-400' },
+                  { rarity: 'platinum', icon: Sparkles, desc: '1.5% drop rate — PACK EXCLUSIVE — only 250 ever, numbered, brushed platinum with rose-gold', color: 'text-slate-200' },
                 ].map(({ rarity, icon: Icon, desc, color }) => (
                   <div key={rarity} className="flex items-center gap-3">
                     <Icon className={cn('w-4 h-4', color)} />

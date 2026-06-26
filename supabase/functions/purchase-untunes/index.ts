@@ -29,13 +29,15 @@ const ALBUM_COST = 30;
 const BUNDLE_COST = 50; // All albums for price of 2 minus discount
 
 // ── Rarity odds ──
+// Diamond (10%) and Platinum (1.5%) are PACK-EXCLUSIVE — singles/albums/bundles only drop gold or standard
 const RARITY_ODDS = {
-  single: { platinum: 0.005, diamond: 0.01, gold: 0.10 },  // 0.5% platinum, 1% diamond, 10% gold, 88.5% standard
-  album:  { platinum: 0.008, diamond: 0.015, gold: 0.12 }, // better odds for album packs
-  bundle: { platinum: 0.015, diamond: 0.03, gold: 0.18 },  // best odds for bundles
+  single: { platinum: 0,     diamond: 0,    gold: 0.10 },  // 10% gold, 90% standard — no diamond/platinum outside packs
+  album:  { platinum: 0,     diamond: 0,    gold: 0.15 },  // 15% gold, 85% standard
+  bundle: { platinum: 0,     diamond: 0,    gold: 0.20 },  // 20% gold, 80% standard — best gold odds
+  pack:   { platinum: 0.015, diamond: 0.10, gold: 0.25 },  // 1.5% platinum, 10% diamond, 25% gold — pack exclusive
 };
-const MAX_DIAMOND_EDITIONS = 100;
-const MAX_PLATINUM_EDITIONS = 50;
+const MAX_DIAMOND_EDITIONS = 1000;  // Only 1,000 diamond editions ever
+const MAX_PLATINUM_EDITIONS = 250;  // Only 250 platinum editions ever
 
 function rollRarity(type: "single" | "album" | "bundle"): "standard" | "gold" | "diamond" | "platinum" {
   const roll = Math.random();

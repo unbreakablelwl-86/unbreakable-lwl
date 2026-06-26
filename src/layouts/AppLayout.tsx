@@ -435,7 +435,7 @@ export default function AppLayout() {
       {/* ━━━ Bottom Navigation ━━━ */}
       {!hideBottomNav && (
         <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-border"
-          style={{ background: 'rgba(8,8,8,0.96)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)' }}
+          style={{ background: 'hsl(var(--background) / 0.96)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)' }}
         >
           <div className="flex items-center justify-around py-1.5 px-0.5 max-w-lg mx-auto safe-area-pb">
             {bottomNavItems.map(item => {
@@ -451,7 +451,7 @@ export default function AppLayout() {
                   className={`flex flex-col items-center gap-0.5 px-2 py-1.5 rounded-lg transition-all relative ${
                     active ? '' : 'opacity-80 hover:opacity-100'
                   }`}
-                  style={active ? { color: item.color || '#FF5500' } : { color: '#e0e0e0' }}
+                  style={active ? { color: item.color || '#FF5500' } : { color: 'hsl(var(--muted-foreground))' }}
                 >
                   {item.isShield ? (
                     <img
@@ -500,7 +500,7 @@ export default function AppLayout() {
               className={`flex flex-col items-center gap-0.5 px-2 py-1.5 rounded-lg transition-all relative ${
                 showMore ? '' : 'opacity-80 hover:opacity-100'
               }`}
-              style={{ color: showMore ? '#FF5500' : '#e0e0e0' }}
+              style={{ color: showMore ? '#FF5500' : 'hsl(var(--muted-foreground))' }}
             >
               <MoreHorizontal
                 className="w-[22px] h-[22px] transition-all"
@@ -531,10 +531,10 @@ export default function AppLayout() {
           <div
             className="absolute bottom-20 left-3 right-3 max-w-lg sm:mx-auto overflow-hidden animate-in slide-in-from-bottom-4 duration-200"
             style={{
-              background: 'linear-gradient(180deg, rgba(20,20,20,0.98) 0%, rgba(10,10,10,0.99) 100%)',
+              background: 'hsl(var(--card) / 0.98)',
               borderRadius: '16px',
-              border: '1px solid rgba(255,85,0,0.15)',
-              boxShadow: '0 0 40px rgba(255,85,0,0.08), 0 20px 60px rgba(0,0,0,0.6)',
+              border: '1px solid hsl(var(--primary) / 0.15)',
+              boxShadow: '0 0 40px hsl(var(--primary) / 0.08), 0 20px 60px hsl(var(--background) / 0.6)',
               maxHeight: '70vh',
             }}
             onClick={e => e.stopPropagation()}
@@ -551,12 +551,12 @@ export default function AppLayout() {
                 <ThemeToggle />
                 <button
                   onClick={() => setShowCustomize(!showCustomize)}
-                  className={`p-1.5 rounded-full transition-colors ${showCustomize ? 'bg-primary/20 text-primary' : 'hover:bg-white/5 text-muted-foreground'}`}
+                  className={`p-1.5 rounded-full transition-colors ${showCustomize ? 'bg-primary/20 text-primary' : 'hover:bg-foreground/5 text-muted-foreground'}`}
                   title="Customise navigation"
                 >
                   <Settings size={16} />
                 </button>
-                <button onClick={() => { setShowMore(false); setShowCustomize(false); }} className="p-1.5 rounded-full hover:bg-white/5 transition-colors">
+                <button onClick={() => { setShowMore(false); setShowCustomize(false); }} className="p-1.5 rounded-full hover:bg-foreground/5 transition-colors">
                   <X size={18} className="text-muted-foreground" />
                 </button>
               </div>
@@ -565,13 +565,13 @@ export default function AppLayout() {
             {showCustomize ? (
               /* ─── Customise View ─── */
               <div className="overflow-y-auto" style={{ maxHeight: 'calc(70vh - 56px)' }}>
-                <div className="px-4 py-3 border-b border-white/[0.04]">
+                <div className="px-4 py-3 border-b border-border">
                   <p className="text-[11px] uppercase tracking-wider text-primary font-bold mb-1">Customise Navigation</p>
                   <p className="text-[10px] text-muted-foreground">Tap to add/remove from your bottom bar (2-6 tabs). Long-press to reorder.</p>
                 </div>
 
                 {/* Current tabs */}
-                <div className="px-4 py-3 border-b border-white/[0.04]">
+                <div className="px-4 py-3 border-b border-border">
                   <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold mb-2">Your tabs ({activeTabs.length}/6)</p>
                   <div className="space-y-1">
                     {activeTabs.map((id, idx) => {
@@ -579,7 +579,7 @@ export default function AppLayout() {
                       if (!item) return null;
                       const Icon = item.icon;
                       return (
-                        <div key={id} className="flex items-center gap-3 p-2.5 rounded-xl bg-white/[0.03]">
+                        <div key={id} className="flex items-center gap-3 p-2.5 rounded-xl bg-foreground/[0.03]">
                           <div className="flex flex-col gap-0.5">
                             <button
                               onClick={() => moveTab(id, -1)}
@@ -631,7 +631,7 @@ export default function AppLayout() {
                         const Icon = item.icon;
                         const canAdd = activeTabs.length < 6;
                         return (
-                          <div key={item.id} className="flex items-center gap-3 p-2.5 rounded-xl bg-white/[0.02]">
+                          <div key={item.id} className="flex items-center gap-3 p-2.5 rounded-xl bg-foreground/[0.02]">
                             {/* Reorder arrows */}
                             <div className="flex flex-col gap-0.5">
                               <button
@@ -698,11 +698,11 @@ export default function AppLayout() {
                           navigate(item.path);
                         }}
                         className={`flex items-center gap-3 p-3 rounded-xl text-left transition-all ${
-                          active ? 'bg-primary/10' : 'hover:bg-white/[0.03]'
+                          active ? 'bg-primary/10' : 'hover:bg-foreground/[0.03]'
                         }`}
                       >
                         <div className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                          active ? 'bg-primary/20' : 'bg-white/[0.05]'
+                          active ? 'bg-primary/20' : 'bg-foreground/[0.05]'
                         }`}>
                           {Icon && <Icon size={18} className={active ? 'text-primary' : ''} style={!active ? { color: item.color } : undefined} />}
                         </div>
@@ -717,7 +717,7 @@ export default function AppLayout() {
 
                 {/* Sign Out */}
                 {user && (
-                  <div className="px-2 pb-2 pt-1 border-t border-white/[0.06]">
+                  <div className="px-2 pb-2 pt-1 border-t border-border">
                     <button
                       onClick={async () => {
                         setShowMore(false);

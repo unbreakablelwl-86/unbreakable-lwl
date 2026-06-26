@@ -24,6 +24,8 @@ interface ExplorePost {
   kudos_count: number;
   comments_count: number;
   media_items: { media_type: string; media_url: string; thumbnail_url: string | null }[];
+  post_kudos?: { count: number }[];
+  post_comments?: { count: number }[];
 }
 
 export default function Explore() {
@@ -40,13 +42,19 @@ export default function Explore() {
     const fetchExplorePosts = async () => {
       const { data } = await supabase
         .from('posts')
-        .select('id, image_url, video_url, kudos_count, comments_count')
+        .select('id, image_url, video_url, post_kudos(count), post_comments(count)')
         .eq('visibility', 'public')
         .not('image_url', 'is', null)
         .order('created_at', { ascending: false })
         .limit(30);
 
-      setExplorePosts((data as ExplorePost[]) || []);
+      // Map aggregated counts into flat kudos_count / comments_count
+      const mapped = (data || []).map((p: any) => ({
+        ...p,
+        kudos_count: p.post_kudos?.[0]?.count ?? 0,
+        comments_count: p.post_comments?.[0]?.count ?? 0,
+      }));
+      setExplorePosts(mapped as ExplorePost[]);
       setPostsLoading(false);
     };
 

@@ -1334,14 +1334,14 @@ function NewestDropdownView({
             <Card className="border border-orange-500/20 bg-orange-500/5 overflow-hidden transition-all">
               <button
                 onClick={() => setExpanded(prev => ({ ...prev, [group.key]: !prev[group.key] }))}
-                className="w-full flex items-center justify-between p-3 hover:bg-white/5 transition-colors"
+                className="w-full flex items-center justify-between p-3 hover:bg-foreground/5 transition-colors"
               >
                 <div className="flex items-center gap-2.5">
                   <group.icon className="w-5 h-5 text-primary" />
                   <span className="font-display tracking-wider text-sm text-primary">
                     {group.label.toUpperCase()}
                   </span>
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-display tracking-wider text-primary bg-white/5 border border-orange-500/20">
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-display tracking-wider text-primary bg-foreground/5 border border-orange-500/20">
                     {group.cards.length}
                   </span>
                 </div>
@@ -1374,7 +1374,7 @@ function NewestDropdownView({
                             <div className="absolute bottom-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                               <button
                                 onClick={(e) => { e.stopPropagation(); onShareCard(card); }}
-                                className="w-7 h-7 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center border border-white/10 hover:border-white/30 transition-colors"
+                                className="w-7 h-7 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center border border-foreground/10 hover:border-white/30 transition-colors"
                               >
                                 <Share2 className="w-3 h-3 text-white/70" />
                               </button>
@@ -1451,7 +1451,7 @@ function ExerciseGroupedView({
               {/* Exercise header — tap to expand */}
               <button
                 onClick={() => setExpanded(prev => ({ ...prev, [exerciseName]: !prev[exerciseName] }))}
-                className="w-full flex items-center justify-between p-3 hover:bg-white/5 transition-colors"
+                className="w-full flex items-center justify-between p-3 hover:bg-foreground/5 transition-colors"
               >
                 <div className="flex items-center gap-2.5 min-w-0">
                   <cfg.icon className={cn('w-4 h-4 flex-shrink-0', cfg.textColor)} />
@@ -1460,7 +1460,7 @@ function ExerciseGroupedView({
                   </span>
                   <span className={cn(
                     'px-1.5 py-0.5 rounded-full text-[9px] font-display tracking-wider flex-shrink-0',
-                    cfg.textColor, 'bg-white/5 border', cfg.borderClass,
+                    cfg.textColor, 'bg-foreground/5 border', cfg.borderClass,
                   )}>
                     {exCards.length} {exCards.length === 1 ? 'PB' : 'PBs'}
                   </span>
@@ -1536,7 +1536,7 @@ function ExerciseGroupedView({
                             {/* Share button */}
                             <button
                               onClick={(e) => { e.stopPropagation(); onShareCard(card); }}
-                              className="w-7 h-7 rounded-full bg-white/5 flex items-center justify-center border border-white/10 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"
+                              className="w-7 h-7 rounded-full bg-foreground/5 flex items-center justify-center border border-foreground/10 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"
                             >
                               <Share2 className="w-3 h-3 text-white/60" />
                             </button>
@@ -1599,7 +1599,7 @@ function AZRarityDropdownView({
             <Card className={cn('border overflow-hidden transition-all', cfg.borderClass, cfg.bgClass)}>
               <button
                 onClick={() => setExpanded(prev => ({ ...prev, [rarity]: !prev[rarity] }))}
-                className="w-full flex items-center justify-between p-3 hover:bg-white/5 transition-colors"
+                className="w-full flex items-center justify-between p-3 hover:bg-foreground/5 transition-colors"
               >
                 <div className="flex items-center gap-2.5">
                   <cfg.icon className={cn('w-5 h-5', cfg.textColor)} />
@@ -1608,7 +1608,7 @@ function AZRarityDropdownView({
                   </span>
                   <span className={cn(
                     'px-2 py-0.5 rounded-full text-[10px] font-display tracking-wider',
-                    cfg.textColor, 'bg-white/5 border', cfg.borderClass,
+                    cfg.textColor, 'bg-foreground/5 border', cfg.borderClass,
                   )}>
                     {rarityCards.length}
                   </span>
@@ -1640,7 +1640,7 @@ function AZRarityDropdownView({
                           <div className="absolute bottom-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                             <button
                               onClick={(e) => { e.stopPropagation(); onShareCard(card); }}
-                              className="w-7 h-7 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center border border-white/10 hover:border-white/30 transition-colors"
+                              className="w-7 h-7 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center border border-foreground/10 hover:border-white/30 transition-colors"
                             >
                               <Share2 className="w-3 h-3 text-white/70" />
                             </button>
@@ -1698,7 +1698,7 @@ function RarityDropdownGrid({
               {/* Dropdown header */}
               <button
                 onClick={() => setExpanded(prev => ({ ...prev, [rarity]: !prev[rarity] }))}
-                className="w-full flex items-center justify-between p-3 hover:bg-white/5 transition-colors"
+                className="w-full flex items-center justify-between p-3 hover:bg-foreground/5 transition-colors"
               >
                 <div className="flex items-center gap-2.5">
                   <cfg.icon className={cn('w-5 h-5', cfg.textColor)} />
@@ -1707,7 +1707,7 @@ function RarityDropdownGrid({
                   </span>
                   <span className={cn(
                     'px-2 py-0.5 rounded-full text-[10px] font-display tracking-wider',
-                    cfg.textColor, 'bg-white/5 border', cfg.borderClass,
+                    cfg.textColor, 'bg-foreground/5 border', cfg.borderClass,
                   )}>
                     {rarityCards.length}
                   </span>
@@ -1740,7 +1740,7 @@ function RarityDropdownGrid({
                           <div className="absolute bottom-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                             <button
                               onClick={(e) => { e.stopPropagation(); onShareCard(card); }}
-                              className="w-7 h-7 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center border border-white/10 hover:border-white/30 transition-colors"
+                              className="w-7 h-7 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center border border-foreground/10 hover:border-white/30 transition-colors"
                             >
                               <Share2 className="w-3 h-3 text-white/70" />
                             </button>

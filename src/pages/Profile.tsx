@@ -412,7 +412,7 @@ function PostDetailModal({
                 onClick={(e) => e.stopPropagation()}
               >
                 <Trash2 className="w-10 h-10 text-red-400 mx-auto" />
-                <h3 className="font-display tracking-wider text-sm text-white">DELETE POST?</h3>
+                <h3 className="font-display tracking-wider text-sm text-foreground">DELETE POST?</h3>
                 <p className="text-xs text-muted-foreground">This can't be undone. The post will be permanently removed.</p>
                 <div className="flex gap-2">
                   <button
@@ -452,7 +452,7 @@ function PostDetailModal({
                 onClick={(e) => e.stopPropagation()}
               >
                 <div className="w-10 h-1 bg-zinc-700 rounded-full mx-auto" />
-                <h3 className="font-display tracking-wider text-sm text-white text-center">SHARE POST</h3>
+                <h3 className="font-display tracking-wider text-sm text-foreground text-center">SHARE POST</h3>
                 
                 {/* Editable caption */}
                 <div className="space-y-2">
@@ -460,7 +460,7 @@ function PostDetailModal({
                   <textarea
                     value={shareCaption}
                     onChange={(e) => setShareCaption(e.target.value)}
-                    className="w-full bg-black/60 border border-border rounded-xl p-3 text-sm text-white resize-none focus:border-primary/40 focus:outline-none"
+                    className="w-full bg-card border border-border rounded-xl p-3 text-sm text-foreground resize-none focus:border-primary/40 focus:outline-none"
                     rows={3}
                     placeholder="Add a caption..."
                   />

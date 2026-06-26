@@ -567,3 +567,64 @@
   0% { transform: translateX(0); }
   100% { transform: translateX(-33.33%); }
 }
+
+/* ─── Light mode fixes for semi-transparent white patterns ─── */
+.light {
+  /* Buttons and interactive elements - ensure visible hover/active states */
+  --tw-bg-opacity: 1;
+}
+
+/* Fix semi-transparent white backgrounds in light mode */
+.light .bg-white\/5,
+.light .bg-white\/\[0\.02\],
+.light .bg-white\/\[0\.03\],
+.light .bg-white\/\[0\.04\],
+.light .bg-white\/\[0\.05\],
+.light .bg-white\/10,
+.light .bg-white\/15,
+.light .bg-white\/20 {
+  background-color: hsl(var(--foreground) / 0.05) !important;
+}
+
+/* Fix hover states */
+.light .hover\:bg-white\/5:hover,
+.light .hover\:bg-white\/10:hover,
+.light .hover\:bg-white\/20:hover,
+.light .hover\:bg-white\/\[0\.03\]:hover,
+.light .hover\:bg-white\/\[0\.05\]:hover {
+  background-color: hsl(var(--foreground) / 0.06) !important;
+}
+
+/* Fix semi-transparent white borders */
+.light .border-white\/5,
+.light .border-white\/10,
+.light .border-white\/15,
+.light .border-white\/20,
+.light .border-white\/\[0\.04\],
+.light .border-white\/\[0\.06\],
+.light .border-white\/\[0\.08\],
+.light .border-white\/\[0\.10\] {
+  border-color: hsl(var(--border)) !important;
+}
+
+/* Fix text-white on non-primary backgrounds to be theme-aware */
+/* Only override text-white where it's NOT on a colored/primary background */
+.light .text-white\/40,
+.light .text-white\/50,
+.light .text-white\/60,
+.light .text-white\/70,
+.light .text-white\/80 {
+  color: hsl(var(--muted-foreground)) !important;
+}
+
+/* Fix semi-transparent black backgrounds that become too dark in light mode */
+.light .bg-black\/40,
+.light .bg-black\/50,
+.light .bg-black\/60 {
+  background-color: hsl(var(--foreground) / 0.08) !important;
+}
+
+/* Skeleton/loading states */
+.light [class*="animate-pulse"] {
+  --tw-bg-opacity: 0.08;
+}

@@ -41,7 +41,7 @@ export function SocialHeader({
     <>
       {/* Instagram-style header */}
       <header className="sticky top-0 z-50 border-b border-border"
-        style={{ background: 'rgba(8,8,8,0.95)', backdropFilter: 'blur(20px)' }}>
+        style={{ background: 'hsl(var(--background) / 0.95)', backdropFilter: 'blur(20px)' }}>
         <div className="px-4 py-2.5">
           <div className="flex items-center justify-between">
             {/* Logo — shield + wordmark */}
@@ -57,7 +57,7 @@ export function SocialHeader({
               {/* Create Post */}
               <button
                 onClick={onShowActionMenu}
-                className="p-2.5 rounded-full hover:bg-white/[0.05] transition-colors"
+                className="p-2.5 rounded-full hover:bg-foreground/[0.05] transition-colors"
               >
                 <Plus size={22} className="text-foreground/80" />
               </button>
@@ -65,7 +65,7 @@ export function SocialHeader({
               {/* Search */}
               <button
                 onClick={onShowUserSearch}
-                className="p-2.5 rounded-full hover:bg-white/[0.05] transition-colors"
+                className="p-2.5 rounded-full hover:bg-foreground/[0.05] transition-colors"
               >
                 <Search size={22} className="text-foreground/80" />
               </button>
@@ -73,7 +73,7 @@ export function SocialHeader({
               {/* Activity / Notifications */}
               <button
                 onClick={() => setShowNotifications(true)}
-                className="p-2.5 rounded-full hover:bg-white/[0.05] transition-colors relative"
+                className="p-2.5 rounded-full hover:bg-foreground/[0.05] transition-colors relative"
               >
                 <Heart size={22} className={notifCount > 0 ? 'text-primary fill-[#FF5500]' : 'text-foreground/80'} />
                 {(notifCount + incomingRequestCount) > 0 && (
@@ -87,7 +87,7 @@ export function SocialHeader({
               {/* DMs */}
               <button
                 onClick={() => navigate('/inbox')}
-                className="p-2.5 rounded-full hover:bg-white/[0.05] transition-colors relative"
+                className="p-2.5 rounded-full hover:bg-foreground/[0.05] transition-colors relative"
               >
                 <Send size={20} className="text-foreground/80" />
                 {messageCount > 0 && (

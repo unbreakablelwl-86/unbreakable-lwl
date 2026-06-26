@@ -349,7 +349,7 @@ export default function UserProfileCard() {
           className={`px-2.5 py-1 rounded-lg text-[8px] font-display tracking-[0.12em] uppercase transition-all ${
             viewMode === 'strength'
               ? 'bg-[#FF5500]/15 text-[#FF5500] border border-[#FF5500]/30'
-              : 'bg-white/[0.02] text-white/30 border border-white/5 hover:bg-white/[0.04]'
+              : 'bg-foreground/[0.02] text-white/30 border border-white/5 hover:bg-foreground/[0.04]'
           }`}
         >
           <Zap className="w-2.5 h-2.5 inline mr-0.5" />STRENGTH
@@ -360,7 +360,7 @@ export default function UserProfileCard() {
           className={`px-2.5 py-1 rounded-lg text-[8px] font-display tracking-[0.12em] uppercase transition-all ${
             viewMode === 'cardio'
               ? 'bg-[#FF6B1A]/15 text-[#FF6B1A] border border-[#FF6B1A]/30'
-              : 'bg-white/[0.02] text-white/30 border border-white/5 hover:bg-white/[0.04]'
+              : 'bg-foreground/[0.02] text-white/30 border border-white/5 hover:bg-foreground/[0.04]'
           }`}
         >
           <Activity className="w-2.5 h-2.5 inline mr-0.5" />CARDIO
@@ -435,8 +435,8 @@ export default function UserProfileCard() {
 
       {/* Page dots indicator */}
       <div className="flex items-center justify-center gap-1.5 mt-1">
-        <div className={`rounded-full transition-all ${viewMode === 'strength' ? 'w-4 h-1 bg-[#FF5500]' : 'w-1 h-1 bg-white/20'}`} />
-        <div className={`rounded-full transition-all ${viewMode === 'cardio' ? 'w-4 h-1 bg-[#FF6B1A]' : 'w-1 h-1 bg-white/20'}`} />
+        <div className={`rounded-full transition-all ${viewMode === 'strength' ? 'w-4 h-1 bg-[#FF5500]' : 'w-1 h-1 bg-foreground/20'}`} />
+        <div className={`rounded-full transition-all ${viewMode === 'cardio' ? 'w-4 h-1 bg-[#FF6B1A]' : 'w-1 h-1 bg-foreground/20'}`} />
       </div>
 
       {/* Total cards count */}
@@ -481,20 +481,20 @@ export default function UserProfileCard() {
       {/* Image menu */}
       <AnimatePresence>
         {showImageMenu && (
-          <motion.div className="absolute top-16 right-4 bg-black/90 backdrop-blur-lg rounded-xl border border-white/10 overflow-hidden z-30"
+          <motion.div className="absolute top-16 right-4 bg-black/90 backdrop-blur-lg rounded-xl border border-foreground/10 overflow-hidden z-30"
             initial={{ opacity: 0, y: -5, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -5, scale: 0.95 }}>
             <button onClick={() => fileInputRef.current?.click()} disabled={uploading}
-              className="flex items-center gap-2 px-4 py-2.5 text-sm text-white/80 hover:bg-white/5 w-full text-left">
+              className="flex items-center gap-2 px-4 py-2.5 text-sm text-white/80 hover:bg-foreground/5 w-full text-left">
               <Upload className="w-4 h-4" /> {uploading ? 'Uploading...' : 'Upload card image'}
             </button>
             {cardImageUrl && (
               <button onClick={removeCardImage}
-                className="flex items-center gap-2 px-4 py-2.5 text-sm text-red-400/80 hover:bg-white/5 w-full text-left border-t border-white/5">
+                className="flex items-center gap-2 px-4 py-2.5 text-sm text-red-400/80 hover:bg-foreground/5 w-full text-left border-t border-white/5">
                 <X className="w-4 h-4" /> Remove image
               </button>
             )}
             <button onClick={() => setShowImageMenu(false)}
-              className="flex items-center gap-2 px-4 py-2.5 text-sm text-white/40 hover:bg-white/5 w-full text-left border-t border-white/5">
+              className="flex items-center gap-2 px-4 py-2.5 text-sm text-white/40 hover:bg-foreground/5 w-full text-left border-t border-white/5">
               Cancel
             </button>
           </motion.div>
@@ -644,7 +644,7 @@ function StrengthCardPanel({
           <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, transparent 30%, rgba(5,5,5,0.9) 100%)' }} />
           {/* Camera */}
           <button onClick={onImageMenu}
-            className="absolute top-2 right-2 w-6 h-6 rounded-full bg-black/60 flex items-center justify-center border border-white/10 z-10">
+            className="absolute top-2 right-2 w-6 h-6 rounded-full bg-black/60 flex items-center justify-center border border-foreground/10 z-10">
             <Camera className="w-3 h-3 text-white/50" />
           </button>
           {/* Card count badge */}
@@ -703,7 +703,7 @@ function StrengthCardPanel({
             </div>
             <div className="flex items-center gap-1">
               <button onClick={(e) => { e.stopPropagation(); onEditPBs(); }}
-                className="w-5 h-5 rounded-full bg-white/5 flex items-center justify-center">
+                className="w-5 h-5 rounded-full bg-foreground/5 flex items-center justify-center">
                 <Edit3 className="w-2.5 h-2.5 text-white/40" />
               </button>
               <motion.span animate={{ rotate: showStrDropdown ? 180 : 0 }}
@@ -881,7 +881,7 @@ function CardioCardPanel({
             </div>
             <div className="flex items-center gap-1">
               <button onClick={(e) => { e.stopPropagation(); onEditPBs(); }}
-                className="w-5 h-5 rounded-full bg-white/5 flex items-center justify-center">
+                className="w-5 h-5 rounded-full bg-foreground/5 flex items-center justify-center">
                 <Edit3 className="w-2.5 h-2.5 text-white/40" />
               </button>
               <motion.span animate={{ rotate: showCardioDropdown ? 180 : 0 }}
@@ -990,7 +990,7 @@ function PBEditMenu({
                 RESET
               </button>
             )}
-            <button onClick={onClose} className="w-8 h-8 rounded-full hover:bg-white/5 flex items-center justify-center">
+            <button onClick={onClose} className="w-8 h-8 rounded-full hover:bg-foreground/5 flex items-center justify-center">
               <X className="w-4 h-4 text-muted-foreground" />
             </button>
           </div>
@@ -1023,7 +1023,7 @@ function PBEditMenu({
 
           {/* Search */}
           <div className="px-4 pt-3">
-            <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/[0.03] border border-white/10">
+            <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-foreground/[0.03] border border-foreground/10">
               <Search className="w-4 h-4 text-muted-foreground" />
               <input type="text" placeholder="Search exercises..." value={search}
                 onChange={(e) => setSearch(e.target.value)}
@@ -1039,7 +1039,7 @@ function PBEditMenu({
                 <button key={ex.exerciseName}
                   onClick={() => onAdd(ex.exerciseName, ex.value, ex.unit)}
                   disabled={customPBs.length >= maxItems}
-                  className="w-full flex items-center justify-between p-2 rounded-lg hover:bg-white/5 transition-colors disabled:opacity-30">
+                  className="w-full flex items-center justify-between p-2 rounded-lg hover:bg-foreground/5 transition-colors disabled:opacity-30">
                   <div className="text-left">
                     <p className="text-[12px] font-semibold text-foreground">{ex.exerciseName}</p>
                     <p className="text-[10px]" style={{ color: accentColor }}>{formatStatValue(ex.value, ex.unit)}</p>
@@ -1059,7 +1059,7 @@ function PBEditMenu({
           <div className="px-4 pb-4">
             {!showManual ? (
               <button onClick={() => setShowManual(true)}
-                className="w-full flex items-center justify-center gap-2 p-2.5 rounded-lg border border-dashed border-white/10 text-muted-foreground hover:bg-white/[0.02] transition-colors">
+                className="w-full flex items-center justify-center gap-2 p-2.5 rounded-lg border border-dashed border-foreground/10 text-muted-foreground hover:bg-foreground/[0.02] transition-colors">
                 <Plus className="w-4 h-4" />
                 <span className="text-[12px] font-semibold">Add custom exercise</span>
               </button>
@@ -1067,13 +1067,13 @@ function PBEditMenu({
               <div className="space-y-2 p-3 rounded-lg border border-border bg-card">
                 <input type="text" placeholder="Exercise name" value={manualName}
                   onChange={(e) => setManualName(e.target.value)}
-                  className="w-full px-3 py-2 text-sm bg-white/[0.03] rounded-lg border border-white/10 text-foreground outline-none" />
+                  className="w-full px-3 py-2 text-sm bg-foreground/[0.03] rounded-lg border border-foreground/10 text-foreground outline-none" />
                 <div className="flex gap-2">
                   <input type="number" placeholder="Value" value={manualValue}
                     onChange={(e) => setManualValue(e.target.value)}
-                    className="flex-1 px-3 py-2 text-sm bg-white/[0.03] rounded-lg border border-white/10 text-foreground outline-none" />
+                    className="flex-1 px-3 py-2 text-sm bg-foreground/[0.03] rounded-lg border border-foreground/10 text-foreground outline-none" />
                   <select value={manualUnit} onChange={(e) => setManualUnit(e.target.value)}
-                    className="px-3 py-2 text-sm bg-white/[0.03] rounded-lg border border-white/10 text-foreground outline-none">
+                    className="px-3 py-2 text-sm bg-foreground/[0.03] rounded-lg border border-foreground/10 text-foreground outline-none">
                     <option value="kg">KG</option>
                     <option value="reps">Reps</option>
                     <option value="seconds">Time</option>
@@ -1086,7 +1086,7 @@ function PBEditMenu({
                     <Check className="w-4 h-4 inline mr-1" /> Add
                   </button>
                   <button onClick={() => setShowManual(false)}
-                    className="px-4 py-2 rounded-lg text-sm text-muted-foreground hover:bg-white/5">
+                    className="px-4 py-2 rounded-lg text-sm text-muted-foreground hover:bg-foreground/5">
                     Cancel
                   </button>
                 </div>
