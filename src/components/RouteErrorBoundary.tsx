@@ -3,7 +3,6 @@ import { AlertTriangle, RefreshCw, ArrowLeft } from 'lucide-react';
 
 interface Props {
   children: ReactNode;
-  /** Optional label for the section (e.g. "Fuel", "Mindset") */
   section?: string;
 }
 
@@ -12,10 +11,6 @@ interface State {
   error: Error | null;
 }
 
-/**
- * Route-level ErrorBoundary — catches crashes inside individual pages
- * rather than letting the whole app go down.
- */
 export class RouteErrorBoundary extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
@@ -28,6 +23,16 @@ export class RouteErrorBoundary extends Component<Props, State> {
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     console.error(`[RouteErrorBoundary${this.props.section ? ` / ${this.props.section}` : ''}]`, error, errorInfo);
+    try {
+      import('@sentry/react').then((Sentry) => {
+        Sentry.captureException(error, {
+          tags: { section: this.props.section || 'unknown' },
+          extra: { componentStack: errorInfo.componentStack },
+        });
+      });
+    } catch {
+      // Sentry not available
+    }
   }
 
   handleReset = () => {

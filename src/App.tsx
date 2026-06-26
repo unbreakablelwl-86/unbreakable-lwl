@@ -19,6 +19,8 @@ import { FloatingSessionTracker } from "@/components/tracker/FloatingSessionTrac
 import { FloatingZoneTimer } from "@/components/timer/FloatingZoneTimer";
 import { usePresenceHeartbeat } from "@/hooks/usePresence";
 import CookieConsent from "@/components/CookieConsent";
+import { SkipToContent } from "@/components/a11y/SkipToContent";
+import { RouteAnnouncer } from "@/components/a11y/RouteAnnouncer";
 
 /** Runs presence heartbeat inside BrowserRouter context */
 function PresenceTracker() {
@@ -112,6 +114,7 @@ const App = () => {
 
   return (
   <ErrorBoundary>
+      <SkipToContent />
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
       <UnTunesPlayerProvider>
@@ -125,7 +128,9 @@ const App = () => {
           {!splashDone && <SplashScreen onComplete={handleSplashComplete} />}
           <BrowserRouter>
             <PresenceTracker />
+              <RouteAnnouncer />
             <Suspense fallback={<LazyFallback />}>
+            <main id="main-content">
             <Routes>
               {/* Sign-in — standalone full-page (no bottom nav) */}
               <Route path="/signin" element={<SignIn />} />
@@ -308,6 +313,7 @@ const App = () => {
                 <Route path="*" element={<NotFound />} />
               </Route>
             </Routes>
+            </main>
             </Suspense>
           </BrowserRouter>
           <FloatingMiniPlayer />

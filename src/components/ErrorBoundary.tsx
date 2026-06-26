@@ -23,6 +23,13 @@ export class ErrorBoundary extends Component<Props, State> {
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     console.error('ErrorBoundary caught:', error, errorInfo);
+    try {
+      import('@sentry/react').then((Sentry) => {
+        Sentry.captureException(error, { extra: { componentStack: errorInfo.componentStack } });
+      });
+    } catch {
+      // Sentry not available
+    }
   }
 
   handleReset = () => {
