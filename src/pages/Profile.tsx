@@ -694,7 +694,7 @@ export default function Profile() {
       <div className="flex border-b border-border sticky top-[57px] z-30" >
         {[
           { key: 'posts' as const, icon: Grid3X3 },
-          { key: 'achievements' as const, icon: Trophy },
+          // { key: 'achievements' as const, icon: Trophy }, // FIFA card system hidden
           { key: 'saved' as const, icon: Bookmark },
           { key: 'tagged' as const, icon: Tag },
         ].map(({ key, icon: Icon }) => (

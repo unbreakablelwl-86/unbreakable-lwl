@@ -106,9 +106,10 @@ export default function UnTunes() {
     { key: 'podcasts' as const, label: 'PODS', icon: Podcast },
     { key: 'search' as const, label: 'SEARCH', icon: Search },
     { key: 'library' as const, label: 'LIBRARY', icon: Library },
-    { key: 'store' as const, label: 'STORE', icon: ShoppingBag },
-    { key: 'collection' as const, label: 'CARDS', icon: LayoutGrid },
-    { key: 'auction' as const, label: 'TRADE', icon: Gavel },
+    // FIFA card system hidden — re-enable when ready
+    // { key: 'store' as const, label: 'STORE', icon: ShoppingBag },
+    // { key: 'collection' as const, label: 'CARDS', icon: LayoutGrid },
+    // { key: 'auction' as const, label: 'TRADE', icon: Gavel },
     { key: 'artist' as const, label: myArtist ? 'ARTIST HUB' : 'BECOME ARTIST', icon: myArtist ? Crown : UserPlus },
   ];
 
@@ -128,33 +129,10 @@ export default function UnTunes() {
             </div>
           </motion.div>
 
-          {/* ── Hero: Store & Collectibles CTA ── */}
-          <motion.div
-            {...fadeIn}
-            transition={{ delay: 0.1 }}
-            className="mb-4 rounded-xl border border-primary/20 bg-gradient-to-r from-primary/10 via-zinc-900/80 to-violet-500/10 p-3 flex items-center gap-3 cursor-pointer hover:border-primary/40 transition-colors"
-            onClick={() => setActiveTab(activeTab === 'store' ? 'collection' : 'store')}
-          >
-            <div className="flex -space-x-2">
-              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-primary to-orange-600 flex items-center justify-center border-2 border-background z-10">
-                <ShoppingBag className="w-4 h-4 text-white" />
-              </div>
-              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-violet-500 to-pink-500 flex items-center justify-center border-2 border-background">
-                <Diamond className="w-4 h-4 text-white" />
-              </div>
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="font-display text-xs tracking-wider text-white">OWN YOUR TUNES • COLLECT RARE CARDS</p>
-              <p className="text-[10px] text-muted-foreground">Buy singles, albums & bundles → open packs → collect rare & diamond editions</p>
-            </div>
-            <div className="flex items-center gap-1 text-primary">
-              <Coins className="w-3.5 h-3.5" />
-              <ChevronRight className="w-4 h-4" />
-            </div>
-          </motion.div>
+          {/* FIFA card store CTA hidden — re-enable when ready */}
 
-          {/* ── Token Savings Scroll Banner ── */}
-          {(() => {
+          {/* Token savings banner hidden with card store */}
+          {false && (() => {
             // Token value per tier (monthly price / monthly tokens)
             const tierValue: Record<string, { perToken: number; bundleCost: string; albumCost: string; singleCost: string; label: string }> = {
               elite:  { perToken: 0.20, bundleCost: '£10',    albumCost: '£6',    singleCost: '£0.60', label: 'ELITE' },

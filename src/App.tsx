@@ -282,7 +282,8 @@ const App = () => {
                 {/* Un-Tunes — Music & Podcasts */}
                 <Route path="/untunes" element={<RouteErrorBoundary section="Un-Tunes"><UnTunes /></RouteErrorBoundary>} />
                 <Route path="/untunes/terms" element={<UnTunesTerms />} />
-                <Route path="/achievements" element={<RouteErrorBoundary section="Achievements"><AchievementsPage /></RouteErrorBoundary>} />
+                {/* FIFA card system hidden — re-enable when ready */}
+                {/* <Route path="/achievements" element={<RouteErrorBoundary section="Achievements"><AchievementsPage /></RouteErrorBoundary>} /> */}
                 
                 {/* Coach Dashboard - role-protected + subscribed */}
                 <Route path="/coach" element={

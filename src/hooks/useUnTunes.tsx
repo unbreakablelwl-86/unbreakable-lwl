@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useRef, createContext, useContext, us
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useUserRole } from '@/hooks/useUserRole';
+import { useTokenBalance } from '@/hooks/useTokenBalance';
 
 /* ─── Types ─── */
 export interface Artist {
@@ -182,6 +183,7 @@ const PREVIEW_DURATION = 30; // seconds
 export function usePlayerProvider() {
   const { user } = useAuth();
   const { isDev, isCoach, loading: roleLoading } = useUserRole();
+  const { currentTier, loading: tierLoading } = useTokenBalance();
   const ownedTrackIds = useOwnedTracks();
   const [state, setState] = useState<PlayerState>(defaultPlayerState);
   const [locked, setLocked] = useState(false);
@@ -193,10 +195,11 @@ export function usePlayerProvider() {
   const prevTrackRef = useRef<() => void>(() => {});
   const togglePlayRef = useRef<() => void>(() => {});
 
-  // Full access = dev/coach role OR known dev user IDs (hardcoded fallback)
-  // While role is loading, fall back to hardcoded IDs to prevent brief 30s cap flash
+  // Full access = dev/coach role, any paying subscriber, OR known dev user IDs
+  // While role/tier is loading, fall back to hardcoded IDs to prevent brief 30s cap flash
   const DEV_USER_IDS = ['3a61bd9e-785b-4512-abab-e61b87496c54', 'c219f448-c05a-4fe3-ae11-793222b7dced'];
-  const hasFullAccess = isDev || isCoach || roleLoading || (user?.id ? DEV_USER_IDS.includes(user.id) : false);
+  const isPaidUser = !tierLoading && currentTier !== 'free';
+  const hasFullAccess = isDev || isCoach || isPaidUser || roleLoading || tierLoading || (user?.id ? DEV_USER_IDS.includes(user.id) : false);
 
   // Is current track a preview?
   const isPreview = useMemo(() => {

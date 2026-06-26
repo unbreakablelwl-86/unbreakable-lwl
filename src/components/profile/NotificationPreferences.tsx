@@ -12,7 +12,7 @@ const PREF_SECTIONS = [
       { key: 'ai_daily_fill', label: 'Daily auto-fill completed', icon: Bot },
       { key: 'ai_programme', label: 'Programme generated', icon: Bot },
       { key: 'ai_meal_plan', label: 'Meal plan generated', icon: Bot },
-      { key: 'weekly_pack', label: 'Weekly pack ready', icon: Package },
+      // { key: 'weekly_pack', label: 'Weekly pack ready', icon: Package }, // Card system hidden
     ],
   },
   {
