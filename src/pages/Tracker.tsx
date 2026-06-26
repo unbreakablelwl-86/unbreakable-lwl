@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -96,6 +96,15 @@ export default function Tracker() {
   const [activeTab, setActiveTab] = useState<TabId>('overview');
   const [activityFilter, setActivityFilter] = useState<ActivityFilter>('all');
   const [showTracker, setShowTracker] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // Auto-open tracker when navigating with ?track=true
+  useEffect(() => {
+    if (searchParams.get('track') === 'true') {
+      setShowTracker(true);
+      setSearchParams({}, { replace: true });
+    }
+  }, [searchParams]);
 
   // Listen for floating tracker expand event
   useEffect(() => {

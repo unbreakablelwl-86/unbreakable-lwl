@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FoodTracker } from '@/components/fuel/FoodTracker';
 import { useAuth } from '@/hooks/useAuth';
@@ -14,9 +14,18 @@ type FuelTab = 'overview' | 'tracker' | 'recipes';
 
 export default function Fuel() {
   const { user, loading } = useAuth();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showSnapTrack, setShowSnapTrack] = useState(false);
   const [activeTab, setActiveTab] = useState<FuelTab>('overview');
+
+  // Auto-open Snap & Track when navigating with ?snap=true
+  useEffect(() => {
+    if (searchParams.get('snap') === 'true' && user && !loading) {
+      setShowSnapTrack(true);
+      setSearchParams({}, { replace: true });
+    }
+  }, [searchParams, user, loading]);
 
   if (loading) {
     return (

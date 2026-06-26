@@ -71,8 +71,8 @@ interface QuickAction {
 }
 
 const ALL_QUICK_ACTIONS: QuickAction[] = [
-  { id: 'snap', label: 'Snap & Track', icon: Camera, path: '/fuel' },
-  { id: 'run', label: 'Track Run', icon: Activity, path: '/tracker' },
+  { id: 'snap', label: 'Snap & Track', icon: Camera, path: '/fuel?snap=true' },
+  { id: 'run', label: 'Track Run', icon: Activity, path: '/tracker?track=true' },
   { id: 'lift', label: 'Start Lift', icon: Dumbbell, path: '/programming' },
   { id: 'journal', label: 'Journal', icon: BookOpen, path: '/habits' },
   { id: 'coach', label: 'Unbreakable Coach', icon: Sparkles, path: '/help' },
