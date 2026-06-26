@@ -10,7 +10,7 @@ import {
   MessageCircle, Dumbbell, Apple, Brain, Activity,
   Coins, Plus, Package, BookOpen, ChevronDown,
   Lock, ArrowRight, Flame, Shield,
-  Settings, Tag, BadgePercent,
+  Settings, Tag,
   Music, Bell, User, Search,
   GraduationCap, Trophy,
 } from 'lucide-react';
@@ -105,14 +105,14 @@ export default function AITokens() {
   return (
     <>
       <div className="min-h-screen bg-background pb-28 px-4">
-        {/* ─── 50% Off Scrolling Banner ─── */}
+        {/* ─── Founding Member Scrolling Banner ─── */}
         <div className="w-full overflow-hidden bg-primary text-primary-foreground py-2.5 mb-6">
           <motion.div
             animate={{ x: ['100%', '-100%'] }}
             transition={{ duration: 18, repeat: Infinity, ease: 'linear' }}
             className="whitespace-nowrap font-display tracking-wider text-sm"
           >
-            🔥 USE CODE <span className="font-bold underline">LAUNCH50</span> — 50% OFF YOUR FIRST MONTH ON ANY PLAN! 🔥 &nbsp;&nbsp;&nbsp; LIMITED TIME OFFER &nbsp;&nbsp;&nbsp; 🔥 USE CODE <span className="font-bold underline">LAUNCH50</span> — 50% OFF YOUR FIRST MONTH ON ANY PLAN! 🔥 &nbsp;&nbsp;&nbsp; LIMITED TIME OFFER &nbsp;&nbsp;&nbsp; 🔥 USE CODE <span className="font-bold underline">LAUNCH50</span> — 50% OFF YOUR FIRST MONTH! 🔥
+            🔒 FOUNDING MEMBER PRICING — LOCKED FOR LIFE! ONLY 100 SPOTS AVAILABLE 🔒 &nbsp;&nbsp;&nbsp; JOIN NOW &amp; NEVER PAY MORE &nbsp;&nbsp;&nbsp; 🔒 FOUNDING MEMBER PRICING — LOCKED FOR LIFE! ONLY 100 SPOTS AVAILABLE 🔒 &nbsp;&nbsp;&nbsp; JOIN NOW &amp; NEVER PAY MORE &nbsp;&nbsp;&nbsp; 🔒 FOUNDING MEMBER — PRICE LOCKED FOR LIFE! 🔒
           </motion.div>
         </div>
 
@@ -215,7 +215,6 @@ export default function AITokens() {
               const isCurrent = userTier === tier.key;
               const isPopular = tier.popular;
               const isPaid = tier.monthlyPrice > 0;
-              const halfPrice = (tier.monthlyPrice / 2).toFixed(0);
 
               return (
                 <motion.div
@@ -263,12 +262,12 @@ export default function AITokens() {
                     )}
                   </div>
 
-                  {/* 50% off promo badge */}
+                  {/* Founding member badge */}
                   {isPaid && (
                     <div className="flex items-center gap-1.5 mb-3 bg-primary/10 rounded-lg px-2 py-1 w-fit">
-                      <BadgePercent className="w-3.5 h-3.5 text-primary" />
+                      <Lock className="w-3.5 h-3.5 text-primary" />
                       <span className="text-xs text-primary font-display tracking-wide">
-                        <span className="font-bold">LAUNCH50</span> → £{halfPrice} first month
+                        FOUNDING MEMBER — <span className="font-bold">PRICE LOCKED FOR LIFE</span>
                       </span>
                     </div>
                   )}
@@ -317,6 +316,28 @@ export default function AITokens() {
                 </motion.div>
               );
             })}
+          </div>
+
+          {/* ─── Founding Member Notice ─── */}
+          <div className="max-w-2xl mx-auto mb-16">
+            <div className="rounded-2xl border border-primary/30 bg-gradient-to-br from-primary/10 to-transparent p-6 text-center">
+              <div className="inline-flex items-center gap-2 bg-primary/15 rounded-full px-4 py-1.5 mb-4">
+                <Lock className="w-4 h-4 text-primary" />
+                <span className="text-xs font-display tracking-widest text-primary">FOUNDING MEMBER</span>
+              </div>
+              <h3 className="font-display text-lg tracking-wider mb-2">YOUR PRICE, LOCKED FOR LIFE</h3>
+              <p className="text-sm text-muted-foreground mb-4 max-w-md mx-auto">
+                The first 100 members get founding member pricing — your monthly rate will
+                <span className="text-foreground font-medium"> never increase</span>, no matter how much the platform grows.
+                Once all 100 spots are taken, prices go up.
+              </p>
+              <div className="inline-flex items-center gap-2 bg-card border border-border rounded-full px-4 py-2">
+                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                <span className="text-sm font-display tracking-wider text-foreground">
+                  SPOTS REMAINING
+                </span>
+              </div>
+            </div>
           </div>
 
           {/* ─── What Costs Tokens — Full Breakdown ─── */}

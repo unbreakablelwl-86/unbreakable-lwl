@@ -623,11 +623,11 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
                 </p>
               </div>
               <h2 className="font-heading font-black text-2xl sm:text-3xl md:text-5xl text-white uppercase tracking-wide">
-                Power Up Your Coach
+                Founding Member Pricing
               </h2>
               <p className="text-[#888] mt-3 max-w-xl mx-auto text-sm">
-                Tokens fuel your Unbreakable Coach — programmes, meal plans, form checks, course access.
-                Everything else is free forever.
+                🔒 First 100 members lock in these prices <span className="text-white font-semibold">for life</span>.
+                Your rate never increases, no matter how much the platform grows.
               </p>
             </motion.div>
 
@@ -674,7 +674,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
                 <span className="text-[#FF5500] font-bold">Top-ups carry over</span> — never lose purchased tokens
               </p>
               <p className="text-[#666] text-[11px]">
-                Need more? Grab a top-up anytime — Small (50) · Medium (150) · Large (300)
+                Need more? Grab a £10 top-up anytime — 25 tokens that never expire
               </p>
             </motion.div>
           </motion.div>
