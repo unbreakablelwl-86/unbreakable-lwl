@@ -169,7 +169,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
         <div className="container mx-auto px-5 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5">
-              <img src={shieldLogo} alt="UNBREAKABLE" className="h-8 w-8 object-contain" />
+              <img loading="lazy" src={shieldLogo} alt="UNBREAKABLE" className="h-8 w-8 object-contain" />
               <span className="font-heading font-black text-base tracking-[0.12em] text-white uppercase hidden sm:block">
                 UNBREAKABLE
               </span>
@@ -524,17 +524,17 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
                 <p className="text-[#666] text-xs font-heading tracking-widest uppercase mb-4 text-center">The Journey</p>
                 <div className="grid grid-cols-3 gap-3 sm:gap-4">
                   <div className="text-center">
-                    <img src={jj2018} alt="2018" className="w-full aspect-square object-cover rounded-xl mb-2 opacity-80 hover:opacity-100 transition-opacity"
+                    <img loading="lazy" src={jj2018} alt="2018" className="w-full aspect-square object-cover rounded-xl mb-2 opacity-80 hover:opacity-100 transition-opacity"
                       style={{ border: '1px solid rgba(255,255,255,0.06)' }} />
                     <p className="text-[#666] text-[10px] sm:text-xs font-heading tracking-wider">2018 — THE START</p>
                   </div>
                   <div className="text-center">
-                    <img src={jj2020} alt="2020" className="w-full aspect-square object-cover rounded-xl mb-2 opacity-80 hover:opacity-100 transition-opacity"
+                    <img loading="lazy" src={jj2020} alt="2020" className="w-full aspect-square object-cover rounded-xl mb-2 opacity-80 hover:opacity-100 transition-opacity"
                       style={{ border: '1px solid rgba(255,255,255,0.06)' }} />
                     <p className="text-[#666] text-[10px] sm:text-xs font-heading tracking-wider">2020 — THE GRIND</p>
                   </div>
                   <div className="text-center">
-                    <img src={jjReturn} alt="2025-2026" className="w-full aspect-square object-cover rounded-xl mb-2 opacity-80 hover:opacity-100 transition-opacity"
+                    <img loading="lazy" src={jjReturn} alt="2025-2026" className="w-full aspect-square object-cover rounded-xl mb-2 opacity-80 hover:opacity-100 transition-opacity"
                       style={{ border: '1px solid rgba(255,85,0,0.15)' }} />
                     <p className="text-[#FF5500] text-[10px] sm:text-xs font-heading tracking-wider">2025 — UNBREAKABLE</p>
                   </div>
@@ -723,7 +723,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
             style={{ background: 'rgba(255,85,0,0.06)' }} />
         </div>
         <div className="relative max-w-2xl mx-auto">
-          <img src={shieldLogo} alt="" className="h-16 w-16 mx-auto mb-5 shield-pulse" />
+          <img loading="lazy" src={shieldLogo} alt="" className="h-16 w-16 mx-auto mb-5 shield-pulse" />
           <h2 className="font-heading font-black text-3xl md:text-5xl text-white uppercase tracking-wide mb-4">
             Ready to Be <span className="text-[#FF5500]">Unbreakable</span>?
           </h2>

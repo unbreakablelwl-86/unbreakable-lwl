@@ -147,7 +147,7 @@ export function SessionNotesView({
               {media.map((m, i) => (
                 <div key={i} className="relative w-20 h-20 rounded-lg overflow-hidden border border-border">
                   {m.type === 'image' ? (
-                    <img src={m.url} alt="" className="w-full h-full object-cover" />
+                    <img loading="lazy" src={m.url} alt="" className="w-full h-full object-cover" />
                   ) : (
                     <div className="w-full h-full bg-muted flex items-center justify-center">
                       <Video className="w-6 h-6 text-primary" />

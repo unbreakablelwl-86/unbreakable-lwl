@@ -485,7 +485,7 @@ export function BarcodeScanner({ isOpen, onClose, mealType = 'snack' }: BarcodeS
                     <div className="flex items-start justify-between">
                       <div className="flex gap-3">
                         {scannedItem.imageUrl && (
-                          <img 
+                          <img loading="lazy" 
                             src={scannedItem.imageUrl} 
                             alt={scannedItem.name}
                             className="w-16 h-16 object-contain rounded-lg bg-white"

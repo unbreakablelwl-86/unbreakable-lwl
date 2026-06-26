@@ -334,7 +334,7 @@ export function CreatePostBox({ onPostCreated }: CreatePostBoxProps) {
                 {mediaItems.map((item, idx) => (
                   <div key={idx} className="relative w-20 h-20 rounded-lg overflow-hidden border border-border">
                     {item.type === 'image' ? (
-                      <img src={item.previewUrl} alt="" className="w-full h-full object-cover" />
+                      <img loading="lazy" src={item.previewUrl} alt="" className="w-full h-full object-cover" />
                     ) : (
                       <div className="w-full h-full bg-muted flex items-center justify-center">
                         <Video className="w-6 h-6 text-muted-foreground" />

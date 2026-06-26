@@ -627,7 +627,7 @@ export function PackOpening({ cards, purchaseType, packTierId, onClose, onMarkOp
 
                   {/* Unbreakable branding — top-left watermark */}
                   <div className="absolute top-2.5 left-3 z-[20] flex items-center gap-1.5">
-                    <img src={shieldLogo} alt="" className="w-4 h-4 object-contain" style={{ filter: 'drop-shadow(0 0 3px rgba(255,255,255,0.15))', opacity: 0.55 }} />
+                    <img loading="lazy" src={shieldLogo} alt="" className="w-4 h-4 object-contain" style={{ filter: 'drop-shadow(0 0 3px rgba(255,255,255,0.15))', opacity: 0.55 }} />
                     <div>
                       <p className="text-[6px] font-display tracking-[0.15em] text-white/45">UNBREAKABLE</p>
                       <p className="text-[4px] font-mono tracking-[0.1em] text-white/30">LIVE WITHOUT LIMITS™</p>

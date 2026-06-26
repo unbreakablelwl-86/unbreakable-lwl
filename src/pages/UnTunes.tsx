@@ -260,7 +260,7 @@ export default function UnTunes() {
                       </button>
                       <div className="flex gap-4 mb-6">
                         {selectedAlbum.cover_url ? (
-                          <img src={selectedAlbum.cover_url} alt={selectedAlbum.title} className="w-28 h-28 sm:w-36 sm:h-36 rounded-lg object-cover shadow-lg shadow-primary/10" />
+                          <img loading="lazy" src={selectedAlbum.cover_url} alt={selectedAlbum.title} className="w-28 h-28 sm:w-36 sm:h-36 rounded-lg object-cover shadow-lg shadow-primary/10" />
                         ) : (
                           <div className="w-28 h-28 sm:w-36 sm:h-36 rounded-lg bg-card flex items-center justify-center">
                             <Disc3 className="w-12 h-12 text-primary/30" />
@@ -331,7 +331,7 @@ export default function UnTunes() {
                             >
                               <div className="aspect-square rounded-lg overflow-hidden bg-card border border-border/30 mb-2 relative shadow-md group-hover:shadow-primary/20 transition-shadow">
                                 {album.cover_url ? (
-                                  <img src={album.cover_url} alt={album.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                                  <img loading="lazy" src={album.cover_url} alt={album.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                                 ) : (
                                   <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/20 to-primary/5">
                                     <Disc3 className="w-12 h-12 text-primary/30" />

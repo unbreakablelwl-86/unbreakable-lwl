@@ -78,7 +78,7 @@ export const SnakeLeaderboard = ({ scores, userBest, onClose, onRefetch }: Snake
                   <div className="flex items-center gap-2 flex-1 min-w-0">
                     <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center overflow-hidden shrink-0">
                       {entry.avatar_url ? (
-                        <img src={entry.avatar_url} alt="" className="w-full h-full object-cover" />
+                        <img loading="lazy" src={entry.avatar_url} alt="" className="w-full h-full object-cover" />
                       ) : (
                         <span className="font-display text-xs text-primary">
                           {(entry.display_name || "?")[0].toUpperCase()}

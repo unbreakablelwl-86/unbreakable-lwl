@@ -13,7 +13,7 @@ export function UnTunesArtistCard({ artist }: ArtistCardProps) {
         {/* Avatar */}
         <div className="w-16 h-16 rounded-full bg-primary/15 flex items-center justify-center group-hover:shadow-[0_0_20px_rgba(255,85,0,0.3)] transition-shadow">
           {artist.avatar_url ? (
-            <img src={artist.avatar_url} alt="" className="w-full h-full rounded-full object-cover" />
+            <img loading="lazy" src={artist.avatar_url} alt="" className="w-full h-full rounded-full object-cover" />
           ) : (
             <span className="text-xl font-display text-primary drop-shadow-[0_0_6px_rgba(255,85,0,0.5)]">
               {artist.artist_name.charAt(0).toUpperCase()}

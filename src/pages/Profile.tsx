@@ -143,7 +143,7 @@ function PostGridItem({ post, onClick }: { post: OwnPost; onClick: () => void })
       className="relative aspect-square overflow-hidden group bg-card"
     >
       {thumbnail ? (
-        <img src={thumbnail} alt="" className="w-full h-full object-cover" />
+        <img loading="lazy" src={thumbnail} alt="" className="w-full h-full object-cover" />
       ) : isAutoPost ? (
         /* Clean black + orange neon thumbnail for Daily 7 auto-posts */
         <div className="w-full h-full relative flex items-center justify-center p-3 border border-[#FF5500]/30"
@@ -223,7 +223,7 @@ function PostMediaCarousel({ post }: { post: OwnPost }) {
             {m.type === 'video' ? (
               <video src={m.url} controls className="w-full max-h-[50vh] object-contain bg-background" />
             ) : (
-              <img src={m.url} alt="" className="w-full max-h-[50vh] object-contain bg-background" />
+              <img loading="lazy" src={m.url} alt="" className="w-full max-h-[50vh] object-contain bg-background" />
             )}
           </div>
         ))}
@@ -548,7 +548,7 @@ export default function Profile() {
   if (!user || !profile) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center px-6" >
-        <img src={shieldLogo} alt="UNBREAKABLE" className="h-20 w-20 shield-pulse mb-6" />
+        <img loading="lazy" src={shieldLogo} alt="UNBREAKABLE" className="h-20 w-20 shield-pulse mb-6" />
         <h1 className="font-heading font-black text-2xl text-foreground uppercase tracking-wider mb-2">Your Profile</h1>
         <p className="text-muted-foreground text-center mb-6">Sign in to view your profile, track progress, and connect with others.</p>
         <button

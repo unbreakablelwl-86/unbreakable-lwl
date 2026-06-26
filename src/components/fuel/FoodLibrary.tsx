@@ -466,7 +466,7 @@ export function FoodLibrary() {
                       <CardContent className="p-4">
                         <div className="flex items-start gap-3">
                           {food.imageUrl && (
-                            <img 
+                            <img loading="lazy" 
                               src={food.imageUrl} 
                               alt={food.name}
                               className="w-12 h-12 object-contain rounded bg-white"
@@ -551,7 +551,7 @@ export function FoodLibrary() {
                 <CardContent className="p-4">
                   <div className="flex items-center gap-3">
                     {selectedFood.imageUrl && (
-                      <img 
+                      <img loading="lazy" 
                         src={selectedFood.imageUrl} 
                         alt={selectedFood.name}
                         className="w-16 h-16 object-contain rounded bg-white"

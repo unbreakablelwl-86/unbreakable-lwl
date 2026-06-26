@@ -738,7 +738,7 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
             <div className="flex items-center gap-2 px-2.5 py-1.5 rounded-full bg-black/50 backdrop-blur-md border border-white/10 shadow-lg">
               <div className="w-7 h-7 rounded-md overflow-hidden bg-primary/20 shrink-0">
                 {selectedTrack.cover_url ? (
-                  <img src={selectedTrack.cover_url} alt="" className="w-full h-full object-cover" />
+                  <img loading="lazy" src={selectedTrack.cover_url} alt="" className="w-full h-full object-cover" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center"><Music className="w-3 h-3 text-primary/60" /></div>
                 )}
@@ -992,7 +992,7 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <div className="w-6 h-6 rounded overflow-hidden bg-primary/20 shrink-0">
-                      {selectedTrack.cover_url ? <img src={selectedTrack.cover_url} alt="" className="w-full h-full object-cover" /> : <Music className="w-3 h-3 text-primary/60 m-auto" />}
+                      {selectedTrack.cover_url ? <img loading="lazy" src={selectedTrack.cover_url} alt="" className="w-full h-full object-cover" /> : <Music className="w-3 h-3 text-primary/60 m-auto" />}
                     </div>
                     <p className="text-[10px] text-white/70 truncate max-w-[120px]">{selectedTrack.title}</p>
                   </div>
@@ -1039,7 +1039,7 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
               {mediaItems.map((item, idx) => (
                 <div key={idx} className={`relative w-10 h-10 rounded-lg overflow-hidden border-2 transition-all cursor-pointer ${idx === activeMediaIndex ? 'border-primary scale-110' : 'border-white/20'}`}
                   onClick={(e) => { e.stopPropagation(); setActiveMediaIndex(idx); }}>
-                  {item.type === 'image' ? <img src={item.previewUrl} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full bg-muted/50 flex items-center justify-center"><Video className="w-3 h-3 text-foreground/70" /></div>}
+                  {item.type === 'image' ? <img loading="lazy" src={item.previewUrl} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full bg-muted/50 flex items-center justify-center"><Video className="w-3 h-3 text-foreground/70" /></div>}
                   {item.status === 'uploading' && <div className="absolute inset-0 bg-background/50 flex items-center justify-center"><Loader2 className="w-3 h-3 text-foreground animate-spin" /></div>}
                   {!publishing && <button className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-red-500 flex items-center justify-center" onClick={(e) => { e.stopPropagation(); removeMediaItem(idx); }}><X className="w-2 h-2 text-white" /></button>}
                 </div>

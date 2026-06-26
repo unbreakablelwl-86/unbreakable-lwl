@@ -212,7 +212,7 @@ export function SamplePlayer({ onSignUp, className }: SamplePlayerProps) {
             {/* Cover art */}
             <div className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 bg-zinc-800 relative">
               {currentTrack?.cover_url ? (
-                <img src={currentTrack.cover_url} alt={currentTrack.title} className="w-full h-full object-cover" />
+                <img loading="lazy" src={currentTrack.cover_url} alt={currentTrack.title} className="w-full h-full object-cover" />
               ) : (
                 <div className="w-full h-full flex items-center justify-center">
                   <Music className="w-5 h-5 text-zinc-600" />

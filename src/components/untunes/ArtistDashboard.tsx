@@ -120,7 +120,7 @@ export function UnTunesArtistDashboard({ artist }: ArtistDashboardProps) {
       <motion.div {...fadeIn} className="flex items-center gap-4">
         <div className="w-14 h-14 rounded-xl bg-primary/20 flex items-center justify-center overflow-hidden">
           {artist.avatar_url ? (
-            <img src={artist.avatar_url} alt={artist.artist_name} className="w-full h-full object-cover" />
+            <img loading="lazy" src={artist.avatar_url} alt={artist.artist_name} className="w-full h-full object-cover" />
           ) : (
             <Mic2 className="w-6 h-6 text-primary" />
           )}

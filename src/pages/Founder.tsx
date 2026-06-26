@@ -123,7 +123,7 @@ const Founder = () => {
               style={{ background: 'conic-gradient(hsl(var(--primary)) 0deg, transparent 180deg, hsl(var(--primary)) 360deg)' }}
             />
             <div className="absolute inset-1 rounded-full bg-card overflow-hidden">
-              <img src={founderPhoto} alt="John James — Founder" className="w-full h-full object-cover" />
+              <img loading="lazy" src={founderPhoto} alt="John James — Founder" className="w-full h-full object-cover" />
             </div>
           </div>
         </motion.div>
@@ -179,7 +179,7 @@ const Founder = () => {
             ].map(img => (
               <div key={img.label} className="relative">
                 <div className="aspect-[3/4] rounded-lg overflow-hidden border border-border">
-                  <img src={img.src} alt={`JJ journey ${img.label}`} className="w-full h-full object-cover" />
+                  <img loading="lazy" src={img.src} alt={`JJ journey ${img.label}`} className="w-full h-full object-cover" />
                 </div>
                 <div className="mt-2 text-center">
                   <p className="font-display text-sm tracking-wide text-primary">{img.label}</p>
@@ -211,7 +211,7 @@ const Founder = () => {
           </p>
 
           <div className="rounded-lg overflow-hidden border border-border">
-            <img src={returnPhoto} alt="JJ transformation — Nov 2025 to Apr 2026" className="w-full h-auto" />
+            <img loading="lazy" src={returnPhoto} alt="JJ transformation — Nov 2025 to Apr 2026" className="w-full h-auto" />
           </div>
 
           <div className="flex items-center justify-between mt-3">

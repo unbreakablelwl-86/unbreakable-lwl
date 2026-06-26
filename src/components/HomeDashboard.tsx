@@ -144,7 +144,7 @@ export function HomeDashboard() {
         style={{ background: 'linear-gradient(135deg, rgba(255,85,0,0.15) 0%, rgba(255,85,0,0.05) 50%, hsl(var(--background) / 0.8) 100%)' }}>
         {/* LWL logo watermark */}
         <div className="absolute top-2 right-2 w-24 h-24 opacity-20">
-          <img src="/lwl-logo.png" alt="" className="w-full h-full object-contain" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+          <img loading="lazy" src="/lwl-logo.png" alt="" className="w-full h-full object-contain" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
         </div>
         <div className="relative z-10 p-5">
           <h2 className="font-display text-lg tracking-widest text-primary mb-4"

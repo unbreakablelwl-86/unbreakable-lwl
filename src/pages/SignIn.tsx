@@ -311,7 +311,7 @@ export default function SignIn() {
 
       {/* Logo */}
       <div className="flex flex-col items-center mb-8">
-        <img src={shieldLogo} alt="UNBREAKABLE" className="h-24 w-24 object-contain shield-pulse mb-4" />
+        <img loading="lazy" src={shieldLogo} alt="UNBREAKABLE" className="h-24 w-24 object-contain shield-pulse mb-4" />
         <h1 className="font-heading font-black text-3xl tracking-[0.15em] text-foreground uppercase">
           UNBREAKABLE
         </h1>

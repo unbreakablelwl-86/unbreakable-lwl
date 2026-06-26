@@ -169,7 +169,7 @@ function PostGridItem({ post, onClick }: { post: UserPost; onClick: () => void }
       className="relative aspect-square bg-muted/30 rounded-lg overflow-hidden group border border-border/50 hover:border-primary/30 transition-all"
     >
       {thumbnail ? (
-        <img src={thumbnail} alt="" className="w-full h-full object-cover" />
+        <img loading="lazy" src={thumbnail} alt="" className="w-full h-full object-cover" />
       ) : isAutoPost ? (
         /* Clean black + orange neon thumbnail for Daily 7 auto-posts */
         <div className="w-full h-full relative flex items-center justify-center p-3 border border-[#FF5500]/30"
@@ -271,7 +271,7 @@ function PostDetailModal({
             {isVideo ? (
               <video src={mediaUrl} controls className="w-full max-h-[50vh] object-contain bg-background" />
             ) : (
-              <img src={mediaUrl} alt="" className="w-full max-h-[50vh] object-contain bg-background" />
+              <img loading="lazy" src={mediaUrl} alt="" className="w-full max-h-[50vh] object-contain bg-background" />
             )}
           </div>
         )}

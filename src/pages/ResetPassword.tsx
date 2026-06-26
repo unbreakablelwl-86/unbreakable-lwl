@@ -87,7 +87,7 @@ export default function ResetPassword() {
 
       {/* Logo */}
       <div className="flex flex-col items-center mb-8">
-        <img src={shieldLogo} alt="UNBREAKABLE" className="h-20 w-20 object-contain mb-3" />
+        <img loading="lazy" src={shieldLogo} alt="UNBREAKABLE" className="h-20 w-20 object-contain mb-3" />
         <h1 className="font-heading font-black text-2xl tracking-[0.15em] text-foreground uppercase">
           UNBREAKABLE
         </h1>

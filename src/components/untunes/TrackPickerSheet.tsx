@@ -246,7 +246,7 @@ export function TrackPickerSheet({ open, onOpenChange, onSelect, selectedTrackId
                           className="relative w-14 h-14 rounded-xl overflow-hidden bg-primary/8 shrink-0 group/cover active:scale-95 transition-transform"
                         >
                           {track.cover_url ? (
-                            <img src={track.cover_url} alt={track.title} className="w-full h-full object-cover" />
+                            <img loading="lazy" src={track.cover_url} alt={track.title} className="w-full h-full object-cover" />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/10 to-primary/5">
                               <Music className="w-6 h-6 text-primary/30" />

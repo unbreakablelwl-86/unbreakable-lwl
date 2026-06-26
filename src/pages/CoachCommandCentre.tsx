@@ -419,7 +419,7 @@ export default function CoachCommandCentre() {
                             </div>
                           )}
                           {msg.image_url && (
-                            <img src={msg.image_url} alt="" className="max-w-full rounded-lg mb-1 border border-border" />
+                            <img loading="lazy" src={msg.image_url} alt="" className="max-w-full rounded-lg mb-1 border border-border" />
                           )}
                           {msg.video_url && (
                             <video src={msg.video_url} controls className="max-w-full rounded-lg mb-1 border border-border" />

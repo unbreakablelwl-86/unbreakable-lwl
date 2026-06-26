@@ -542,7 +542,7 @@ export default function AppLayout() {
             {/* Header */}
             <div className="flex items-center justify-between px-4 py-3 border-b border-border">
               <div className="flex items-center gap-2.5">
-                <img src={shieldLogo} alt="UNBREAKABLE" className="h-7 w-7 object-contain shield-pulse" />
+                <img loading="lazy" src={shieldLogo} alt="UNBREAKABLE" className="h-7 w-7 object-contain shield-pulse" />
                 <span className="text-sm font-black uppercase tracking-[0.15em] text-foreground font-heading">
                   Unbreakable
                 </span>
@@ -599,7 +599,7 @@ export default function AppLayout() {
                           <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
                             style={{ background: `${item.color}15` }}>
                             {item.isShield ? (
-                              <img src={shieldLogo} alt="" className="w-4 h-4" />
+                              <img loading="lazy" src={shieldLogo} alt="" className="w-4 h-4" />
                             ) : (
                               Icon && <Icon size={16} style={{ color: item.color }} />
                             )}

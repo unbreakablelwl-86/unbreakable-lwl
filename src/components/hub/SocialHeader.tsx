@@ -46,7 +46,7 @@ export function SocialHeader({
           <div className="flex items-center justify-between">
             {/* Logo — shield + wordmark */}
             <div className="flex items-center gap-2.5">
-              <img src={shieldLogo} alt="UNBREAKABLE" className="h-7 w-7 object-contain" />
+              <img loading="lazy" src={shieldLogo} alt="UNBREAKABLE" className="h-7 w-7 object-contain" />
               <span className="font-heading font-black text-lg tracking-[0.12em] text-foreground uppercase">
                 Unbreakable
               </span>

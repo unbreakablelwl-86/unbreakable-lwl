@@ -237,7 +237,7 @@ function UnTunesCardDetailViewer({
               <Card className={`overflow-hidden border-2 ${style.border} ${style.glow}`}>
                 <div className="aspect-[3/4] relative bg-gradient-to-br from-card to-muted/20" style={{ width: '18rem' }}>
                   {image ? (
-                    <img src={image} alt="" className="w-full h-full object-cover" />
+                    <img loading="lazy" src={image} alt="" className="w-full h-full object-cover" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
                       <Music size={48} className="text-muted-foreground/20" />
@@ -246,7 +246,7 @@ function UnTunesCardDetailViewer({
                   <CardShimmer rarity={card.rarity} />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20" />
                   <div className="absolute top-2 left-3 z-10 flex items-center gap-1.5">
-                    <img src="/unbreakable-shield.png" alt="" className="w-4 h-4 object-contain" style={{ filter: 'drop-shadow(0 0 3px rgba(255,255,255,0.15))', opacity: 0.55 }} />
+                    <img loading="lazy" src="/unbreakable-shield.png" alt="" className="w-4 h-4 object-contain" style={{ filter: 'drop-shadow(0 0 3px rgba(255,255,255,0.15))', opacity: 0.55 }} />
                     <div>
                       <p className="text-[6px] font-display tracking-[0.15em] text-white/45">UNBREAKABLE</p>
                       <p className="text-[4px] font-mono tracking-[0.1em] text-white/30">LIVE WITHOUT LIMITS™</p>
@@ -805,11 +805,11 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
                   className="w-full flex items-center gap-3 p-3 hover:bg-card/60 transition-colors"
                 >
                   {group.cover ? (
-                    <img src={group.cover} alt="" className="w-10 h-10 rounded-lg object-cover shrink-0" />
+                    <img loading="lazy" src={group.cover} alt="" className="w-10 h-10 rounded-lg object-cover shrink-0" />
                   ) : group.id === '_brand' ? (
                     <div className="w-10 h-10 rounded-lg shrink-0 flex items-center justify-center overflow-hidden"
                       style={{ background: 'linear-gradient(135deg, #1A0A00 0%, #0A0A0A 50%, #1A0500 100%)', border: '1px solid rgba(255,85,0,0.3)' }}>
-                      <img src="/unbreakable-shield.png" alt="Brand" className="w-7 h-7 object-contain" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.4))' }} />
+                      <img loading="lazy" src="/unbreakable-shield.png" alt="Brand" className="w-7 h-7 object-contain" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.4))' }} />
                     </div>
                   ) : group.id === '_tracks' ? (
                     <div className="w-10 h-10 rounded-lg shrink-0 flex items-center justify-center overflow-hidden"
@@ -857,7 +857,7 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
                         >
                           <div className="aspect-square bg-card relative">
                             {image ? (
-                              <img src={image} alt="" className="w-full h-full object-cover" />
+                              <img loading="lazy" src={image} alt="" className="w-full h-full object-cover" />
                             ) : (
                               <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-card to-muted/30">
                                 <Music size={24} className="text-muted-foreground/30" />
@@ -916,7 +916,7 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
                   {/* Card Image */}
                   <div className="aspect-square bg-card relative">
                     {image ? (
-                      <img src={image} alt="" className="w-full h-full object-cover" />
+                      <img loading="lazy" src={image} alt="" className="w-full h-full object-cover" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-card to-muted/30">
                         <Music size={32} className="text-muted-foreground/30" />
@@ -926,7 +926,7 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
                     <CardShimmer rarity={card.rarity} />
                     {/* Unbreakable branding — top-left */}
                     <div className="absolute top-1.5 left-1.5 z-10 flex items-center gap-1">
-                      <img src="/unbreakable-shield.png" alt="" className="w-3 h-3 object-contain" style={{ opacity: 0.5 }} />
+                      <img loading="lazy" src="/unbreakable-shield.png" alt="" className="w-3 h-3 object-contain" style={{ opacity: 0.5 }} />
                       <span className="text-[5px] font-display tracking-[0.15em] text-white/40">UNBREAKABLE</span>
                     </div>
                     {/* Rarity badge */}
@@ -987,7 +987,7 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
                   >
                     <div className="w-12 h-12 rounded-lg overflow-hidden shrink-0 bg-muted/30">
                       {image ? (
-                        <img src={image} alt="" className="w-full h-full object-cover" />
+                        <img loading="lazy" src={image} alt="" className="w-full h-full object-cover" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
                           <Music size={16} className="text-muted-foreground/30" />

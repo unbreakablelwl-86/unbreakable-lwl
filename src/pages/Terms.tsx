@@ -18,7 +18,7 @@ export default function Terms() {
       <header className="sticky top-0 z-50 border-b border-border bg-card/80 backdrop-blur-md">
         <div className="container mx-auto px-6 py-4 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3">
-            <img src={trademarkBadge} alt="Unbreakable" className="h-8 logo-neon-glow" />
+            <img loading="lazy" src={trademarkBadge} alt="Unbreakable" className="h-8 logo-neon-glow" />
             <span className="font-display text-lg tracking-wider text-primary">
               UNBREAKABLE
             </span>

@@ -109,7 +109,7 @@ function ListingCard({ listing, onBid, onBuyNow, onShare }: {
     >
       {/* Cover image */}
       {image ? (
-        <img src={image} alt={title} className="w-full aspect-square object-cover" />
+        <img loading="lazy" src={image} alt={title} className="w-full aspect-square object-cover" />
       ) : (
         <div className="w-full aspect-square bg-card flex items-center justify-center">
           <Music className="w-8 h-8 text-zinc-700" />
@@ -247,7 +247,7 @@ function SellCardModal({ cards, onClose, onListCreated }: {
                     onClick={() => setSelectedCard(card)}
                   >
                     {card.cover_url ? (
-                      <img src={card.cover_url} alt={card.title} className="w-full aspect-square object-cover" />
+                      <img loading="lazy" src={card.cover_url} alt={card.title} className="w-full aspect-square object-cover" />
                     ) : (
                       <div className="w-full aspect-square bg-card flex items-center justify-center">
                         <Music className="w-6 h-6 text-zinc-700" />
@@ -272,7 +272,7 @@ function SellCardModal({ cards, onClose, onListCreated }: {
             {/* Selected card preview */}
             <div className="flex items-center gap-3 p-3 rounded-xl bg-card/50 border border-border/50">
               {selectedCard.cover_url ? (
-                <img src={selectedCard.cover_url} className="w-12 h-12 rounded-lg object-cover" />
+                <img loading="lazy" src={selectedCard.cover_url} className="w-12 h-12 rounded-lg object-cover" />
               ) : (
                 <div className="w-12 h-12 rounded-lg bg-zinc-700 flex items-center justify-center"><Music className="w-5 h-5 text-muted-foreground" /></div>
               )}

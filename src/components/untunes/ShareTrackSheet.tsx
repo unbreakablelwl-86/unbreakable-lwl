@@ -62,7 +62,7 @@ export function ShareTrackSheet({ open, onOpenChange, track }: ShareTrackSheetPr
         <div className="flex items-center gap-3 p-3 rounded-xl bg-muted/30 border border-border/50 mb-4">
           <div className="w-14 h-14 rounded-lg overflow-hidden bg-primary/10 shrink-0 shadow-[0_0_8px_rgba(255,85,0,0.2)]">
             {track.cover_url ? (
-              <img src={track.cover_url} alt={track.title} className="w-full h-full object-cover" />
+              <img loading="lazy" src={track.cover_url} alt={track.title} className="w-full h-full object-cover" />
             ) : (
               <div className="w-full h-full flex items-center justify-center">
                 <Music className="w-6 h-6 text-primary/40" />

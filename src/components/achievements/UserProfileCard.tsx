@@ -633,9 +633,9 @@ function StrengthCardPanel({
         {/* Hero image */}
         <div className="relative rounded-lg overflow-hidden mb-2.5" style={{ height: heroH }}>
           {cardImageUrl ? (
-            <img src={cardImageUrl} alt="Card" className="absolute inset-0 w-full h-full object-cover" style={{ objectPosition: 'center 20%' }} />
+            <img loading="lazy" src={cardImageUrl} alt="Card" className="absolute inset-0 w-full h-full object-cover" style={{ objectPosition: 'center 20%' }} />
           ) : profile.avatar_url ? (
-            <img src={profile.avatar_url} alt="Profile" className="absolute inset-0 w-full h-full object-cover" style={{ objectPosition: 'center 20%' }} />
+            <img loading="lazy" src={profile.avatar_url} alt="Profile" className="absolute inset-0 w-full h-full object-cover" style={{ objectPosition: 'center 20%' }} />
           ) : (
             <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-b from-orange-500/5 to-transparent">
               <span className="text-4xl font-display text-primary opacity-40">{displayName[0]?.toUpperCase()}</span>
@@ -823,9 +823,9 @@ function CardioCardPanel({
         {/* Hero image */}
         <div className="relative rounded-lg overflow-hidden mb-2.5" style={{ height: heroH }}>
           {cardImageUrl ? (
-            <img src={cardImageUrl} alt="Card" className="absolute inset-0 w-full h-full object-cover" style={{ objectPosition: 'center 20%' }} />
+            <img loading="lazy" src={cardImageUrl} alt="Card" className="absolute inset-0 w-full h-full object-cover" style={{ objectPosition: 'center 20%' }} />
           ) : profile.avatar_url ? (
-            <img src={profile.avatar_url} alt="Profile" className="absolute inset-0 w-full h-full object-cover" style={{ objectPosition: 'center 20%' }} />
+            <img loading="lazy" src={profile.avatar_url} alt="Profile" className="absolute inset-0 w-full h-full object-cover" style={{ objectPosition: 'center 20%' }} />
           ) : (
             <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-b from-orange-500/5 to-transparent">
               <span className="text-4xl font-display text-primary opacity-40">{displayName[0]?.toUpperCase()}</span>

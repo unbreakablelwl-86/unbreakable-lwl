@@ -1415,7 +1415,7 @@ export function AchievementCardReveal({
                               }}
                             >
                               {card.programme_type === 'u86' ? (
-                                <img src="/unbreakable-shield.png" alt="U86" className="w-9 h-9 object-contain"
+                                <img loading="lazy" src="/unbreakable-shield.png" alt="U86" className="w-9 h-9 object-contain"
                                   style={{ filter: `drop-shadow(0 0 6px ${config.accentHex}50)` }} />
                               ) : (
                                 <Icon className="w-7 h-7" style={{ color: config.accentHex }} />
@@ -2013,7 +2013,7 @@ export function AchievementCardStatic({
             <div className="absolute inset-0 flex flex-col">
               {/* Unbreakable branding top-left */}
               <div className="absolute top-2 left-2 flex items-center gap-1 z-10">
-                <img src="/unbreakable-shield.png" alt=""
+                <img loading="lazy" src="/unbreakable-shield.png" alt=""
                   className={cn(isSm ? 'w-3 h-3' : 'w-4 h-4', 'object-contain')}
                   style={{ filter: `drop-shadow(0 0 3px ${config.accentHex}30)` }} />
                 <div>
@@ -2034,7 +2034,7 @@ export function AchievementCardStatic({
                   }}
                 >
                   {card.programme_type === 'u86' ? (
-                    <img src="/unbreakable-shield.png" alt="U86"
+                    <img loading="lazy" src="/unbreakable-shield.png" alt="U86"
                       className={cn(isSm ? 'w-5 h-5' : 'w-6 h-6', 'object-contain')}
                       style={{ filter: `drop-shadow(0 0 4px ${config.accentHex}40)` }} />
                   ) : (
@@ -2089,7 +2089,7 @@ export function AchievementCardStatic({
         {/* Unbreakable shield branding — all PB cards — sits BELOW shimmer (z-10 < z-12 shimmer) */}
         {!isProgramme && (
           <div className={cn('absolute z-[10] flex items-center gap-1', size === 'sm' ? 'top-1.5 left-1.5' : 'top-2 left-2')}>
-            <img src="/unbreakable-shield.png" alt=""
+            <img loading="lazy" src="/unbreakable-shield.png" alt=""
               className={cn(size === 'sm' ? 'w-3 h-3' : 'w-4 h-4', 'object-contain')}
               style={{ filter: `drop-shadow(0 0 3px ${config.accentHex}40)`, opacity: 0.55 }} />
             <div>

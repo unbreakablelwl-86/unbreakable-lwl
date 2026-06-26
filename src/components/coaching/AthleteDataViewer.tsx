@@ -98,7 +98,7 @@ export function AthleteDataViewer({ athleteId, onBack }: AthleteDataViewerProps)
         <div className="flex items-center gap-3 mb-3">
           <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
             {profile?.avatar_url ? (
-              <img src={profile.avatar_url} alt="" className="w-12 h-12 rounded-full object-cover" />
+              <img loading="lazy" src={profile.avatar_url} alt="" className="w-12 h-12 rounded-full object-cover" />
             ) : (
               <User size={24} className="text-primary" />
             )}

@@ -433,7 +433,7 @@ export function SocialCommandCentre() {
             {selectedTrack && (
               <div className="flex items-center gap-3 p-2 rounded-lg border border-primary/30 bg-primary/5">
                 {selectedTrack.cover_url && (
-                  <img src={selectedTrack.cover_url} alt="" className="w-10 h-10 rounded object-cover" />
+                  <img loading="lazy" src={selectedTrack.cover_url} alt="" className="w-10 h-10 rounded object-cover" />
                 )}
                 <div className="flex-1 min-w-0">
                   <p className="text-xs font-display text-foreground truncate">{selectedTrack.title}</p>
@@ -475,7 +475,7 @@ export function SocialCommandCentre() {
                         }`}
                       >
                         {track.cover_url ? (
-                          <img src={track.cover_url} alt="" className="w-8 h-8 rounded object-cover flex-shrink-0" />
+                          <img loading="lazy" src={track.cover_url} alt="" className="w-8 h-8 rounded object-cover flex-shrink-0" />
                         ) : (
                           <div className="w-8 h-8 rounded bg-primary/10 flex items-center justify-center flex-shrink-0">
                             <Music className="w-3.5 h-3.5 text-primary" />
@@ -537,7 +537,7 @@ export function SocialCommandCentre() {
                         : <><Image className="w-3 h-3" />GENERATE IMAGE</>}
                     </Button>
                     {generatedImageUrl && (
-                      <img src={generatedImageUrl} alt="Generated social content" className="w-full rounded-lg mt-2" />
+                      <img loading="lazy" src={generatedImageUrl} alt="Generated social content" className="w-full rounded-lg mt-2" />
                     )}
                   </div>
                 )}
@@ -581,7 +581,7 @@ export function SocialCommandCentre() {
 
                   {/* Show uploaded media */}
                   {(post.custom_image_url || post.image_url) && (
-                    <img src={post.custom_image_url || post.image_url || ''} alt="Post image" className="w-full rounded-lg max-h-48 object-cover" />
+                    <img loading="lazy" src={post.custom_image_url || post.image_url || ''} alt="Post image" className="w-full rounded-lg max-h-48 object-cover" />
                   )}
                   {post.custom_video_url && (
                     <video src={post.custom_video_url} controls className="w-full rounded-lg max-h-48" />

@@ -82,7 +82,7 @@ export function SocialMediaUpload({
 
       {currentImageUrl && (
         <div className="relative">
-          <img src={currentImageUrl} alt="Uploaded" className="w-full rounded-lg max-h-48 object-cover" />
+          <img loading="lazy" src={currentImageUrl} alt="Uploaded" className="w-full rounded-lg max-h-48 object-cover" />
           {onClearImage && (
             <Button variant="destructive" size="icon" className="absolute top-2 right-2 h-6 w-6" onClick={onClearImage}>
               <X className="w-3 h-3" />

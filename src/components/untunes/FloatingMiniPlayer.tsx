@@ -204,7 +204,7 @@ export function FloatingMiniPlayer() {
                 {/* Cover */}
                 <div className="w-10 h-10 rounded-lg overflow-hidden bg-primary/10 shrink-0 shadow-[0_0_8px_rgba(255,85,0,0.2)]">
                   {track.cover_url ? (
-                    <img src={track.cover_url} alt="" className="w-full h-full object-cover" />
+                    <img loading="lazy" src={track.cover_url} alt="" className="w-full h-full object-cover" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
                       <Music className="w-4 h-4 text-primary/40" />
@@ -293,7 +293,7 @@ export function FloatingMiniPlayer() {
                 className="w-56 h-56 sm:w-64 sm:h-64 md:w-72 md:h-72 rounded-2xl overflow-hidden border-2 border-primary/20 shadow-[0_0_40px_rgba(255,85,0,0.2)] shrink-0"
               >
                 {track.cover_url ? (
-                  <img src={track.cover_url} alt={track.title} className="w-full h-full object-cover" />
+                  <img loading="lazy" src={track.cover_url} alt={track.title} className="w-full h-full object-cover" />
                 ) : (
                   <div className="w-full h-full bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center">
                     <Music className="w-16 h-16 text-primary/40 drop-shadow-[0_0_12px_rgba(255,85,0,0.3)]" />

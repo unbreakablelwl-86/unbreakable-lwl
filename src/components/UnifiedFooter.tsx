@@ -11,7 +11,7 @@ export function UnifiedFooter({ className = '' }: UnifiedFooterProps) {
       <div className="container mx-auto px-4">
         <div className="flex flex-col items-center gap-4">
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <img 
+            <img loading="lazy" 
               src={trademarkBadge} 
               alt="Unbreakable Badge" 
               className="h-8 object-contain logo-neon-glow"

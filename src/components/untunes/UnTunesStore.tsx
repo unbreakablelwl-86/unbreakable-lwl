@@ -607,7 +607,7 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
                   <motion.div key={album.id} whileTap={{ scale: 0.98 }}>
                     <Card className="flex items-center gap-3 p-3 border-primary/15 bg-black/60">
                       {album.cover_url ? (
-                        <img src={album.cover_url} alt={album.title} className="w-14 h-14 rounded-lg object-cover" />
+                        <img loading="lazy" src={album.cover_url} alt={album.title} className="w-14 h-14 rounded-lg object-cover" />
                       ) : (
                         <div className="w-14 h-14 rounded-lg bg-card flex items-center justify-center">
                           <Disc3 className="w-6 h-6 text-zinc-600" />
@@ -725,7 +725,7 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
                 <motion.div key={track.id} whileTap={{ scale: 0.98 }}>
                   <Card className="flex items-center gap-3 p-3 border-primary/15 bg-black/60">
                     {track.cover_url ? (
-                      <img src={track.cover_url} alt={track.title} className="w-10 h-10 rounded-lg object-cover" />
+                      <img loading="lazy" src={track.cover_url} alt={track.title} className="w-10 h-10 rounded-lg object-cover" />
                     ) : (
                       <div className="w-10 h-10 rounded-lg bg-card flex items-center justify-center">
                         <Music className="w-4 h-4 text-zinc-600" />
