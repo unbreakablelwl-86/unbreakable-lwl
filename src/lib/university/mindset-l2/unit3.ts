@@ -1,11 +1,5 @@
+import { getUniversityImage } from '@/lib/university/imageMap';
 import type { Unit } from '../types';
-import ch1ScienceOfFocus from '@/assets/university/mindl2-u3-ch1-science-of-focus.png';
-import ch2DisciplineVsMotivation from '@/assets/university/mindl2-u3-ch2-discipline-vs-motivation.png';
-import ch3HabitFormation from '@/assets/university/mindl2-u3-ch3-habit-formation.png';
-import ch4EmotionalRegulation from '@/assets/university/mindl2-u3-ch4-emotional-regulation.png';
-import ch5Visualisation from '@/assets/university/mindl2-u3-ch5-visualisation.png';
-import ch6DopamineLoop from '@/assets/university/mindl2-u3-ch6-dopamine-loop.png';
-
 
 export const mindsetL2Unit3: Unit = {
   number: 3,
@@ -28,7 +22,7 @@ export const mindsetL2Unit3: Unit = {
             'Your brain has a finite capacity for focused attention. The prefrontal cortex — responsible for executive function, decision-making, and sustained attention — operates like a battery that depletes with use. Every decision, every task switch, and every distraction drains this resource.',
             'This is why you make poorer decisions at the end of a long day and why "willpower" seems to evaporate by evening. Understanding that focus is a depletable resource changes how you structure your day — you protect your best attention for your most important work.',
           ],
-          imageUrl: ch1ScienceOfFocus,
+          imageUrl: getUniversityImage('mindl2-u3-ch1-science-of-focus'),
           imageAlt: 'Focus science diagram showing attention depletion across the day',
         },
         {
@@ -77,7 +71,7 @@ export const mindsetL2Unit3: Unit = {
             'Motivation is an emotion — and like all emotions, it fluctuates. Some days you feel driven, energised, and ready to conquer the world. Other days you feel flat, tired, and would rather stay in bed. If your system for getting things done depends on feeling motivated, it will fail every time motivation dips.',
             'This is not a personal failing — it is the nature of motivation. It is useful for starting something new but unreliable for sustaining it. The people who consistently perform at a high level do not have more motivation than you — they have better systems that operate regardless of how they feel.',
           ],
-          imageUrl: ch2DisciplineVsMotivation,
+          imageUrl: getUniversityImage('mindl2-u3-ch2-discipline-vs-motivation'),
           imageAlt: 'Motivation fluctuation versus discipline consistency graph',
         },
         {
@@ -129,7 +123,7 @@ export const mindsetL2Unit3: Unit = {
             'Every habit follows a neurological pattern: cue → routine → reward. A cue triggers the behaviour (your alarm goes off), the routine is the behaviour itself (you go to the gym), and the reward reinforces the loop (endorphins, sense of accomplishment). Over time, this loop becomes automatic — the basal ganglia takes over from the prefrontal cortex, requiring less conscious effort.',
             'This is why habits are so powerful — once established, they operate on autopilot. The challenge is building the loop in the first place, which requires conscious repetition for approximately 4–8 weeks until the basal ganglia encodes the pattern.',
           ],
-          imageUrl: ch3HabitFormation,
+          imageUrl: getUniversityImage('mindl2-u3-ch3-habit-formation'),
           imageAlt: 'Habit loop diagram showing cue, routine, and reward',
         },
         {
@@ -178,7 +172,7 @@ export const mindsetL2Unit3: Unit = {
             'Emotional regulation is the ability to influence which emotions you have, when you have them, and how you experience and express them. It is not about suppressing emotions — research consistently shows that suppression increases physiological stress, impairs memory, and damages relationships.',
             'Effective regulation means processing emotions consciously rather than being controlled by them. You still feel anger, frustration, fear, and sadness — but you create space between the emotion and your response, allowing you to choose how to act rather than reacting automatically.',
           ],
-          imageUrl: ch4EmotionalRegulation,
+          imageUrl: getUniversityImage('mindl2-u3-ch4-emotional-regulation'),
           imageAlt: 'Stimulus-space-response emotional regulation diagram',
         },
         {
@@ -229,7 +223,7 @@ export const mindsetL2Unit3: Unit = {
             'Mental rehearsal — vividly imagining yourself performing an action — activates many of the same neural pathways as physically performing it. Brain imaging studies show that visualising a movement produces activity in the motor cortex, premotor cortex, and supplementary motor area — the same regions active during actual movement.',
             'This is not pseudoscience or "manifesting." It is established neuroscience used by elite athletes, surgeons, musicians, and military operators. Visualisation does not replace physical practice, but it enhances it — improving motor learning, confidence, and performance under pressure.',
           ],
-          imageUrl: ch5Visualisation,
+          imageUrl: getUniversityImage('mindl2-u3-ch5-visualisation'),
           imageAlt: 'Brain activity comparison between movement and mental rehearsal',
         },
         {
@@ -292,7 +286,7 @@ export const mindsetL2Unit3: Unit = {
             'Infinite scroll — removes natural stopping cues, leading to extended mindless consumption',
             'Comparison culture — constant exposure to curated highlight reels lowers self-esteem and increases anxiety',
           ],
-          imageUrl: ch6DopamineLoop,
+          imageUrl: getUniversityImage('mindl2-u3-ch6-dopamine-loop'),
           imageAlt: 'Circular diagram showing the dopamine feedback loop: notification, anticipation, check phone, brief reward, dopamine drop, seek next stimulus',
         },
         {

@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import trademarkBadge from '@/assets/trademark-badge.png';
+const trademarkBadge = 'https://vlwcoqilwyfcrsxodtdx.supabase.co/storage/v1/object/public/site-assets/misc/trademark-badge.webp';
 
 interface UnifiedFooterProps {
   className?: string;

@@ -1,24 +1,5 @@
+import { getUniversityImage } from '@/lib/university/imageMap';
 import type { Unit } from '../types';
-import ch1EatwellGuide from '@/assets/university/nutl2-u1-ch1-eatwell-guide.png';
-import ch1FoodGroups from '@/assets/university/nutl2-u1-ch1-food-groups.png';
-import ch1ActiveLimitations from '@/assets/university/nutl2-u1-ch1-active-limitations.png';
-import ch2Macronutrients from '@/assets/university/nutl2-u1-ch2-macronutrients.png';
-import ch2Protein from '@/assets/university/nutl2-u1-ch2-protein.png';
-import ch2Fats from '@/assets/university/nutl2-u1-ch2-fats.png';
-import ch3VitaminsMinerals from '@/assets/university/nutl2-u1-ch3-vitamins-minerals.png';
-import ch3Vitamins from '@/assets/university/nutl2-u1-ch3-vitamins.png';
-import ch3Minerals from '@/assets/university/nutl2-u1-ch3-minerals.png';
-import ch4FibreTypes from '@/assets/university/nutl2-u1-ch4-fibre-types.png';
-import ch4FibreComparison from '@/assets/university/nutl2-u1-ch4-fibre-comparison.png';
-import ch5WaterFunctions from '@/assets/university/nutl2-u1-ch5-water-functions.png';
-import ch5HydrationCheck from '@/assets/university/nutl2-u1-ch5-hydration-check.png';
-import ch6NutrientDensity from '@/assets/university/nutl2-u1-ch6-nutrient-density.png';
-import ch6BalancedPlate from '@/assets/university/nutl2-u1-ch6-balanced-plate.png';
-import ch7PortionSizes from '@/assets/university/nutl2-u1-ch7-portion-sizes.png';
-import ch7HandPortions from '@/assets/university/nutl2-u1-ch7-hand-portions.png';
-import ch8BalancedDay from '@/assets/university/nutl2-u1-ch8-balanced-day.png';
-import ch8FourComponent from '@/assets/university/nutl2-u1-ch8-four-component.png';
-import ch8MealTiming from '@/assets/university/nutl2-u1-ch8-meal-timing.png';
 
 export const nutritionL2Unit1: Unit = {
   number: 1,
@@ -41,12 +22,12 @@ export const nutritionL2Unit1: Unit = {
             'The Eatwell Guide is a visual representation of the UK government\'s recommendations for a balanced diet. It divides food into five groups and shows the approximate proportions in which you should aim to eat them over the course of a day or week.',
             'It was designed for the general population aged 2 and above, and provides a useful starting framework — though it has limitations when applied to people with specific performance or body composition goals.',
           ],
-          imageUrl: ch1EatwellGuide,
+          imageUrl: getUniversityImage('nutl2-u1-ch1-eatwell-guide'),
           imageAlt: 'UK Eatwell Guide diagram',
         },
         {
           heading: 'The Five Food Groups',
-          imageUrl: ch1FoodGroups,
+          imageUrl: getUniversityImage('nutl2-u1-ch1-food-groups'),
           imageAlt: 'The five food groups with recommended proportions',
           paragraphs: [
             'Fruit and vegetables — Should make up just over a third of your daily food intake. These provide essential vitamins, minerals, and fibre. Aim for at least five portions per day, with variety in colour and type.',
@@ -58,7 +39,7 @@ export const nutritionL2Unit1: Unit = {
         },
         {
           heading: 'Limitations for Active Individuals',
-          imageUrl: ch1ActiveLimitations,
+          imageUrl: getUniversityImage('nutl2-u1-ch1-active-limitations'),
           imageAlt: 'Eatwell Guide limitations for active individuals comparison',
           paragraphs: [
             'The Eatwell Guide is designed for the average sedentary adult. If you train regularly, your protein and carbohydrate needs are likely higher than what the guide suggests. Your fat intake requirements may also differ depending on your training phase.',
@@ -100,12 +81,12 @@ export const nutritionL2Unit1: Unit = {
             'Macronutrients are the nutrients your body needs in large quantities to provide energy and support essential functions. There are three: protein, carbohydrates, and fats. Each plays a distinct role and provides a specific amount of energy per gram.',
             'Protein provides 4 calories per gram. Carbohydrates provide 4 calories per gram. Fat provides 9 calories per gram. Alcohol, while not a macronutrient, provides 7 calories per gram with no nutritional benefit.',
           ],
-          imageUrl: ch2Macronutrients,
+          imageUrl: getUniversityImage('nutl2-u1-ch2-macronutrients'),
           imageAlt: 'Macronutrient comparison diagram',
         },
         {
           heading: 'Protein',
-          imageUrl: ch2Protein,
+          imageUrl: getUniversityImage('nutl2-u1-ch2-protein'),
           imageAlt: 'Protein structure, function, and complete vs incomplete protein sources',
           paragraphs: [
             'Protein is essential for muscle repair, immune function, enzyme production, and hormone regulation. It is made up of amino acids — nine of which are essential, meaning your body cannot produce them and they must come from food.',
@@ -134,7 +115,7 @@ export const nutritionL2Unit1: Unit = {
         },
         {
           heading: 'Fats',
-          imageUrl: ch2Fats,
+          imageUrl: getUniversityImage('nutl2-u1-ch2-fats'),
           imageAlt: 'Dietary fats types and sources — saturated, unsaturated, and trans fats',
           paragraphs: [
             'Dietary fat is essential for hormone production (including testosterone), brain function, vitamin absorption (A, D, E, K), and cell membrane integrity. It is the most calorie-dense macronutrient at 9 calories per gram.',
@@ -176,12 +157,12 @@ export const nutritionL2Unit1: Unit = {
             'Micronutrients are vitamins and minerals that your body needs in small amounts for proper functioning. Unlike macronutrients, they do not provide calories — but they are essential for energy production, immune function, bone health, and hundreds of biochemical processes.',
             'Deficiencies in micronutrients can impair performance, recovery, mood, and long-term health — even if your calorie and macro intake is perfect.',
           ],
-          imageUrl: ch3VitaminsMinerals,
+          imageUrl: getUniversityImage('nutl2-u1-ch3-vitamins-minerals'),
           imageAlt: 'Vitamins and minerals chart',
         },
         {
           heading: 'Vitamins',
-          imageUrl: ch3Vitamins,
+          imageUrl: getUniversityImage('nutl2-u1-ch3-vitamins'),
           imageAlt: 'Essential vitamins — fat-soluble and water-soluble classification',
           paragraphs: [
             'Vitamins are divided into two categories based on how they are stored in the body:',
@@ -199,7 +180,7 @@ export const nutritionL2Unit1: Unit = {
         },
         {
           heading: 'Key Minerals',
-          imageUrl: ch3Minerals,
+          imageUrl: getUniversityImage('nutl2-u1-ch3-minerals'),
           imageAlt: 'Key minerals grid showing calcium, iron, zinc, magnesium, potassium, and sodium',
           paragraphs: [
             'Minerals are inorganic elements that support structural and functional roles in the body. Some are needed in larger amounts (macro-minerals) and others in trace amounts.',
@@ -254,12 +235,12 @@ export const nutritionL2Unit1: Unit = {
             'Dietary fibre is a type of carbohydrate that your body cannot digest. Unlike other carbohydrates that are broken down into glucose, fibre passes through the digestive system largely intact — but it plays crucial roles in gut health, blood sugar regulation, and satiety.',
             'The recommended daily intake for adults in the UK is 30 grams per day. Most people consume around 18 grams — well below the target.',
           ],
-          imageUrl: ch4FibreTypes,
+          imageUrl: getUniversityImage('nutl2-u1-ch4-fibre-types'),
           imageAlt: 'Soluble and insoluble fibre diagram',
         },
         {
           heading: 'Types of Fibre',
-          imageUrl: ch4FibreComparison,
+          imageUrl: getUniversityImage('nutl2-u1-ch4-fibre-comparison'),
           imageAlt: 'Soluble vs insoluble fibre comparison with food sources and daily target',
           paragraphs: [
             'Soluble fibre — Dissolves in water to form a gel-like substance. It slows digestion, helps regulate blood sugar levels, and can lower cholesterol. Found in oats, beans, lentils, fruits, and vegetables.',
@@ -319,7 +300,7 @@ export const nutritionL2Unit1: Unit = {
             'Water makes up approximately 60% of adult body weight and is involved in virtually every physiological process — from temperature regulation and nutrient transport to joint lubrication and waste removal.',
             'Even mild dehydration (1–2% body weight loss) can impair cognitive function, mood, exercise performance, and recovery. Chronic under-hydration is associated with kidney stones, urinary tract infections, and reduced metabolic efficiency.',
           ],
-          imageUrl: ch5WaterFunctions,
+          imageUrl: getUniversityImage('nutl2-u1-ch5-water-functions'),
           imageAlt: 'Water functions in the body diagram',
         },
         {
@@ -337,7 +318,7 @@ export const nutritionL2Unit1: Unit = {
         },
         {
           heading: 'Assessing Hydration Status',
-          imageUrl: ch5HydrationCheck,
+          imageUrl: getUniversityImage('nutl2-u1-ch5-hydration-check'),
           imageAlt: 'Hydration status assessment with urine colour chart and quick checks',
           paragraphs: [
             'The simplest method is the urine colour test. Pale straw-coloured urine indicates good hydration. Dark yellow or amber suggests dehydration. Note that some supplements (particularly B vitamins) can affect urine colour.',
@@ -388,7 +369,7 @@ export const nutritionL2Unit1: Unit = {
             'Nutrient density refers to the amount of beneficial nutrients a food provides relative to its calorie content. Foods high in vitamins, minerals, protein, and fibre relative to their calories are considered nutrient-dense. Foods high in calories but low in beneficial nutrients are considered calorie-dense but nutrient-poor.',
             'Understanding nutrient density helps you make better food choices without needing to obsessively track every meal. Prioritising nutrient-dense foods naturally supports health, performance, and body composition.',
           ],
-          imageUrl: ch6NutrientDensity,
+          imageUrl: getUniversityImage('nutl2-u1-ch6-nutrient-density'),
           imageAlt: 'Nutrient density comparison chart',
         },
         {
@@ -423,7 +404,7 @@ export const nutritionL2Unit1: Unit = {
         },
         {
           heading: 'Building a Balanced Plate',
-          imageUrl: ch6BalancedPlate,
+          imageUrl: getUniversityImage('nutl2-u1-ch6-balanced-plate'),
           imageAlt: 'Balanced plate diagram showing 50% vegetables, 25% protein, 25% carbs',
           paragraphs: [
             'A simple framework: fill half your plate with vegetables and salad, a quarter with protein, and a quarter with complex carbohydrates. Add a small amount of healthy fat (dressing, cooking oil, or avocado). This approach works for most meals and ensures a balance of macronutrients and micronutrients without detailed tracking.',
@@ -458,12 +439,12 @@ export const nutritionL2Unit1: Unit = {
             'A serving size is a standardised measurement used on food labels. A portion size is how much you actually eat. These are often different — and the gap between them is where many people unknowingly over-consume calories.',
             'Over the past few decades, average portion sizes have increased significantly. Restaurant meals, ready meals, and even dinner plates have grown — leading to a distorted sense of what a "normal" amount of food looks like.',
           ],
-          imageUrl: ch7PortionSizes,
+          imageUrl: getUniversityImage('nutl2-u1-ch7-portion-sizes'),
           imageAlt: 'Portion size comparison over time',
         },
         {
           heading: 'Hand-Based Portion Estimation',
-          imageUrl: ch7HandPortions,
+          imageUrl: getUniversityImage('nutl2-u1-ch7-hand-portions'),
           imageAlt: 'Hand-based portion guide showing palm, fist, cupped hand, and thumb measurements',
           paragraphs: [
             'Your hand provides a convenient, always-available tool for estimating portions without scales or apps. While not perfectly accurate, this method is practical and good enough for most people.',
@@ -525,12 +506,12 @@ export const nutritionL2Unit1: Unit = {
             'A well-structured meal provides energy, satisfies appetite, and delivers the nutrients your body needs. Rather than following complicated rules, the goal is to build habits that make balanced eating your default — not something that requires constant effort.',
             'Most people benefit from three main meals per day, with the option of one to two snacks depending on activity level and hunger patterns. Consistency in meal timing helps regulate appetite, blood sugar, and energy levels.',
           ],
-          imageUrl: ch8BalancedDay,
+          imageUrl: getUniversityImage('nutl2-u1-ch8-balanced-day'),
           imageAlt: 'Balanced daily meals with macro breakdowns',
         },
         {
           heading: 'The Four-Component Meal',
-          imageUrl: ch8FourComponent,
+          imageUrl: getUniversityImage('nutl2-u1-ch8-four-component'),
           imageAlt: 'Four-component meal framework showing protein, carbs, vegetables, and healthy fats',
           paragraphs: [
             'Every main meal should aim to include four components: a protein source, a complex carbohydrate, vegetables or fruit, and a small amount of healthy fat. This framework ensures nutritional balance without over-thinking.',
@@ -543,7 +524,7 @@ export const nutritionL2Unit1: Unit = {
         },
         {
           heading: 'Meal Regularity',
-          imageUrl: ch8MealTiming,
+          imageUrl: getUniversityImage('nutl2-u1-ch8-meal-timing'),
           imageAlt: 'Daily meal structure timeline showing calorie distribution across four meals',
           paragraphs: [
             'Eating at roughly consistent times each day helps regulate hunger hormones (ghrelin and leptin), maintains stable blood sugar, and prevents the extreme hunger that leads to poor food choices.',

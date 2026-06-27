@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Lock, ArrowLeft, CheckCircle, Eye, EyeOff } from 'lucide-react';
 import { toast } from 'sonner';
-import shieldLogo from '@/assets/unbreakable-shield.png';
+const shieldLogo = 'https://vlwcoqilwyfcrsxodtdx.supabase.co/storage/v1/object/public/site-assets/misc/unbreakable-shield.webp';
 
 export default function ResetPassword() {
   const navigate = useNavigate();

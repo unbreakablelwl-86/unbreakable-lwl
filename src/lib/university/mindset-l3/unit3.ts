@@ -1,10 +1,5 @@
+import { getUniversityImage } from '@/lib/university/imageMap';
 import type { Unit } from '../types';
-import ch1DeepWork from '@/assets/university/mindl3-u3-ch1-deep-work.png';
-import ch2Willpower from '@/assets/university/mindl3-u3-ch2-willpower.png';
-import ch3CognitivePerformance from '@/assets/university/mindl3-u3-ch3-cognitive-performance.png';
-import ch4SelfDetermination from '@/assets/university/mindl3-u3-ch4-self-determination.png';
-import ch5IdentityChange from '@/assets/university/mindl3-u3-ch5-identity-change.png';
-import ch6Visualisation from '@/assets/university/mindl3-u3-ch6-visualisation.png';
 
 export const mindsetL3Unit3: Unit = {
   number: 3,
@@ -27,7 +22,7 @@ export const mindsetL3Unit3: Unit = {
             'Attention is not a single system — it involves three networks: the alerting network (readiness), the orienting network (directing focus), and the executive network (resolving conflict between competing demands). Deep, sustained attention requires all three networks working in coordination, which is metabolically expensive — your brain uses 20% of total body energy despite being 2% of body mass.',
             'Attention residue — identified by researcher Sophie Leroy — is the cognitive cost of switching tasks. When you check your phone between sets, your brain does not fully return to the training task. Part of your attention remains on the phone content, reducing the quality of your focus for 10–20 minutes. This is why eliminating distractions is more important than "trying harder to focus."',
           ],
-          imageUrl: ch1DeepWork,
+          imageUrl: getUniversityImage('mindl3-u3-ch1-deep-work'),
           imageAlt: 'Attention training and deep work showing prefrontal cortex attention network and focus session blocks',
           imagePlaceholder: 'Diagram showing the three attention networks (alerting, orienting, executive) in the brain and how attention residue accumulates across task switches',
         },
@@ -80,7 +75,7 @@ export const mindsetL3Unit3: Unit = {
             'Roy Baumeister\'s ego depletion theory proposed that willpower is a finite resource that gets "used up" through the day. This explained why people make worse decisions in the evening and why resisting one temptation makes it harder to resist the next. However, recent large-scale replication studies have challenged this model, suggesting the effect is smaller than originally claimed and may be influenced by beliefs about willpower.',
             'The current consensus: willpower is influenced by both physiological factors (blood glucose, sleep, stress) and psychological factors (beliefs, motivation, perceived difficulty). Whether or not it is a "depletable resource," it is clear that the more decisions you make, the worse those decisions tend to become. This is decision fatigue, and it is well-documented.',
           ],
-          imageUrl: ch2Willpower,
+          imageUrl: getUniversityImage('mindl3-u3-ch2-willpower'),
           imageAlt: 'Willpower and decision fatigue showing ego depletion model and decision fatigue curve',
           imagePlaceholder: 'Chart showing decision quality declining across the day with the number of decisions made, and how routines/systems flatten the decline curve',
         },
@@ -133,7 +128,7 @@ export const mindsetL3Unit3: Unit = {
             'Exercise is the most powerful neuroplasticity-enhancing intervention available without a prescription. Aerobic exercise increases brain-derived neurotrophic factor (BDNF), which supports the growth and survival of neurons, enhances synaptic plasticity, and improves learning and memory. The hippocampus — critical for memory — physically grows with regular exercise.',
             'Resistance training also has cognitive benefits: it reduces neuroinflammation, improves executive function, and may reduce dementia risk. High-intensity interval training (HIIT) produces the largest acute BDNF increases, while consistent moderate exercise produces the best long-term brain health outcomes.',
           ],
-          imageUrl: ch3CognitivePerformance,
+          imageUrl: getUniversityImage('mindl3-u3-ch3-cognitive-performance'),
           imageAlt: 'Cognitive performance and brain health showing BDNF pathways, neuroplasticity, and exercise-brain connection',
           imagePlaceholder: 'Diagram showing how different types of exercise (aerobic, resistance, HIIT) affect BDNF levels, hippocampal volume, and cognitive performance',
         },
@@ -187,7 +182,7 @@ export const mindsetL3Unit3: Unit = {
             'Deci and Ryan\'s self-determination theory identifies three basic psychological needs that must be satisfied for sustained motivation: autonomy (feeling in control of your choices), competence (feeling capable and making progress), and relatedness (feeling connected to others). When these needs are met, intrinsic motivation flourishes; when they are thwarted, motivation collapses.',
             'This explains why rigid, externally imposed programmes often fail — they undermine autonomy. Why programmes that are too easy or too hard cause dropout — they undermine competence. And why training alone without any social connection feels harder to maintain — it undermines relatedness.',
           ],
-          imageUrl: ch4SelfDetermination,
+          imageUrl: getUniversityImage('mindl3-u3-ch4-self-determination'),
           imageAlt: 'Self-determination theory showing three basic needs: autonomy, competence, and relatedness with motivation continuum',
           imagePlaceholder: 'Venn diagram showing the three SDT needs (Autonomy, Competence, Relatedness) with intrinsic motivation at the intersection and examples of each need in training context',
         },
@@ -240,7 +235,7 @@ export const mindsetL3Unit3: Unit = {
             'Your behaviour is largely a reflection of your identity — your beliefs about who you are. Someone who identifies as "a runner" does not need willpower to go running; it is simply what they do. Someone who identifies as "not a gym person" will struggle with consistency regardless of their programme quality. The most lasting changes happen when you shift your identity, not just your actions.',
             'James Clear describes three layers of behaviour change: outcomes (what you achieve), processes (what you do), and identity (what you believe). Most people start with outcomes ("I want to lose 10kg") and work inward. More effective change starts with identity ("I am someone who takes care of their health") and works outward.',
           ],
-          imageUrl: ch5IdentityChange,
+          imageUrl: getUniversityImage('mindl3-u3-ch5-identity-change'),
           imageAlt: 'Identity-based change showing identity iceberg model with actions, beliefs, and identity layers',
           imagePlaceholder: 'Concentric circles diagram showing the three layers of behaviour change — Identity (core), Process (middle), Outcome (outer) — with arrows showing the preferred inside-out direction',
         },
@@ -293,7 +288,7 @@ export const mindsetL3Unit3: Unit = {
             'Brain imaging studies show that vividly imagining an action activates many of the same motor cortex regions as physically performing it. This is not mystical — it is neuroplasticity. Mental rehearsal strengthens neural pathways, improves motor planning, and enhances confidence through simulated experience.',
             'Studies in athletic performance show that mental practice combined with physical practice produces better results than physical practice alone. Weightlifters who visualised successful lifts alongside training showed greater strength gains than those who only trained physically. The effect is real and measurable.',
           ],
-          imageUrl: ch6Visualisation,
+          imageUrl: getUniversityImage('mindl3-u3-ch6-visualisation'),
           imageAlt: 'Advanced visualisation and mental rehearsal showing brain activation during mental practice and PETTLEP model',
           imagePlaceholder: 'Brain scan comparison showing motor cortex activation during physical movement vs mental visualisation of the same movement, highlighting the overlap in activated regions',
         },

@@ -13,11 +13,11 @@ import {
   ArrowRight,
   Sparkles,
 } from 'lucide-react';
-import founderPhoto from '@/assets/john-founder.png';
-import journey2018 from '@/assets/jj-journey-2018.png';
-import journey2019 from '@/assets/jj-journey-2019.png';
-import journey2020 from '@/assets/jj-journey-2020.png';
-import returnPhoto from '@/assets/jj-return-2025-2026.png';
+const founderPhoto = 'https://vlwcoqilwyfcrsxodtdx.supabase.co/storage/v1/object/public/site-assets/misc/john-founder.webp';
+const journey2018 = 'https://vlwcoqilwyfcrsxodtdx.supabase.co/storage/v1/object/public/site-assets/misc/jj-journey-2018.webp';
+const journey2019 = 'https://vlwcoqilwyfcrsxodtdx.supabase.co/storage/v1/object/public/site-assets/misc/jj-journey-2019.webp';
+const journey2020 = 'https://vlwcoqilwyfcrsxodtdx.supabase.co/storage/v1/object/public/site-assets/misc/jj-journey-2020.webp';
+const returnPhoto = 'https://vlwcoqilwyfcrsxodtdx.supabase.co/storage/v1/object/public/site-assets/misc/jj-return-2025-2026.webp';
 
 const fadeUp = {
   initial: { opacity: 0, y: 24 },

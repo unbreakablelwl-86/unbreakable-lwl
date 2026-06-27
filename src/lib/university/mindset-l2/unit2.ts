@@ -1,11 +1,5 @@
+import { getUniversityImage } from '@/lib/university/imageMap';
 import type { Unit } from '../types';
-import ch1BreathingPhysiology from '@/assets/university/mindl2-u2-ch1-breathing-physiology.png';
-import ch2Diaphragmatic from '@/assets/university/mindl2-u2-ch2-diaphragmatic.png';
-import ch3BoxBreathing from '@/assets/university/mindl2-u2-ch3-box-breathing.png';
-import ch4EnergisingBreathwork from '@/assets/university/mindl2-u2-ch4-energising-breathwork.png';
-import ch5ColdExposure from '@/assets/university/mindl2-u2-ch5-cold-exposure.png';
-import ch6Journaling from '@/assets/university/mindl2-u2-ch6-journaling.png';
-
 
 export const mindsetL2Unit2: Unit = {
   number: 2,
@@ -28,7 +22,7 @@ export const mindsetL2Unit2: Unit = {
             'Breathing is the process of drawing air into the lungs (inhalation) and expelling it (exhalation). During inhalation, the diaphragm contracts and flattens, expanding the chest cavity and creating negative pressure that draws air in. During exhalation, the diaphragm relaxes and the elastic recoil of the lungs pushes air out.',
             'In the lungs, oxygen passes from the air into the blood via the alveoli — tiny air sacs with walls just one cell thick. Simultaneously, carbon dioxide passes from the blood into the alveoli to be exhaled. This gas exchange is the fundamental purpose of breathing.',
           ],
-          imageUrl: ch1BreathingPhysiology,
+          imageUrl: getUniversityImage('mindl2-u2-ch1-breathing-physiology'),
           imageAlt: 'Breathing physiology diagram showing diaphragm, lungs, alveoli, and oxygen-carbon dioxide exchange',
         },
         {
@@ -76,7 +70,7 @@ export const mindsetL2Unit2: Unit = {
             'The diaphragm is a dome-shaped muscle at the base of your ribcage. When it contracts, it moves downward, expanding the abdominal cavity and drawing air deep into the lower lungs where gas exchange is most efficient. This is diaphragmatic breathing — sometimes called belly breathing.',
             'Most people default to chest breathing, which uses the accessory muscles of the neck and upper chest. This is less efficient, moves less air per breath, and signals the sympathetic nervous system. Retraining yourself to use the diaphragm as your primary breathing muscle is one of the most impactful changes you can make.',
           ],
-          imageUrl: ch2Diaphragmatic,
+          imageUrl: getUniversityImage('mindl2-u2-ch2-diaphragmatic'),
           imageAlt: 'Chest breathing versus diaphragmatic breathing comparison',
         },
         {
@@ -129,7 +123,7 @@ export const mindsetL2Unit2: Unit = {
             'Box breathing — also called square breathing — is a structured protocol used by military special forces, emergency services, and high-performance athletes to maintain composure under pressure. It works by imposing a controlled, rhythmic pattern on your breathing that activates the parasympathetic nervous system.',
             'The protocol: Inhale through the nose for 4 seconds. Hold for 4 seconds. Exhale through the nose for 4 seconds. Hold for 4 seconds. Repeat for 4–5 minutes. The equal timing creates a balanced autonomic state — neither overly activated nor overly relaxed.',
           ],
-          imageUrl: ch3BoxBreathing,
+          imageUrl: getUniversityImage('mindl2-u2-ch3-box-breathing'),
           imageAlt: 'Box breathing cycle showing inhale, hold, exhale, and hold timing',
         },
         {
@@ -178,7 +172,7 @@ export const mindsetL2Unit2: Unit = {
             'While calming techniques are essential, there are times when you need the opposite — increased alertness, energy, and readiness. Before a competition, a heavy training session, or when you need to overcome fatigue, energising breathwork can shift your nervous system into a state of controlled activation.',
             'These techniques work by deliberately increasing sympathetic nervous system tone through controlled hyperventilation, breath holds, or rapid breathing patterns. They temporarily lower CO2 levels, alter blood pH, and trigger an adrenaline response.',
           ],
-          imageUrl: ch4EnergisingBreathwork,
+          imageUrl: getUniversityImage('mindl2-u2-ch4-energising-breathwork'),
           imageAlt: 'Calming versus energising breathwork nervous system effects',
         },
         {
@@ -230,7 +224,7 @@ export const mindsetL2Unit2: Unit = {
             'When your body is exposed to cold — particularly cold water — a cascade of physiological responses occurs. Blood vessels in the skin constrict (vasoconstriction) to preserve core temperature. Your heart rate and blood pressure increase. Breathing rate accelerates. Noradrenaline and dopamine are released in significant quantities.',
             'The noradrenaline release is particularly interesting — cold water immersion can increase noradrenaline by 200–300%, producing sustained improvements in alertness, mood, and focus. The dopamine response provides a natural mood elevation that can last for several hours.',
           ],
-          imageUrl: ch5ColdExposure,
+          imageUrl: getUniversityImage('mindl2-u2-ch5-cold-exposure'),
           imageAlt: 'Cold exposure physiology diagram showing vasoconstriction and hormone response',
         },
         {
@@ -286,7 +280,7 @@ export const mindsetL2Unit2: Unit = {
             'Expressive writing — putting your thoughts and feelings into words on paper — has been extensively researched since James Pennebaker\'s pioneering studies in the 1980s. The evidence consistently shows that regular journaling reduces stress, improves mood, enhances immune function, and helps process difficult experiences.',
             'The mechanism appears to involve cognitive processing — when you write about an experience, you are forced to organise your thoughts, identify patterns, and create narrative coherence from what might otherwise remain a chaotic emotional experience. This processing reduces the emotional charge associated with stressful events.',
           ],
-          imageUrl: ch6Journaling,
+          imageUrl: getUniversityImage('mindl2-u2-ch6-journaling'),
           imageAlt: 'Journaling benefits diagram showing stress reduction, pattern recognition, and clarity',
         },
         {

@@ -1,26 +1,5 @@
+import { getUniversityImage } from '@/lib/university/imageMap';
 import type { Unit } from '../types';
-import l3u1ch1Img from '@/assets/university/l3-u1-ch1-macro-periodisation.png';
-import l3u1ch1PhasesImg from '@/assets/university/l3-u1-ch1-three-phases.png';
-import l3u1ch1PracticalImg from '@/assets/university/l3-u1-ch1-practical-application.png';
-import l3u1ch2Img from '@/assets/university/l3-u1-ch2-nutrient-timing.png';
-import l3u1ch2PreImg from '@/assets/university/l3-u1-ch2-pre-workout.png';
-import l3u1ch2PostImg from '@/assets/university/l3-u1-ch2-post-session.png';
-import l3u1ch3Img from '@/assets/university/l3-u1-ch3-supplement-pyramid.png';
-import l3u1ch3Tier1Img from '@/assets/university/l3-u1-ch3-tier1-supplements.png';
-import l3u1ch3RedFlagsImg from '@/assets/university/l3-u1-ch3-red-flags.png';
-import l3u1ch4Img from '@/assets/university/l3-u1-ch4-body-composition.png';
-import l3u1ch4RecompImg from '@/assets/university/l3-u1-ch4-recomposition.png';
-import l3u1ch4BodyFatImg from '@/assets/university/l3-u1-ch4-body-fat-ranges.png';
-import l3u1ch5Img from '@/assets/university/l3-u1-ch5-metabolic-adaptation.png';
-import l3u1ch5DietImg from '@/assets/university/l3-u1-ch5-diet-strategies.png';
-import l3u1ch6Img from '@/assets/university/l3-u1-ch6-calorie-cycling.png';
-import l3u1ch6MatchImg from '@/assets/university/l3-u1-ch6-matching-calories.png';
-import l3u1ch7Img from '@/assets/university/l3-u1-ch7-digestive-system.png';
-import l3u1ch7MicrobiomeImg from '@/assets/university/l3-u1-ch7-microbiome.png';
-import l3u1ch7DigestiveImg from '@/assets/university/l3-u1-ch7-digestive-issues.png';
-import l3u1ch8Img from '@/assets/university/l3-u1-ch8-phase-targets.png';
-import l3u1ch8CuttingImg from '@/assets/university/l3-u1-ch8-cutting-priorities.png';
-import l3u1ch8EnduranceImg from '@/assets/university/l3-u1-ch8-endurance-fuelling.png';
 
 export const level3Unit1: Unit = {
   number: 1,
@@ -54,7 +33,7 @@ export const level3Unit1: Unit = {
             'Cutting (caloric deficit) — Protein increases to preserve lean mass (2.0–2.4 g/kg). Carbohydrates are reduced but kept high enough to fuel training. Fat is kept at minimum healthy levels (0.7–1.0 g/kg).',
             'Maintenance (energy balance) — A balanced approach. Protein at 1.6–2.0 g/kg, carbohydrates and fats distributed according to preference and activity level.',
           ],
-          imageUrl: l3u1ch1PhasesImg,
+          imageUrl: getUniversityImage('l3-u1-ch1-three-phases'),
           imageAlt: 'The three core nutrition phases — bulking, cutting, and maintenance — with macro ranges for each',
         },
         {
@@ -63,7 +42,7 @@ export const level3Unit1: Unit = {
             'Even within a single mesocycle, your macros can be fine-tuned. During a high-volume accumulation block, carbohydrate needs are elevated because glycogen turnover is greater. During a deload week, total intake can drop slightly because training stress is reduced.',
             'The key principle is responsiveness. You are not locked into a rigid plan — you are adjusting based on training demand, recovery quality, and how your body is responding.',
           ],
-          imageUrl: l3u1ch1Img,
+          imageUrl: getUniversityImage('l3-u1-ch1-macro-periodisation'),
           imageAlt: 'Diagram showing macro split changes across bulking, cutting, and maintenance phases with protein, carbs, and fat bars adjusting per phase',
         },
         {
@@ -72,7 +51,7 @@ export const level3Unit1: Unit = {
             'Start by establishing your maintenance calories and macros. From there, apply small adjustments (200–500 kcal) when transitioning between phases. Avoid dramatic overnight changes — gradual transitions give your body time to adapt and reduce the risk of metabolic slowdown or excessive fat gain.',
             'Track your intake for the first two to three weeks of any new phase to ensure you are hitting your targets. After that, many people can transition to intuitive adjustments based on hunger, energy, and performance feedback.',
           ],
-          imageUrl: l3u1ch1PracticalImg,
+          imageUrl: getUniversityImage('l3-u1-ch1-practical-application'),
           imageAlt: 'Phase transition flowchart showing 5 steps from establishing maintenance to assessing and fine-tuning',
         },
       ],
@@ -116,7 +95,7 @@ export const level3Unit1: Unit = {
             'Fat slows digestion — keep fat moderate-to-low in the meal closest to training to avoid stomach discomfort',
             'Hydration is non-negotiable — even mild dehydration impairs strength and concentration',
           ],
-          imageUrl: l3u1ch2PreImg,
+          imageUrl: getUniversityImage('l3-u1-ch2-pre-workout'),
           imageAlt: 'Nutrient timing around training — before, during, and after with recommended macronutrient focus',
         },
         {
@@ -125,7 +104,7 @@ export const level3Unit1: Unit = {
             'For most gym-based sessions lasting under 90 minutes, intra-workout nutrition is unnecessary if you ate beforehand. Water is sufficient.',
             'For endurance sessions, high-volume training days, or sessions exceeding 90 minutes, intra-workout carbohydrates (30–60 g/hour) can maintain performance. This is where sports drinks, gels, or simple carbohydrate sources have genuine value.',
           ],
-          imageUrl: l3u1ch2Img,
+          imageUrl: getUniversityImage('l3-u1-ch2-nutrient-timing'),
           imageAlt: 'Timeline diagram showing pre-workout, intra-workout, and post-workout nutrition windows with recommended macronutrient focus for each',
         },
         {
@@ -134,7 +113,7 @@ export const level3Unit1: Unit = {
             'After training, your priorities are replenishing glycogen and providing amino acids for muscle repair. A meal or shake containing 20–40 g of protein and a serving of carbohydrates within two hours of training covers both needs.',
             'The type of protein matters less than the total amount. Whey is convenient and fast-absorbing, but whole food sources like chicken, eggs, or Greek yoghurt work equally well if consumed within a reasonable timeframe.',
           ],
-          imageUrl: l3u1ch2PostImg,
+          imageUrl: getUniversityImage('l3-u1-ch2-post-session'),
           imageAlt: 'Post-session recovery priorities — glycogen replenishment and muscle repair with protein sources comparison',
         },
       ],
@@ -178,7 +157,7 @@ export const level3Unit1: Unit = {
             'Vitamin D — Essential for bone health, immune function, and potentially muscle function. Supplementation is recommended if blood levels are below 75 nmol/L, particularly in northern climates with limited sun exposure.',
             'Protein powder — A convenient way to hit daily protein targets. Not superior to whole food protein, but practical for timing and convenience.',
           ],
-          imageUrl: l3u1ch3Tier1Img,
+          imageUrl: getUniversityImage('l3-u1-ch3-tier1-supplements'),
           imageAlt: 'Evidence-based supplements — creatine, caffeine, vitamin D, and protein powder with dosing guidelines',
         },
         {
@@ -191,7 +170,7 @@ export const level3Unit1: Unit = {
             'Omega-3 fatty acids — Anti-inflammatory properties that may support recovery. Dose: 2–3 g EPA/DHA daily.',
             'Ashwagandha — Some evidence for reducing cortisol and improving recovery. Research is growing but not yet conclusive.',
           ],
-          imageUrl: l3u1ch3Img,
+          imageUrl: getUniversityImage('l3-u1-ch3-supplement-pyramid'),
           imageAlt: 'Tiered supplement pyramid showing Tier 1 (strong evidence) at the base, Tier 2 (moderate) in the middle, and Tier 3 (weak/no evidence) at the top',
         },
         {
@@ -206,7 +185,7 @@ export const level3Unit1: Unit = {
             'Products claiming to "boost testosterone" or "burn fat" without specifying mechanism or magnitude',
             'Endorsements from athletes who are almost certainly using performance-enhancing drugs alongside the product',
           ],
-          imageUrl: l3u1ch3RedFlagsImg,
+          imageUrl: getUniversityImage('l3-u1-ch3-red-flags'),
           imageAlt: 'Red flags in supplement marketing — proprietary blends, unverified claims, misleading photos, vague promises',
         },
       ],
@@ -250,7 +229,7 @@ export const level3Unit1: Unit = {
             'Skinfold callipers — Measures subcutaneous fat at specific sites. Accuracy depends heavily on the skill of the person taking the measurements. Consistent technique matters more than the individual reading.',
             'Visual assessment and progress photos — Subjective but practical. Taking photos under consistent conditions (same lighting, time of day, clothing) provides useful visual feedback over weeks and months.',
           ],
-          imageUrl: l3u1ch4Img,
+          imageUrl: getUniversityImage('l3-u1-ch4-body-composition'),
           imageAlt: 'Comparison diagram showing different body composition measurement methods — DEXA, BIA, skinfold callipers — with accuracy and accessibility ratings',
         },
         {
@@ -259,7 +238,7 @@ export const level3Unit1: Unit = {
             'Recomposition — gaining muscle while losing fat simultaneously — is possible, but it is not equally achievable for everyone. It works best for beginners, those returning after a break, individuals with higher body fat, and people using performance-enhancing drugs.',
             'For trained individuals at moderate body fat levels, recomposition is slow and difficult. In most cases, dedicated bulking and cutting phases are more efficient for changing body composition.',
           ],
-          imageUrl: l3u1ch4RecompImg,
+          imageUrl: getUniversityImage('l3-u1-ch4-recomposition'),
           imageAlt: 'Body recomposition — who it works for vs who should use dedicated bulk/cut cycles',
         },
         {
@@ -268,7 +247,7 @@ export const level3Unit1: Unit = {
             'Body fat percentage varies by sex and age. General health ranges for adults are approximately 10–20% for men and 18–28% for women. Essential fat (the minimum for physiological function) is around 3–5% for men and 10–13% for women.',
             'Chasing extremely low body fat percentages is not healthy or sustainable for most people. The leanest physiques you see in magazines and on social media are typically achieved for short periods, often with significant trade-offs to health and wellbeing.',
           ],
-          imageUrl: l3u1ch4BodyFatImg,
+          imageUrl: getUniversityImage('l3-u1-ch4-body-fat-ranges'),
           imageAlt: 'Healthy body fat percentage ranges for men and women across categories from essential to overfat',
         },
       ],
@@ -312,7 +291,7 @@ export const level3Unit1: Unit = {
             'Hormonal changes — Leptin (the satiety hormone) drops, ghrelin (the hunger hormone) rises, and thyroid output may decrease. You feel hungrier and your body burns less.',
             'Increased metabolic efficiency — Your muscles become more efficient at producing work with less energy, which sounds positive but means you burn fewer calories during exercise.',
           ],
-          imageUrl: l3u1ch5Img,
+          imageUrl: getUniversityImage('l3-u1-ch5-metabolic-adaptation'),
           imageAlt: 'Flow diagram showing the metabolic adaptation loop — caloric deficit leading to hormonal changes, reduced NEAT, lower RMR, and increased hunger',
         },
         {
@@ -321,7 +300,7 @@ export const level3Unit1: Unit = {
             'A diet break is a planned period (typically 1–2 weeks) of eating at maintenance calories during a fat-loss phase. Research suggests that diet breaks can partially reverse some aspects of metabolic adaptation, particularly the drop in leptin and the reduction in NEAT.',
             'Refeeds are shorter — usually one to two days of higher carbohydrate intake within a deficit. They provide a psychological break and may temporarily boost leptin, though the metabolic impact is smaller than a full diet break.',
           ],
-          imageUrl: l3u1ch5DietImg,
+          imageUrl: getUniversityImage('l3-u1-ch5-diet-strategies'),
           imageAlt: 'Comparison of diet breaks, refeeds, and reverse dieting strategies with duration and purpose',
         },
         {
@@ -372,7 +351,7 @@ export const level3Unit1: Unit = {
             'Weekend cycling — Lower intake during the structured work week, slightly higher on weekends to accommodate social eating. Pragmatic and sustainable for many people.',
             '5:2 approach — Five days at a moderate deficit, two days at maintenance. Simple to implement and effective for adherence.',
           ],
-          imageUrl: l3u1ch6Img,
+          imageUrl: getUniversityImage('l3-u1-ch6-calorie-cycling'),
           imageAlt: 'Weekly calendar view showing calorie cycling with training days at higher calories and rest days at lower calories, with weekly total remaining consistent',
         },
         {
@@ -430,7 +409,7 @@ export const level3Unit1: Unit = {
             'Small intestine — The primary site of nutrient absorption. Enzymes from the pancreas and bile from the liver complete digestion. Nutrients are absorbed through the intestinal wall into the bloodstream.',
             'Large intestine — Absorbs water and electrolytes. Home to the majority of gut bacteria, which ferment undigested fibre and produce short-chain fatty acids.',
           ],
-          imageUrl: l3u1ch7Img,
+          imageUrl: getUniversityImage('l3-u1-ch7-digestive-system'),
           imageAlt: 'Anatomical diagram of the digestive system highlighting each stage — mouth, stomach, small intestine, large intestine — with key functions labelled',
         },
         {
@@ -496,7 +475,7 @@ export const level3Unit1: Unit = {
             'Carbohydrate focus: Carbs fuel training and support recovery. A bulk is the time to prioritise carbohydrate intake.',
             'Monitoring: Track body weight weekly and assess rate of gain. If weight is increasing faster than 0.5–1.0% per month (for intermediates/advanced), the surplus is likely too large.',
           ],
-          imageUrl: l3u1ch8Img,
+          imageUrl: getUniversityImage('l3-u1-ch8-phase-targets'),
           imageAlt: 'Side-by-side comparison table showing recommended calorie surplus/deficit, protein, carbs, and fat targets for cutting vs bulking vs maintenance phases',
         },
         {

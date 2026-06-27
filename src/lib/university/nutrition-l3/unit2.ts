@@ -1,22 +1,5 @@
+import { getUniversityImage } from '@/lib/university/imageMap';
 import type { Unit } from '../types';
-import ch1FatSolubleVitamins from '@/assets/university/nutl3-u2-ch1-fat-soluble-vitamins.png';
-import ch1VitaminD from '@/assets/university/nutl3-u2-ch1-vitamin-d.png';
-import ch1FatSolubleAEK from '@/assets/university/nutl3-u2-ch1-fat-soluble-aek.png';
-import ch2WaterSolubleVitamins from '@/assets/university/nutl3-u2-ch2-water-soluble-vitamins.png';
-import ch2IronAbsorption from '@/assets/university/nutl3-u2-ch2-iron-absorption.png';
-import ch2ZincMagnesium from '@/assets/university/nutl3-u2-ch2-zinc-magnesium.png';
-import ch3Supplementation from '@/assets/university/nutl3-u2-ch3-supplementation.png';
-import ch3Creatine from '@/assets/university/nutl3-u2-ch3-creatine.png';
-import ch3SupplementRedflags from '@/assets/university/nutl3-u2-ch3-supplement-redflags.png';
-import ch4SpecialPopulations from '@/assets/university/nutl3-u2-ch4-special-populations.png';
-import ch4PregnancyFoods from '@/assets/university/nutl3-u2-ch4-pregnancy-foods.png';
-import ch4AgeingNutrition from '@/assets/university/nutl3-u2-ch4-ageing-nutrition.png';
-import ch5RestrictedDiets from '@/assets/university/nutl3-u2-ch5-restricted-diets.png';
-import ch5ProteinComplementation from '@/assets/university/nutl3-u2-ch5-protein-complementation.png';
-import ch5Allergens from '@/assets/university/nutl3-u2-ch5-allergens.png';
-import ch6ClinicalAwareness from '@/assets/university/nutl3-u2-ch6-clinical-awareness.png';
-import ch6ScopeBoundaries from '@/assets/university/nutl3-u2-ch6-scope-boundaries.png';
-import ch6ReferralPathway from '@/assets/university/nutl3-u2-ch6-referral-pathway.png';
 
 export const nutritionL3Unit2: Unit = {
   number: 2,
@@ -39,7 +22,7 @@ export const nutritionL3Unit2: Unit = {
             'Fat-soluble vitamins (A, D, E, and K) are absorbed alongside dietary fat and stored in your liver and adipose tissue. Unlike water-soluble vitamins, which are excreted in urine when consumed in excess, fat-soluble vitamins accumulate — making both deficiency and toxicity possible.',
             'This storage capacity means you do not need to consume them every single day, but chronic under-consumption or over-supplementation can cause significant problems over time.',
           ],
-          imageUrl: ch1FatSolubleVitamins,
+          imageUrl: getUniversityImage('nutl3-u2-ch1-fat-soluble-vitamins'),
           imageAlt: 'Fat-soluble vitamins A, D, E, K comparison table',
         },
         {
@@ -54,7 +37,7 @@ export const nutritionL3Unit2: Unit = {
             'Groups at higher risk — people with darker skin, those who cover most of their skin, people who spend little time outdoors, and older adults',
             'Food sources are limited — oily fish, egg yolks, fortified cereals and spreads provide small amounts',
           ],
-          imageUrl: ch1VitaminD,
+          imageUrl: getUniversityImage('nutl3-u2-ch1-vitamin-d'),
           imageAlt: 'UK vitamin D deficiency: October to March UVB gap',
         },
         {
@@ -64,7 +47,7 @@ export const nutritionL3Unit2: Unit = {
             'Vitamin E acts as an antioxidant, protecting cell membranes from oxidative damage. Deficiency is rare in developed countries, and supplementation has shown limited benefit in well-nourished populations. Food sources include nuts, seeds, and plant oils.',
             'Vitamin K is essential for blood clotting (K1) and bone metabolism (K2). K1 is found in green leafy vegetables, while K2 is produced by gut bacteria and found in fermented foods. Deficiency is uncommon in healthy adults but can occur with certain medications or gut conditions.',
           ],
-          imageUrl: ch1FatSolubleAEK,
+          imageUrl: getUniversityImage('nutl3-u2-ch1-fat-soluble-aek'),
           imageAlt: 'Vitamins A, E, K: sources, functions, and risks',
         },
       ],
@@ -96,7 +79,7 @@ export const nutritionL3Unit2: Unit = {
             'The B vitamin group (B1, B2, B3, B5, B6, B7, B9, B12) plays essential roles in energy metabolism — they act as coenzymes in the pathways that convert carbohydrates, fats, and proteins into usable ATP. This does not mean supplementing B vitamins gives you "more energy" — it means deficiency impairs your ability to utilise the energy from food.',
             'B12 is of particular concern for vegans and vegetarians, as it is found almost exclusively in animal products. Deficiency develops slowly (the liver stores several years\' worth) but causes irreversible nerve damage if left untreated. All vegans should supplement B12 — this is non-negotiable.',
           ],
-          imageUrl: ch2WaterSolubleVitamins,
+          imageUrl: getUniversityImage('nutl3-u2-ch2-water-soluble-vitamins'),
           imageAlt: 'B vitamins and energy metabolism pathways',
         },
         {
@@ -111,7 +94,7 @@ export const nutritionL3Unit2: Unit = {
             'Iron absorption inhibitors — Tannins (tea, coffee), phytates (wholegrains, legumes), calcium',
             'Iron absorption enhancers — Vitamin C, haem iron consumed alongside non-haem iron',
           ],
-          imageUrl: ch2IronAbsorption,
+          imageUrl: getUniversityImage('nutl3-u2-ch2-iron-absorption'),
           imageAlt: 'Iron absorption: haem vs non-haem, enhancers vs inhibitors',
         },
         {
@@ -120,7 +103,7 @@ export const nutritionL3Unit2: Unit = {
             'Zinc supports immune function, protein synthesis, wound healing, and testosterone production. Deficiency is associated with impaired immune response, poor wound healing, and reduced appetite. Oysters are the richest source, followed by red meat, poultry, beans, and nuts.',
             'Magnesium is involved in over 300 enzymatic reactions, including muscle contraction, nerve function, and energy production. Active individuals may have increased magnesium needs due to losses through sweat. Deficiency symptoms include muscle cramps, fatigue, and poor sleep quality. Good sources include dark leafy greens, nuts, seeds, and wholegrains.',
           ],
-          imageUrl: ch2ZincMagnesium,
+          imageUrl: getUniversityImage('nutl3-u2-ch2-zinc-magnesium'),
           imageAlt: 'Zinc and magnesium: roles, sources, and deficiency signs',
         },
       ],
@@ -151,7 +134,7 @@ export const nutritionL3Unit2: Unit = {
           paragraphs: [
             'The sports supplement industry generates billions of pounds annually, yet the vast majority of products have little or no evidence supporting their claims. Understanding the evidence hierarchy helps you avoid wasting money and focus on the few supplements that genuinely work.',
           ],
-          imageUrl: ch3Supplementation,
+          imageUrl: getUniversityImage('nutl3-u2-ch3-supplementation'),
           imageAlt: 'Supplement evidence tiers pyramid',
           bullets: [
             'Tier 1 — Strong evidence: Creatine monohydrate, caffeine, protein supplements (when dietary intake is insufficient), vitamin D (when deficient)',
@@ -165,7 +148,7 @@ export const nutritionL3Unit2: Unit = {
             'Creatine is the most researched and consistently supported sports supplement in existence. It works by increasing your muscles\' stores of phosphocreatine, which is used to rapidly regenerate ATP during high-intensity, short-duration efforts — improving your capacity for an extra rep or two per set.',
             'The standard dose is 3–5 grams per day, every day, regardless of training. Loading protocols (20g per day for 5–7 days) saturate stores faster but are not necessary. Creatine monohydrate is the most studied form — newer forms (HCL, ethyl ester, buffered) have no proven advantage despite higher prices.',
           ],
-          imageUrl: ch3Creatine,
+          imageUrl: getUniversityImage('nutl3-u2-ch3-creatine'),
           imageAlt: 'Creatine monohydrate: mechanism, dosing, and myths debunked',
           bullets: [
             'Proven benefits — Increased strength, power output, and lean mass. Improved recovery between sets',
@@ -187,7 +170,7 @@ export const nutritionL3Unit2: Unit = {
             'Be sceptical of any supplement that claims to "boost testosterone naturally," "burn fat while you sleep," or produce results comparable to pharmaceutical drugs. Legitimate supplements have modest, evidence-based effects — not dramatic transformations.',
             'Proprietary blends that hide individual ingredient doses, endorsements from sponsored athletes, before-and-after photos, and claims that are not supported by independent peer-reviewed research are all warning signs of marketing-driven products rather than science-driven ones.',
           ],
-          imageUrl: ch3SupplementRedflags,
+          imageUrl: getUniversityImage('nutl3-u2-ch3-supplement-redflags'),
           imageAlt: 'Supplement marketing red flags checklist',
         },
       ],
@@ -219,7 +202,7 @@ export const nutritionL3Unit2: Unit = {
             'Pregnancy increases energy requirements by approximately 200 additional calories per day during the third trimester only — the common advice to "eat for two" is a myth that contributes to excessive gestational weight gain. However, while calorie needs increase modestly, micronutrient requirements increase significantly.',
             'Folic acid supplementation (400 micrograms daily) is recommended from the point of trying to conceive until 12 weeks of pregnancy, as it dramatically reduces the risk of neural tube defects. Vitamin D supplementation (10 micrograms daily) is recommended throughout pregnancy and breastfeeding.',
           ],
-          imageUrl: ch4SpecialPopulations,
+          imageUrl: getUniversityImage('nutl3-u2-ch4-special-populations'),
           imageAlt: 'Pregnancy nutritional requirements infographic',
         },
         {
@@ -227,7 +210,7 @@ export const nutritionL3Unit2: Unit = {
           paragraphs: [
             'Certain foods carry specific risks during pregnancy due to the potential for harmful bacteria or substances to affect foetal development.',
           ],
-          imageUrl: ch4PregnancyFoods,
+          imageUrl: getUniversityImage('nutl3-u2-ch4-pregnancy-foods'),
           imageAlt: 'Foods to avoid during pregnancy with risk explanations',
           bullets: [
             'Raw or undercooked meat and eggs — Risk of salmonella and toxoplasmosis',
@@ -244,7 +227,7 @@ export const nutritionL3Unit2: Unit = {
             'Ageing brings several nutritional challenges: reduced appetite, decreased absorption efficiency, loss of muscle mass (sarcopenia), reduced bone density, and often reduced physical activity. While total calorie needs may decrease, the need for specific nutrients — particularly protein, calcium, vitamin D, and B12 — increases or remains the same.',
             'Sarcopenia — the age-related loss of muscle mass and function — can be significantly slowed through adequate protein intake and resistance training. Older adults may need 1.2–1.6 grams of protein per kilogram of body weight daily, higher than the standard recommendation, to maintain muscle mass.',
           ],
-          imageUrl: ch4AgeingNutrition,
+          imageUrl: getUniversityImage('nutl3-u2-ch4-ageing-nutrition'),
           imageAlt: 'Ageing nutrition: sarcopenia, protein needs, and key nutrients',
           bullets: [
             'Protein — Higher per-meal doses (30–40g) may be needed to overcome anabolic resistance in older adults',
@@ -282,7 +265,7 @@ export const nutritionL3Unit2: Unit = {
           paragraphs: [
             'Well-planned vegetarian and vegan diets can meet all nutritional requirements. However, "well-planned" is the operative phrase. Several nutrients require deliberate attention when animal products are reduced or eliminated entirely.',
           ],
-          imageUrl: ch5RestrictedDiets,
+          imageUrl: getUniversityImage('nutl3-u2-ch5-restricted-diets'),
           imageAlt: 'Vegan nutrients of concern table',
           bullets: [
             'Vitamin B12 — No reliable plant source exists. All vegans must supplement (at least 10 micrograms daily or 2,000 micrograms weekly)',
@@ -299,7 +282,7 @@ export const nutritionL3Unit2: Unit = {
             'Plant proteins are generally "incomplete" — they lack sufficient quantities of one or more essential amino acids. However, different plant proteins have different limiting amino acids. Combining complementary sources (e.g., rice with beans, bread with hummus) throughout the day provides a complete amino acid profile.',
             'The outdated concept of "complete protein combining at every meal" has been replaced by the understanding that your body pools amino acids over the course of 24 hours. You do not need to combine sources at every sitting — but you do need variety across the day.',
           ],
-          imageUrl: ch5ProteinComplementation,
+          imageUrl: getUniversityImage('nutl3-u2-ch5-protein-complementation'),
           imageAlt: 'Protein complementation: rice and beans, bread and hummus pairings',
         },
         {
@@ -308,7 +291,7 @@ export const nutritionL3Unit2: Unit = {
             'Food allergies involve an immune response (IgE-mediated) and can be life-threatening (anaphylaxis). The 14 major allergens in UK food law must be declared on packaging and in catering. Common allergens include peanuts, tree nuts, milk, eggs, wheat, soy, fish, shellfish, and sesame.',
             'Food intolerances (e.g., lactose intolerance, non-coeliac gluten sensitivity) do not involve the immune system and are not life-threatening, but can cause significant discomfort. Management involves identification through elimination diets (ideally supervised by a dietitian) and appropriate avoidance or substitution.',
           ],
-          imageUrl: ch5Allergens,
+          imageUrl: getUniversityImage('nutl3-u2-ch5-allergens'),
           imageAlt: 'Food allergies vs intolerances comparison',
           bullets: [
             'Coeliac disease — An autoimmune condition triggered by gluten. Requires lifelong strict gluten avoidance',
@@ -345,7 +328,7 @@ export const nutritionL3Unit2: Unit = {
             'Understanding clinical nutrition awareness does not make you a clinical practitioner. In the UK, only registered dietitians (regulated by the HCPC) are qualified to provide medical nutrition therapy. Nutritional therapists, coaches, and personal trainers can provide general healthy eating guidance but must refer clients with medical conditions to appropriate healthcare professionals.',
             'Recognising the boundaries of your competence is a professional responsibility. Providing dietary advice for conditions such as diabetes, kidney disease, eating disorders, or severe food allergies without appropriate qualifications could cause harm and may have legal implications.',
           ],
-          imageUrl: ch6ClinicalAwareness,
+          imageUrl: getUniversityImage('nutl3-u2-ch6-clinical-awareness'),
           imageAlt: 'Nutrition scope of practice diagram',
         },
         {
@@ -354,7 +337,7 @@ export const nutritionL3Unit2: Unit = {
             'Type 2 diabetes is characterised by insulin resistance — the body produces insulin but cells respond to it less effectively, resulting in elevated blood glucose levels. Nutritional management focuses on controlling blood glucose through carbohydrate awareness, weight management, and overall dietary quality.',
             'This does not necessarily mean a "low-carb" diet — the evidence supports moderate carbohydrate intake from whole food sources, with emphasis on low-glycaemic-index foods, adequate fibre, and regular meal timing to avoid blood glucose spikes and crashes.',
           ],
-          imageUrl: ch6ScopeBoundaries,
+          imageUrl: getUniversityImage('nutl3-u2-ch6-scope-boundaries'),
           imageAlt: 'When to refer: scope of practice boundaries',
           bullets: [
             'The UK Diabetes Prevention Programme has shown that moderate weight loss (5–7% of body weight) significantly reduces risk of progression from pre-diabetes to type 2 diabetes',
@@ -375,7 +358,7 @@ export const nutritionL3Unit2: Unit = {
             'Eating disorders (anorexia nervosa, bulimia nervosa, binge eating disorder, and others) are serious mental health conditions that require specialist treatment. As someone with nutrition knowledge, you are in a position to recognise potential warning signs — but never to diagnose or treat.',
             'Warning signs include extreme dietary restriction, obsessive calorie counting, food rituals, excessive exercise to "compensate" for eating, distorted body image, and significant weight changes. If you suspect someone may be struggling, encourage them to speak with their GP and direct them to Beat — the UK eating disorder charity.',
           ],
-          imageUrl: ch6ReferralPathway,
+          imageUrl: getUniversityImage('nutl3-u2-ch6-referral-pathway'),
           imageAlt: 'Eating disorder referral pathway: GP, Beat, specialist',
         },
       ],

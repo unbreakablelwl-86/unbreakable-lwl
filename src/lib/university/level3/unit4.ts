@@ -1,28 +1,5 @@
+import { getUniversityImage } from '@/lib/university/imageMap';
 import type { Unit } from '../types';
-import l3u4ch1Img from '@/assets/university/l3-u4-ch1-adherence.png';
-import l3u4ch1WhyQuit from '@/assets/university/l3-u4-ch1-why-people-quit.png';
-import l3u4ch1Strategies from '@/assets/university/l3-u4-ch1-adherence-strategies.png';
-import l3u4ch2Img from '@/assets/university/l3-u4-ch2-habit-loop.png';
-import l3u4ch2Stacking from '@/assets/university/l3-u4-ch2-habit-stacking.png';
-import l3u4ch2Timeline from '@/assets/university/l3-u4-ch2-habit-timeline.png';
-import l3u4ch3Img from '@/assets/university/l3-u4-ch3-nervous-system.png';
-import l3u4ch3Ans from '@/assets/university/l3-u4-ch3-ans-branches.png';
-import l3u4ch3Hrv from '@/assets/university/l3-u4-ch3-hrv.png';
-import l3u4ch4Img from '@/assets/university/l3-u4-ch4-sleep-stages.png';
-import l3u4ch4Deprivation from '@/assets/university/l3-u4-ch4-sleep-deprivation.png';
-import l3u4ch4Hygiene from '@/assets/university/l3-u4-ch4-sleep-hygiene.png';
-import l3u4ch5Img from '@/assets/university/l3-u4-ch5-stress-response.png';
-import l3u4ch5Travel from '@/assets/university/l3-u4-ch5-travel-training.png';
-import l3u4ch5Motivation from '@/assets/university/l3-u4-ch5-motivation-dips.png';
-import l3u4ch6Img from '@/assets/university/l3-u4-ch6-social-support.png';
-import l3u4ch6Mindset from '@/assets/university/l3-u4-ch6-mindset-comparison.png';
-import l3u4ch6SelfTalk from '@/assets/university/l3-u4-ch6-self-talk.png';
-import l3u4ch7Img from '@/assets/university/l3-u4-ch7-self-talk.png';
-import l3u4ch7Social from '@/assets/university/l3-u4-ch7-social-environment.png';
-import l3u4ch7Comparison from '@/assets/university/l3-u4-ch7-comparison-trap.png';
-import l3u4ch8Img from '@/assets/university/l3-u4-ch8-long-term-planning.png';
-import l3u4ch8EightyTwenty from '@/assets/university/l3-u4-ch8-eighty-twenty.png';
-import l3u4ch8Burnout from '@/assets/university/l3-u4-ch8-burnout.png';
 
 export const level3Unit4: Unit = {
   number: 4,
@@ -52,7 +29,7 @@ export const level3Unit4: Unit = {
             'Lack of intrinsic motivation — Relying on external motivation (social media, a bet, a holiday) that fades over time',
             'Comparison — Measuring your progress against other people rather than your own starting point',
           ],
-          imageUrl: l3u4ch1WhyQuit,
+          imageUrl: getUniversityImage('l3-u4-ch1-why-people-quit'),
           imageAlt: 'Declining motivation curve showing five common quit points over 90 days',
         },
         {
@@ -61,7 +38,7 @@ export const level3Unit4: Unit = {
             'Consistency beats perfection every time. A person who trains three times per week for a year will achieve far more than someone who trains six times per week for six weeks and then burns out.',
             'The key shift is moving from a performance mindset ("I need to train perfectly") to a consistency mindset ("I need to keep showing up"). This means accepting that some sessions will be average, some meals will be imperfect, and progress will not be linear.',
           ],
-          imageUrl: l3u4ch1Img,
+          imageUrl: getUniversityImage('l3-u4-ch1-adherence'),
           imageAlt: 'Graph comparing perfect but unsustainable adherence vs imperfect but consistent adherence over 12 months',
         },
         {
@@ -76,7 +53,7 @@ export const level3Unit4: Unit = {
             'Track progress with multiple metrics — Scale weight, photos, strength, energy, and how clothes fit',
             'Plan for obstacles — Anticipate busy weeks, holidays, and low-motivation periods. Have a plan B.',
           ],
-          imageUrl: l3u4ch1Strategies,
+          imageUrl: getUniversityImage('l3-u4-ch1-adherence-strategies'),
           imageAlt: 'Five adherence strategies: process goals, identity-based habits, minimum viable sessions, multi-metric tracking, obstacle planning',
         },
         {
@@ -120,7 +97,7 @@ export const level3Unit4: Unit = {
             'Routine — The behaviour itself. Going to the gym, preparing a meal, drinking water.',
             'Reward — The positive outcome that reinforces the loop. This could be the post-workout endorphin rush, the satisfaction of ticking a box, or a tangible reward you set for yourself.',
           ],
-          imageUrl: l3u4ch2Img,
+          imageUrl: getUniversityImage('l3-u4-ch2-habit-loop'),
           imageAlt: 'Circular diagram showing the habit loop — Cue triggers Routine which produces Reward which reinforces the Cue',
         },
         {
@@ -129,7 +106,7 @@ export const level3Unit4: Unit = {
             'Habit stacking links a new behaviour to an existing habit. The formula is: "After [current habit], I will [new habit]." For example: "After I make my morning coffee, I will prepare my gym bag." By anchoring the new behaviour to something you already do automatically, the cue is already built in.',
             'This technique is particularly effective for small behaviours like taking supplements, filling a water bottle, or reviewing your training plan.',
           ],
-          imageUrl: l3u4ch2Stacking,
+          imageUrl: getUniversityImage('l3-u4-ch2-habit-stacking'),
           imageAlt: 'Habit stacking diagram showing existing habit plus new behaviour equals stacked routine',
         },
         {
@@ -151,7 +128,7 @@ export const level3Unit4: Unit = {
             'The popular claim that habits take 21 days to form is a myth. Research by Phillippa Lally at University College London found that it takes an average of 66 days for a new behaviour to become automatic, with significant individual variation (18 to 254 days).',
             'The key finding was that missing a single day did not reset progress. What mattered was overall consistency, not perfection. This is liberating — it means occasional misses do not ruin your habit-building efforts.',
           ],
-          imageUrl: l3u4ch2Timeline,
+          imageUrl: getUniversityImage('l3-u4-ch2-habit-timeline'),
           imageAlt: 'Bell curve showing habit formation timeline averaging 66 days with range from 18 to 254 days',
         },
       ],
@@ -183,7 +160,7 @@ export const level3Unit4: Unit = {
             'Your autonomic nervous system (ANS) has two branches that work in balance: the sympathetic nervous system (SNS) — your "fight or flight" response — and the parasympathetic nervous system (PNS) — your "rest and digest" response.',
             'Training itself is a sympathetic stressor. After training, you need to shift into a parasympathetic state for recovery and adaptation to occur. Problems arise when chronic life stress keeps you stuck in sympathetic dominance.',
           ],
-          imageUrl: l3u4ch3Ans,
+          imageUrl: getUniversityImage('l3-u4-ch3-ans-branches'),
           imageAlt: 'Two-column comparison of sympathetic fight-or-flight vs parasympathetic rest-and-digest nervous system branches',
         },
         {
@@ -198,7 +175,7 @@ export const level3Unit4: Unit = {
             'Suppressed immune function — Making you more susceptible to illness',
             'Reduced motivation — Chronic stress depletes the psychological resources needed for consistent training',
           ],
-          imageUrl: l3u4ch3Img,
+          imageUrl: getUniversityImage('l3-u4-ch3-nervous-system'),
           imageAlt: 'Balance scale diagram showing sympathetic vs parasympathetic nervous system with factors that tip each direction',
         },
         {
@@ -207,7 +184,7 @@ export const level3Unit4: Unit = {
             'HRV — the variation in time between successive heartbeats — is a non-invasive marker of autonomic nervous system balance. Higher HRV generally indicates better recovery and parasympathetic dominance. Lower HRV suggests sympathetic dominance and accumulated stress.',
             'Many wearable devices now track HRV. While not a perfect metric, trends in HRV over time can provide useful insight into your recovery status and readiness to train.',
           ],
-          imageUrl: l3u4ch3Hrv,
+          imageUrl: getUniversityImage('l3-u4-ch3-hrv'),
           imageAlt: 'Heart rate variability comparison showing high HRV good recovery vs low HRV stressed state with readiness zones',
         },
         {
@@ -252,7 +229,7 @@ export const level3Unit4: Unit = {
             'Sleep is the single most important recovery tool available to you — and it is free. During deep sleep, your body releases the majority of its daily growth hormone, repairs damaged tissues, consolidates motor learning, and restores the nervous system.',
             'Chronic sleep deprivation (consistently less than 7 hours) impairs every aspect of fitness: strength decreases, injury risk increases, appetite regulation breaks down, and motivation drops. No amount of supplements, recovery tools, or "optimal programming" can compensate for poor sleep.',
           ],
-          imageUrl: l3u4ch4Deprivation,
+          imageUrl: getUniversityImage('l3-u4-ch4-sleep-deprivation'),
           imageAlt: 'Sleep deprivation effects on six body systems including strength, injury risk, appetite, motivation, immunity, and hormones',
         },
         {
@@ -266,7 +243,7 @@ export const level3Unit4: Unit = {
             'Cortisol — Poor sleep elevates morning cortisol, promoting catabolism and fat storage.',
             'Leptin and ghrelin — Sleep deprivation decreases leptin (satiety) and increases ghrelin (hunger), making appetite control significantly harder.',
           ],
-          imageUrl: l3u4ch4Img,
+          imageUrl: getUniversityImage('l3-u4-ch4-sleep-stages'),
           imageAlt: 'Diagram showing sleep stages and hormonal release patterns across a typical 8-hour sleep cycle',
         },
         {
@@ -282,7 +259,7 @@ export const level3Unit4: Unit = {
             'Pre-sleep routine — Develop a consistent wind-down routine: dim lights, read, stretch, or practise breathing exercises.',
             'Limit alcohol — While alcohol may help you fall asleep, it severely disrupts sleep architecture, reducing deep and REM sleep.',
           ],
-          imageUrl: l3u4ch4Hygiene,
+          imageUrl: getUniversityImage('l3-u4-ch4-sleep-hygiene'),
           imageAlt: 'Sleep hygiene checklist with six key practices: consistent schedule, cool dark room, screen limitation, caffeine curfew, wind-down routine, limit alcohol',
         },
         {
@@ -332,7 +309,7 @@ export const level3Unit4: Unit = {
             'Muscle mass can be preserved with approximately one-third of your normal training volume, provided intensity is maintained',
             'Cardiovascular fitness declines more slowly than most people expect — moderate activity prevents significant loss for several weeks',
           ],
-          imageUrl: l3u4ch5Img,
+          imageUrl: getUniversityImage('l3-u4-ch5-stress-response'),
           imageAlt: 'Stress response pathway showing the HPA axis from stressor through hypothalamus, pituitary, adrenal glands, and cortisol release with negative feedback loop',
         },
         {
@@ -346,7 +323,7 @@ export const level3Unit4: Unit = {
             'Hotel gym sessions — Even basic equipment (dumbbells, cable machine) allows effective maintenance training',
             'Walking — Accumulating 8,000–10,000 steps daily maintains NEAT and cardiovascular health',
           ],
-          imageUrl: l3u4ch5Travel,
+          imageUrl: getUniversityImage('l3-u4-ch5-travel-training'),
           imageAlt: 'Four travel training options: bodyweight circuits, resistance bands, hotel gym, and walking for 10000 steps',
         },
         {
@@ -362,7 +339,7 @@ export const level3Unit4: Unit = {
             'Motivation is not constant — it fluctuates. Waiting to "feel motivated" before training is a losing strategy. Instead, rely on your systems (habits, scheduled sessions, training partners, minimum sessions) to carry you through low-motivation periods.',
             'If low motivation persists for more than two weeks, it may signal overtraining, life stress overload, or the need for a programme change. Treat persistent amotivation as information, not a character flaw.',
           ],
-          imageUrl: l3u4ch5Motivation,
+          imageUrl: getUniversityImage('l3-u4-ch5-motivation-dips'),
           imageAlt: 'Motivation wave chart over 12 months showing dips where systems like habits and training partners carry you through',
         },
       ],
@@ -394,7 +371,7 @@ export const level3Unit4: Unit = {
             'Carol Dweck\'s research on mindset distinguishes between two fundamental orientations: a fixed mindset (believing abilities are innate and unchangeable) and a growth mindset (believing abilities can be developed through effort and learning).',
             'In training, a fixed mindset sounds like: "I am not a strong person." A growth mindset sounds like: "I am not strong yet, but I am getting stronger." This single word — "yet" — transforms a limitation into a work-in-progress.',
           ],
-          imageUrl: l3u4ch6Mindset,
+          imageUrl: getUniversityImage('l3-u4-ch6-mindset-comparison'),
           imageAlt: 'Fixed vs growth mindset comparison showing locked vs open mindset with the power of the word YET',
         },
         {
@@ -407,7 +384,7 @@ export const level3Unit4: Unit = {
             'Identity-based: "I am someone who trains consistently" — This is an ongoing identity that drives behaviour indefinitely.',
             'Every action you take is a vote for the type of person you want to become. Each training session reinforces the identity of "someone who trains."',
           ],
-          imageUrl: l3u4ch6Img,
+          imageUrl: getUniversityImage('l3-u4-ch6-social-support'),
           imageAlt: 'Social support and accountability diagram showing training partner, online community, coach/mentor, and family connections',
         },
         {
@@ -421,7 +398,7 @@ export const level3Unit4: Unit = {
             'After a poor set, redirect attention: "What will I do differently next set?" rather than dwelling on failure',
             'Celebrate small wins — acknowledging progress, however small, reinforces positive self-talk patterns',
           ],
-          imageUrl: l3u4ch6SelfTalk,
+          imageUrl: getUniversityImage('l3-u4-ch6-self-talk'),
           imageAlt: 'Self-talk reframe chart transforming negative statements into positive growth-oriented alternatives',
         },
         {
@@ -460,7 +437,7 @@ export const level3Unit4: Unit = {
             'You are the average of the five people you spend the most time with — this often-quoted principle has genuine relevance in fitness. Research consistently shows that social environment significantly influences health behaviours, including exercise habits, dietary choices, and overall motivation.',
             'Surrounding yourself with people who value training and health creates social norms that make your own training feel natural rather than exceptional.',
           ],
-          imageUrl: l3u4ch7Social,
+          imageUrl: getUniversityImage('l3-u4-ch7-social-environment'),
           imageAlt: 'Social environment network diagram showing central person connected to training partner, coach, family, and communities',
         },
         {
@@ -474,7 +451,7 @@ export const level3Unit4: Unit = {
             'Safety — A spotter allows you to train closer to failure on heavy compounds',
             'Social enjoyment — Training becomes more enjoyable, which improves adherence',
           ],
-          imageUrl: l3u4ch7Img,
+          imageUrl: getUniversityImage('l3-u4-ch7-self-talk'),
           imageAlt: 'Self-talk reframing model showing negative self-talk transformed into positive reframes with the cue-thought-reframe-action process',
         },
         {
@@ -488,7 +465,7 @@ export const level3Unit4: Unit = {
             'Comparing your beginning to someone else\'s peak is demoralising and irrational',
             'The only valid comparison is you today vs you six months ago',
           ],
-          imageUrl: l3u4ch7Comparison,
+          imageUrl: getUniversityImage('l3-u4-ch7-comparison-trap'),
           imageAlt: 'The comparison trap showing highlight reel vs reality with the message to only compare yourself to your past self',
         },
         {
@@ -546,7 +523,7 @@ export const level3Unit4: Unit = {
             'High-motivation phases — Capitalise on enthusiasm with progressive training blocks and ambitious goals',
             'Recovery phases — Deliberately pull back after intense training blocks or life events',
           ],
-          imageUrl: l3u4ch8Img,
+          imageUrl: getUniversityImage('l3-u4-ch8-long-term-planning'),
           imageAlt: 'Long-term planning framework showing a 12-month timeline with foundation, development, peak, and recovery phases with quarterly assessment checkpoints',
         },
         {
@@ -559,7 +536,7 @@ export const level3Unit4: Unit = {
             'Nutrition — Adequate protein and appropriate calories drive 80% of body composition outcomes. Meal timing, supplements, and micro-optimisation are the other 20%.',
             'Lifestyle — Consistent sleep, managed stress, and regular movement cover 80% of recovery needs. Ice baths, compression boots, and recovery gadgets are the other 20%.',
           ],
-          imageUrl: l3u4ch8EightyTwenty,
+          imageUrl: getUniversityImage('l3-u4-ch8-eighty-twenty'),
           imageAlt: 'The 80/20 rule applied to training, nutrition, and lifestyle showing where the majority of results come from',
         },
         {
@@ -574,7 +551,7 @@ export const level3Unit4: Unit = {
             'Maintain perspective — Fitness serves your life, not the other way around',
             'Enjoy the process — If you only enjoy the results, you will be unhappy 95% of the time. Learn to enjoy the training itself.',
           ],
-          imageUrl: l3u4ch8Burnout,
+          imageUrl: getUniversityImage('l3-u4-ch8-burnout'),
           imageAlt: 'Burnout warning signs and prevention strategies with battery metaphor showing depletion vs recharge',
         },
         {

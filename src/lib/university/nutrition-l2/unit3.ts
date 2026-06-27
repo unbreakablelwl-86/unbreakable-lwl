@@ -1,20 +1,5 @@
+import { getUniversityImage } from '@/lib/university/imageMap';
 import type { Unit } from '../types';
-import ch1FourCs from '@/assets/university/nutl2-u3-ch1-four-cs.png';
-import ch1Bacteria from '@/assets/university/nutl2-u3-ch1-bacteria.png';
-import ch2TemperatureZones from '@/assets/university/nutl2-u3-ch2-temperature-zones.png';
-import ch2Storage from '@/assets/university/nutl2-u3-ch2-storage.png';
-import ch3CrossContamination from '@/assets/university/nutl2-u3-ch3-cross-contamination.png';
-import ch3Prevention from '@/assets/university/nutl2-u3-ch3-prevention.png';
-import ch4FoodLabels from '@/assets/university/nutl2-u3-ch4-food-labels.png';
-import ch4TrafficLight from '@/assets/university/nutl2-u3-ch4-traffic-light.png';
-import ch5BudgetShopping from '@/assets/university/nutl2-u3-ch5-budget-shopping.png';
-import ch5BudgetFoods from '@/assets/university/nutl2-u3-ch5-budget-foods.png';
-import ch6BatchCooking from '@/assets/university/nutl2-u3-ch6-batch-cooking.png';
-import ch6BatchFundamentals from '@/assets/university/nutl2-u3-ch6-batch-fundamentals.png';
-import ch7MealPrep from '@/assets/university/nutl2-u3-ch7-meal-prep.png';
-import ch7CookingMethods from '@/assets/university/nutl2-u3-ch7-cooking-methods.png';
-import ch8KitchenSafety from '@/assets/university/nutl2-u3-ch8-kitchen-safety.png';
-import ch8KnifeSafety from '@/assets/university/nutl2-u3-ch8-knife-safety.png';
 
 export const nutritionL2Unit3: Unit = {
   number: 3,
@@ -36,7 +21,7 @@ export const nutritionL2Unit3: Unit = {
           paragraphs: [
             'Food hygiene is about preventing foodborne illness through safe handling, preparation, and storage of food. The UK Food Standards Agency promotes four key principles — the "Four Cs" — as the foundation of safe food practice.',
           ],
-          imageUrl: ch1FourCs,
+          imageUrl: getUniversityImage('nutl2-u3-ch1-four-cs'),
           imageAlt: 'Four Cs of food hygiene diagram',
           bullets: [
             'Cleaning — Wash hands, utensils, and surfaces regularly. Always wash hands before handling food and after handling raw meat',
@@ -47,7 +32,7 @@ export const nutritionL2Unit3: Unit = {
         },
         {
           heading: 'Common Foodborne Bacteria',
-          imageUrl: ch1Bacteria,
+          imageUrl: getUniversityImage('nutl2-u3-ch1-bacteria'),
           imageAlt: 'Common foodborne bacteria — Salmonella, Campylobacter, E. coli, Listeria, Staphylococcus',
           bullets: [
             'Salmonella — Found in raw poultry, eggs, and meat. Causes diarrhoea, fever, and abdominal cramps. Killed by thorough cooking',
@@ -91,7 +76,7 @@ export const nutritionL2Unit3: Unit = {
           paragraphs: [
             'Bacteria multiply most rapidly between 8°C and 63°C — this is known as the "danger zone." Food should spend as little time as possible in this range. Below 5°C, bacterial growth slows significantly. Above 75°C, most harmful bacteria are killed.',
           ],
-          imageUrl: ch2TemperatureZones,
+          imageUrl: getUniversityImage('nutl2-u3-ch2-temperature-zones'),
           imageAlt: 'Food temperature danger zones diagram',
           bullets: [
             'Fridge — 0–5°C (slows bacterial growth)',
@@ -103,7 +88,7 @@ export const nutritionL2Unit3: Unit = {
         },
         {
           heading: 'Storage Best Practices',
-          imageUrl: ch2Storage,
+          imageUrl: getUniversityImage('nutl2-u3-ch2-storage'),
           imageAlt: 'Fridge storage diagram showing proper shelf arrangement and temperature',
           bullets: [
             'Raw meat — Store on the bottom shelf of the fridge in sealed containers to prevent dripping onto other food',
@@ -149,7 +134,7 @@ export const nutritionL2Unit3: Unit = {
             'Cross-contamination occurs when harmful bacteria are transferred from one food or surface to another. This is one of the most common causes of foodborne illness and is entirely preventable with proper practices.',
             'The most dangerous form is the transfer of bacteria from raw food (especially meat, poultry, and fish) to ready-to-eat food (salads, bread, cooked food). This can happen through direct contact, via hands, or through shared utensils and surfaces.',
           ],
-          imageUrl: ch3CrossContamination,
+          imageUrl: getUniversityImage('nutl2-u3-ch3-cross-contamination'),
           imageAlt: 'Cross-contamination pathways diagram',
         },
         {
@@ -165,7 +150,7 @@ export const nutritionL2Unit3: Unit = {
         },
         {
           heading: 'Prevention Measures',
-          imageUrl: ch3Prevention,
+          imageUrl: getUniversityImage('nutl2-u3-ch3-prevention'),
           imageAlt: 'Four cross-contamination prevention measures with colour-coded chopping boards',
           bullets: [
             'Use colour-coded chopping boards (red for raw meat, green for salad/veg)',
@@ -204,7 +189,7 @@ export const nutritionL2Unit3: Unit = {
           paragraphs: [
             'UK food law requires pre-packaged foods to display specific information to help consumers make informed choices. Understanding this information is a fundamental nutrition skill.',
           ],
-          imageUrl: ch4FoodLabels,
+          imageUrl: getUniversityImage('nutl2-u3-ch4-food-labels'),
           imageAlt: 'Annotated food label diagram',
           bullets: [
             'Product name and description',
@@ -219,7 +204,7 @@ export const nutritionL2Unit3: Unit = {
         },
         {
           heading: 'Traffic Light Labels',
-          imageUrl: ch4TrafficLight,
+          imageUrl: getUniversityImage('nutl2-u3-ch4-traffic-light'),
           imageAlt: 'UK traffic light food label system showing red, amber, and green indicators',
           paragraphs: [
             'The UK front-of-pack traffic light system uses colour coding to show at a glance whether a food is high (red), medium (amber), or low (green) in fat, saturated fat, sugar, and salt per serving or per 100 g.',
@@ -270,12 +255,12 @@ export const nutritionL2Unit3: Unit = {
           paragraphs: [
             'One of the most common barriers to healthy eating is the perception that it costs more. While some nutrient-dense foods are expensive, many are among the cheapest items in the supermarket. The key is knowing which foods offer the best nutritional value per pound.',
           ],
-          imageUrl: ch5BudgetShopping,
+          imageUrl: getUniversityImage('nutl2-u3-ch5-budget-shopping'),
           imageAlt: 'Cost per gram of protein comparison',
         },
         {
           heading: 'Budget-Friendly Nutrient-Dense Foods',
-          imageUrl: ch5BudgetFoods,
+          imageUrl: getUniversityImage('nutl2-u3-ch5-budget-foods'),
           imageAlt: 'Budget-friendly nutrient-dense foods grid with cost per serving',
           bullets: [
             'Eggs — One of the cheapest complete protein sources. Versatile and nutritious',
@@ -331,12 +316,12 @@ export const nutritionL2Unit3: Unit = {
             'Meal preparation is the practice of cooking and portioning meals in advance — typically for 3–5 days. It removes the daily decision of "what should I eat?" and replaces it with a ready-made healthy option.',
             "The biggest benefit is consistency. When healthy food is ready and accessible, you eat it. When it isn\'t, you reach for convenience options that are often higher in calories and lower in nutrients.",
           ],
-          imageUrl: ch6BatchCooking,
+          imageUrl: getUniversityImage('nutl2-u3-ch6-batch-cooking'),
           imageAlt: 'Batch cooking workflow diagram',
         },
         {
           heading: 'Batch Cooking Fundamentals',
-          imageUrl: ch6BatchFundamentals,
+          imageUrl: getUniversityImage('nutl2-u3-ch6-batch-fundamentals'),
           imageAlt: 'Four-step batch cooking process — plan, shop, cook, store',
           bullets: [
             'Choose 2–3 protein sources to cook in bulk (e.g., chicken thighs, mince, lentils)',
@@ -392,7 +377,7 @@ export const nutritionL2Unit3: Unit = {
           paragraphs: [
             'Successful meal prep starts with a plan. Before you cook, decide what you will eat for the week, write a shopping list, and organise your kitchen. This preparation saves time, money, and stress.',
           ],
-          imageUrl: ch7MealPrep,
+          imageUrl: getUniversityImage('nutl2-u3-ch7-meal-prep'),
           imageAlt: 'Weekly meal planning template',
           bullets: [
             'Review your schedule for the week — which days are busiest?',
@@ -404,7 +389,7 @@ export const nutritionL2Unit3: Unit = {
         },
         {
           heading: 'Time-Efficient Cooking',
-          imageUrl: ch7CookingMethods,
+          imageUrl: getUniversityImage('nutl2-u3-ch7-cooking-methods'),
           imageAlt: 'Time-efficient cooking methods — sheet pan, slow cooker, one pot, stir-fry',
           bullets: [
             'Use the oven for multiple items at once (roast veg, bake chicken, cook sweet potato)',
@@ -455,7 +440,7 @@ export const nutritionL2Unit3: Unit = {
           paragraphs: [
             'The kitchen is one of the most common locations for domestic accidents. Understanding potential hazards and how to prevent them is an essential life skill — whether you are cooking for yourself or for others.',
           ],
-          imageUrl: ch8KitchenSafety,
+          imageUrl: getUniversityImage('nutl2-u3-ch8-kitchen-safety'),
           imageAlt: 'Kitchen safety hazards diagram',
           bullets: [
             'Burns and scalds — The most common kitchen injury. Use oven gloves, turn pan handles inward, and be cautious with steam',
@@ -467,7 +452,7 @@ export const nutritionL2Unit3: Unit = {
         },
         {
           heading: 'Safe Knife Handling',
-          imageUrl: ch8KnifeSafety,
+          imageUrl: getUniversityImage('nutl2-u3-ch8-knife-safety'),
           imageAlt: 'Safe knife handling rules with claw grip, carry, and washing guidelines',
           bullets: [
             'Always cut on a stable chopping board',

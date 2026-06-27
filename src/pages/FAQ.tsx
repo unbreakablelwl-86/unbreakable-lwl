@@ -24,7 +24,7 @@ import {
   Zap,
   MessageCircle,
 } from 'lucide-react';
-import founderPhoto from '@/assets/john-founder.png';
+const founderPhoto = 'https://vlwcoqilwyfcrsxodtdx.supabase.co/storage/v1/object/public/site-assets/misc/john-founder.webp';
 
 /* ─── FAQ Data ─── */
 interface FAQItem {

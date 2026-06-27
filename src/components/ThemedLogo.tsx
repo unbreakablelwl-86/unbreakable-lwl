@@ -1,4 +1,4 @@
-import logo from '@/assets/logo.png';
+const logo = 'https://vlwcoqilwyfcrsxodtdx.supabase.co/storage/v1/object/public/site-assets/misc/logo.webp';
 
 interface ThemedLogoProps {
   className?: string;

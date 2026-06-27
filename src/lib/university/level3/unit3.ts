@@ -1,29 +1,5 @@
+import { getUniversityImage } from '@/lib/university/imageMap';
 import type { Unit } from '../types';
-import l3u3ch1Img from '@/assets/university/l3-u3-ch1-periodisation-models.png';
-import l3u3ch1Linear from '@/assets/university/l3-u3-ch1-linear-periodisation.png';
-import l3u3ch1Block from '@/assets/university/l3-u3-ch1-block-periodisation.png';
-import l3u3ch1Conjugate from '@/assets/university/l3-u3-ch1-conjugate-method.png';
-import l3u3ch2Img from '@/assets/university/l3-u3-ch2-exercise-selection.png';
-import l3u3ch2Compound from '@/assets/university/l3-u3-ch2-compound-vs-isolation.png';
-import l3u3ch2Sfr from '@/assets/university/l3-u3-ch2-sfr-comparison.png';
-import l3u3ch3Img from '@/assets/university/l3-u3-ch3-training-splits.png';
-import l3u3ch3FullBody from '@/assets/university/l3-u3-ch3-full-body-layout.png';
-import l3u3ch3Ppl from '@/assets/university/l3-u3-ch3-ppl-layout.png';
-import l3u3ch4Img from '@/assets/university/l3-u3-ch4-rpe-scale.png';
-import l3u3ch4Flow from '@/assets/university/l3-u3-ch4-autoregulation-flow.png';
-import l3u3ch4Rir from '@/assets/university/l3-u3-ch4-rir-scale.png';
-import l3u3ch5Img from '@/assets/university/l3-u3-ch5-weak-points.png';
-import l3u3ch5Strategies from '@/assets/university/l3-u3-ch5-priority-strategies.png';
-import l3u3ch5Fixes from '@/assets/university/l3-u3-ch5-common-fixes.png';
-import l3u3ch6Img from '@/assets/university/l3-u3-ch6-tapering.png';
-import l3u3ch6Tapers from '@/assets/university/l3-u3-ch6-taper-types.png';
-import l3u3ch6Peak from '@/assets/university/l3-u3-ch6-strength-peak.png';
-import l3u3ch7Img from '@/assets/university/l3-u3-ch7-progression-curves.png';
-import l3u3ch7Intermediate from '@/assets/university/l3-u3-ch7-intermediate-framework.png';
-import l3u3ch7Advanced from '@/assets/university/l3-u3-ch7-advanced-framework.png';
-import l3u3ch8Img from '@/assets/university/l3-u3-ch8-programme-layout.png';
-import l3u3ch8Process from '@/assets/university/l3-u3-ch8-design-process.png';
-import l3u3ch8Cycle from '@/assets/university/l3-u3-ch8-review-cycle.png';
 
 export const level3Unit3: Unit = {
   number: 3,
@@ -56,7 +32,7 @@ export const level3Unit3: Unit = {
             'Advantages — Simple to programme and follow. Clear progression path. Well-suited to beginners and those peaking for a specific event.',
             'Limitations — Only one quality is emphasised at a time. Gains in earlier phases (e.g., endurance) may detrain while focusing on later phases (e.g., strength).',
           ],
-          imageUrl: l3u3ch1Linear,
+          imageUrl: getUniversityImage('l3-u3-ch1-linear-periodisation'),
           imageAlt: 'Staircase chart showing ascending load and descending reps across 12 weeks of linear periodisation',
         },
         {
@@ -68,7 +44,7 @@ export const level3Unit3: Unit = {
             'Advantages — Trains multiple qualities concurrently. Greater variety reduces boredom. Research shows it can produce similar or superior results to linear periodisation for intermediate trainees.',
             'Limitations — More complex to programme. Requires careful management of fatigue across sessions.',
           ],
-          imageUrl: l3u3ch1Img,
+          imageUrl: getUniversityImage('l3-u3-ch1-periodisation-models'),
           imageAlt: 'Comparison chart showing linear periodisation vs daily undulating periodisation across a 12-week cycle',
         },
         {
@@ -80,7 +56,7 @@ export const level3Unit3: Unit = {
             'Advantages — Concentrated focus produces faster adaptation in the targeted quality. Efficient for advanced trainees with specific performance goals.',
             'Limitations — Non-targeted qualities may detrain during blocks that do not address them. Requires precise planning.',
           ],
-          imageUrl: l3u3ch1Block,
+          imageUrl: getUniversityImage('l3-u3-ch1-block-periodisation'),
           imageAlt: 'Three-block diagram showing Accumulation, Transmutation, and Realisation phases of block periodisation',
         },
         {
@@ -89,7 +65,7 @@ export const level3Unit3: Unit = {
             'Conjugate (concurrent) periodisation trains multiple qualities simultaneously by dedicating different sessions to different focuses. The Westside Barbell method is the most well-known example: maximum effort days for strength, dynamic effort days for speed, and repetition days for hypertrophy within the same week.',
             'This model is most commonly used by advanced powerlifters but the principles — varying the training stimulus within a week while maintaining multiple qualities — can be applied to any programme.',
           ],
-          imageUrl: l3u3ch1Conjugate,
+          imageUrl: getUniversityImage('l3-u3-ch1-conjugate-method'),
           imageAlt: 'Three-pillar diagram showing Max Effort, Dynamic Effort, and Repetition methods of the conjugate system',
         },
         {
@@ -131,7 +107,7 @@ export const level3Unit3: Unit = {
             'Isolation exercises allow targeted development of specific muscles that may be underserved by compounds',
             'A balance of both is ideal: compounds for overall development, isolations for targeted work',
           ],
-          imageUrl: l3u3ch2Compound,
+          imageUrl: getUniversityImage('l3-u3-ch2-compound-vs-isolation'),
           imageAlt: 'Side-by-side comparison of compound and isolation exercises showing multi-joint vs single-joint muscle activation',
         },
         {
@@ -146,7 +122,7 @@ export const level3Unit3: Unit = {
             'Equipment availability — The best exercise is one you can actually perform consistently with the equipment available',
             'Skill level — Complex movements (Olympic lifts, single-leg work) require technical proficiency before they are effective',
           ],
-          imageUrl: l3u3ch2Img,
+          imageUrl: getUniversityImage('l3-u3-ch2-exercise-selection'),
           imageAlt: 'Decision flowchart for exercise selection showing goal alignment, anatomy check, stimulus-to-fatigue ratio assessment, equipment check, and skill level evaluation',
         },
         {
@@ -168,7 +144,7 @@ export const level3Unit3: Unit = {
             'This concept deserves special attention. Two exercises may target the same muscle, but one might create significantly more systemic fatigue than the other. For example, a barbell row and a chest-supported dumbbell row both target the back, but the barbell row creates substantially more lower back and systemic fatigue.',
             'Choosing exercises with a favourable stimulus-to-fatigue ratio allows you to accumulate more effective training volume without exceeding your recovery capacity.',
           ],
-          imageUrl: l3u3ch2Sfr,
+          imageUrl: getUniversityImage('l3-u3-ch2-sfr-comparison'),
           imageAlt: 'Stimulus-to-fatigue ratio comparison between barbell row and chest-supported row showing fatigue differences',
         },
       ],
@@ -209,7 +185,7 @@ export const level3Unit3: Unit = {
             'Advantages — High frequency per muscle group (3×/week). Ideal for beginners. Efficient for those with limited training days. Research supports higher frequency for hypertrophy.',
             'Limitations — Sessions can be long. Fatigue from early exercises affects later ones. Harder to accumulate high volume per muscle group as you advance.',
           ],
-          imageUrl: l3u3ch3FullBody,
+          imageUrl: getUniversityImage('l3-u3-ch3-full-body-layout'),
           imageAlt: 'Weekly calendar showing 3-day full body training split with rest days and muscle frequency of 3x per week',
         },
         {
@@ -221,7 +197,7 @@ export const level3Unit3: Unit = {
             'Advantages — Good balance of frequency (2×/week per muscle) and volume. Manageable session lengths. Suitable for intermediates.',
             'Limitations — Lower body days can be demanding with squats, deadlifts, and accessories in one session. May need variation between the two upper and two lower sessions.',
           ],
-          imageUrl: l3u3ch3Img,
+          imageUrl: getUniversityImage('l3-u3-ch3-training-splits'),
           imageAlt: 'Weekly schedule comparison showing full body, upper/lower, PPL, and body part split with muscle group frequency indicated',
         },
         {
@@ -233,7 +209,7 @@ export const level3Unit3: Unit = {
             'Advantages — Logical grouping by movement pattern. Allows high volume per muscle group. 6-day PPL provides 2× frequency.',
             'Limitations — Requires 6 days per week for optimal frequency. 3-day PPL only hits each muscle once per week. Demanding recovery requirements.',
           ],
-          imageUrl: l3u3ch3Ppl,
+          imageUrl: getUniversityImage('l3-u3-ch3-ppl-layout'),
           imageAlt: '6-day Push/Pull/Legs rotation layout showing muscle groupings and 2x weekly frequency',
         },
         {
@@ -294,7 +270,7 @@ export const level3Unit3: Unit = {
             'RPE 9 — Could have done 1 more rep. Very challenging.',
             'RPE 10 — Maximum effort. Could not have done another rep (true failure).',
           ],
-          imageUrl: l3u3ch4Img,
+          imageUrl: getUniversityImage('l3-u3-ch4-rpe-scale'),
           imageAlt: 'RPE scale visual from 6 to 10 showing reps in reserve for each level with colour coding from green to red',
         },
         {
@@ -303,7 +279,7 @@ export const level3Unit3: Unit = {
             'RIR (Reps in Reserve) is closely related to RPE and is often easier for trainees to understand. Instead of rating effort, you estimate how many more reps you could have performed. RPE 8 = 2 RIR. RPE 9 = 1 RIR. RPE 10 = 0 RIR (failure).',
             'Research suggests that training at RPE 7–9 (1–3 RIR) for most working sets produces optimal hypertrophy results. Training to true failure on every set creates excessive fatigue without proportional benefit.',
           ],
-          imageUrl: l3u3ch4Rir,
+          imageUrl: getUniversityImage('l3-u3-ch4-rir-scale'),
           imageAlt: 'RIR scale from 0 to 4 with corresponding RPE values and optimal training zone highlighted between RIR 1-3',
         },
         {
@@ -317,7 +293,7 @@ export const level3Unit3: Unit = {
             'Fatigue stops — Set a performance limit (e.g., "stop when rep speed noticeably drops or RPE exceeds 9"). This prevents junk volume.',
             'Back-off sets — After a top set, reduce the load by 10–15% and perform additional volume at a lower RPE.',
           ],
-          imageUrl: l3u3ch4Flow,
+          imageUrl: getUniversityImage('l3-u3-ch4-autoregulation-flow'),
           imageAlt: 'Decision flowchart for auto-regulation showing readiness assessment leading to load adjustment paths',
         },
         {
@@ -362,7 +338,7 @@ export const level3Unit3: Unit = {
             'Sticking points — Where you fail in a lift often indicates the weakest link. Failing at the bottom of a squat suggests quad or glute weakness; failing at lockout suggests hip extension.',
             'Movement quality — Poor form during specific exercises may indicate weakness in stabilising muscles.',
           ],
-          imageUrl: l3u3ch5Img,
+          imageUrl: getUniversityImage('l3-u3-ch5-weak-points'),
           imageAlt: 'Body map diagram highlighting common weak points — rear delts, hamstrings, glutes, upper back — with typical imbalance patterns',
         },
         {
@@ -377,7 +353,7 @@ export const level3Unit3: Unit = {
             'Isolation work — Add direct isolation exercises for the weak muscle group',
             'Frequency increase — Train the weak muscle more frequently (e.g., 3× per week instead of 2×)',
           ],
-          imageUrl: l3u3ch5Strategies,
+          imageUrl: getUniversityImage('l3-u3-ch5-priority-strategies'),
           imageAlt: 'Five-pillar diagram showing weak point strategies: priority placement, volume increase, exercise selection, isolation work, and frequency boost',
         },
         {
@@ -391,7 +367,7 @@ export const level3Unit3: Unit = {
             'Upper back — Insufficient rowing volume relative to pressing. Add a 2:1 ratio of pull to push volume.',
             'Glutes — Under-activated in many trainees. Add hip thrusts, glute bridges, and cable kickbacks with a mind-muscle focus.',
           ],
-          imageUrl: l3u3ch5Fixes,
+          imageUrl: getUniversityImage('l3-u3-ch5-common-fixes'),
           imageAlt: 'Table showing common weak points (rear delts, hamstrings, upper back, glutes) with specific exercise solutions',
         },
         {
@@ -441,7 +417,7 @@ export const level3Unit3: Unit = {
             'Maintain training frequency. Reducing sessions disrupts rhythm and can impair readiness.',
             'Prioritise sleep, nutrition, and stress management during the taper.',
           ],
-          imageUrl: l3u3ch6Img,
+          imageUrl: getUniversityImage('l3-u3-ch6-tapering'),
           imageAlt: 'Graph showing the fitness-fatigue model during a taper — fitness remains high while fatigue drops sharply and performance peaks',
         },
         {
@@ -454,7 +430,7 @@ export const level3Unit3: Unit = {
             'Step taper — Volume drops sharply at the start of the taper and remains low. Best for short tapers (1 week).',
             'Exponential taper — Volume decreases rapidly at first, then more gradually. Often considered optimal for endurance events.',
           ],
-          imageUrl: l3u3ch6Tapers,
+          imageUrl: getUniversityImage('l3-u3-ch6-taper-types'),
           imageAlt: 'Three-line graph comparing linear, step, and exponential taper types showing volume reduction over 3 weeks',
         },
         {
@@ -463,7 +439,7 @@ export const level3Unit3: Unit = {
             'For strength peaking (e.g., testing 1RM or competing in powerlifting), the final two weeks should feature reduced volume with heavy singles, doubles, or triples at 90–95% of projected maxes. The final 3–5 days before the event should involve very light movement or complete rest.',
             'Practice the competition movements at the expected loads during the taper. This is not the time to introduce new exercises or techniques.',
           ],
-          imageUrl: l3u3ch6Peak,
+          imageUrl: getUniversityImage('l3-u3-ch6-strength-peak'),
           imageAlt: 'Timeline showing the final 2-week strength peaking protocol with decreasing volume bars leading to competition day',
         },
         {
@@ -513,7 +489,7 @@ export const level3Unit3: Unit = {
             'Complexity — Minimal. Master basic movement patterns. No need for advanced techniques.',
             'Key focus — Learning technique, building consistency, establishing the training habit.',
           ],
-          imageUrl: l3u3ch7Img,
+          imageUrl: getUniversityImage('l3-u3-ch7-progression-curves'),
           imageAlt: 'Progression curve diagram showing beginner, intermediate, and advanced training ages with diminishing rate of progress',
         },
         {
@@ -527,7 +503,7 @@ export const level3Unit3: Unit = {
             'Complexity — Moderate. Introduction of varied rep ranges, auto-regulation (RPE/RIR), and basic advanced techniques.',
             'Key focus — Building muscle, refining technique, learning to manage fatigue and recovery.',
           ],
-          imageUrl: l3u3ch7Intermediate,
+          imageUrl: getUniversityImage('l3-u3-ch7-intermediate-framework'),
           imageAlt: 'Intermediate programme framework showing 4-week mesocycle with DUP and progressive volume ramp plus deload',
         },
         {
@@ -541,7 +517,7 @@ export const level3Unit3: Unit = {
             'Complexity — High. Advanced techniques, auto-regulation, weak point specialisation, and frequent programme adjustments.',
             'Key focus — Incremental progress, injury prevention, long-term planning, and sustainability.',
           ],
-          imageUrl: l3u3ch7Advanced,
+          imageUrl: getUniversityImage('l3-u3-ch7-advanced-framework'),
           imageAlt: 'Layered diagram showing advanced programme complexity with macrocycle, mesocycle, and microcycle layers',
         },
         {
@@ -587,7 +563,7 @@ export const level3Unit3: Unit = {
             'Step 6 — Build in auto-regulation, deloads, and recovery management',
             'Step 7 — Review, execute, and adjust based on feedback',
           ],
-          imageUrl: l3u3ch8Process,
+          imageUrl: getUniversityImage('l3-u3-ch8-design-process'),
           imageAlt: '7-step sequential flowchart of the programme design process from goal definition to review and adjustment',
         },
         {
@@ -603,7 +579,7 @@ export const level3Unit3: Unit = {
             'Week 9 (Deload): Volume reduced by 50%, load maintained, RPE 6–7',
             'Weeks 10–12 (Peak block): High volume with heavy emphasis, RPE 8–9, testing PRs in week 12',
           ],
-          imageUrl: l3u3ch8Img,
+          imageUrl: getUniversityImage('l3-u3-ch8-programme-layout'),
           imageAlt: 'Gantt chart style diagram showing a 12-week programme layout with accumulation, intensification, deload, and peak blocks',
         },
         {
@@ -621,7 +597,7 @@ export const level3Unit3: Unit = {
             'No programme survives first contact with reality without some adjustment. After each mesocycle, review performance data: did lifts progress? Was recovery adequate? Were any exercises causing joint issues? Use this feedback to refine the next block.',
             'The mark of good programming is not perfection on paper — it is the ability to adjust intelligently when things do not go exactly as planned.',
           ],
-          imageUrl: l3u3ch8Cycle,
+          imageUrl: getUniversityImage('l3-u3-ch8-review-cycle'),
           imageAlt: 'Circular feedback loop showing Execute, Measure, Evaluate, and Adjust stages of continuous programme improvement',
         },
       ],

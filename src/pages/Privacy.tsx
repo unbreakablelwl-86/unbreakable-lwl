@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowLeft } from 'lucide-react';
 import { LandingFooter } from '@/components/landing/LandingFooter';
-import trademarkBadge from '@/assets/trademark-badge.png';
+const trademarkBadge = 'https://vlwcoqilwyfcrsxodtdx.supabase.co/storage/v1/object/public/site-assets/misc/trademark-badge.webp';
 
 const fadeUp = {
   initial: { opacity: 0, y: 16 },

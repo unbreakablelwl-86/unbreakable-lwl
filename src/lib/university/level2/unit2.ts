@@ -1,12 +1,5 @@
+import { getUniversityImage } from '@/lib/university/imageMap';
 import type { Unit } from '../types';
-import ch1Macronutrients from '@/assets/university/u2-ch1-protein-sources.png';
-import ch2Micronutrients from '@/assets/university/u2-ch2-deficiency-signs.png';
-import ch3Hydration from '@/assets/university/u2-ch3-dehydration-stages.png';
-import ch4EnergyBalance from '@/assets/university/u2-ch4-tdee-breakdown.png';
-import ch5FoodLabels from '@/assets/university/u2-ch5-marketing-claims.png';
-import ch6NutrientTiming from '@/assets/university/u2-ch6-meal-frequency.png';
-import ch7BalancedPlate from '@/assets/university/u2-ch7-plate-model.png';
-import ch8MythEvaluation from '@/assets/university/l2-u2-ch8-myth-evaluation.png';
 
 export const level2Unit2: Unit = {
   number: 2,
@@ -56,7 +49,7 @@ export const level2Unit2: Unit = {
             'Fibre: a type of carbohydrate the body cannot digest. Essential for gut health, satiety, and blood sugar regulation. Found in vegetables, fruits, whole grains, and legumes.',
             'Glycogen: the stored form of carbohydrate in muscles and the liver. Depleted during exercise and replenished through dietary carbohydrate.',
           ],
-          imageUrl: ch1Macronutrients,
+          imageUrl: getUniversityImage('u2-ch1-protein-sources'),
           imageAlt: 'Diagram showing the three macronutrients — protein, carbohydrates, and fats — with their caloric values and food sources',
         },
         {
@@ -128,7 +121,7 @@ export const level2Unit2: Unit = {
             'Vitamin E — antioxidant, protects cells from damage. Sources: nuts, seeds, olive oil, avocado.',
             'Vitamin K — blood clotting, bone metabolism. Sources: leafy greens (kale, spinach, broccoli).',
           ],
-          imageUrl: ch2Micronutrients,
+          imageUrl: getUniversityImage('u2-ch2-deficiency-signs'),
           imageAlt: 'Diagram showing fat-soluble and water-soluble vitamins alongside key minerals and their food sources',
         },
         {
@@ -207,7 +200,7 @@ export const level2Unit2: Unit = {
             'Digestion — water is essential for breaking down food, absorbing nutrients, and maintaining gut health.',
             'Cognitive function — even mild dehydration reduces concentration, reaction time, and mood.',
           ],
-          imageUrl: ch3Hydration,
+          imageUrl: getUniversityImage('u2-ch3-dehydration-stages'),
           imageAlt: 'Diagram showing the role of water in the body, electrolyte balance, and recommended daily intake guidelines',
         },
         {
@@ -290,7 +283,7 @@ export const level2Unit2: Unit = {
             'TEF (Thermic Effect of Food) — the energy used to digest, absorb, and process food. This accounts for approximately 10% of TDEE. Protein has the highest TEF (~20-30%), followed by carbohydrates (~5-10%), then fats (~0-3%).',
             'EAT (Exercise Activity Thermogenesis) — the energy burned during structured exercise. For most people, this is only 5-10% of TDEE — far less than most assume.',
           ],
-          imageUrl: ch4EnergyBalance,
+          imageUrl: getUniversityImage('u2-ch4-tdee-breakdown'),
           imageAlt: 'Diagram showing the components of Total Daily Energy Expenditure: BMR, NEAT, TEF, and EAT with their relative proportions',
         },
         {
@@ -370,7 +363,7 @@ export const level2Unit2: Unit = {
             'Protein — important for satiety and muscle repair.',
             'Salt — high: >1.5g per 100g. Low: <0.3g per 100g. Adults should consume no more than 6g per day.',
           ],
-          imageUrl: ch5FoodLabels,
+          imageUrl: getUniversityImage('u2-ch5-marketing-claims'),
           imageAlt: 'Annotated food label showing key sections: serving size, calories, macronutrients, daily values, and ingredient list',
         },
         {
@@ -460,7 +453,7 @@ export const level2Unit2: Unit = {
             'Avoid high-fat, high-fibre meals close to training — these slow digestion and can cause bloating or nausea.',
             'Fasted training is viable for low-to-moderate intensity sessions but may impair high-intensity performance.',
           ],
-          imageUrl: ch6NutrientTiming,
+          imageUrl: getUniversityImage('u2-ch6-meal-frequency'),
           imageAlt: 'Timeline diagram showing nutrient timing around exercise: pre-workout, during workout, and post-workout nutrition windows',
         },
         {
@@ -544,7 +537,7 @@ export const level2Unit2: Unit = {
             'Healthy fat sources: include nuts, seeds, olive oil, avocado, and oily fish. Don\'t fear fat — just be aware of its caloric density.',
             'Adequate hydration: 35ml per kg bodyweight as a baseline, more with exercise and heat.',
           ],
-          imageUrl: ch7BalancedPlate,
+          imageUrl: getUniversityImage('u2-ch7-plate-model'),
           imageAlt: 'Diagram showing a balanced plate composition with protein, carbohydrates, vegetables, and healthy fats, alongside a full day meal structure',
         },
         {
@@ -666,7 +659,7 @@ export const level2Unit2: Unit = {
             'Dose and context — Many substances are harmful at high doses but fine at normal levels. Sugar isn\'t poison. Saturated fat isn\'t deadly. Context and quantity matter.',
             'The "too good to be true" test — If it sounds like a miracle, it probably isn\'t. Real nutrition science is boring: eat mostly whole foods, get enough protein, maintain a healthy weight. That\'s it.',
           ],
-          imageUrl: ch8MythEvaluation,
+          imageUrl: getUniversityImage('l2-u2-ch8-myth-evaluation'),
           imageAlt: 'Five-step flowchart for evaluating nutrition claims: who benefits, what research says, correlation vs causation, dose and context, and too-good-to-be-true test',
         },
       ],

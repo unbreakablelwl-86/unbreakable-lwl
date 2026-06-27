@@ -1,10 +1,5 @@
+import { getUniversityImage } from '@/lib/university/imageMap';
 import type { Unit } from '../types';
-import ch1ResilienceSystem from '@/assets/university/mindl3-u4-ch1-resilience-system.png';
-import ch2SetbackNavigation from '@/assets/university/mindl3-u4-ch2-setback-navigation.png';
-import ch3SocialResilience from '@/assets/university/mindl3-u4-ch3-social-resilience.png';
-import ch4PurposeValues from '@/assets/university/mindl3-u4-ch4-purpose-values.png';
-import ch5CoachingOthers from '@/assets/university/mindl3-u4-ch5-coaching-others.png';
-import ch6UnbreakablePhilosophy from '@/assets/university/mindl3-u4-ch6-unbreakable-philosophy.png';
 
 export const mindsetL3Unit4: Unit = {
   number: 4,
@@ -27,7 +22,7 @@ export const mindsetL3Unit4: Unit = {
             'A complete resilience system addresses five areas daily: physiological regulation (breathwork, exposure therapy), physical challenge (training, movement), cognitive engagement (learning, deep work), emotional processing (journaling, reflection), and social connection (meaningful relationships). Missing any pillar consistently creates a vulnerability.',
             'The key is integration, not addition. You do not need hours of extra practice — you need intentional design. Your morning routine, training session, and evening wind-down can incorporate all five pillars within your existing schedule.',
           ],
-          imageUrl: ch1ResilienceSystem,
+          imageUrl: getUniversityImage('mindl3-u4-ch1-resilience-system'),
           imageAlt: 'Personal resilience system showing interconnected physical, mental, emotional, and social pillars with daily practices',
           imagePlaceholder: 'Pentagon diagram showing the five pillars of daily resilience — Physiological Regulation, Physical Challenge, Cognitive Engagement, Emotional Processing, Social Connection — with example practices for each',
         },
@@ -81,7 +76,7 @@ export const mindsetL3Unit4: Unit = {
             'Major setbacks — injury, job loss, relationship breakdown, bereavement — disrupt your identity, routine, and sense of control simultaneously. The psychological response is not a clean linear process but a messy oscillation between denial, anger, bargaining, sadness, and acceptance (Kübler-Ross\'s model, adapted for general setbacks).',
             'Understanding that oscillation is normal prevents the secondary injury of criticising yourself for "not handling it well." Some days you will feel fine; the next day the setback hits again. This is not regression — it is the natural pattern of psychological processing.',
           ],
-          imageUrl: ch2SetbackNavigation,
+          imageUrl: getUniversityImage('mindl3-u4-ch2-setback-navigation'),
           imageAlt: 'Advanced setback navigation showing emotional timeline after failure and bounce-back protocol steps',
           imagePlaceholder: 'Wave diagram showing the non-linear oscillation of setback recovery, with emotional intensity gradually decreasing over time but with frequent revisits to earlier emotional states',
         },
@@ -134,7 +129,7 @@ export const mindsetL3Unit4: Unit = {
             'Loneliness is as harmful to health as smoking 15 cigarettes per day — this is not hyperbole but the conclusion of a meta-analysis of 148 studies involving 300,000+ participants. Social connection reduces cortisol, improves immune function, enhances cardiovascular health, and is the single strongest predictor of happiness and longevity.',
             'Quality matters more than quantity. One deeply supportive relationship is more protective than a hundred superficial connections. The relationships that matter are characterised by trust, reciprocity, emotional safety, and the ability to be authentically yourself.',
           ],
-          imageUrl: ch3SocialResilience,
+          imageUrl: getUniversityImage('mindl3-u4-ch3-social-resilience'),
           imageAlt: 'Social resilience and boundaries showing relationship energy audit, boundary types, and social support network map',
           imagePlaceholder: 'Infographic comparing the health impact of loneliness vs social connection across five health domains — cardiovascular, immune, mental health, longevity, and cognitive function',
         },
@@ -187,7 +182,7 @@ export const mindsetL3Unit4: Unit = {
             'Hedonic wellbeing is the pursuit of pleasure and avoidance of pain — it is about feeling good. Eudaimonic wellbeing is the pursuit of meaning, purpose, and the realisation of your potential — it is about living well. Research consistently shows that eudaimonic wellbeing produces deeper, more lasting satisfaction than hedonic wellbeing alone.',
             'This is not about rejecting pleasure. It is about understanding that a life built solely on comfort-seeking eventually feels empty, while a life with purpose can sustain you through discomfort. The training metaphor is perfect: the session is often uncomfortable, but the sense of accomplishment, progress, and alignment with your values makes it deeply satisfying.',
           ],
-          imageUrl: ch4PurposeValues,
+          imageUrl: getUniversityImage('mindl3-u4-ch4-purpose-values'),
           imageAlt: 'Purpose, values and meaning showing values hierarchy pyramid, ikigai framework, and purpose-driven decision filter',
           imagePlaceholder: 'Comparison chart showing hedonic wellbeing (short-term pleasure, diminishing returns) vs eudaimonic wellbeing (deeper satisfaction, compounds over time) with examples from training context',
         },
@@ -242,7 +237,7 @@ export const mindsetL3Unit4: Unit = {
             'Coaching helps someone find their own answers through questions and structured reflection. Mentoring shares experience and guidance based on the mentor\'s own journey. Therapy treats psychological disorders, trauma, and clinical conditions using evidence-based clinical techniques. Understanding these distinctions prevents you from overstepping your competence.',
             'As a resilience-informed individual, you can coach and mentor — helping friends, training partners, and colleagues develop mental toughness through the practices you have learned. You cannot and should not attempt to provide therapy. When someone describes symptoms of depression, anxiety disorders, PTSD, or suicidal ideation, the appropriate response is to encourage them to seek professional help.',
           ],
-          imageUrl: ch5CoachingOthers,
+          imageUrl: getUniversityImage('mindl3-u4-ch5-coaching-others'),
           imageAlt: 'Coaching others and teaching resilience showing coaching conversation model and mentoring vs coaching distinction',
           imagePlaceholder: 'Comparison table showing the scope, approach, and appropriate context for coaching, mentoring, and therapy with clear boundaries between each',
         },
@@ -296,7 +291,7 @@ export const mindsetL3Unit4: Unit = {
             'Being "unbreakable" does not mean never breaking. It means having the knowledge, tools, and self-awareness to recover from anything and come back stronger. It means understanding your nervous system well enough to regulate it. Knowing your values well enough to navigate by them. Having practiced enough discomfort to know that you can handle more than you think.',
             'The philosophy is simple: show up, do the work, process what happens, recover, and repeat. Not perfectly — consistently. The person who trains 3 times a week for 10 years beats the person who trains 7 times a week for 3 months. Sustainability is the ultimate performance metric.',
           ],
-          imageUrl: ch6UnbreakablePhilosophy,
+          imageUrl: getUniversityImage('mindl3-u4-ch6-unbreakable-philosophy'),
           imageAlt: 'The Unbreakable Philosophy master integration blueprint connecting all mindset pillars with lifetime resilience framework',
           imagePlaceholder: 'Visual summary of the Unbreakable Philosophy — circular diagram showing the cycle of Challenge → Response → Recovery → Growth → Challenge, with the five pillars of resilience supporting the cycle',
         },

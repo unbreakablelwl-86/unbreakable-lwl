@@ -9,7 +9,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Music, ChevronRight, X, Share2, Trash2, Crown, Gem, Award, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import confetti from 'canvas-confetti';
-import shieldLogo from '@/assets/unbreakable-shield.png';
+const shieldLogo = 'https://vlwcoqilwyfcrsxodtdx.supabase.co/storage/v1/object/public/site-assets/misc/unbreakable-shield.webp';
 
 /* ═══════════════════════════════════════════════════ */
 /*  TYPES & CONFIG                                    */

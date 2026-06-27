@@ -1,34 +1,5 @@
+import { getUniversityImage } from '@/lib/university/imageMap';
 import type { Unit } from '../types';
-import l3u2ch1Img from '@/assets/university/l3-u2-ch1-hypertrophy-mechanisms.png';
-import l3u2ch2Img from '@/assets/university/l3-u2-ch2-progressive-overload.png';
-import l3u2ch3Img from '@/assets/university/l3-u2-ch3-volume-landmarks.png';
-import l3u2ch4Img from '@/assets/university/l3-u2-ch4-fibre-types.png';
-import l3u2ch5Img from '@/assets/university/l3-u2-ch5-tempo.png';
-import l3u2ch6Img from '@/assets/university/l3-u2-ch6-mesocycle.png';
-import l3u2ch7Img from '@/assets/university/l3-u2-ch7-mind-muscle.png';
-import l3u2ch8Img from '@/assets/university/l3-u2-ch8-rest-pause.png';
-import l3u2ch1ThreeDrivers from '@/assets/university/l3-u2-ch1-three-drivers.png';
-import l3u2ch1MechanicalTension from '@/assets/university/l3-u2-ch1-mechanical-tension.png';
-import l3u2ch1MuscleDamage from '@/assets/university/l3-u2-ch1-muscle-damage.png';
-import l3u2ch2OverloadVariables from '@/assets/university/l3-u2-ch2-overload-variables.png';
-import l3u2ch2DoubleProgression from '@/assets/university/l3-u2-ch2-double-progression.png';
-import l3u2ch3VolumeIntensityBalance from '@/assets/university/l3-u2-ch3-volume-intensity-balance.png';
-import l3u2ch3VolumeRamp from '@/assets/university/l3-u2-ch3-volume-ramp.png';
-import l3u2ch4FibreComparison from '@/assets/university/l3-u2-ch4-fibre-comparison.png';
-import l3u2ch4RepRangeZones from '@/assets/university/l3-u2-ch4-rep-range-zones.png';
-import l3u2ch5TempoNotation from '@/assets/university/l3-u2-ch5-tempo-notation.png';
-import l3u2ch5IsometricPauses from '@/assets/university/l3-u2-ch5-isometric-pauses.png';
-import l3u2ch6FitnessFatigue from '@/assets/university/l3-u2-ch6-fitness-fatigue.png';
-import l3u2ch6DeloadStrategies from '@/assets/university/l3-u2-ch6-deload-strategies.png';
-import l3u2ch7NeuralFocus from '@/assets/university/l3-u2-ch7-neural-focus.png';
-import l3u2ch3IndividualVariation from '@/assets/university/l3-u2-ch3-individual-variation.png';
-import l3u2ch5ConcentricPhase from '@/assets/university/l3-u2-ch5-concentric-phase.png';
-import l3u2ch6DeloadMyths from '@/assets/university/l3-u2-ch6-deload-myths.png';
-import l3u2ch7MmcConcept from '@/assets/university/l3-u2-ch7-mmc-concept.png';
-import l3u2ch7PracticalCues from '@/assets/university/l3-u2-ch7-practical-cues.png';
-import l3u2ch8DropSets from '@/assets/university/l3-u2-ch8-drop-sets.png';
-import l3u2ch8ClusterSets from '@/assets/university/l3-u2-ch8-cluster-sets.png';
-import l3u2ch8MyoReps from '@/assets/university/l3-u2-ch8-myo-reps.png';
 
 export const level3Unit2: Unit = {
   number: 2,
@@ -51,7 +22,7 @@ export const level3Unit2: Unit = {
             'Muscle hypertrophy — the increase in muscle fibre size — is driven by three primary mechanisms. Understanding these allows you to design training that maximises growth rather than simply "working hard" without direction.',
             'While all three contribute to hypertrophy, current evidence suggests they are not equally important. Knowing which to prioritise, and when, is what separates intelligent training from simply going through the motions.',
           ],
-          imageUrl: l3u2ch1ThreeDrivers,
+          imageUrl: getUniversityImage('l3-u2-ch1-three-drivers'),
           imageAlt: 'Technical diagram comparing the three drivers of muscle growth with mechanical tension shown as the primary pillar and metabolic stress and muscle damage as supporting factors',
         },
         {
@@ -66,7 +37,7 @@ export const level3Unit2: Unit = {
             'Controlled tempos increase time under tension without requiring heavier loads',
             'Mechanical tension is maximised when a muscle is both stretched and contracting forcefully',
           ],
-          imageUrl: l3u2ch1MechanicalTension,
+          imageUrl: getUniversityImage('l3-u2-ch1-mechanical-tension'),
           imageAlt: 'Technical diagram showing a muscle fibre under load and the mechanotransduction pathway from mechanical force to protein synthesis and muscle growth',
         },
         {
@@ -75,7 +46,7 @@ export const level3Unit2: Unit = {
             'Metabolic stress refers to the accumulation of metabolic by-products (lactate, hydrogen ions, inorganic phosphate) within the muscle during sustained contractions. This is the "burn" you feel during higher-rep sets.',
             'While metabolic stress was once thought to be a primary driver of growth, recent evidence suggests it plays a supporting role rather than being essential. However, training methods that create metabolic stress (higher reps, shorter rest periods, techniques like drop sets) can contribute to hypertrophy, particularly in combination with adequate mechanical tension.',
           ],
-          imageUrl: l3u2ch1Img,
+          imageUrl: getUniversityImage('l3-u2-ch1-hypertrophy-mechanisms'),
           imageAlt: 'Diagram showing the three mechanisms of hypertrophy — mechanical tension, metabolic stress, and muscle damage — with mechanical tension highlighted as the primary driver',
         },
         {
@@ -84,7 +55,7 @@ export const level3Unit2: Unit = {
             'Exercise-induced muscle damage occurs when muscle fibres are subjected to unfamiliar or excessive stress, particularly during the eccentric (lowering) phase of a movement. This damage triggers an inflammatory repair process that contributes to muscle remodelling.',
             'However, muscle damage is not a reliable indicator of growth. Excessive soreness impairs recovery and training frequency without providing proportional hypertrophy benefits. The goal is controlled stimulus, not destruction.',
           ],
-          imageUrl: l3u2ch1MuscleDamage,
+          imageUrl: getUniversityImage('l3-u2-ch1-muscle-damage'),
           imageAlt: 'Technical diagram showing eccentric load leading to micro-damage, repair, and remodelling as a controlled recovery process',
         },
         {
@@ -122,7 +93,7 @@ export const level3Unit2: Unit = {
             'Progressive overload is the most important principle in resistance training. Without it, your body has no reason to adapt. But adding weight to the bar every session is not the only way — nor is it always the best way — to create progressive overload.',
             'As you advance, weight increases become smaller and less frequent. Understanding alternative overload methods allows you to continue progressing when adding load is no longer practical.',
           ],
-          imageUrl: l3u2ch2OverloadVariables,
+          imageUrl: getUniversityImage('l3-u2-ch2-overload-variables'),
           imageAlt: 'Technical diagram showing progressive overload as a central concept with load, volume, density, range of motion, tempo, complexity, and frequency as separate progression variables',
         },
         {
@@ -139,7 +110,7 @@ export const level3Unit2: Unit = {
             'Exercise complexity — Progressing from a machine variation to a free-weight variation of the same movement pattern adds stability demands.',
             'Frequency — Training a muscle group more often per week increases the total weekly stimulus.',
           ],
-          imageUrl: l3u2ch2Img,
+          imageUrl: getUniversityImage('l3-u2-ch2-progressive-overload'),
           imageAlt: 'Pyramid diagram showing methods of progressive overload ranked by priority — load at the base, then volume, density, ROM, tempo, complexity, and frequency',
         },
         {
@@ -155,7 +126,7 @@ export const level3Unit2: Unit = {
             'Double progression is one of the most practical overload methods for intermediate trainees. You work within a rep range (e.g., 8–12 reps). Once you hit the top of the range on all sets, you increase the weight and start back at the bottom of the range.',
             'For example: if your target is 3 × 8–12 on bench press and you achieve 3 × 12 at 80 kg, your next session would be 3 × 8 at 82.5 kg. This provides a clear, repeatable framework for long-term progress.',
           ],
-          imageUrl: l3u2ch2DoubleProgression,
+          imageUrl: getUniversityImage('l3-u2-ch2-double-progression'),
           imageAlt: 'Four-session technical diagram showing double progression where reps increase within an 8 to 12 range until the top range is hit, then load increases and reps reset',
         },
       ],
@@ -187,7 +158,7 @@ export const level3Unit2: Unit = {
             'Training volume refers to the total amount of work performed — typically measured as sets per muscle group per week. Training intensity refers to how hard each set is relative to your capacity, often expressed as a percentage of one-rep max (1RM) or using RPE/RIR scales.',
             'Both variables must be managed carefully. Too little volume and you under-stimulate growth. Too much volume and you accumulate fatigue faster than you can recover, leading to stalled progress or regression.',
           ],
-          imageUrl: l3u2ch3VolumeIntensityBalance,
+          imageUrl: getUniversityImage('l3-u2-ch3-volume-intensity-balance'),
           imageAlt: 'Technical diagram showing the balance between training volume and intensity with stimulus and fatigue in the center of a productive hypertrophy zone',
         },
         {
@@ -201,7 +172,7 @@ export const level3Unit2: Unit = {
             'MAV (Maximum Adaptive Volume) — The volume range where most growth occurs. Typically 12–20 sets per muscle group per week, depending on training experience.',
             'MRV (Maximum Recoverable Volume) — The most sets you can perform while still recovering. Exceeding this leads to overtraining. Individual and varies with sleep, nutrition, stress, and training age.',
           ],
-          imageUrl: l3u2ch3Img,
+          imageUrl: getUniversityImage('l3-u2-ch3-volume-landmarks'),
           imageAlt: 'Horizontal bar chart showing volume landmarks from MV through MEV, MAV, to MRV with the productive training zone highlighted between MEV and MRV',
         },
         {
@@ -210,7 +181,7 @@ export const level3Unit2: Unit = {
             'Rather than performing the same volume every week, a more effective approach is to ramp volume across a mesocycle. Start near MEV in week one, gradually increase toward MAV or MRV over 4–6 weeks, then deload to allow recovery.',
             'This approach — often called a volume-ramp mesocycle — allows you to accumulate a growth stimulus while managing fatigue. Each week pushes slightly beyond what you did previously, creating progressive overload through volume.',
           ],
-          imageUrl: l3u2ch3VolumeRamp,
+          imageUrl: getUniversityImage('l3-u2-ch3-volume-ramp'),
           imageAlt: 'Technical diagram showing a volume-ramp mesocycle with weekly set counts increasing from MEV toward MRV over 4 weeks followed by a deload',
         },
         {
@@ -219,7 +190,7 @@ export const level3Unit2: Unit = {
             'Volume needs vary significantly between individuals and between muscle groups. Some people grow well on 12 sets per week for chest; others need 20. Some muscle groups (calves, side delts) often benefit from higher volume, while others (back, hamstrings) may respond well to moderate volume with higher intensity.',
             'The only way to determine your individual landmarks is through systematic experimentation and honest self-assessment. Track your performance, recovery, and progress over multiple mesocycles to refine your approach.',
           ],
-          imageUrl: l3u2ch3IndividualVariation,
+          imageUrl: getUniversityImage('l3-u2-ch3-individual-variation'),
           imageAlt: 'Bell curve diagram showing individual variation in optimal weekly training volume with low, average, and high responders needing different set counts',
         },
       ],
@@ -255,7 +226,7 @@ export const level3Unit2: Unit = {
             'Type IIa (fast-twitch oxidative) — Moderate endurance, high force production. Can function aerobically and anaerobically. Respond well to moderate rep ranges (8–15).',
             'Type IIx (fast-twitch glycolytic) — Low endurance, highest force production, fatigue quickly. Dominant in explosive movements. Greatest hypertrophy potential. Respond best to heavy loads and lower rep ranges (3–8).',
           ],
-          imageUrl: l3u2ch4FibreComparison,
+          imageUrl: getUniversityImage('l3-u2-ch4-fibre-comparison'),
           imageAlt: 'Technical comparison chart of Type I, Type IIa, and Type IIx muscle fibres showing size, contraction speed, fatigue resistance, and force production characteristics',
         },
         {
@@ -264,7 +235,7 @@ export const level3Unit2: Unit = {
             'Fibre type distribution varies between individuals and between muscle groups within the same person. This is largely genetically determined, though training can cause some conversion between Type IIa and IIx fibres.',
             'Muscles with a higher proportion of slow-twitch fibres (such as the soleus in the calf) tend to respond better to higher rep ranges and higher training volumes. Muscles with more fast-twitch fibres (such as the hamstrings and triceps) often respond well to heavier loads and explosive training.',
           ],
-          imageUrl: l3u2ch4Img,
+          imageUrl: getUniversityImage('l3-u2-ch4-fibre-types'),
           imageAlt: 'Comparison diagram of Type I vs Type IIa vs Type IIx muscle fibres showing relative size, endurance capacity, force production, and optimal rep ranges for each',
         },
         {
@@ -277,7 +248,7 @@ export const level3Unit2: Unit = {
             'Moderate work (8–12 reps) — The "hypertrophy range" that provides a balance of mechanical tension and metabolic stress. Effective for both fibre types.',
             'Higher rep work (15–25 reps) — Targets Type I fibres and creates metabolic stress. Effective for isolation exercises and muscle groups with higher slow-twitch composition.',
           ],
-          imageUrl: l3u2ch4RepRangeZones,
+          imageUrl: getUniversityImage('l3-u2-ch4-rep-range-zones'),
           imageAlt: 'Technical diagram showing optimal rep range zones for each fibre type with heavy 3-6 reps for Type IIx, moderate 8-12 for Type IIa, and higher 15-25 for Type I',
         },
         {
@@ -315,7 +286,7 @@ export const level3Unit2: Unit = {
             'Tempo prescribes the speed of each phase of a repetition using a four-digit notation: eccentric – pause at bottom – concentric – pause at top. For example, a tempo of 3-1-1-0 means a 3-second lowering phase, a 1-second pause at the stretched position, a 1-second lifting phase, and no pause at the top.',
             'Controlling tempo adds a layer of precision to your training. Rather than simply moving a weight from A to B, you are controlling how the muscle experiences the load throughout the entire repetition.',
           ],
-          imageUrl: l3u2ch5TempoNotation,
+          imageUrl: getUniversityImage('l3-u2-ch5-tempo-notation'),
           imageAlt: 'Technical diagram showing the four-digit tempo notation system with each digit mapped to eccentric, pause at bottom, concentric, and pause at top phases',
         },
         {
@@ -329,7 +300,7 @@ export const level3Unit2: Unit = {
             'Eccentric-focused training is particularly effective for strengthening tendons and developing muscle at longer lengths',
             'Excessive eccentric emphasis can cause significant delayed-onset muscle soreness (DOMS) — introduce gradually',
           ],
-          imageUrl: l3u2ch5Img,
+          imageUrl: getUniversityImage('l3-u2-ch5-tempo'),
           imageAlt: 'Illustration of a bicep curl showing the four tempo phases — eccentric (lowering), pause at bottom, concentric (lifting), pause at top — with timing labels',
         },
         {
@@ -338,7 +309,7 @@ export const level3Unit2: Unit = {
             'The concentric (lifting) phase is where the muscle shortens to move the load. For hypertrophy, the concentric phase should generally be performed with controlled intent — not explosively fast, but with purposeful force.',
             'There is evidence that explosive concentric phases can be beneficial for strength and power development, but for hypertrophy-focused training, a controlled 1–2 second concentric is typically more effective.',
           ],
-          imageUrl: l3u2ch5ConcentricPhase,
+          imageUrl: getUniversityImage('l3-u2-ch5-concentric-phase'),
           imageAlt: 'Side-by-side comparison of explosive versus controlled concentric phase strategies showing speed, load, and best use cases for each approach',
         },
         {
@@ -347,7 +318,7 @@ export const level3Unit2: Unit = {
             'Pauses at the stretched or contracted position of a movement increase the time spent under peak tension. A 1–2 second pause at the bottom of a bench press or squat eliminates the stretch reflex, forcing the muscle to generate force from a dead stop.',
             'Pauses at the contracted position (e.g., squeezing at the top of a cable fly) enhance the mind-muscle connection and can increase metabolic stress. Both types of pause have value and can be rotated across training phases.',
           ],
-          imageUrl: l3u2ch5IsometricPauses,
+          imageUrl: getUniversityImage('l3-u2-ch5-isometric-pauses'),
           imageAlt: 'Technical diagram comparing pauses at the stretched position versus the contracted position showing different physiological effects and use cases',
         },
         {
@@ -386,7 +357,7 @@ export const level3Unit2: Unit = {
             'Training creates a stimulus; recovery is where adaptation happens. Without planned recovery periods, fatigue accumulates beyond your ability to recover from it, leading to performance plateaus, increased injury risk, and eventually regression.',
             'A deload is a planned reduction in training stress — typically lasting one week — that allows accumulated fatigue to dissipate while maintaining the training habit and movement patterns.',
           ],
-          imageUrl: l3u2ch6FitnessFatigue,
+          imageUrl: getUniversityImage('l3-u2-ch6-fitness-fatigue'),
           imageAlt: 'Technical diagram of the fitness-fatigue model showing how preparedness peaks during a deload week as accumulated fatigue dissipates',
         },
         {
@@ -400,7 +371,7 @@ export const level3Unit2: Unit = {
             'Frequency deload — Reduce training days while maintaining per-session volume. Best when general life stress or sleep debt is the primary issue.',
             'Active recovery — Replace structured training with light movement, mobility work, and recreational activity. Best after particularly demanding blocks or competition.',
           ],
-          imageUrl: l3u2ch6Img,
+          imageUrl: getUniversityImage('l3-u2-ch6-mesocycle'),
           imageAlt: 'Timeline diagram showing a 5-week mesocycle with progressive volume ramp in weeks 1–4 and a deload in week 5 with reduced volume',
         },
         {
@@ -419,7 +390,7 @@ export const level3Unit2: Unit = {
             'Many people treat deload weeks as a complete break from training. This is rarely optimal — complete rest for a week often makes you feel worse when you return, not better. The goal is reduced stress, not zero stress.',
             'Others resist deloading because they fear losing progress. In reality, no meaningful muscle or strength is lost in one week of reduced training. Fatigue dissipation often reveals hidden progress that was masked by accumulated tiredness.',
           ],
-          imageUrl: l3u2ch6DeloadMyths,
+          imageUrl: getUniversityImage('l3-u2-ch6-deload-myths'),
           imageAlt: 'Three-row myth versus truth comparison debunking common deload misconceptions about complete rest, losing gains, and deloads being only for beginners',
         },
       ],
@@ -451,7 +422,7 @@ export const level3Unit2: Unit = {
             'The mind-muscle connection refers to the practice of deliberately focusing your attention on the target muscle during an exercise, rather than simply moving the weight from point A to point B. In research terms, this is called an "internal focus of attention."',
             'This concept has been dismissed by some as unscientific, but research over the past decade has provided growing evidence that attentional focus can meaningfully affect muscle activation and, potentially, hypertrophy outcomes.',
           ],
-          imageUrl: l3u2ch7MmcConcept,
+          imageUrl: getUniversityImage('l3-u2-ch7-mmc-concept'),
           imageAlt: 'Anatomical diagram showing the neural pathway from brain to bicep muscle during a curl with callouts for deliberate focus, motor unit recruitment, and enhanced activation',
         },
         {
@@ -463,7 +434,7 @@ export const level3Unit2: Unit = {
             'Internal focus — Directing attention to the working muscle. "Squeeze your bicep at the top." Research shows this can increase muscle activation, particularly at lighter loads (below ~60% 1RM).',
             'External focus — Directing attention to the movement outcome or the environment. "Drive your feet through the floor." Research shows this improves performance in strength and power tasks.',
           ],
-          imageUrl: l3u2ch7Img,
+          imageUrl: getUniversityImage('l3-u2-ch7-mind-muscle'),
           imageAlt: 'Split comparison diagram showing internal focus (attention on the muscle, isolation exercises) vs external focus (attention on the movement, compound exercises) with example cues',
         },
         {
@@ -479,7 +450,7 @@ export const level3Unit2: Unit = {
             'Use internal focus (mind-muscle connection) for isolation exercises and lighter compound accessories. Think about the target muscle contracting and stretching throughout the movement. Use external focus for heavy compound lifts where performance and technique are the priority.',
             'The mind-muscle connection is a skill that improves with practice. If you cannot feel a muscle working, start with lighter loads and slower tempos until you develop the awareness.',
           ],
-          imageUrl: l3u2ch7PracticalCues,
+          imageUrl: getUniversityImage('l3-u2-ch7-practical-cues'),
           imageAlt: 'Two-column reference chart showing internal cueing strategies for isolation exercises and external cueing strategies for compound exercises with specific examples',
         },
       ],
@@ -522,7 +493,7 @@ export const level3Unit2: Unit = {
             'Typically 1–2 drops per set is sufficient; more than 3 drops produces diminishing returns',
             'Use sparingly — 1–2 drop sets per session for a given muscle group is usually adequate',
           ],
-          imageUrl: l3u2ch8DropSets,
+          imageUrl: getUniversityImage('l3-u2-ch8-drop-sets'),
           imageAlt: 'Flow diagram showing drop set execution with initial set at 100kg to near failure, then 20% weight reductions through two consecutive drops to failure',
         },
         {
@@ -531,7 +502,7 @@ export const level3Unit2: Unit = {
             'Rest-pause involves performing a set to near failure, resting 10–20 seconds, then continuing with the same weight for additional reps. This allows you to accumulate more reps at a given load than a single straight set would permit.',
             'Rest-pause is particularly effective for hypertrophy because it keeps the load high (maintaining mechanical tension) while extending the set. It works well on both compound and isolation exercises.',
           ],
-          imageUrl: l3u2ch8Img,
+          imageUrl: getUniversityImage('l3-u2-ch8-rest-pause'),
           imageAlt: 'Step-by-step diagram showing rest-pause set execution — initial set to near failure, 10–20 second rest, additional reps, optional second rest-pause',
         },
         {
@@ -540,7 +511,7 @@ export const level3Unit2: Unit = {
             'Cluster sets break a traditional set into smaller segments with brief intra-set rest periods (15–30 seconds). For example, instead of performing 6 continuous reps at a heavy load, you might perform 2 reps, rest 20 seconds, 2 reps, rest 20 seconds, 2 reps.',
             'This approach allows you to maintain higher quality reps at heavier loads by managing fatigue within the set. It is particularly useful for strength-hypertrophy work in the 4–6 rep range.',
           ],
-          imageUrl: l3u2ch8ClusterSets,
+          imageUrl: getUniversityImage('l3-u2-ch8-cluster-sets'),
           imageAlt: 'Flow diagram showing cluster set structure with 2 reps, 20 second rest repeated three times compared to traditional continuous set execution',
         },
         {
@@ -549,7 +520,7 @@ export const level3Unit2: Unit = {
             'Myo-reps (developed by Borge Fagerli) are an efficient rest-pause variant. You perform an activation set of 12–20 reps to near failure, then perform mini-sets of 3–5 reps with 10–15 seconds rest until you can no longer match the target reps.',
             'Myo-reps are exceptionally time-efficient. A single myo-rep set can provide the hypertrophy stimulus of multiple straight sets in a fraction of the time. They are ideal for accessory work and for trainees with limited time.',
           ],
-          imageUrl: l3u2ch8MyoReps,
+          imageUrl: getUniversityImage('l3-u2-ch8-myo-reps'),
           imageAlt: 'Step-by-step flow diagram showing myo-rep execution with activation set of 15 reps followed by mini-sets of 3-5 reps with 10-15 second rests',
         },
         {

@@ -4,7 +4,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { Mail, Lock, User, Cake, ArrowLeft, Eye, EyeOff, Tag, ShieldCheck } from 'lucide-react';
 import { toast } from 'sonner';
-import shieldLogo from '@/assets/unbreakable-shield.png';
+const shieldLogo = 'https://vlwcoqilwyfcrsxodtdx.supabase.co/storage/v1/object/public/site-assets/misc/unbreakable-shield.webp';
 
 
 /* ═══ OTP Code Input — 6 individual digits ═══ */

@@ -1,13 +1,5 @@
+import { getUniversityImage } from '@/lib/university/imageMap';
 import type { Unit } from '../types';
-
-import u4ch1Img from '@/assets/university/u4-ch1-goal-types.png';
-import u4ch2Img from '@/assets/university/u4-ch2-volume-distribution.png';
-import u4ch3Img from '@/assets/university/u4-ch3-periodisation-types.png';
-import u4ch4Img from '@/assets/university/u4-ch4-warmup-sets.png';
-import u4ch5Img from '@/assets/university/u4-ch5-data-trends.png';
-import u4ch6Img from '@/assets/university/u4-ch6-stress-recovery.png';
-import u4ch7Img from '@/assets/university/u4-ch7-barriers.png';
-import u4ch8Img from '@/assets/university/u4-ch8-progressive-overload.png';
 
 export const level2Unit4: Unit = {
   number: 4,
@@ -45,7 +37,7 @@ export const level2Unit4: Unit = {
             'Relevant — The goal must align with the individual\'s broader training objectives. A marathon runner setting a goal to bench press 150 kg may not be relevant to their primary aim.',
             'Time-bound — Every goal needs a deadline. "Achieve within 12 weeks" creates urgency and allows for structured planning.',
           ],
-          imageUrl: u4ch1Img,
+          imageUrl: getUniversityImage('u4-ch1-goal-types'),
           imageAlt: 'SMART goals framework diagram showing the five components: Specific, Measurable, Achievable, Relevant, and Time-bound',
         },
         {
@@ -116,7 +108,7 @@ export const level2Unit4: Unit = {
             'Upper/Lower Split (4 sessions per week) — Two upper-body days and two lower-body days. Provides a good balance of frequency and volume. Suited to intermediate trainees who can handle more per-session work.',
             'Push/Pull/Legs (PPL) (5–6 sessions per week) — Push day (chest, shoulders, triceps), Pull day (back, biceps), Legs day. Allows high volume per muscle group with adequate recovery between sessions. Best suited to advanced trainees.',
           ],
-          imageUrl: u4ch2Img,
+          imageUrl: getUniversityImage('u4-ch2-volume-distribution'),
           imageAlt: 'Training split comparison showing full-body, upper/lower, and push/pull/legs weekly layouts',
         },
         {
@@ -182,7 +174,7 @@ export const level2Unit4: Unit = {
             'Mesocycle — A block of 4–6 microcycles (usually 4–6 weeks) focused on a specific training goal, such as hypertrophy, strength, or power.',
             'Macrocycle — The overall training plan, typically spanning several months to a year. It encompasses multiple mesocycles and represents the journey from starting point to long-term goal.',
           ],
-          imageUrl: u4ch3Img,
+          imageUrl: getUniversityImage('u4-ch3-periodisation-types'),
           imageAlt: 'Periodisation timeline showing microcycle, mesocycle, and macrocycle with volume and intensity progression',
         },
         {
@@ -279,7 +271,7 @@ export const level2Unit4: Unit = {
             '6. Core work (anti-extension, anti-rotation, and bracing exercises).',
             '7. Cool-down (light cardio, static stretching, and/or foam rolling).',
           ],
-          imageUrl: u4ch4Img,
+          imageUrl: getUniversityImage('u4-ch4-warmup-sets'),
           imageAlt: 'Session structure flow diagram showing optimal exercise order from warm-up through compound movements to cool-down',
         },
         {
@@ -335,7 +327,7 @@ export const level2Unit4: Unit = {
             'Performance tests — Periodic tests such as 1RM estimates, timed runs, or max reps at a given weight. These provide direct measures of fitness improvement.',
             'Subjective wellbeing — Rating energy, mood, sleep quality, and motivation on a simple 1–10 scale. Patterns in subjective data can reveal overtraining or lifestyle issues.',
           ],
-          imageUrl: u4ch5Img,
+          imageUrl: getUniversityImage('u4-ch5-data-trends'),
           imageAlt: 'Progress tracking methods diagram showing six key measurement approaches radiating from a central hub',
         },
         {
@@ -396,7 +388,7 @@ export const level2Unit4: Unit = {
             'Stage 3 (Deep sleep / slow-wave sleep) — The most physically restorative stage. Growth hormone is released, muscle repair occurs, and the immune system is strengthened.',
             'REM sleep (Rapid Eye Movement) — The brain is highly active. Essential for cognitive function, emotional regulation, and motor learning.',
           ],
-          imageUrl: u4ch6Img,
+          imageUrl: getUniversityImage('u4-ch6-stress-recovery'),
           imageAlt: 'Sleep and recovery cycle diagram showing the relationship between training stimulus, cortisol response, sleep stages, and adaptation',
         },
         {
@@ -475,7 +467,7 @@ export const level2Unit4: Unit = {
             'Response — The actual behaviour (e.g., going to the gym).',
             'Reward — The positive outcome that reinforces the loop (e.g., the endorphin rush after training, the satisfaction of ticking it off your list).',
           ],
-          imageUrl: u4ch7Img,
+          imageUrl: getUniversityImage('u4-ch7-barriers'),
           imageAlt: 'Habit formation loop diagram showing Cue, Craving, Response, and Reward cycle with habit stacking concept',
         },
         {
@@ -568,7 +560,7 @@ export const level2Unit4: Unit = {
             'Single-leg work (e.g., lunges, Bulgarian split squat).',
             'Core (e.g., plank, Pallof press, dead bug).',
           ],
-          imageUrl: u4ch8Img,
+          imageUrl: getUniversityImage('u4-ch8-progressive-overload'),
           imageAlt: 'Sample 4-week beginner training programme template showing weekly layout and progressive overload across four weeks',
         },
         {

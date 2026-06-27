@@ -1,12 +1,5 @@
+import { getUniversityImage } from '@/lib/university/imageMap';
 import type { Unit } from '../types';
-import u3ch1Img from '@/assets/university/u3-ch1-training-comparison.png';
-import u3ch2Img from '@/assets/university/u3-ch2-stretching-types.png';
-import u3ch3Img from '@/assets/university/u3-ch3-tempo-notation.png';
-import u3ch4Img from '@/assets/university/u3-ch4-fitt-principle.png';
-import u3ch5Img from '@/assets/university/u3-ch5-flexibility.png';
-import u3ch6Img from '@/assets/university/u3-ch6-bilateral-unilateral.png';
-import u3ch7Img from '@/assets/university/u3-ch7-overtraining-signs.png';
-import u3ch8Img from '@/assets/university/u3-ch8-special-populations.png';
 
 export const level2Unit3: Unit = {
   number: 3,
@@ -90,7 +83,7 @@ export const level2Unit3: Unit = {
             'No single training type delivers all adaptations. An effective programme typically includes resistance training as a foundation, cardiovascular work for heart health and energy expenditure, flexibility training for movement quality, and potentially HIIT for time-efficient conditioning.',
             'The proportion of each depends on individual goals: a powerlifter prioritises resistance training, a marathon runner prioritises cardiovascular work, and someone focused on general fitness benefits from a balanced blend of all four.',
           ],
-          imageUrl: u3ch1Img,
+          imageUrl: getUniversityImage('u3-ch1-training-comparison'),
           imageAlt: 'Comparison of four main training types: resistance, cardiovascular, flexibility, and HIIT',
         },
       ],
@@ -137,7 +130,7 @@ export const level2Unit3: Unit = {
           paragraphs: [
             'RAMP is a widely used framework in UK fitness education that structures the warm-up into four progressive phases. It was developed by Dr Ian Jeffreys and provides a systematic approach applicable to any training session or sport.',
           ],
-          imageUrl: u3ch2Img,
+          imageUrl: getUniversityImage('u3-ch2-stretching-types'),
           imageAlt: 'RAMP warm-up protocol showing the four phases: Raise, Activate, Mobilise, Potentiate',
         },
         {
@@ -254,7 +247,7 @@ export const level2Unit3: Unit = {
             'Hypertrophy: 6–12 reps at 65–85% of 1RM — moderate loads, mechanical tension and metabolic stress, moderate rest (60–120 seconds)',
             'Muscular Endurance: 15–25+ reps at 40–65% of 1RM — lighter loads, sustained effort, shorter rest (30–60 seconds)',
           ],
-          imageUrl: u3ch3Img,
+          imageUrl: getUniversityImage('u3-ch3-tempo-notation'),
           imageAlt: 'The rep range continuum showing strength, hypertrophy, and endurance zones',
         },
         {
@@ -381,7 +374,7 @@ export const level2Unit3: Unit = {
             'Zone 4 (80–90% MHR): Hard — threshold training, lactate tolerance, race pace preparation',
             'Zone 5 (90–100% MHR): Maximal — VO₂ max intervals, anaerobic capacity, very short durations',
           ],
-          imageUrl: u3ch4Img,
+          imageUrl: getUniversityImage('u3-ch4-fitt-principle'),
           imageAlt: 'Heart rate training zones showing intensity percentages and primary adaptations',
         },
         {
@@ -481,7 +474,7 @@ export const level2Unit3: Unit = {
             'Mirrors the movement patterns of the upcoming training session',
             '8–12 reps per movement, gradually increasing range and speed',
           ],
-          imageUrl: u3ch5Img,
+          imageUrl: getUniversityImage('u3-ch5-flexibility'),
           imageAlt: 'Types of flexibility and mobility training including static, dynamic, and PNF stretching',
         },
         {
@@ -575,7 +568,7 @@ export const level2Unit3: Unit = {
             'Lunge: walking lunge, reverse lunge, Bulgarian split squat, step-up',
             'Carry: farmer\'s walk, suitcase carry, overhead carry, sandbag carry',
           ],
-          imageUrl: u3ch6Img,
+          imageUrl: getUniversityImage('u3-ch6-bilateral-unilateral'),
           imageAlt: 'The six fundamental movement patterns used in exercise selection',
         },
         {
@@ -676,7 +669,7 @@ export const level2Unit3: Unit = {
             'Recovery: the body repairs damage and replenishes energy, returning to baseline',
             'Supercompensation: the body overcompensates, briefly exceeding the previous baseline',
           ],
-          imageUrl: u3ch7Img,
+          imageUrl: getUniversityImage('u3-ch7-overtraining-signs'),
           imageAlt: 'The supercompensation curve showing training stimulus, fatigue, recovery, and adaptation',
         },
         {
@@ -802,7 +795,7 @@ export const level2Unit3: Unit = {
             'Focus on functional movements: sit-to-stand, step-ups, carries, reaching overhead',
             'UK guidelines: 150 minutes moderate activity + 2 strength sessions per week apply to all adults, including those over 65',
           ],
-          imageUrl: u3ch8Img,
+          imageUrl: getUniversityImage('u3-ch8-special-populations'),
           imageAlt: 'Training considerations for special populations including beginners, older adults, and pre/postnatal',
         },
         {

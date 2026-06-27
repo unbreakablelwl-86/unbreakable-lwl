@@ -33,7 +33,7 @@ import {
   Trash2,
 } from 'lucide-react';
 import { format, formatDistanceToNow } from 'date-fns';
-import shieldLogo from '@/assets/unbreakable-shield.png';
+const shieldLogo = 'https://vlwcoqilwyfcrsxodtdx.supabase.co/storage/v1/object/public/site-assets/misc/unbreakable-shield.webp';
 import { ProfileAchievements } from '@/components/profile/AchievementPBTrackers';
 import { ProfileSkeleton } from '@/components/ui/PageSkeleton';
 import { NotificationPreferences } from '@/components/profile/NotificationPreferences';

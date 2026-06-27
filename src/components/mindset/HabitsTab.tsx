@@ -314,7 +314,4 @@ function JournalHistory({ userId }: { userId?: string }) {
   );
 }
 
-export default Mindset;
-
-
 export { HabitsTab, JournalHistory };

@@ -1,29 +1,5 @@
+import { getUniversityImage } from '@/lib/university/imageMap';
 import type { Unit } from '../types';
-import ch1AnatomicalPlanes from '@/assets/university/ch1-anatomical-planes.png';
-import ch1DirectionalTerms from '@/assets/university/ch1-directional-terms.png';
-import ch1GymPlanes from '@/assets/university/ch1-gym-planes.png';
-import ch2JointTypes from '@/assets/university/ch2-joint-types.png';
-import ch2SkeletalFunctions from '@/assets/university/ch2-skeletal-functions.png';
-import ch2SynovialJoint from '@/assets/university/ch2-synovial-joint.png';
-import ch3MuscleGroups from '@/assets/university/ch3-muscle-groups.png';
-import ch3MuscleContractions from '@/assets/university/ch3-muscle-contractions.png';
-import ch3AgonistAntagonist from '@/assets/university/ch3-agonist-antagonist.png';
-import ch4Cardiovascular from '@/assets/university/ch4-cardiovascular.png';
-import ch4CirculatorySystem from '@/assets/university/ch4-circulatory-system.png';
-import ch4AcuteResponses from '@/assets/university/ch4-acute-responses.png';
-import ch4ChronicAdaptations from '@/assets/university/ch4-chronic-adaptations.png';
-import ch5EnergySystems from '@/assets/university/ch5-energy-systems.png';
-import ch5AtpBreakdown from '@/assets/university/ch5-atp-breakdown.png';
-import ch5EnergyTimeline from '@/assets/university/ch5-energy-timeline.png';
-import ch5RepRanges from '@/assets/university/ch5-rep-ranges.png';
-import ch6RespiratoryPathway from '@/assets/university/l2-u1-ch6-respiratory-pathway.png';
-import ch6BreathingComparison from '@/assets/university/l2-u1-ch6-breathing-comparison.png';
-import ch7MotorUnitRecruitment from '@/assets/university/l2-u1-ch7-motor-unit-recruitment.png';
-import ch8PostureDeviations from '@/assets/university/l2-u1-ch8-posture-deviations.png';
-import ch8MobilityAreas from '@/assets/university/l2-u1-ch8-mobility-areas.png';
-import ch6GasExchange from '@/assets/university/l2-u1-ch6-gas-exchange.png';
-import ch7NervousSystem from '@/assets/university/l2-u1-ch7-nervous-system.png';
-import ch7Proprioceptors from '@/assets/university/l2-u1-ch7-proprioceptors.png';
 
 export const level2Unit1: Unit = {
   number: 1,
@@ -57,7 +33,7 @@ export const level2Unit1: Unit = {
             'Frontal Plane — divides the body into front and back. Movements go side to side. Examples: lateral raises, side lunges, star jumps.',
             'Transverse Plane — divides the body into top and bottom. Movements involve rotation. Examples: cable woodchops, Russian twists, throwing a punch.',
           ],
-          imageUrl: ch1AnatomicalPlanes,
+          imageUrl: getUniversityImage('ch1-anatomical-planes'),
           imageAlt: 'Diagram showing the three anatomical planes on a human figure with example exercises labelled for each plane',
         },
         {
@@ -73,7 +49,7 @@ export const level2Unit1: Unit = {
             'Superior — towards the head (e.g., the shoulders are superior to the hips)',
             'Inferior — towards the feet (e.g., the ankles are inferior to the knees)',
           ],
-          imageUrl: ch1DirectionalTerms,
+          imageUrl: getUniversityImage('ch1-directional-terms'),
           imageAlt: 'Labelled human figure showing anatomical directional terms: anterior, posterior, medial, lateral, superior, inferior',
         },
         {
@@ -82,7 +58,7 @@ export const level2Unit1: Unit = {
             'When someone says "this exercise targets the anterior deltoid", they mean the front of the shoulder. When a programme says "lateral movement", it means side-to-side work in the frontal plane.',
             'Understanding these terms means you\'ll never be confused by programme instructions, coaching cues, or exercise descriptions again.',
           ],
-          imageUrl: ch1GymPlanes,
+          imageUrl: getUniversityImage('ch1-gym-planes'),
           imageAlt: 'Three exercises classified by movement plane: squat (sagittal), lateral raise (frontal), cable woodchop (transverse)',
         },
       ],
@@ -120,7 +96,7 @@ export const level2Unit1: Unit = {
             'Mineral storage — bones store calcium and phosphorus, releasing them when needed',
             'Blood cell production — red and white blood cells are produced in bone marrow',
           ],
-          imageUrl: ch2SkeletalFunctions,
+          imageUrl: getUniversityImage('ch2-skeletal-functions'),
           imageAlt: 'Skeleton diagram with five functions labelled: support, protection, movement, mineral storage, blood cell production',
         },
         {
@@ -134,7 +110,7 @@ export const level2Unit1: Unit = {
             'Pivot joints — allow rotation around a single axis. Example: the neck turning side to side',
             'Gliding joints — allow sliding movements. Example: wrist movements during pressing',
           ],
-          imageUrl: ch2JointTypes,
+          imageUrl: getUniversityImage('ch2-joint-types'),
           imageAlt: 'Labelled diagram showing hinge, ball-and-socket, pivot, and gliding joints with their gym exercise equivalents',
         },
         {
@@ -144,7 +120,7 @@ export const level2Unit1: Unit = {
             'Synovial fluid lubricates joints and reduces friction. Warming up before training increases synovial fluid production, which is why cold joints feel stiff and creaky.',
             'Cartilage covers the ends of bones at joints. It doesn\'t have its own blood supply, so it relies on movement to receive nutrients. Sedentary lifestyles lead to cartilage deterioration. Regular training — with proper technique — actually improves joint health over time.',
           ],
-          imageUrl: ch2SynovialJoint,
+          imageUrl: getUniversityImage('ch2-synovial-joint'),
           imageAlt: 'Cross-section of a synovial joint showing cartilage, synovial fluid, joint capsule, and warm-up effects',
         },
       ],
@@ -186,7 +162,7 @@ export const level2Unit1: Unit = {
             'Eccentric — the muscle lengthens under load. This is the "lowering" phase. Example: slowly lowering a dumbbell back down. Eccentric contractions cause the most muscle damage and are crucial for growth.',
             'Isometric — the muscle produces force without changing length. Example: holding a plank, pausing at the bottom of a squat.',
           ],
-          imageUrl: ch3MuscleContractions,
+          imageUrl: getUniversityImage('ch3-muscle-contractions'),
           imageAlt: 'Three types of muscle contraction shown with bicep curl: concentric (shortening), eccentric (lengthening), isometric (static hold)',
         },
         {
@@ -202,7 +178,7 @@ export const level2Unit1: Unit = {
             'Core (Rectus Abdominis, Obliques, Transverse Abdominis, Erector Spinae) — stabilises the trunk. Planks, anti-rotation work.',
             'Legs — Quadriceps (front of thigh, knee extension), Hamstrings (back of thigh, knee flexion and hip extension), Glutes (hip extension, the strongest muscle group), Calves (ankle plantar flexion).',
           ],
-          imageUrl: ch3MuscleGroups,
+          imageUrl: getUniversityImage('ch3-muscle-groups'),
           imageAlt: 'Labelled diagram of major muscle groups from front and rear view of the human body',
         },
         {
@@ -215,7 +191,7 @@ export const level2Unit1: Unit = {
             'Quadriceps and Hamstrings — when you extend the knee, quads contract and hamstrings relax',
             'Chest and Back — when you push, chest contracts and back relaxes',
           ],
-          imageUrl: ch3AgonistAntagonist,
+          imageUrl: getUniversityImage('ch3-agonist-antagonist'),
           imageAlt: 'Diagram showing agonist and antagonist muscle pairs: biceps/triceps and quadriceps/hamstrings',
         },
         {
@@ -252,7 +228,7 @@ export const level2Unit1: Unit = {
             'The cardiovascular system is your body\'s transport network. It delivers oxygen and nutrients to working muscles and removes waste products like carbon dioxide and lactic acid.',
             'It consists of three main components: the heart (the pump), blood vessels (the pipes), and blood (the delivery fluid).',
           ],
-          imageUrl: ch4CirculatorySystem,
+          imageUrl: getUniversityImage('ch4-circulatory-system'),
           imageAlt: 'Circulatory system diagram showing heart, arteries, veins, capillaries, and lungs with blood flow direction',
         },
         {
@@ -261,7 +237,7 @@ export const level2Unit1: Unit = {
             'The heart is a muscular pump with four chambers. The right side pumps deoxygenated blood to the lungs. The left side pumps oxygenated blood to the rest of the body.',
             'Your resting heart rate is a reliable indicator of cardiovascular fitness. Trained individuals typically have lower resting heart rates because their hearts pump more blood per beat (higher stroke volume).',
           ],
-          imageUrl: ch4Cardiovascular,
+          imageUrl: getUniversityImage('ch4-cardiovascular'),
           imageAlt: 'Heart diagram with acute responses and chronic adaptations of the cardiovascular system',
         },
         {
@@ -276,7 +252,7 @@ export const level2Unit1: Unit = {
             'Blood is redistributed — away from the digestive system and towards muscles',
             'Breathing rate increases — to take in more oxygen and expel more carbon dioxide',
           ],
-          imageUrl: ch4AcuteResponses,
+          imageUrl: getUniversityImage('ch4-acute-responses'),
           imageAlt: 'Infographic showing five acute cardiovascular responses to exercise: heart rate, stroke volume, blood pressure, redistribution, breathing',
         },
         {
@@ -291,7 +267,7 @@ export const level2Unit1: Unit = {
             'Improved VO2 max — your body becomes more efficient at using oxygen during exercise',
             'Lower resting blood pressure — blood vessels become more elastic and efficient',
           ],
-          imageUrl: ch4ChronicAdaptations,
+          imageUrl: getUniversityImage('ch4-chronic-adaptations'),
           imageAlt: 'Before and after comparison of chronic cardiovascular adaptations: cardiac hypertrophy, capillary density, VO2 max improvements',
         },
       ],
@@ -322,7 +298,7 @@ export const level2Unit1: Unit = {
           paragraphs: [
             'Every muscle contraction requires energy. That energy comes from a molecule called ATP (adenosine triphosphate). Your body has three systems for producing ATP, and which one dominates depends on the intensity and duration of the exercise.',
           ],
-          imageUrl: ch5AtpBreakdown,
+          imageUrl: getUniversityImage('ch5-atp-breakdown'),
           imageAlt: 'ATP molecule diagram showing phosphate bond breaking to release energy, producing ADP and free phosphate',
         },
         {
@@ -332,7 +308,7 @@ export const level2Unit1: Unit = {
             'Anaerobic Glycolysis — short-duration energy, lasts 30 seconds to 2 minutes. Breaks down glucose without oxygen. Produces lactic acid as a by-product. Used for high-rep sets, 400m sprints, circuit training.',
             'Aerobic System — long-duration energy, used for anything lasting more than 2-3 minutes. Uses oxygen to break down carbohydrates and fats. Used for steady-state cardio, long walks, extended training sessions.',
           ],
-          imageUrl: ch5EnergySystems,
+          imageUrl: getUniversityImage('ch5-energy-systems'),
           imageAlt: 'Chart showing the three energy systems with duration on the x-axis and contribution percentage on the y-axis, with example activities marked',
         },
         {
@@ -341,7 +317,7 @@ export const level2Unit1: Unit = {
             'All three systems work simultaneously — but one always dominates depending on intensity and duration. A heavy set of 3 reps uses mostly the ATP-PC system. A set of 15 reps relies more on anaerobic glycolysis. A 30-minute jog is primarily aerobic.',
             'Understanding this helps you structure rest periods correctly. Heavy strength work needs 2-5 minutes of rest to replenish phosphocreatine. Hypertrophy sets need 60-90 seconds. Endurance work can use shorter rests or continuous effort.',
           ],
-          imageUrl: ch5EnergyTimeline,
+          imageUrl: getUniversityImage('ch5-energy-timeline'),
           imageAlt: 'Timeline showing energy system dominance: ATP-PC peaks at 0-12 seconds, anaerobic glycolysis at 30s-2min, aerobic after 2-3 minutes',
         },
         {
@@ -352,7 +328,7 @@ export const level2Unit1: Unit = {
             'Training for endurance (15+ reps or cardio) — primarily aerobic/anaerobic glycolysis, short rest (30-60 seconds)',
             'Creatine supplementation works because it helps replenish the ATP-PC system faster',
           ],
-          imageUrl: ch5RepRanges,
+          imageUrl: getUniversityImage('ch5-rep-ranges'),
           imageAlt: 'Infographic mapping rep ranges to energy systems and recommended rest periods',
         },
       ],
@@ -391,7 +367,7 @@ export const level2Unit1: Unit = {
             'When you inhale, air enters through your nose or mouth and travels down the trachea (windpipe). The trachea splits into two bronchi — one for each lung. These branch into smaller and smaller tubes called bronchioles, which end in tiny air sacs called alveoli.',
             'The alveoli are where the magic happens. There are roughly 300 million of them in your lungs, creating a surface area about the size of a tennis court. This massive surface area allows efficient gas exchange — oxygen passes into your blood, and carbon dioxide passes out.',
           ],
-          imageUrl: ch6RespiratoryPathway,
+          imageUrl: getUniversityImage('l2-u1-ch6-respiratory-pathway'),
           imageAlt: 'Diagram showing the respiratory pathway from nose/mouth through trachea, bronchi, bronchioles, to alveoli with gas exchange details',
         },
         {
@@ -400,7 +376,7 @@ export const level2Unit1: Unit = {
             'At the alveoli, oxygen diffuses across a thin membrane into capillaries, where it binds to haemoglobin in red blood cells. These cells transport oxygen through the bloodstream to working muscles. At the same time, carbon dioxide — a waste product of energy production — diffuses from the blood into the alveoli and is exhaled.',
             'During exercise, your breathing rate increases to match higher oxygen demand. At rest you might breathe 12-20 times per minute. During intense exercise that can rise to 40-60 breaths per minute. Your body automatically adjusts based on CO2 levels in the blood.',
           ],
-          imageUrl: ch6GasExchange,
+          imageUrl: getUniversityImage('l2-u1-ch6-gas-exchange'),
           imageAlt: 'Diagram of gas exchange at the alveoli showing O2 diffusing into capillary blood and CO2 diffusing out',
         },
         {
@@ -423,7 +399,7 @@ export const level2Unit1: Unit = {
             'Breathing too fast — hyperventilation reduces CO2 levels, causing light-headedness and tingling',
             'Forgetting to breathe at all — surprisingly common during focused efforts. Your muscles need oxygen to perform.',
           ],
-          imageUrl: ch6BreathingComparison,
+          imageUrl: getUniversityImage('l2-u1-ch6-breathing-comparison'),
           imageAlt: 'Side-by-side comparison of diaphragmatic breathing versus shallow chest breathing, showing correct and incorrect technique',
         },
       ],
@@ -455,7 +431,7 @@ export const level2Unit1: Unit = {
             'Every time you pick up a dumbbell, stabilise during a squat, or catch yourself from tripping — your nervous system made it happen. Muscles don\'t move on their own. They respond to electrical signals from your brain and spinal cord.',
             'The nervous system is split into two main parts: the Central Nervous System (CNS) — your brain and spinal cord — and the Peripheral Nervous System (PNS) — the network of nerves that extends to every muscle, joint, and organ in your body.',
           ],
-          imageUrl: ch7NervousSystem,
+          imageUrl: getUniversityImage('l2-u1-ch7-nervous-system'),
           imageAlt: 'Diagram showing the central and peripheral nervous systems with somatic and autonomic branches',
         },
         {
@@ -464,7 +440,7 @@ export const level2Unit1: Unit = {
             'A motor unit consists of a single motor neuron and all the muscle fibres it controls. When the neuron fires, every fibre in that motor unit contracts. Small motor units control fine movements (writing, eye movements). Large motor units control powerful movements (jumping, heavy lifting).',
             'Your body recruits motor units in order — small ones first, large ones only when more force is needed. This is called the Size Principle. It\'s why light weights feel easy — you\'re only using small motor units. As the load increases, larger motor units are recruited to produce more force.',
           ],
-          imageUrl: ch7MotorUnitRecruitment,
+          imageUrl: getUniversityImage('l2-u1-ch7-motor-unit-recruitment'),
           imageAlt: 'Progressive bar chart showing motor unit recruitment from light load to maximal load following the size principle',
         },
         {
@@ -493,7 +469,7 @@ export const level2Unit1: Unit = {
             'Golgi tendon organs — detect changes in muscle tension. Provide a protective mechanism against excessive force',
             'Joint receptors — detect joint position, movement direction, and pressure. Essential for stability and coordination',
           ],
-          imageUrl: ch7Proprioceptors,
+          imageUrl: getUniversityImage('l2-u1-ch7-proprioceptors'),
           imageAlt: 'Three types of proprioceptive receptors: muscle spindles, Golgi tendon organs, and joint receptors with their functions',
         },
         {
@@ -547,7 +523,7 @@ export const level2Unit1: Unit = {
             'Kyphosis — excessive rounding of the upper back. Can be structural or habitual. Limits overhead pressing ability and increases shoulder impingement risk.',
             'Lateral imbalances — one shoulder higher than the other, hips shifted to one side, or rotation through the torso. Often caused by carrying bags on one side or sport-specific dominance.',
           ],
-          imageUrl: ch8PostureDeviations,
+          imageUrl: getUniversityImage('l2-u1-ch8-posture-deviations'),
           imageAlt: 'Diagram showing common postural deviations: upper crossed syndrome, lower crossed syndrome, and lateral imbalance with causes and effects',
         },
         {
@@ -574,7 +550,7 @@ export const level2Unit1: Unit = {
             'Ankles — need dorsiflexion. Limited ankle mobility forces the torso forward in a squat and can cause knee tracking issues.',
             'Shoulders — need flexion, external rotation, and extension. Limited shoulder mobility restricts overhead pressing and back squat bar position.',
           ],
-          imageUrl: ch8MobilityAreas,
+          imageUrl: getUniversityImage('l2-u1-ch8-mobility-areas'),
           imageAlt: 'Key mobility areas for gym users: thoracic spine, shoulders, hips, and ankles with specific limitations each causes',
         },
         {

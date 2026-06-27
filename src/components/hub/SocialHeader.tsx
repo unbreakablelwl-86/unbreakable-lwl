@@ -10,7 +10,7 @@ import {
   Plus,
   Search,
 } from 'lucide-react';
-import shieldLogo from '@/assets/unbreakable-shield.png';
+const shieldLogo = 'https://vlwcoqilwyfcrsxodtdx.supabase.co/storage/v1/object/public/site-assets/misc/unbreakable-shield.webp';
 
 interface SocialHeaderProps {
   activeTab: 'feed' | 'messages' | 'notifications';

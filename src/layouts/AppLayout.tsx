@@ -37,7 +37,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useConversations } from '@/hooks/useConversations';
 import { useNotifications } from '@/hooks/useNotifications';
 import { useTokenBalance } from '@/hooks/useTokenBalance';
-import shieldLogo from '@/assets/unbreakable-shield.png';
+const shieldLogo = 'https://vlwcoqilwyfcrsxodtdx.supabase.co/storage/v1/object/public/site-assets/misc/unbreakable-shield.webp';
 import CasioZoneIcon from '@/components/icons/CasioZoneIcon';
 
 /* ─── All available nav items ─── */

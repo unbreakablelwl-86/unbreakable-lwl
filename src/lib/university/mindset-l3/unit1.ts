@@ -1,10 +1,5 @@
+import { getUniversityImage } from '@/lib/university/imageMap';
 import type { Unit } from '../types';
-import ch1NeuroscienceStress from '@/assets/university/mindl3-u1-ch1-neuroscience-stress.png';
-import ch2EmotionalRegulation from '@/assets/university/mindl3-u1-ch2-emotional-regulation.png';
-import ch3FlowStates from '@/assets/university/mindl3-u1-ch3-flow-states.png';
-import ch4PostTraumaticGrowth from '@/assets/university/mindl3-u1-ch4-post-traumatic-growth.png';
-import ch5Confidence from '@/assets/university/mindl3-u1-ch5-confidence.png';
-import ch6Polyvagal from '@/assets/university/mindl3-u1-ch6-polyvagal.png';
 
 export const mindsetL3Unit1: Unit = {
   number: 1,
@@ -27,7 +22,7 @@ export const mindsetL3Unit1: Unit = {
             'The hypothalamic-pituitary-adrenal (HPA) axis is the body\'s central stress response system. When your brain detects a threat — real or perceived — the hypothalamus releases corticotropin-releasing hormone (CRH), which signals the pituitary gland to release adrenocorticotropic hormone (ACTH). ACTH then travels through the bloodstream to the adrenal glands, triggering cortisol release.',
             'This cascade is designed to be rapid and self-limiting. Cortisol feeds back to the hypothalamus and pituitary to shut down the response once the threat passes. Problems arise when this feedback loop becomes dysregulated through chronic stress — the system stays "on" when it should be switching off.',
           ],
-          imageUrl: ch1NeuroscienceStress,
+          imageUrl: getUniversityImage('mindl3-u1-ch1-neuroscience-stress'),
           imageAlt: 'HPA axis pathway diagram showing hypothalamus, pituitary gland, and adrenal cortex with cortisol feedback loops',
           imagePlaceholder: 'Diagram of the HPA axis showing the hypothalamus, pituitary gland, and adrenal glands with CRH, ACTH, and cortisol feedback loops clearly labelled',
         },
@@ -80,7 +75,7 @@ export const mindsetL3Unit1: Unit = {
             'Cognitive reappraisal is the process of deliberately reinterpreting the meaning of a situation to change your emotional response. Unlike suppression (which tries to push emotions down), reappraisal changes the emotion at its source by altering how you perceive the event.',
             'Research shows that reappraisal reduces amygdala activation and increases prefrontal cortex engagement. It is not about pretending something is fine — it is about finding a more accurate, balanced, or useful interpretation. "This is a disaster" becomes "This is a setback I can learn from." The facts remain the same; your relationship to them changes.',
           ],
-          imageUrl: ch2EmotionalRegulation,
+          imageUrl: getUniversityImage('mindl3-u1-ch2-emotional-regulation'),
           imageAlt: 'Emotional regulation strategies comparing cognitive reappraisal and suppression pathways with window of tolerance zones',
           imagePlaceholder: 'Flowchart comparing emotional suppression vs cognitive reappraisal pathways, showing brain regions involved and long-term outcomes for each strategy',
         },
@@ -133,7 +128,7 @@ export const mindsetL3Unit1: Unit = {
             'Flow state — described by psychologist Mihaly Csikszentmihalyi — is a state of complete absorption where self-consciousness dissolves, time perception alters, and performance peaks. During flow, the prefrontal cortex undergoes temporary hypofrontality: it partially deactivates, silencing the inner critic and allowing implicit learning systems to drive action.',
             'Neurochemically, flow involves a cascade of norepinephrine, dopamine, endorphins, anandamide, and serotonin. This cocktail enhances focus, pattern recognition, lateral thinking, and pain tolerance simultaneously. Flow is not just about feeling good — research shows it can increase productivity by 200–500%.',
           ],
-          imageUrl: ch3FlowStates,
+          imageUrl: getUniversityImage('mindl3-u1-ch3-flow-states'),
           imageAlt: 'Flow state channel diagram showing skill vs challenge axes with optimal zone between anxiety and boredom',
           imagePlaceholder: 'Diagram showing the flow channel — the zone between anxiety (challenge too high) and boredom (skill too high) with the optimal challenge-skill balance highlighted',
         },
@@ -187,7 +182,7 @@ export const mindsetL3Unit1: Unit = {
             'Trauma is not defined by what happened to you — it is defined by how your nervous system responded and whether that response became stuck. Acute stress reactions (heightened arousal, intrusive thoughts, emotional numbness) are normal after adverse events and typically resolve within weeks. When these responses persist beyond a month and significantly impair daily functioning, post-traumatic stress disorder (PTSD) may be present.',
             'PTSD involves changes in brain structure and function: an overactive amygdala, a suppressed prefrontal cortex, and a hippocampus that struggles to process traumatic memories into narrative form. The memory remains "live" — triggered by sensory cues that replay the experience as though it were happening now.',
           ],
-          imageUrl: ch4PostTraumaticGrowth,
+          imageUrl: getUniversityImage('mindl3-u1-ch4-post-traumatic-growth'),
           imageAlt: 'Post-traumatic growth trajectory showing decline after adversity then surpassing baseline with five PTG domains',
           imagePlaceholder: 'Diagram showing the spectrum from normal stress response through acute stress reaction to PTSD, with timeline markers and key symptoms at each stage',
         },
@@ -241,7 +236,7 @@ export const mindsetL3Unit1: Unit = {
             'Confidence is not just a thought — it is a bodily state. Research by Amy Cuddy and subsequent studies show that posture, breathing rate, and hormonal profiles all influence subjective confidence. Testosterone is associated with assertiveness and risk-taking; cortisol with anxiety and hesitation. The ratio between them — the T/C ratio — correlates with behavioural confidence.',
             'This is not about "power posing" as a quick fix. It is about understanding that your body state influences your psychological state. Chronic poor posture, shallow breathing, and physical inactivity create a physiological profile that undermines confidence regardless of your achievements.',
           ],
-          imageUrl: ch5Confidence,
+          imageUrl: getUniversityImage('mindl3-u1-ch5-confidence'),
           imageAlt: 'Psychophysiology of confidence showing self-efficacy building blocks, mastery experiences, and confidence-competence loop',
           imagePlaceholder: 'Infographic showing the bidirectional relationship between physiology (posture, breathing, hormones) and psychology (confidence, self-efficacy, risk tolerance)',
         },
@@ -294,7 +289,7 @@ export const mindsetL3Unit1: Unit = {
             'Stephen Porges\' polyvagal theory describes three hierarchical states of the autonomic nervous system. The ventral vagal state (social engagement) is the state of safety — you feel connected, calm, and capable of complex thought. The sympathetic state (mobilisation) is the fight-or-flight response — anxiety, agitation, and hyper-alertness. The dorsal vagal state (shutdown) is the freeze response — numbness, disconnection, and collapse.',
             'Your nervous system moves through these states constantly, often outside your awareness. Understanding which state you are in allows you to apply targeted interventions rather than fighting your physiology with willpower.',
           ],
-          imageUrl: ch6Polyvagal,
+          imageUrl: getUniversityImage('mindl3-u1-ch6-polyvagal'),
           imageAlt: 'Polyvagal theory diagram showing three autonomic states: ventral vagal, sympathetic, and dorsal vagal with vagus nerve pathway',
           imagePlaceholder: 'Vertical ladder diagram showing the three polyvagal states — ventral vagal (safety/connection) at top, sympathetic (fight/flight) in middle, dorsal vagal (freeze/shutdown) at bottom — with associated behaviours and sensations',
         },

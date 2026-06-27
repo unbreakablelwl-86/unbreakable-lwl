@@ -1,20 +1,5 @@
+import { getUniversityImage } from '@/lib/university/imageMap';
 import type { Unit } from '../types';
-import ch1GrowthStages from '@/assets/university/nutl2-u2-ch1-growth-stages.png';
-import ch1YouthNutrients from '@/assets/university/nutl2-u2-ch1-youth-nutrients.png';
-import ch2AgeingMetabolism from '@/assets/university/nutl2-u2-ch2-ageing-metabolism.png';
-import ch2ElderlyNutrients from '@/assets/university/nutl2-u2-ch2-elderly-nutrients.png';
-import ch3PregnancyNutrition from '@/assets/university/nutl2-u2-ch3-pregnancy-nutrition.png';
-import ch3PregnancyAvoid from '@/assets/university/nutl2-u2-ch3-pregnancy-avoid.png';
-import ch4DietaryPatterns from '@/assets/university/nutl2-u2-ch4-dietary-patterns.png';
-import ch4ProteinCombining from '@/assets/university/nutl2-u2-ch4-protein-combining.png';
-import ch5CulturalDiets from '@/assets/university/nutl2-u2-ch5-cultural-diets.png';
-import ch5ReligiousDiets from '@/assets/university/nutl2-u2-ch5-religious-diets.png';
-import ch6AllergyIntolerance from '@/assets/university/nutl2-u2-ch6-allergy-intolerance.png';
-import ch6Allergens14 from '@/assets/university/nutl2-u2-ch6-14-allergens.png';
-import ch7CaloricNeeds from '@/assets/university/nutl2-u2-ch7-caloric-needs.png';
-import ch7ActivityMacros from '@/assets/university/nutl2-u2-ch7-activity-macros.png';
-import ch8BloodSugar from '@/assets/university/nutl2-u2-ch8-blood-sugar.png';
-import ch8CardioNutrition from '@/assets/university/nutl2-u2-ch8-cardio-nutrition.png';
 
 export const nutritionL2Unit2: Unit = {
   number: 2,
@@ -37,12 +22,12 @@ export const nutritionL2Unit2: Unit = {
             'Children and adolescents have proportionally higher energy and nutrient needs relative to their body weight compared to adults. This is because they are not only maintaining existing tissues but actively building new ones — bones, muscles, organs, and neural pathways.',
             'During puberty, growth accelerates significantly. Boys typically need more calories than girls due to greater increases in lean mass. Both sexes require adequate protein, calcium, iron, and zinc to support this growth.',
           ],
-          imageUrl: ch1GrowthStages,
+          imageUrl: getUniversityImage('nutl2-u2-ch1-growth-stages'),
           imageAlt: 'Growth and nutrient needs across life stages',
         },
         {
           heading: 'Key Nutrients for Young People',
-          imageUrl: ch1YouthNutrients,
+          imageUrl: getUniversityImage('nutl2-u2-ch1-youth-nutrients'),
           imageAlt: 'Essential nutrients for growth — calcium, iron, vitamin D, protein, and omega-3',
           bullets: [
             'Calcium — Critical for bone development. Peak bone mass is established during adolescence. Dairy, fortified plant milks, and leafy greens are key sources',
@@ -88,12 +73,12 @@ export const nutritionL2Unit2: Unit = {
             'As you age, basal metabolic rate gradually decreases — primarily due to loss of lean muscle mass (sarcopenia). This means calorie needs reduce, but nutrient needs remain the same or increase. The result is that older adults must eat more nutrient-dense foods per calorie consumed.',
             'Physical activity becomes even more important with age, both for maintaining muscle mass and for supporting appetite, bone density, and mental health.',
           ],
-          imageUrl: ch2AgeingMetabolism,
+          imageUrl: getUniversityImage('nutl2-u2-ch2-ageing-metabolism'),
           imageAlt: 'Metabolic changes with ageing diagram',
         },
         {
           heading: 'Critical Nutrients for Older Adults',
-          imageUrl: ch2ElderlyNutrients,
+          imageUrl: getUniversityImage('nutl2-u2-ch2-elderly-nutrients'),
           imageAlt: 'Critical nutrients for older adults — calcium, vitamin D, protein, B12, fibre',
           bullets: [
             'Protein — Requirements increase to 1.0–1.2 g/kg to prevent sarcopenia. Distribute protein evenly across meals (25–30 g per meal)',
@@ -143,7 +128,7 @@ export const nutritionL2Unit2: Unit = {
             'Pregnancy increases nutritional demands, but not as dramatically as many people believe. In the first trimester, no additional calories are needed. In the second trimester, approximately 340 extra calories per day are recommended, rising to about 450 in the third trimester.',
             'The focus should be on nutrient quality rather than quantity. Several micronutrients become critical for the health of both the mother and developing baby.',
           ],
-          imageUrl: ch3PregnancyNutrition,
+          imageUrl: getUniversityImage('nutl2-u2-ch3-pregnancy-nutrition'),
           imageAlt: 'Trimester nutrition requirements',
         },
         {
@@ -159,7 +144,7 @@ export const nutritionL2Unit2: Unit = {
         },
         {
           heading: 'Foods to Avoid',
-          imageUrl: ch3PregnancyAvoid,
+          imageUrl: getUniversityImage('nutl2-u2-ch3-pregnancy-avoid'),
           imageAlt: 'Foods to avoid during pregnancy with warning icons',
           bullets: [
             'Raw or undercooked meat, fish, and eggs — Risk of toxoplasmosis and salmonella',
@@ -205,7 +190,7 @@ export const nutritionL2Unit2: Unit = {
             'Vegetarian diets exclude meat and fish but may include dairy (lacto-vegetarian), eggs (ovo-vegetarian), or both (lacto-ovo-vegetarian). Vegan diets exclude all animal products, including dairy, eggs, and honey.',
             'A well-planned vegetarian or vegan diet can meet all nutritional needs. However, certain nutrients require more attention because they are naturally found in higher concentrations in animal foods.',
           ],
-          imageUrl: ch4DietaryPatterns,
+          imageUrl: getUniversityImage('nutl2-u2-ch4-dietary-patterns'),
           imageAlt: 'Dietary pattern spectrum diagram',
         },
         {
@@ -222,7 +207,7 @@ export const nutritionL2Unit2: Unit = {
         },
         {
           heading: 'Achieving Complete Protein',
-          imageUrl: ch4ProteinCombining,
+          imageUrl: getUniversityImage('nutl2-u2-ch4-protein-combining'),
           imageAlt: 'Plant-based protein combining diagram with grains, legumes, nuts, and seeds',
           paragraphs: [
             'Most plant proteins are "incomplete" — they lack one or more essential amino acids. However, you do not need to combine them in a single meal. Eating a variety of plant proteins throughout the day ensures you get all essential amino acids.',
@@ -263,12 +248,12 @@ export const nutritionL2Unit2: Unit = {
             'Food is deeply connected to cultural identity, religious practice, and social belonging. Understanding dietary traditions is essential for respecting individual choices while ensuring nutritional needs are met.',
             'Many cultural diets are inherently balanced and nutrient-rich. The Mediterranean diet, traditional Japanese diet, and Indian vegetarian cuisine are all examples of culturally-rooted eating patterns associated with excellent health outcomes.',
           ],
-          imageUrl: ch5CulturalDiets,
+          imageUrl: getUniversityImage('nutl2-u2-ch5-cultural-diets'),
           imageAlt: 'World cultural dietary traditions map',
         },
         {
           heading: 'Religious Dietary Practices',
-          imageUrl: ch5ReligiousDiets,
+          imageUrl: getUniversityImage('nutl2-u2-ch5-religious-diets'),
           imageAlt: 'Religious dietary practices — Halal, Kosher, Hindu, and Buddhist food rules',
           bullets: [
             'Islam (Halal) — Pork and alcohol prohibited. Meat must be slaughtered according to Islamic law. Fasting during Ramadan (dawn to sunset)',
@@ -320,12 +305,12 @@ export const nutritionL2Unit2: Unit = {
             'A food allergy is an immune system reaction that can be severe or life-threatening (anaphylaxis). Even tiny amounts of the allergen can trigger a response. Symptoms include swelling, hives, breathing difficulties, and in severe cases, anaphylactic shock.',
             'A food intolerance does not involve the immune system in the same way. Symptoms are usually digestive (bloating, cramping, diarrhoea) and are dose-dependent — small amounts may be tolerated. Lactose intolerance and non-coeliac gluten sensitivity are common examples.',
           ],
-          imageUrl: ch6AllergyIntolerance,
+          imageUrl: getUniversityImage('nutl2-u2-ch6-allergy-intolerance'),
           imageAlt: 'Food allergy vs intolerance comparison',
         },
         {
           heading: 'The 14 Major Allergens (UK Law)',
-          imageUrl: ch6Allergens14,
+          imageUrl: getUniversityImage('nutl2-u2-ch6-14-allergens'),
           imageAlt: 'The 14 major allergens required by UK food law with icons',
           paragraphs: [
             'UK food law requires that 14 allergens are clearly declared on food labels and in catering settings:',
@@ -388,12 +373,12 @@ export const nutritionL2Unit2: Unit = {
             'The most obvious difference between active and sedentary individuals is total energy expenditure. A sedentary adult might burn 1,800–2,200 calories per day, while a highly active person might burn 3,000–5,000+ depending on the type, duration, and intensity of training.',
             'Under-fuelling is a significant risk for active individuals. Relative Energy Deficiency in Sport (RED-S) can impair performance, bone health, immune function, hormonal balance, and mental health.',
           ],
-          imageUrl: ch7CaloricNeeds,
+          imageUrl: getUniversityImage('nutl2-u2-ch7-caloric-needs'),
           imageAlt: 'Daily caloric needs comparison chart',
         },
         {
           heading: 'Macronutrient Differences',
-          imageUrl: ch7ActivityMacros,
+          imageUrl: getUniversityImage('nutl2-u2-ch7-activity-macros'),
           imageAlt: 'Macronutrient needs comparison by activity level — sedentary, moderate, and highly active',
           bullets: [
             'Protein — Sedentary: 0.8 g/kg. Active: 1.4–2.2 g/kg depending on goal and training type',
@@ -442,12 +427,12 @@ export const nutritionL2Unit2: Unit = {
             'Type 2 diabetes is characterised by insulin resistance — the body produces insulin but cells do not respond to it effectively, leading to elevated blood sugar levels. Nutritional management is a cornerstone of treatment.',
             'Key dietary strategies include reducing refined carbohydrates and added sugars, increasing fibre intake, managing portion sizes, and achieving or maintaining a healthy body weight. Consistent meal timing helps prevent blood sugar spikes and crashes.',
           ],
-          imageUrl: ch8BloodSugar,
+          imageUrl: getUniversityImage('nutl2-u2-ch8-blood-sugar'),
           imageAlt: 'Blood sugar response comparison diagram',
         },
         {
           heading: 'Cardiovascular Health',
-          imageUrl: ch8CardioNutrition,
+          imageUrl: getUniversityImage('nutl2-u2-ch8-cardio-nutrition'),
           imageAlt: 'Nutrition and cardiovascular health — reduce saturated fat, increase omega-3, reduce sodium, increase fibre',
           paragraphs: [
             'Diet plays a major role in cardiovascular risk. Key factors include the type and amount of fat consumed, sodium intake, fibre consumption, and overall dietary patterns.',

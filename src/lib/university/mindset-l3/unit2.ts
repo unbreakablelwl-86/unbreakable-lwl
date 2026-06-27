@@ -1,10 +1,5 @@
+import { getUniversityImage } from '@/lib/university/imageMap';
 import type { Unit } from '../types';
-import ch1AdvancedBreathwork from '@/assets/university/mindl3-u2-ch1-advanced-breathwork.png';
-import ch2ColdScience from '@/assets/university/mindl3-u2-ch2-cold-science.png';
-import ch3HeatExposure from '@/assets/university/mindl3-u2-ch3-heat-exposure.png';
-import ch4SportBreathing from '@/assets/university/mindl3-u2-ch4-sport-breathing.png';
-import ch5ContrastTherapy from '@/assets/university/mindl3-u2-ch5-contrast-therapy.png';
-import ch6AltitudeTimeline from '@/assets/university/mindl3-u2-ch6-altitude-timeline.png';
 
 export const mindsetL3Unit2: Unit = {
   number: 2,
@@ -27,7 +22,7 @@ export const mindsetL3Unit2: Unit = {
             'Cyclic hyperventilation protocols (such as the Unbreakable Breathwork Method, Tummo, and holotropic breathwork) deliberately lower blood CO2, raising blood pH (respiratory alkalosis). This creates tingling sensations, lightheadedness, and a controlled adrenaline response. The subsequent breath hold after exhalation allows CO2 to rise sharply, creating a powerful sympathetic-to-parasympathetic transition.',
             'Advanced protocols extend round counts (4–5 rounds vs beginner 3), increase breath pace, and extend retention times. The physiological benefits include improved CO2 tolerance, enhanced vagal tone (from the recovery phase), and acute increases in noradrenaline and dopamine that can last hours.',
           ],
-          imageUrl: ch1AdvancedBreathwork,
+          imageUrl: getUniversityImage('mindl3-u2-ch1-advanced-breathwork'),
           imageAlt: 'Advanced breathwork protocols showing Unbreakable Breathwork Method cycles, CO2 tolerance curve, and oxygen-CO2 exchange diagram',
           imagePlaceholder: 'Graph showing blood CO2 and O2 levels across a 4-round cyclic hyperventilation session, with breath hold periods and recovery phases marked',
         },
@@ -80,7 +75,7 @@ export const mindsetL3Unit2: Unit = {
             'When cold water contacts your skin, the cold shock response triggers an involuntary gasp, rapid breathing, and sharp increases in heart rate and blood pressure. This is mediated by cutaneous cold receptors signalling the sympathetic nervous system. The response is most intense in the first 30–60 seconds and diminishes with repeated exposure as habituation occurs.',
             'Understanding this response is essential for safety. The gasp reflex is dangerous in water (drowning risk), and the cardiovascular strain can be risky for those with heart conditions. Progressive exposure — starting with cold showers rather than immersion — builds habituation safely.',
           ],
-          imageUrl: ch2ColdScience,
+          imageUrl: getUniversityImage('mindl3-u2-ch2-cold-science'),
           imageAlt: 'Cold exposure science showing thermogenesis pathways, brown adipose tissue activation, and progressive cold protocol',
           imagePlaceholder: 'Timeline diagram of the cold shock response showing heart rate, breathing rate, and noradrenaline levels from 0 to 5 minutes of cold water exposure',
         },
@@ -134,7 +129,7 @@ export const mindsetL3Unit2: Unit = {
             'Deliberate heat exposure (sauna, hot baths) creates cardiovascular stress comparable to moderate exercise. Core body temperature rises, heart rate increases to 100–150 bpm, blood vessels dilate, and blood pressure initially drops before the cardiovascular system compensates. This "passive cardiovascular conditioning" has measurable benefits for heart health.',
             'Finnish longitudinal studies (involving 2,300+ participants over 20 years) found that frequent sauna use (4–7 sessions per week at 80°C+) was associated with a 40% reduction in all-cause mortality and a 50% reduction in cardiovascular disease events compared to once-weekly use.',
           ],
-          imageUrl: ch3HeatExposure,
+          imageUrl: getUniversityImage('mindl3-u2-ch3-heat-exposure'),
           imageAlt: 'Sauna and heat exposure science showing heat shock protein activation, growth hormone release, and cardiovascular benefits',
           imagePlaceholder: 'Infographic showing the cardiovascular response to sauna use — heart rate, blood pressure, and core temperature changes over a 20-minute session',
         },
@@ -188,7 +183,7 @@ export const mindsetL3Unit2: Unit = {
             'The goal before performance is to reach your optimal arousal zone — not too calm, not too activated. For power events (heavy lifts, sprints), you want moderate sympathetic activation: short, sharp nasal breathing or 2–3 forced exhales through the mouth can raise arousal. For precision events (archery, putting), you want parasympathetic dominance: slow 4-7-8 breathing to lower heart rate.',
             'The Inverted-U hypothesis (Yerkes-Dodson Law) explains this: performance peaks at moderate arousal and declines at both extremes. Different tasks have different optimal arousal points. Your job is to learn where your personal peak is for each type of performance and use breathing to dial to that level.',
           ],
-          imageUrl: ch4SportBreathing,
+          imageUrl: getUniversityImage('mindl3-u2-ch4-sport-breathing'),
           imageAlt: 'Breathing for sport and competition showing pre-competition activation, inter-set recovery, and nasal vs mouth breathing',
           imagePlaceholder: 'Inverted-U curve diagram showing the Yerkes-Dodson relationship between arousal and performance, with breathing protocols mapped to different zones',
         },
@@ -242,7 +237,7 @@ export const mindsetL3Unit2: Unit = {
             'Hormesis is the biological principle that low-to-moderate doses of a stressor stimulate beneficial adaptive responses, while high doses cause harm. Exercise is the most obvious example: moderate training stress builds fitness, while overtraining causes breakdown.',
             'The same principle applies to cold exposure (builds cold tolerance and neurochemical resilience), heat exposure (triggers heat shock proteins and cardiovascular adaptation), breathing challenges (improves CO2 tolerance and vagal tone), and even psychological stress (builds coping capacity through controlled challenge). The key is dose — enough to trigger adaptation, not so much that you overwhelm recovery.',
           ],
-          imageUrl: ch5ContrastTherapy,
+          imageUrl: getUniversityImage('mindl3-u2-ch5-contrast-therapy'),
           imageAlt: 'Contrast therapy and hormetic stress showing dose-response curve and cellular stress adaptation pathways',
           imagePlaceholder: 'Hormesis dose-response curve showing the beneficial adaptation zone between no-effect threshold and harmful overdose, with examples of cold, heat, and exercise mapped along the curve',
         },
@@ -319,7 +314,7 @@ export const mindsetL3Unit2: Unit = {
             'Mitochondrial efficiency improves — cells become better at using available oxygen',
             'Ventilatory response adapts — breathing becomes more efficient, extracting more oxygen per breath',
           ],
-          imageUrl: ch6AltitudeTimeline,
+          imageUrl: getUniversityImage('mindl3-u2-ch6-altitude-timeline'),
           imageAlt: 'Timeline showing acute altitude responses transitioning to chronic adaptations over weeks, with accessible training methods listed',
         },
         {

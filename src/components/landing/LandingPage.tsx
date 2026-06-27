@@ -23,12 +23,12 @@ import {
   Quote,
   Users,
 } from 'lucide-react';
-import shieldLogo from '@/assets/unbreakable-shield.png';
-import lwlFilmstrip from '@/assets/lwl-filmstrip-web.png';
-import johnFounder from '@/assets/john-founder.png';
-import jj2018 from '@/assets/jj-journey-2018.png';
-import jj2020 from '@/assets/jj-journey-2020.png';
-import jjReturn from '@/assets/jj-return-2025-2026.png';
+const shieldLogo = 'https://vlwcoqilwyfcrsxodtdx.supabase.co/storage/v1/object/public/site-assets/misc/unbreakable-shield.webp';
+const lwlFilmstrip = 'https://vlwcoqilwyfcrsxodtdx.supabase.co/storage/v1/object/public/site-assets/misc/lwl-filmstrip-web.webp';
+const johnFounder = 'https://vlwcoqilwyfcrsxodtdx.supabase.co/storage/v1/object/public/site-assets/misc/john-founder.webp';
+const jj2018 = 'https://vlwcoqilwyfcrsxodtdx.supabase.co/storage/v1/object/public/site-assets/misc/jj-journey-2018.webp';
+const jj2020 = 'https://vlwcoqilwyfcrsxodtdx.supabase.co/storage/v1/object/public/site-assets/misc/jj-journey-2020.webp';
+const jjReturn = 'https://vlwcoqilwyfcrsxodtdx.supabase.co/storage/v1/object/public/site-assets/misc/jj-return-2025-2026.webp';
 
 interface LandingPageProps {
   onSignIn: () => void;

@@ -1,11 +1,5 @@
+import { getUniversityImage } from '@/lib/university/imageMap';
 import type { Unit } from '../types';
-import ch1MorningRoutine from '@/assets/university/mindl2-u4-ch1-morning-routine.png';
-import ch2StressInoculation from '@/assets/university/mindl2-u4-ch2-stress-inoculation.png';
-import ch3Mindfulness from '@/assets/university/mindl2-u4-ch3-mindfulness.png';
-import ch4ResilienceProtocol from '@/assets/university/mindl2-u4-ch4-resilience-protocol.png';
-import ch5SleepStages from '@/assets/university/mindl2-u4-ch5-sleep-stages.png';
-import ch6JournalingBrain from '@/assets/university/mindl2-u4-ch6-journaling-brain.png';
-
 
 export const mindsetL2Unit4: Unit = {
   number: 4,
@@ -28,7 +22,7 @@ export const mindsetL2Unit4: Unit = {
             'How you start your day sets the neurological and psychological tone for everything that follows. A morning spent scrolling social media, checking emails, and reacting to other people\'s priorities puts you in reactive mode from the start. A morning spent with intentional practices puts you in proactive mode — focused, calm, and directed.',
             'This does not require waking at 4am or performing elaborate two-hour rituals. A simple, consistent 15–30 minute routine that includes movement, breathwork, and reflection is sufficient to create a meaningful shift in your daily experience.',
           ],
-          imageUrl: ch1MorningRoutine,
+          imageUrl: getUniversityImage('mindl2-u4-ch1-morning-routine'),
           imageAlt: 'Morning routine timeline with breathwork, journaling, movement, and hydration',
         },
         {
@@ -77,7 +71,7 @@ export const mindsetL2Unit4: Unit = {
             'Stress inoculation training (SIT), developed by Donald Meichenbaum, is based on a simple principle: controlled exposure to manageable stress builds resilience to larger stressors. Just as a vaccine exposes your immune system to a weakened pathogen to build immunity, stress inoculation exposes your nervous system to controlled challenges to build mental toughness.',
             'The key word is "controlled." Uncontrolled, overwhelming stress causes trauma. Controlled, progressive stress — where you choose the challenge and have tools to manage it — builds capacity.',
           ],
-          imageUrl: ch2StressInoculation,
+          imageUrl: getUniversityImage('mindl2-u4-ch2-stress-inoculation'),
           imageAlt: 'Stress inoculation training phases diagram',
         },
         {
@@ -124,7 +118,7 @@ export const mindsetL2Unit4: Unit = {
             'Mindfulness is paying attention to the present moment, on purpose, without judgement. It is not about clearing your mind, achieving a state of bliss, or sitting cross-legged for hours. It is simply the practice of noticing what is happening right now — your thoughts, sensations, emotions, and surroundings — without trying to change them.',
             'The reason mindfulness works is that most mental suffering comes from ruminating about the past (regret, guilt) or worrying about the future (anxiety, fear). When you bring your attention to the present moment, you interrupt these patterns and give your nervous system a break from the chronic stress they generate.',
           ],
-          imageUrl: ch3Mindfulness,
+          imageUrl: getUniversityImage('mindl2-u4-ch3-mindfulness'),
           imageAlt: 'Mindfulness timeline showing past rumination, present awareness, and future worry',
         },
         {
@@ -173,7 +167,7 @@ export const mindsetL2Unit4: Unit = {
             'Throughout this course, you have learned the science behind resilience, breathwork, cold exposure, focus, habit formation, emotional regulation, visualisation, and mindfulness. The final step is assembling these tools into a personalised daily practice that works for your life, your schedule, and your specific goals.',
             'The key principle is sustainability. A protocol that takes 15 minutes and you do every day is infinitely more powerful than a 90-minute protocol you abandon after a week. Start with the minimum effective dose and build from there.',
           ],
-          imageUrl: ch4ResilienceProtocol,
+          imageUrl: getUniversityImage('mindl2-u4-ch4-resilience-protocol'),
           imageAlt: 'Personal resilience protocol template with morning, training, and evening blocks',
         },
         {
@@ -238,7 +232,7 @@ export const mindsetL2Unit4: Unit = {
           paragraphs: [
             'Deep sleep (N3) dominates the first half of the night. REM sleep dominates the second half. This is why cutting sleep short costs you REM, and going to bed too late costs you deep sleep. Both matter — you need a full 7-9 hours to cycle through all stages adequately.',
           ],
-          imageUrl: ch5SleepStages,
+          imageUrl: getUniversityImage('mindl2-u4-ch5-sleep-stages'),
           imageAlt: 'Hypnogram showing sleep architecture across an 8-hour night with deep sleep dominant early and REM dominant later',
         },
         {
@@ -309,7 +303,7 @@ export const mindsetL2Unit4: Unit = {
             'Writing engages different neural pathways than thinking or speaking. When you write by hand, you activate the reticular activating system (RAS), which filters information and signals your brain to pay closer attention to what you\'re writing. This is why written goals are significantly more likely to be achieved than goals that are only thought about.',
             'Journaling also bridges the left brain (language, logic, analysis) and the right brain (emotion, intuition, creativity). By putting emotions into words, you engage your prefrontal cortex — the rational, planning part of your brain — which helps regulate the emotional limbic system. This is the same mechanism used in cognitive behavioural therapy.',
           ],
-          imageUrl: ch6JournalingBrain,
+          imageUrl: getUniversityImage('mindl2-u4-ch6-journaling-brain'),
           imageAlt: 'Brain regions activated during journaling: prefrontal cortex, reticular activating system, and limbic system connected through writing',
         },
         {

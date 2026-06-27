@@ -27,7 +27,7 @@ function getSportImageUrl(courseType: string | undefined, chapterNumber: number)
   // courseType is already 'sport-football', 'sport-boxing' etc.
   // Images at src/assets/university/sport-{sport}-ch{N}.png e.g. sport-football-ch1.png
   try {
-    return new URL(`../../assets/university/${courseType}-ch${chapterNumber}.png`, import.meta.url).href;
+    return `https://vlwcoqilwyfcrsxodtdx.supabase.co/storage/v1/object/public/site-assets/university/${courseType}-ch${chapterNumber}.webp`;
   } catch {
     return null;
   }
