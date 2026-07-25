@@ -66,7 +66,7 @@ export function ImmersiveSessionView({
           phase === "inhale" ? "opacity-100" : phase === "hold" ? "opacity-80" : "opacity-30"
         }`}
         style={{
-          background: `radial-gradient(circle at center, rgba(255,85,0,0.12), transparent 60%)`
+          background: `radial-gradient(circle at center, hsl(var(--primary) / 0.12), transparent 60%)`
         }}
       />
 

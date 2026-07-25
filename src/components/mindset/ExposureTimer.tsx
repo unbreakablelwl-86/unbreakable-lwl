@@ -27,7 +27,7 @@ const EXPOSURE_PROTOCOLS: ExposureProtocol[] = [
       { label: 'Full Cold', duration: 30 },
     ],
     category: 'cold',
-    colour: '#FF5500',
+    colour: 'hsl(var(--primary))',
   },
   {
     id: 'cold-shower-intermediate',
@@ -40,7 +40,7 @@ const EXPOSURE_PROTOCOLS: ExposureProtocol[] = [
       { label: 'Full Cold', duration: 90 },
     ],
     category: 'cold',
-    colour: '#FF5500',
+    colour: 'hsl(var(--primary))',
   },
   {
     id: 'cold-shower-advanced',
@@ -52,7 +52,7 @@ const EXPOSURE_PROTOCOLS: ExposureProtocol[] = [
       { label: 'Recovery Breathing', duration: 30 },
     ],
     category: 'cold',
-    colour: '#FF5500',
+    colour: 'hsl(var(--primary))',
   },
   {
     id: 'ice-bath-standard',
@@ -65,7 +65,7 @@ const EXPOSURE_PROTOCOLS: ExposureProtocol[] = [
       { label: 'Recovery', duration: 60 },
     ],
     category: 'cold',
-    colour: '#FF5500',
+    colour: 'hsl(var(--primary))',
   },
   {
     id: 'ice-bath-extended',
@@ -78,7 +78,7 @@ const EXPOSURE_PROTOCOLS: ExposureProtocol[] = [
       { label: 'Active Recovery', duration: 120 },
     ],
     category: 'cold',
-    colour: '#FF5500',
+    colour: 'hsl(var(--primary))',
   },
   {
     id: 'sauna-standard',
@@ -92,7 +92,7 @@ const EXPOSURE_PROTOCOLS: ExposureProtocol[] = [
       { label: 'Recovery', duration: 180 },
     ],
     category: 'heat',
-    colour: '#FF5500',
+    colour: 'hsl(var(--primary))',
   },
   {
     id: 'sauna-contrast',
@@ -107,7 +107,7 @@ const EXPOSURE_PROTOCOLS: ExposureProtocol[] = [
       { label: 'Final Recovery', duration: 120 },
     ],
     category: 'heat',
-    colour: '#FF5500',
+    colour: 'hsl(var(--primary))',
   },
 ];
 

@@ -128,10 +128,10 @@ const MindsetGames = () => {
       {/* Compact Mindset Hero */}
       <div className="relative px-4 pt-3 pb-5 overflow-hidden">
         <div className="absolute inset-0 pointer-events-none"
-          style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(255,85,0,0.08), transparent 70%)' }} />
+          style={{ background: 'radial-gradient(ellipse at 50% 0%, hsl(var(--primary) / 0.08), transparent 70%)' }} />
         <div className="relative z-10">
           <h1 className="font-display text-2xl tracking-wider text-center">
-            <span className="text-primary" style={{ textShadow: '0 0 20px rgba(255,85,0,0.4)' }}>UNBREAKABLE</span>
+            <span className="text-primary" style={{ textShadow: '0 0 20px hsl(var(--primary) / 0.4)' }}>UNBREAKABLE</span>
             <span className="text-foreground"> FOCUS</span>
           </h1>
           <p className="text-center text-muted-foreground text-sm mt-1 font-display tracking-wide">
@@ -163,7 +163,7 @@ const MindsetGames = () => {
             }`}
           >
             {musicEnabled ? (
-              <Music className="w-4 h-4 text-primary shrink-0" style={{ filter: 'drop-shadow(0 0 6px rgba(255,85,0,0.5))' }} />
+              <Music className="w-4 h-4 text-primary shrink-0" style={{ filter: 'drop-shadow(0 0 6px hsl(var(--primary) / 0.5))' }} />
             ) : (
               <VolumeX className="w-4 h-4 text-muted-foreground shrink-0" />
             )}
@@ -189,8 +189,8 @@ const MindsetGames = () => {
                 onClick={() => setView(game.id)}
                 className="w-full p-3.5 rounded-xl border border-border bg-card flex items-center gap-3 hover:border-primary/30 transition-all group text-left"
               >
-                <div className="w-10 h-10 rounded-lg border border-primary/20 flex items-center justify-center shrink-0" style={{ background: 'rgba(255,85,0,0.1)' }}>
-                  <Icon className="w-5 h-5 text-primary" style={{ filter: 'drop-shadow(0 0 6px rgba(255,85,0,0.5))' }} />
+                <div className="w-10 h-10 rounded-lg border border-primary/20 flex items-center justify-center shrink-0" style={{ background: 'hsl(var(--primary) / 0.1)' }}>
+                  <Icon className="w-5 h-5 text-primary" style={{ filter: 'drop-shadow(0 0 6px hsl(var(--primary) / 0.5))' }} />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">

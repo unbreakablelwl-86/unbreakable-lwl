@@ -8,7 +8,7 @@ import { getChapterData, getUnitData, getChapterQuiz } from '@/lib/university/co
 import { useUniversityProgress } from '@/hooks/useUniversityProgress';
 import { useCourseAccess } from '@/hooks/useCourseAccess';
 import { toCourseKey } from '@/lib/coursePricing';
-import { CoursePurchaseGate } from '@/components/university/CoursePurchaseGate';
+import { SubscriptionUpgradeBanner } from '@/components/university/SubscriptionUpgradeBanner';
 import { AdminControlPanel } from '@/components/university/AdminControlPanel';
 import { getCourseColors, getReadingTime } from '@/lib/university/courseColors';
 import { toast } from 'sonner';
@@ -23,7 +23,7 @@ export default function UniversityChapter() {
   const colors = getCourseColors(ct);
 
   const courseKey = toCourseKey(ct, levelNum);
-  const { hasAccess, ownedCourses, loading: accessLoading } = useCourseAccess(courseKey);
+  const { hasAccess, loading: accessLoading } = useCourseAccess(courseKey);
 
   const chapterData = getChapterData(levelNum, unitNum, chapterNum, ct);
   const unitData = getUnitData(levelNum, unitNum, ct);
@@ -136,12 +136,7 @@ export default function UniversityChapter() {
               <div className="w-10 h-10 border-2 border-primary border-t-transparent rounded-full animate-spin" />
             </div>
           ) : !hasAccess ? (
-            <CoursePurchaseGate
-              courseKey={courseKey}
-              courseName={chapterData ? `${unitData?.title ?? 'Course'}` : 'this course'}
-              ownedCourses={ownedCourses}
-              variant="full"
-            />
+            <SubscriptionUpgradeBanner />
           ) : (
           <>
           <motion.div

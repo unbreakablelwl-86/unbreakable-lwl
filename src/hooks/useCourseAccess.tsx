@@ -1,53 +1,46 @@
-import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
 import { useUserRole } from './useUserRole';
+import { useTokenBalance } from './useTokenBalance';
 
 interface CourseAccessResult {
-  /** User owns this specific course */
+  /** User has access to this course (any active subscriber) */
   hasAccess: boolean;
-  /** All course keys the user owns */
+  /** All course keys the user owns (legacy, kept for compatibility) */
   ownedCourses: string[];
   /** Still loading */
   loading: boolean;
 }
 
 /**
- * Check whether the current user has purchased a university course.
- * Dev and coach users bypass all purchase gates.
+ * Check whether the current user can access university courses.
+ *
+ * Access rules (post-paywall removal):
+ *   - Dev / Coach roles → always have access
+ *   - Any paying subscriber (Starter / Pro / Elite / Absolute Base) → access
+ *   - Free tier → no access to L2+ courses
+ *
+ * Level-progression requirements are handled separately in UniversityLevel
+ * (must complete prior level assessment to unlock the next).
  */
 export function useCourseAccess(courseKey?: string): CourseAccessResult {
   const { user } = useAuth();
   const { isDev, isCoach, loading: roleLoading } = useUserRole();
+  const { currentTier, loading: tierLoading } = useTokenBalance();
 
-  const { data: purchases = [], isLoading } = useQuery({
-    queryKey: ['course-purchases', user?.id],
-    queryFn: async () => {
-      if (!user) return [];
-      const { data, error } = await supabase
-        .from('course_purchases' as any)
-        .select('course_key')
-        .eq('user_id', user.id);
-      if (error) {
-        console.error('Error fetching course purchases:', error);
-        return [];
-      }
-      return (data as any[]).map((r: any) => r.course_key as string);
-    },
-    enabled: !!user,
-    staleTime: 1000 * 60 * 5, // cache 5 min
-  });
-
-  const loading = isLoading || roleLoading;
+  const loading = roleLoading || tierLoading;
 
   // Dev / coach users always have access
   if (isDev || isCoach) {
-    return { hasAccess: true, ownedCourses: purchases, loading: false };
+    return { hasAccess: true, ownedCourses: [], loading: false };
   }
 
+  // Any paying subscriber gets full university access
+  const paidTiers = ['base', 'absolute_base', 'pro', 'elite'];
+  const isSubscriber = paidTiers.includes(currentTier);
+
   return {
-    hasAccess: courseKey ? purchases.includes(courseKey) : false,
-    ownedCourses: purchases,
+    hasAccess: isSubscriber,
+    ownedCourses: [], // Legacy field — no longer tracking individual purchases
     loading,
   };
 }

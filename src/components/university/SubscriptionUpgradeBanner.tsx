@@ -1,0 +1,48 @@
+import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Lock, Zap } from 'lucide-react';
+
+/**
+ * Simple banner shown to free-tier users on university L2+ content.
+ * Replaces the old CoursePurchaseGate (token purchase wall).
+ * Any paying subscriber (Starter / Pro / Elite) gets full access.
+ */
+export function SubscriptionUpgradeBanner() {
+  const navigate = useNavigate();
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: -8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+    >
+      <Card className="border-primary/30 bg-primary/5 p-4 sm:p-5 border-border bg-card">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+          <div className="flex items-center gap-3 flex-1 min-w-0">
+            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+              <Lock className="w-5 h-5 text-primary" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-sm font-medium text-foreground">
+                Subscribe to unlock all courses
+              </p>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Full access to every chapter, quiz &amp; assessment with any subscription
+              </p>
+            </div>
+          </div>
+          <Button
+            size="sm"
+            onClick={() => navigate('/ai-tokens')}
+            className="font-display tracking-wide w-full sm:w-auto"
+          >
+            <Zap className="w-4 h-4 mr-2" />
+            VIEW PLANS
+          </Button>
+        </div>
+      </Card>
+    </motion.div>
+  );
+}

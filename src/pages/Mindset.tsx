@@ -71,7 +71,7 @@ const Mindset = () => {
           style={{ background: 'radial-gradient(ellipse at 50% 0%, hsl(var(--primary) / 0.08), transparent 70%)' }} />
         <div className="relative z-10">
           <h1 className="font-display text-2xl tracking-wider text-center">
-            <span className="text-primary" style={{ textShadow: '0 0 20px rgba(255,85,0,0.4)' }}>UNBREAKABLE</span>
+            <span className="text-primary" style={{ textShadow: '0 0 20px hsl(var(--primary) / 0.4)' }}>UNBREAKABLE</span>
             <span className="text-foreground"> MINDSET</span>
           </h1>
           <p className="text-center text-muted-foreground text-sm mt-1 font-display tracking-wide">
@@ -89,7 +89,10 @@ const Mindset = () => {
             return (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
+                onClick={() => {
+                  if (tab.id === 'breathwork') { navigate('/mindset/breathing'); return; }
+                  setActiveTab(tab.id);
+                }}
                 className={`flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-display tracking-wider shrink-0 transition-all border ${
                   active
                     ? 'bg-primary/15 text-primary border-primary/30 shadow-[0_0_12px_hsl(var(--primary)/0.3)]'
@@ -133,7 +136,7 @@ const Mindset = () => {
                   controlled breathwork, cold & heat exposure, focus training, and daily habit tracking to build 
                   a mind that stays calm in chaos — focused, present, and <span className="text-primary font-semibold">UNBREAKABLE</span>.
                 </p>
-                <p className="text-primary font-display text-sm tracking-wide mt-3" style={{ textShadow: '0 0 10px rgba(255,85,0,0.3)' }}>
+                <p className="text-primary font-display text-sm tracking-wide mt-3" style={{ textShadow: '0 0 10px hsl(var(--primary) / 0.3)' }}>
                   KEEP SHOWING UP.
                 </p>
               </div>
@@ -142,15 +145,18 @@ const Mindset = () => {
               <div className="space-y-2">
                 <h3 className="text-xs font-display tracking-wider text-muted-foreground">EXPLORE</h3>
                 {[
-                  { tab: 'breathwork' as MindsetTab, icon: Wind, title: 'BREATHWORK', desc: 'Voice-guided sessions — Box Breathing, 4-7-8, Tactical Calm', colour: '#FF5500' },
-                  { tab: 'exposure' as MindsetTab, icon: Snowflake, title: 'COLD & HEAT', desc: 'Cold showers, ice baths, sauna protocols — guided timers', colour: '#FF5500' },
-                  { tab: 'games' as MindsetTab, icon: Gamepad2, title: 'FOCUS GAMES', desc: 'Reaction training, hand-eye coordination, global leaderboards', colour: '#FF5500' },
-                  { tab: 'habits' as MindsetTab, icon: Target, title: 'DAILY HABITS', desc: 'Track your Daily 7 — train, learn, hydrate, numbers, breathwork, sauna, cold', colour: '#FF5500' },
-                  { tab: 'programmes' as MindsetTab, icon: Sparkles, title: 'PROGRAMMES', desc: 'Unbreakable Coach or manual mindset programmes — breathwork, cold exposure, focus plans', colour: '#FF5500' },
+                  { tab: 'breathwork' as MindsetTab, icon: Wind, title: 'BREATHWORK', desc: 'Voice-guided sessions — Box Breathing, 4-7-8, Tactical Calm', colour: 'var(--pillar-accent)' },
+                  { tab: 'exposure' as MindsetTab, icon: Snowflake, title: 'COLD & HEAT', desc: 'Cold showers, ice baths, sauna protocols — guided timers', colour: 'var(--pillar-accent)' },
+                  { tab: 'games' as MindsetTab, icon: Gamepad2, title: 'FOCUS GAMES', desc: 'Reaction training, hand-eye coordination, global leaderboards', colour: 'var(--pillar-accent)' },
+                  { tab: 'habits' as MindsetTab, icon: Target, title: 'DAILY HABITS', desc: 'Track your Daily 7 — train, learn, hydrate, numbers, breathwork, sauna, cold', colour: 'var(--pillar-accent)' },
+                  { tab: 'programmes' as MindsetTab, icon: Sparkles, title: 'PROGRAMMES', desc: 'Unbreakable Coach or manual mindset programmes — breathwork, cold exposure, focus plans', colour: 'var(--pillar-accent)' },
                 ].map(card => (
                   <button
                     key={card.tab}
-                    onClick={() => setActiveTab(card.tab)}
+                    onClick={() => {
+                      if (card.tab === 'breathwork') { navigate('/mindset/breathing'); return; }
+                      setActiveTab(card.tab);
+                    }}
                     className="w-full flex items-center gap-3 p-3.5 rounded-xl border border-border bg-card hover:border-border hover:bg-card transition-all text-left"
                   >
                     <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 border"
@@ -170,7 +176,7 @@ const Mindset = () => {
               <Link to="/help" className="block">
                 <div className="flex items-center gap-3 p-4 rounded-xl border border-primary/20 bg-primary/5 hover:bg-primary/10 transition-all">
                   <div className="w-10 h-10 rounded-full bg-primary/15 flex items-center justify-center"
-                    style={{ boxShadow: '0 0 15px rgba(255,85,0,0.2)' }}>
+                    style={{ boxShadow: '0 0 15px hsl(var(--primary) / 0.2)' }}>
                     <Flame className="w-5 h-5 text-primary" />
                   </div>
                   <div className="flex-1">
@@ -183,65 +189,8 @@ const Mindset = () => {
             </motion.div>
           )}
 
-          {/* ═══ BREATHWORK TAB ═══ */}
-          {activeTab === 'breathwork' && (
-            <motion.div key="breathwork" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-4">
-              <div className="p-4 rounded-xl border border-primary/15 bg-card">
-                <h3 className="font-display text-sm text-primary mb-1">BREATHE WITH PURPOSE</h3>
-                <p className="text-muted-foreground text-sm leading-relaxed">
-                  Controlled breathing isn't relaxation — it's <span className="text-primary">nervous system training</span>. 
-                  Box Breathing is used by Navy SEALs. The 4-7-8 activates parasympathetic response. 
-                  Choose your weapon.
-                </p>
-              </div>
-
-              {/* Breathing technique cards — same style as games tab */}
-              {[
-                { id: 'power-breath', name: 'POWER BREATH', subtitle: 'CONTROL YOUR NERVOUS SYSTEM.', desc: 'The 4-7-8 technique. Inhale 4, hold 7, exhale 8. Proven to activate deep parasympathetic response.', pattern: '4-7-8', intensity: 'high' as const },
-                { id: 'box-breathing', name: 'BOX BREATHING', subtitle: 'NAVY SEAL CALM UNDER FIRE.', desc: 'Equal 4-4-4-4 phases. Total nervous system balance and razor-sharp focus under pressure.', pattern: '4-4-4-4', intensity: 'medium' as const },
-                { id: 'tactical-calm', name: 'TACTICAL CALM', subtitle: 'RAPID STRESS RESET.', desc: 'Short inhale, brief hold, extended exhale. When you need calm NOW — fast parasympathetic activation.', pattern: '4-2-6', intensity: 'high' as const },
-                { id: 'deep-reset', name: 'DEEP RESET', subtitle: 'TOTAL RESTORATION.', desc: 'Slow, deep breathing for recovery. Extended exhale with rest phase for complete stress release.', pattern: '4-4-6-2', intensity: 'calm' as const },
-                { id: 'fire-breath', name: 'FIRE BREATH', subtitle: 'IGNITE YOUR ENERGY.', desc: 'Fast-paced rapid breathing. Short, sharp cycles with no holds — fire up before training or competition.', pattern: '2-0-2-0', intensity: 'high' as const },
-                { id: 'warrior-breath', name: 'WARRIOR BREATH', subtitle: 'THE BREATH BEFORE BATTLE.', desc: 'Double-length exhale forces deep activation while strong inhale keeps you alert and ready.', pattern: '4-4-8', intensity: 'high' as const },
-                { id: 'ocean-breath', name: 'OCEAN BREATH', subtitle: 'FLOW LIKE THE TIDE.', desc: 'Continuous flowing breath inspired by Ujjayi pranayama. No pauses — meditative rhythm for focus.', pattern: '5-0-5-0', intensity: 'calm' as const },
-                { id: 'resilience-breath', name: 'RESILIENCE BREATH', subtitle: 'MENTAL STEEL.', desc: 'Extended hold training. Builds CO2 tolerance and the composure to stay calm when everything screams quit.', pattern: '4-7-4-7', intensity: 'high' as const },
-                { id: 'sleep-breath', name: 'SLEEP MODE', subtitle: 'SWITCH OFF.', desc: 'Gentle 4-7-8 variant designed for winding down. Signals your brain it\'s time to rest.', pattern: '4-7-8', intensity: 'calm' as const },
-                { id: 'energise-breath', name: 'ENERGISE', subtitle: 'WAKE UP. QUICK BOX.', desc: 'Faster box breathing — more cycles per minute for a quick energy boost before any challenge.', pattern: '3-3-3-3', intensity: 'medium' as const },
-              ].map((technique) => (
-                <button
-                  key={technique.id}
-                  onClick={() => navigate(`/mindset/breathing?exercise=${technique.id}`)}
-                  className="w-full text-left p-4 rounded-xl border border-border bg-card hover:border-border hover:bg-card transition-all"
-                >
-                  <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
-                      <Wind className="w-5 h-5 text-primary" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.5))' }} />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <h4 className="font-display text-sm text-foreground">{technique.name}</h4>
-                        <span className={`text-[9px] font-display tracking-wider px-1.5 py-0.5 rounded border ${
-                          technique.intensity === 'high' ? 'bg-red-500/15 text-red-400 border-red-500/25' :
-                          technique.intensity === 'calm' ? 'bg-blue-500/15 text-blue-400 border-blue-500/25' :
-                          'bg-primary/15 text-primary border-primary/25'
-                        }`}>{technique.intensity === 'high' ? 'HIGH' : technique.intensity === 'calm' ? 'CALM' : 'MED'}</span>
-                      </div>
-                      <p className="text-primary text-[10px] font-display">{technique.subtitle}</p>
-                      <p className="text-muted-foreground text-xs mt-1">{technique.desc}</p>
-                      <div className="flex items-center gap-2 mt-2 text-[10px] text-muted-foreground">
-                        <span>{technique.pattern} pattern</span>
-                        <span>•</span>
-                        <span>Voice-guided</span>
-                        <span>•</span>
-                        <span>2–20 min</span>
-                      </div>
-                    </div>
-                    <ArrowRight className="w-4 h-4 text-muted-foreground mt-1 shrink-0" />
-                  </div>
-                </button>
-              ))}
-            </motion.div>
-          )}
+          {/* Breathwork tab removed — clicking "Breathwork" in tabs/overview
+              navigates directly to /mindset/breathing (single exercise picker) */}
 
           {/* ═══ COLD & HEAT TAB ═══ */}
           {activeTab === 'exposure' && (
@@ -330,17 +279,12 @@ const Mindset = () => {
                 </p>
               </div>
 
-              {/* Game cards */}
+              {/* Game cards — only games with working components */}
               {[
                 { id: 'snake', name: 'HUNT', subtitle: 'CHASE. DEVOUR. NEVER STOP.', desc: 'Split-second reactions. Colours shift, speed climbs. Only relentless focus keeps you alive.', icon: Gamepad2 },
                 { id: 'alleyway', name: 'SHATTER', subtitle: 'BREAK EVERY WALL.', desc: 'Walls go up, you smash them down. Precision, timing, and relentless aggression.', icon: Zap },
                 { id: 'tetris', name: 'STACK', subtitle: 'ORDER FROM CHAOS.', desc: 'Pieces fall faster. Find clarity in the chaos — stack clean, think ahead, stay composed.', icon: Trophy },
                 { id: 'pattern', name: 'LOCK IN', subtitle: 'ONE WRONG MOVE, IT\'S OVER.', desc: 'Watch. Listen. Repeat. Each round adds one more — break focus and you\'re done.', icon: Shapes },
-                { id: 'flow', name: 'FLOW', subtitle: 'STAY IN THE ZONE.', desc: 'Endless runner — dodge obstacles at increasing speed. Double-jump your way to immortality.', icon: Flame },
-                { id: 'maths', name: 'SOLVE', subtitle: 'RAPID FIRE. ZERO HESITATION.', desc: 'Mental maths blitz — solve under countdown. Numbers grow, timer shrinks. 3 lives.', icon: Activity },
-                { id: 'flappy', name: 'RISE', subtitle: 'DEFY GRAVITY.', desc: 'Tap to fly through impossible gaps. One mistake and you\'re done. How far can you go?', icon: Gamepad2 },
-                { id: 'memory', name: 'RECALL', subtitle: 'REMEMBER EVERYTHING.', desc: 'Memorise the grid pattern. Tiles flash faster, grids grow bigger. Pure visual memory.', icon: Gamepad2 },
-                { id: 'reaction', name: 'STRIKE', subtitle: 'MILLISECONDS MATTER.', desc: 'Test your raw reaction speed. Hit the target the instant it appears. Track your best times.', icon: Gamepad2 },
               ].map((game, i) => (
                 <button
                   key={game.name}
@@ -403,7 +347,7 @@ const Mindset = () => {
                   className="p-4 rounded-xl border border-primary/20 bg-card hover:border-primary/40 transition-all text-left"
                 >
                   <div className="w-10 h-10 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center mb-3"
-                    style={{ boxShadow: '0 0 12px rgba(255,85,0,0.12)' }}>
+                    style={{ boxShadow: '0 0 12px hsl(var(--primary) / 0.12)' }}>
                     <Sparkles className="w-5 h-5 text-primary" />
                   </div>
                   <h4 className="font-display text-xs text-foreground">AI PROGRAMME</h4>
@@ -598,7 +542,7 @@ const Mindset = () => {
 
               {(!programmes || programmes.length === 0) && !progsLoading && (
                 <div className="p-6 rounded-xl border border-border bg-card text-center">
-                  <Brain className="w-8 h-8 text-primary mx-auto mb-2" style={{ filter: 'drop-shadow(0 0 8px rgba(255,85,0,0.4))' }} />
+                  <Brain className="w-8 h-8 text-primary mx-auto mb-2" style={{ filter: 'drop-shadow(0 0 8px hsl(var(--primary) / 0.4))' }} />
                   <p className="text-muted-foreground text-sm">No programmes yet. Build one to start your mindset training journey.</p>
                 </div>
               )}

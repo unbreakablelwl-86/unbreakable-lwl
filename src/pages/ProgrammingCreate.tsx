@@ -112,13 +112,13 @@ export default function ProgrammingCreate() {
       {/* ─── Hero ─── */}
       <div className="relative px-4 pt-6 pb-5 overflow-hidden">
         <div className="absolute inset-0 pointer-events-none"
-          style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(255,85,0,0.08), transparent 70%)' }} />
+          style={{ background: 'radial-gradient(ellipse at 50% 0%, hsl(var(--primary) / 0.08), transparent 70%)' }} />
         <div className="relative z-10">
           <button onClick={() => navigate('/power')} className="flex items-center gap-1 text-muted-foreground text-sm mb-4 hover:text-muted-foreground transition-colors">
             <ArrowLeft className="w-4 h-4" /> Power
           </button>
           <h1 className="font-display text-2xl tracking-wider text-center">
-            <span className="text-primary" style={{ textShadow: '0 0 20px rgba(255,85,0,0.4)' }}>UNBREAKABLE</span>
+            <span className="text-primary" style={{ textShadow: '0 0 20px hsl(var(--primary) / 0.4)' }}>UNBREAKABLE</span>
             <span className="text-foreground"> BUILDER</span>
           </h1>
           <p className="text-center text-muted-foreground text-sm mt-1 font-display tracking-wide">
@@ -139,8 +139,8 @@ export default function ProgrammingCreate() {
                   onClick={() => handleModeSelect('auto')}
                   className="w-full p-3.5 rounded-xl border border-border bg-card flex items-center gap-3 hover:border-primary/30 transition-all group"
                 >
-                  <div className="w-10 h-10 rounded-lg border border-primary/20 flex items-center justify-center" style={{ background: 'rgba(255,85,0,0.1)' }}>
-                    <MessageSquare className="w-5 h-5 text-primary" style={{ filter: 'drop-shadow(0 0 6px rgba(255,85,0,0.5))' }} />
+                  <div className="w-10 h-10 rounded-lg border border-primary/20 flex items-center justify-center" style={{ background: 'hsl(var(--primary) / 0.1)' }}>
+                    <MessageSquare className="w-5 h-5 text-primary" style={{ filter: 'drop-shadow(0 0 6px hsl(var(--primary) / 0.5))' }} />
                   </div>
                   <div className="flex-1 text-left">
                     <p className="font-display text-sm tracking-wider text-foreground">UNBREAKABLE COACH BUILDER</p>
@@ -155,8 +155,8 @@ export default function ProgrammingCreate() {
                   onClick={() => handleModeSelect('manual')}
                   className="w-full p-3.5 rounded-xl border border-border bg-card flex items-center gap-3 hover:border-primary/30 transition-all group"
                 >
-                  <div className="w-10 h-10 rounded-lg border border-primary/20 flex items-center justify-center" style={{ background: 'rgba(255,85,0,0.1)' }}>
-                    <Wrench className="w-5 h-5 text-primary" style={{ filter: 'drop-shadow(0 0 6px rgba(255,85,0,0.5))' }} />
+                  <div className="w-10 h-10 rounded-lg border border-primary/20 flex items-center justify-center" style={{ background: 'hsl(var(--primary) / 0.1)' }}>
+                    <Wrench className="w-5 h-5 text-primary" style={{ filter: 'drop-shadow(0 0 6px hsl(var(--primary) / 0.5))' }} />
                   </div>
                   <div className="flex-1 text-left">
                     <p className="font-display text-sm tracking-wider text-foreground">MANUAL BUILDER</p>
@@ -169,8 +169,8 @@ export default function ProgrammingCreate() {
               {/* Coach CTA */}
               <div className="mt-6 p-3.5 rounded-xl border border-primary/20 bg-primary/5">
                 <Link to="/help" className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg border border-primary/20 flex items-center justify-center" style={{ background: 'rgba(255,85,0,0.1)' }}>
-                    <Flame className="w-5 h-5 text-primary" style={{ filter: 'drop-shadow(0 0 6px rgba(255,85,0,0.5))' }} />
+                  <div className="w-10 h-10 rounded-lg border border-primary/20 flex items-center justify-center" style={{ background: 'hsl(var(--primary) / 0.1)' }}>
+                    <Flame className="w-5 h-5 text-primary" style={{ filter: 'drop-shadow(0 0 6px hsl(var(--primary) / 0.5))' }} />
                   </div>
                   <div className="flex-1">
                     <p className="font-display text-sm tracking-wider text-foreground">NEED HELP?</p>

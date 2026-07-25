@@ -15,7 +15,7 @@ interface UseBreathingAudioOptions {
  * 3. Warm-up SpeechSynthesis on first enable to satisfy mobile user-gesture requirement
  * 4. Respects male/female voice preference
  */
-export function useBreathingAudio({ enabled, voiceGender = 'female' }: UseBreathingAudioOptions) {
+export function useBreathingAudio({ enabled, voiceGender = 'male' }: UseBreathingAudioOptions) {
   const [voicesReady, setVoicesReady] = useState(false);
   const selectedVoiceRef = useRef<SpeechSynthesisVoice | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);

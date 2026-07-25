@@ -359,7 +359,7 @@ const PatternBreakerGame = () => {
     <div
       className="absolute inset-0 pointer-events-none z-30"
       style={{
-        background: "repeating-linear-gradient(0deg, rgba(255,85,0,0.04) 0px, transparent 1px, transparent 2px)",
+        background: "repeating-linear-gradient(0deg, hsl(var(--primary) / 0.04) 0px, transparent 1px, transparent 2px)",
         mixBlendMode: "multiply",
       }}
     />
@@ -396,7 +396,7 @@ const PatternBreakerGame = () => {
           <div className="relative z-10">
             <h2
               className="font-display text-4xl text-primary tracking-wider mb-1"
-              style={{ textShadow: "0 0 20px rgba(255,85,0,0.5)" }}
+              style={{ textShadow: "0 0 20px hsl(var(--primary) / 0.5)" }}
             >
               LOCK IN
             </h2>
@@ -448,7 +448,7 @@ const PatternBreakerGame = () => {
             <Button
               onClick={startGame}
               className="font-display text-lg tracking-wider px-8 py-4 bg-primary hover:bg-primary/80"
-              style={{ boxShadow: "0 0 20px rgba(255,85,0,0.4)" }}
+              style={{ boxShadow: "0 0 20px hsl(var(--primary) / 0.4)" }}
             >
               START
             </Button>
@@ -488,7 +488,7 @@ const PatternBreakerGame = () => {
             <motion.div initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}>
               <h2
                 className="font-display text-3xl text-primary tracking-wider mb-1"
-                style={{ textShadow: "0 0 20px rgba(255,85,0,0.5)" }}
+                style={{ textShadow: "0 0 20px hsl(var(--primary) / 0.5)" }}
               >
                 FOCUS LOST
               </h2>
@@ -510,7 +510,7 @@ const PatternBreakerGame = () => {
             <div className="my-4">
               <p
                 className="font-display text-6xl text-primary"
-                style={{ textShadow: "0 0 30px rgba(255,85,0,0.4)" }}
+                style={{ textShadow: "0 0 30px hsl(var(--primary) / 0.4)" }}
               >
                 {score}
               </p>
@@ -602,7 +602,7 @@ const PatternBreakerGame = () => {
         <div className="flex items-center gap-3">
           <p
             className="font-display text-2xl text-primary"
-            style={{ textShadow: "0 0 10px rgba(255,85,0,0.4)" }}
+            style={{ textShadow: "0 0 10px hsl(var(--primary) / 0.4)" }}
           >
             {score}
           </p>
@@ -619,7 +619,7 @@ const PatternBreakerGame = () => {
           )}
           <div className="flex items-center gap-1">
             {[0, 1, 2].map(i => (
-              <div key={i} className={`w-2.5 h-2.5 rounded-full ${i < lives ? "bg-primary shadow-[0_0_6px_rgba(255,85,0,0.5)]" : "bg-white/10"}`} />
+              <div key={i} className={`w-2.5 h-2.5 rounded-full ${i < lives ? "bg-primary shadow-[0_0_6px_hsl(var(--primary) / 0.5)]" : "bg-white/10"}`} />
             ))}
           </div>
           <div className="bg-card/60 border border-border rounded px-2 py-0.5">
@@ -678,7 +678,7 @@ const PatternBreakerGame = () => {
             gameState === "fail"
               ? "rgba(239,68,68,0.5)"
               : gameState === "success"
-              ? "rgba(255,85,0,0.5)"
+              ? "hsl(var(--primary) / 0.5)"
               : "rgba(255,85,0,0.3)",
           maxWidth: 360,
           transition: "border-color 0.2s",
@@ -768,7 +768,7 @@ const PatternBreakerGame = () => {
           >
             <span
               className="font-display text-xs text-primary tracking-wider"
-              style={{ textShadow: "0 0 6px rgba(255,85,0,0.4)" }}
+              style={{ textShadow: "0 0 6px hsl(var(--primary) / 0.4)" }}
             >
               UB
             </span>

@@ -12,11 +12,11 @@ interface BreathingVisualProps {
   pattern?: BreathPattern;
 }
 
-/* ── Neon orange constants ── */
-const NEON = "#FF5500";                   // Unbreakable brand orange
-const NEON_GLOW = "rgba(255, 100, 0, 0.6)";
-const NEON_SOFT = "rgba(255, 100, 0, 0.25)";
-const NEON_DIM = "rgba(255, 100, 0, 0.1)";
+/* ── Neon constants — use CSS vars so colour follows pillar theme ── */
+const NEON = "hsl(var(--primary))";
+const NEON_GLOW = "hsl(var(--primary) / 0.6)";
+const NEON_SOFT = "hsl(var(--primary) / 0.25)";
+const NEON_DIM = "hsl(var(--primary) / 0.1)";
 
 const getSubtext = (phase: BreathPhase) => {
   switch (phase) {

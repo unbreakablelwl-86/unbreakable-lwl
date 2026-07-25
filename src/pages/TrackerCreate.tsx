@@ -308,7 +308,7 @@ export default function TrackerCreate() {
             <ArrowLeft className="w-4 h-4" /> Back
           </button>
           <h1 className="font-display text-2xl tracking-wide">
-            <span className="text-primary" style={{ textShadow: '0 0 20px rgba(255,85,0,0.4)' }}>MANUAL </span>
+            <span className="text-primary" style={{ textShadow: '0 0 20px hsl(var(--primary) / 0.4)' }}>MANUAL </span>
             <span className="text-foreground">PROGRAMME BUILDER</span>
           </h1>
           <p className="text-muted-foreground text-sm mt-1">Build your own custom cardio plan</p>
@@ -388,7 +388,7 @@ export default function TrackerCreate() {
 
             {manualData.sessions.length === 0 && (
               <div className="p-6 rounded-xl border border-border bg-card text-center">
-                <Wrench className="w-8 h-8 text-primary mx-auto mb-2" style={{ filter: 'drop-shadow(0 0 8px rgba(255,85,0,0.4))' }} />
+                <Wrench className="w-8 h-8 text-primary mx-auto mb-2" style={{ filter: 'drop-shadow(0 0 8px hsl(var(--primary) / 0.4))' }} />
                 <p className="text-sm text-muted-foreground">No sessions yet. Tap "Add Session" to build your weekly template.</p>
               </div>
             )}
@@ -479,10 +479,10 @@ export default function TrackerCreate() {
         {/* Hero header */}
         <div className="relative px-4 pt-3 pb-5 overflow-hidden">
           <div className="absolute inset-0 pointer-events-none"
-            style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(255,85,0,0.08), transparent 70%)' }} />
+            style={{ background: 'radial-gradient(ellipse at 50% 0%, hsl(var(--primary) / 0.08), transparent 70%)' }} />
           <div className="relative z-10">
             <h1 className="font-display text-2xl tracking-wider text-center">
-              <span className="text-primary" style={{ textShadow: '0 0 20px rgba(255,85,0,0.4)' }}>PROGRAMME</span>
+              <span className="text-primary" style={{ textShadow: '0 0 20px hsl(var(--primary) / 0.4)' }}>PROGRAMME</span>
               <span className="text-foreground"> BUILDER</span>
             </h1>
             <p className="text-center text-muted-foreground text-sm mt-1 font-display tracking-wide">
@@ -501,7 +501,7 @@ export default function TrackerCreate() {
             <div className="h-1.5 bg-card rounded-full overflow-hidden border border-border">
               <motion.div
                 className="h-full rounded-full"
-                style={{ background: 'linear-gradient(90deg, #FF5500, #FF7733)', boxShadow: '0 0 12px rgba(255,85,0,0.5)' }}
+                style={{ background: 'linear-gradient(90deg, hsl(var(--primary)), hsl(var(--primary) / 0.8))', boxShadow: '0 0 12px hsl(var(--primary) / 0.5)' }}
                 initial={{ width: 0 }}
                 animate={{ width: `${(currentStep / totalSteps) * 100}%` }}
                 transition={{ duration: 0.3 }}
@@ -520,7 +520,7 @@ export default function TrackerCreate() {
                 className="space-y-4"
               >
                 <h2 className="font-display text-xl text-center tracking-wide">
-                  CHOOSE YOUR <span className="text-primary" style={{ textShadow: '0 0 10px rgba(255,85,0,0.3)' }}>ACTIVITY</span>
+                  CHOOSE YOUR <span className="text-primary" style={{ textShadow: '0 0 10px hsl(var(--primary) / 0.3)' }}>ACTIVITY</span>
                 </h2>
                 <div className="space-y-2.5">
                   {activityOptions.map((option) => {
@@ -540,10 +540,10 @@ export default function TrackerCreate() {
                             ? 'border-primary/30 bg-primary/15'
                             : 'border-border bg-background'
                         }`}
-                          style={selected ? { boxShadow: '0 0 15px rgba(255,85,0,0.2)' } : undefined}
+                          style={selected ? { boxShadow: '0 0 15px hsl(var(--primary) / 0.2)' } : undefined}
                         >
                           <span className={`transition-colors [&>svg]:w-6 [&>svg]:h-6 ${selected ? 'text-primary' : 'text-muted-foreground'}`}
-                            style={selected ? { filter: 'drop-shadow(0 0 6px rgba(255,85,0,0.5))' } : undefined}
+                            style={selected ? { filter: 'drop-shadow(0 0 6px hsl(var(--primary) / 0.5))' } : undefined}
                           >
                             {option.icon}
                           </span>
@@ -554,7 +554,7 @@ export default function TrackerCreate() {
                         </div>
                         {selected && (
                           <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center shrink-0"
-                            style={{ boxShadow: '0 0 10px rgba(255,85,0,0.4)' }}>
+                            style={{ boxShadow: '0 0 10px hsl(var(--primary) / 0.4)' }}>
                             <svg width="12" height="9" viewBox="0 0 12 9" fill="none"><path d="M1 4L4.5 7.5L11 1" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
                           </div>
                         )}
@@ -575,7 +575,7 @@ export default function TrackerCreate() {
                 className="space-y-4"
               >
                 <h2 className="font-display text-xl text-center tracking-wide">
-                  SELECT YOUR <span className="text-primary" style={{ textShadow: '0 0 10px rgba(255,85,0,0.3)' }}>GOAL</span>
+                  SELECT YOUR <span className="text-primary" style={{ textShadow: '0 0 10px hsl(var(--primary) / 0.3)' }}>GOAL</span>
                 </h2>
                 <div className="space-y-2.5">
                   {goalOptions.map((option) => {
@@ -595,10 +595,10 @@ export default function TrackerCreate() {
                             ? 'border-primary/30 bg-primary/15'
                             : 'border-border bg-background'
                         }`}
-                          style={selected ? { boxShadow: '0 0 12px rgba(255,85,0,0.2)' } : undefined}
+                          style={selected ? { boxShadow: '0 0 12px hsl(var(--primary) / 0.2)' } : undefined}
                         >
                           <span className={`[&>svg]:w-5 [&>svg]:h-5 ${selected ? 'text-primary' : 'text-muted-foreground'}`}
-                            style={selected ? { filter: 'drop-shadow(0 0 6px rgba(255,85,0,0.5))' } : undefined}
+                            style={selected ? { filter: 'drop-shadow(0 0 6px hsl(var(--primary) / 0.5))' } : undefined}
                           >
                             {option.icon}
                           </span>
@@ -609,7 +609,7 @@ export default function TrackerCreate() {
                         </div>
                         {selected && (
                           <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center shrink-0"
-                            style={{ boxShadow: '0 0 10px rgba(255,85,0,0.4)' }}>
+                            style={{ boxShadow: '0 0 10px hsl(var(--primary) / 0.4)' }}>
                             <svg width="12" height="9" viewBox="0 0 12 9" fill="none"><path d="M1 4L4.5 7.5L11 1" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
                           </div>
                         )}
@@ -630,7 +630,7 @@ export default function TrackerCreate() {
                 className="space-y-4"
               >
                 <h2 className="font-display text-xl text-center tracking-wide">
-                  YOUR CURRENT <span className="text-primary" style={{ textShadow: '0 0 10px rgba(255,85,0,0.3)' }}>LEVEL</span>
+                  YOUR CURRENT <span className="text-primary" style={{ textShadow: '0 0 10px hsl(var(--primary) / 0.3)' }}>LEVEL</span>
                 </h2>
                 <div className="space-y-2.5">
                   {(Object.keys(levelLabels) as CardioLevel[]).map((level) => {
@@ -651,7 +651,7 @@ export default function TrackerCreate() {
                         </div>
                         {selected && (
                           <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center shrink-0"
-                            style={{ boxShadow: '0 0 10px rgba(255,85,0,0.4)' }}>
+                            style={{ boxShadow: '0 0 10px hsl(var(--primary) / 0.4)' }}>
                             <svg width="12" height="9" viewBox="0 0 12 9" fill="none"><path d="M1 4L4.5 7.5L11 1" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
                           </div>
                         )}
@@ -672,7 +672,7 @@ export default function TrackerCreate() {
                 className="space-y-6"
               >
                 <h2 className="font-display text-xl text-center tracking-wide">
-                  SET YOUR <span className="text-primary" style={{ textShadow: '0 0 10px rgba(255,85,0,0.3)' }}>SCHEDULE</span>
+                  SET YOUR <span className="text-primary" style={{ textShadow: '0 0 10px hsl(var(--primary) / 0.3)' }}>SCHEDULE</span>
                 </h2>
 
                 <div className="space-y-5">
@@ -743,7 +743,7 @@ export default function TrackerCreate() {
               className="flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-display tracking-wider 
                 bg-primary hover:bg-primary/80 text-white disabled:opacity-40 
                 disabled:cursor-not-allowed transition-all min-w-[160px] justify-center"
-              style={{ boxShadow: '0 0 20px rgba(255,85,0,0.3)' }}
+              style={{ boxShadow: '0 0 20px hsl(var(--primary) / 0.3)' }}
             >
               {isGenerating ? (
                 <>
@@ -775,10 +775,10 @@ export default function TrackerCreate() {
 {/* Hero */}
       <div className="relative px-4 pt-6 pb-5 overflow-hidden">
         <div className="absolute inset-0 pointer-events-none"
-          style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(255,85,0,0.08), transparent 70%)' }} />
+          style={{ background: 'radial-gradient(ellipse at 50% 0%, hsl(var(--primary) / 0.08), transparent 70%)' }} />
         <div className="relative z-10">
           <h1 className="font-display text-2xl tracking-wider text-center">
-            <span className="text-primary" style={{ textShadow: '0 0 20px rgba(255,85,0,0.4)' }}>UNBREAKABLE</span>
+            <span className="text-primary" style={{ textShadow: '0 0 20px hsl(var(--primary) / 0.4)' }}>UNBREAKABLE</span>
             <span className="text-foreground"> CARDIO</span>
           </h1>
           <p className="text-center text-muted-foreground text-sm mt-1 font-display tracking-wide">

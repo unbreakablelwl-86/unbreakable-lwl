@@ -207,42 +207,7 @@ export function SettingsPanel() {
             />
           </div>
 
-          {/* Voice Gender */}
-          {(settings as any).cardio_voice_enabled !== false && (
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label className="text-foreground font-medium flex items-center gap-2">
-                  <Volume2 className="w-4 h-4 text-primary" />
-                  Voice Type
-                </Label>
-                <p className="text-sm text-muted-foreground">
-                  Male or female cardio coach voice
-                </p>
-              </div>
-              <div className="flex gap-1">
-                <button
-                  className={`px-3 py-1.5 rounded-lg text-xs font-display tracking-wide transition-all ${
-                    (settings as any).cardio_voice_gender !== 'female' 
-                      ? 'bg-primary/20 text-primary border border-primary/30' 
-                      : 'bg-muted text-muted-foreground border border-border'
-                  }`}
-                  onClick={() => handleUpdate({ cardio_voice_gender: 'male' } as any)}
-                >
-                  Male
-                </button>
-                <button
-                  className={`px-3 py-1.5 rounded-lg text-xs font-display tracking-wide transition-all ${
-                    (settings as any).cardio_voice_gender === 'female' 
-                      ? 'bg-primary/20 text-primary border border-primary/30' 
-                      : 'bg-muted text-muted-foreground border border-border'
-                  }`}
-                  onClick={() => handleUpdate({ cardio_voice_gender: 'female' } as any)}
-                >
-                  Female
-                </button>
-              </div>
-            </div>
-          )}
+          {/* Voice — JJ coaches everything, no selection needed */}
 
           {/* Spotify removed — Un-Tunes is standalone */}
         </CardContent>

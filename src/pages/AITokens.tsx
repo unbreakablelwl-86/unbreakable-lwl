@@ -456,39 +456,33 @@ export default function AITokens() {
             </div>
           </section>
 
-          {/* ─── University Courses & Bundles ─── */}
+          {/* ─── University Courses ─── */}
           <section className="max-w-3xl mx-auto mb-16">
             <h2 className="text-xl font-display tracking-wider text-center mb-2">UNIVERSITY COURSES</h2>
             <p className="text-sm text-muted-foreground text-center mb-2">
-              Level 1 is free. Unlock advanced levels with tokens — lifetime access once purchased.
+              Full access to all university courses is included with every subscription tier.
             </p>
             <p className="text-xs text-primary text-center mb-8 font-display tracking-wider">
-              MUST COMPLETE EACH LEVEL TO UNLOCK THE NEXT: L1 → L2 → L3 → L4
+              COMPLETE EACH LEVEL TO UNLOCK THE NEXT: L1 → L2 → L3 → L4
             </p>
 
-            {/* Individual course pricing */}
-            <div className="rounded-2xl border border-primary/20 bg-primary/5 p-6 mb-6">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-xl bg-primary/15 border border-primary/25 flex items-center justify-center">
-                    <GraduationCap className="w-6 h-6 text-primary" />
-                  </div>
-                  <div>
-                    <p className="font-display text-sm tracking-wider">ANY SINGLE COURSE</p>
-                    <p className="text-xs text-muted-foreground">Level 2, Level 3, Level 4, or L4 Sport-Specific</p>
-                  </div>
+            {/* Included with subscription notice */}
+            <div className="rounded-2xl border border-primary/20 bg-primary/5 p-6">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-12 h-12 rounded-xl bg-primary/15 border border-primary/25 flex items-center justify-center">
+                  <GraduationCap className="w-6 h-6 text-primary" />
                 </div>
-                <div className="text-right">
-                  <p className="font-display text-3xl tracking-wider text-primary">50</p>
-                  <p className="text-[10px] text-muted-foreground font-display tracking-wider">TOKENS EACH</p>
+                <div>
+                  <p className="font-display text-sm tracking-wider">INCLUDED WITH YOUR SUBSCRIPTION</p>
+                  <p className="text-xs text-muted-foreground">All courses across Power, Fuel, Mindset &amp; Sport</p>
                 </div>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 {[
-                  { level: 'L2', desc: 'Foundation' },
-                  { level: 'L3', desc: 'Intermediate' },
-                  { level: 'L4', desc: 'Advanced' },
-                  { level: 'L4 Sport', desc: 'Sport-Specific' },
+                  { level: 'L1', desc: 'Foundation' },
+                  { level: 'L2', desc: 'Intermediate' },
+                  { level: 'L3', desc: 'Advanced' },
+                  { level: 'L4', desc: 'Expert + Sport' },
                 ].map((item, i) => (
                   <div key={i} className="rounded-lg bg-background/50 border border-border/50 px-3 py-2 text-center">
                     <p className="font-display text-xs tracking-wider text-primary">{item.level}</p>
@@ -496,61 +490,6 @@ export default function AITokens() {
                   </div>
                 ))}
               </div>
-              <p className="text-xs text-muted-foreground mt-3 text-center">
-                Lifetime access once purchased · £20 equivalent per course
-              </p>
-            </div>
-
-            {/* Bundles */}
-            <h3 className="text-sm font-display tracking-wider text-center mb-4 text-muted-foreground">BUNDLES — SAVE MORE</h3>
-            <div className="space-y-3">
-              {COURSE_BUNDLES.map((bundle) => (
-                <div
-                  key={bundle.id}
-                  className={cn(
-                    'rounded-2xl border p-5 transition-all',
-                    bundle.id === 'mega_bundle'
-                      ? 'border-primary/30 bg-primary/5'
-                      : 'border-border bg-card'
-                  )}
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className={cn(
-                        'w-10 h-10 rounded-xl border flex items-center justify-center',
-                        bundle.id === 'mega_bundle'
-                          ? 'bg-primary/15 border-primary/25'
-                          : 'bg-muted border-border'
-                      )}>
-                        <Package className={cn(
-                          'w-5 h-5',
-                          bundle.id === 'mega_bundle' ? 'text-primary' : 'text-foreground'
-                        )} />
-                      </div>
-                      <div>
-                        <p className="font-display text-sm tracking-wider">{bundle.name.toUpperCase()}</p>
-                        <p className="text-xs text-muted-foreground">{bundle.description}</p>
-                      </div>
-                    </div>
-                    <div className="text-right ml-3">
-                      <p className={cn(
-                        'font-display text-lg tracking-wider',
-                        bundle.id === 'mega_bundle' ? 'text-primary' : 'text-foreground'
-                      )}>
-                        {bundle.tokenCost}
-                      </p>
-                      <p className="text-[10px] text-muted-foreground font-display tracking-wider">
-                        TOKENS
-                      </p>
-                    </div>
-                  </div>
-                  <div className="mt-2 ml-13">
-                    <span className="inline-flex items-center bg-primary/10 text-primary text-[10px] font-display tracking-wider px-2 py-0.5 rounded-full">
-                      {bundle.savings}
-                    </span>
-                  </div>
-                </div>
-              ))}
             </div>
           </section>
 

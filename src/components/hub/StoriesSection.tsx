@@ -47,7 +47,7 @@ export function StoriesSection() {
   const [activeStoryIndex, setActiveStoryIndex] = useState(0);
   const [deleting, setDeleting] = useState(false);
   const [isPlaying, setIsPlaying] = useState(true);
-  const [isMuted, setIsMuted] = useState(true);
+  const [isMuted, setIsMuted] = useState(false);
   const [isMusicMuted, setIsMusicMuted] = useState(false); // Music defaults UNMUTED
   const [isPaused, setIsPaused] = useState(false);
   const [musicPlaying, setMusicPlaying] = useState(false); // Track if music audio is actually playing

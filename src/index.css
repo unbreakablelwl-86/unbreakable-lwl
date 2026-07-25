@@ -264,19 +264,19 @@
     animation: glow-pulse 2s ease-in-out infinite;
   }
 
-  /* 2.0-style orange CTA glow */
+  /* 2.0-style CTA glow — follows pillar theme */
   .ub-glow {
-    box-shadow: 0 0 20px rgba(255, 85, 0, 0.35), 0 0 60px rgba(255, 85, 0, 0.12);
+    box-shadow: 0 0 20px hsl(var(--primary) / 0.35), 0 0 60px hsl(var(--primary) / 0.12);
   }
 
   .ub-glow-lg {
-    box-shadow: 0 0 30px rgba(255, 85, 0, 0.5), 0 0 80px rgba(255, 85, 0, 0.2), 0 0 120px rgba(255, 85, 0, 0.08);
+    box-shadow: 0 0 30px hsl(var(--primary) / 0.5), 0 0 80px hsl(var(--primary) / 0.2), 0 0 120px hsl(var(--primary) / 0.08);
   }
 
   /* Shield pulsing glow */
   @keyframes shield-pulse {
-    0%, 100% { filter: drop-shadow(0 0 8px rgba(255, 85, 0, 0.4)); }
-    50% { filter: drop-shadow(0 0 24px rgba(255, 85, 0, 0.8)); }
+    0%, 100% { filter: drop-shadow(0 0 8px hsl(var(--primary) / 0.4)); }
+    50% { filter: drop-shadow(0 0 24px hsl(var(--primary) / 0.8)); }
   }
   .shield-pulse {
     animation: shield-pulse 2.5s ease-in-out infinite;
@@ -284,7 +284,7 @@
 
   /* Nav active glow */
   .nav-glow {
-    filter: drop-shadow(0 0 6px rgba(255, 85, 0, 0.6));
+    filter: drop-shadow(0 0 6px hsl(var(--primary) / 0.6));
   }
 
   /* Pillar accent utilities — uses dynamic --pillar-accent var */

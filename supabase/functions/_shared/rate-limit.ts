@@ -38,6 +38,9 @@ const MAX_REQUESTS: Record<string, number> = {
   "generate-pb-bio": 10,
   "daily-autofill": 10,
   "on-session-complete": 10,
+  "purchase-card": 10,
+  "purchase-untunes": 10,
+  "purchase-course-with-coins": 5,
 };
 
 function getMaxRequests(functionName: string): number {

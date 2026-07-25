@@ -10,10 +10,11 @@ import { useLocation } from 'react-router-dom';
  *
  * Colors:
  *   Power    → #FF5500 (22° orange)  — default brand
- *   Fuel     → #FF8C00 (33° amber)
- *   Movement → #00C853 (145° green)
- *   Mindset  → #7C4DFF (255° purple)
- *   Academy  → #2196F3 (207° blue)
+ *   Fuel     → #10B981 (160° emerald)
+ *   Movement → #EF4444 (0° neon red)
+ *   Mindset  → #8B5CF6 (263° violet)
+ *   Academy  → #3B82F6 (217° blue)
+ *   UnTunes  → #FF5500 (22° orange, brand)
  *   Default  → #FF5500 (brand orange)
  */
 
@@ -25,20 +26,22 @@ interface PillarDef {
 const BRAND_DEFAULT: PillarDef = { hex: '#FF5500', hsl: '22 100% 50%' };
 
 const PILLAR_MAP: Record<string, PillarDef> = {
-  '/programming':  { hex: '#FF5500', hsl: '22 100% 50%' },
-  '/calculators':  { hex: '#FF5500', hsl: '22 100% 50%' },
-  '/fuel':         { hex: '#FFD600', hsl: '51 100% 50%' },
-  '/tracker':      { hex: '#00C853', hsl: '145 100% 39%' },
-  '/mindset':      { hex: '#7C4DFF', hsl: '255 100% 65%' },
-  '/university':   { hex: '#2196F3', hsl: '207 90% 54%' },
-  '/habits':       { hex: '#00C853', hsl: '145 100% 39%' },
-  '/coaches':      { hex: '#FF5500', hsl: '22 100% 50%' },
-  '/inbox':        { hex: '#00BCD4', hsl: '187 100% 42%' },
-  '/ai-tokens':    { hex: '#FFB300', hsl: '42 100% 50%' },
-  '/explore':      { hex: '#E91E63', hsl: '340 82% 52%' },
-  '/profile':      { hex: '#FF5500', hsl: '22 100% 50%' },
-  '/help':         { hex: '#FF5500', hsl: '22 100% 50%' },
-  '/admin':        { hex: '#FF5500', hsl: '22 100% 50%' },
+  '/programming':      { hex: '#FF5500', hsl: '22 100% 50%' },
+  '/calculators':      { hex: '#FF5500', hsl: '22 100% 50%' },
+  '/fuel':             { hex: '#10B981', hsl: '160 84% 39%' },
+  '/tracker':          { hex: '#EF4444', hsl: '0 84% 60%' },
+  '/mindset':          { hex: '#8B5CF6', hsl: '263 70% 66%' },
+  '/university':       { hex: '#3B82F6', hsl: '217 91% 60%' },
+  '/habits':           { hex: '#10B981', hsl: '160 84% 39%' },
+  '/coaches':          { hex: '#FF5500', hsl: '22 100% 50%' },
+  '/inbox':            { hex: '#00BCD4', hsl: '187 100% 42%' },
+  '/ai-tokens':        { hex: '#FFB300', hsl: '42 100% 50%' },
+  '/explore':          { hex: '#E91E63', hsl: '340 82% 52%' },
+  '/profile':          { hex: '#FF5500', hsl: '22 100% 50%' },
+  '/help':             { hex: '#FF5500', hsl: '22 100% 50%' },
+  '/admin':            { hex: '#FF5500', hsl: '22 100% 50%' },
+  '/untunes':          { hex: '#FF5500', hsl: '22 100% 50%' },
+  '/unbreakable-86':   { hex: '#FF5500', hsl: '22 100% 50%' },
 };
 
 export function usePillarTheme() {

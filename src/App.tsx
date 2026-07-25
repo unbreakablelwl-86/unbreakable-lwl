@@ -9,6 +9,7 @@ import { PlayerContext, usePlayerProvider } from "@/hooks/useUnTunes";
 import { UniversityAdminProvider } from "@/hooks/useUniversityAdmin";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { AdminRoute } from "@/components/AdminRoute";
+import { CoachRoute } from "@/components/CoachRoute";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { RouteErrorBoundary } from "@/components/RouteErrorBoundary";
 import { InstallPrompt } from "@/components/pwa/InstallPrompt";
@@ -18,6 +19,7 @@ import { FloatingMiniPlayer } from "@/components/untunes/FloatingMiniPlayer";
 import { FloatingSessionTracker } from "@/components/tracker/FloatingSessionTracker";
 import { FloatingZoneTimer } from "@/components/timer/FloatingZoneTimer";
 import { usePresenceHeartbeat } from "@/hooks/usePresence";
+import { usePillarTheme } from "@/hooks/usePillarTheme";
 import CookieConsent from "@/components/CookieConsent";
 import { SkipToContent } from "@/components/a11y/SkipToContent";
 import { RouteAnnouncer } from "@/components/a11y/RouteAnnouncer";
@@ -25,6 +27,12 @@ import { RouteAnnouncer } from "@/components/a11y/RouteAnnouncer";
 /** Runs presence heartbeat inside BrowserRouter context */
 function PresenceTracker() {
   usePresenceHeartbeat();
+  return null;
+}
+
+/** Overrides --primary per section so neons match pillar colours */
+function PillarThemeTracker() {
+  usePillarTheme();
   return null;
 }
 
@@ -128,6 +136,7 @@ const App = () => {
           {!splashDone && <SplashScreen onComplete={handleSplashComplete} />}
           <BrowserRouter>
             <PresenceTracker />
+            <PillarThemeTracker />
               <RouteAnnouncer />
             <Suspense fallback={<LazyFallback />}>
             <main id="main-content">
@@ -290,20 +299,24 @@ const App = () => {
                 {/* FIFA card system hidden — re-enable when ready */}
                 {/* <Route path="/achievements" element={<RouteErrorBoundary section="Achievements"><AchievementsPage /></RouteErrorBoundary>} /> */}
                 
-                {/* Coach Dashboard - role-protected + subscribed */}
+                {/* Coaching — hidden from regular users, coach/dev only (reactivate later) */}
                 <Route path="/coach" element={
-                  <ProtectedRoute><RouteErrorBoundary section="Coach"><CoachDashboard /></RouteErrorBoundary></ProtectedRoute>
+                  <CoachRoute><RouteErrorBoundary section="Coach"><CoachDashboard /></RouteErrorBoundary></CoachRoute>
                 } />
-                
-                {/* Athlete coaching page */}
-                <Route path="/my-coaching" element={<MyCoaching />} />
+                <Route path="/my-coaching" element={
+                  <CoachRoute><MyCoaching /></CoachRoute>
+                } />
                 <Route path="/coach-profile-edit" element={
-                  <ProtectedRoute><CoachProfileEdit /></ProtectedRoute>
+                  <CoachRoute><CoachProfileEdit /></CoachRoute>
                 } />
-                <Route path="/coach/:userId" element={<CoachProfile />} />
-                <Route path="/coaches" element={<Coaches />} />
+                <Route path="/coach/:userId" element={
+                  <CoachRoute><CoachProfile /></CoachRoute>
+                } />
+                <Route path="/coaches" element={
+                  <CoachRoute><Coaches /></CoachRoute>
+                } />
                 <Route path="/command-centre" element={
-                  <ProtectedRoute><CoachCommandCentre /></ProtectedRoute>
+                  <CoachRoute><CoachCommandCentre /></CoachRoute>
                 } />
                 
                 {/* Admin Dashboard - role-protected (dev only) */}
