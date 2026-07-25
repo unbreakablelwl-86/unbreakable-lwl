@@ -35,7 +35,7 @@ export function useCourseAccess(courseKey?: string): CourseAccessResult {
   }
 
   // Any paying subscriber gets full university access
-  const paidTiers = ['base', 'absolute_base', 'pro', 'elite'];
+  const paidTiers = ['foundation', 'absolute_base'];
   const isSubscriber = paidTiers.includes(currentTier);
 
   return {

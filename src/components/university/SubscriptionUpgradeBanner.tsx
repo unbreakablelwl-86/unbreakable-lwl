@@ -5,9 +5,9 @@ import { Button } from '@/components/ui/button';
 import { Lock, Zap } from 'lucide-react';
 
 /**
- * Simple banner shown to free-tier users on university L2+ content.
- * Replaces the old CoursePurchaseGate (token purchase wall).
- * Any paying subscriber (Starter / Pro / Elite) gets full access.
+ * Banner shown to free-tier users on gated content.
+ * Shows Foundation offer price (£50/mo, normally £89).
+ * Price only — no "X spaces left" messaging.
  */
 export function SubscriptionUpgradeBanner() {
   const navigate = useNavigate();
@@ -26,10 +26,12 @@ export function SubscriptionUpgradeBanner() {
             </div>
             <div className="min-w-0">
               <p className="text-sm font-medium text-foreground">
-                Subscribe to unlock all courses
+                Unbreakable Foundation
               </p>
               <p className="text-xs text-muted-foreground mt-0.5">
-                Full access to every chapter, quiz &amp; assessment with any subscription
+                <span className="line-through opacity-60">£89/mo</span>{' '}
+                <span className="text-primary font-display font-bold">£50/mo</span>{' '}
+                — Foundation offer
               </p>
             </div>
           </div>
@@ -39,7 +41,7 @@ export function SubscriptionUpgradeBanner() {
             className="font-display tracking-wide w-full sm:w-auto"
           >
             <Zap className="w-4 h-4 mr-2" />
-            VIEW PLANS
+            GET STARTED
           </Button>
         </div>
       </Card>

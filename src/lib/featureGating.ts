@@ -126,20 +126,20 @@ const FEATURE_GATES: Record<FeatureId, FeatureGate> = {
     id: 'ai_coach_basic',
     name: 'AI Coach (Basic)',
     description: 'Chat with Unbreakable Coach — text-only, no video/image assessment',
-    requiredTier: 'base',
+    requiredTier: 'foundation',
     availableOnAbsoluteBase: true, // Limited version available on £7 plan
   },
   unbreakable_86: {
     id: 'unbreakable_86',
     name: 'UNBREAKABLE 86',
     description: '86-day challenge across all 5 pillars',
-    requiredTier: 'base',
+    requiredTier: 'foundation',
   },
   manual_programme: {
     id: 'manual_programme',
     name: 'Manual Programme Builder',
     description: 'Build your own programmes manually',
-    requiredTier: 'base',
+    requiredTier: 'foundation',
   },
 
   // ─── PRO FEATURES ───
@@ -147,31 +147,31 @@ const FEATURE_GATES: Record<FeatureId, FeatureGate> = {
     id: 'ai_coach_full',
     name: 'Unbreakable Coach (Full)',
     description: 'Full AI coaching — programmes, nutrition, analysis (no video/image)',
-    requiredTier: 'pro',
+    requiredTier: 'foundation',
   },
   ai_programme: {
     id: 'ai_programme',
     name: 'AI Programme Generator',
     description: 'AI-generated personalised workout programmes',
-    requiredTier: 'pro',
+    requiredTier: 'foundation',
   },
   ai_meal_plan: {
     id: 'ai_meal_plan',
     name: 'AI Meal Plans',
     description: 'AI-generated personalised nutrition plans',
-    requiredTier: 'pro',
+    requiredTier: 'foundation',
   },
   exercise_library: {
     id: 'exercise_library',
     name: 'Full Exercise Library',
     description: 'Full 1,500+ exercise library with AI recommendations',
-    requiredTier: 'pro',
+    requiredTier: 'foundation',
   },
   progress_reports: {
     id: 'progress_reports',
     name: 'AI Progress Reports',
     description: 'Weekly/monthly AI-generated progress summaries',
-    requiredTier: 'pro',
+    requiredTier: 'foundation',
   },
 
   // ─── ELITE FEATURES ───
@@ -179,25 +179,25 @@ const FEATURE_GATES: Record<FeatureId, FeatureGate> = {
     id: 'pt_hub',
     name: 'PT Hub',
     description: '1-to-1 coaching marketplace and sessions',
-    requiredTier: 'elite',
+    requiredTier: 'foundation',
   },
   coach_command: {
     id: 'coach_command',
     name: 'Coach Command Centre',
     description: 'Discord-style coach management dashboard',
-    requiredTier: 'elite',
+    requiredTier: 'foundation',
   },
   priority_ai: {
     id: 'priority_ai',
     name: 'Priority AI',
     description: 'Faster AI response times',
-    requiredTier: 'elite',
+    requiredTier: 'foundation',
   },
   advanced_analytics: {
     id: 'advanced_analytics',
     name: 'Advanced Analytics',
     description: 'Detailed performance analytics and trends',
-    requiredTier: 'elite',
+    requiredTier: 'foundation',
   },
 
   // ─── PURCHASABLE (any paid tier) ───
@@ -205,7 +205,7 @@ const FEATURE_GATES: Record<FeatureId, FeatureGate> = {
     id: 'university_paid',
     name: 'University Courses',
     description: 'Paid uni courses (L2+) — purchased with tokens',
-    requiredTier: 'base', // Need at least Base to purchase
+    requiredTier: 'foundation', // Need at least Base to purchase
   },
 };
 
@@ -230,7 +230,7 @@ export function hasFeatureAccess(userTier: TierKey, featureId: FeatureId): boole
  * Get the tier required for a feature
  */
 export function getRequiredTier(featureId: FeatureId): TierKey {
-  return FEATURE_GATES[featureId]?.requiredTier ?? 'elite';
+  return FEATURE_GATES[featureId]?.requiredTier ?? 'foundation';
 }
 
 /**

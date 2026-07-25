@@ -26,9 +26,7 @@ import { CancelRetention } from '@/components/paywall/CancelRetention';
 /* ─── Tier visual configs ─── */
 const TIER_ICONS: Record<string, React.ElementType> = {
   free: Zap,
-  base: Star,
-  pro: Rocket,
-  elite: Crown,
+  foundation: Crown,
 };
 
 export default function AITokens() {

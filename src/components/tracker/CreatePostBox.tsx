@@ -215,14 +215,15 @@ export function CreatePostBox({ onPostCreated }: CreatePostBoxProps) {
       const finalContent = trimmed ? (hasDefaultTags ? trimmed : trimmed + DEFAULT_HASHTAGS) : undefined;
 
       const { error, data: postData } = await createPost({
-        content: finalContent,
+        content: finalContent || (uploadedMedia.length > 0 ? '' : undefined),
         image_url: firstImage?.url || undefined,
         video_url: firstVideo?.url || undefined,
         visibility,
       });
 
       if (error || !postData) {
-        toast.error('Failed to create post');
+        console.error('[CreatePostBox] Post creation failed:', error?.message || 'No data returned', { error, hasContent: !!finalContent, hasVideo: !!firstVideo, hasImage: !!firstImage });
+        toast.error(error?.message || 'Failed to create post — please try again');
         setIsSubmitting(false);
         setOverallProgress(0);
         setProgressLabel('');

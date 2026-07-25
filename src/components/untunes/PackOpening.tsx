@@ -47,10 +47,19 @@ export interface PackTier {
 }
 
 export const PACK_TIERS: PackTier[] = [
-  { id: 'standard', name: 'STANDARD PACK', cards: 5, cost: 15, guaranteedGold: 0, guaranteedDiamond: 0, platinumBoost: 1 },
-  { id: 'premium',  name: 'PREMIUM PACK',  cards: 8, cost: 35, guaranteedGold: 1, guaranteedDiamond: 0, platinumBoost: 2 },
-  { id: 'elite',    name: 'ELITE PACK',    cards: 12, cost: 75, guaranteedGold: 2, guaranteedDiamond: 1, platinumBoost: 5 },
+  { id: 'standard', name: 'UNBREAKABLE PACK', cards: 5, cost: 0, guaranteedGold: 0, guaranteedDiamond: 0, platinumBoost: 2 },
 ];
+
+/**
+ * Mixed rarity drop rates (all packs use the same rates):
+ *   Standard: 60%  |  Gold: 25%  |  Diamond: 10%  |  Platinum: 5%
+ */
+export const RARITY_DROP_RATES = {
+  standard: 0.60,
+  gold: 0.25,
+  diamond: 0.10,
+  platinum: 0.05,
+};
 
 /* ═══════════════════════════════════════════════════ */
 /*  SHIMMER OVERLAY COMPONENTS (matching PB card quality) */

@@ -1,19 +1,17 @@
 /**
- * UNBREAKABLE Subscription Tiers & Token Configuration
+ * UNBREAKABLE Coaching Subscription & Top-Up Configuration
  *
- * Tiers:
+ * Coaching:
  *   Free (£0)       — Home hub, socials, manual tools, 30s UnTunes previews
- *   Starter (£20/mo) — 50 tokens. Opens AI coaching, UNBREAKABLE 86, full UnTunes
- *   Pro  (£30/mo)    — 100 tokens. Full AI Coach, programme generator, exercise library
- *   Elite (£40/mo)   — 200 tokens. PT Hub, priority AI, coach command centre, analytics
+ *   Foundation (£50/mo) — LAUNCH OFFER (normally £89/mo). Full AI coaching, all features.
+ *
+ * Optional one-time top-ups: £20, £30, £50
  *
  * Hidden retention tier:
  *   Absolute Base (£7/mo) — Limited AI coaching, offered ONLY on cancel
- *
- * Optional top-up: £10 for 25 tokens (never expire)
  */
 
-export type TierKey = 'free' | 'absolute_base' | 'base' | 'pro' | 'elite';
+export type TierKey = 'free' | 'absolute_base' | 'foundation';
 
 export interface TierConfig {
   key: TierKey;
@@ -26,9 +24,13 @@ export interface TierConfig {
   features: string[];
   popular?: boolean;
   hidden?: boolean; // true = only shown on cancel flow
-  rank: number; // 0 = free, 1 = abs base, 2 = starter, 3 = pro, 4 = elite
+  rank: number; // 0 = free, 1 = abs base, 2 = foundation
   /** GBP price used for display; kept in sync with monthlyPrice */
   price?: number;
+  /** Original price before offer (for strikethrough display) */
+  originalPrice?: number;
+  /** Whether this is a limited-time offer */
+  isOffer?: boolean;
 }
 
 export const TIERS: Record<TierKey, TierConfig> = {
@@ -67,62 +69,29 @@ export const TIERS: Record<TierKey, TierConfig> = {
       'Basic coach chat only',
     ],
   },
-  base: {
-    key: 'base',
-    name: 'base',
-    displayName: 'Starter',
-    monthlyPrice: 20,
-    monthlyTokens: 50,
-    stripePriceId: 'price_1TaPmmD5KOEmeWH2LeANGH4k',
-    stripeProductId: 'prod_UZYuPRujc7nGZN',
+  foundation: {
+    key: 'foundation',
+    name: 'foundation',
+    displayName: 'Foundation',
+    monthlyPrice: 50,
+    originalPrice: 89,
+    isOffer: true,
+    monthlyTokens: 200,
+    stripePriceId: null, // TODO: Create in Stripe
+    stripeProductId: null, // TODO: Create in Stripe
     rank: 2,
-    features: [
-      '50 tokens/month',
-      'AI coach chat',
-      'UNBREAKABLE 86 access',
-      'Full UnTunes streaming',
-      'University L2+ (token purchase)',
-      'Manual trackers & builders',
-      'Habits & calculators',
-    ],
-  },
-  pro: {
-    key: 'pro',
-    name: 'pro',
-    displayName: 'Pro',
-    monthlyPrice: 30,
-    monthlyTokens: 100,
-    stripePriceId: 'price_1TaPmsD5KOEmeWH2dO7mg9XK',
-    stripeProductId: 'prod_UZYu2DeD4GRXYS',
-    rank: 3,
     popular: true,
     features: [
-      '100 tokens/month',
-      'Unbreakable Coach (full AI)',
+      'JJ AI Coach (unlimited)',
+      'UNBREAKABLE 86 programme',
       'Full exercise library (1,500+)',
       'AI programme generator',
       'AI nutrition plans',
-      'AI progress reports',
       'Full UnTunes streaming',
-      'All Starter features',
-    ],
-  },
-  elite: {
-    key: 'elite',
-    name: 'elite',
-    displayName: 'Elite',
-    monthlyPrice: 40,
-    monthlyTokens: 200,
-    stripePriceId: 'price_1TaPmmD5KOEmeWH2bemvjYM4',
-    stripeProductId: 'prod_UZYuJliRwgNO6J',
-    rank: 4,
-    features: [
-      '200 tokens/month',
-      'PT Hub (1-to-1 coaching)',
-      'Priority AI responses',
-      'Coach command centre',
-      'Advanced analytics',
-      'All Pro features',
+      'University L2+ access',
+      'PT Hub & coaching tools',
+      'Advanced analytics & reports',
+      'Priority support',
     ],
   },
 } as const;
@@ -130,18 +99,21 @@ export const TIERS: Record<TierKey, TierConfig> = {
 /** Ordered visible tiers (excludes absolute_base) */
 export const VISIBLE_TIERS: TierConfig[] = [
   TIERS.free,
-  TIERS.base,
-  TIERS.pro,
-  TIERS.elite,
+  TIERS.foundation,
 ];
 
 /** All tiers ordered by rank */
 export const ALL_TIERS: TierConfig[] = [
   TIERS.free,
   TIERS.absolute_base,
-  TIERS.base,
-  TIERS.pro,
-  TIERS.elite,
+  TIERS.foundation,
+];
+
+/** Optional coaching top-ups (one-time purchases) */
+export const COACHING_TOPUPS = [
+  { id: 'topup_20', name: 'Bronze Top-Up', price: 20, tokens: 50, stripePriceId: null as string | null },
+  { id: 'topup_30', name: 'Silver Top-Up', price: 30, tokens: 80, stripePriceId: null as string | null },
+  { id: 'topup_50', name: 'Gold Top-Up', price: 50, tokens: 150, stripePriceId: null as string | null },
 ];
 
 /** Get tier config by key */

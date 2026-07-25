@@ -111,27 +111,40 @@ export function usePosts() {
   const createPost = async (postData: { content?: string; image_url?: string; video_url?: string; visibility: string }) => {
     if (!user) return { error: new Error('Not authenticated'), data: null };
 
-    const { data, error } = await supabase
-      .from('posts')
-      .insert({
-        user_id: user.id,
-        content: postData.content || null,
-        image_url: postData.image_url || null,
-        video_url: postData.video_url || null,
-        visibility: postData.visibility,
-      })
-      .select()
-      .single();
+    try {
+      const { data, error } = await supabase
+        .from('posts')
+        .insert({
+          user_id: user.id,
+          content: postData.content || null,
+          image_url: postData.image_url || null,
+          video_url: postData.video_url || null,
+          visibility: postData.visibility,
+        })
+        .select()
+        .single();
 
-    if (!error && data) {
+      if (error) {
+        console.error('[usePosts] createPost error:', error.message, error.details, error.hint);
+        return { error, data: null };
+      }
+
+      if (!data) {
+        console.error('[usePosts] createPost: insert succeeded but no data returned');
+        return { error: new Error('Post created but could not be retrieved'), data: null };
+      }
+
       // Notify mentioned users
       if (postData.content) {
         notifyMentionedUsers(postData.content, user.id, 'post', data.id);
       }
       await fetchPosts();
-    }
 
-    return { error, data };
+      return { error: null, data };
+    } catch (err) {
+      console.error('[usePosts] createPost exception:', err);
+      return { error: err instanceof Error ? err : new Error(String(err)), data: null };
+    }
   };
 
   const deletePost = async (postId: string) => {

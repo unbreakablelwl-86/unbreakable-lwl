@@ -495,67 +495,43 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
               </h3>
               <div className="space-y-3">
                 {PACK_TIERS.map((tier) => {
-                  const tierColors: Record<string, { border: string; bg: string; text: string; glow: string }> = {
-                    standard: { border: 'border-primary/30', bg: 'from-zinc-900 via-zinc-800/50 to-zinc-900', text: 'text-primary', glow: 'rgba(255,107,0,0.1)' },
-                    premium: { border: 'border-yellow-500/30', bg: 'from-zinc-900 via-yellow-950/20 to-zinc-900', text: 'text-yellow-400', glow: 'rgba(251,191,36,0.1)' },
-                    elite: { border: 'border-violet-500/30', bg: 'from-zinc-900 via-violet-950/20 to-zinc-900', text: 'text-violet-400', glow: 'rgba(139,92,246,0.12)' },
-                  };
-                  const tc = tierColors[tier.id] || tierColors.standard;
                   return (
                     <motion.div key={tier.id} whileTap={{ scale: 0.98 }}>
-                      <Card className={cn('relative overflow-hidden', tc.border, `bg-gradient-to-br ${tc.bg}`)}>
-                        <div className="absolute inset-0" style={{ background: `radial-gradient(circle at 30% 20%, ${tc.glow}, transparent 50%)` }} />
+                      <Card className="relative overflow-hidden border-primary/30 bg-gradient-to-br from-zinc-900 via-zinc-800/50 to-zinc-900">
+                        <div className="absolute inset-0" style={{ background: 'radial-gradient(circle at 30% 20%, rgba(255,107,0,0.1), transparent 50%)' }} />
                         <div className="relative p-4">
                           <div className="flex items-center justify-between mb-2">
                             <div>
-                              <p className={cn('font-display text-sm tracking-wider', tc.text)}>{tier.name}</p>
-                              <p className="text-[10px] text-muted-foreground mt-0.5">{tier.cards} cards per pack</p>
+                              <p className="font-display text-sm tracking-wider text-primary">{tier.name}</p>
+                              <p className="text-[10px] text-muted-foreground mt-0.5">{tier.cards} cards · mixed rarity</p>
                             </div>
-                            {tier.id === 'elite' && (
-                              <Badge className="bg-violet-500/20 text-violet-300 border-violet-500/30 text-[9px] font-display">
-                                BEST VALUE
-                              </Badge>
-                            )}
-                            {tier.id === 'premium' && (
-                              <Badge className="bg-yellow-500/20 text-yellow-300 border-yellow-500/30 text-[9px] font-display">
-                                POPULAR
-                              </Badge>
-                            )}
+                            <Badge className="bg-primary/20 text-primary border-primary/30 text-[9px] font-display">
+                              INCLUDED WITH PURCHASE
+                            </Badge>
                           </div>
 
                           <div className="flex gap-2 mb-3 flex-wrap">
-                            {tier.guaranteedGold > 0 && (
-                              <span className="text-[9px] px-2 py-0.5 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 font-display tracking-wider">
-                                <Crown className="w-2.5 h-2.5 inline mr-0.5" />{tier.guaranteedGold} GOLD GUARANTEED
-                              </span>
-                            )}
-                            {tier.guaranteedDiamond > 0 && (
-                              <span className="text-[9px] px-2 py-0.5 rounded-full bg-violet-500/10 border border-violet-500/20 text-violet-300 font-display tracking-wider">
-                                <Diamond className="w-2.5 h-2.5 inline mr-0.5" />{tier.guaranteedDiamond} DIAMOND GUARANTEED
-                              </span>
-                            )}
-                            {tier.platinumBoost > 1 && (
-                              <span className="text-[9px] px-2 py-0.5 rounded-full bg-slate-200/10 border border-slate-300/20 text-slate-300 font-display tracking-wider">
-                                {tier.platinumBoost}× PLAT CHANCE
-                              </span>
-                            )}
+                            <span className="text-[9px] px-2 py-0.5 rounded-full bg-zinc-700/30 border border-zinc-600/20 text-zinc-300 font-display tracking-wider">
+                              60% STANDARD
+                            </span>
+                            <span className="text-[9px] px-2 py-0.5 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 font-display tracking-wider">
+                              <Crown className="w-2.5 h-2.5 inline mr-0.5" />25% GOLD
+                            </span>
+                            <span className="text-[9px] px-2 py-0.5 rounded-full bg-violet-500/10 border border-violet-500/20 text-violet-300 font-display tracking-wider">
+                              <Diamond className="w-2.5 h-2.5 inline mr-0.5" />10% DIAMOND
+                            </span>
+                            <span className="text-[9px] px-2 py-0.5 rounded-full bg-slate-200/10 border border-slate-300/20 text-slate-300 font-display tracking-wider">
+                              5% PLATINUM
+                            </span>
                           </div>
 
                           <div className="flex items-center gap-3">
                             <div className="flex-1">
-                              <div className="flex items-baseline gap-1">
-                                <span className={cn('text-xl font-display', tc.text)}>{tier.cost}</span>
-                                <Coins className="w-3 h-3 text-primary" />
-                              </div>
+                              <p className="text-[10px] text-muted-foreground">Every track purchase includes a card pack</p>
                             </div>
                             <Button
                               size="sm"
-                              className={cn(
-                                'font-display tracking-wider text-xs text-white',
-                                tier.id === 'elite' ? 'bg-gradient-to-r from-violet-600 to-purple-600' :
-                                tier.id === 'premium' ? 'bg-gradient-to-r from-yellow-600 to-amber-600' :
-                                'bg-gradient-to-r from-primary to-orange-600',
-                              )}
+                              className="font-display tracking-wider text-xs text-white bg-gradient-to-r from-primary to-orange-600"
                               disabled={!!purchasing}
                               onClick={() => {
                                 setConfirmPackTier(tier);
@@ -565,8 +541,8 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
                                 <Loader2 className="w-3 h-3 animate-spin" />
                               ) : (
                                 <>
-                                  <Zap className="w-3 h-3 mr-1" />
-                                  BUY PACK
+                                  <Sparkles className="w-3 h-3 mr-1" />
+                                  VIEW DROPS
                                 </>
                               )}
                             </Button>
