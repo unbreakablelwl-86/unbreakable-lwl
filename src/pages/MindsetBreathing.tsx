@@ -322,33 +322,7 @@ const MindsetBreathing = () => {
                 </span>
               </button>
 
-              {/* Male / Female toggle */}
-              {voiceEnabled && (
-                <div className="flex rounded-xl border border-border overflow-hidden">
-                  <button
-                    onClick={() => setVoiceGender('female')}
-                    className={`flex items-center gap-1.5 px-3 py-2.5 text-xs font-display tracking-wider transition-all ${
-                      voiceGender === 'female'
-                        ? 'bg-primary text-primary-foreground shadow-[0_0_12px_hsl(var(--primary) / 0.3)]'
-                        : 'text-muted-foreground hover:text-foreground bg-card/30'
-                    }`}
-                  >
-                    <UserRound className="w-3.5 h-3.5" />
-                    HER
-                  </button>
-                  <button
-                    onClick={() => setVoiceGender('male')}
-                    className={`flex items-center gap-1.5 px-3 py-2.5 text-xs font-display tracking-wider transition-all ${
-                      voiceGender === 'male'
-                        ? 'bg-primary text-primary-foreground shadow-[0_0_12px_hsl(var(--primary) / 0.3)]'
-                        : 'text-muted-foreground hover:text-foreground bg-card/30'
-                    }`}
-                  >
-                    <User className="w-3.5 h-3.5" />
-                    HIM
-                  </button>
-                </div>
-              )}
+              {/* JJ voices everything — no gender selection */}
             </div>
 
             {/* Visual pattern selector — hidden, using orb only */}
@@ -437,7 +411,7 @@ const MindsetBreathing = () => {
             </div>
             <div className="text-left">
               <p className="text-[10px] text-muted-foreground">
-                {voiceEnabled ? `${voiceGender === 'female' ? 'Female' : 'Male'} voice guidance` : 'Voice off'}
+                {voiceEnabled ? 'JJ voice guidance' : 'Voice off'}
               </p>
             </div>
           </div>
