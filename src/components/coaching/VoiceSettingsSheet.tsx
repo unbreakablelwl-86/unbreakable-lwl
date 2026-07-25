@@ -63,8 +63,8 @@ export function VoiceSettingsSheet({ children }: VoiceSettingsSheetProps) {
 
           {preferences.voice_feedback_enabled && (
             <div className="p-3 rounded-lg bg-muted/30 border border-border">
-              <p className="text-sm font-medium text-foreground">Female Voice</p>
-              <p className="text-xs text-muted-foreground">Clear and encouraging tone</p>
+              <p className="text-sm font-medium text-foreground">JJ Voice</p>
+              <p className="text-xs text-muted-foreground">Direct, motivational coaching tone</p>
             </div>
           )}
 

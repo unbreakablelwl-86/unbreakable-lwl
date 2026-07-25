@@ -110,7 +110,7 @@ export default function AITokens() {
             transition={{ duration: 18, repeat: Infinity, ease: 'linear' }}
             className="whitespace-nowrap font-display tracking-wider text-sm"
           >
-            🔒 FOUNDING MEMBER PRICING — LOCKED FOR LIFE! ONLY 100 SPOTS AVAILABLE 🔒 &nbsp;&nbsp;&nbsp; JOIN NOW &amp; NEVER PAY MORE &nbsp;&nbsp;&nbsp; 🔒 FOUNDING MEMBER PRICING — LOCKED FOR LIFE! ONLY 100 SPOTS AVAILABLE 🔒 &nbsp;&nbsp;&nbsp; JOIN NOW &amp; NEVER PAY MORE &nbsp;&nbsp;&nbsp; 🔒 FOUNDING MEMBER — PRICE LOCKED FOR LIFE! 🔒
+            🔒 FOUNDATION OFFER — PRICE LOCKED FOR LIFE! 🔒 &nbsp;&nbsp;&nbsp; JOIN NOW &amp; NEVER PAY MORE &nbsp;&nbsp;&nbsp; 🔒 FOUNDATION OFFER — PRICE LOCKED FOR LIFE! 🔒 &nbsp;&nbsp;&nbsp; JOIN NOW &amp; NEVER PAY MORE &nbsp;&nbsp;&nbsp; 🔒 LOCK IN YOUR PRICE FOR LIFE! 🔒
           </motion.div>
         </div>
 
@@ -325,16 +325,9 @@ export default function AITokens() {
               </div>
               <h3 className="font-display text-lg tracking-wider mb-2">YOUR PRICE, LOCKED FOR LIFE</h3>
               <p className="text-sm text-muted-foreground mb-4 max-w-md mx-auto">
-                The first 100 members get founding member pricing — your monthly rate will
+                Lock in the Foundation offer price for life — your monthly rate will
                 <span className="text-foreground font-medium"> never increase</span>, no matter how much the platform grows.
-                Once all 100 spots are taken, prices go up.
               </p>
-              <div className="inline-flex items-center gap-2 bg-card border border-border rounded-full px-4 py-2">
-                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                <span className="text-sm font-display tracking-wider text-foreground">
-                  SPOTS REMAINING
-                </span>
-              </div>
             </div>
           </div>
 
