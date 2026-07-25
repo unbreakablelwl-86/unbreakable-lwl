@@ -330,17 +330,12 @@ const Mindset = () => {
                 </p>
               </div>
 
-              {/* Game cards */}
+              {/* Game cards — only games with working components */}
               {[
                 { id: 'snake', name: 'HUNT', subtitle: 'CHASE. DEVOUR. NEVER STOP.', desc: 'Split-second reactions. Colours shift, speed climbs. Only relentless focus keeps you alive.', icon: Gamepad2 },
                 { id: 'alleyway', name: 'SHATTER', subtitle: 'BREAK EVERY WALL.', desc: 'Walls go up, you smash them down. Precision, timing, and relentless aggression.', icon: Zap },
                 { id: 'tetris', name: 'STACK', subtitle: 'ORDER FROM CHAOS.', desc: 'Pieces fall faster. Find clarity in the chaos — stack clean, think ahead, stay composed.', icon: Trophy },
                 { id: 'pattern', name: 'LOCK IN', subtitle: 'ONE WRONG MOVE, IT\'S OVER.', desc: 'Watch. Listen. Repeat. Each round adds one more — break focus and you\'re done.', icon: Shapes },
-                { id: 'flow', name: 'FLOW', subtitle: 'STAY IN THE ZONE.', desc: 'Endless runner — dodge obstacles at increasing speed. Double-jump your way to immortality.', icon: Flame },
-                { id: 'maths', name: 'SOLVE', subtitle: 'RAPID FIRE. ZERO HESITATION.', desc: 'Mental maths blitz — solve under countdown. Numbers grow, timer shrinks. 3 lives.', icon: Activity },
-                { id: 'flappy', name: 'RISE', subtitle: 'DEFY GRAVITY.', desc: 'Tap to fly through impossible gaps. One mistake and you\'re done. How far can you go?', icon: Gamepad2 },
-                { id: 'memory', name: 'RECALL', subtitle: 'REMEMBER EVERYTHING.', desc: 'Memorise the grid pattern. Tiles flash faster, grids grow bigger. Pure visual memory.', icon: Gamepad2 },
-                { id: 'reaction', name: 'STRIKE', subtitle: 'MILLISECONDS MATTER.', desc: 'Test your raw reaction speed. Hit the target the instant it appears. Track your best times.', icon: Gamepad2 },
               ].map((game, i) => (
                 <button
                   key={game.name}
