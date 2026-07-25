@@ -125,15 +125,13 @@ const freeFeatures = [
   'Daily habit diary & lifestyle tracking',
   'Calculators & body composition tools',
   'Music library (Un-Tunes)',
-  '5 free coach tokens on signup',
+  'Free coach tokens on signup',
 ];
 
 /* ─── Token tiers ─── */
 const tokenTiers = [
-  { name: 'FREE', tokens: 5, price: '£0', desc: 'Try the Coach with 5 tokens on signup', highlight: false, features: ['5 tokens on signup', 'All free tools', 'Community access'] },
-  { name: 'STARTER', tokens: 50, price: '£20', period: '/mo', desc: 'AI coaching, UNBREAKABLE 86 & full UnTunes', highlight: false, features: ['50 tokens/month', 'AI coach chat', 'Full UnTunes'] },
-  { name: 'PRO', tokens: 100, price: '£30', period: '/mo', desc: 'Full AI coach, programmes & exercise library', highlight: true, features: ['100 tokens/month', 'AI programme builder', 'University access'] },
-  { name: 'ELITE', tokens: 200, price: '£40', period: '/mo', desc: 'PT Hub, priority AI & coach command centre', highlight: false, features: ['200 tokens/month', 'Priority AI', 'Coach command centre'] },
+  { name: 'FREE', tokens: 0, price: '£0', desc: 'Full access to all free tools & community', highlight: false, features: ['All free tools', 'Community access', 'University L1'] },
+  { name: 'FOUNDATION', tokens: 1000, price: '£50', period: '/mo', desc: 'Full AI coaching, all features unlocked', highlight: true, features: ['1,000 tokens/month', 'JJ AI Coach', 'All features'], originalPrice: '£89' },
 ];
 
 /* ─── What makes this different ─── */
@@ -626,12 +624,12 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
                 Founding Member Pricing
               </h2>
               <p className="text-[#888] mt-3 max-w-xl mx-auto text-sm">
-                🔒 First 100 members lock in these prices <span className="text-white font-semibold">for life</span>.
-                Your rate never increases, no matter how much the platform grows.
+                🔒 Lock in the <span className="text-white font-semibold">Foundation offer price for life</span>.
+                <span className="line-through opacity-50">£89/mo</span> → <span className="text-[#FF5500] font-bold">£50/mo</span>. Your rate never increases.
               </p>
             </motion.div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
               {tokenTiers.map(t => (
                 <motion.div
                   key={t.name}
@@ -651,6 +649,9 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
                   )}
                   <h3 className="font-heading font-black text-lg text-white uppercase tracking-wider mb-1">{t.name}</h3>
                   <div className="flex items-baseline gap-1 mb-3">
+                    {'originalPrice' in t && t.originalPrice && (
+                      <span className="text-[#666] text-sm line-through mr-1">{t.originalPrice}</span>
+                    )}
                     <span className="font-heading font-black text-2xl text-[#FF5500]">{t.price}</span>
                     {t.period && <span className="text-[#666] text-xs">{t.period}</span>}
                   </div>
@@ -670,11 +671,11 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
             {/* Top-ups & credit info */}
             <motion.div variants={fadeUp} className="mt-6 text-center space-y-1.5">
               <p className="text-[#aaa] text-xs">
-                <span className="text-[#FF5500] font-bold">Monthly credits reset</span> each billing cycle &nbsp;·&nbsp;
+                <span className="text-[#FF5500] font-bold">1,000 tokens/month</span> refresh each billing cycle &nbsp;·&nbsp;
                 <span className="text-[#FF5500] font-bold">Top-ups carry over</span> — never lose purchased tokens
               </p>
               <p className="text-[#666] text-[11px]">
-                Need more? Grab a £10 top-up anytime — 25 tokens that never expire
+                Need more? Top-ups from £2.50 — tokens that never expire
               </p>
             </motion.div>
           </motion.div>

@@ -99,8 +99,8 @@ export function TokenTopUp({ asModal, onClose }: TokenTopUpProps) {
       <div className="flex items-start gap-2 px-2 pt-2">
         <Sparkles className="w-4 h-4 text-primary shrink-0 mt-0.5" />
         <p className="text-xs text-muted-foreground">
-          <span className="text-foreground font-medium">Better value on a plan:</span> Pro gives you
-          100 tokens/mo for £30 (£0.30/token) — Elite gives 200 tokens for £40 (£0.20/token).
+          <span className="text-foreground font-medium">Better value on Foundation:</span> 1,000 tokens/mo
+          for £50 — that's 5p/token vs 1p/token on top-ups.
         </p>
       </div>
     </div>
