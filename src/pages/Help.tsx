@@ -646,14 +646,9 @@ export default function Help() {
     else startListening();
   }, [isListening, startListening, stopListening]);
 
-  /* ── Voice Output (Text-to-Speech) ── */
-  const speakText = useCallback((text: string) => {
-    if (!('speechSynthesis' in window)) {
-      toast({ title: 'Speech not supported', description: 'Your browser doesn\'t support text-to-speech.', variant: 'destructive' });
-      return;
-    }
-    window.speechSynthesis.cancel();
-
+  /* ── Voice Output (Text-to-Speech via ElevenLabs JJ voice) ── */
+  const ttsAudioRef = useRef<HTMLAudioElement | null>(null);
+  const speakText = useCallback(async (text: string) => {
     // Clean text for reading (remove emojis, markdown, etc.)
     const cleanText = text
       .replace(/[#*_~`>]/g, '')
@@ -661,28 +656,52 @@ export default function Help() {
       .replace(/[\u{1F600}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{1FA00}-\u{1FAFF}]/gu, '')
       .replace(/\s+/g, ' ')
       .trim();
+    if (!cleanText) return;
 
-    const utterance = new SpeechSynthesisUtterance(cleanText);
-    utterance.lang = 'en-GB';
-    utterance.rate = 1.0;
-    utterance.pitch = 1.0;
+    // Stop any current playback
+    if (ttsAudioRef.current) { ttsAudioRef.current.pause(); ttsAudioRef.current = null; }
 
-    // Try to use a good English voice
-    const voices = window.speechSynthesis.getVoices();
-    const preferred = voices.find(v =>
-      v.lang.startsWith('en-GB') && v.name.toLowerCase().includes('male')
-    ) || voices.find(v => v.lang.startsWith('en-GB')) || voices.find(v => v.lang.startsWith('en'));
-    if (preferred) utterance.voice = preferred;
+    setIsSpeaking(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) { setIsSpeaking(false); return; }
 
-    utterance.onstart = () => setIsSpeaking(true);
-    utterance.onend = () => setIsSpeaking(false);
-    utterance.onerror = () => setIsSpeaking(false);
+      const res = await supabase.functions.invoke('breathing-tts', {
+        body: { text: cleanText.slice(0, 5000) },
+      });
 
-    window.speechSynthesis.speak(utterance);
+      if (res.error || !res.data) {
+        // Fallback to browser speech synthesis
+        if ('speechSynthesis' in window) {
+          window.speechSynthesis.cancel();
+          const utterance = new SpeechSynthesisUtterance(cleanText);
+          utterance.lang = 'en-GB';
+          const voices = window.speechSynthesis.getVoices();
+          const preferred = voices.find(v => v.lang.startsWith('en-GB') && v.name.toLowerCase().includes('male'))
+            || voices.find(v => v.lang.startsWith('en-GB')) || voices.find(v => v.lang.startsWith('en'));
+          if (preferred) utterance.voice = preferred;
+          utterance.onend = () => setIsSpeaking(false);
+          utterance.onerror = () => setIsSpeaking(false);
+          window.speechSynthesis.speak(utterance);
+        } else { setIsSpeaking(false); }
+        return;
+      }
+
+      const blob = new Blob([res.data], { type: 'audio/mpeg' });
+      const url = URL.createObjectURL(blob);
+      const audio = new Audio(url);
+      ttsAudioRef.current = audio;
+      audio.onended = () => { setIsSpeaking(false); URL.revokeObjectURL(url); ttsAudioRef.current = null; };
+      audio.onerror = () => { setIsSpeaking(false); URL.revokeObjectURL(url); ttsAudioRef.current = null; };
+      await audio.play();
+    } catch {
+      setIsSpeaking(false);
+    }
   }, []);
 
   const stopSpeaking = useCallback(() => {
-    window.speechSynthesis.cancel();
+    if (ttsAudioRef.current) { ttsAudioRef.current.pause(); ttsAudioRef.current = null; }
+    if ('speechSynthesis' in window) window.speechSynthesis.cancel();
     setIsSpeaking(false);
   }, []);
 
