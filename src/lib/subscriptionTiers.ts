@@ -79,7 +79,7 @@ export const TIERS: Record<TierKey, TierConfig> = {
     monthlyPrice: 50,
     originalPrice: 89,
     isOffer: true,
-    monthlyTokens: 200,
+    monthlyTokens: 1000,
     stripePriceId: null, // TODO: Create in Stripe once re-authenticated
     stripeProductId: null,
     rank: 2,
@@ -123,9 +123,9 @@ export interface CoachingTopUp {
 }
 
 export const COACHING_TOPUPS: CoachingTopUp[] = [
-  { id: 'topup_1', name: 'Unbreakable', displayName: 'UNBREAKABLE', price: 20, tokens: 50, stripePriceId: null },
-  { id: 'topup_2', name: 'Keep Showing Up', displayName: 'KEEP SHOWING UP', price: 30, tokens: 80, stripePriceId: null },
-  { id: 'topup_3', name: 'Live Without Limits', displayName: 'LIVE WITHOUT LIMITS', price: 50, tokens: 150, stripePriceId: null },
+  { id: 'topup_1', name: 'Unbreakable', displayName: 'UNBREAKABLE', price: 20, tokens: 250, stripePriceId: null },
+  { id: 'topup_2', name: 'Keep Showing Up', displayName: 'KEEP SHOWING UP', price: 30, tokens: 400, stripePriceId: null },
+  { id: 'topup_3', name: 'Live Without Limits', displayName: 'LIVE WITHOUT LIMITS', price: 50, tokens: 750, stripePriceId: null },
 ];
 
 /** Get tier config by key */
