@@ -5,7 +5,10 @@
  *   Free (£0)       — Home hub, socials, manual tools, 30s UnTunes previews
  *   Foundation (£50/mo) — LAUNCH OFFER (normally £89/mo). Full AI coaching, all features.
  *
- * Optional one-time top-ups: £20, £30, £50
+ * Optional one-time top-ups:
+ *   Level 1 "Unbreakable"         — £20
+ *   Level 2 "Keep Showing Up"     — £30
+ *   Level 3 "Live Without Limits" — £50
  *
  * Hidden retention tier:
  *   Absolute Base (£7/mo) — Limited AI coaching, offered ONLY on cancel
@@ -77,8 +80,8 @@ export const TIERS: Record<TierKey, TierConfig> = {
     originalPrice: 89,
     isOffer: true,
     monthlyTokens: 200,
-    stripePriceId: null, // TODO: Create in Stripe
-    stripeProductId: null, // TODO: Create in Stripe
+    stripePriceId: null, // TODO: Create in Stripe once re-authenticated
+    stripeProductId: null,
     rank: 2,
     popular: true,
     features: [
@@ -110,10 +113,19 @@ export const ALL_TIERS: TierConfig[] = [
 ];
 
 /** Optional coaching top-ups (one-time purchases) */
-export const COACHING_TOPUPS = [
-  { id: 'topup_20', name: 'Bronze Top-Up', price: 20, tokens: 50, stripePriceId: null as string | null },
-  { id: 'topup_30', name: 'Silver Top-Up', price: 30, tokens: 80, stripePriceId: null as string | null },
-  { id: 'topup_50', name: 'Gold Top-Up', price: 50, tokens: 150, stripePriceId: null as string | null },
+export interface CoachingTopUp {
+  id: string;
+  name: string;
+  displayName: string;
+  price: number; // GBP
+  tokens: number;
+  stripePriceId: string | null;
+}
+
+export const COACHING_TOPUPS: CoachingTopUp[] = [
+  { id: 'topup_1', name: 'Unbreakable', displayName: 'UNBREAKABLE', price: 20, tokens: 50, stripePriceId: null },
+  { id: 'topup_2', name: 'Keep Showing Up', displayName: 'KEEP SHOWING UP', price: 30, tokens: 80, stripePriceId: null },
+  { id: 'topup_3', name: 'Live Without Limits', displayName: 'LIVE WITHOUT LIMITS', price: 50, tokens: 150, stripePriceId: null },
 ];
 
 /** Get tier config by key */
@@ -141,8 +153,6 @@ export function getTierBelow(currentTier: TierKey): TierConfig | null {
 }
 
 // ─── Legacy compatibility ───
-// Old code references TIERS.tier1 / TIERS.tier2
-// Map them to new tier equivalents
 export const LEGACY_TIERS = {
   tier1: {
     name: 'Unbreakable Coaching',
