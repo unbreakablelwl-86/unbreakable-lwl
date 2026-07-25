@@ -61,15 +61,8 @@ export function VoiceSettingsSheet({ children }: VoiceSettingsSheetProps) {
             />
           </div>
 
-          {preferences.voice_feedback_enabled && (
-            <div className="p-3 rounded-lg bg-muted/30 border border-border">
-              <p className="text-sm font-medium text-foreground">JJ Voice</p>
-              <p className="text-xs text-muted-foreground">Direct, motivational coaching tone</p>
-            </div>
-          )}
-
           <p className="text-xs text-muted-foreground pt-4 border-t border-border">
-            Voice settings sync across the app. You can also manage these in your Profile Settings.
+            JJ's voice is used across the app — coaching, breathing, and chat.
           </p>
         </div>
       </SheetContent>
