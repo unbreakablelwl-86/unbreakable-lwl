@@ -180,11 +180,8 @@ export function useBreathingAudio({ enabled, voiceGender = 'male' }: UseBreathin
       if (typeof speechSynthesis !== "undefined") speechSynthesis.cancel();
 
       // Try ElevenLabs TTS first
-      const ttsWorked = await tryTTS(text);
-      if (!ttsWorked) {
-        // Fall back to SpeechSynthesis
-        speakFallback(text);
-      }
+      // JJ's ElevenLabs voice only — no browser speech fallback
+      await tryTTS(text);
     },
     [enabled, tryTTS, speakFallback]
   );

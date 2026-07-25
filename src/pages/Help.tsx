@@ -671,25 +671,8 @@ export default function Help() {
       });
 
       if (res.error || !res.data) {
-        // Fallback to browser speech synthesis
-        if ('speechSynthesis' in window) {
-          window.speechSynthesis.cancel();
-          const utterance = new SpeechSynthesisUtterance(cleanText);
-          utterance.lang = 'en-GB';
-          const voices = window.speechSynthesis.getVoices();
-          const maleNames = ['daniel', 'alex', 'thomas', 'james', 'oliver', 'google uk english male', 'microsoft david', 'microsoft mark', 'microsoft george'];
-          const preferred = maleNames.reduce<SpeechSynthesisVoice | null>((found, name) => found || voices.find(v => v.name.toLowerCase().includes(name) && v.lang.startsWith('en')) || null, null)
-            || voices.find(v => v.lang.startsWith('en-GB') && v.name.toLowerCase().includes('male'))
-            || voices.find(v => v.lang.startsWith('en') && v.name.toLowerCase().includes('male'))
-            || voices.find(v => v.lang.startsWith('en-GB'))
-            || voices.find(v => v.lang.startsWith('en'));
-          if (preferred) utterance.voice = preferred;
-          utterance.pitch = 0.9;
-          utterance.rate = 0.95;
-          utterance.onend = () => setIsSpeaking(false);
-          utterance.onerror = () => setIsSpeaking(false);
-          window.speechSynthesis.speak(utterance);
-        } else { setIsSpeaking(false); }
+        // No fallback — JJ's ElevenLabs voice only, never browser speech
+        setIsSpeaking(false);
         return;
       }
 

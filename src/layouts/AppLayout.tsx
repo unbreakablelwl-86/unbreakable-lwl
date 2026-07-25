@@ -68,7 +68,7 @@ const ALL_NAV_ITEMS: NavItemDef[] = [
     label: 'Social',
     path: '/social',
     activeMatch: ['/social'],
-    color: '#FF5500',
+    color: '#FFFFFF',
     description: 'Timeline & feed',
   },
   {
