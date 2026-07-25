@@ -654,7 +654,7 @@ export default function Profile() {
             whileTap={{ scale: 0.92, opacity: 0.7 }}
             transition={{ type: 'spring', stiffness: 400, damping: 17 }}
             onClick={() => setActiveTab('settings')}
-            className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-foreground bg-muted/80 border border-border/50 active:bg-primary/20 active:border-primary/40 transition-colors duration-150"
+            className={`flex-1 py-2.5 rounded-xl text-sm font-semibold transition-colors duration-150 ${activeTab === 'settings' ? 'bg-primary text-primary-foreground border border-primary shadow-[0_0_12px_rgba(255,85,0,0.3)]' : 'text-foreground bg-muted/80 border border-border/50 active:bg-primary/20 active:border-primary/40'}`}
           >
             Edit Profile
           </motion.button>
@@ -673,7 +673,7 @@ export default function Profile() {
               }
             }}
             id="share-btn"
-            className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-foreground bg-muted/80 border border-border/50 active:bg-primary/20 active:border-primary/40 transition-colors duration-150"
+            className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-foreground bg-muted/80 border border-border/50 active:bg-primary active:text-primary-foreground active:border-primary transition-colors duration-150"
           >
             Share Profile
           </motion.button>
@@ -682,10 +682,10 @@ export default function Profile() {
             whileTap={{ scale: 0.88, rotate: 45, opacity: 0.7 }}
             transition={{ type: 'spring', stiffness: 400, damping: 17 }}
             onClick={() => navigate('/admin')}
-            className="py-2.5 px-4 rounded-xl text-sm font-semibold text-foreground bg-muted/80 border border-border/50 active:bg-primary/20 active:border-primary/40 transition-colors duration-150"
+            className="py-2.5 px-4 rounded-xl text-sm font-semibold text-foreground bg-muted/80 border border-border/50 active:bg-primary active:text-primary-foreground active:border-primary transition-colors duration-150"
             title="Admin & Content Studio"
           >
-            <Settings size={18} className="text-muted-foreground" />
+            <Settings size={18} />
           </motion.button>
         </div>
       </section>
