@@ -24,6 +24,7 @@ const PILLARS = [
     sub: 'Strength & PT Hub',
     icon: Zap,
     path: '/programming',
+    color: '#FF5500',
   },
   {
     id: 'fuel',
@@ -31,6 +32,7 @@ const PILLARS = [
     sub: 'Nutrition Tracker',
     icon: Flame,
     path: '/fuel',
+    color: '#10B981',
   },
   {
     id: 'movement',
@@ -38,6 +40,7 @@ const PILLARS = [
     sub: 'Cardio & GPS',
     icon: Activity,
     path: '/tracker',
+    color: '#EF4444',
   },
   {
     id: 'mindset',
@@ -45,6 +48,7 @@ const PILLARS = [
     sub: 'Mental Performance',
     icon: Brain,
     path: '/mindset',
+    color: '#8B5CF6',
   },
   {
     id: 'university',
@@ -52,6 +56,7 @@ const PILLARS = [
     sub: 'Unbreakable University',
     icon: GraduationCap,
     path: '/university',
+    color: '#3B82F6',
   },
   {
     id: 'untunes',
@@ -59,6 +64,7 @@ const PILLARS = [
     sub: 'Music & Podcasts',
     icon: Music,
     path: '/untunes',
+    color: '#CCFF00',
   },
 ];
 
@@ -232,14 +238,15 @@ export function HomeDashboard() {
                 style={{ background: 'linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--background)) 100%)' }}
               >
                 {/* Icon */}
-                <div className="w-12 h-12 rounded-xl bg-card border border-primary/20 flex items-center justify-center
-                  shadow-[0_0_12px_hsl(var(--primary)/0.3)] group-hover:shadow-[0_0_12px_hsl(var(--primary)/0.3)] transition-shadow">
-                  <p.icon className="w-6 h-6 text-primary" 
-                    style={{ filter: 'drop-shadow(0 0 6px rgba(255,85,0,0.6))' }} />
+                <div className="w-12 h-12 rounded-xl bg-card flex items-center justify-center transition-shadow"
+                  style={{ borderColor: `${p.color}33`, borderWidth: 1, boxShadow: `0 0 12px ${p.color}4D` }}>
+                  <p.icon className="w-6 h-6" 
+                    style={{ color: p.color, filter: `drop-shadow(0 0 6px ${p.color}99)` }} />
                 </div>
                 {/* Text */}
                 <div className="flex-1 min-w-0">
-                  <h4 className="font-display text-base tracking-wide text-foreground group-hover:text-primary transition-colors">
+                  <h4 className="font-display text-base tracking-wide text-foreground transition-colors"
+                    style={{ '--hover-color': p.color } as React.CSSProperties}>
                     {p.label}
                   </h4>
                   <p className="text-xs text-muted-foreground">{p.sub}</p>
@@ -247,8 +254,8 @@ export function HomeDashboard() {
                 {/* Progress placeholder + chevron */}
                 <div className="flex items-center gap-3">
                   <div className="w-16 h-1.5 bg-card rounded-full overflow-hidden hidden sm:block">
-                    <div className="h-full bg-gradient-to-r from-primary to-[#FF7733] rounded-full w-0 
-                      group-hover:w-1/3 transition-all duration-500" />
+                    <div className="h-full rounded-full w-0 group-hover:w-1/3 transition-all duration-500"
+                      style={{ background: p.color }} />
                   </div>
                   <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
                 </div>
