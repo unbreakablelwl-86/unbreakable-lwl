@@ -23,6 +23,10 @@ import {
   Target,
   Zap,
   MessageCircle,
+  Music,
+  Camera,
+  Award,
+  Gamepad2,
 } from 'lucide-react';
 const founderPhoto = 'https://vlwcoqilwyfcrsxodtdx.supabase.co/storage/v1/object/public/site-assets/misc/john-founder.webp';
 
@@ -254,6 +258,92 @@ const FAQ_SECTIONS: { title: string; icon: typeof Shield; items: FAQItem[] }[] =
       {
         q: 'Who can see my posts on the social feed?',
         a: 'Your posts on the community feed are visible to all UNBREAKABLE members. Your training data, habits, and journal entries are private to your account only.',
+      },
+    ],
+  },
+  {
+    title: 'Social & Community',
+    icon: Heart,
+    items: [
+      {
+        q: 'What is the Social feed?',
+        a: 'The Social feed is your community timeline. Post updates, share achievements, and engage with other members. Like, comment, and follow other users. Stories appear at the top for quick video/image updates.',
+      },
+      {
+        q: 'How do I post to the feed?',
+        a: 'Tap the + button on the Social tab to create a post. Add text, images, or videos. Your achievements and workout completions can also be shared automatically.',
+      },
+      {
+        q: 'How do Stories work?',
+        a: 'Stories are short-lived video or image posts that appear in the carousel at the top of the Social feed. Create a story by tapping your avatar. Stories disappear after 24 hours.',
+      },
+      {
+        q: 'Can I make my profile private?',
+        a: 'Yes — go to Profile → Settings and toggle your profile visibility. Private profiles hide your posts from non-followers. Your training data is always private regardless of this setting.',
+      },
+    ],
+  },
+  {
+    title: 'Un-Tunes',
+    icon: Music,
+    items: [
+      {
+        q: 'What is Un-Tunes?',
+        a: 'Un-Tunes is UNBREAKABLE\'s music platform. All tracks are free to stream during your sessions. Browse albums, create playlists, and add background music to your training.',
+      },
+      {
+        q: 'Is the music free?',
+        a: 'Yes — all Un-Tunes tracks are free to stream. Optional collectible card packs and digital merchandise are available for purchase, with 20% of proceeds donated to Mind charity.',
+      },
+      {
+        q: 'What are the card packs?',
+        a: 'Un-Tunes card packs are collectible digital cards featuring artwork, tracks, and brand items. Each purchase includes matching base-level track cards. Collect, trade, and showcase your collection on your profile.',
+      },
+      {
+        q: 'What is the Mind charity donation?',
+        a: '20% of all Un-Tunes purchases are donated to Mind, the UK mental health charity. Every card pack, album, or bundle purchase directly supports mental health awareness and support services.',
+      },
+    ],
+  },
+  {
+    title: 'Snap & Track',
+    icon: Camera,
+    items: [
+      {
+        q: 'What is Snap & Track?',
+        a: 'Snap & Track uses your phone camera to log food and track nutrition instantly. Take a photo of your meal and the Unbreakable Coach identifies the food, estimates portions, and logs your macros automatically.',
+      },
+      {
+        q: 'How accurate is the food tracking?',
+        a: 'Snap & Track provides estimates based on AI image recognition. For best results, take clear, well-lit photos with individual items visible. You can always edit the logged values after scanning.',
+      },
+    ],
+  },
+  {
+    title: 'Achievements & Cards',
+    icon: Award,
+    items: [
+      {
+        q: 'How do I earn achievement cards?',
+        a: 'Achievement cards are earned automatically when you hit milestones — personal bests, streak completions, level-ups, and training achievements. Each card has a rarity level based on the difficulty of the milestone.',
+      },
+      {
+        q: 'Can I share my cards?',
+        a: 'Yes — tap any card in your collection to open the share sheet. Share directly to Instagram Stories, WhatsApp, or download the card image to share anywhere.',
+      },
+    ],
+  },
+  {
+    title: 'Focus Games',
+    icon: Gamepad2,
+    items: [
+      {
+        q: 'What games are available?',
+        a: 'Four focus games: Hunt (Snake-style reflex game), Shatter (Alleyway brick-breaker), Stack (Tetris-style stacking), and Lock In (pattern recognition). All feature global leaderboards.',
+      },
+      {
+        q: 'Do games count towards my Daily 7?',
+        a: 'Focus games are part of the Mindset pillar but don\'t count as a separate Daily 7 habit. They\'re designed to train reaction time, focus, and hand-eye coordination between sessions.',
       },
     ],
   },
