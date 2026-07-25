@@ -34,7 +34,7 @@ const PILLAR_MAP: Record<string, PillarDef> = {
   '/university':       { hex: '#3B82F6', hsl: '217 91% 60%' },
   '/habits':           { hex: '#10B981', hsl: '160 84% 39%' },
   '/coaches':          { hex: '#FF5500', hsl: '22 100% 50%' },
-  '/inbox':            { hex: '#00BCD4', hsl: '187 100% 42%' },
+  '/inbox':            { hex: '#FF5500', hsl: '20 100% 50%' },
   '/ai-tokens':        { hex: '#FFB300', hsl: '42 100% 50%' },
   '/explore':          { hex: '#E91E63', hsl: '340 82% 52%' },
   '/profile':          { hex: '#FF5500', hsl: '22 100% 50%' },

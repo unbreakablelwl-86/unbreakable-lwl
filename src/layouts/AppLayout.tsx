@@ -176,7 +176,7 @@ const ALL_NAV_ITEMS: NavItemDef[] = [
     label: 'Inbox',
     path: '/inbox',
     activeMatch: ['/inbox'],
-    color: '#06B6D4',
+    color: '#FF5500',
     description: 'Messages & chats',
   },
   {

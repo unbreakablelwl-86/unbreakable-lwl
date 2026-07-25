@@ -84,7 +84,7 @@ const ALL_QUICK_ACTIONS: QuickAction[] = [
   { id: 'journal', label: 'Journal', icon: BookOpen, path: '/habits', color: '#8B5CF6' },
   { id: 'coach', label: 'JJ Coach', icon: Sparkles, path: '/help', color: '#FF5500' },
   { id: 'calc', label: 'Calculators', icon: Calculator, path: '/calculators', color: '#10B981' },
-  { id: 'inbox', label: 'Inbox', icon: MessageCircle, path: '/inbox', color: '#06B6D4' },
+  { id: 'inbox', label: 'Inbox', icon: MessageCircle, path: '/inbox', color: '#FF5500' },
   { id: 'profile', label: 'Profile', icon: User, path: '/profile', color: '#6366F1' },
   { id: 'explore', label: 'Explore', icon: Search, path: '/explore', color: '#EC4899' },
   { id: 'habits', label: 'Habits', icon: Calendar, path: '/habits', color: '#8B5CF6' },
