@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Plus, Check, Target, Sparkles, ChevronDown, Activity, BookOpen, Wind,
-  ThermometerSun, Snowflake,
+  ThermometerSun, Snowflake, Droplets,
   ChevronRight as ChevronRightIcon, Calendar, BarChart3, Clock, TrendingUp,
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
