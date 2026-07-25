@@ -31,14 +31,43 @@ serve(async (req) => {
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     // Get the new user's profile info for the notification
+    // NOTE: profiles.user_id = auth user ID, NOT profiles.id
     const { data: newUserProfile } = await supabase
       .from("profiles")
       .select("display_name, username, avatar_url, city")
-      .eq("id", new_user_id)
+      .eq("user_id", new_user_id)
       .maybeSingle();
 
     const displayName = newUserProfile?.display_name || newUserProfile?.username || "Someone";
     const city = newUserProfile?.city ? ` from ${newUserProfile.city}` : "";
+
+    // 0. Mark onboarding timestamp
+    await supabase
+      .from("coaching_profiles")
+      .update({ onboarding_completed_at: new Date().toISOString() })
+      .eq("user_id", new_user_id);
+
+    // 0b. Queue welcome email drip sequence (7 emails over 14 days)
+    const { data: authData } = await supabase.auth.admin.getUserById(new_user_id);
+    const userEmail = authData?.user?.email;
+    if (userEmail) {
+      const dripDays = [0, 1, 2, 3, 5, 7, 14]; // Day offsets for the 7-email sequence
+      const now = new Date();
+      const dripRows = dripDays.map((dayOffset, idx) => {
+        const scheduled = new Date(now);
+        scheduled.setDate(scheduled.getDate() + dayOffset);
+        scheduled.setHours(8, 0, 0, 0); // 8am BST
+        return {
+          user_id: new_user_id,
+          email: userEmail,
+          day_number: idx,
+          scheduled_for: scheduled.toISOString(),
+          status: idx === 0 ? "sent" : "pending", // Day 0 welcome is sent by Resend below
+          sequence_name: "welcome",
+        };
+      });
+      await supabase.from("email_drip").insert(dripRows);
+    }
 
     // 1. Auto-follow: Founder follows the new user
     const { error: followError } = await supabase.from("follows").upsert(

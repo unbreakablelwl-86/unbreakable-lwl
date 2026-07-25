@@ -205,7 +205,7 @@ export default function Onboarding() {
       }
 
       toast({ title: 'Welcome to UNBREAKABLE! 💪', description: 'Your coach profile is set up and ready.' });
-      navigate('/', { replace: true });
+      navigate('/welcome', { replace: true });
     } catch (err) {
       console.error('Onboarding save error:', err);
       toast({ title: 'Error', description: 'Failed to save profile. Please try again.', variant: 'destructive' });

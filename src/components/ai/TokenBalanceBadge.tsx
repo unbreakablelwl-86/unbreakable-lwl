@@ -1,4 +1,5 @@
 import { Zap } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { useTokenBalance } from '@/hooks/useTokenBalance';
 import { cn } from '@/lib/utils';
 
@@ -9,6 +10,7 @@ interface TokenBalanceBadgeProps {
 }
 
 export function TokenBalanceBadge({ className, showTier = false, size = 'sm' }: TokenBalanceBadgeProps) {
+  const navigate = useNavigate();
   const { balance, isUnlimited, tierDisplayName, loading } = useTokenBalance();
 
   if (loading) return null;
@@ -18,7 +20,10 @@ export function TokenBalanceBadge({ className, showTier = false, size = 'sm' }: 
 
   return (
     <div
+      onClick={() => navigate('/token-pricing')}
+      role="button"
       className={cn(
+        'cursor-pointer hover:opacity-80 transition-opacity',
         'inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1',
         isEmpty
           ? 'border-destructive/30 bg-destructive/10 text-destructive'

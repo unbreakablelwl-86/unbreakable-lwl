@@ -83,6 +83,8 @@ const TrackerMyProgrammes = lazy(() => import("./pages/TrackerMyProgrammes"));
 const TrackerCreate = lazy(() => import("./pages/TrackerCreate"));
 const UserProfile = lazy(() => import("./pages/UserProfile"));
 const Onboarding = lazy(() => import("./pages/Onboarding"));
+const Welcome = lazy(() => import("./pages/Welcome"));
+const TokenPricing = lazy(() => import("./pages/TokenPricing"));
 const Habits = lazy(() => import("./pages/Habits"));
 const CoachDashboard = lazy(() => import("./pages/CoachDashboard"));
 const MyCoaching = lazy(() => import("./pages/MyCoaching"));
@@ -168,6 +170,8 @@ const App = () => {
                 
                 {/* Onboarding wizard - mandatory for new users */}
                 <Route path="/onboarding" element={<Onboarding />} />
+                <Route path="/welcome" element={<Welcome />} />
+                <Route path="/token-pricing" element={<TokenPricing />} />
                 
                 {/* Profile - free access (has membership tab) */}
                 <Route path="/profile" element={
