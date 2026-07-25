@@ -121,8 +121,8 @@ export default function UnTunes() {
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent pointer-events-none" />
         <div className="container mx-auto px-4 pt-6 pb-4 relative">
           <motion.div {...fadeIn} className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center shadow-[0_0_20px_rgba(255,85,0,0.3)]">
-              <Music className="w-5 h-5 text-primary drop-shadow-[0_0_6px_rgba(255,85,0,0.6)]" />
+            <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center shadow-[0_0_20px_hsl(var(--primary) / 0.3)]">
+              <Music className="w-5 h-5 text-primary drop-shadow-[0_0_6px_hsl(var(--primary) / 0.6)]" />
             </div>
             <div>
               <h1 className="font-display text-2xl tracking-wider text-foreground">UN-TUNES</h1>
@@ -277,7 +277,7 @@ export default function UnTunes() {
                           )}
                           <Button
                             size="sm"
-                            className="mt-3 gap-1.5 text-[10px] font-display tracking-wider shadow-[0_0_12px_rgba(255,85,0,0.3)] w-fit"
+                            className="mt-3 gap-1.5 text-[10px] font-display tracking-wider shadow-[0_0_12px_hsl(var(--primary) / 0.3)] w-fit"
                             onClick={() => { if (albumTracks.length > 0) playTrack(albumTracks[0], albumTracks); }}
                             disabled={albumTracksLoading || albumTracks.length === 0}
                           >
@@ -310,7 +310,7 @@ export default function UnTunes() {
                     /* Album grid */
                     <>
                       <div className="flex items-center gap-2 mb-4">
-                        <Disc3 className="w-4 h-4 text-primary drop-shadow-[0_0_6px_rgba(255,85,0,0.5)]" />
+                        <Disc3 className="w-4 h-4 text-primary drop-shadow-[0_0_6px_hsl(var(--primary) / 0.5)]" />
                         <h2 className="font-display text-sm tracking-wider text-foreground">ALBUMS</h2>
                       </div>
                       {albumsLoading ? (
@@ -360,7 +360,7 @@ export default function UnTunes() {
                 <div>
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-2">
-                      <TrendingUp className="w-4 h-4 text-primary drop-shadow-[0_0_6px_rgba(255,85,0,0.5)]" />
+                      <TrendingUp className="w-4 h-4 text-primary drop-shadow-[0_0_6px_hsl(var(--primary) / 0.5)]" />
                       <h2 className="font-display text-sm tracking-wider text-foreground">TRENDING NOW</h2>
                     </div>
                     <Badge variant="outline" className="text-[10px] font-display tracking-wider border-primary/30 text-primary">
@@ -369,7 +369,7 @@ export default function UnTunes() {
                   </div>
                   {featuredLoading ? (
                     <div className="flex items-center justify-center py-12">
-                      <Disc3 className="w-8 h-8 text-primary animate-spin drop-shadow-[0_0_12px_rgba(255,85,0,0.5)]" />
+                      <Disc3 className="w-8 h-8 text-primary animate-spin drop-shadow-[0_0_12px_hsl(var(--primary) / 0.5)]" />
                     </div>
                   ) : featured.length === 0 ? (
                     <Card className="p-8 text-center border-border/50 bg-card/50">
@@ -400,7 +400,7 @@ export default function UnTunes() {
                 <div>
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-2">
-                      <Library className="w-4 h-4 text-primary drop-shadow-[0_0_6px_rgba(255,85,0,0.5)]" />
+                      <Library className="w-4 h-4 text-primary drop-shadow-[0_0_6px_hsl(var(--primary) / 0.5)]" />
                       <h2 className="font-display text-sm tracking-wider text-foreground">FULL LIBRARY</h2>
                     </div>
                     <Badge variant="outline" className="text-[10px] font-display tracking-wider border-primary/30 text-primary">
@@ -409,7 +409,7 @@ export default function UnTunes() {
                   </div>
                   {allTracksLoading ? (
                     <div className="flex items-center justify-center py-12">
-                      <Disc3 className="w-8 h-8 text-primary animate-spin drop-shadow-[0_0_12px_rgba(255,85,0,0.5)]" />
+                      <Disc3 className="w-8 h-8 text-primary animate-spin drop-shadow-[0_0_12px_hsl(var(--primary) / 0.5)]" />
                     </div>
                   ) : allTracks.length === 0 ? (
                     <Card className="p-8 text-center border-border/50 bg-card/50">
@@ -438,7 +438,7 @@ export default function UnTunes() {
               {/* Featured Artists */}
               <div>
                 <div className="flex items-center gap-2 mb-4">
-                  <Star className="w-4 h-4 text-primary drop-shadow-[0_0_6px_rgba(255,85,0,0.5)]" />
+                  <Star className="w-4 h-4 text-primary drop-shadow-[0_0_6px_hsl(var(--primary) / 0.5)]" />
                   <h2 className="font-display text-sm tracking-wider text-foreground">ARTISTS</h2>
                 </div>
                 {artistsLoading ? (
@@ -447,7 +447,7 @@ export default function UnTunes() {
                   </div>
                 ) : artists.length === 0 ? (
                   <Card className="p-8 text-center border-border/50 bg-card/50">
-                    <Mic2 className="w-10 h-10 text-primary/20 mx-auto mb-3 drop-shadow-[0_0_8px_rgba(255,85,0,0.2)]" />
+                    <Mic2 className="w-10 h-10 text-primary/20 mx-auto mb-3 drop-shadow-[0_0_8px_hsl(var(--primary) / 0.2)]" />
                     <p className="text-sm text-muted-foreground mb-1">No artists yet</p>
                     <p className="text-xs text-muted-foreground/60 mb-4">
                       {'Join as an artist for a one-time 50 token sign-up and share your music — you keep 80%'}
@@ -455,7 +455,7 @@ export default function UnTunes() {
                     <Button
                       size="sm"
                       onClick={() => setActiveTab('artist')}
-                      className="gap-2 shadow-[0_0_16px_rgba(255,85,0,0.3)]"
+                      className="gap-2 shadow-[0_0_16px_hsl(var(--primary) / 0.3)]"
                     >
                       <UserPlus className="w-4 h-4" />
                       {'Become an Artist'}
@@ -664,7 +664,7 @@ export default function UnTunes() {
                     <Card className="p-4 border-primary/30 bg-primary/5 relative overflow-hidden">
                       <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent pointer-events-none" />
                       <div className="relative flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-lg bg-primary/20 flex items-center justify-center shadow-[0_0_16px_rgba(255,85,0,0.3)]">
+                        <div className="w-12 h-12 rounded-lg bg-primary/20 flex items-center justify-center shadow-[0_0_16px_hsl(var(--primary) / 0.3)]">
                           <Play className="w-5 h-5 text-primary" />
                         </div>
                         <div className="flex-1 min-w-0">
@@ -693,8 +693,8 @@ export default function UnTunes() {
                       onClick={() => { setLibraryView('liked'); refreshLiked(); }}
                     >
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-lg bg-primary/15 flex items-center justify-center group-hover:shadow-[0_0_12px_rgba(255,85,0,0.3)] group-active:shadow-[0_0_16px_rgba(255,85,0,0.5)] transition-shadow">
-                          <Heart className="w-5 h-5 text-primary drop-shadow-[0_0_4px_rgba(255,85,0,0.5)]" />
+                        <div className="w-10 h-10 rounded-lg bg-primary/15 flex items-center justify-center group-hover:shadow-[0_0_12px_hsl(var(--primary) / 0.3)] group-active:shadow-[0_0_16px_hsl(var(--primary) / 0.5)] transition-shadow">
+                          <Heart className="w-5 h-5 text-primary drop-shadow-[0_0_4px_hsl(var(--primary) / 0.5)]" />
                         </div>
                         <div>
                           <p className="font-display text-xs tracking-wider text-foreground">LIKED</p>
@@ -708,8 +708,8 @@ export default function UnTunes() {
                       onClick={() => setLibraryView('recent')}
                     >
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-lg bg-primary/15 flex items-center justify-center group-hover:shadow-[0_0_12px_rgba(255,85,0,0.3)] group-active:shadow-[0_0_16px_rgba(255,85,0,0.5)] transition-shadow">
-                          <Clock className="w-5 h-5 text-primary drop-shadow-[0_0_4px_rgba(255,85,0,0.5)]" />
+                        <div className="w-10 h-10 rounded-lg bg-primary/15 flex items-center justify-center group-hover:shadow-[0_0_12px_hsl(var(--primary) / 0.3)] group-active:shadow-[0_0_16px_hsl(var(--primary) / 0.5)] transition-shadow">
+                          <Clock className="w-5 h-5 text-primary drop-shadow-[0_0_4px_hsl(var(--primary) / 0.5)]" />
                         </div>
                         <div>
                           <p className="font-display text-xs tracking-wider text-foreground">RECENT</p>
@@ -814,8 +814,8 @@ export default function UnTunes() {
               <div className="flex flex-col items-center justify-center py-16 text-center">
                 {/* Animated icon */}
                 <div className="relative mb-6">
-                  <div className="w-24 h-24 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center shadow-[0_0_40px_rgba(255,85,0,0.15)]">
-                    <Podcast className="w-12 h-12 text-primary drop-shadow-[0_0_12px_rgba(255,85,0,0.6)]" />
+                  <div className="w-24 h-24 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center shadow-[0_0_40px_hsl(var(--primary) / 0.15)]">
+                    <Podcast className="w-12 h-12 text-primary drop-shadow-[0_0_12px_hsl(var(--primary) / 0.6)]" />
                   </div>
                   <div className="absolute -top-2 -right-2 bg-primary text-primary-foreground text-[9px] font-display tracking-widest px-2.5 py-1 rounded-full shadow-lg shadow-primary/30">
                     SOON
@@ -867,7 +867,7 @@ export default function UnTunes() {
                 </Card>
               ) : artistLoading ? (
                 <div className="flex items-center justify-center py-16">
-                  <Disc3 className="w-8 h-8 text-primary animate-spin drop-shadow-[0_0_12px_rgba(255,85,0,0.5)]" />
+                  <Disc3 className="w-8 h-8 text-primary animate-spin drop-shadow-[0_0_12px_hsl(var(--primary) / 0.5)]" />
                 </div>
               ) : myArtist ? (
                 <UnTunesArtistDashboard artist={myArtist} />

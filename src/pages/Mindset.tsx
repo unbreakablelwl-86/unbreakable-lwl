@@ -71,7 +71,7 @@ const Mindset = () => {
           style={{ background: 'radial-gradient(ellipse at 50% 0%, hsl(var(--primary) / 0.08), transparent 70%)' }} />
         <div className="relative z-10">
           <h1 className="font-display text-2xl tracking-wider text-center">
-            <span className="text-primary" style={{ textShadow: '0 0 20px rgba(255,85,0,0.4)' }}>UNBREAKABLE</span>
+            <span className="text-primary" style={{ textShadow: '0 0 20px hsl(var(--primary) / 0.4)' }}>UNBREAKABLE</span>
             <span className="text-foreground"> MINDSET</span>
           </h1>
           <p className="text-center text-muted-foreground text-sm mt-1 font-display tracking-wide">
@@ -133,7 +133,7 @@ const Mindset = () => {
                   controlled breathwork, cold & heat exposure, focus training, and daily habit tracking to build 
                   a mind that stays calm in chaos — focused, present, and <span className="text-primary font-semibold">UNBREAKABLE</span>.
                 </p>
-                <p className="text-primary font-display text-sm tracking-wide mt-3" style={{ textShadow: '0 0 10px rgba(255,85,0,0.3)' }}>
+                <p className="text-primary font-display text-sm tracking-wide mt-3" style={{ textShadow: '0 0 10px hsl(var(--primary) / 0.3)' }}>
                   KEEP SHOWING UP.
                 </p>
               </div>
@@ -142,11 +142,11 @@ const Mindset = () => {
               <div className="space-y-2">
                 <h3 className="text-xs font-display tracking-wider text-muted-foreground">EXPLORE</h3>
                 {[
-                  { tab: 'breathwork' as MindsetTab, icon: Wind, title: 'BREATHWORK', desc: 'Voice-guided sessions — Box Breathing, 4-7-8, Tactical Calm', colour: '#FF5500' },
-                  { tab: 'exposure' as MindsetTab, icon: Snowflake, title: 'COLD & HEAT', desc: 'Cold showers, ice baths, sauna protocols — guided timers', colour: '#FF5500' },
-                  { tab: 'games' as MindsetTab, icon: Gamepad2, title: 'FOCUS GAMES', desc: 'Reaction training, hand-eye coordination, global leaderboards', colour: '#FF5500' },
-                  { tab: 'habits' as MindsetTab, icon: Target, title: 'DAILY HABITS', desc: 'Track your Daily 7 — train, learn, hydrate, numbers, breathwork, sauna, cold', colour: '#FF5500' },
-                  { tab: 'programmes' as MindsetTab, icon: Sparkles, title: 'PROGRAMMES', desc: 'Unbreakable Coach or manual mindset programmes — breathwork, cold exposure, focus plans', colour: '#FF5500' },
+                  { tab: 'breathwork' as MindsetTab, icon: Wind, title: 'BREATHWORK', desc: 'Voice-guided sessions — Box Breathing, 4-7-8, Tactical Calm', colour: 'var(--pillar-accent)' },
+                  { tab: 'exposure' as MindsetTab, icon: Snowflake, title: 'COLD & HEAT', desc: 'Cold showers, ice baths, sauna protocols — guided timers', colour: 'var(--pillar-accent)' },
+                  { tab: 'games' as MindsetTab, icon: Gamepad2, title: 'FOCUS GAMES', desc: 'Reaction training, hand-eye coordination, global leaderboards', colour: 'var(--pillar-accent)' },
+                  { tab: 'habits' as MindsetTab, icon: Target, title: 'DAILY HABITS', desc: 'Track your Daily 7 — train, learn, hydrate, numbers, breathwork, sauna, cold', colour: 'var(--pillar-accent)' },
+                  { tab: 'programmes' as MindsetTab, icon: Sparkles, title: 'PROGRAMMES', desc: 'Unbreakable Coach or manual mindset programmes — breathwork, cold exposure, focus plans', colour: 'var(--pillar-accent)' },
                 ].map(card => (
                   <button
                     key={card.tab}
@@ -170,7 +170,7 @@ const Mindset = () => {
               <Link to="/help" className="block">
                 <div className="flex items-center gap-3 p-4 rounded-xl border border-primary/20 bg-primary/5 hover:bg-primary/10 transition-all">
                   <div className="w-10 h-10 rounded-full bg-primary/15 flex items-center justify-center"
-                    style={{ boxShadow: '0 0 15px rgba(255,85,0,0.2)' }}>
+                    style={{ boxShadow: '0 0 15px hsl(var(--primary) / 0.2)' }}>
                     <Flame className="w-5 h-5 text-primary" />
                   </div>
                   <div className="flex-1">
@@ -215,7 +215,7 @@ const Mindset = () => {
                 >
                   <div className="flex items-start gap-3">
                     <div className="w-10 h-10 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
-                      <Wind className="w-5 h-5 text-primary" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.5))' }} />
+                      <Wind className="w-5 h-5 text-primary" style={{ filter: 'drop-shadow(0 0 4px hsl(var(--primary) / 0.5))' }} />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
@@ -398,7 +398,7 @@ const Mindset = () => {
                   className="p-4 rounded-xl border border-primary/20 bg-card hover:border-primary/40 transition-all text-left"
                 >
                   <div className="w-10 h-10 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center mb-3"
-                    style={{ boxShadow: '0 0 12px rgba(255,85,0,0.12)' }}>
+                    style={{ boxShadow: '0 0 12px hsl(var(--primary) / 0.12)' }}>
                     <Sparkles className="w-5 h-5 text-primary" />
                   </div>
                   <h4 className="font-display text-xs text-foreground">AI PROGRAMME</h4>
@@ -593,7 +593,7 @@ const Mindset = () => {
 
               {(!programmes || programmes.length === 0) && !progsLoading && (
                 <div className="p-6 rounded-xl border border-border bg-card text-center">
-                  <Brain className="w-8 h-8 text-primary mx-auto mb-2" style={{ filter: 'drop-shadow(0 0 8px rgba(255,85,0,0.4))' }} />
+                  <Brain className="w-8 h-8 text-primary mx-auto mb-2" style={{ filter: 'drop-shadow(0 0 8px hsl(var(--primary) / 0.4))' }} />
                   <p className="text-muted-foreground text-sm">No programmes yet. Build one to start your mindset training journey.</p>
                 </div>
               )}

@@ -40,10 +40,10 @@ export default function Programming() {
       {/* ─── Hero Banner ─── */}
       <div className="relative px-4 pt-6 pb-5 overflow-hidden">
         <div className="absolute inset-0 pointer-events-none"
-          style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(255,85,0,0.08), transparent 70%)' }} />
+          style={{ background: 'radial-gradient(ellipse at 50% 0%, hsl(var(--primary) / 0.08), transparent 70%)' }} />
         <div className="relative z-10">
           <h1 className="font-display text-2xl tracking-wider text-center">
-            <span className="text-primary" style={{ textShadow: '0 0 20px rgba(255,85,0,0.4)' }}>UNBREAKABLE</span>
+            <span className="text-primary" style={{ textShadow: '0 0 20px hsl(var(--primary) / 0.4)' }}>UNBREAKABLE</span>
             <span className="text-foreground"> POWER</span>
           </h1>
           <p className="text-center text-muted-foreground text-sm mt-1 font-display tracking-wide">
@@ -105,7 +105,7 @@ export default function Programming() {
                   combines Unbreakable Coaching, a 1,500-exercise library, and bespoke programme building to create training that's
                   built for <span className="text-primary font-semibold">you</span>.
                 </p>
-                <p className="text-primary font-display text-sm tracking-wide mt-3" style={{ textShadow: '0 0 10px rgba(255,85,0,0.3)' }}>
+                <p className="text-primary font-display text-sm tracking-wide mt-3" style={{ textShadow: '0 0 10px hsl(var(--primary) / 0.3)' }}>
                   KEEP SHOWING UP.
                 </p>
               </div>
@@ -124,7 +124,7 @@ export default function Programming() {
                     <div className="w-full flex items-center gap-3 p-3.5 rounded-xl border border-border bg-card hover:border-border hover:bg-card transition-all text-left">
                       <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 border"
                        >
-                        <Icon className="w-5 h-5 text-primary" style={{ filter: 'drop-shadow(0 0 4px #FF550066)' }} />
+                        <Icon className="w-5 h-5 text-primary" style={{ filter: 'drop-shadow(0 0 4px hsl(var(--primary) / 0.4))' }} />
                       </div>
                       <div className="flex-1 min-w-0">
                         <h4 className="font-display text-sm text-foreground tracking-wide">{card.title}</h4>
@@ -149,7 +149,7 @@ export default function Programming() {
                       <div className="w-full flex items-center gap-3 p-3.5 rounded-xl border border-primary/20 bg-primary/5 hover:bg-primary/10 transition-all text-left">
                         <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 border"
                          >
-                          <Zap className="w-5 h-5 text-primary" style={{ filter: 'drop-shadow(0 0 4px #FF550066)' }} />
+                          <Zap className="w-5 h-5 text-primary" style={{ filter: 'drop-shadow(0 0 4px hsl(var(--primary) / 0.4))' }} />
                         </div>
                         <div className="flex-1 min-w-0">
                           <h4 className="font-display text-sm text-foreground tracking-wide truncate">{prog.name}</h4>
@@ -166,7 +166,7 @@ export default function Programming() {
               <Link to="/help" className="block">
                 <div className="flex items-center gap-3 p-4 rounded-xl border border-primary/20 bg-primary/5 hover:bg-primary/10 transition-all">
                   <div className="w-10 h-10 rounded-full bg-primary/15 flex items-center justify-center"
-                    style={{ boxShadow: '0 0 15px rgba(255,85,0,0.2)' }}>
+                    style={{ boxShadow: '0 0 15px hsl(var(--primary) / 0.2)' }}>
                     <Flame className="w-5 h-5 text-primary" />
                   </div>
                   <div className="flex-1">
@@ -212,7 +212,7 @@ export default function Programming() {
                 <div className="w-full flex items-center gap-3 p-3.5 rounded-xl border border-primary/20 bg-primary/5 hover:bg-primary/10 transition-all text-left">
                   <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 border"
                    >
-                    <Dumbbell className="w-5 h-5 text-primary" style={{ filter: 'drop-shadow(0 0 4px #FF550066)' }} />
+                    <Dumbbell className="w-5 h-5 text-primary" style={{ filter: 'drop-shadow(0 0 4px hsl(var(--primary) / 0.4))' }} />
                   </div>
                   <div className="flex-1 min-w-0">
                     <h4 className="font-display text-sm text-foreground tracking-wide">BROWSE FULL LIBRARY</h4>

@@ -169,7 +169,7 @@ export default function Tracker() {
           style={{ background: 'radial-gradient(ellipse at 50% 0%, hsl(var(--primary) / 0.08), transparent 70%)' }} />
         <div className="relative z-10">
           <h1 className="font-display text-2xl tracking-wider text-center">
-            <span className="text-primary" style={{ textShadow: '0 0 20px rgba(255,85,0,0.4)' }}>UNBREAKABLE</span>
+            <span className="text-primary" style={{ textShadow: '0 0 20px hsl(var(--primary) / 0.4)' }}>UNBREAKABLE</span>
             <span className="text-foreground"> MOVEMENT</span>
           </h1>
           <p className="text-center text-muted-foreground text-sm mt-1 font-display tracking-wide">
@@ -231,7 +231,7 @@ export default function Tracker() {
                   tracks every step, every stride, every rep. GPS sessions, structured cardio programmes, trophies and personal records
                   — all built to keep you <span className="text-primary font-semibold">moving forward</span>.
                 </p>
-                <p className="text-primary font-display text-sm tracking-wide mt-3" style={{ textShadow: '0 0 10px rgba(255,85,0,0.3)' }}>
+                <p className="text-primary font-display text-sm tracking-wide mt-3" style={{ textShadow: '0 0 10px hsl(var(--primary) / 0.3)' }}>
                   KEEP SHOWING UP.
                 </p>
               </div>
@@ -249,7 +249,7 @@ export default function Tracker() {
                     <div className="w-full flex items-center gap-3 p-3.5 rounded-xl border border-border bg-card hover:border-border hover:bg-card transition-all text-left">
                       <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 border"
                        >
-                        <Icon className="w-5 h-5 text-primary" style={{ filter: 'drop-shadow(0 0 4px #FF550066)' }} />
+                        <Icon className="w-5 h-5 text-primary" style={{ filter: 'drop-shadow(0 0 4px hsl(var(--primary) / 0.4))' }} />
                       </div>
                       <div className="flex-1 min-w-0">
                         <h4 className="font-display text-sm text-foreground tracking-wide">{card.title}</h4>
@@ -276,7 +276,7 @@ export default function Tracker() {
                     { label: 'Activities', value: `${weekly.activities}`, icon: Zap },
                   ].map(s => (
                     <div key={s.label} className="text-center">
-                      <s.icon className="w-4 h-4 text-primary mx-auto mb-1" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.5))' }} />
+                      <s.icon className="w-4 h-4 text-primary mx-auto mb-1" style={{ filter: 'drop-shadow(0 0 4px hsl(var(--primary) / 0.5))' }} />
                       <p className="text-lg font-bold text-foreground">{s.value}</p>
                       <p className="text-[10px] text-muted-foreground">{s.label}</p>
                     </div>
@@ -298,7 +298,7 @@ export default function Tracker() {
               <Link to="/help" className="block">
                 <div className="flex items-center gap-3 p-4 rounded-xl border border-primary/20 bg-primary/5 hover:bg-primary/10 transition-all">
                   <div className="w-10 h-10 rounded-full bg-primary/15 flex items-center justify-center"
-                    style={{ boxShadow: '0 0 15px rgba(255,85,0,0.2)' }}>
+                    style={{ boxShadow: '0 0 15px hsl(var(--primary) / 0.2)' }}>
                     <Flame className="w-5 h-5 text-primary" />
                   </div>
                   <div className="flex-1">
@@ -322,7 +322,7 @@ export default function Tracker() {
                   className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl border border-primary/30 
                     bg-primary/10 hover:bg-primary/20 hover:border-primary/50 transition-all group"
                 >
-                  <Play className="w-5 h-5 text-primary" style={{ filter: 'drop-shadow(0 0 6px rgba(255,85,0,0.5))' }} />
+                  <Play className="w-5 h-5 text-primary" style={{ filter: 'drop-shadow(0 0 6px hsl(var(--primary) / 0.5))' }} />
                   <span className="font-display text-sm tracking-wide text-foreground">START SESSION</span>
                 </button>
                 <button
@@ -373,7 +373,7 @@ export default function Tracker() {
                 </div>
               ) : filteredRuns.length === 0 ? (
                 <div className="p-8 text-center rounded-xl border border-border bg-card">
-                  <Activity className="w-12 h-12 text-primary mx-auto mb-4" style={{ filter: 'drop-shadow(0 0 10px rgba(255,85,0,0.4))' }} />
+                  <Activity className="w-12 h-12 text-primary mx-auto mb-4" style={{ filter: 'drop-shadow(0 0 10px hsl(var(--primary) / 0.4))' }} />
                   <h3 className="font-display text-lg text-foreground mb-2">
                     {activityFilter === 'all' ? 'NO ACTIVITIES YET' : `NO ${ACTIVITY_LABELS[activityFilter as CardioActivityType]?.toUpperCase()} SESSIONS`}
                   </h3>
@@ -393,7 +393,7 @@ export default function Tracker() {
                     <div key={run.id} className="w-full flex items-start gap-3 p-3.5 rounded-xl border border-border bg-card hover:border-primary/30 transition-all">
                       <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 border"
                        >
-                        <Icon className="w-5 h-5 text-primary" style={{ filter: 'drop-shadow(0 0 4px #FF550066)' }} />
+                        <Icon className="w-5 h-5 text-primary" style={{ filter: 'drop-shadow(0 0 4px hsl(var(--primary) / 0.4))' }} />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between mb-1">
@@ -439,7 +439,7 @@ export default function Tracker() {
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 border"
                    >
-                    <Trophy className="w-5 h-5 text-primary" style={{ filter: 'drop-shadow(0 0 4px #FF550066)' }} />
+                    <Trophy className="w-5 h-5 text-primary" style={{ filter: 'drop-shadow(0 0 4px hsl(var(--primary) / 0.4))' }} />
                   </div>
                   <div>
                     <p className="font-display text-sm text-foreground tracking-wide">{medals.length} / {MEDAL_DEFINITIONS.length} Trophies</p>
@@ -463,7 +463,7 @@ export default function Tracker() {
                   </div>
                 ) : medals.length === 0 ? (
                   <div className="p-8 text-center rounded-xl border border-border bg-card">
-                    <Trophy className="w-12 h-12 text-primary mx-auto mb-4" style={{ filter: 'drop-shadow(0 0 10px rgba(255,85,0,0.4))' }} />
+                    <Trophy className="w-12 h-12 text-primary mx-auto mb-4" style={{ filter: 'drop-shadow(0 0 10px hsl(var(--primary) / 0.4))' }} />
                     <h3 className="font-display text-lg text-foreground mb-2">EARN YOUR FIRST TROPHY</h3>
                     <p className="text-muted-foreground text-sm">Complete activities to unlock trophies and medals</p>
                   </div>
@@ -525,7 +525,7 @@ export default function Tracker() {
                   </div>
                 ) : records.length === 0 ? (
                   <div className="p-6 text-center rounded-xl border border-border bg-card">
-                    <Star className="w-8 h-8 text-primary mx-auto mb-3" style={{ filter: 'drop-shadow(0 0 8px rgba(255,85,0,0.4))' }} />
+                    <Star className="w-8 h-8 text-primary mx-auto mb-3" style={{ filter: 'drop-shadow(0 0 8px hsl(var(--primary) / 0.4))' }} />
                     <p className="text-sm text-muted-foreground">Complete runs to set personal records</p>
                   </div>
                 ) : (
@@ -534,7 +534,7 @@ export default function Tracker() {
                       <div key={pr.id} className="flex items-center gap-3 p-3.5 rounded-xl border border-border bg-card">
                         <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 border"
                          >
-                          <Award className="w-5 h-5 text-primary" style={{ filter: 'drop-shadow(0 0 4px #FF550066)' }} />
+                          <Award className="w-5 h-5 text-primary" style={{ filter: 'drop-shadow(0 0 4px hsl(var(--primary) / 0.4))' }} />
                         </div>
                         <div className="flex-1 min-w-0">
                           <h4 className="font-display text-sm text-foreground tracking-wide">{pr.distance_type}</h4>
@@ -583,7 +583,7 @@ export default function Tracker() {
                   <div className="grid grid-cols-2 gap-3">
                     {stats.map(s => (
                       <div key={s.label} className="p-4 rounded-xl border border-border bg-card">
-                        <s.icon className="w-5 h-5 text-primary mb-2" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.5))' }} />
+                        <s.icon className="w-5 h-5 text-primary mb-2" style={{ filter: 'drop-shadow(0 0 4px hsl(var(--primary) / 0.5))' }} />
                         <p className="text-xl font-bold text-foreground">{s.value}</p>
                         <p className="text-[10px] text-muted-foreground mt-0.5">{s.label}</p>
                       </div>
@@ -601,7 +601,7 @@ export default function Tracker() {
                   </div>
                 ) : !segments || segments.length === 0 ? (
                   <div className="p-6 text-center rounded-xl border border-border bg-card">
-                    <Route className="w-10 h-10 text-primary mx-auto mb-3" style={{ filter: 'drop-shadow(0 0 8px rgba(255,85,0,0.4))' }} />
+                    <Route className="w-10 h-10 text-primary mx-auto mb-3" style={{ filter: 'drop-shadow(0 0 8px hsl(var(--primary) / 0.4))' }} />
                     <h3 className="font-display text-sm text-foreground mb-1">NO SEGMENTS YET</h3>
                     <p className="text-muted-foreground text-xs">Segments auto-create when you complete GPS-tracked activities</p>
                   </div>
@@ -632,7 +632,7 @@ export default function Tracker() {
               <Link to="/tracker/create" className="block">
                 <div className="flex items-center gap-3 p-4 rounded-xl border border-primary/20 bg-primary/5 hover:bg-primary/10 transition-all">
                   <div className="w-10 h-10 rounded-full bg-primary/15 flex items-center justify-center"
-                    style={{ boxShadow: '0 0 15px rgba(255,85,0,0.2)' }}>
+                    style={{ boxShadow: '0 0 15px hsl(var(--primary) / 0.2)' }}>
                     <Zap className="w-5 h-5 text-primary" />
                   </div>
                   <div className="flex-1">

@@ -274,10 +274,10 @@ const MindsetBreathing = () => {
         {/* Compact Mindset Hero */}
         <div className="relative px-4 pt-3 pb-5 overflow-hidden">
           <div className="absolute inset-0 pointer-events-none"
-            style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(255,85,0,0.08), transparent 70%)' }} />
+            style={{ background: 'radial-gradient(ellipse at 50% 0%, hsl(var(--primary) / 0.08), transparent 70%)' }} />
           <div className="relative z-10">
             <h1 className="font-display text-2xl tracking-wider text-center">
-              <span className="text-primary" style={{ textShadow: '0 0 20px rgba(255,85,0,0.4)' }}>UNBREAKABLE</span>
+              <span className="text-primary" style={{ textShadow: '0 0 20px hsl(var(--primary) / 0.4)' }}>UNBREAKABLE</span>
               <span className="text-foreground"> BREATHING</span>
             </h1>
             <p className="text-center text-muted-foreground text-sm mt-1 font-display tracking-wide">
@@ -329,7 +329,7 @@ const MindsetBreathing = () => {
                     onClick={() => setVoiceGender('female')}
                     className={`flex items-center gap-1.5 px-3 py-2.5 text-xs font-display tracking-wider transition-all ${
                       voiceGender === 'female'
-                        ? 'bg-primary text-primary-foreground shadow-[0_0_12px_rgba(255,85,0,0.3)]'
+                        ? 'bg-primary text-primary-foreground shadow-[0_0_12px_hsl(var(--primary) / 0.3)]'
                         : 'text-muted-foreground hover:text-foreground bg-card/30'
                     }`}
                   >
@@ -340,7 +340,7 @@ const MindsetBreathing = () => {
                     onClick={() => setVoiceGender('male')}
                     className={`flex items-center gap-1.5 px-3 py-2.5 text-xs font-display tracking-wider transition-all ${
                       voiceGender === 'male'
-                        ? 'bg-primary text-primary-foreground shadow-[0_0_12px_rgba(255,85,0,0.3)]'
+                        ? 'bg-primary text-primary-foreground shadow-[0_0_12px_hsl(var(--primary) / 0.3)]'
                         : 'text-muted-foreground hover:text-foreground bg-card/30'
                     }`}
                   >
@@ -367,8 +367,8 @@ const MindsetBreathing = () => {
                   onClick={() => selectExercise(exercise)}
                   className="w-full p-3.5 rounded-xl border border-border bg-card flex items-center gap-3 hover:border-primary/30 transition-all group text-left"
                 >
-                  <div className="w-10 h-10 rounded-lg border border-primary/20 flex items-center justify-center shrink-0" style={{ background: 'rgba(255,85,0,0.1)' }}>
-                    <span className="text-primary" style={{ filter: 'drop-shadow(0 0 6px rgba(255,85,0,0.5))' }}>
+                  <div className="w-10 h-10 rounded-lg border border-primary/20 flex items-center justify-center shrink-0" style={{ background: 'hsl(var(--primary) / 0.1)' }}>
+                    <span className="text-primary" style={{ filter: 'drop-shadow(0 0 6px hsl(var(--primary) / 0.5))' }}>
                       {getIntensityIcon(exercise.intensity)}
                     </span>
                   </div>
@@ -388,8 +388,8 @@ const MindsetBreathing = () => {
           {/* Coach CTA */}
           <div className="mt-4 p-3.5 rounded-xl border border-primary/20 bg-primary/5">
             <Link to="/help" className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg border border-primary/20 flex items-center justify-center" style={{ background: 'rgba(255,85,0,0.1)' }}>
-                <Flame className="w-5 h-5 text-primary" style={{ filter: 'drop-shadow(0 0 6px rgba(255,85,0,0.5))' }} />
+              <div className="w-10 h-10 rounded-lg border border-primary/20 flex items-center justify-center" style={{ background: 'hsl(var(--primary) / 0.1)' }}>
+                <Flame className="w-5 h-5 text-primary" style={{ filter: 'drop-shadow(0 0 6px hsl(var(--primary) / 0.5))' }} />
               </div>
               <div className="flex-1">
                 <p className="font-display text-sm tracking-wider text-foreground">NEED HELP?</p>
@@ -413,7 +413,7 @@ const MindsetBreathing = () => {
         <div 
           className="absolute inset-0 pointer-events-none"
           style={{
-            background: `radial-gradient(circle at center, rgba(255,85,0,0.12), transparent 60%)`
+            background: `radial-gradient(circle at center, hsl(var(--primary) / 0.12), transparent 60%)`
           }}
         />
 
@@ -431,7 +431,7 @@ const MindsetBreathing = () => {
           {/* Voice preview */}
           <div className="flex items-center justify-center gap-3 mb-6">
             <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-primary-foreground"
-              style={{ boxShadow: `0 0 20px rgba(255,85,0,0.4)` }}
+              style={{ boxShadow: `0 0 20px hsl(var(--primary) / 0.4)` }}
             >
               <Circle className="w-4 h-4" />
             </div>
