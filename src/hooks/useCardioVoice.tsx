@@ -24,8 +24,8 @@ export function useCardioVoice({ enabled }: { enabled: boolean }) {
     if (voices.length === 0) return;
 
     const preferred = [
-      "samantha", "karen", "moira", "google uk english female",
-      "google us english", "microsoft zira", "microsoft hazel",
+      "daniel", "alex", "thomas", "james", "google uk english male",
+      "google us english", "microsoft david", "microsoft mark",
     ];
     for (const pref of preferred) {
       const match = voices.find(v => v.name.toLowerCase().includes(pref) && v.lang.startsWith("en"));

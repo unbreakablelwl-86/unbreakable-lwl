@@ -17,7 +17,7 @@ export interface AIPreferences {
 
 const defaultPreferences: Omit<AIPreferences, 'id' | 'user_id' | 'created_at' | 'updated_at'> = {
   voice_feedback_enabled: false,
-  voice_gender: 'female',
+  voice_gender: 'male',
   movement_analysis_enabled: false,
   auto_progression_enabled: true,
   feedback_frequency: 'after_session',

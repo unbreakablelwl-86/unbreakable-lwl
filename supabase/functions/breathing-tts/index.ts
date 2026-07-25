@@ -6,8 +6,8 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-// Female voice only, Sarah (calm, soothing)
-const VOICE_ID = "EXAVITQu4vr4xnSDxMaL";
+// JJ voice — Brian (male, confident, coaching tone)
+const VOICE_ID = "nPczCjzI2devNBz1zQrb";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
