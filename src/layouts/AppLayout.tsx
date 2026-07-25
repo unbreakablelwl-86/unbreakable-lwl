@@ -149,7 +149,7 @@ const ALL_NAV_ITEMS: NavItemDef[] = [
     label: '121 Coaches',
     path: '/coaches',
     activeMatch: ['/coaches'],
-    color: '#FF5500',
+    color: '#14B8A6',
     description: '1-2-1 coaching',
   },
   {
@@ -167,7 +167,7 @@ const ALL_NAV_ITEMS: NavItemDef[] = [
     label: 'Alerts',
     path: '/social?tab=notifications',
     activeMatch: [],
-    color: '#FF5500',
+    color: '#FBBF24',
     description: 'Notifications & alerts',
   },
   {
@@ -176,7 +176,7 @@ const ALL_NAV_ITEMS: NavItemDef[] = [
     label: 'Inbox',
     path: '/inbox',
     activeMatch: ['/inbox'],
-    color: '#FF5500',
+    color: '#06B6D4',
     description: 'Messages & chats',
   },
   {
@@ -185,7 +185,7 @@ const ALL_NAV_ITEMS: NavItemDef[] = [
     label: 'Tokens',
     path: '/ai-tokens',
     activeMatch: ['/ai-tokens'],
-    color: '#FF5500',
+    color: '#F97316',
     description: 'Unbreakable Coaching tokens',
   },
   {
@@ -194,7 +194,7 @@ const ALL_NAV_ITEMS: NavItemDef[] = [
     label: 'Calculators',
     path: '/calculators',
     activeMatch: ['/calculators'],
-    color: '#FF5500',
+    color: '#10B981',
     description: 'Fitness calculators',
   },
   {
@@ -203,7 +203,7 @@ const ALL_NAV_ITEMS: NavItemDef[] = [
     label: 'Explore',
     path: '/explore',
     activeMatch: ['/explore'],
-    color: '#FF5500',
+    color: '#EC4899',
     description: 'Discover content',
   },
   {
@@ -212,7 +212,7 @@ const ALL_NAV_ITEMS: NavItemDef[] = [
     label: 'Profile',
     path: '/profile',
     activeMatch: ['/profile'],
-    color: '#FF5500',
+    color: '#6366F1',
     description: 'Your profile',
   },
   {
@@ -221,7 +221,7 @@ const ALL_NAV_ITEMS: NavItemDef[] = [
     label: 'Help',
     path: '/faq',
     activeMatch: ['/faq'],
-    color: '#FF5500',
+    color: '#EF4444',
     description: 'FAQ, terms & support',
   },
   {
@@ -230,7 +230,7 @@ const ALL_NAV_ITEMS: NavItemDef[] = [
     label: 'Admin',
     path: '/admin',
     activeMatch: ['/admin'],
-    color: '#FF5500',
+    color: '#F97316',
     description: 'Content studio & admin',
   },
 ];

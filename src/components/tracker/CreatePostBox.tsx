@@ -3,7 +3,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Image, Video, X, Loader2, Globe, Users, Lock, Send, CheckCircle2 } from 'lucide-react';
+import { Image, Video, X, Loader2, Globe, Users, Lock, Send, CheckCircle2, Music } from 'lucide-react';
+import { TrackPicker } from './TrackPicker';
 import { useAuth } from '@/hooks/useAuth';
 import { useProfile } from '@/hooks/useProfile';
 import { usePosts } from '@/hooks/usePosts';
@@ -38,6 +39,7 @@ export function CreatePostBox({ onPostCreated }: CreatePostBoxProps) {
   const [progressLabel, setProgressLabel] = useState('');
   const [showSuccess, setShowSuccess] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [attachedTrack, setAttachedTrack] = useState<{ id: string; title: string; artist_name: string; cover_url: string | null; audio_url: string; duration_seconds: number } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleContentChange = useCallback((value: string) => {
@@ -231,22 +233,34 @@ export function CreatePostBox({ onPostCreated }: CreatePostBoxProps) {
       }
 
       // Insert media items into post_media table
-      if (uploadedMedia.length > 0) {
-        const mediaRows = uploadedMedia.map((m) => ({
+      const allMediaRows: any[] = uploadedMedia.map((m) => ({
+        post_id: postData.id,
+        user_id: user.id,
+        media_type: m.type,
+        media_url: m.url,
+        thumbnail_url: m.thumbnailUrl,
+        sort_order: m.sortOrder,
+        width: m.width || null,
+        height: m.height || null,
+        duration_seconds: m.duration || null,
+        file_size_bytes: m.fileSize || null,
+      }));
+
+      // Add attached Un-Tunes track as audio media
+      if (attachedTrack) {
+        allMediaRows.push({
           post_id: postData.id,
           user_id: user.id,
-          media_type: m.type,
-          media_url: m.url,
-          thumbnail_url: m.thumbnailUrl,
-          sort_order: m.sortOrder,
-          width: m.width || null,
-          height: m.height || null,
-          duration_seconds: m.duration || null,
-          file_size_bytes: m.fileSize || null,
-        }));
+          media_type: 'audio',
+          media_url: attachedTrack.audio_url,
+          thumbnail_url: attachedTrack.cover_url,
+          sort_order: allMediaRows.length,
+          duration_seconds: attachedTrack.duration_seconds || null,
+        });
+      }
 
-        await supabase.from('post_media').insert(mediaRows);
-        // Refetch so the post now includes all media_items
+      if (allMediaRows.length > 0) {
+        await supabase.from('post_media').insert(allMediaRows);
         await refetchPosts();
       }
 
@@ -259,6 +273,7 @@ export function CreatePostBox({ onPostCreated }: CreatePostBoxProps) {
         setShowSuccess(false);
         setContent('');
         setMediaItems([]);
+        setAttachedTrack(null);
         setIsExpanded(false);
         setIsSubmitting(false);
         setOverallProgress(0);
@@ -385,6 +400,37 @@ export function CreatePostBox({ onPostCreated }: CreatePostBoxProps) {
             )}
           </AnimatePresence>
 
+          {/* Attached Un-Tunes track preview */}
+          <AnimatePresence>
+            {attachedTrack && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                className="flex items-center gap-3 p-3 rounded-xl border border-primary/30 bg-primary/5"
+              >
+                <div className="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0 bg-zinc-800">
+                  {attachedTrack.cover_url ? (
+                    <img loading="lazy" src={attachedTrack.cover_url} alt="" className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <Music className="w-4 h-4 text-zinc-600" />
+                    </div>
+                  )}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-foreground truncate">{attachedTrack.title}</p>
+                  <p className="text-xs text-muted-foreground truncate">{attachedTrack.artist_name}</p>
+                </div>
+                {!isSubmitting && (
+                  <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => setAttachedTrack(null)}>
+                    <X className="w-4 h-4" />
+                  </Button>
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           {/* Upload Progress */}
           <AnimatePresence>
             {isSubmitting && overallProgress > 0 && (
@@ -431,6 +477,21 @@ export function CreatePostBox({ onPostCreated }: CreatePostBoxProps) {
                       <span className="ml-1 text-xs text-primary">{mediaItems.length}/{MAX_MEDIA}</span>
                     )}
                   </Button>
+
+                  <TrackPicker
+                    onSelect={setAttachedTrack}
+                    selectedTrack={attachedTrack}
+                  >
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className={attachedTrack ? 'text-primary' : 'text-muted-foreground'}
+                      disabled={isSubmitting}
+                    >
+                      <Music className="w-5 h-5 mr-1" />
+                      Music
+                    </Button>
+                  </TrackPicker>
 
                   <Select value={visibility} onValueChange={setVisibility}>
                     <SelectTrigger className="w-auto h-8 border-0 bg-transparent">
