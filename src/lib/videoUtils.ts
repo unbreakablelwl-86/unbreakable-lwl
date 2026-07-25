@@ -3,7 +3,8 @@
  */
 
 /**
- * Generates a thumbnail from a video file by capturing the first frame
+ * Generates a thumbnail from a video file by capturing the first frame.
+ * Has a 10-second timeout to prevent freezing on mobile devices.
  */
 export async function generateVideoThumbnail(
   videoFile: File,
@@ -14,19 +15,41 @@ export async function generateVideoThumbnail(
     const video = document.createElement('video');
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
+    let resolved = false;
 
-    video.preload = 'metadata';
-    video.muted = true;
-    video.playsInline = true;
-
-    video.onloadeddata = () => {
-      // Seek to first frame
-      video.currentTime = 0.1;
+    const cleanup = () => {
+      try { URL.revokeObjectURL(video.src); } catch {}
+      video.onloadeddata = null;
+      video.onseeked = null;
+      video.onerror = null;
+      video.oncanplay = null;
     };
 
-    video.onseeked = () => {
-      // Calculate aspect ratio
-      const aspectRatio = video.videoWidth / video.videoHeight;
+    const safeResolve = (value: Blob | null) => {
+      if (resolved) return;
+      resolved = true;
+      cleanup();
+      resolve(value);
+    };
+
+    // Timeout after 10s — skip thumbnail rather than freeze
+    const timeout = setTimeout(() => {
+      console.warn('[videoUtils] Thumbnail generation timed out after 10s — skipping');
+      safeResolve(null);
+    }, 10000);
+
+    video.preload = 'auto';
+    video.muted = true;
+    video.playsInline = true;
+    video.crossOrigin = 'anonymous';
+
+    const drawFrame = () => {
+      clearTimeout(timeout);
+      const vw = video.videoWidth;
+      const vh = video.videoHeight;
+      if (!vw || !vh || !ctx) { safeResolve(null); return; }
+
+      const aspectRatio = vw / vh;
       let drawWidth = width;
       let drawHeight = height;
 
@@ -38,29 +61,35 @@ export async function generateVideoThumbnail(
 
       canvas.width = drawWidth;
       canvas.height = drawHeight;
+      ctx.drawImage(video, 0, 0, drawWidth, drawHeight);
 
-      if (ctx) {
-        ctx.drawImage(video, 0, 0, drawWidth, drawHeight);
-        canvas.toBlob(
-          (blob) => {
-            URL.revokeObjectURL(video.src);
-            resolve(blob);
-          },
-          'image/jpeg',
-          0.8
-        );
-      } else {
-        URL.revokeObjectURL(video.src);
-        resolve(null);
-      }
+      canvas.toBlob(
+        (blob) => safeResolve(blob),
+        'image/jpeg',
+        0.8
+      );
+    };
+
+    video.onseeked = drawFrame;
+
+    video.onloadeddata = () => {
+      video.currentTime = 0.1;
+    };
+
+    // Fallback: some browsers fire canplay but not loadeddata
+    video.oncanplay = () => {
+      if (!video.onloadeddata) return;
+      video.onloadeddata = null;
+      video.currentTime = 0.1;
     };
 
     video.onerror = () => {
-      URL.revokeObjectURL(video.src);
-      resolve(null);
+      clearTimeout(timeout);
+      safeResolve(null);
     };
 
     video.src = URL.createObjectURL(videoFile);
+    video.load(); // Explicitly trigger loading on mobile
   });
 }
 

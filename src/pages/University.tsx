@@ -9,6 +9,7 @@ import { allCourses, sportCourses, getTotalChapters } from '@/lib/university/cou
 import { useUniversityProgress } from '@/hooks/useUniversityProgress';
 import { AdminControlPanel } from '@/components/university/AdminControlPanel';
 import { getCourseColors } from '@/lib/university/courseColors';
+import { useCourseAccess } from '@/hooks/useCourseAccess';
 import type { CourseType } from '@/lib/university/types';
 import { GuidesSection } from '@/components/university/GuidesSection';
 
@@ -47,6 +48,7 @@ export default function University() {
   const [searchParams, setSearchParams] = useSearchParams();
   const activeTab = (searchParams.get('course') as CourseType) || 'gym';
   const { getLevelCompletedChapters, hasPassedAssessment } = useUniversityProgress();
+  const { hasAccess } = useCourseAccess();
 
   // Hide Level 4 content (no images yet — re-enable when L4 images are ready)
   const courseData = (allCourses[activeTab] || []).filter(l => l.level <= 3);
@@ -85,7 +87,7 @@ export default function University() {
 
             <p className="text-muted-foreground text-sm md:text-base max-w-2xl mx-auto leading-relaxed">
               Real education that should be taught in schools — not locked behind a qualification.
-              Level 2, 3 and 4 courses in fitness, nutrition, mindset and sports science.
+              Level 2, 3 &amp; 4 courses in fitness, nutrition, mindset and sports science. Unit 1 of every course is free.
             </p>
 
             <p className="text-xs text-muted-foreground/70 max-w-xl mx-auto">
@@ -281,7 +283,10 @@ export default function University() {
               const totalChapters = getTotalChapters(level.level, activeTab);
               const completedChapters = getLevelCompletedChapters(level.level, activeTab);
               const hasContent = level.units.some(u => u.chapters.length > 0);
-              const isLocked = level.level > 2 && !hasPassedAssessment(level.level - 1, 0, activeTab);
+              const isProgressLocked = level.level > 2 && !hasPassedAssessment(level.level - 1, 0, activeTab);
+              // Free users: can click L2 (preview Unit 1), L3+ fully locked
+              const isPaidLocked = !hasAccess;
+              const isLocked = isProgressLocked || (isPaidLocked && level.level > 2);
               const progressPercent = totalChapters > 0 ? Math.round((completedChapters / totalChapters) * 100) : 0;
               const estimatedHours = Math.round(totalChapters * 5 / 60);
 
@@ -327,7 +332,15 @@ export default function University() {
                             )}
                           </div>
                           <div>
-                            <h2 className="font-display text-lg sm:text-xl tracking-wider text-foreground">{level.title}</h2>
+                            <div className="flex items-center gap-2">
+                              <h2 className="font-display text-lg sm:text-xl tracking-wider text-foreground">{level.title}</h2>
+                              {isPaidLocked && level.level === 2 && (
+                                <span className="text-[9px] font-bold tracking-wider px-1.5 py-0.5 rounded bg-primary/20 text-primary border border-primary/30">UNIT 1 FREE</span>
+                              )}
+                              {isPaidLocked && level.level > 2 && (
+                                <span className="text-[9px] font-bold tracking-wider px-1.5 py-0.5 rounded bg-muted text-muted-foreground border border-border">LOCKED</span>
+                              )}
+                            </div>
                             <p className={`text-xs ${colors.text} font-display tracking-wider mt-0.5`}>{level.subtitle}</p>
                           </div>
                         </div>

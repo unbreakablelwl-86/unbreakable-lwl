@@ -53,7 +53,7 @@ export const TIERS: Record<TierKey, TierConfig> = {
       'Manual trackers & builders',
       'Calculators & habits',
       '30-second UnTunes previews',
-      'University Level 1 (free)',
+      'University preview (L2 Unit 1 free)',
     ],
   },
   absolute_base: {

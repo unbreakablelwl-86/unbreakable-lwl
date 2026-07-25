@@ -131,7 +131,7 @@ const ALL_NAV_ITEMS: NavItemDef[] = [
     label: 'Un-Tunes',
     path: '/untunes',
     activeMatch: ['/untunes'],
-    color: '#FF5500',
+    color: '#CCFF00',
     description: 'Music & collectibles',
   },
   {
@@ -422,7 +422,7 @@ export default function AppLayout() {
                 <Sparkles className="w-3 h-3 text-primary" />
                 <span className="text-primary font-bold">🔒 FOUNDING MEMBER</span>
                 <span className="text-foreground">—</span>
-                <span className="text-foreground">PRICE LOCKED FOR LIFE · 100 SPOTS ONLY</span>
+                <span className="text-foreground">PRICE LOCKED FOR LIFE</span>
                 <span className="text-[10px] text-primary border border-primary/40 rounded-full px-2 py-0.5 ml-1">
                   JOIN NOW
                 </span>
@@ -448,25 +448,21 @@ export default function AppLayout() {
                     setShowMore(false);
                     navigate(item.path);
                   }}
-                  className={`flex flex-col items-center gap-0.5 px-2 py-1.5 rounded-lg transition-all relative ${
-                    active ? '' : 'opacity-80 hover:opacity-100'
-                  }`}
-                  style={active ? { color: item.color || '#FF5500' } : { color: 'hsl(var(--muted-foreground))' }}
+                  className="flex flex-col items-center gap-0.5 px-2 py-1.5 rounded-lg transition-all relative"
+                  style={{ color: item.color || '#FF5500' }}
                 >
                   {item.isShield ? (
                     <img
                       src={shieldLogo}
                       alt="Home"
-                      className={`w-6 h-6 rounded-sm transition-all ${
-                        active ? 'opacity-100' : 'opacity-60 grayscale'
-                      }`}
-                      style={active ? { filter: `drop-shadow(0 0 6px ${item.color || '#FF5500'}80)` } : undefined}
+                      className="w-6 h-6 rounded-sm transition-all"
+                      style={{ filter: active ? `drop-shadow(0 0 6px ${item.color || '#FF5500'}80)` : undefined }}
                     />
                   ) : (
                     Icon && <Icon
                       className="w-[22px] h-[22px] transition-all"
-                      strokeWidth={active ? 2.5 : 1.5}
-                      style={active ? { filter: `drop-shadow(0 0 6px ${item.color || '#FF5500'}80)` } : undefined}
+                      strokeWidth={active ? 2.5 : 2}
+                      style={{ filter: active ? `drop-shadow(0 0 6px ${item.color || '#FF5500'}80)` : undefined }}
                     />
                   )}
                   <span className={`text-[10px] transition-all ${active ? 'font-bold' : 'font-medium'}`}>

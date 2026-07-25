@@ -130,7 +130,7 @@ const freeFeatures = [
 
 /* ─── Token tiers ─── */
 const tokenTiers = [
-  { name: 'FREE', tokens: 0, price: '£0', desc: 'Full access to all free tools & community', highlight: false, features: ['All free tools', 'Community access', 'University L1'] },
+  { name: 'FREE', tokens: 0, price: '£0', desc: 'Full access to all free tools & community', highlight: false, features: ['All free tools', 'Community access', 'University preview'] },
   { name: 'FOUNDATION', tokens: 1000, price: '£50', period: '/mo', desc: 'Full AI coaching, all features unlocked', highlight: true, features: ['1,000 tokens/month', 'JJ AI Coach', 'All features'], originalPrice: '£89' },
 ];
 

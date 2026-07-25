@@ -14,7 +14,7 @@ import { useLocation } from 'react-router-dom';
  *   Movement → #EF4444 (0° neon red)
  *   Mindset  → #8B5CF6 (263° violet)
  *   Academy  → #3B82F6 (217° blue)
- *   UnTunes  → #FF5500 (22° orange, brand)
+ *   UnTunes  → #CCFF00 (75° neon yellow)
  *   Default  → #FF5500 (brand orange)
  */
 
@@ -40,7 +40,7 @@ const PILLAR_MAP: Record<string, PillarDef> = {
   '/profile':          { hex: '#FF5500', hsl: '22 100% 50%' },
   '/help':             { hex: '#FF5500', hsl: '22 100% 50%' },
   '/admin':            { hex: '#FF5500', hsl: '22 100% 50%' },
-  '/untunes':          { hex: '#FF5500', hsl: '22 100% 50%' },
+  '/untunes':          { hex: '#CCFF00', hsl: '75 100% 50%' },
   '/unbreakable-86':   { hex: '#FF5500', hsl: '22 100% 50%' },
 };
 

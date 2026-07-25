@@ -19,7 +19,7 @@ const FREE_FEATURES = [
   { feature: 'Social feed, stories & messaging', icon: Users },
   { feature: 'Manual trackers & daily habits', icon: Check },
   { feature: 'Calculators & tools', icon: Calculator },
-  { feature: 'University Level 1 courses', icon: BookOpen },
+  { feature: 'University L2 Unit 1 (preview)', icon: BookOpen },
   { feature: 'Exercise library', icon: Dumbbell },
   { feature: 'Daily motivation', icon: Flame },
   { feature: 'Focus games & leaderboards', icon: Brain },

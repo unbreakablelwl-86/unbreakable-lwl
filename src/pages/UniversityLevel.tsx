@@ -111,8 +111,8 @@ export default function UniversityLevel() {
         </div>
       </div>
 
-      {/* Purchase banner */}
-      {!accessLoading && !hasAccess && levelData && (
+      {/* Purchase banner — shown for free users on L2+ */}
+      {!accessLoading && !hasAccess && levelNum >= 2 && levelData && (
         <div className="container mx-auto px-4 pt-6">
           <div className="max-w-3xl mx-auto">
             <SubscriptionUpgradeBanner />
@@ -124,6 +124,9 @@ export default function UniversityLevel() {
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-3xl mx-auto space-y-5">
           {levelData.units.map((unit, idx) => {
+            // Free users: L2 Unit 1 is free preview, everything else locked
+            const isUnitPreviewable = !hasAccess && levelNum === 2 && unit.number === 1;
+            const isUnitLocked = !hasAccess && (levelNum > 2 || (levelNum === 2 && unit.number > 1));
             const hasChapters = unit.chapters.length > 0;
             const completedCount = getUnitCompletedChapters(levelNum, unit.number, ct);
             const quizzesPassed = hasChapters ? getUnitQuizzesPassed(unit.number, unit.chapters.length) : 0;
@@ -139,7 +142,24 @@ export default function UniversityLevel() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: idx * 0.08 }}
               >
-                <Card className={`${colors.border} overflow-hidden`}>
+                <Card className={`${colors.border} overflow-hidden ${isUnitLocked ? 'opacity-50 relative' : ''}`}>
+                  {/* Locked overlay for free users on units beyond 1 */}
+                  {isUnitLocked && (
+                    <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-background/80 backdrop-blur-sm rounded-xl">
+                      <Lock className="w-8 h-8 text-primary mb-2" />
+                      <p className="font-display text-sm tracking-wider text-foreground mb-1">FOUNDATION REQUIRED</p>
+                      <p className="text-xs text-muted-foreground text-center max-w-[200px]">
+                        Upgrade to Foundation to unlock all university content
+                      </p>
+                    </div>
+                  )}
+                  {/* Preview badge on Unit 1 for free users */}
+                  {isUnitPreviewable && (
+                    <div className="bg-primary/10 border-b border-primary/20 px-5 py-2 flex items-center gap-2">
+                      <BookOpen className="w-3.5 h-3.5 text-primary" />
+                      <span className="text-xs font-display tracking-wider text-primary">FREE PREVIEW</span>
+                    </div>
+                  )}
                   {/* Unit header */}
                   <div className="p-5 pb-4">
                     <div className="flex items-center gap-3 mb-3">
@@ -190,8 +210,8 @@ export default function UniversityLevel() {
                         return (
                           <motion.button
                             key={ch.number}
-                            onClick={() => (accessible && hasAccess) ? navigate(`/university/${ct}/level-${levelNum}/unit-${unit.number}/chapter-${ch.number}`) : undefined}
-                            disabled={!accessible || !hasAccess}
+                            onClick={() => (accessible && (hasAccess || isUnitPreviewable)) ? navigate(`/university/${ct}/level-${levelNum}/unit-${unit.number}/chapter-${ch.number}`) : undefined}
+                            disabled={!accessible || isUnitLocked}
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             transition={{ delay: idx * 0.08 + chIdx * 0.03 }}

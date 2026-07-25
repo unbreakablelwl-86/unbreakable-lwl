@@ -57,7 +57,8 @@ export function getImageDimensions(file: File): Promise<{ width: number; height:
 }
 
 /**
- * Optimise image: resize to max dimension and compress as WebP/JPEG
+ * Optimise image: resize to max dimension and compress as WebP/JPEG.
+ * Has a 15-second timeout — returns original file if optimisation stalls.
  */
 export async function optimiseImage(file: File): Promise<File> {
   const { width, height } = await getImageDimensions(file);
@@ -68,6 +69,20 @@ export async function optimiseImage(file: File): Promise<File> {
   }
 
   return new Promise((resolve) => {
+    let resolved = false;
+    const safeResolve = (f: File) => {
+      if (resolved) return;
+      resolved = true;
+      clearTimeout(timeout);
+      resolve(f);
+    };
+
+    // Timeout: return original rather than freeze
+    const timeout = setTimeout(() => {
+      console.warn('[mediaUpload] Image optimisation timed out — using original');
+      safeResolve(file);
+    }, 15000);
+
     const img = new Image();
     img.onload = () => {
       const canvas = document.createElement('canvas');
@@ -82,7 +97,8 @@ export async function optimiseImage(file: File): Promise<File> {
 
       canvas.width = w;
       canvas.height = h;
-      const ctx = canvas.getContext('2d')!;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) { safeResolve(file); return; }
       ctx.drawImage(img, 0, 0, w, h);
 
       // Try WebP first, fallback JPEG
@@ -91,11 +107,11 @@ export async function optimiseImage(file: File): Promise<File> {
           (blob) => {
             if (blob) {
               const ext = format === 'image/webp' ? 'webp' : 'jpg';
-              resolve(new File([blob], file.name.replace(/\.[^.]+$/, `.${ext}`), { type: format }));
+              safeResolve(new File([blob], file.name.replace(/\.[^.]+$/, `.${ext}`), { type: format }));
             } else if (format === 'image/webp') {
               tryFormat('image/jpeg', IMAGE_QUALITY);
             } else {
-              resolve(file);
+              safeResolve(file);
             }
           },
           format,
@@ -108,7 +124,7 @@ export async function optimiseImage(file: File): Promise<File> {
     };
     img.onerror = () => {
       URL.revokeObjectURL(img.src);
-      resolve(file);
+      safeResolve(file);
     };
     img.src = URL.createObjectURL(file);
   });

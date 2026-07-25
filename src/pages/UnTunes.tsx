@@ -434,32 +434,7 @@ export default function UnTunes() {
                 </div>
               )}
 
-              {/* Featured Artists */}
-              <div>
-                <div className="flex items-center gap-2 mb-4">
-                  <Star className="w-4 h-4 text-primary drop-shadow-[0_0_6px_hsl(var(--primary) / 0.5)]" />
-                  <h2 className="font-display text-sm tracking-wider text-foreground">ARTISTS</h2>
-                </div>
-                {artistsLoading ? (
-                  <div className="flex items-center justify-center py-8">
-                    <Disc3 className="w-6 h-6 text-primary animate-spin" />
-                  </div>
-                ) : artists.length === 0 ? (
-                  <Card className="p-8 text-center border-border/50 bg-card/50">
-                    <Mic2 className="w-10 h-10 text-primary/20 mx-auto mb-3 drop-shadow-[0_0_8px_hsl(var(--primary) / 0.2)]" />
-                    <p className="text-sm text-muted-foreground mb-1">Artists coming soon</p>
-                    <p className="text-xs text-muted-foreground/60">
-                      Original UNBREAKABLE music artists — stay tuned.
-                    </p>
-                  </Card>
-                ) : (
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-                    {artists.map(a => (
-                      <UnTunesArtistCard key={a.id} artist={a} />
-                    ))}
-                  </div>
-                )}
-              </div>
+              {/* Artists section removed — not needed for library */}
             </motion.div>
           )}
 
