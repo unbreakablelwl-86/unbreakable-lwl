@@ -37,15 +37,15 @@ export function useDailyHabits() {
       .maybeSingle();
 
     if (data) {
-      const glasses = (data as any).water_glasses ?? 0;
+      const glasses = data.water_glasses ?? 0;
       setHabits({
         train: data.train,
         learnDaily: data.learn_daily,
         water: glasses >= 8 ? true : data.water,
         hitYourNumbers: data.hit_your_numbers,
-        sauna: (data as any).sauna ?? false,
-        coldShower: (data as any).cold_shower ?? false,
-        breathworkDone: (data as any).breathwork_done ?? false,
+        sauna: data.sauna ?? false,
+        coldShower: data.cold_shower ?? false,
+        breathworkDone: data.breathwork_done ?? false,
         waterGlasses: glasses,
         journal: data.journal || '',
       });
@@ -79,7 +79,7 @@ export function useDailyHabits() {
         breathwork_done: newHabits.breathworkDone,
         water_glasses: newHabits.waterGlasses,
         journal: newHabits.journal,
-      } as any, { onConflict: 'user_id,habit_date' });
+      }, { onConflict: 'user_id,habit_date' });
 
     setSaving(false);
   }, [user, dateStr]);

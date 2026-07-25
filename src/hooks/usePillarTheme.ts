@@ -11,10 +11,10 @@ import { useLocation } from 'react-router-dom';
  * Colors:
  *   Power    → #FF5500 (22° orange)  — default brand
  *   Fuel     → #10B981 (160° emerald)
- *   Movement → #10B981 (160° emerald)
+ *   Movement → #EF4444 (0° neon red)
  *   Mindset  → #8B5CF6 (263° violet)
  *   Academy  → #3B82F6 (217° blue)
- *   UnTunes  → #00BCD4 (187° cyan)
+ *   UnTunes  → #FF5500 (22° orange, brand)
  *   Default  → #FF5500 (brand orange)
  */
 
@@ -29,7 +29,7 @@ const PILLAR_MAP: Record<string, PillarDef> = {
   '/programming':      { hex: '#FF5500', hsl: '22 100% 50%' },
   '/calculators':      { hex: '#FF5500', hsl: '22 100% 50%' },
   '/fuel':             { hex: '#10B981', hsl: '160 84% 39%' },
-  '/tracker':          { hex: '#10B981', hsl: '160 84% 39%' },
+  '/tracker':          { hex: '#EF4444', hsl: '0 84% 60%' },
   '/mindset':          { hex: '#8B5CF6', hsl: '263 70% 66%' },
   '/university':       { hex: '#3B82F6', hsl: '217 91% 60%' },
   '/habits':           { hex: '#10B981', hsl: '160 84% 39%' },
@@ -40,7 +40,7 @@ const PILLAR_MAP: Record<string, PillarDef> = {
   '/profile':          { hex: '#FF5500', hsl: '22 100% 50%' },
   '/help':             { hex: '#FF5500', hsl: '22 100% 50%' },
   '/admin':            { hex: '#FF5500', hsl: '22 100% 50%' },
-  '/untunes':          { hex: '#00BCD4', hsl: '187 100% 42%' },
+  '/untunes':          { hex: '#FF5500', hsl: '22 100% 50%' },
   '/unbreakable-86':   { hex: '#FF5500', hsl: '22 100% 50%' },
 };
 

@@ -727,6 +727,8 @@ export type Database = {
       }
       daily_habits: {
         Row: {
+          breathwork_done: boolean
+          cold_shower: boolean
           created_at: string
           do_the_hard_thing: boolean
           habit_date: string
@@ -734,12 +736,16 @@ export type Database = {
           id: string
           journal: string
           learn_daily: boolean
+          sauna: boolean
           train: boolean
           updated_at: string
           user_id: string
           water: boolean
+          water_glasses: number
         }
         Insert: {
+          breathwork_done?: boolean
+          cold_shower?: boolean
           created_at?: string
           do_the_hard_thing?: boolean
           habit_date?: string
@@ -747,12 +753,16 @@ export type Database = {
           id?: string
           journal?: string
           learn_daily?: boolean
+          sauna?: boolean
           train?: boolean
           updated_at?: string
           user_id: string
           water?: boolean
+          water_glasses?: number
         }
         Update: {
+          breathwork_done?: boolean
+          cold_shower?: boolean
           created_at?: string
           do_the_hard_thing?: boolean
           habit_date?: string
@@ -760,10 +770,12 @@ export type Database = {
           id?: string
           journal?: string
           learn_daily?: boolean
+          sauna?: boolean
           train?: boolean
           updated_at?: string
           user_id?: string
           water?: boolean
+          water_glasses?: number
         }
         Relationships: []
       }
