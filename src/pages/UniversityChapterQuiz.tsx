@@ -11,7 +11,7 @@ import { useUniversityProgress } from '@/hooks/useUniversityProgress';
 import { useUniversityAdmin } from '@/hooks/useUniversityAdmin';
 import { useCourseAccess } from '@/hooks/useCourseAccess';
 import { toCourseKey } from '@/lib/coursePricing';
-import { CoursePurchaseGate } from '@/components/university/CoursePurchaseGate';
+import { SubscriptionUpgradeBanner } from '@/components/university/SubscriptionUpgradeBanner';
 import { AdminControlPanel } from '@/components/university/AdminControlPanel';
 import { getCourseColors } from '@/lib/university/courseColors';
 import { toast } from 'sonner';
@@ -56,7 +56,7 @@ export default function UniversityChapterQuiz() {
   const colors = getCourseColors(ct);
 
   const courseKey = toCourseKey(ct, levelNum);
-  const { hasAccess, ownedCourses, loading: accessLoading } = useCourseAccess(courseKey);
+  const { hasAccess, loading: accessLoading } = useCourseAccess(courseKey);
 
   const quiz = getChapterQuiz(levelNum, unitNum, chapterNum, ct);
   const chapterData = getChapterData(levelNum, unitNum, chapterNum, ct);
@@ -83,19 +83,14 @@ export default function UniversityChapterQuiz() {
     );
   }
 
-  // Purchase gate — can't take quizzes without buying the course
+  // Subscription gate — can't take quizzes without an active subscription
   if (!accessLoading && !hasAccess) {
     return (
       <div className="min-h-screen bg-background">
-<div className="pt-6 container mx-auto px-4 max-w-2xl">
-          <CoursePurchaseGate
-            courseKey={courseKey}
-            courseName={unitData.title}
-            ownedCourses={ownedCourses}
-            variant="full"
-          />
+        <div className="pt-6 container mx-auto px-4 max-w-2xl">
+          <SubscriptionUpgradeBanner />
         </div>
-</div>
+      </div>
     );
   }
 

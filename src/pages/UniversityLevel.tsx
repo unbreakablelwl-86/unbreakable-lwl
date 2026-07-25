@@ -8,7 +8,7 @@ import { getLevelData } from '@/lib/university/courseStructure';
 import { useUniversityProgress } from '@/hooks/useUniversityProgress';
 import { useCourseAccess } from '@/hooks/useCourseAccess';
 import { toCourseKey } from '@/lib/coursePricing';
-import { CoursePurchaseGate } from '@/components/university/CoursePurchaseGate';
+import { SubscriptionUpgradeBanner } from '@/components/university/SubscriptionUpgradeBanner';
 import { AdminControlPanel } from '@/components/university/AdminControlPanel';
 import { getCourseColors, getReadingTime } from '@/lib/university/courseColors';
 
@@ -20,7 +20,7 @@ export default function UniversityLevel() {
   // Sport-specific courses should navigate back to the sport tab, not their raw key
   const backTab = ct.startsWith('sport-') ? 'sport' : ct;
   const courseKey = toCourseKey(ct, levelNum);
-  const { hasAccess, ownedCourses, loading: accessLoading } = useCourseAccess(courseKey);
+  const { hasAccess, loading: accessLoading } = useCourseAccess(courseKey);
   const levelData = getLevelData(levelNum, ct);
   const colors = getCourseColors(ct);
   const {
@@ -114,12 +114,7 @@ export default function UniversityLevel() {
       {!accessLoading && !hasAccess && levelData && (
         <div className="container mx-auto px-4 pt-6">
           <div className="max-w-3xl mx-auto">
-            <CoursePurchaseGate
-              courseKey={courseKey}
-              courseName={levelData.title}
-              ownedCourses={ownedCourses}
-              variant="banner"
-            />
+            <SubscriptionUpgradeBanner />
           </div>
         </div>
       )}
@@ -270,7 +265,7 @@ export default function UniversityLevel() {
 
                   {!hasChapters && (
                     <div className="px-5 pb-5">
-                      <p className={`text-xs ${colors.text} font-display tracking-wider`}>COMING SOON</p>
+                      <p className={`text-xs ${colors.text} font-display tracking-wider`}>IN DEVELOPMENT</p>
                     </div>
                   )}
                 </Card>

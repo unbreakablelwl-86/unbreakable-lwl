@@ -263,13 +263,13 @@ export default function University() {
             );
           })()}
 
-          {/* Non-sport tabs: coming soon */}
+          {/* Non-sport tabs: empty state (content not yet loaded) */}
           {activeTab !== 'sport' && activeTab !== 'guides' && courseData.length === 0 && (
             <Card className={`p-8 ${colors.border} text-center`}>
               <Flame className={`w-10 h-10 ${colors.text} mx-auto mb-4`} />
-              <h2 className="font-display text-xl tracking-wider text-foreground mb-2">COMING SOON</h2>
+              <h2 className="font-display text-xl tracking-wider text-foreground mb-2">NO COURSES YET</h2>
               <p className="text-sm text-muted-foreground max-w-md mx-auto">
-                The {activeTabData.label} course is being built. Check back soon — it'll be worth the wait.
+                New {activeTabData.label} courses are being added — check back for updates.
               </p>
             </Card>
           )}
@@ -380,7 +380,7 @@ export default function University() {
                       {!hasContent && !isLocked && (
                         <div className={`flex items-center gap-2 text-xs ${colors.text}`}>
                           <Flame className="w-3.5 h-3.5" />
-                          <span className="font-display tracking-wider">COMING SOON</span>
+                          <span className="font-display tracking-wider">IN DEVELOPMENT</span>
                         </div>
                       )}
 

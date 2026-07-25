@@ -103,7 +103,8 @@ export default function UnTunes() {
 
   const tabs = [
     { key: 'browse' as const, label: 'BROWSE', icon: Music },
-    { key: 'podcasts' as const, label: 'PODS', icon: Podcast },
+    // Podcasts hidden for now — re-enable when content is ready
+    // { key: 'podcasts' as const, label: 'PODS', icon: Podcast },
     { key: 'search' as const, label: 'SEARCH', icon: Search },
     { key: 'library' as const, label: 'LIBRARY', icon: Library },
     { key: 'store' as const, label: 'STORE', icon: ShoppingBag },
@@ -125,7 +126,7 @@ export default function UnTunes() {
             </div>
             <div>
               <h1 className="font-display text-2xl tracking-wider text-foreground">UN-TUNES</h1>
-              <p className="text-xs text-muted-foreground tracking-wider">MUSIC • COLLECTIBLES • PODCASTS</p>
+              <p className="text-xs text-muted-foreground tracking-wider">MUSIC • COLLECTIBLES</p>
             </div>
           </motion.div>
 
