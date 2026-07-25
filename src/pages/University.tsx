@@ -48,7 +48,8 @@ export default function University() {
   const activeTab = (searchParams.get('course') as CourseType) || 'gym';
   const { getLevelCompletedChapters, hasPassedAssessment } = useUniversityProgress();
 
-  const courseData = allCourses[activeTab] || [];
+  // Hide Level 4 content (no images yet — re-enable when L4 images are ready)
+  const courseData = (allCourses[activeTab] || []).filter(l => l.level <= 3);
   const colors = getCourseColors(activeTab);
 
   const setActiveTab = (tab: CourseType) => {

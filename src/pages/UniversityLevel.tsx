@@ -32,10 +32,11 @@ export default function UniversityLevel() {
     allChapterQuizzesPassed,
   } = useUniversityProgress();
 
-  if (!levelData) {
+  // Hide Level 4 content (no images yet)
+  if (!levelData || levelNum >= 4) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <p className="text-muted-foreground">Level not found</p>
+        <p className="text-muted-foreground">{levelNum >= 4 ? 'Coming soon' : 'Level not found'}</p>
       </div>
     );
   }
