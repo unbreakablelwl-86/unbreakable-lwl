@@ -648,6 +648,24 @@ export default function Help() {
 
   /* ── Voice Output (Text-to-Speech via ElevenLabs JJ voice) ── */
   const ttsAudioRef = useRef<HTMLAudioElement | null>(null);
+  const audioCtxRef = useRef<AudioContext | null>(null);
+
+  // Unlock audio on mobile — called on user gesture (voice toggle tap)
+  const unlockAudio = useCallback(() => {
+    if (!audioCtxRef.current) {
+      audioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+    }
+    if (audioCtxRef.current.state === 'suspended') {
+      audioCtxRef.current.resume();
+    }
+    // Also play a tiny silent buffer to fully unlock HTMLAudio
+    const silent = audioCtxRef.current.createBuffer(1, 1, 22050);
+    const src = audioCtxRef.current.createBufferSource();
+    src.buffer = silent;
+    src.connect(audioCtxRef.current.destination);
+    src.start();
+  }, []);
+
   const speakText = useCallback(async (text: string) => {
     // Clean text for reading (remove emojis, markdown, etc.)
     const cleanText = text
@@ -915,6 +933,7 @@ export default function Help() {
                   <button
                     type="button"
                     onClick={() => {
+                      if (!voiceEnabled) unlockAudio();
                       setVoiceEnabled(!voiceEnabled);
                       if (isSpeaking) stopSpeaking();
                     }}

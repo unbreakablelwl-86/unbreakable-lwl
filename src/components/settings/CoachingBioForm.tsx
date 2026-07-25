@@ -41,7 +41,7 @@ const numVal = (v: string): number | null => {
 };
 
 /* ── pill selector (reusable) ── */
-function PillSelect({ value, options, onChange }: { value: string | null; options: string[]; onChange: (v: string) => void }) {
+function PillSelect({ value, options, onChange, accentColor }: { value: string | null; options: string[]; onChange: (v: string) => void; accentColor?: string }) {
   return (
     <RadioGroup value={value ?? ''} onValueChange={onChange} className="flex flex-wrap gap-2 mt-1.5">
       {options.map(opt => (
@@ -49,9 +49,10 @@ function PillSelect({ value, options, onChange }: { value: string | null; option
           key={opt}
           className={`flex items-center gap-2 px-3 py-2 rounded-lg border cursor-pointer transition-colors text-sm ${
             value === opt
-              ? 'border-primary bg-primary/10 text-primary'
+              ? ''
               : 'border-border bg-card hover:border-muted-foreground'
           }`}
+          style={value === opt ? { borderColor: accentColor || 'hsl(var(--primary))', backgroundColor: `${accentColor || 'hsl(var(--primary))'}1A`, color: accentColor || 'hsl(var(--primary))' } : undefined}
         >
           <RadioGroupItem value={opt} className="sr-only" />
           {opt}
@@ -67,12 +68,14 @@ function Section({
   title,
   description,
   defaultOpen = false,
+  color,
   children,
 }: {
   icon: React.ElementType;
   title: string;
   description: string;
   defaultOpen?: boolean;
+  color?: string;
   children: React.ReactNode;
 }) {
   const [open, setOpen] = useState(defaultOpen);
@@ -80,7 +83,7 @@ function Section({
     <Collapsible open={open} onOpenChange={setOpen}>
       <CollapsibleTrigger className="flex items-center justify-between w-full py-3 group">
         <div className="flex items-center gap-2">
-          <Icon className="w-4 h-4 text-primary" />
+          <Icon className="w-4 h-4" style={{ color: color || 'hsl(var(--primary))' }} />
           <span className="font-display text-sm tracking-wide">{title}</span>
           <span className="text-xs text-muted-foreground hidden sm:inline">— {description}</span>
         </div>
@@ -329,7 +332,7 @@ export function CoachingBioForm() {
           {/* Gender */}
           <div>
             <Label>Gender</Label>
-            <PillSelect value={gender} options={GENDER_OPTIONS} onChange={setGender} />
+            <PillSelect value={gender} options={GENDER_OPTIONS} onChange={setGender} accentColor="#FF5500" />
           </div>
 
           {/* City */}
@@ -419,17 +422,17 @@ export function CoachingBioForm() {
         <div className="border-t border-border" />
 
         {/* ═══ POWER ═══ */}
-        <Section icon={Zap} title="POWER" description="strength & training">
+        <Section icon={Zap} title="POWER" description="strength & training" color="#FF5500">
           {/* Experience */}
           <div>
             <Label>Experience Level</Label>
-            <PillSelect value={experienceLevel} options={EXPERIENCE_OPTIONS} onChange={setExperienceLevel} />
+            <PillSelect value={experienceLevel} options={EXPERIENCE_OPTIONS} onChange={setExperienceLevel} accentColor="#FF5500" />
           </div>
 
           {/* Training Goal */}
           <div>
             <Label>Training Goal</Label>
-            <PillSelect value={trainingGoal} options={TRAINING_GOAL_OPTIONS} onChange={setTrainingGoal} />
+            <PillSelect value={trainingGoal} options={TRAINING_GOAL_OPTIONS} onChange={setTrainingGoal} accentColor="#FF5500" />
           </div>
 
           {/* Days + Session length */}
@@ -490,17 +493,17 @@ export function CoachingBioForm() {
         <div className="border-t border-border" />
 
         {/* ═══ MOVEMENT ═══ */}
-        <Section icon={Activity} title="MOVEMENT" description="cardio & fitness">
+        <Section icon={Activity} title="MOVEMENT" description="cardio & fitness" color="#EF4444">
           {/* Fitness level */}
           <div>
             <Label>Current Fitness Level</Label>
-            <PillSelect value={fitnessLevel} options={FITNESS_LEVEL_OPTIONS} onChange={setFitnessLevel} />
+            <PillSelect value={fitnessLevel} options={FITNESS_LEVEL_OPTIONS} onChange={setFitnessLevel} accentColor="#EF4444" />
           </div>
 
           {/* Preferred cardio */}
           <div>
             <Label>Preferred Cardio</Label>
-            <PillSelect value={preferredCardio} options={CARDIO_OPTIONS} onChange={setPreferredCardio} />
+            <PillSelect value={preferredCardio} options={CARDIO_OPTIONS} onChange={setPreferredCardio} accentColor="#EF4444" />
           </div>
 
           {/* Weekly cardio */}
@@ -532,17 +535,17 @@ export function CoachingBioForm() {
         <div className="border-t border-border" />
 
         {/* ═══ FUEL ═══ */}
-        <Section icon={Utensils} title="FUEL" description="nutrition & diet">
+        <Section icon={Utensils} title="FUEL" description="nutrition & diet" color="#10B981">
           {/* Nutrition goal */}
           <div>
             <Label>Nutrition Goal</Label>
-            <PillSelect value={nutritionGoal} options={NUTRITION_GOAL_OPTIONS} onChange={setNutritionGoal} />
+            <PillSelect value={nutritionGoal} options={NUTRITION_GOAL_OPTIONS} onChange={setNutritionGoal} accentColor="#10B981" />
           </div>
 
           {/* Dietary preferences */}
           <div>
             <Label>Dietary Preferences</Label>
-            <PillSelect value={dietaryPreferences} options={DIET_OPTIONS} onChange={setDietaryPreferences} />
+            <PillSelect value={dietaryPreferences} options={DIET_OPTIONS} onChange={setDietaryPreferences} accentColor="#10B981" />
           </div>
 
           {/* Allergies */}
@@ -574,17 +577,17 @@ export function CoachingBioForm() {
         <div className="border-t border-border" />
 
         {/* ═══ MINDSET ═══ */}
-        <Section icon={Brain} title="MINDSET" description="goals, sleep & recovery">
+        <Section icon={Brain} title="MINDSET" description="goals, sleep & recovery" color="#8B5CF6">
           {/* Primary motivation */}
           <div>
             <Label>Primary Motivation</Label>
-            <PillSelect value={primaryMotivation} options={MOTIVATION_OPTIONS} onChange={setPrimaryMotivation} />
+            <PillSelect value={primaryMotivation} options={MOTIVATION_OPTIONS} onChange={setPrimaryMotivation} accentColor="#8B5CF6" />
           </div>
 
           {/* Biggest challenge */}
           <div>
             <Label>Biggest Challenge</Label>
-            <PillSelect value={biggestChallenge} options={CHALLENGE_OPTIONS} onChange={setBiggestChallenge} />
+            <PillSelect value={biggestChallenge} options={CHALLENGE_OPTIONS} onChange={setBiggestChallenge} accentColor="#8B5CF6" />
           </div>
 
           {/* Sleep */}
@@ -616,7 +619,7 @@ export function CoachingBioForm() {
           {/* Stress */}
           <div>
             <Label>Stress Level</Label>
-            <PillSelect value={stressLevel} options={STRESS_OPTIONS} onChange={setStressLevel} />
+            <PillSelect value={stressLevel} options={STRESS_OPTIONS} onChange={setStressLevel} accentColor="#8B5CF6" />
           </div>
 
           {/* Injuries */}

@@ -162,15 +162,6 @@ const ALL_NAV_ITEMS: NavItemDef[] = [
     description: 'JJ — Your AI Coach',
   },
   {
-    id: 'threads',
-    icon: MessageSquare,
-    label: 'Threads',
-    path: '/coach?tab=threads',
-    activeMatch: [],
-    color: '#FF5500',
-    description: 'Programme builder threads (coaches/devs)',
-  },
-  {
     id: 'notifications',
     icon: Bell,
     label: 'Alerts',
