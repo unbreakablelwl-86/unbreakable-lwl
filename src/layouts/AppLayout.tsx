@@ -440,7 +440,7 @@ export default function AppLayout() {
                     navigate(item.path);
                   }}
                   className="flex flex-col items-center gap-0.5 px-2 py-1.5 rounded-lg transition-all relative"
-                  style={{ color: item.color || '#FF5500' }}
+                  style={{ color: active ? (item.color || '#FF5500') : '#FFFFFF' }}
                 >
                   {item.isShield ? (
                     <img
