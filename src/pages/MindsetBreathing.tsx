@@ -1,12 +1,12 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Wind, Zap, Target, Heart, Volume2, VolumeX, Flame, ArrowRight, Clock, ChevronRight, ArrowLeft, User, UserRound, Waves, BarChart3, Sparkles, Route, Circle } from "lucide-react";
 import { ThemedLogo } from "@/components/ThemedLogo";
 import { ThemeToggle } from "@/components/hub/ThemeToggle";
 import { CountdownOverlay } from "@/components/CountdownOverlay";
-import { getVisibleExercises, BreathingExercise, DURATION_OPTIONS } from "@/lib/breathingExercises";
+import { getVisibleExercises, getExerciseById, BreathingExercise, DURATION_OPTIONS } from "@/lib/breathingExercises";
 import { ImmersiveSessionView } from "@/components/mindset/ImmersiveSessionView";
 import { useBreathingAudio } from "@/hooks/useBreathingAudio";
 import { useAIPreferences } from "@/hooks/useAIPreferences";
@@ -27,6 +27,7 @@ const BREATH_PATTERNS: { id: BreathPattern; name: string; icon: React.ReactNode;
 
 const MindsetBreathing = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [view, setView] = useState<ViewState>("selection");
   const [selectedExercise, setSelectedExercise] = useState<BreathingExercise | null>(null);
   const [selectedMinutes, setSelectedMinutes] = useState(3);
@@ -52,6 +53,18 @@ const MindsetBreathing = () => {
     enabled: voiceEnabled,
     voiceGender,
   });
+
+  // Auto-select exercise from URL param (?exercise=box-breathing)
+  useEffect(() => {
+    const exerciseParam = searchParams.get("exercise");
+    if (exerciseParam && !selectedExercise) {
+      const exercise = getExerciseById(exerciseParam);
+      if (exercise) {
+        setSelectedExercise(exercise);
+        setView("duration");
+      }
+    }
+  }, [searchParams, selectedExercise]);
 
   const getCycleDuration = useCallback((exercise: BreathingExercise) => {
     const { inhale, hold, exhale, rest = 0 } = exercise.phases;
