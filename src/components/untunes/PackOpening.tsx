@@ -224,12 +224,8 @@ const RARITY_RANK: Record<string, number> = { platinum: 5, diamond: 4, gold: 3, 
 /* ═══════════════════════════════════════════════════ */
 
 function PackBackDesign({ tier }: { tier: string }) {
-  const tierColors = {
-    elite: { from: '#BF5FFF', to: '#7C3AED', label: 'ELITE', accent: '#BF5FFF' },
-    premium: { from: '#FFD700', to: '#B8860B', label: 'PREMIUM', accent: '#FFD700' },
-    standard: { from: '#FF5500', to: '#CC4400', label: 'STANDARD', accent: '#FF5500' },
-  };
-  const c = tierColors[tier as keyof typeof tierColors] || tierColors.standard;
+  // All packs use orange neon brand colour
+  const c = { from: '#FF5500', to: '#CC4400', label: 'UNBREAKABLE', accent: '#FF5500' };
 
   return (
     <div className="w-full h-full rounded-2xl overflow-hidden relative" style={{ background: '#080808' }}>
@@ -284,7 +280,7 @@ function PackBackDesign({ tier }: { tier: string }) {
         {/* Brand text */}
         <div className="text-center mt-4 relative z-10">
           <p className="font-display text-[11px] tracking-[0.35em] text-white/80 font-bold" style={{ textShadow: `0 0 15px ${c.accent}25` }}>UNBREAKABLE</p>
-          <p className="font-display text-[8px] tracking-[0.25em] text-primary/50 mt-1">TAP TO REVEAL</p>
+          <p className="font-display text-[7px] tracking-[0.2em] text-primary/30 mt-1">KEEP SHOWING UP</p>
         </div>
       </div>
 
