@@ -74,22 +74,23 @@ interface QuickAction {
   label: string;
   icon: React.ComponentType<any>;
   path: string;
+  color: string;
 }
 
 const ALL_QUICK_ACTIONS: QuickAction[] = [
-  { id: 'snap', label: 'Snap & Track', icon: Camera, path: '/fuel?snap=true' },
-  { id: 'run', label: 'Track Run', icon: Activity, path: '/tracker?track=true' },
-  { id: 'lift', label: 'Start Lift', icon: Dumbbell, path: '/programming' },
-  { id: 'journal', label: 'Journal', icon: BookOpen, path: '/habits' },
-  { id: 'coach', label: 'JJ Coach', icon: Sparkles, path: '/help' },
-  { id: 'calc', label: 'Calculators', icon: Calculator, path: '/calculators' },
-  { id: 'inbox', label: 'Inbox', icon: MessageCircle, path: '/inbox' },
-  { id: 'profile', label: 'Profile', icon: User, path: '/profile' },
-  { id: 'explore', label: 'Explore', icon: Search, path: '/explore' },
-  { id: 'habits', label: 'Habits', icon: Calendar, path: '/habits' },
-  { id: 'faq', label: 'Help', icon: HelpCircle, path: '/faq' },
-  { id: 'mindset', label: 'Breathe', icon: Wind, path: '/mindset/breathing' },
-  { id: 'untunes', label: 'Un-Tunes', icon: Music, path: '/untunes' },
+  { id: 'snap', label: 'Snap & Track', icon: Camera, path: '/fuel?snap=true', color: '#10B981' },
+  { id: 'run', label: 'Track Run', icon: Activity, path: '/tracker?track=true', color: '#EF4444' },
+  { id: 'lift', label: 'Start Lift', icon: Dumbbell, path: '/programming', color: '#FF5500' },
+  { id: 'journal', label: 'Journal', icon: BookOpen, path: '/habits', color: '#8B5CF6' },
+  { id: 'coach', label: 'JJ Coach', icon: Sparkles, path: '/help', color: '#FF5500' },
+  { id: 'calc', label: 'Calculators', icon: Calculator, path: '/calculators', color: '#10B981' },
+  { id: 'inbox', label: 'Inbox', icon: MessageCircle, path: '/inbox', color: '#06B6D4' },
+  { id: 'profile', label: 'Profile', icon: User, path: '/profile', color: '#6366F1' },
+  { id: 'explore', label: 'Explore', icon: Search, path: '/explore', color: '#EC4899' },
+  { id: 'habits', label: 'Habits', icon: Calendar, path: '/habits', color: '#8B5CF6' },
+  { id: 'faq', label: 'Help', icon: HelpCircle, path: '/faq', color: '#EF4444' },
+  { id: 'mindset', label: 'Breathe', icon: Wind, path: '/mindset/breathing', color: '#8B5CF6' },
+  { id: 'untunes', label: 'Un-Tunes', icon: Music, path: '/untunes', color: '#CCFF00' },
 ];
 
 const DEFAULT_ACTION_IDS = ['snap', 'run', 'lift', 'journal'];
@@ -307,25 +308,31 @@ export function HomeDashboard() {
               {editing ? (
                 <button
                   onClick={() => toggleAction(a.id)}
-                  className="w-full flex flex-col items-center gap-2 p-4 rounded-xl border border-primary/30 
-                    bg-muted transition-all duration-300 relative"
+                  className="w-full flex flex-col items-center gap-2 p-4 rounded-xl border bg-muted transition-all duration-300 relative"
+                  style={{ borderColor: `${a.color}40` }}
                 >
                   <div className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-red-500 flex items-center justify-center">
                     <X className="w-3 h-3 text-foreground" />
                   </div>
-                  <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                    <a.icon className="w-5 h-5 text-primary" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.5))' }} />
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center"
+                    style={{ background: `${a.color}15` }}>
+                    <a.icon className="w-5 h-5" style={{ color: a.color, filter: `drop-shadow(0 0 4px ${a.color}80)` }} />
                   </div>
                   <span className="text-[11px] text-muted-foreground text-center leading-tight">{a.label}</span>
                 </button>
               ) : (
                 <Link to={a.path}>
                   <div className="flex flex-col items-center gap-2 p-4 rounded-xl border border-border 
-                    hover:border-primary/40 bg-muted hover:bg-muted/80 
-                    transition-all duration-300 group">
-                    <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center
-                      group-hover:shadow-[0_0_12px_hsl(var(--primary)/0.3)] transition-shadow">
-                      <a.icon className="w-5 h-5 text-primary" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.5))' }} />
+                    hover:bg-muted/80 bg-muted
+                    transition-all duration-300 group"
+                    style={{ ['--qa-color' as any]: a.color }}
+                  >
+                    <div className="w-10 h-10 rounded-xl flex items-center justify-center transition-shadow"
+                      style={{ background: `${a.color}15`, boxShadow: `0 0 0 transparent` }}
+                      onMouseEnter={e => (e.currentTarget.style.boxShadow = `0 0 12px ${a.color}30`)}
+                      onMouseLeave={e => (e.currentTarget.style.boxShadow = `0 0 0 transparent`)}
+                    >
+                      <a.icon className="w-5 h-5" style={{ color: a.color, filter: `drop-shadow(0 0 4px ${a.color}80)` }} />
                     </div>
                     <span className="text-[11px] text-muted-foreground group-hover:text-foreground text-center leading-tight transition-colors">
                       {a.label}
@@ -357,11 +364,13 @@ export function HomeDashboard() {
                     className="flex flex-col items-center gap-2 p-4 rounded-xl border border-dashed border-border 
                       bg-card hover:border-primary/30 transition-all duration-300 disabled:opacity-30 relative"
                   >
-                    <div className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-primary flex items-center justify-center">
+                    <div className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full flex items-center justify-center"
+                      style={{ background: a.color }}>
                       <Plus className="w-3 h-3 text-foreground" />
                     </div>
-                    <div className="w-10 h-10 rounded-xl bg-card/50 flex items-center justify-center">
-                      <a.icon className="w-5 h-5 text-muted-foreground" />
+                    <div className="w-10 h-10 rounded-xl flex items-center justify-center"
+                      style={{ background: `${a.color}10` }}>
+                      <a.icon className="w-5 h-5" style={{ color: a.color, opacity: 0.7 }} />
                     </div>
                     <span className="text-[11px] text-muted-foreground text-center leading-tight">{a.label}</span>
                   </button>
