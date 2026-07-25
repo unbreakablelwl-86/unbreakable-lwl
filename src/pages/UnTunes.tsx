@@ -30,7 +30,7 @@ import { UnTunesStore } from '@/components/untunes/UnTunesStore';
 import { CollectionGallery } from '@/components/untunes/CollectionGallery';
 import { AuctionHouse } from '@/components/untunes/AuctionHouse';
 
-type UnTunesTab = 'browse' | 'search' | 'library' | 'store' | 'collection' | 'auction' | 'podcasts' | 'artist';
+type UnTunesTab = 'browse' | 'search' | 'library' | 'store' | 'collection' | 'auction' | 'podcasts';
 
 const fadeIn = { initial: { opacity: 0, y: 12 }, animate: { opacity: 1, y: 0 } };
 
@@ -108,10 +108,9 @@ export default function UnTunes() {
     { key: 'search' as const, label: 'SEARCH', icon: Search },
     { key: 'library' as const, label: 'LIBRARY', icon: Library },
     { key: 'store' as const, label: 'STORE', icon: ShoppingBag },
-    // FIFA card system hidden — re-enable when ready
-    // { key: 'collection' as const, label: 'CARDS', icon: LayoutGrid },
-    // { key: 'auction' as const, label: 'TRADE', icon: Gavel },
-    { key: 'artist' as const, label: myArtist ? 'ARTIST HUB' : 'BECOME ARTIST', icon: myArtist ? Crown : UserPlus },
+    { key: 'collection' as const, label: 'CARDS', icon: LayoutGrid },
+    { key: 'auction' as const, label: 'TRADE', icon: Gavel },
+    // Artist signup removed — no public artist onboarding
   ];
 
   return (
@@ -448,18 +447,10 @@ export default function UnTunes() {
                 ) : artists.length === 0 ? (
                   <Card className="p-8 text-center border-border/50 bg-card/50">
                     <Mic2 className="w-10 h-10 text-primary/20 mx-auto mb-3 drop-shadow-[0_0_8px_hsl(var(--primary) / 0.2)]" />
-                    <p className="text-sm text-muted-foreground mb-1">No artists yet</p>
-                    <p className="text-xs text-muted-foreground/60 mb-4">
-                      {'Join as an artist for a one-time 50 token sign-up and share your music — you keep 80%'}
+                    <p className="text-sm text-muted-foreground mb-1">Artists coming soon</p>
+                    <p className="text-xs text-muted-foreground/60">
+                      Original UNBREAKABLE music artists — stay tuned.
                     </p>
-                    <Button
-                      size="sm"
-                      onClick={() => setActiveTab('artist')}
-                      className="gap-2 shadow-[0_0_16px_hsl(var(--primary) / 0.3)]"
-                    >
-                      <UserPlus className="w-4 h-4" />
-                      {'Become an Artist'}
-                    </Button>
                   </Card>
                 ) : (
                   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
@@ -858,24 +849,7 @@ export default function UnTunes() {
           )}
 
           {/* ─── Artist Tab ─── */}
-          {activeTab === 'artist' && (
-            <motion.div key="artist" {...fadeIn}>
-              {!user ? (
-                <Card className="p-8 text-center border-border/50 bg-card/50">
-                  <Mic2 className="w-10 h-10 text-primary/20 mx-auto mb-3" />
-                  <p className="text-sm text-muted-foreground">Sign in to become an artist</p>
-                </Card>
-              ) : artistLoading ? (
-                <div className="flex items-center justify-center py-16">
-                  <Disc3 className="w-8 h-8 text-primary animate-spin drop-shadow-[0_0_12px_hsl(var(--primary) / 0.5)]" />
-                </div>
-              ) : myArtist ? (
-                <UnTunesArtistDashboard artist={myArtist} />
-              ) : (
-                <UnTunesArtistSignup />
-              )}
-            </motion.div>
-          )}
+          {/* Artist tab removed — no public artist onboarding */}
         </AnimatePresence>
       </div>
 

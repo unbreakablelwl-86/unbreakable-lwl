@@ -75,7 +75,7 @@ const ALL_QUICK_ACTIONS: QuickAction[] = [
   { id: 'run', label: 'Track Run', icon: Activity, path: '/tracker?track=true' },
   { id: 'lift', label: 'Start Lift', icon: Dumbbell, path: '/programming' },
   { id: 'journal', label: 'Journal', icon: BookOpen, path: '/habits' },
-  { id: 'coach', label: 'Unbreakable Coach', icon: Sparkles, path: '/help' },
+  { id: 'coach', label: 'JJ Coach', icon: Sparkles, path: '/help' },
   { id: 'calc', label: 'Calculators', icon: Calculator, path: '/calculators' },
   { id: 'inbox', label: 'Inbox', icon: MessageCircle, path: '/inbox' },
   { id: 'profile', label: 'Profile', icon: User, path: '/profile' },

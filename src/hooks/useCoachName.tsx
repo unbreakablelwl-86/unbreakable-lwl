@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 import { useAuth } from './useAuth';
 
 const STORAGE_KEY = 'unbreakable_coach_name';
-const DEFAULT_NAME = 'UNBREAKABLE COACH';
+const DEFAULT_NAME = 'JJ';
 
 /**
  * Hook to manage the user's custom Unbreakable Coach name.

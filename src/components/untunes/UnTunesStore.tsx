@@ -1,13 +1,15 @@
 /**
- * UnTunesStore — Purchase tracks, albums, and bundles with tokens.
- * Includes buy buttons, token pricing, and triggers pack opening animation.
+ * UnTunesStore — Purchase tracks, albums, and bundles with GBP.
+ * Singles £1.50 (+ card pack), Albums £10 (+ full card set), 3-Album Bundle £20.
+ * 20% of all purchases donated to Mind charity.
+ * Includes buy buttons, Stripe checkout, and triggers pack opening animation.
  */
 
 import { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Coins, Music, Disc3, Package, ShoppingBag, Sparkles,
-  Diamond, Crown, ChevronRight, Loader2, Zap, Gift,
+  Diamond, Crown, ChevronRight, Loader2, Zap, Gift, Heart,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -22,11 +24,11 @@ import { PackOpening, PACK_TIERS, type PackCard, type PackTier } from './PackOpe
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 
-// Pricing in tokens
-const STANDARD_SINGLE_COST = 2;  // Standard rarity single
-const GOLD_SINGLE_COST = 3;     // Guaranteed gold rarity single
-const ALBUM_COST = 30;   // ≈ £10
-const BUNDLE_COST = 50;  // All albums — price of 2
+// GBP pricing
+const SINGLE_PRICE = '£1.50';
+const ALBUM_PRICE = '£10';
+const BUNDLE_PRICE = '£20';
+const MIND_DONATION_PCT = 20;
 
 interface UnTunesStoreProps {
   onViewCollection?: () => void;
@@ -157,8 +159,8 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
       return;
     }
     const cost = type === 'single'
-      ? (goldTier ? GOLD_SINGLE_COST : STANDARD_SINGLE_COST)
-      : type === 'album' ? ALBUM_COST : BUNDLE_COST;
+      ? (goldTier ? 3 : 2)
+      : type === 'album' ? 10 : 20;
     let label = type === 'bundle' ? 'Ultimate Bundle (All Albums)' : type === 'album' ? 'Album' : (goldTier ? 'Gold Single' : 'Standard Single');
     if (trackId) {
       const t = tracks.find((tr: any) => tr.id === trackId);
@@ -182,84 +184,67 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
       return;
     }
 
-    const cost = type === 'single'
-      ? (goldTier ? GOLD_SINGLE_COST : STANDARD_SINGLE_COST)
-      : type === 'album' ? ALBUM_COST : BUNDLE_COST;
-    // Dev/coach accounts bypass token balance check
-    if (!hasFullAccess && balance < cost) {
-      toast.error(`Not enough tokens. You need ${cost} but have ${balance}.`);
-      return;
-    }
-
     const purchaseKey = `${type}-${trackId || albumId || 'bundle'}`;
     setPurchasing(purchaseKey);
 
     try {
-      const body: any = { type };
-      if (trackId) body.trackId = trackId;
-      if (albumId) body.albumId = albumId;
-
-      // Use database RPC instead of edge function for reliability
-      const { data, error } = await supabase.rpc('purchase_untunes', {
-        _type: type,
-        _track_id: trackId || null,
-        _album_id: albumId || null,
-        _gold_tier: goldTier || false,
+      // Stripe checkout for cash purchases
+      const { data, error } = await supabase.functions.invoke('create-checkout', {
+        body: {
+          mode: 'payment',
+          untunes_purchase: { type, trackId, albumId, goldTier },
+          // Price determined server-side; metadata carries purchase details
+        },
       });
 
       if (error) throw error;
-      if (data?.error) {
-        if (data.error === 'Not enough tokens') {
-          toast.error(`Not enough tokens. Need ${data.required}, have ${data.balance}.`);
-        } else {
-          toast.error(data.error);
-        }
+      if (data?.url) {
+        window.location.href = data.url;
         return;
       }
 
-      // Success — show pack opening
-      // Enrich cards with track/album data (RPC doesn't return PostgREST joins)
-      // Fetch directly if hooks haven't loaded yet
-      let trackList = tracks;
-      let albumList = albums;
-      if (trackList.length === 0 || albumList.length === 0) {
-        const [tRes, aRes] = await Promise.all([
-          supabase.from('un_tunes_tracks').select('id,title,cover_url,artist_id,un_tunes_artists(artist_name)'),
-          supabase.from('un_tunes_albums').select('id,title,cover_url'),
-        ]);
-        if (tRes.data && trackList.length === 0) trackList = tRes.data.map((t: any) => ({ ...t, artist_name: t.un_tunes_artists?.artist_name || null })) as any;
-        if (aRes.data && albumList.length === 0) albumList = aRes.data as any;
+      // Fallback: if checkout returned cards directly (dev/coach free access)
+      if (data?.cards) {
+        let trackList = tracks;
+        let albumList = albums;
+        if (trackList.length === 0 || albumList.length === 0) {
+          const [tRes, aRes] = await Promise.all([
+            supabase.from('un_tunes_tracks').select('id,title,cover_url,artist_id,un_tunes_artists(artist_name)'),
+            supabase.from('un_tunes_albums').select('id,title,cover_url'),
+          ]);
+          if (tRes.data && trackList.length === 0) trackList = tRes.data.map((t: any) => ({ ...t, artist_name: t.un_tunes_artists?.artist_name || null })) as any;
+          if (aRes.data && albumList.length === 0) albumList = aRes.data as any;
+        }
+
+        let cards: PackCard[] = (data.cards || []).map((c: any) => {
+          const track = c.track_id ? trackList.find((t: any) => t.id === c.track_id) : null;
+          const album = c.album_id ? albumList.find((a: any) => a.id === c.album_id) : null;
+          return {
+            ...c,
+            un_tunes_tracks: c.un_tunes_tracks || (track ? { title: track.title || 'Unknown Track', artist: (track as any).artist_name || (track as any).artist || 'Unbreakable', cover_url: (track as any).cover_url || null, image_url: (track as any).cover_url || null } : null),
+            un_tunes_albums: c.un_tunes_albums || (album ? { title: album.title || 'Unknown Album', cover_url: (album as any).cover_url || null, image_url: (album as any).cover_url || null } : null),
+          };
+        });
+
+        // Bundle bonus: 10 diamond-rarity cards
+        if (type === 'bundle' && tracks.length > 0) {
+          const shuffled = [...tracks].sort(() => Math.random() - 0.5);
+          const bonusDiamondCards = shuffled.slice(0, 10).map((t, i) => ({
+            id: `bonus-diamond-${i}`,
+            track_id: t.id,
+            rarity: 'diamond' as const,
+            edition_number: Math.floor(Math.random() * 50) + 1,
+            is_bonus: true,
+            un_tunes_tracks: { title: t.title || 'Unknown Track', artist: (t as any).artist_name || (t as any).artist || 'Unbreakable', cover_url: (t as any).cover_url || null, image_url: (t as any).cover_url || null },
+          }));
+          cards = [...cards, ...bonusDiamondCards];
+          toast.success('🎁 FREE Diamond Pack included!', { duration: 4000 });
+        }
+
+        setPackType(type);
+        setPackCards(cards);
+        toast.success('Purchase complete!');
       }
-
-      let cards: PackCard[] = (data.cards || []).map((c: any) => {
-        const track = c.track_id ? trackList.find((t: any) => t.id === c.track_id) : null;
-        const album = c.album_id ? albumList.find((a: any) => a.id === c.album_id) : null;
-        return {
-          ...c,
-          un_tunes_tracks: c.un_tunes_tracks || (track ? { title: track.title || 'Unknown Track', artist: (track as any).artist_name || (track as any).artist || 'Unbreakable', cover_url: (track as any).cover_url || null, image_url: (track as any).cover_url || null } : null),
-          un_tunes_albums: c.un_tunes_albums || (album ? { title: album.title || 'Unknown Album', cover_url: (album as any).cover_url || null, image_url: (album as any).cover_url || null } : null),
-        };
-      });
-
-      // Ultimate Bundle bonus: add 1× free Diamond Pack (10 guaranteed diamond-rarity cards)
-      if (type === 'bundle' && tracks.length > 0) {
-        const shuffled = [...tracks].sort(() => Math.random() - 0.5);
-        const bonusDiamondCards = shuffled.slice(0, 10).map((t, i) => ({
-          id: `bonus-diamond-${i}`,
-          track_id: t.id,
-          rarity: 'diamond' as const,
-          edition_number: Math.floor(Math.random() * 50) + 1,
-          is_bonus: true,
-          un_tunes_tracks: { title: t.title || 'Unknown Track', artist: (t as any).artist_name || (t as any).artist || 'Unbreakable', cover_url: (t as any).cover_url || null, image_url: (t as any).cover_url || null },
-        }));
-        cards = [...cards, ...bonusDiamondCards];
-        toast.success('🎁 FREE Diamond Pack included!', { duration: 4000 });
-      }
-
-      setPackType(type);
-      setPackCards(cards);
-      refreshBalance();
-      toast.success(`${data.tokensSpent || 0} tokens spent`);
     } catch (err) {
       console.error('Purchase error:', err);
       toast.error('Purchase failed. Please try again.');
@@ -272,7 +257,7 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
   const handlePackPurchase = useCallback(async (tier: PackTier) => {
     if (!user) { toast.error('Please sign in to purchase'); return; }
     if (!hasFullAccess && balance < tier.cost) {
-      toast.error(`Not enough tokens. You need ${tier.cost} but have ${balance}.`);
+      toast.error(`Insufficient balance. Need ${tier.cost} but have ${balance}.`);
       return;
     }
     setPurchasing(tier.id);
@@ -343,7 +328,7 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
       setPackType(cards.length <= 5 ? 'single' : cards.length <= 8 ? 'album' : 'bundle');
       setPackCards(cards);
       refreshBalance();
-      toast.success(`${tier.cost} tokens spent — ${tier.name}!`);
+      toast.success(`${tier.cost} spent — ${tier.name}!`);
     } catch (err) {
       console.error('Pack purchase error:', err);
       toast.error('Pack purchase failed. Please try again.');
@@ -369,12 +354,13 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
   return (
     <>
       <div className="space-y-4">
-        {/* Token balance bar */}
+        {/* Mind charity banner */}
         <div className="flex items-center justify-between bg-black/60 border border-primary/15 rounded-xl px-4 py-3">
           <div className="flex items-center gap-2">
-            <Coins className="w-4 h-4 text-primary" />
-            <span className="text-sm font-display tracking-wider text-white">{hasFullAccess ? '∞' : balance}</span>
-            <span className="text-xs text-muted-foreground">tokens</span>
+            <Heart className="w-4 h-4 text-pink-500" />
+            <span className="text-xs text-muted-foreground">20% of every purchase donated to</span>
+            <span className="text-sm font-display tracking-wider text-white">Mind</span>
+            <span className="text-xs text-muted-foreground">charity</span>
           </div>
           {onViewCollection && (
             <Button
@@ -476,16 +462,15 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
                   <div className="flex items-center gap-3">
                     <div className="flex-1">
                       <div className="flex items-baseline gap-1">
-                        <span className="text-2xl font-display text-white">{BUNDLE_COST}</span>
-                        <Coins className="w-3.5 h-3.5 text-primary" />
+                        <span className="text-2xl font-display text-white">{BUNDLE_PRICE}</span>
                       </div>
-                      <p className="text-[10px] text-muted-foreground line-through">
-                        {ALBUM_COST * albums.length} tokens
+                      <p className="text-[10px] text-green-400">
+                        Save £{albums.length * 10 - 20} vs buying separately
                       </p>
                     </div>
                     <Button
                       className="bg-gradient-to-r from-primary to-orange-600 text-white font-display tracking-wider"
-                      disabled={!!purchasing || (!hasFullAccess && balance < BUNDLE_COST)}
+                      disabled={!!purchasing}
                       onClick={() => requestPurchase('bundle')}
                     >
                       {purchasing === 'bundle-bundle' ? (
@@ -502,8 +487,8 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
               </Card>
             </motion.div>
 
-            {/* ═══ CARD PACKS (hidden with FIFA card system) ═══ */}
-            {false && <div>
+            {/* ═══ CARD PACKS ═══ */}
+            <div>
               <h3 className="font-display text-sm tracking-wider text-white mb-3 flex items-center gap-2">
                 <Sparkles className="w-4 h-4 text-primary" />
                 CARD PACKS
@@ -571,7 +556,7 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
                                 tier.id === 'premium' ? 'bg-gradient-to-r from-yellow-600 to-amber-600' :
                                 'bg-gradient-to-r from-primary to-orange-600',
                               )}
-                              disabled={!!purchasing || (!hasFullAccess && balance < tier.cost)}
+                              disabled={!!purchasing}
                               onClick={() => {
                                 setConfirmPackTier(tier);
                               }}
@@ -592,7 +577,7 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
                   );
                 })}
               </div>
-            </div>}
+            </div>
 
             {/* ═══ ALBUMS ═══ */}
             <div>
@@ -623,14 +608,13 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
                       </div>
                       <div className="text-right">
                         <div className="flex items-center gap-1 mb-1">
-                          <span className="text-lg font-display text-white">{ALBUM_COST}</span>
-                          <Coins className="w-3 h-3 text-primary" />
+                          <span className="text-lg font-display text-white">{ALBUM_PRICE}</span>
                         </div>
                         <Button
                           size="sm"
                           variant="outline"
                           className="text-[10px] font-display tracking-wider border-primary/30 text-primary hover:bg-primary/10"
-                          disabled={!!purchasing || (!hasFullAccess && balance < ALBUM_COST)}
+                          disabled={!!purchasing}
                           onClick={() => requestPurchase('album', undefined, album.id)}
                         >
                           {purchasing === `album-${album.id}` ? (
@@ -666,11 +650,11 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
                   <div className="flex items-center gap-4 mt-2">
                     <div className="flex items-center gap-1.5">
                       <Coins className="w-3 h-3 text-zinc-400" />
-                      <span className="text-xs font-display text-yellow-400">Standard · {STANDARD_SINGLE_COST} tokens</span>
+                      <span className="text-xs font-display text-yellow-400">£1.50</span>
                     </div>
                     <div className="flex items-center gap-1.5">
                       <Coins className="w-3 h-3 text-yellow-400" />
-                      <span className="text-xs font-display text-yellow-400">Gold · {GOLD_SINGLE_COST} tokens</span>
+                      <span className="text-xs font-display text-yellow-400">£3 · Gold</span>
                     </div>
                   </div>
                   <div className="flex items-center justify-end mt-2">
@@ -680,8 +664,8 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
               </Card>
             </motion.div>
 
-            {/* ═══ Rarity info (hidden with FIFA card system) ═══ */}
-            {false && <Card className="p-4 border-border/30 bg-card/20">
+            {/* ═══ Rarity info ═══ */}
+            <Card className="p-4 border-border/30 bg-card/20">
               <p className="font-display text-xs tracking-wider text-muted-foreground mb-3">COLLECTIBLE RARITIES</p>
               <div className="space-y-2">
                 {[
@@ -699,7 +683,7 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
                   </div>
                 ))}
               </div>
-            </Card>}
+            </Card>
           </>
         ) : (
           /* ═══ Singles list ═══ */
@@ -736,38 +720,19 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
                       <p className="text-[10px] text-muted-foreground">{track.genre || 'Original'}</p>
                     </div>
                     <div className="flex items-center gap-1.5">
-                      {/* Standard purchase — gold text, 2 tokens */}
+                      {/* Buy single — £1.50 + card pack */}
                       <Button
                         size="sm"
                         variant="outline"
-                        className="text-[10px] font-display tracking-wider border-yellow-500/30 text-yellow-400 hover:bg-yellow-500/10 px-2"
-                        disabled={!!purchasing || (!hasFullAccess && balance < STANDARD_SINGLE_COST)}
-                        onClick={() => requestPurchase('single', track.id, undefined, false)}
+                        className="text-[10px] font-display tracking-wider border-primary/30 text-primary hover:bg-primary/10 px-2"
+                        disabled={!!purchasing}
+                        onClick={() => requestPurchase('single', track.id)}
                       >
                         {purchasing === `single-${track.id}` ? (
                           <Loader2 className="w-3 h-3 animate-spin" />
                         ) : (
                           <span className="flex items-center gap-1">
-                            <span>{STANDARD_SINGLE_COST}</span>
-                            <Coins className="w-2.5 h-2.5" />
-                          </span>
-                        )}
-                      </Button>
-                      {/* Gold purchase — gold text, 3 tokens */}
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="text-[10px] font-display tracking-wider border-yellow-400/40 text-yellow-400 hover:bg-yellow-400/10 bg-yellow-400/5 px-2"
-                        disabled={!!purchasing || (!hasFullAccess && balance < GOLD_SINGLE_COST)}
-                        onClick={() => requestPurchase('single', track.id, undefined, true)}
-                      >
-                        {purchasing === `single-${track.id}-gold` ? (
-                          <Loader2 className="w-3 h-3 animate-spin" />
-                        ) : (
-                          <span className="flex items-center gap-1">
-                            <Crown className="w-2.5 h-2.5" />
-                            <span>{GOLD_SINGLE_COST}</span>
-                            <Coins className="w-2.5 h-2.5" />
+                            <span>{SINGLE_PRICE}</span>
                           </span>
                         )}
                       </Button>
@@ -816,21 +781,20 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
               {/* Cost breakdown */}
               <div className="bg-card rounded-lg p-3 border border-border space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs text-muted-foreground">Cost:</span>
+                  <span className="text-xs text-muted-foreground">Price:</span>
                   <div className="flex items-center gap-1.5">
-                    <Coins className="w-3.5 h-3.5 text-yellow-400" />
-                    <span className="text-sm font-display text-yellow-400 font-bold">{confirmPurchase.cost} tokens</span>
+                    <span className="text-sm font-display text-primary font-bold">
+                      {confirmPurchase.type === 'single' ? SINGLE_PRICE : confirmPurchase.type === 'album' ? ALBUM_PRICE : BUNDLE_PRICE}
+                    </span>
                   </div>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-xs text-muted-foreground">Your balance:</span>
-                  <span className="text-sm font-display text-white">{balance}</span>
+                  <span className="text-xs text-muted-foreground">Includes:</span>
+                  <span className="text-xs text-white">Base card pack + chance of rares</span>
                 </div>
-                <div className="border-t border-border pt-2 flex items-center justify-between">
-                  <span className="text-xs text-muted-foreground">After purchase:</span>
-                  <span className={cn("text-sm font-display", balance >= confirmPurchase.cost ? "text-green-400" : "text-red-400")}>
-                    {balance - confirmPurchase.cost}
-                  </span>
+                <div className="border-t border-border pt-2 flex items-center gap-2">
+                  <Heart className="w-3 h-3 text-pink-500" />
+                  <span className="text-[10px] text-pink-400">{MIND_DONATION_PCT}% donated to Mind charity</span>
                 </div>
               </div>
 
@@ -838,17 +802,15 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
                 size="sm"
                 className="w-full text-xs font-display tracking-wider bg-[#FF5500] hover:bg-[#FF5500]/90 text-white"
                 style={{ boxShadow: '0 0 20px rgba(255,85,0,0.3)' }}
-                disabled={!hasFullAccess && balance < confirmPurchase.cost}
+                disabled={!!purchasing}
                 onClick={() => {
                   const { type, trackId, albumId, goldTier } = confirmPurchase;
                   setConfirmPurchase(null);
                   handlePurchase(type, trackId, albumId, goldTier);
                 }}
               >
-                <Coins className="w-3 h-3 mr-1" />
-                {!hasFullAccess && balance < confirmPurchase.cost
-                  ? 'NOT ENOUGH TOKENS'
-                  : `CONFIRM · ${confirmPurchase.cost} TOKENS`}
+                <ShoppingBag className="w-3 h-3 mr-1" />
+                {`CHECKOUT · ${confirmPurchase.type === 'single' ? SINGLE_PRICE : confirmPurchase.type === 'album' ? ALBUM_PRICE : BUNDLE_PRICE}`}
               </Button>
 
               <Button variant="ghost" size="sm"
@@ -890,7 +852,7 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
                   <span className="text-xs text-muted-foreground">Cost:</span>
                   <div className="flex items-center gap-1.5">
                     <Coins className="w-3.5 h-3.5 text-yellow-400" />
-                    <span className="text-sm font-display text-yellow-400 font-bold">{confirmPackTier.cost} tokens</span>
+                    <span className="text-sm font-display text-yellow-400 font-bold">{confirmPackTier.cost} each</span>
                   </div>
                 </div>
                 {confirmPackTier.guaranteedGold > 0 && (
@@ -905,15 +867,9 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
                     <span className="text-sm font-display text-violet-400">{confirmPackTier.guaranteedDiamond}</span>
                   </div>
                 )}
-                <div className="border-t border-border pt-2 flex items-center justify-between">
-                  <span className="text-xs text-muted-foreground">Your balance:</span>
-                  <span className="text-sm font-display text-white">{balance}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-muted-foreground">After purchase:</span>
-                  <span className={cn("text-sm font-display", balance >= confirmPackTier.cost ? "text-green-400" : "text-red-400")}>
-                    {balance - confirmPackTier.cost}
-                  </span>
+                <div className="border-t border-border pt-2 flex items-center gap-2">
+                  <Heart className="w-3 h-3 text-pink-500" />
+                  <span className="text-[10px] text-pink-400">{MIND_DONATION_PCT}% donated to Mind charity</span>
                 </div>
               </div>
 
@@ -921,7 +877,7 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
                 size="sm"
                 className="w-full text-xs font-display tracking-wider bg-[#FF5500] hover:bg-[#FF5500]/90 text-white"
                 style={{ boxShadow: '0 0 20px rgba(255,85,0,0.3)' }}
-                disabled={!hasFullAccess && balance < confirmPackTier.cost}
+                disabled={!!purchasing}
                 onClick={() => {
                   const tier = confirmPackTier;
                   setConfirmPackTier(null);
@@ -929,10 +885,8 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
                   handlePackPurchase(tier);
                 }}
               >
-                <Coins className="w-3 h-3 mr-1" />
-                {!hasFullAccess && balance < confirmPackTier.cost
-                  ? 'NOT ENOUGH TOKENS'
-                  : `CONFIRM · ${confirmPackTier.cost} TOKENS`}
+                <ShoppingBag className="w-3 h-3 mr-1" />
+                CHECKOUT · £{(confirmPackTier.cost / 100).toFixed(2)}
               </Button>
 
               <Button variant="ghost" size="sm"

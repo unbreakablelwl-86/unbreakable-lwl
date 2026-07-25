@@ -86,7 +86,7 @@ const ALL_NAV_ITEMS: NavItemDef[] = [
     label: 'Fuel',
     path: '/fuel',
     activeMatch: ['/fuel'],
-    color: '#FF5500',
+    color: '#10B981',
     description: 'Nutrition & meals',
   },
   {
@@ -95,7 +95,7 @@ const ALL_NAV_ITEMS: NavItemDef[] = [
     label: 'Move',
     path: '/tracker',
     activeMatch: ['/tracker'],
-    color: '#FF5500',
+    color: '#EF4444',
     description: 'Cardio & movement',
   },
   {
@@ -104,7 +104,7 @@ const ALL_NAV_ITEMS: NavItemDef[] = [
     label: 'Mind',
     path: '/mindset',
     activeMatch: ['/mindset'],
-    color: '#FF5500',
+    color: '#8B5CF6',
     description: 'Mental resilience',
   },
   {
@@ -113,7 +113,7 @@ const ALL_NAV_ITEMS: NavItemDef[] = [
     label: 'Zone',
     path: '/zone',
     activeMatch: ['/zone'],
-    color: '#FF5500',
+    color: '#8B5CF6',
     description: 'Switch off — focus timer',
   },
   {
@@ -122,7 +122,7 @@ const ALL_NAV_ITEMS: NavItemDef[] = [
     label: 'Unbreakable Uni',
     path: '/university',
     activeMatch: ['/university'],
-    color: '#FF5500',
+    color: '#3B82F6',
     description: 'Courses & learning',
   },
   {
@@ -132,7 +132,7 @@ const ALL_NAV_ITEMS: NavItemDef[] = [
     path: '/untunes',
     activeMatch: ['/untunes'],
     color: '#FF5500',
-    description: 'Music & podcasts',
+    description: 'Music & collectibles',
   },
   {
     id: 'habits',
@@ -140,7 +140,7 @@ const ALL_NAV_ITEMS: NavItemDef[] = [
     label: 'Habits',
     path: '/habits',
     activeMatch: ['/habits'],
-    color: '#FF5500',
+    color: '#8B5CF6',
     description: 'Daily habit tracking',
   },
   {
@@ -159,7 +159,7 @@ const ALL_NAV_ITEMS: NavItemDef[] = [
     path: '/help',
     activeMatch: ['/help'],
     color: '#FF5500',
-    description: 'Unbreakable AI Coach',
+    description: 'JJ — Your AI Coach',
   },
   {
     id: 'threads',

@@ -172,15 +172,19 @@ export function SocialCommandCentre() {
     setGeneratedImageUrl('');
 
     try {
+      // Auto-select a random Un-Tunes track if none manually picked
+      const trackToUse = selectedTrack || (musicTracks.length > 0
+        ? musicTracks[Math.floor(Math.random() * musicTracks.length)]
+        : null);
       const { data, error } = await supabase.functions.invoke('generate-social-content', {
         body: {
           platform, contentType, tone, context, inspiration,
-          ...(selectedTrack ? {
+          ...(trackToUse ? {
             featuredTrack: {
-              title: selectedTrack.title,
-              genre: selectedTrack.genre,
-              artist: selectedTrack.artist_name,
-              duration: selectedTrack.duration_seconds,
+              title: trackToUse.title,
+              genre: trackToUse.genre,
+              artist: trackToUse.artist_name,
+              duration: trackToUse.duration_seconds,
             },
           } : {}),
         },
@@ -238,6 +242,8 @@ export function SocialCommandCentre() {
         custom_image_url: customImageUrl || null,
         custom_video_url: customVideoUrl || null,
         script: script || null,
+        music_track_id: selectedTrack?.id || null,
+        music_suggestion: selectedTrack ? `${selectedTrack.title} — ${selectedTrack.artist_name || 'Unbreakable'}` : null,
       });
       if (error) throw error;
       toast({ title: 'Post saved!' });
