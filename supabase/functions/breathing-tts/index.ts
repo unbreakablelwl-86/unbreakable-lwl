@@ -6,8 +6,8 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-// JJ voice — Alex (upbeat, energetic, clear — 1.1M users on ElevenLabs)
-const VOICE_ID = "yl2ZDV1MzN4HbQJbMihG";
+// JJ voice — James (deep, authoritative, male — ElevenLabs premade)
+const VOICE_ID = "ZQe5CZNOzWyzPSCn5a3c";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -18,7 +18,7 @@ serve(async (req) => {
     const authHeader = req.headers.get('Authorization');
     if (!authHeader?.startsWith('Bearer ')) {
       return new Response(
-        JSON.stringify({ error: 'Unauthorized - Please sign in to use this feature' }),
+        JSON.stringify({ error: 'Unauthorized' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -30,18 +30,18 @@ serve(async (req) => {
     );
 
     const token = authHeader.replace('Bearer ', '');
-    const { data: claimsData, error: authError } = await supabaseClient.auth.getClaims(token);
-    
-    if (authError || !claimsData?.claims) {
+    const { data: { user }, error: authError } = await supabaseClient.auth.getUser(token);
+
+    if (authError || !user) {
       return new Response(
-        JSON.stringify({ error: 'Unauthorized - Invalid session' }),
+        JSON.stringify({ error: 'Unauthorized — invalid session' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
     const body = await req.json();
     const { text } = body;
-    
+
     if (!text || typeof text !== 'string') {
       return new Response(
         JSON.stringify({ error: "Text is required" }),
@@ -56,14 +56,11 @@ serve(async (req) => {
     }
 
     const ELEVENLABS_API_KEY = Deno.env.get("ELEVENLABS_API_KEY");
-    
+
     if (!ELEVENLABS_API_KEY) {
       return new Response(
         JSON.stringify({ error: "ElevenLabs API key not configured" }),
-        { 
-          status: 500, 
-          headers: { ...corsHeaders, "Content-Type": "application/json" } 
-        }
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
@@ -94,10 +91,7 @@ serve(async (req) => {
       console.error("ElevenLabs API error:", errorText);
       return new Response(
         JSON.stringify({ error: "Failed to generate speech" }),
-        { 
-          status: response.status, 
-          headers: { ...corsHeaders, "Content-Type": "application/json" } 
-        }
+        { status: response.status, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
@@ -113,10 +107,7 @@ serve(async (req) => {
     console.error("TTS Error:", error);
     return new Response(
       JSON.stringify({ error: "Internal server error" }),
-      { 
-        status: 500, 
-        headers: { ...corsHeaders, "Content-Type": "application/json" } 
-      }
+      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
 });

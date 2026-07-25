@@ -17,6 +17,7 @@ import { ThemedLogo } from '@/components/ThemedLogo';
 import { ProfileButton } from '@/components/coaching/ProfileButton';
 import { PlanDisplayCard } from '@/components/coaching/PlanDisplayCard';
 import { useAIPreferences } from '@/hooks/useAIPreferences';
+import { useJJVoice } from '@/hooks/useJJVoice';
 import { useCoachName } from '@/hooks/useCoachName';
 import { CoachNameEditor } from '@/components/coaching/CoachNameEditor';
 import { AIPlanReviewModal } from '@/components/ai/AIPlanReviewModal';
@@ -286,7 +287,7 @@ export default function Help() {
 
   /* ── Voice Chat State ── */
   const [isListening, setIsListening] = useState(false);
-  const [isSpeaking, setIsSpeaking] = useState(false);
+  const jjVoice = useJJVoice();
   const [voiceEnabled, setVoiceEnabled] = useState(false);
   const recognitionRef = useRef<any>(null);
 
@@ -646,86 +647,21 @@ export default function Help() {
     else startListening();
   }, [isListening, startListening, stopListening]);
 
-  /* ── Voice Output (Text-to-Speech via ElevenLabs JJ voice) ── */
-  const ttsAudioRef = useRef<HTMLAudioElement | null>(null);
-  const audioCtxRef = useRef<AudioContext | null>(null);
-
-  // Unlock audio on mobile — called on user gesture (voice toggle tap)
-  const unlockAudio = useCallback(() => {
-    if (!audioCtxRef.current) {
-      audioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
-    }
-    if (audioCtxRef.current.state === 'suspended') {
-      audioCtxRef.current.resume();
-    }
-    // Also play a tiny silent buffer to fully unlock HTMLAudio
-    const silent = audioCtxRef.current.createBuffer(1, 1, 22050);
-    const src = audioCtxRef.current.createBufferSource();
-    src.buffer = silent;
-    src.connect(audioCtxRef.current.destination);
-    src.start();
-  }, []);
-
-  const speakText = useCallback(async (text: string) => {
-    // Clean text for reading (remove emojis, markdown, etc.)
-    const cleanText = text
-      .replace(/[#*_~`>]/g, '')
-      .replace(/\[.*?\]\(.*?\)/g, '')
-      .replace(/[\u{1F600}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{1FA00}-\u{1FAFF}]/gu, '')
-      .replace(/\s+/g, ' ')
-      .trim();
-    if (!cleanText) return;
-
-    // Stop any current playback
-    if (ttsAudioRef.current) { ttsAudioRef.current.pause(); ttsAudioRef.current = null; }
-
-    setIsSpeaking(true);
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) { setIsSpeaking(false); return; }
-
-      const res = await supabase.functions.invoke('breathing-tts', {
-        body: { text: cleanText.slice(0, 5000) },
-      });
-
-      if (res.error || !res.data) {
-        // No fallback — JJ's ElevenLabs voice only, never browser speech
-        setIsSpeaking(false);
-        return;
-      }
-
-      const blob = new Blob([res.data], { type: 'audio/mpeg' });
-      const url = URL.createObjectURL(blob);
-      const audio = new Audio(url);
-      ttsAudioRef.current = audio;
-      audio.onended = () => { setIsSpeaking(false); URL.revokeObjectURL(url); ttsAudioRef.current = null; };
-      audio.onerror = () => { setIsSpeaking(false); URL.revokeObjectURL(url); ttsAudioRef.current = null; };
-      await audio.play();
-    } catch {
-      setIsSpeaking(false);
-    }
-  }, []);
-
-  const stopSpeaking = useCallback(() => {
-    if (ttsAudioRef.current) { ttsAudioRef.current.pause(); ttsAudioRef.current = null; }
-    if ('speechSynthesis' in window) window.speechSynthesis.cancel();
-    setIsSpeaking(false);
-  }, []);
+  /* ── Voice Output via centralized useJJVoice hook ── */
 
   /* Auto-speak new assistant messages when voice mode is on */
   useEffect(() => {
-    if (!voiceEnabled || messages.length === 0) return;
+    if (!voiceEnabled || !jjVoice.isEnabled('chat') || messages.length === 0) return;
     const lastMsg = messages[messages.length - 1];
     if (lastMsg.role === 'assistant' && lastMsg.content && !isLoading) {
-      speakText(lastMsg.content);
+      jjVoice.speak(lastMsg.content, 'chat');
     }
-  }, [messages.length, isLoading, voiceEnabled]);
+  }, [messages.length, isLoading, voiceEnabled, jjVoice]);
 
   /* Cleanup on unmount */
   useEffect(() => {
     return () => {
       if (recognitionRef.current) recognitionRef.current.stop();
-      window.speechSynthesis?.cancel();
     };
   }, []);
 
@@ -832,7 +768,7 @@ export default function Help() {
                 /* ─── Chat Messages ─── */
                 <div className="max-w-3xl mx-auto">
                   {enrichedMessages.map((msg) => (
-                    <MessageBubble key={msg.id} message={msg} onSpeak={speakText} />
+                    <MessageBubble key={msg.id} message={msg} onSpeak={(text) => jjVoice.speak(text, 'chat')} />
                   ))}
 
                   {/* Loading states */}
@@ -933,9 +869,9 @@ export default function Help() {
                   <button
                     type="button"
                     onClick={() => {
-                      if (!voiceEnabled) unlockAudio();
+                      if (!voiceEnabled) jjVoice.unlockAudio();
                       setVoiceEnabled(!voiceEnabled);
-                      if (isSpeaking) stopSpeaking();
+                      if (jjVoice.isSpeaking) jjVoice.stop();
                     }}
                     className={`h-11 w-11 rounded-xl flex items-center justify-center transition-all ${
                       voiceEnabled

@@ -2,38 +2,30 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/co
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { Volume2, VolumeX } from 'lucide-react';
-import { useAIPreferences } from '@/hooks/useAIPreferences';
+import { Volume2, VolumeX, MessageSquare, Brain, Activity, Bell, GraduationCap } from 'lucide-react';
+import { useJJVoice, VoiceFeature } from '@/hooks/useJJVoice';
 
 interface VoiceSettingsSheetProps {
   children?: React.ReactNode;
 }
 
+const FEATURES: { key: VoiceFeature; icon: React.ElementType; label: string; description: string }[] = [
+  { key: 'chat', icon: MessageSquare, label: 'Chat with JJ', description: 'Voice replies when chatting with your coach' },
+  { key: 'mindset', icon: Brain, label: 'Mindset & Breathing', description: 'Voice guidance during meditation and exercises' },
+  { key: 'cardio', icon: Activity, label: 'Cardio Updates', description: 'Voice prompts during live cardio tracking' },
+  { key: 'university', icon: GraduationCap, label: 'University Read-Aloud', description: 'JJ reads course chapters aloud' },
+  { key: 'notifications', icon: Bell, label: 'Notifications', description: 'Read notifications and alerts aloud' },
+];
+
 export function VoiceSettingsSheet({ children }: VoiceSettingsSheetProps) {
-  const { preferences, isLoading, updatePreferences } = useAIPreferences();
-
-  if (isLoading || !preferences) {
-    return children || (
-      <Button variant="ghost" size="icon" disabled>
-        <Volume2 className="w-5 h-5 text-primary" />
-      </Button>
-    );
-  }
-
-  const handleVoiceToggle = (enabled: boolean) => {
-    updatePreferences.mutate({ voice_feedback_enabled: enabled });
-  };
+  const { settings, setSetting, unlockAudio } = useJJVoice();
 
   return (
     <Sheet>
       <SheetTrigger asChild>
         {children || (
-          <Button 
-            variant="ghost" 
-            size="icon"
-            className="relative"
-          >
-            {preferences.voice_feedback_enabled ? (
+          <Button variant="ghost" size="icon" className="relative">
+            {settings.master ? (
               <Volume2 className="w-5 h-5 text-primary" />
             ) : (
               <VolumeX className="w-5 h-5 text-muted-foreground" />
@@ -43,26 +35,50 @@ export function VoiceSettingsSheet({ children }: VoiceSettingsSheetProps) {
       </SheetTrigger>
       <SheetContent side="right" className="w-80">
         <SheetHeader>
-          <SheetTitle className="font-display tracking-wide">VOICE SETTINGS</SheetTitle>
+          <SheetTitle className="font-display tracking-wide">JJ VOICE</SheetTitle>
         </SheetHeader>
-        
+
         <div className="space-y-6 mt-6">
-          {/* Voice Feedback Toggle */}
-          <div className="flex items-center justify-between">
+          {/* Master toggle */}
+          <div className="flex items-center justify-between pb-4 border-b border-border">
             <div className="space-y-0.5">
-              <Label className="text-foreground font-medium">Voice Feedback</Label>
+              <Label className="text-foreground font-bold text-base flex items-center gap-2">
+                {settings.master ? <Volume2 className="w-5 h-5 text-primary" /> : <VolumeX className="w-5 h-5 text-muted-foreground" />}
+                Voice On/Off
+              </Label>
               <p className="text-sm text-muted-foreground">
-                Enable audio responses from your coach
+                Master switch for all JJ voice features
               </p>
             </div>
             <Switch
-              checked={preferences.voice_feedback_enabled}
-              onCheckedChange={handleVoiceToggle}
+              checked={settings.master}
+              onCheckedChange={(checked) => {
+                if (checked) unlockAudio();
+                setSetting('master', checked);
+              }}
             />
           </div>
 
+          {/* Feature toggles */}
+          {FEATURES.map(({ key, icon: Icon, label, description }) => (
+            <div key={key} className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label className={`font-medium flex items-center gap-2 ${settings.master ? 'text-foreground' : 'text-muted-foreground'}`}>
+                  <Icon className="w-4 h-4 text-primary" />
+                  {label}
+                </Label>
+                <p className="text-xs text-muted-foreground">{description}</p>
+              </div>
+              <Switch
+                checked={settings[key]}
+                onCheckedChange={(checked) => setSetting(key, checked)}
+                disabled={!settings.master}
+              />
+            </div>
+          ))}
+
           <p className="text-xs text-muted-foreground pt-4 border-t border-border">
-            JJ's voice is used across the app — coaching, breathing, and chat.
+            JJ's voice — powered by ElevenLabs. All voice features use the same male coach voice.
           </p>
         </div>
       </SheetContent>

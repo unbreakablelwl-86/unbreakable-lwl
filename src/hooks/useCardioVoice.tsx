@@ -1,69 +1,16 @@
-import { useCallback, useRef, useEffect, useState } from "react";
+import { useCallback, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 /**
  * Cardio voice updates.
- * 
- * Strategy:
- * 1. Try ElevenLabs TTS via edge function (best quality, works in background)
- * 2. Fall back to browser SpeechSynthesis if TTS unavailable
- * 3. Warm-up SpeechSynthesis on enable to satisfy mobile user-gesture requirement
+ * Uses ElevenLabs TTS (James voice) via the breathing-tts edge function.
+ * No browser speech fallback — JJ's voice only.
  */
 export function useCardioVoice({ enabled }: { enabled: boolean }) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const cacheRef = useRef<Map<string, string>>(new Map());
   const pendingRef = useRef<Set<string>>(new Set());
-  const ttsAvailableRef = useRef<boolean | null>(null); // null = untested
-  const selectedVoiceRef = useRef<SpeechSynthesisVoice | null>(null);
-  const warmedUpRef = useRef(false);
-
-  /* ── Pick best voice for SpeechSynthesis fallback ── */
-  const pickVoice = useCallback(() => {
-    if (typeof speechSynthesis === "undefined") return;
-    const voices = speechSynthesis.getVoices();
-    if (voices.length === 0) return;
-
-    const preferred = [
-      "daniel", "alex", "thomas", "james", "google uk english male",
-      "google us english", "microsoft david", "microsoft mark",
-    ];
-    for (const pref of preferred) {
-      const match = voices.find(v => v.name.toLowerCase().includes(pref) && v.lang.startsWith("en"));
-      if (match) { selectedVoiceRef.current = match; return; }
-    }
-    const anyEnglish = voices.find(v => v.lang.startsWith("en"));
-    selectedVoiceRef.current = anyEnglish || voices[0];
-  }, []);
-
-  useEffect(() => {
-    if (typeof speechSynthesis === "undefined") return;
-    const handle = () => pickVoice();
-    if (speechSynthesis.getVoices().length > 0) handle();
-    speechSynthesis.addEventListener("voiceschanged", handle);
-    return () => speechSynthesis.removeEventListener("voiceschanged", handle);
-  }, [pickVoice]);
-
-  /* ── Warm up SpeechSynthesis on enable ── */
-  useEffect(() => {
-    if (enabled && !warmedUpRef.current && typeof speechSynthesis !== "undefined") {
-      warmedUpRef.current = true;
-      const warmup = new SpeechSynthesisUtterance("");
-      warmup.volume = 0;
-      speechSynthesis.speak(warmup);
-    }
-  }, [enabled]);
-
-  /* ── SpeechSynthesis fallback ── */
-  const speakFallback = useCallback((text: string) => {
-    if (typeof speechSynthesis === "undefined") return;
-    speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.rate = 0.9;
-    utterance.pitch = 1.0;
-    utterance.volume = 1;
-    if (selectedVoiceRef.current) utterance.voice = selectedVoiceRef.current;
-    speechSynthesis.speak(utterance);
-  }, []);
+  const ttsAvailableRef = useRef<boolean | null>(null);
 
   const speak = useCallback(async (text: string) => {
     if (!enabled) return;
@@ -76,7 +23,7 @@ export function useCardioVoice({ enabled }: { enabled: boolean }) {
 
     const cacheKey = text;
 
-    // Check cache first (TTS audio)
+    // Check cache first
     if (cacheRef.current.has(cacheKey)) {
       try {
         audioRef.current = new Audio(cacheRef.current.get(cacheKey)!);
@@ -88,11 +35,8 @@ export function useCardioVoice({ enabled }: { enabled: boolean }) {
       }
     }
 
-    // If we know TTS is unavailable, use fallback immediately
-    if (ttsAvailableRef.current === false) {
-      speakFallback(text);
-      return;
-    }
+    // If we know TTS is unavailable, skip
+    if (ttsAvailableRef.current === false) return;
 
     // Skip if already fetching this text
     if (pendingRef.current.has(cacheKey)) return;
@@ -104,7 +48,6 @@ export function useCardioVoice({ enabled }: { enabled: boolean }) {
       if (!accessToken) {
         pendingRef.current.delete(cacheKey);
         ttsAvailableRef.current = false;
-        speakFallback(text);
         return;
       }
 
@@ -124,9 +67,8 @@ export function useCardioVoice({ enabled }: { enabled: boolean }) {
       pendingRef.current.delete(cacheKey);
 
       if (!response.ok) {
-        console.warn("Cardio TTS failed:", response.status, "— using SpeechSynthesis fallback");
+        console.warn("Cardio TTS failed:", response.status);
         ttsAvailableRef.current = false;
-        speakFallback(text);
         return;
       }
 
@@ -140,18 +82,16 @@ export function useCardioVoice({ enabled }: { enabled: boolean }) {
       await audioRef.current.play();
     } catch (error) {
       pendingRef.current.delete(cacheKey);
-      console.warn("Cardio voice error, falling back:", error);
+      console.warn("Cardio voice error:", error);
       ttsAvailableRef.current = false;
-      speakFallback(text);
     }
-  }, [enabled, speakFallback]);
+  }, [enabled]);
 
   const stop = useCallback(() => {
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current.currentTime = 0;
     }
-    if (typeof speechSynthesis !== "undefined") speechSynthesis.cancel();
   }, []);
 
   const cleanup = useCallback(() => {

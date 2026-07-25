@@ -40,7 +40,6 @@ export default function UniversityChapter() {
 
   const stopReading = useCallback(() => {
     if (ttsAudioRef.current) { ttsAudioRef.current.pause(); ttsAudioRef.current = null; }
-    if ('speechSynthesis' in window) window.speechSynthesis.cancel();
     setIsReading(false);
   }, []);
 
@@ -64,18 +63,7 @@ export default function UniversityChapter() {
     try {
       const res = await supabase.functions.invoke('breathing-tts', { body: { text } });
       if (res.error || !res.data) {
-        // Fallback to browser TTS
-        if ('speechSynthesis' in window) {
-          const u = new SpeechSynthesisUtterance(text);
-          u.lang = 'en-GB';
-          const voices = window.speechSynthesis.getVoices();
-          const v = voices.find(v => v.lang.startsWith('en-GB') && v.name.toLowerCase().includes('male'))
-            || voices.find(v => v.lang.startsWith('en-GB')) || voices.find(v => v.lang.startsWith('en'));
-          if (v) u.voice = v;
-          u.onend = () => setIsReading(false);
-          u.onerror = () => setIsReading(false);
-          window.speechSynthesis.speak(u);
-        } else setIsReading(false);
+        setIsReading(false);
         return;
       }
       const blob = new Blob([res.data], { type: 'audio/mpeg' });

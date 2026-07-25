@@ -19,9 +19,11 @@ import {
   EyeOff,
   Shield,
   Bell,
+  ChevronRight,
 } from 'lucide-react';
 import { useUserSettings, UserSettings } from '@/hooks/useUserSettings';
 import { useAIPreferences } from '@/hooks/useAIPreferences';
+import { VoiceSettingsSheet } from '@/components/coaching/VoiceSettingsSheet';
 import { useAuth } from '@/hooks/useAuth';
 import { useProfile } from '@/hooks/useProfile';
 import { toast } from 'sonner';
@@ -191,23 +193,21 @@ export function SettingsPanel() {
             />
           </div>
 
-          <div className="flex items-center justify-between">
-            <div className="space-y-0.5">
-              <Label className="text-foreground font-medium flex items-center gap-2">
-                <Mic className="w-4 h-4 text-primary" />
-                Cardio Voice Prompts
-              </Label>
-              <p className="text-sm text-muted-foreground">
-                Voice updates every 1km during live cardio tracking
-              </p>
-            </div>
-            <Switch
-              checked={(settings as any).cardio_voice_enabled ?? true}
-              onCheckedChange={(checked) => handleUpdate({ cardio_voice_enabled: checked } as any)}
-            />
-          </div>
-
-          {/* Voice — JJ coaches everything, no selection needed */}
+          {/* Voice — opens JJ Voice settings sheet */}
+          <VoiceSettingsSheet>
+            <button className="flex items-center justify-between w-full text-left">
+              <div className="space-y-0.5">
+                <Label className="text-foreground font-medium flex items-center gap-2 cursor-pointer">
+                  <Volume2 className="w-4 h-4 text-primary" />
+                  JJ Voice Settings
+                </Label>
+                <p className="text-sm text-muted-foreground">
+                  Configure voice for chat, mindset, cardio, notifications & more
+                </p>
+              </div>
+              <ChevronRight className="w-4 h-4 text-muted-foreground" />
+            </button>
+          </VoiceSettingsSheet>
 
           {/* Spotify removed — Un-Tunes is standalone */}
         </CardContent>
@@ -222,22 +222,7 @@ export function SettingsPanel() {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
-          <div className="flex items-center justify-between">
-            <div className="space-y-0.5">
-              <Label className="text-foreground font-medium flex items-center gap-2">
-                <Volume2 className="w-4 h-4 text-primary" />
-                Breathing Voice
-              </Label>
-              <p className="text-sm text-muted-foreground">
-                Voice guidance for breathing meditation exercises
-              </p>
-            </div>
-            <Switch
-              checked={aiPreferences?.voice_feedback_enabled ?? false}
-              onCheckedChange={(checked) => updatePreferences.mutate({ voice_feedback_enabled: checked })}
-              disabled={aiLoading}
-            />
-          </div>
+          {/* Breathing voice now controlled via JJ Voice Settings above */}
 
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">

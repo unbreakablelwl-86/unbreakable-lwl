@@ -51,7 +51,6 @@ const MindsetBreathing = () => {
 
   const { playAudio, stopAudio, preloadAudio, cleanup } = useBreathingAudio({
     enabled: voiceEnabled,
-    voiceGender,
   });
 
   // Auto-select exercise from URL param (?exercise=box-breathing)

@@ -1,111 +1,22 @@
-import { useCallback, useRef, useEffect, useState } from "react";
+import { useCallback, useRef, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 interface UseBreathingAudioOptions {
   enabled: boolean;
-  voiceGender?: 'male' | 'female';
 }
 
 /**
  * Breathing-exercise voice guidance.
- * 
- * Strategy:
- * 1. Try ElevenLabs TTS edge function first (sounds best, works in background)
- * 2. Fall back to browser SpeechSynthesis if ElevenLabs unavailable
- * 3. Warm-up SpeechSynthesis on first enable to satisfy mobile user-gesture requirement
- * 4. Respects male/female voice preference
+ * Uses ElevenLabs TTS (James voice) via the breathing-tts edge function.
+ * No browser speech fallback — JJ's voice only.
  */
-export function useBreathingAudio({ enabled, voiceGender = 'male' }: UseBreathingAudioOptions) {
-  const [voicesReady, setVoicesReady] = useState(false);
-  const selectedVoiceRef = useRef<SpeechSynthesisVoice | null>(null);
+export function useBreathingAudio({ enabled }: UseBreathingAudioOptions) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const ttsAvailableRef = useRef<boolean | null>(null); // null = untested
+  const ttsAvailableRef = useRef<boolean | null>(null);
   const ttsCacheRef = useRef<Map<string, string>>(new Map());
-  const warmedUpRef = useRef(false);
-  const currentGenderRef = useRef(voiceGender);
-
-  // Update ref when gender changes
-  useEffect(() => {
-    if (currentGenderRef.current !== voiceGender) {
-      currentGenderRef.current = voiceGender;
-      // Clear TTS cache on gender change
-      ttsCacheRef.current.forEach(url => URL.revokeObjectURL(url));
-      ttsCacheRef.current.clear();
-      ttsAvailableRef.current = null;
-      // Re-pick speech synthesis voice
-      pickVoice();
-    }
-  }, [voiceGender]);
-
-  /* ── Pick the best voice for SpeechSynthesis fallback ── */
-  const pickVoice = useCallback(() => {
-    if (typeof speechSynthesis === "undefined") return;
-    const voices = speechSynthesis.getVoices();
-    if (voices.length === 0) return;
-
-    const gender = currentGenderRef.current;
-
-    if (gender === 'male') {
-      const malePreferred = [
-        "daniel", "alex", "thomas", "james", "oliver",
-        "google uk english male", "microsoft david", "microsoft mark", "microsoft george",
-      ];
-      for (const pref of malePreferred) {
-        const match = voices.find(
-          (v) => v.name.toLowerCase().includes(pref) && v.lang.startsWith("en")
-        );
-        if (match) { selectedVoiceRef.current = match; return; }
-      }
-      const maleHints = ["male", "man", "guy"];
-      const maleVoice = voices.find(
-        (v) => v.lang.startsWith("en") && maleHints.some((h) => v.name.toLowerCase().includes(h))
-      );
-      if (maleVoice) { selectedVoiceRef.current = maleVoice; return; }
-    } else {
-      const femalePreferred = [
-        "samantha", "karen", "moira", "tessa", "fiona",
-        "google uk english female", "google us english",
-        "microsoft zira", "microsoft hazel", "microsoft susan",
-      ];
-      for (const pref of femalePreferred) {
-        const match = voices.find(
-          (v) => v.name.toLowerCase().includes(pref) && v.lang.startsWith("en")
-        );
-        if (match) { selectedVoiceRef.current = match; return; }
-      }
-      const femaleHints = ["female", "woman", "girl"];
-      const femaleVoice = voices.find(
-        (v) => v.lang.startsWith("en") && femaleHints.some((h) => v.name.toLowerCase().includes(h))
-      );
-      if (femaleVoice) { selectedVoiceRef.current = femaleVoice; return; }
-    }
-
-    // Fallback: any English voice
-    const anyEnglish = voices.find((v) => v.lang.startsWith("en"));
-    selectedVoiceRef.current = anyEnglish || voices[0];
-  }, []);
-
-  useEffect(() => {
-    if (typeof speechSynthesis === "undefined") return;
-    const handle = () => { pickVoice(); setVoicesReady(true); };
-    if (speechSynthesis.getVoices().length > 0) handle();
-    speechSynthesis.addEventListener("voiceschanged", handle);
-    return () => speechSynthesis.removeEventListener("voiceschanged", handle);
-  }, [pickVoice]);
-
-  /* ── Warm up: speak a silent utterance on first enable (mobile user-gesture requirement) ── */
-  useEffect(() => {
-    if (enabled && !warmedUpRef.current && typeof speechSynthesis !== "undefined") {
-      warmedUpRef.current = true;
-      const warmup = new SpeechSynthesisUtterance("");
-      warmup.volume = 0;
-      speechSynthesis.speak(warmup);
-    }
-  }, [enabled]);
 
   /* ── Try ElevenLabs TTS ── */
   const tryTTS = useCallback(async (text: string): Promise<boolean> => {
-    // If we already know TTS is unavailable, skip
     if (ttsAvailableRef.current === false) return false;
 
     try {
@@ -113,8 +24,7 @@ export function useBreathingAudio({ enabled, voiceGender = 'male' }: UseBreathin
       const accessToken = session?.access_token;
       if (!accessToken) { ttsAvailableRef.current = false; return false; }
 
-      // Include gender in cache key
-      const cacheKey = `${currentGenderRef.current}:${text}`;
+      const cacheKey = text;
       if (ttsCacheRef.current.has(cacheKey)) {
         const url = ttsCacheRef.current.get(cacheKey)!;
         audioRef.current = new Audio(url);
@@ -132,7 +42,7 @@ export function useBreathingAudio({ enabled, voiceGender = 'male' }: UseBreathin
             apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
             Authorization: `Bearer ${accessToken}`,
           },
-          body: JSON.stringify({ text, voice_gender: currentGenderRef.current }),
+          body: JSON.stringify({ text }),
         }
       );
 
@@ -152,50 +62,32 @@ export function useBreathingAudio({ enabled, voiceGender = 'male' }: UseBreathin
       ttsAvailableRef.current = true;
       return true;
     } catch (e) {
-      console.warn("TTS error, falling back to SpeechSynthesis:", e);
+      console.warn("TTS error:", e);
       ttsAvailableRef.current = false;
       return false;
     }
   }, []);
 
-  /* ── SpeechSynthesis fallback ── */
-  const speakFallback = useCallback((text: string) => {
-    if (typeof speechSynthesis === "undefined") return;
-    speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.rate = currentGenderRef.current === 'male' ? 0.9 : 0.85;
-    utterance.pitch = currentGenderRef.current === 'male' ? 0.85 : 1.05;
-    utterance.volume = 0.8;
-    if (selectedVoiceRef.current) utterance.voice = selectedVoiceRef.current;
-    speechSynthesis.speak(utterance);
-  }, []);
-
-  /* ── Play (tries TTS first, then SpeechSynthesis) ── */
+  /* ── Play ── */
   const playAudio = useCallback(
     async (text: string) => {
       if (!enabled) return;
 
       // Stop any ongoing audio
       if (audioRef.current) { audioRef.current.pause(); audioRef.current.currentTime = 0; }
-      if (typeof speechSynthesis !== "undefined") speechSynthesis.cancel();
 
-      // Try ElevenLabs TTS first
-      // JJ's ElevenLabs voice only — no browser speech fallback
       await tryTTS(text);
     },
-    [enabled, tryTTS, speakFallback]
+    [enabled, tryTTS]
   );
 
   /* ── Stop ── */
   const stopAudio = useCallback(() => {
     if (audioRef.current) { audioRef.current.pause(); audioRef.current.currentTime = 0; }
-    if (typeof speechSynthesis !== "undefined") speechSynthesis.cancel();
   }, []);
 
-  /* ── Preload ── */
-  const preloadAudio = useCallback((_texts: string[]) => {
-    if (typeof speechSynthesis !== "undefined" && !voicesReady) pickVoice();
-  }, [voicesReady, pickVoice]);
+  /* ── Preload (no-op, kept for API compat) ── */
+  const preloadAudio = useCallback((_texts: string[]) => {}, []);
 
   /* ── Cleanup ── */
   const cleanup = useCallback(() => {
