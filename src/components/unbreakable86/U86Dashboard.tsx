@@ -27,20 +27,20 @@ interface U86DashboardProps {
 }
 
 const DAILY_7 = [
-  { key: 'habit_train' as const, icon: Dumbbell, label: 'TRAIN', desc: 'Complete your session' },
-  { key: 'habit_learn' as const, icon: BookOpen, label: 'LEARN', desc: 'Education pillar task' },
-  { key: 'habit_hydrate' as const, icon: Droplets, label: 'HYDRATE', desc: '8 glasses minimum' },
-  { key: 'habit_numbers' as const, icon: Target, label: 'HIT YOUR NUMBERS', desc: 'Track your nutrition' },
-  { key: 'habit_breathwork' as const, icon: Wind, label: 'BREATHWORK', desc: 'Daily breathing session' },
-  { key: 'habit_sauna' as const, icon: ThermometerSun, label: 'SAUNA', desc: 'Heat exposure' },
-  { key: 'habit_cold_shower' as const, icon: Snowflake, label: 'COLD SHOWER', desc: 'Cold exposure' },
+  { key: 'habit_train' as const, icon: Dumbbell, label: 'TRAIN', desc: 'Complete your session', color: '#FF5500' },
+  { key: 'habit_learn' as const, icon: BookOpen, label: 'LEARN', desc: 'Education pillar task', color: '#3B82F6' },
+  { key: 'habit_hydrate' as const, icon: Droplets, label: 'HYDRATE', desc: '8 glasses minimum', color: '#06B6D4' },
+  { key: 'habit_numbers' as const, icon: Target, label: 'HIT YOUR NUMBERS', desc: 'Track your nutrition', color: '#10B981' },
+  { key: 'habit_breathwork' as const, icon: Wind, label: 'BREATHWORK', desc: 'Daily breathing session', color: '#8B5CF6' },
+  { key: 'habit_sauna' as const, icon: ThermometerSun, label: 'SAUNA', desc: 'Heat exposure', color: '#EF4444' },
+  { key: 'habit_cold_shower' as const, icon: Snowflake, label: 'COLD SHOWER', desc: 'Cold exposure', color: '#06B6D4' },
 ];
 
-const TABS: { id: U86Tab; icon: typeof Flame; label: string }[] = [
-  { id: 'dashboard', icon: Flame, label: 'TODAY' },
-  { id: 'programme', icon: Dumbbell, label: 'PLAN' },
-  { id: 'progress', icon: BarChart3, label: 'PROGRESS' },
-  { id: 'education', icon: GraduationCap, label: 'LEARN' },
+const TABS: { id: U86Tab; icon: typeof Flame; label: string; color: string }[] = [
+  { id: 'dashboard', icon: Flame, label: 'TODAY', color: '#FF5500' },
+  { id: 'programme', icon: Dumbbell, label: 'PLAN', color: '#EF4444' },
+  { id: 'progress', icon: BarChart3, label: 'PROGRESS', color: '#10B981' },
+  { id: 'education', icon: GraduationCap, label: 'LEARN', color: '#3B82F6' },
 ];
 
 export function U86Dashboard({
@@ -156,11 +156,12 @@ export function U86Dashboard({
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-display tracking-wider shrink-0 transition-all border ${
                   active
-                    ? 'bg-primary/15 text-primary border-primary/30 shadow-[0_0_12px_hsl(var(--primary)/0.3)]'
+                    ? 'border-opacity-30'
                     : 'text-muted-foreground border-transparent hover:text-foreground'
                 }`}
+                style={active ? { color: tab.color, background: `${tab.color}15`, borderColor: `${tab.color}40`, boxShadow: `0 0 12px ${tab.color}30` } : undefined}
               >
-                <Icon className="w-3.5 h-3.5" />
+                <Icon className="w-3.5 h-3.5" style={active ? { color: tab.color } : undefined} />
                 {tab.label}
               </button>
             );
@@ -207,21 +208,26 @@ export function U86Dashboard({
                       whileTap={{ scale: 0.98 }}
                       className={`w-full rounded-xl border p-3 flex items-center gap-3 transition-all ${
                         done
-                          ? 'border-primary/30 bg-primary/10'
+                          ? 'border-opacity-30'
                           : 'border-border bg-card hover:border-border/80'
                       }`}
+                      style={done ? { borderColor: `${habit.color}40`, background: `${habit.color}10` } : undefined}
                     >
-                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${
-                        done ? 'bg-primary/20 border border-primary/40' : 'bg-card border border-border'
-                      }`}>
+                      <div className="w-8 h-8 rounded-lg flex items-center justify-center transition-all border"
+                        style={done
+                          ? { background: `${habit.color}20`, borderColor: `${habit.color}50` }
+                          : { background: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }
+                        }
+                      >
                         {done ? (
-                          <Check className="w-4 h-4 text-primary" />
+                          <Check className="w-4 h-4" style={{ color: habit.color }} />
                         ) : (
-                          <Icon className="w-4 h-4 text-muted-foreground" />
+                          <Icon className="w-4 h-4" style={{ color: habit.color, opacity: 0.6 }} />
                         )}
                       </div>
                       <div className="text-left flex-1">
-                        <p className={`font-display text-xs tracking-wider ${done ? 'text-primary' : 'text-foreground'}`}>
+                        <p className="font-display text-xs tracking-wider"
+                          style={{ color: done ? habit.color : 'hsl(var(--foreground))' }}>
                           {habit.label}
                         </p>
                         <p className="text-muted-foreground text-[10px]">{habit.desc}</p>
@@ -232,7 +238,7 @@ export function U86Dashboard({
                           animate={{ scale: 1, rotate: 0 }}
                           transition={{ type: 'spring', stiffness: 300 }}
                         >
-                          <Flame className="w-4 h-4 text-primary" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.5))' }} />
+                          <Flame className="w-4 h-4" style={{ color: habit.color, filter: `drop-shadow(0 0 4px ${habit.color}80)` }} />
                         </motion.div>
                       )}
                     </motion.button>
