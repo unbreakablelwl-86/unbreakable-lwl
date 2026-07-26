@@ -295,26 +295,71 @@ export function U86Dashboard({
             <div className="rounded-xl border border-primary/15 bg-card p-4">
               <h3 className="font-display text-sm tracking-wider text-foreground mb-3">TODAY'S PROGRAMME</h3>
               {[
-                { icon: Dumbbell, label: 'POWER', task: phaseInfo.power_focus },
-                { icon: Activity, label: 'MOVEMENT', task: phaseInfo.movement_focus },
-                { icon: Apple, label: 'FUEL', task: phaseInfo.fuel_focus },
-                { icon: Brain, label: 'MINDSET', task: phaseInfo.mindset_focus },
-                { icon: GraduationCap, label: 'EDUCATION', task: phaseInfo.education_focus },
+                { icon: Dumbbell, label: 'POWER', task: phaseInfo.power_focus, color: '#FF5500' },
+                { icon: Activity, label: 'MOVEMENT', task: phaseInfo.movement_focus, color: '#EF4444' },
+                { icon: Apple, label: 'FUEL', task: phaseInfo.fuel_focus, color: '#10B981' },
+                { icon: Brain, label: 'MINDSET', task: phaseInfo.mindset_focus, color: '#8B5CF6' },
+                { icon: GraduationCap, label: 'EDUCATION', task: phaseInfo.education_focus, color: '#3B82F6' },
               ].map(item => {
                 const Icon = item.icon;
                 return (
                   <div key={item.label} className="flex items-start gap-3 py-2.5 border-b border-border last:border-0">
-                    <div className="w-8 h-8 rounded-lg border border-primary/30 bg-primary/5 flex items-center justify-center shrink-0">
-                      <Icon className="w-4 h-4 text-primary" />
+                    <div className="w-8 h-8 rounded-lg border flex items-center justify-center shrink-0"
+                      style={{ borderColor: `${item.color}40`, background: `${item.color}10` }}>
+                      <Icon className="w-4 h-4" style={{ color: item.color, filter: `drop-shadow(0 0 3px ${item.color}60)` }} />
                     </div>
                     <div>
-                      <p className="font-display text-xs tracking-wider text-foreground">{item.label}</p>
+                      <p className="font-display text-xs tracking-wider" style={{ color: item.color }}>{item.label}</p>
                       <p className="text-muted-foreground text-xs mt-0.5">{item.task}</p>
                     </div>
                   </div>
                 );
               })}
             </div>
+
+            {/* Add to Calendar */}
+            <Button
+              onClick={() => {
+                // Generate ICS for remaining days
+                const startDate = new Date(enrolment.start_date);
+                const lines = [
+                  'BEGIN:VCALENDAR',
+                  'VERSION:2.0',
+                  'PRODID:-//UNBREAKABLE//U86//EN',
+                  'CALSCALE:GREGORIAN',
+                ];
+                for (let d = enrolment.current_day; d <= 86; d++) {
+                  const date = new Date(startDate);
+                  date.setDate(date.getDate() + d - 1);
+                  const dateStr = date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+                  const endDate = new Date(date);
+                  endDate.setHours(endDate.getHours() + 1);
+                  const endStr = endDate.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+                  const phase = d <= 28 ? 'FOUNDATION' : d <= 56 ? 'BUILD' : 'PEAK';
+                  lines.push(
+                    'BEGIN:VEVENT',
+                    `DTSTART:${dateStr}`,
+                    `DTEND:${endStr}`,
+                    `SUMMARY:UNBREAKABLE 86 — Day ${d} (${phase})`,
+                    `DESCRIPTION:Complete your Daily 7 habits. Train • Learn • Hydrate • Hit Numbers • Breathwork • Sauna • Cold Shower`,
+                    'END:VEVENT'
+                  );
+                }
+                lines.push('END:VCALENDAR');
+                const blob = new Blob([lines.join('\r\n')], { type: 'text/calendar' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'UNBREAKABLE-86.ics';
+                a.click();
+                URL.revokeObjectURL(url);
+              }}
+              variant="outline"
+              className="w-full h-10 rounded-xl text-xs font-display tracking-wider border-primary/20 text-primary hover:bg-primary/10"
+            >
+              <Calendar className="w-4 h-4 mr-2" />
+              ADD TO CALENDAR
+            </Button>
 
             {/* Upsell Card */}
             {phaseInfo.upsell && (
