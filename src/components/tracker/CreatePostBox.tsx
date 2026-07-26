@@ -448,8 +448,9 @@ export function CreatePostBox({ onPostCreated }: CreatePostBoxProps) {
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
                 exit={{ opacity: 0, height: 0 }}
-                className="flex items-center justify-between gap-2 pt-2 border-t border-border"
+                className="flex flex-col gap-2 pt-2 border-t border-border"
               >
+                {/* Row 1: Media + Music */}
                 <div className="flex items-center gap-2">
                   <input
                     type="file"
@@ -487,7 +488,10 @@ export function CreatePostBox({ onPostCreated }: CreatePostBoxProps) {
                       Music
                     </Button>
                   </TrackPicker>
+                </div>
 
+                {/* Row 2: Visibility + Post */}
+                <div className="flex items-center justify-between">
                   <Select value={visibility} onValueChange={setVisibility}>
                     <SelectTrigger className="w-auto h-8 border-0 bg-transparent">
                       <div className="flex items-center gap-1 text-muted-foreground">
@@ -507,20 +511,20 @@ export function CreatePostBox({ onPostCreated }: CreatePostBoxProps) {
                       </SelectItem>
                     </SelectContent>
                   </Select>
-                </div>
 
-                <Button
-                  onClick={handleSubmit}
-                  disabled={isSubmitting || (!content.trim() && mediaItems.length === 0 && !attachedTrack)}
-                  className="font-heading tracking-wide"
-                >
-                  {isSubmitting ? (
-                    <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                  ) : (
-                    <Send className="w-4 h-4 mr-2" />
-                  )}
-                  Post
-                </Button>
+                  <Button
+                    onClick={handleSubmit}
+                    disabled={isSubmitting || (!content.trim() && mediaItems.length === 0 && !attachedTrack)}
+                    className="font-heading tracking-wide"
+                  >
+                    {isSubmitting ? (
+                      <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                    ) : (
+                      <Send className="w-4 h-4 mr-2" />
+                    )}
+                    Post
+                  </Button>
+                </div>
               </motion.div>
             )}
           </AnimatePresence>
