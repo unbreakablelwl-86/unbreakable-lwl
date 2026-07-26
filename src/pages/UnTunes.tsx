@@ -55,7 +55,7 @@ export default function UnTunes() {
   const { isLiked, toggleLike } = useLikeTrack();
   const { createPlaylist, addToPlaylist } = usePlaylistActions();
   const [searchQuery, setSearchQuery] = useState('');
-  const { playTrack, currentTrack } = usePlayer();
+  const { playTrack, currentTrack, ownedTrackIds } = usePlayer();
 
   /* ── Library sub-views ── */
   const [libraryView, setLibraryView] = useState<'main' | 'liked' | 'recent' | 'playlist'>('main');
@@ -300,6 +300,7 @@ export default function UnTunes() {
                               isLiked={isLiked(track.id)}
                               onToggleLike={() => toggleLike(track.id)}
                               onAddToPlaylist={() => openPlaylistSheet(track)}
+                              isOwned={ownedTrackIds.has(track.id)}
                             />
                           ))}
                         </div>
@@ -387,6 +388,7 @@ export default function UnTunes() {
                           isLiked={isLiked(track.id)}
                           onToggleLike={() => toggleLike(track.id)}
                           onAddToPlaylist={() => openPlaylistSheet(track)}
+                          isOwned={ownedTrackIds.has(track.id)}
                         />
                       ))}
                     </div>
@@ -427,6 +429,7 @@ export default function UnTunes() {
                           isLiked={isLiked(track.id)}
                           onToggleLike={() => toggleLike(track.id)}
                           onAddToPlaylist={() => openPlaylistSheet(track)}
+                          isOwned={ownedTrackIds.has(track.id)}
                         />
                       ))}
                     </div>
@@ -477,6 +480,7 @@ export default function UnTunes() {
                           isLiked={isLiked(track.id)}
                           onToggleLike={() => toggleLike(track.id)}
                           onAddToPlaylist={() => openPlaylistSheet(track)}
+                          isOwned={ownedTrackIds.has(track.id)}
                         />
                       ))}
                     </div>
@@ -537,6 +541,7 @@ export default function UnTunes() {
                           isLiked={isLiked(track.id)}
                           onToggleLike={() => { toggleLike(track.id); setTimeout(refreshLiked, 300); }}
                           onAddToPlaylist={() => openPlaylistSheet(track)}
+                          isOwned={ownedTrackIds.has(track.id)}
                         />
                       ))}
                     </div>
@@ -577,6 +582,7 @@ export default function UnTunes() {
                           isLiked={isLiked(track.id)}
                           onToggleLike={() => toggleLike(track.id)}
                           onAddToPlaylist={() => openPlaylistSheet(track)}
+                          isOwned={ownedTrackIds.has(track.id)}
                         />
                       ))}
                     </div>
@@ -617,6 +623,7 @@ export default function UnTunes() {
                           isLiked={isLiked(track.id)}
                           onToggleLike={() => toggleLike(track.id)}
                           onAddToPlaylist={() => openPlaylistSheet(track)}
+                          isOwned={ownedTrackIds.has(track.id)}
                         />
                       ))}
                     </div>

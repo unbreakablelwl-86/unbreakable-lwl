@@ -13,6 +13,7 @@ const logStep = (step: string, details?: any) => {
 // Known subscription price IDs (AI tiers + coaching tiers)
 const SUBSCRIPTION_PRICES = new Set([
   // Current subscription tiers (subscriptionTiers.ts)
+  "price_1TxFZED5KOEmeWH2ZSHP5Azn", // Foundation £50/mo (launch offer)
   "price_1TaPmmD5KOEmeWH2Le2bNnPh", // Absolute Base £7/mo (retention)
   "price_1TaPmmD5KOEmeWH2LeANGH4k", // Base £25/mo
   "price_1TaPmsD5KOEmeWH2dO7mg9XK", // Pro £50/mo

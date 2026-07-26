@@ -146,13 +146,18 @@ export function HomeDashboard() {
 
   return (
     <div className="min-h-screen pb-28 bg-background">
-      {/* ─── Hero Banner ─── */}
+      {/* ─── Hero Banner with JJ ─── */}
       <div className="relative overflow-hidden mx-4 mt-4 rounded-2xl border border-primary/30"
-        style={{ background: 'linear-gradient(135deg, rgba(255,85,0,0.15) 0%, rgba(255,85,0,0.05) 50%, hsl(var(--background) / 0.8) 100%)' }}>
-        {/* LWL logo watermark */}
-        <div className="absolute top-2 right-2 w-24 h-24 opacity-20">
-          <img loading="lazy" src="/lwl-logo.png" alt="" className="w-full h-full object-contain" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
-        </div>
+        style={{ background: 'linear-gradient(135deg, rgba(255,85,0,0.15) 0%, rgba(0,0,0,0.9) 100%)' }}>
+        {/* JJ hero background image */}
+        <img
+          loading="lazy"
+          src="https://vlwcoqilwyfcrsxodtdx.supabase.co/storage/v1/object/public/site-assets/misc/jj-hero-welcome.webp"
+          alt=""
+          className="absolute inset-0 w-full h-full object-cover opacity-40"
+        />
+        {/* Gradient overlay for readability */}
+        <div className="absolute inset-0 bg-gradient-to-r from-background/90 via-background/60 to-transparent" />
         <div className="relative z-10 p-5">
           <h2 className="font-display text-lg tracking-widest text-primary mb-4"
             style={{ textShadow: '0 0 20px rgba(255,85,0,0.5), 0 0 40px rgba(255,85,0,0.2)' }}>

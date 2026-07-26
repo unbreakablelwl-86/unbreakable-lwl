@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Play, Pause, Share2, Dumbbell, ListPlus, Check } from 'lucide-react';
+import { Play, Pause, Share2, Dumbbell, ListPlus, Check, Download } from 'lucide-react';
 import { usePlayer } from '@/hooks/useUnTunes';
 import type { Track } from '@/hooks/useUnTunes';
 
@@ -11,9 +11,10 @@ interface TrackRowProps {
   isLiked?: boolean;
   onToggleLike?: () => void;
   onAddToPlaylist?: () => void;
+  isOwned?: boolean;
 }
 
-export function UnTunesTrackRow({ track, index, onPlay, onShare, isLiked, onToggleLike, onAddToPlaylist }: TrackRowProps) {
+export function UnTunesTrackRow({ track, index, onPlay, onShare, isLiked, onToggleLike, onAddToPlaylist, isOwned }: TrackRowProps) {
   const { currentTrack, isPlaying } = usePlayer();
   const isActive = currentTrack?.id === track.id;
   const [justAdded, setJustAdded] = useState(false);
@@ -108,6 +109,27 @@ export function UnTunesTrackRow({ track, index, onPlay, onShare, isLiked, onTogg
           title="Add to playlist"
         >
           {justAdded ? <Check className="w-3.5 h-3.5" /> : <ListPlus className="w-3.5 h-3.5" />}
+        </button>
+      )}
+
+      {/* Download button (owned tracks only) */}
+      {isOwned && track.audio_url && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            const a = document.createElement('a');
+            a.href = track.audio_url;
+            a.download = `${track.title} - ${track.artist_name || 'UNBREAKABLE'}.mp3`;
+            a.target = '_blank';
+            a.rel = 'noopener';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+          }}
+          className="w-7 h-7 rounded-lg flex items-center justify-center transition-all text-green-500 hover:bg-green-500/10"
+          title="Download"
+        >
+          <Download className="w-3.5 h-3.5" />
         </button>
       )}
 

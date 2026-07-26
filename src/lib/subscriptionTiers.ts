@@ -80,8 +80,8 @@ export const TIERS: Record<TierKey, TierConfig> = {
     originalPrice: 89,
     isOffer: true,
     monthlyTokens: 1000,
-    stripePriceId: null, // TODO: Create in Stripe once re-authenticated
-    stripeProductId: null,
+    stripePriceId: 'price_1TxFZED5KOEmeWH2ZSHP5Azn',
+    stripeProductId: 'prod_Ux9sHxs4tgcQy8',
     rank: 2,
     popular: true,
     features: [
