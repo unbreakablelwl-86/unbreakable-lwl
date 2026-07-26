@@ -1,12 +1,20 @@
 /**
  * UNBREAKABLE 86 — Core Hook
  * Manages enrolment state, daily logs, progress tracking, and reset mechanics.
+ *
+ * Token economy:
+ *   £5 (500 tokens) to start the challenge
+ *   £5 (500 tokens) fine for each missed daily log (must save even if incomplete)
  */
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { format, differenceInCalendarDays, parseISO } from 'date-fns';
+import { format, differenceInCalendarDays, parseISO, addDays } from 'date-fns';
+import { toast } from 'sonner';
 import type { U86Enrolment, U86DailyLog, U86QuizAnswers } from '@/lib/unbreakable86Types';
+
+const U86_ENTRY_FEE = 500;   // 500 tokens = £5
+const U86_MISS_FINE = 500;   // 500 tokens = £5 per missed day
 
 interface U86State {
   enrolment: U86Enrolment | null;
@@ -69,17 +77,41 @@ export function useUnbreakable86() {
 
         completedDays = count || 0;
 
-        // Check if user missed a day (reset mechanic)
-        if ((enrolment as any).status === 'active' && completedDays > 0) {
-          const daysSinceStart = differenceInCalendarDays(
-            new Date(),
-            parseISO((enrolment as any).start_date)
-          );
-          const expectedDay = daysSinceStart + 1;
+        // Check for missed days — charge £5 fine per missed day (no reset)
+        if ((enrolment as any).status === 'active') {
+          const startDate = parseISO((enrolment as any).start_date);
+          const daysSinceStart = differenceInCalendarDays(new Date(), startDate);
 
-          // If they're behind (missed days), trigger reset
-          if (expectedDay > (enrolment as any).current_day + 1 && completedDays < expectedDay - 1) {
-            await resetEnrolment((enrolment as any).id, (enrolment as any).reset_count);
+          // Find which dates have logs
+          const { data: allLogs } = await supabase
+            .from('unbreakable86_daily_logs' as any)
+            .select('log_date')
+            .eq('enrolment_id', (enrolment as any).id);
+
+          const loggedDates = new Set((allLogs || []).map((l: any) => l.log_date));
+
+          // Check each past day (not today) for missing logs
+          let missedCount = 0;
+          for (let d = 0; d < daysSinceStart; d++) {
+            const checkDate = format(addDays(startDate, d), 'yyyy-MM-dd');
+            if (!loggedDates.has(checkDate)) {
+              missedCount++;
+            }
+          }
+
+          // Charge fines for newly missed days (store fined count on enrolment)
+          const previouslyFined = (enrolment as any).reset_count || 0; // repurpose reset_count as fined_days
+          if (missedCount > previouslyFined && user) {
+            const newFines = missedCount - previouslyFined;
+            const totalFine = newFines * U86_MISS_FINE;
+            await deductTokens(totalFine, `UNBREAKABLE 86 — ${newFines} missed day(s) fine (£${newFines * 5})`);
+            toast.error(`${newFines} missed day${newFines > 1 ? 's' : ''} — ${totalFine} tokens deducted!`);
+
+            // Update fined count
+            await supabase
+              .from('unbreakable86_enrolments' as any)
+              .update({ reset_count: missedCount })
+              .eq('id', (enrolment as any).id);
           }
         }
       }
@@ -98,9 +130,48 @@ export function useUnbreakable86() {
 
   useEffect(() => { fetchEnrolment(); }, [fetchEnrolment]);
 
-  /* ─── Start new enrolment ─── */
+  /* ─── Deduct tokens (returns true if successful) ─── */
+  const deductTokens = useCallback(async (amount: number, reason: string): Promise<boolean> => {
+    if (!user) return false;
+    try {
+      const { data, error } = await supabase.rpc('deduct_tokens' as any, {
+        p_user_id: user.id,
+        p_amount: amount,
+        p_reason: reason,
+      });
+      if (error) {
+        // Fallback: direct update if RPC doesn't exist
+        const { data: bal } = await supabase
+          .from('ai_token_balances' as any)
+          .select('balance')
+          .eq('user_id', user.id)
+          .maybeSingle();
+        if (!bal || (bal as any).balance < amount) {
+          toast.error(`Not enough tokens (need ${amount}). Top up to continue.`);
+          return false;
+        }
+        await supabase
+          .from('ai_token_balances' as any)
+          .update({ balance: (bal as any).balance - amount, lifetime_spent: ((bal as any).lifetime_spent || 0) + amount })
+          .eq('user_id', user.id);
+        await supabase
+          .from('ai_token_transactions' as any)
+          .insert({ user_id: user.id, amount: -amount, type: 'u86_fee', description: reason });
+      }
+      return true;
+    } catch {
+      toast.error('Token deduction failed');
+      return false;
+    }
+  }, [user]);
+
+  /* ─── Start new enrolment (charges £5 entry fee) ─── */
   const startChallenge = useCallback(async (quizAnswers: U86QuizAnswers) => {
     if (!user) return null;
+
+    // Charge entry fee
+    const charged = await deductTokens(U86_ENTRY_FEE, 'UNBREAKABLE 86 — Entry fee (£5)');
+    if (!charged) return null;
 
     const { data, error } = await supabase
       .from('unbreakable86_enrolments' as any)
@@ -116,9 +187,10 @@ export function useUnbreakable86() {
       .single();
 
     if (error) throw error;
+    toast.success('UNBREAKABLE 86 activated! 500 tokens charged.');
     await fetchEnrolment();
     return data as U86Enrolment;
-  }, [user, today, fetchEnrolment]);
+  }, [user, today, fetchEnrolment, deductTokens]);
 
   /* ─── Toggle habit ─── */
   const toggleHabit = useCallback(async (habit: keyof U86DailyLog) => {
@@ -189,7 +261,7 @@ export function useUnbreakable86() {
     }
   }, [user, state.enrolment, state.todayLog, today, fetchEnrolment]);
 
-  /* ─── Update journal ─── */
+  /* ─── Update journal + trigger AI consistency update ─── */
   const updateJournal = useCallback(async (journal: string) => {
     if (!state.todayLog) return;
 
@@ -199,7 +271,14 @@ export function useUnbreakable86() {
       .eq('id', state.todayLog.id);
 
     setState(s => s.todayLog ? ({ ...s, todayLog: { ...s.todayLog, journal } }) : s);
-  }, [state.todayLog]);
+
+    // Fire-and-forget: AI consistency table update
+    if (state.enrolment && journal.trim()) {
+      supabase.functions.invoke('u86-consistency', {
+        body: { enrolment_id: state.enrolment.id, day_number: state.todayLog.day_number },
+      }).catch(() => {}); // Non-blocking
+    }
+  }, [state.todayLog, state.enrolment]);
 
   /* ─── Reset enrolment ─── */
   const resetEnrolment = useCallback(async (enrolmentId: string, currentResets: number) => {

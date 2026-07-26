@@ -5,26 +5,20 @@ const json = (d: any, s = 200) => new Response(JSON.stringify(d), { headers: { .
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: CH });
   try {
-    const serviceClient = createClient(
-      Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
-      { auth: { persistSession: false } }
-    );
-    const { action, imageBase64 } = await req.json();
-
-    if (action === "upload_hero") {
-      const bytes = Uint8Array.from(atob(imageBase64), c => c.charCodeAt(0));
-      const { data, error } = await serviceClient.storage
-        .from("site-assets")
-        .upload("misc/jj-hero-welcome.webp", bytes, {
-          contentType: "image/webp",
-          upsert: true,
-        });
-      if (error) return json({ error: error.message }, 500);
-      const { data: urlData } = serviceClient.storage.from("site-assets").getPublicUrl("misc/jj-hero-welcome.webp");
-      return json({ path: data?.path, url: urlData?.publicUrl });
+    const sc = createClient(Deno.env.get("SUPABASE_URL") ?? "", Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "", { auth: { persistSession: false } });
+    const { action, user_id } = await req.json();
+    if (action === "check_flow") {
+      const { data: drip } = await sc.from("email_drip").select("*").eq("user_id", user_id);
+      const { data: follows } = await sc.from("follows").select("*").or(`follower_id.eq.c219f448-c05a-4fe3-ae11-793222b7dced,following_id.eq.${user_id}`);
+      const { data: convos } = await sc.from("conversation_participants").select("conversation_id").eq("user_id", user_id);
+      const { data: notifs } = await sc.from("notifications").select("type,title,body").eq("type", "new_signup").order("created_at", { ascending: false }).limit(3);
+      return json({ drip_count: drip?.length, drip, follows: follows?.length, convos: convos?.length, recent_signup_notifs: notifs });
     }
-
-    return json({ error: "Unknown action" }, 400);
+    if (action === "test_checkout") {
+      // Test that Foundation price is accessible
+      const { data: tier } = await sc.from("ai_tiers").select("*").eq("stripe_price_id", "price_1TxFZED5KOEmeWH2ZSHP5Azn").maybeSingle();
+      return json({ foundation_tier: tier });
+    }
+    return json({ error: "Unknown" }, 400);
   } catch (e) { return json({ error: String(e) }, 500); }
 });
