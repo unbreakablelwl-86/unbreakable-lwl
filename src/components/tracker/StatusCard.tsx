@@ -4,7 +4,7 @@ import { ClickableAvatar } from '@/components/ClickableAvatar';
 import { ClickableUsername } from '@/components/ClickableUsername';
 import { Button } from '@/components/ui/button';
 
-import { Dumbbell, MessageCircle, Globe, Users, Lock, Play, Pause, Volume2, VolumeX, Maximize, Bookmark } from 'lucide-react';
+import { Dumbbell, MessageCircle, Globe, Users, Lock, Play, Pause, Volume2, VolumeX, Maximize, Bookmark, Music } from 'lucide-react';
 import { PostWithProfile } from '@/hooks/usePosts';
 import { useAuth } from '@/hooks/useAuth';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -172,7 +172,52 @@ export function StatusCard({ post, onKudos, onDelete, onToggleComments, onUpdate
     }
   };
 
-  const hasMedia = (post.media_items && post.media_items.length > 0) || post.image_url || post.video_url;
+  // Split media items into visual (image/video) and audio
+  const visualMedia = post.media_items?.filter(m => m.media_type !== 'audio') || [];
+  const audioMedia = post.media_items?.filter(m => m.media_type === 'audio') || [];
+  const hasMedia = visualMedia.length > 0 || audioMedia.length > 0 || post.image_url || post.video_url;
+
+  // Audio player state
+  const [audioPlaying, setAudioPlaying] = useState(false);
+  const [audioProgress, setAudioProgress] = useState(0);
+  const audioPlayerRef = useRef<HTMLAudioElement | null>(null);
+
+  const toggleAudio = (media: typeof audioMedia[0]) => {
+    if (audioPlaying && audioPlayerRef.current) {
+      audioPlayerRef.current.pause();
+      setAudioPlaying(false);
+      return;
+    }
+    // Parse clip bounds from width/height (stored as ms) or URL #t= fragment
+    const clipStart = media.width ? media.width / 1000 : 0;
+    const clipEnd = media.height ? media.height / 1000 : media.duration_seconds || 0;
+    const baseUrl = media.media_url.split('#')[0];
+    const audio = new Audio(baseUrl);
+    audio.currentTime = clipStart;
+    audio.volume = 0.8;
+    audioPlayerRef.current = audio;
+
+    const updateProgress = () => {
+      if (clipEnd > clipStart) {
+        const pct = ((audio.currentTime - clipStart) / (clipEnd - clipStart)) * 100;
+        setAudioProgress(Math.min(100, Math.max(0, pct)));
+      }
+      if (clipEnd > 0 && audio.currentTime >= clipEnd) {
+        audio.pause();
+        setAudioPlaying(false);
+        setAudioProgress(0);
+      }
+    };
+    audio.addEventListener('timeupdate', updateProgress);
+    audio.addEventListener('ended', () => { setAudioPlaying(false); setAudioProgress(0); });
+    audio.play().catch(() => {});
+    setAudioPlaying(true);
+  };
+
+  // Cleanup audio on unmount
+  useEffect(() => {
+    return () => { audioPlayerRef.current?.pause(); };
+  }, []);
 
   return (
     <motion.div
@@ -231,10 +276,46 @@ export function StatusCard({ post, onKudos, onDelete, onToggleComments, onUpdate
           />
         </div>
 
+        {/* Audio track player */}
+        {audioMedia.length > 0 && audioMedia.map((am) => (
+          <div key={am.id} className="mx-4 mb-2">
+            <div className="flex items-center gap-3 p-3 rounded-xl border border-primary/20 bg-primary/5">
+              <div className="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0 bg-zinc-800">
+                {am.thumbnail_url ? (
+                  <img loading="lazy" src={am.thumbnail_url} alt="" className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <Music className="w-4 h-4 text-zinc-600" />
+                  </div>
+                )}
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <button onClick={() => toggleAudio(am)} className="p-1 rounded-full hover:bg-muted transition-colors">
+                    {audioPlaying ? (
+                      <Pause className="w-5 h-5 text-primary" />
+                    ) : (
+                      <Play className="w-5 h-5 text-primary ml-0.5" />
+                    )}
+                  </button>
+                  <div className="flex-1">
+                    <div className="h-1.5 rounded-full bg-muted/30 overflow-hidden">
+                      <div className="h-full bg-primary rounded-full transition-all duration-200" style={{ width: `${audioProgress}%` }} />
+                    </div>
+                    <p className="text-[10px] text-muted-foreground mt-0.5">
+                      {am.duration_seconds ? `${Math.round(am.duration_seconds)}s clip` : 'Audio'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+
         {/* Media — edge-to-edge, no padding */}
-        {post.media_items && post.media_items.length > 0 ? (
+        {visualMedia.length > 0 ? (
           <div className="relative select-none" onClick={handleDoubleTap}>
-            <MediaCarousel items={post.media_items} />
+            <MediaCarousel items={visualMedia} />
             {/* Double-tap dumbbell overlay */}
             <AnimatePresence>
               {showDoubleTapHeart && (

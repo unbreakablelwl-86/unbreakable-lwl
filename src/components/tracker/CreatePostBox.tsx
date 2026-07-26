@@ -404,33 +404,22 @@ export function CreatePostBox({ onPostCreated }: CreatePostBoxProps) {
             )}
           </AnimatePresence>
 
-          {/* Attached Un-Tunes track preview */}
+          {/* Attached Un-Tunes track preview — compact inline */}
           <AnimatePresence>
             {attachedTrack && (
               <motion.div
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
                 exit={{ opacity: 0, height: 0 }}
-                className="flex items-center gap-3 p-3 rounded-xl border border-primary/30 bg-primary/5"
+                className="flex items-center gap-2 px-2 py-1.5 rounded-lg border border-primary/30 bg-primary/5"
               >
-                <div className="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0 bg-zinc-800">
-                  {attachedTrack.cover_url ? (
-                    <img loading="lazy" src={attachedTrack.cover_url} alt="" className="w-full h-full object-cover" />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <Music className="w-4 h-4 text-zinc-600" />
-                    </div>
-                  )}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-foreground truncate">{attachedTrack.title}</p>
-                  <p className="text-xs text-muted-foreground truncate">
-                    {attachedTrack.artist_name} · Clip {Math.floor(attachedTrack.clipStart / 60)}:{String(Math.round(attachedTrack.clipStart % 60)).padStart(2, '0')}–{Math.floor(attachedTrack.clipEnd / 60)}:{String(Math.round(attachedTrack.clipEnd % 60)).padStart(2, '0')} ({Math.round(attachedTrack.clipEnd - attachedTrack.clipStart)}s)
-                  </p>
-                </div>
+                <Music className="w-4 h-4 text-primary flex-shrink-0" />
+                <p className="text-xs text-foreground truncate flex-1">
+                  {attachedTrack.title} · {Math.round(attachedTrack.clipEnd - attachedTrack.clipStart)}s clip
+                </p>
                 {!isSubmitting && (
-                  <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => setAttachedTrack(null)}>
-                    <X className="w-4 h-4" />
+                  <Button variant="ghost" size="sm" className="h-6 w-6 p-0 flex-shrink-0" onClick={() => setAttachedTrack(null)}>
+                    <X className="w-3.5 h-3.5" />
                   </Button>
                 )}
               </motion.div>
@@ -522,7 +511,7 @@ export function CreatePostBox({ onPostCreated }: CreatePostBoxProps) {
 
                 <Button
                   onClick={handleSubmit}
-                  disabled={isSubmitting || (!content.trim() && mediaItems.length === 0)}
+                  disabled={isSubmitting || (!content.trim() && mediaItems.length === 0 && !attachedTrack)}
                   className="font-heading tracking-wide"
                 >
                   {isSubmitting ? (
