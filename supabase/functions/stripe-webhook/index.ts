@@ -85,7 +85,8 @@ serve(async (req) => {
       event = await stripe.webhooks.constructEventAsync(body, signature, webhookSecret);
     } else {
       event = JSON.parse(body) as Stripe.Event;
-      log("WARNING: No webhook secret, parsing without verification");
+      log("CRITICAL: No webhook secret configured — rejecting request");
+      return new Response("Webhook secret not configured", { status: 500 });
     }
   } catch (err: any) {
     log("Signature verification failed", { error: err.message });

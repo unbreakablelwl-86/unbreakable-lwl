@@ -1,3 +1,4 @@
+import { rateLimit, rateLimitResponse, getClientIP } from "../_shared/rateLimiter.ts";
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.57.2";
 
@@ -51,6 +52,11 @@ function rollRarity(type: "single" | "album" | "bundle"): "standard" | "gold" | 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
+
+  // Rate limiting
+  const ip = getClientIP(req);
+  const rl = rateLimit(ip, 10, 60);
+  if (!rl.allowed) return rateLimitResponse(rl.retryAfter!);
   }
 
   try {
