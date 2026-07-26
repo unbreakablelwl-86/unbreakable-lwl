@@ -146,18 +146,19 @@ export function HomeDashboard() {
 
   return (
     <div className="min-h-screen pb-28 bg-background">
-      {/* ─── Hero Banner with JJ ─── */}
-      <div className="relative overflow-hidden mx-4 mt-4 rounded-2xl border border-primary/30"
-        style={{ background: 'linear-gradient(135deg, rgba(255,85,0,0.15) 0%, rgba(0,0,0,0.9) 100%)' }}>
-        {/* JJ hero background image */}
+      {/* ─── JJ Hero Image ─── */}
+      <div className="mx-4 mt-4 rounded-2xl overflow-hidden border border-primary/30">
         <img
-          loading="lazy"
           src="https://vlwcoqilwyfcrsxodtdx.supabase.co/storage/v1/object/public/site-assets/misc/jj-hero-welcome.webp"
-          alt=""
-          className="absolute inset-0 w-full h-full object-cover opacity-40"
+          alt="UNBREAKABLE — Keep Showing Up"
+          className="w-full object-cover"
+          style={{ maxHeight: '240px' }}
         />
-        {/* Gradient overlay for readability */}
-        <div className="absolute inset-0 bg-gradient-to-r from-background/90 via-background/60 to-transparent" />
+      </div>
+
+      {/* ─── Stats Banner ─── */}
+      <div className="relative overflow-hidden mx-4 mt-3 rounded-2xl border border-primary/30"
+        style={{ background: 'linear-gradient(135deg, rgba(255,85,0,0.12) 0%, hsl(var(--background)) 100%)' }}>
         <div className="relative z-10 p-5">
           <h2 className="font-display text-lg tracking-widest text-primary mb-4"
             style={{ textShadow: '0 0 20px rgba(255,85,0,0.5), 0 0 40px rgba(255,85,0,0.2)' }}>
