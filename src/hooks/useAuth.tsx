@@ -60,7 +60,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!error && data?.user?.identities?.length === 0) {
       return { error: new Error('This email is already registered. Try signing in instead.') };
     }
-    
+
+    // Fire-and-forget: enrol the new member in the onboarding email sequence.
+    // Never allowed to block or fail the sign-up itself.
+    if (!error && data?.user) {
+      void fetch('/api/apollo-enroll', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, fullName }),
+      }).catch(() => undefined);
+    }
+
     return { error: error as Error | null };
   };
 
