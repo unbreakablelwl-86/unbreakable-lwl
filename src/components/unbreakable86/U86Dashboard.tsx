@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
+import { u86CountDone, U86_MIN_HABITS, U86_TOTAL_HABITS } from '@/lib/unbreakable86Types';
 import type { U86Enrolment, U86DailyLog, U86Tab } from '@/lib/unbreakable86Types';
 import { U86_PHASES } from '@/lib/unbreakable86Types';
 
@@ -71,8 +72,9 @@ export function U86Dashboard({
   const [journalSaving, setJournalSaving] = useState(false);
   const [expandedSection, setExpandedSection] = useState<string | null>('habits');
 
-  const habitsCompleted = todayLog ? DAILY_7.filter(h => (todayLog as any)[h.key]).length : 0;
-  const allDone = habitsCompleted === DAILY_7.length;
+  const habitsCompleted = u86CountDone(todayLog as any, therapyChoice);
+  const allDone = habitsCompleted >= U86_TOTAL_HABITS;
+  const dayBanked = habitsCompleted >= U86_MIN_HABITS;
 
   // Current phase info
   const phaseInfo = U86_PHASES.find(p =>
@@ -147,7 +149,7 @@ export function U86Dashboard({
             <p className="text-muted-foreground text-[9px] font-display tracking-wider">COMPLETED</p>
           </div>
           <div className="rounded-xl border border-border bg-card p-2.5 text-center">
-            <p className="font-display text-lg text-foreground">{habitsCompleted}/{DAILY_7.length}</p>
+            <p className="font-display text-lg text-foreground">{habitsCompleted}/{U86_TOTAL_HABITS}</p>
             <p className="text-muted-foreground text-[9px] font-display tracking-wider">TODAY</p>
           </div>
           <div className="rounded-xl border border-border bg-card p-2.5 text-center">
@@ -201,17 +203,18 @@ export function U86Dashboard({
                 <div>
                   <p className="text-xs font-display tracking-wider text-muted-foreground">DAILY 7</p>
                   <p className="text-[9px] text-muted-foreground/70 mt-0.5">
-                    Sauna &amp; cold shower are one choice — locked for the 86. Miss a day and the calendar resets.
+                    Aim for all 7. A minimum of {U86_MIN_HABITS} banks the day — build up to the full 7 across the 86.
+                    Sauna &amp; cold shower are one choice, locked for the 86. Drop below {U86_MIN_HABITS} and the calendar resets.
                   </p>
                 </div>
-                {allDone && (
+                {dayBanked && (
                   <motion.div
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
                     className="flex items-center gap-1 text-primary text-[10px] font-display tracking-wider"
                   >
                     <Trophy className="w-3 h-3" />
-                    ALL DONE
+                    {allDone ? 'ALL 7 DONE' : 'DAY BANKED'}
                   </motion.div>
                 )}
               </div>
@@ -269,7 +272,7 @@ export function U86Dashboard({
             <div className="rounded-xl border border-border bg-card p-3.5">
               <div className="flex items-center gap-2 mb-2">
                 <PenLine className="w-4 h-4 text-primary" />
-                <span className="font-display text-xs tracking-wider text-foreground">DAILY JOURNAL</span>
+                <span className="font-display text-xs tracking-wider text-foreground">DAILY JOURNAL <span className="text-muted-foreground">— HABIT 7</span></span>
               </div>
               <Textarea
                 value={journalText}

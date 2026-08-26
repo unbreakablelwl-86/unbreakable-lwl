@@ -4,9 +4,10 @@
  *
  * Rules (JJ, Aug 2026):
  *   No entry fee. No fines. Included with Unbreakable.
- *   All 7 daily habits must be logged every day. Sauna / cold shower is ONE habit —
- *   the user picks heat or cold at onboarding and is locked to it for the 86 days.
- *   Miss a day (or fail to complete all 7) and the calendar resets to Day 1.
+ *   Seven daily habits. Sauna / cold shower is ONE habit — the user picks heat or
+ *   cold at onboarding and is locked to it for the 86 days.
+ *   The aim is all 7 every day; a MINIMUM of 3 banks the day, so a user can build
+ *   up to the full 7 over the 86 days. Fewer than 3 (or no log) resets to Day 1.
  *   Complete all 86 consecutive days and the certificate unlocks.
  */
 import { useState, useEffect, useCallback } from 'react';
@@ -15,6 +16,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { format, differenceInCalendarDays, parseISO, addDays } from 'date-fns';
 import { toast } from 'sonner';
 import type { U86Enrolment, U86DailyLog, U86QuizAnswers } from '@/lib/unbreakable86Types';
+import { u86DayBanked, U86_MIN_HABITS } from '@/lib/unbreakable86Types';
 
 
 interface U86State {
@@ -130,7 +132,7 @@ export function useUnbreakable86() {
               (enrolment as any).reset_count || 0,
               (enrolment as any).quiz_answers
             );
-            toast.error('Day missed — the 86 resets. Back to Day 1. Keep showing up.');
+            toast.error(`Day missed — fewer than ${U86_MIN_HABITS} of the Daily 7 logged. Back to Day 1. Keep showing up.`);
             setState(s => ({ ...s, loading: true }));
             return fetchEnrolment();
           }
@@ -207,16 +209,10 @@ export function useUnbreakable86() {
       const currentVal = (state.todayLog as any)[habit];
       const updates: any = { [habit]: !currentVal, updated_at: new Date().toISOString() };
 
-      // Check if all habits are done after this toggle
-      const val = (k: string) => (k === habit ? !currentVal : (state.todayLog as any)[k]);
-
       // Sauna and cold shower are ONE habit — the user's locked choice is the only one that counts.
-      const therapyKey = therapyChoice === 'sauna' ? 'habit_sauna' : 'habit_cold_shower';
-      const required = [
-        'habit_train', 'habit_learn', 'habit_hydrate',
-        'habit_numbers', 'habit_breathwork', therapyKey,
-      ];
-      updates.all_habits_done = required.every(k => Boolean(val(k)));
+      // A minimum of 3 of the Daily 7 banks the day (journal counts as the 7th).
+      const projected: any = { ...(state.todayLog as any), [habit]: !currentVal };
+      updates.all_habits_done = u86DayBanked(projected, therapyChoice);
 
       const { data, error } = await supabase
         .from('unbreakable86_daily_logs' as any)
@@ -230,8 +226,8 @@ export function useUnbreakable86() {
       const updatedLog = data as U86DailyLog;
       setState(s => ({ ...s, todayLog: updatedLog }));
 
-      // If all habits done, advance the day
-      if (updatedLog.all_habits_done) {
+      // Day banked (>= 3 of the Daily 7) — advance the day
+      if (updatedLog.all_habits_done && !(state.todayLog as any).all_habits_done) {
         await supabase
           .from('unbreakable86_enrolments' as any)
           .update({
@@ -250,12 +246,32 @@ export function useUnbreakable86() {
   const updateJournal = useCallback(async (journal: string) => {
     if (!state.todayLog) return;
 
+    const projected: any = { ...(state.todayLog as any), journal };
+    const banked = u86DayBanked(projected, therapyChoice);
+    const wasBanked = Boolean((state.todayLog as any).all_habits_done);
+
     await supabase
       .from('unbreakable86_daily_logs' as any)
-      .update({ journal, updated_at: new Date().toISOString() })
+      .update({ journal, all_habits_done: banked, updated_at: new Date().toISOString() })
       .eq('id', state.todayLog.id);
 
-    setState(s => s.todayLog ? ({ ...s, todayLog: { ...s.todayLog, journal } }) : s);
+    setState(s => s.todayLog
+      ? ({ ...s, todayLog: { ...s.todayLog, journal, all_habits_done: banked } })
+      : s);
+
+    // Writing the journal can be the 3rd habit — bank and advance the day
+    if (banked && !wasBanked && state.enrolment) {
+      const nextDay = state.enrolment.current_day + 1;
+      await supabase
+        .from('unbreakable86_enrolments' as any)
+        .update({
+          current_day: nextDay,
+          updated_at: new Date().toISOString(),
+          ...(nextDay > 86 ? { status: 'completed', completed_at: new Date().toISOString() } : {}),
+        })
+        .eq('id', state.enrolment.id);
+      await fetchEnrolment();
+    }
 
     // Fire-and-forget: AI consistency table update
     if (state.enrolment && journal.trim()) {
@@ -263,7 +279,7 @@ export function useUnbreakable86() {
         body: { enrolment_id: state.enrolment.id, day_number: state.todayLog.day_number },
       }).catch(() => {}); // Non-blocking
     }
-  }, [state.todayLog, state.enrolment]);
+  }, [state.todayLog, state.enrolment, therapyChoice, fetchEnrolment]);
 
   /* ─── Manual reset (user-triggered restart) ─── */
   const resetEnrolment = useCallback(async (enrolmentId: string, currentResets: number) => {

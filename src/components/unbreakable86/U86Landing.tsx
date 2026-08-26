@@ -27,8 +27,8 @@ const PILLARS = [
 
 const RULES = [
   { icon: Calendar, text: '86 consecutive days. No shortcuts, no rest days.' },
-  { icon: CheckCircle, text: 'Complete all 7 daily habits, every single day.' },
-  { icon: RotateCcw, text: 'Miss a day, or miss a habit — the calendar resets to Day 1.' },
+  { icon: CheckCircle, text: 'Seven daily habits. Log at least 3 to bank the day — build up to all 7 across the 86.' },
+  { icon: RotateCcw, text: 'Drop below 3 habits, or miss a day entirely — the calendar resets to Day 1.' },
   { icon: Shield, text: 'No fees, no fines. Included with your Unbreakable membership.' },
   { icon: Trophy, text: 'Complete all 86 — your certificate is issued.' },
 ];
