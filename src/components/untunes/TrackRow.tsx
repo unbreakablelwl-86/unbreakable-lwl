@@ -79,6 +79,9 @@ export function UnTunesTrackRow({ track, index, onPlay, onShare, isLiked, onTogg
         </p>
         <p className="text-[10px] text-white/70 truncate">
           {track.artist_name || 'Unknown Artist'}
+          {typeof track.play_count === 'number' && track.play_count > 0 && (
+            <span className="text-white/40"> · {track.play_count.toLocaleString()} plays</span>
+          )}
         </p>
       </div>
 
