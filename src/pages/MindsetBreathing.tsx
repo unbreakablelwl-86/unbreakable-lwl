@@ -454,6 +454,7 @@ const MindsetBreathing = () => {
   if (view === "countdown") {
     return (
       <CountdownOverlay
+        accent="#8B5CF6"
         isActive={true}
         onComplete={handleCountdownComplete}
         startFrom={3}

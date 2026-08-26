@@ -496,6 +496,7 @@ export function RecordRunModal({ isOpen, onClose }: RecordRunModalProps) {
   return (
     <>
       <CountdownOverlay
+        accent="#EF4444"
         isActive={showCountdown}
         onComplete={startTracking}
         startFrom={3}

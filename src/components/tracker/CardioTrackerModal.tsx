@@ -888,6 +888,7 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
   return (
     <>
       <CountdownOverlay
+        accent="#EF4444"
         isActive={phase === 'countdown'}
         onComplete={() => {
           if (preAcquireWatchRef.current !== null) {

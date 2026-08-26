@@ -104,7 +104,7 @@ const Zone = () => {
             onClick={() => toggleMode("stopwatch")}
             className={`flex-1 py-3 flex items-center justify-center gap-2 text-sm font-display tracking-wider transition-colors ${
               mode === "stopwatch"
-                ? "bg-primary text-primary-foreground"
+                ? "bg-[#8B5CF6] text-white"
                 : "bg-card text-muted-foreground hover:text-foreground"
             }`}
           >
@@ -114,7 +114,7 @@ const Zone = () => {
             onClick={() => toggleMode("countdown")}
             className={`flex-1 py-3 flex items-center justify-center gap-2 text-sm font-display tracking-wider transition-colors ${
               mode === "countdown"
-                ? "bg-primary text-primary-foreground"
+                ? "bg-[#8B5CF6] text-white"
                 : "bg-card text-muted-foreground hover:text-foreground"
             }`}
           >
@@ -141,8 +141,8 @@ const Zone = () => {
                 onClick={() => setCountdownStart(p)}
                 className={`py-3 rounded-xl text-sm font-display tracking-wider transition-all border ${
                   countdownStart === p
-                    ? "bg-primary/10 border-primary text-primary"
-                    : "bg-card border-border text-muted-foreground hover:border-primary/40"
+                    ? "bg-[#8B5CF6]/10 border-[#8B5CF6] text-[#8B5CF6]"
+                    : "bg-card border-border text-muted-foreground hover:border-[#8B5CF6]/40"
                 }`}
               >
                 {p >= 60 ? `${Math.floor(p / 60)}:${String(p % 60).padStart(2, "0")}` : `0:${String(p).padStart(2, "0")}`}
@@ -168,7 +168,7 @@ const Zone = () => {
             className={`w-20 h-20 rounded-full p-0 text-lg font-display tracking-wider ${
               running
                 ? "bg-destructive hover:bg-destructive/90"
-                : "bg-primary hover:bg-primary/90"
+                : "bg-[#8B5CF6] hover:bg-[#8B5CF6]/90"
             }`}
             disabled={countdownDone}
           >
@@ -178,7 +178,7 @@ const Zone = () => {
         </div>
 
         {countdownDone && (
-          <p className="text-center text-primary font-display tracking-widest text-lg mt-6 animate-bounce">
+          <p className="text-center text-[#8B5CF6] font-display tracking-widest text-lg mt-6 animate-bounce">
             TIME&apos;S UP!
           </p>
         )}
