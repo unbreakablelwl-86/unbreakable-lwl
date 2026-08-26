@@ -187,6 +187,15 @@ export function ControlledAIBuildFlow({
                 <span className="text-muted-foreground">Won't be a min — your coach is on it 💪</span>
               </div>
 
+              {/* Don't-refresh notice */}
+              <div className="max-w-sm mx-auto rounded-xl border border-primary/25 bg-primary/5 p-3">
+                <p className="font-display text-[11px] tracking-wider text-primary mb-1">HANG TIGHT</p>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  Don't refresh or leave this screen — your coach updates it the second it's ready.
+                  You'll get to read it through and edit anything before it saves to your library.
+                </p>
+              </div>
+
               {/* Progress Animation */}
               <div className="max-w-xs mx-auto">
                 <motion.div
