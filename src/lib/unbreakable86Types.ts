@@ -65,6 +65,8 @@ export interface U86QuizAnswers {
     stress_level: number;  // 1-10
   };
   injuries: string;
+  /** Locked for the full 86 days: heat OR cold exposure counts as the 7th daily habit. */
+  therapy_choice: 'sauna' | 'cold_shower';
 }
 
 /* ─── Programme Structure ─── */

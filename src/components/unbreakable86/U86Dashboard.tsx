@@ -24,17 +24,28 @@ interface U86DashboardProps {
   onToggleHabit: (habit: keyof U86DailyLog) => Promise<void>;
   onUpdateJournal: (journal: string) => Promise<void>;
   onViewProgress: () => void;
+  /** The user's locked heat/cold choice for the full 86 days. */
+  therapyChoice: 'sauna' | 'cold_shower';
 }
 
-const DAILY_7 = [
+const HABITS = [
   { key: 'habit_train' as const, icon: Dumbbell, label: 'TRAIN', desc: 'Complete your session', color: '#FF5500' },
   { key: 'habit_learn' as const, icon: BookOpen, label: 'LEARN', desc: 'Education pillar task', color: '#3B82F6' },
   { key: 'habit_hydrate' as const, icon: Droplets, label: 'HYDRATE', desc: '8 glasses minimum', color: '#06B6D4' },
   { key: 'habit_numbers' as const, icon: Target, label: 'HIT YOUR NUMBERS', desc: 'Track your nutrition', color: '#10B981' },
   { key: 'habit_breathwork' as const, icon: Wind, label: 'BREATHWORK', desc: 'Daily breathing session', color: '#8B5CF6' },
-  { key: 'habit_sauna' as const, icon: ThermometerSun, label: 'SAUNA', desc: 'Heat exposure', color: '#EF4444' },
-  { key: 'habit_cold_shower' as const, icon: Snowflake, label: 'COLD SHOWER', desc: 'Cold exposure', color: '#06B6D4' },
+  { key: 'habit_sauna' as const, icon: ThermometerSun, label: 'SAUNA', desc: 'Heat exposure — your locked therapy', color: '#EF4444' },
+  { key: 'habit_cold_shower' as const, icon: Snowflake, label: 'COLD SHOWER', desc: 'Cold exposure — your locked therapy', color: '#06B6D4' },
 ];
+
+/**
+ * The Daily 7. Sauna and cold shower are the SAME habit — the user picks heat or cold
+ * at onboarding and is locked to it, so only their choice is ever shown.
+ */
+function dailyHabits(therapyChoice: 'sauna' | 'cold_shower') {
+  const drop = therapyChoice === 'sauna' ? 'habit_cold_shower' : 'habit_sauna';
+  return HABITS.filter(h => h.key !== drop);
+}
 
 const TABS: { id: U86Tab; icon: typeof Flame; label: string; color: string }[] = [
   { id: 'dashboard', icon: Flame, label: 'TODAY', color: '#FF5500' },
@@ -52,14 +63,16 @@ export function U86Dashboard({
   onToggleHabit,
   onUpdateJournal,
   onViewProgress,
+  therapyChoice,
 }: U86DashboardProps) {
+  const DAILY_7 = dailyHabits(therapyChoice);
   const [activeTab, setActiveTab] = useState<U86Tab>('dashboard');
   const [journalText, setJournalText] = useState(todayLog?.journal || '');
   const [journalSaving, setJournalSaving] = useState(false);
   const [expandedSection, setExpandedSection] = useState<string | null>('habits');
 
   const habitsCompleted = todayLog ? DAILY_7.filter(h => (todayLog as any)[h.key]).length : 0;
-  const allDone = habitsCompleted === 7;
+  const allDone = habitsCompleted === DAILY_7.length;
 
   // Current phase info
   const phaseInfo = U86_PHASES.find(p =>
@@ -134,7 +147,7 @@ export function U86Dashboard({
             <p className="text-muted-foreground text-[9px] font-display tracking-wider">COMPLETED</p>
           </div>
           <div className="rounded-xl border border-border bg-card p-2.5 text-center">
-            <p className="font-display text-lg text-foreground">{habitsCompleted}/7</p>
+            <p className="font-display text-lg text-foreground">{habitsCompleted}/{DAILY_7.length}</p>
             <p className="text-muted-foreground text-[9px] font-display tracking-wider">TODAY</p>
           </div>
           <div className="rounded-xl border border-border bg-card p-2.5 text-center">
@@ -185,7 +198,12 @@ export function U86Dashboard({
             {/* Daily 7 Habits */}
             <div>
               <div className="flex items-center justify-between mb-2 px-1">
-                <p className="text-xs font-display tracking-wider text-muted-foreground">DAILY 7</p>
+                <div>
+                  <p className="text-xs font-display tracking-wider text-muted-foreground">DAILY 7</p>
+                  <p className="text-[9px] text-muted-foreground/70 mt-0.5">
+                    Sauna &amp; cold shower are one choice — locked for the 86. Miss a day and the calendar resets.
+                  </p>
+                </div>
                 {allDone && (
                   <motion.div
                     initial={{ scale: 0 }}
@@ -388,8 +406,13 @@ export function U86Dashboard({
           <>
             {/* Progress Grid */}
             <div className="rounded-xl border border-border bg-card p-4">
-              <h3 className="font-display text-xs tracking-wider text-muted-foreground mb-3">86-DAY GRID</h3>
-              <div className="grid grid-cols-14 gap-[3px]">
+              <h3 className="font-display text-xs tracking-wider text-muted-foreground mb-3">86-DAY CALENDAR</h3>
+              <div className="grid grid-cols-7 gap-1.5">
+                {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((d, i) => (
+                  <div key={`h${i}`} className="text-center text-[9px] font-display tracking-wider text-muted-foreground pb-0.5">
+                    {d}
+                  </div>
+                ))}
                 {Array.from({ length: 86 }, (_, i) => {
                   const dayNum = i + 1;
                   const isCompleted = dayNum < enrolment.current_day;
@@ -397,20 +420,22 @@ export function U86Dashboard({
                   return (
                     <div
                       key={dayNum}
-                      className={`w-full aspect-square rounded-sm transition-all ${
-                        isCompleted ? 'bg-primary'
-                        : isToday ? 'bg-primary/40 ring-1 ring-primary'
-                        : 'bg-border/50'
+                      className={`w-full aspect-square rounded-md flex items-center justify-center font-display text-[11px] transition-all border ${
+                        isCompleted ? 'bg-primary/90 border-primary text-white'
+                        : isToday ? 'bg-primary/20 border-primary text-primary'
+                        : 'bg-card border-border text-muted-foreground/50'
                       }`}
-                      style={isCompleted ? { boxShadow: '0 0 3px rgba(255,85,0,0.3)' } : {}}
+                      style={isCompleted ? { boxShadow: '0 0 6px rgba(255,85,0,0.35)' } : {}}
                       title={`Day ${dayNum}`}
-                    />
+                    >
+                      {isCompleted ? <Check className="w-3.5 h-3.5" /> : dayNum}
+                    </div>
                   );
                 })}
               </div>
-              <div className="flex items-center gap-4 mt-3 text-[10px] text-muted-foreground">
+              <div className="flex items-center gap-4 mt-3 text-[10px] text-muted-foreground flex-wrap">
                 <div className="flex items-center gap-1"><div className="w-2.5 h-2.5 rounded-sm bg-primary" /> Completed</div>
-                <div className="flex items-center gap-1"><div className="w-2.5 h-2.5 rounded-sm bg-primary/40 ring-1 ring-primary" /> Today</div>
+                <div className="flex items-center gap-1"><div className="w-2.5 h-2.5 rounded-sm bg-primary/20 ring-1 ring-primary" /> Today</div>
                 <div className="flex items-center gap-1"><div className="w-2.5 h-2.5 rounded-sm bg-border/50" /> Remaining</div>
               </div>
             </div>

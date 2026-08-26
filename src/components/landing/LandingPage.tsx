@@ -532,9 +532,9 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
                     <p className="text-[#666] text-[10px] sm:text-xs font-heading tracking-wider">2020 — THE GRIND</p>
                   </div>
                   <div className="text-center">
-                    <img loading="lazy" src={jjReturn} alt="2025-2026" className="w-full aspect-square object-cover rounded-xl mb-2 opacity-80 hover:opacity-100 transition-opacity"
+                    <img loading="lazy" src={jjReturn} alt="2026" className="w-full aspect-square object-cover rounded-xl mb-2 opacity-80 hover:opacity-100 transition-opacity"
                       style={{ border: '1px solid rgba(255,85,0,0.15)' }} />
-                    <p className="text-[#FF5500] text-[10px] sm:text-xs font-heading tracking-wider">2025 — UNBREAKABLE</p>
+                    <p className="text-[#FF5500] text-[10px] sm:text-xs font-heading tracking-wider">2026 — UNBREAKABLE</p>
                   </div>
                 </div>
               </div>

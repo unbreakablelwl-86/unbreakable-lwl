@@ -26,10 +26,21 @@ const PILLARS = [
 ];
 
 const RULES = [
-  { icon: Calendar, text: '86 days. No shortcuts.' },
-  { icon: CheckCircle, text: 'Complete your Daily 7 every single day.' },
-  { icon: RotateCcw, text: 'Miss one day — counter resets to Day 1.' },
-  { icon: Trophy, text: 'Complete all 86 — earn your certificate.' },
+  { icon: Calendar, text: '86 consecutive days. No shortcuts, no rest days.' },
+  { icon: CheckCircle, text: 'Complete all 7 daily habits, every single day.' },
+  { icon: RotateCcw, text: 'Miss a day, or miss a habit — the calendar resets to Day 1.' },
+  { icon: Shield, text: 'No fees, no fines. Included with your Foundation membership.' },
+  { icon: Trophy, text: 'Complete all 86 — your certificate is issued.' },
+];
+
+const DAILY_7 = [
+  { label: 'TRAIN', desc: 'Complete the session your coach built you.' },
+  { label: 'LEARN', desc: 'One education task from the Unbreakable University.' },
+  { label: 'HYDRATE', desc: '8 glasses of water, minimum.' },
+  { label: 'HIT YOUR NUMBERS', desc: 'Log your food and hit your macros.' },
+  { label: 'BREATHWORK', desc: 'A daily breathing session.' },
+  { label: 'THERAPY — SAUNA OR COLD', desc: 'You choose heat or cold at the start. Locked for all 86 days.' },
+  { label: 'JOURNAL', desc: 'Log the day. What worked, what didn\'t, what\'s next.' },
 ];
 
 export function U86Landing({ onStart, resetCount = 0 }: U86LandingProps) {
@@ -105,6 +116,22 @@ export function U86Landing({ onStart, resetCount = 0 }: U86LandingProps) {
             it's a complete system for becoming <span className="text-primary">unbreakable</span>.
           </p>
         </motion.div>
+
+        {/* ─── The Daily 7 ─── */}
+        <div>
+          <p className="text-xs font-display tracking-wider text-muted-foreground mb-3 px-1">THE DAILY 7</p>
+          <div className="rounded-xl border border-border bg-card divide-y divide-border">
+            {DAILY_7.map((h, i) => (
+              <div key={h.label} className="flex items-start gap-3 p-3">
+                <span className="font-display text-xs text-primary w-4 shrink-0 pt-0.5">{i + 1}</span>
+                <div>
+                  <p className="font-display text-xs tracking-wider text-foreground">{h.label}</p>
+                  <p className="text-muted-foreground text-xs mt-0.5">{h.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
 
         {/* ─── 5 Pillars ─── */}
         <div>

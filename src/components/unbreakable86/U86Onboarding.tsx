@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   ArrowRight, ArrowLeft, Dumbbell, Home, Minus,
   Apple, Target, Moon, Droplets, AlertTriangle, Loader2,
-  Flame, Sparkles, ChevronRight,
+  Flame, Sparkles, ChevronRight, ThermometerSun, Snowflake,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -34,9 +34,10 @@ export function U86Onboarding({ onComplete, onBack }: U86OnboardingProps) {
     goals: [],
     current_habits: { sleep_quality: 5, water_intake: 5, stress_level: 5 },
     injuries: '',
+    therapy_choice: undefined,
   });
 
-  const totalSteps = 7;
+  const totalSteps = 8;
   const progress = ((step + 1) / totalSteps) * 100;
 
   const canProceed = () => {
@@ -48,6 +49,7 @@ export function U86Onboarding({ onComplete, onBack }: U86OnboardingProps) {
       case 4: return true; // dietary
       case 5: return true; // habits assessment
       case 6: return true; // injuries (optional)
+      case 7: return !!answers.therapy_choice;
       default: return false;
     }
   };
@@ -311,6 +313,46 @@ export function U86Onboarding({ onComplete, onBack }: U86OnboardingProps) {
                   <p className="text-xs text-muted-foreground">
                     <Sparkles className="w-3.5 h-3.5 text-primary inline mr-1" />
                     The Unbreakable Coach will adapt your programme around any limitations. Safety first, always.
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* ─── Step 7: Recovery Therapy Choice (locked for all 86 days) ─── */}
+            {step === 7 && (
+              <div className="space-y-3">
+                <h2 className="font-display text-lg tracking-wider text-foreground">PICK YOUR THERAPY</h2>
+                <p className="text-muted-foreground text-sm">
+                  One of your Daily 7 is heat or cold exposure. Choose one now — it's locked for all 86 days.
+                  Pick the one you can genuinely do every single day.
+                </p>
+                {[
+                  { value: 'sauna', icon: ThermometerSun, label: 'SAUNA', desc: 'Heat exposure — sauna or steam, every day', color: '#EF4444' },
+                  { value: 'cold_shower', icon: Snowflake, label: 'COLD SHOWER', desc: 'Cold exposure — cold shower or ice bath, every day', color: '#06B6D4' },
+                ].map(opt => {
+                  const Icon = opt.icon;
+                  const selected = answers.therapy_choice === opt.value;
+                  return (
+                    <button
+                      key={opt.value}
+                      onClick={() => setAnswers(a => ({ ...a, therapy_choice: opt.value as any }))}
+                      className={`w-full rounded-xl border p-4 text-left transition-all flex items-start gap-3 ${
+                        selected ? '' : 'border-border bg-card hover:border-border/80'
+                      }`}
+                      style={selected ? { borderColor: `${opt.color}66`, background: `${opt.color}12`, boxShadow: `0 0 12px ${opt.color}40` } : undefined}
+                    >
+                      <Icon className="w-5 h-5 mt-0.5 shrink-0" style={{ color: opt.color }} />
+                      <div>
+                        <span className="font-display text-sm tracking-wider text-foreground">{opt.label}</span>
+                        <p className="text-muted-foreground text-xs mt-0.5">{opt.desc}</p>
+                      </div>
+                    </button>
+                  );
+                })}
+                <div className="rounded-xl border border-primary/15 bg-primary/5 p-3">
+                  <p className="text-xs text-muted-foreground">
+                    <Flame className="w-3.5 h-3.5 text-primary inline mr-1" />
+                    Miss a day's log and the calendar resets to Day 1. No fees, no fines — just start again and keep showing up.
                   </p>
                 </div>
               </div>
