@@ -77,7 +77,7 @@ export const TIERS: Record<TierKey, TierConfig> = {
     name: 'foundation',
     displayName: 'Unbreakable',
     monthlyPrice: 50,
-    originalPrice: 89,
+    originalPrice: 75,
     isOffer: true,
     monthlyTokens: 1000,
     stripePriceId: 'price_1TxFZED5KOEmeWH2ZSHP5Azn',
