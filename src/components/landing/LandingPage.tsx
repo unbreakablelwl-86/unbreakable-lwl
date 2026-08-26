@@ -121,17 +121,17 @@ const freeFeatures = [
   'Nutrition tracker & meal planner',
   'Recipe library with macros',
   'Mindset programmes & breathing exercises',
-  '4 focus & reaction games',
+  'Unbreakable86 — the 86-day habit challenge',
   'Community Hub — feed, stories & messaging',
   'Daily habit diary & lifestyle tracking',
   'Calculators & body composition tools',
   'Music library (Un-Tunes)',
-  'Free coach tokens on signup',
+  'Your Unbreakable Coach — 1,000 tokens a month',
 ];
 
 /* ─── Token tiers ─── */
 const tokenTiers = [
-  { name: 'FREE', tokens: 0, price: '£0', desc: 'Full access to all free tools & community', highlight: false, features: ['All free tools', 'Community access', 'University preview'] },
+  { name: 'FREE', tokens: 0, price: '£0', desc: 'Create your profile and look around', highlight: false, features: ['Your profile & account', 'A look around the app', 'Upgrade whenever you like'] },
   { name: 'UNBREAKABLE', tokens: 1000, price: '£50', period: '/mo', desc: 'Full AI coaching, all features unlocked', highlight: true, features: ['1,000 tokens/month', 'Unbreakable Coach', 'All features'], originalPrice: '£75' },
 ];
 
@@ -189,7 +189,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
                 onClick={goSignUp}
               >
                 <Sparkles size={14} />
-                JOIN FREE
+                JOIN NOW
               </button>
             </div>
           </div>
@@ -257,7 +257,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
               onClick={goSignUp}
             >
               <Sparkles size={18} />
-              JOIN FREE — NO CARD NEEDED
+              JOIN — £50/MO, LAUNCH OFFER
             </button>
           </motion.div>
 
@@ -266,9 +266,9 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
             transition={{ duration: 0.6 }}
             className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-[#666] text-xs sm:text-sm"
           >
-            <span className="flex items-center gap-1.5"><Check size={14} className="text-[#FF5500]" /> 100% free to use</span>
-            <span className="flex items-center gap-1.5"><Check size={14} className="text-[#FF5500]" /> 5 coach tokens on signup</span>
-            <span className="flex items-center gap-1.5"><Check size={14} className="text-[#FF5500]" /> No card required</span>
+            <span className="flex items-center gap-1.5"><Check size={14} className="text-[#FF5500]" /> £75/mo → £50/mo for launch</span>
+            <span className="flex items-center gap-1.5"><Check size={14} className="text-[#FF5500]" /> 1,000 coach tokens a month</span>
+            <span className="flex items-center gap-1.5"><Check size={14} className="text-[#FF5500]" /> Cancel anytime</span>
           </motion.div>
         </motion.div>
 
@@ -588,12 +588,12 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
         <div className="container mx-auto max-w-4xl">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={stagger}>
             <motion.div variants={fadeUp} className="text-center mb-10">
-              <p className="text-[#FF5500] font-heading font-bold text-sm uppercase tracking-[0.2em] mb-2">No Paywall</p>
+              <p className="text-[#FF5500] font-heading font-bold text-sm uppercase tracking-[0.2em] mb-2">One Membership</p>
               <h2 className="font-heading font-black text-2xl sm:text-3xl md:text-5xl text-white uppercase tracking-wide">
-                Free. Seriously.
+                Everything. One Price.
               </h2>
               <p className="text-[#888] mt-3 max-w-xl mx-auto text-sm sm:text-base">
-                Every tool is free to use. Tokens unlock your Unbreakable Coach and premium University courses.
+                One membership unlocks the lot — every tracker, every builder, your Unbreakable Coach and the University. No add-ons, no upsells, no locked tabs.
               </p>
             </motion.div>
 
@@ -678,7 +678,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
                 <span className="text-[#FF5500] font-bold">Top-ups carry over</span> — never lose purchased tokens
               </p>
               <p className="text-[#666] text-[11px]">
-                Need more? Top-ups from £2.50 — tokens that never expire
+                Need more? £10 top-ups — anything you don't use rolls over
               </p>
             </motion.div>
           </motion.div>
@@ -711,7 +711,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
                   Unbreakable University
                 </h3>
                 <p className="text-[#888] text-sm leading-relaxed max-w-lg">
-                  Real PT-level content across 8+ courses — training science, nutrition science, mindset psychology and sport-specific modules.
+                  Real PT-level content at Level 2 and Level 3 — training science, nutrition science, mindset psychology and sport-specific modules.
                   Over 4,400 quiz questions. Certificates on completion. All for a fraction of what traditional PT courses charge.
                 </p>
               </div>
@@ -742,9 +742,9 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
             }}
             onClick={goSignUp}
           >
-            START NOW — IT'S FREE
+            START NOW — £50/MO
           </button>
-          <p className="text-[#555] text-xs mt-4">No card needed · 5 free coach tokens · Cancel anytime</p>
+          <p className="text-[#555] text-xs mt-4">Launch price locked for life · 1,000 tokens a month · Cancel anytime</p>
         </div>
       </section>
 

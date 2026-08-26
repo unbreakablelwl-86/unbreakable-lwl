@@ -2,7 +2,7 @@
  * UNBREAKABLE 86 — Main Page
  * Routes between Landing → Onboarding → Dashboard → Certificate
  */
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useUnbreakable86 } from '@/hooks/useUnbreakable86';
 import { useAuth } from '@/hooks/useAuth';
 import { U86Landing } from '@/components/unbreakable86/U86Landing';
@@ -13,6 +13,8 @@ import type { U86QuizAnswers } from '@/lib/unbreakable86Types';
 import { Loader2 } from 'lucide-react';
 import { PaywallGate } from '@/components/paywall';
 import { ControlledAIBuildFlow } from '@/components/ai/ControlledAIBuildFlow';
+import { useCardioPrograms } from '@/hooks/useCardioPrograms';
+import { supabase } from '@/integrations/supabase/client';
 
 type U86View = 'landing' | 'onboarding' | 'building' | 'dashboard' | 'certificate';
 
@@ -47,6 +49,43 @@ export default function Unbreakable86() {
   );
 
   const [pendingAnswers, setPendingAnswers] = useState<U86QuizAnswers | null>(null);
+  const { saveProgram } = useCardioPrograms();
+  const [cardioState, setCardioState] = useState<'idle' | 'building' | 'done' | 'failed'>('idle');
+
+  /**
+   * UNBREAKABLE 86 is a five-pillar challenge, so enrolment has to deliver the
+   * Movement (cardio) plan as well as the strength programme. Runs once, right
+   * after the strength build is published, and never blocks the dashboard.
+   */
+  const buildU86Cardio = useCallback(async (a: U86QuizAnswers) => {
+    setCardioState('building');
+    try {
+      const sessionsPerWeek = Math.max(2, Math.min(4, 7 - (a.training_days ?? 4)));
+      const { data, error } = await supabase.functions.invoke('generate-cardio-program', {
+        body: {
+          activityType: 'run',
+          goal: (a.goals || []).some(g => /weight|fat|lean/i.test(g)) ? 'weight_loss' : 'fitness',
+          currentLevel: a.experience ?? 'beginner',
+          sessionsPerWeek,
+          sessionLength: a.experience === 'advanced' ? 45 : a.experience === 'intermediate' ? 35 : 25,
+        },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      if (!data?.program) throw new Error('No programme returned');
+      const program = {
+        ...data.program,
+        programName: data.program.programName?.includes('86')
+          ? data.program.programName
+          : `UNBREAKABLE 86 — Movement`,
+      };
+      await saveProgram.mutateAsync({ program });
+      setCardioState('done');
+    } catch (e) {
+      console.error('U86 cardio build failed', e);
+      setCardioState('failed');
+    }
+  }, [saveProgram]);
 
   const handleStartOnboarding = () => setView('onboarding');
 
@@ -99,7 +138,7 @@ export default function Unbreakable86() {
                 </h1>
                 <p className="text-muted-foreground text-sm">
                   Your coach is building the full programme from your answers. Review it, edit anything you want,
-                  then publish it — it lands in My Programmes and drives your trackers.
+                  then publish it — it lands in My Programmes and drives your trackers. Your Movement (cardio) plan is built straight after and saved to your Movement programmes.
                 </p>
               </div>
               <ControlledAIBuildFlow
@@ -113,7 +152,10 @@ export default function Unbreakable86() {
                   daysPerWeek: pendingAnswers.training_days,
                   chatContext: 'UNBREAKABLE 86 challenge enrolment',
                 }}
-                onComplete={() => setView('dashboard')}
+                onComplete={() => {
+                  if (pendingAnswers && cardioState === 'idle') void buildU86Cardio(pendingAnswers);
+                  setView('dashboard');
+                }}
                 onCancel={() => setView('dashboard')}
               />
             </div>

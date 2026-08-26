@@ -11,6 +11,9 @@ interface CountdownOverlayProps {
   exerciseName?: string;
   onPlayAudio?: (text: string) => void;
   onStartGps?: () => void;
+  /** Pillar accent colour (hex). Defaults to the app primary. Tools should
+   *  match the colour of the section they are launched from. */
+  accent?: string;
 }
 
 export function CountdownOverlay({ 
@@ -18,7 +21,9 @@ export function CountdownOverlay({
   onComplete, 
   exerciseName,
   onStartGps,
+  accent,
 }: CountdownOverlayProps) {
+  const accentColor = accent ?? '#FF5500';
   const [phase, setPhase] = useState<CountdownPhase>("power");
   const gpsStartedRef = useRef(false);
 
@@ -77,7 +82,7 @@ export function CountdownOverlay({
         <div 
           className="absolute inset-0 pointer-events-none"
           style={{
-            background: "radial-gradient(circle at center, hsl(var(--primary) / 0.15), transparent 70%)"
+            background: `radial-gradient(circle at center, ${accentColor}26, transparent 70%)`
           }}
         />
 
@@ -96,8 +101,8 @@ export function CountdownOverlay({
             className="relative z-10 flex flex-col items-center"
           >
             <span 
-              className="font-display text-[10rem] md:text-[14rem] leading-none text-primary"
-              style={{ textShadow: "0 0 80px hsl(var(--primary) / 0.8)" }}
+              className="font-display text-[10rem] md:text-[14rem] leading-none"
+              style={{ color: accentColor, textShadow: `0 0 80px ${accentColor}cc` }}
             >
               GO!
             </span>
@@ -113,7 +118,16 @@ export function CountdownOverlay({
   );
 }
 
+/** Each pillar word shows in its own pillar colour. */
+const PILLAR_COLOURS: Record<string, string> = {
+  POWER: '#FF5500',
+  MOVEMENT: '#EF4444',
+  FUEL: '#10B981',
+  MINDSET: '#8B5CF6',
+};
+
 function PowerWord({ word }: { word: string }) {
+  const accentColor = PILLAR_COLOURS[word] ?? '#FF5500';
   return (
     <motion.div
       key={`word-${word}`}
@@ -129,12 +143,12 @@ function PowerWord({ word }: { word: string }) {
           opacity: [0.5, 0, 0.5],
         }}
         transition={{ duration: 0.6, repeat: Infinity, ease: "easeOut" }}
-        className="absolute w-56 h-56 rounded-full border-4 border-primary"
-        style={{ left: "50%", top: "50%", transform: "translate(-50%, -50%)" }}
+        className="absolute w-56 h-56 rounded-full border-4"
+        style={{ borderColor: accentColor, left: "50%", top: "50%", transform: "translate(-50%, -50%)" }}
       />
       <span 
-        className="font-display text-[6rem] md:text-[10rem] leading-none text-primary"
-        style={{ textShadow: "0 0 60px hsl(var(--primary) / 0.7)" }}
+        className="font-display text-[6rem] md:text-[10rem] leading-none"
+        style={{ color: accentColor, textShadow: `0 0 60px ${accentColor}b3` }}
       >
         {word}
       </span>
