@@ -1,3 +1,4 @@
+import { ReferralCard } from './ReferralCard';
 import { TokenBalanceBadge } from '@/components/ai/TokenBalanceBadge';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -64,6 +65,9 @@ export function MembershipTab() {
           </Button>
         </div>
       </Card>
+
+      {/* Personal referral code — gives whoever uses it the £50 rate */}
+      <ReferralCard />
 
       {/* Upgrade prompt for free users */}
       {currentTier === 'free' && (

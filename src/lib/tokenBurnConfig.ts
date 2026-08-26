@@ -322,7 +322,7 @@ export const TOKEN_TOPUPS: TokenTopUp[] = [
     name: 'Token Top-Up',
     tokens: 250,
     price: 10,
-    stripePriceId: 'price_1TaPmmD5KOEmeWH2lbJWYqDf',
+    stripePriceId: 'price_1U8jm2D5KOEmeWH249kqt6M0',
     valuePerToken: '4p/token',
     popular: true,
   },

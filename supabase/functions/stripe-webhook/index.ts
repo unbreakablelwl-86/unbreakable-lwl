@@ -57,7 +57,9 @@ const PRICE_TO_BUNDLE: Record<string, string[]> = {
 // ── Token top-up price IDs (one-time purchases that provision tokens) ──
 const PRICE_TO_TOPUP: Record<string, { tokens: number; label: string }> = {
   // £10 top-up — a quarter tank. Priced at 4p/token against the £50/1,000 membership rate.
-  "price_1TaPmmD5KOEmeWH2lbJWYqDf": { tokens: 250, label: "£10 Top-Up (quarter tank)" },
+  "price_1U8jm2D5KOEmeWH249kqt6M0": { tokens: 250, label: "£10 Top-Up (quarter tank)" },
+  // Retired £15 price — kept so historic/in-flight payments still credit correctly.
+  "price_1TaPmmD5KOEmeWH2lbJWYqDf": { tokens: 250, label: "£10 Top-Up (legacy price)" },
   "price_1TaPmmD5KOEmeWH2aoxZv7uk": { tokens: 150, label: "Medium Top-Up (150 tokens)" },
   "price_1TaPmsD5KOEmeWH2NmqQQnW1": { tokens: 300, label: "Large Top-Up (300 tokens)" },
 };
