@@ -1,3 +1,4 @@
+import { TokenBalanceBadge } from '@/components/ai/TokenBalanceBadge';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -37,20 +38,20 @@ export function MembershipTab() {
                 {tierDisplayName.toUpperCase()} TIER
               </h3>
               <Badge className="bg-primary/20 text-primary text-xs font-display">
-                {monthlyTokens} TOKENS/MO
+                FULL TANK MONTHLY
               </Badge>
             </div>
             <p className="text-sm text-muted-foreground flex items-center gap-1.5">
               <Coins className="w-3.5 h-3.5 text-primary" />
-              Current balance: <span className="text-primary font-semibold">{balance}</span> coins
+              Coach fuel: <TokenBalanceBadge />
             </p>
           </div>
         </div>
 
         <p className="text-xs text-muted-foreground bg-muted/30 p-3 rounded-lg">
-          Tokens power your <span className="text-primary font-semibold">Unbreakable Coach</span> —
-          AI chat, programme builds, meal plans, and University courses. All platform features
-          (Power, Fuel, Movement, Mindset, Community) are free.
+          Your fuel powers the <span className="text-primary font-semibold">Unbreakable Coach</span> —
+          AI chat, programme builds and meal plans. Everything else (Power, Fuel, Movement,
+          Mindset, University and Community) is included with your membership.
         </p>
 
         <div className="flex gap-2">
@@ -72,8 +73,8 @@ export function MembershipTab() {
             <h4 className="font-display text-sm tracking-wide text-foreground">WANT MORE TOKENS?</h4>
           </div>
           <p className="text-xs text-muted-foreground leading-relaxed">
-            Upgrade to Starter (50 tokens/mo), Pro (100 tokens/mo), or Elite (200 tokens/mo)
-            to unlock the full power of your Unbreakable Coach.
+            Foundation gives you 1,000 tokens a month and unlocks everything —
+            your Unbreakable Coach, programmes, nutrition, University and UnTunes.
           </p>
           <Button
             variant="outline"

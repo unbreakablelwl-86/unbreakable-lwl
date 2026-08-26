@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useTokenBalance } from '@/hooks/useTokenBalance';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -42,6 +42,24 @@ export default function AITokens() {
   const userTier = (currentTier || 'free') as TierKey;
   const usedTokens = monthlyTokens - balance;
   const usagePercent = getTokenUsagePercent(usedTokens > 0 ? usedTokens : 0, monthlyTokens);
+
+  /**
+   * Coach fuel gauge. Members never see a raw token number — they see how much
+   * fuel is left in the tank. Balance can exceed the monthly allowance when
+   * top-ups roll over, so the gauge is clamped to 100%.
+   */
+  const remainingPercent = isUnlimited
+    ? 100
+    : monthlyTokens > 0
+      ? Math.max(0, Math.min(100, Math.round((balance / monthlyTokens) * 100)))
+      : 0;
+  const fuelLabel = isUnlimited
+    ? 'UNLIMITED'
+    : remainingPercent >= 75 ? 'FULL TANK'
+    : remainingPercent >= 40 ? 'PLENTY LEFT'
+    : remainingPercent >= 15 ? 'RUNNING LOW'
+    : remainingPercent > 0 ? 'NEARLY OUT'
+    : 'EMPTY';
 
   const handleSelectTier = async (tier: TierConfig) => {
     if (!user) {
@@ -146,41 +164,39 @@ export default function AITokens() {
                   </div>
                   <div className="flex-1">
                     <div className="text-3xl font-display tracking-wider">
-                      {isUnlimited ? '∞' : Math.floor(balance).toLocaleString()}
+                      {isUnlimited ? '∞' : fuelLabel}
                     </div>
                     <div className="text-xs text-muted-foreground font-display tracking-wider">
-                      TOKENS REMAINING
+                      COACH FUEL
                     </div>
                   </div>
                   <div className="text-right">
                     <div className="text-sm font-display tracking-wider text-primary">
                       {tierDisplayName.toUpperCase()}
                     </div>
-                    <div className="text-xs text-muted-foreground">
-                      {lifetimeSpent} used lifetime
-                    </div>
                   </div>
                 </div>
 
-                {/* Usage bar */}
+                {/* Fuel gauge — how much is left, never a raw number */}
                 {monthlyTokens > 0 && (
                   <div>
-                    <div className="flex justify-between text-[10px] text-muted-foreground font-display tracking-wider mb-1">
-                      <span>{usagePercent}% USED</span>
-                      <span>{monthlyTokens} MONTHLY</span>
-                    </div>
-                    <div className="h-2 bg-muted rounded-full overflow-hidden">
+                    <div className="h-3 bg-muted rounded-full overflow-hidden">
                       <motion.div
                         initial={{ width: 0 }}
-                        animate={{ width: `${usagePercent}%` }}
+                        animate={{ width: `${remainingPercent}%` }}
                         transition={{ duration: 0.8, ease: 'easeOut' }}
                         className={cn(
                           'h-full rounded-full',
-                          usagePercent >= 90
+                          remainingPercent <= 10
                             ? 'bg-gradient-to-r from-red-500 to-orange-500'
                             : 'bg-gradient-to-r from-primary to-orange-400'
                         )}
                       />
+                    </div>
+                    <div className="text-[10px] text-muted-foreground font-display tracking-wider mt-1">
+                      {remainingPercent <= 15
+                        ? 'TOP UP TO KEEP YOUR COACH RUNNING'
+                        : 'REFILLS ON YOUR BILLING DATE'}
                     </div>
                   </div>
                 )}
@@ -311,6 +327,17 @@ export default function AITokens() {
                           ? 'GET STARTED'
                           : 'SUBSCRIBE'}
                   </button>
+
+                  {/* Terms consent — required before any payment */}
+                  {isPaid && (
+                    <p className="text-[10px] text-muted-foreground leading-relaxed mt-2 text-center">
+                      By subscribing you agree to the{' '}
+                      <Link to="/terms" className="text-primary hover:underline">Terms &amp; Conditions</Link>
+                      {' '}and{' '}
+                      <Link to="/privacy" className="text-primary hover:underline">Privacy Policy</Link>.
+                      Billed monthly, cancel any time.
+                    </p>
+                  )}
                 </motion.div>
               );
             })}
@@ -377,8 +404,8 @@ export default function AITokens() {
                 </div>
                 <div className="space-y-3">
                   {[
-                    { label: 'Coach chat message', cost: '0.5', desc: 'Text-only AI coaching — ask anything' },
-                    { label: 'Progression tip', cost: '0.25', desc: 'Quick form & recovery suggestions' },
+                    { label: 'Coach chat message', cost: 'LIGHT', desc: 'Text-only AI coaching — ask anything' },
+                    { label: 'Progression tip', cost: 'LIGHT', desc: 'Quick form & recovery suggestions' },
                     { label: 'Motivation & mindset', cost: 'FREE', desc: 'Daily quotes & affirmations' },
                   ].map((item, i) => (
                     <div key={i} className="flex items-start justify-between gap-2">
@@ -390,14 +417,14 @@ export default function AITokens() {
                         'text-sm font-display tracking-wider shrink-0 mt-0.5',
                         item.cost === 'FREE' ? 'text-green-500' : 'text-primary'
                       )}>
-                        {item.cost === 'FREE' ? 'FREE' : `${item.cost} tk`}
+                        {item.cost}
                       </span>
                     </div>
                   ))}
                 </div>
                 <div className="mt-4 pt-3 border-t border-primary/10">
                   <p className="text-[11px] text-primary/70">
-                    💬 50 tokens ≈ 100 chat messages &nbsp;|&nbsp; Elite pays just 0.3/msg
+                    💬 Chat barely touches your fuel — a full month's tank is around 100 conversations.
                   </p>
                 </div>
               </div>
@@ -410,13 +437,13 @@ export default function AITokens() {
                 </div>
                 <div className="space-y-3">
                   {[
-                    { label: 'AI programme build', cost: '3', desc: 'Full personalised workout programme' },
-                    { label: 'AI meal plan', cost: '3', desc: 'Personalised nutrition plan' },
-                    { label: 'UNBREAKABLE 86 plan', cost: '5', desc: '86-day AI programme (Pro: 4, Elite: 3)' },
-                    { label: 'Workout review', cost: '1', desc: 'AI feedback on your logged session' },
-                    { label: 'Nutrition analysis', cost: '1', desc: 'AI analysis of your food log' },
-                    { label: 'Progress report', cost: '2', desc: 'Weekly/monthly AI summary (Elite: 1)' },
-                    { label: 'AI exercise search', cost: '0.5', desc: 'Smart exercise recommendations' },
+                    { label: 'AI programme build', cost: 'HEAVY', desc: 'Full personalised workout programme' },
+                    { label: 'AI meal plan', cost: 'HEAVY', desc: 'Personalised nutrition plan' },
+                    { label: 'UNBREAKABLE 86 plan', cost: 'HEAVY', desc: 'Your full 86-day AI programme' },
+                    { label: 'Workout review', cost: 'MEDIUM', desc: 'AI feedback on your logged session' },
+                    { label: 'Nutrition analysis', cost: 'MEDIUM', desc: 'AI analysis of your food log' },
+                    { label: 'Progress report', cost: 'MEDIUM', desc: 'Weekly & monthly AI summary' },
+                    { label: 'AI exercise search', cost: 'LIGHT', desc: 'Smart exercise recommendations' },
                   ].map((item, i) => (
                     <div key={i} className="flex items-start justify-between gap-2">
                       <div className="flex-1">
@@ -424,7 +451,7 @@ export default function AITokens() {
                         <p className="text-xs text-muted-foreground">{item.desc}</p>
                       </div>
                       <span className="text-sm font-display tracking-wider text-primary shrink-0 mt-0.5">
-                        {item.cost} tk
+                        {item.cost}
                       </span>
                     </div>
                   ))}
@@ -449,31 +476,28 @@ export default function AITokens() {
 
           {/* ─── University Courses ─── */}
           <section className="max-w-3xl mx-auto mb-16">
-            <h2 className="text-xl font-display tracking-wider text-center mb-2">UNIVERSITY COURSES</h2>
+            <h2 className="text-xl font-display tracking-wider text-center mb-2">UNBREAKABLE UNIVERSITY</h2>
             <p className="text-sm text-muted-foreground text-center mb-2">
-              Full access to all university courses is included with every subscription tier.
+              Every course is included with your Foundation membership. No course fees, no upsells.
             </p>
             <p className="text-xs text-primary text-center mb-8 font-display tracking-wider">
-              COMPLETE EACH LEVEL TO UNLOCK THE NEXT: L1 → L2 → L3 → L4
+              FINISH LEVEL 1 TO UNLOCK LEVEL 2 — THEN PICK THE COURSE YOU WANT NEXT
             </p>
 
-            {/* Included with subscription notice */}
             <div className="rounded-2xl border border-primary/20 bg-primary/5 p-6">
               <div className="flex items-center gap-3 mb-3">
                 <div className="w-12 h-12 rounded-xl bg-primary/15 border border-primary/25 flex items-center justify-center">
                   <GraduationCap className="w-6 h-6 text-primary" />
                 </div>
                 <div>
-                  <p className="font-display text-sm tracking-wider">INCLUDED WITH YOUR SUBSCRIPTION</p>
-                  <p className="text-xs text-muted-foreground">All courses across Power, Fuel, Mindset &amp; Sport</p>
+                  <p className="font-display text-sm tracking-wider">INCLUDED WITH YOUR MEMBERSHIP</p>
+                  <p className="text-xs text-muted-foreground">Courses across Power, Fuel and Mindset</p>
                 </div>
               </div>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              <div className="grid grid-cols-2 gap-2">
                 {[
                   { level: 'L1', desc: 'Foundation' },
-                  { level: 'L2', desc: 'Intermediate' },
-                  { level: 'L3', desc: 'Advanced' },
-                  { level: 'L4', desc: 'Expert + Sport' },
+                  { level: 'L2', desc: 'Intermediate — you choose' },
                 ].map((item, i) => (
                   <div key={i} className="rounded-lg bg-background/50 border border-border/50 px-3 py-2 text-center">
                     <p className="font-display text-xs tracking-wider text-primary">{item.level}</p>
@@ -484,35 +508,21 @@ export default function AITokens() {
             </div>
           </section>
 
-          {/* ─── UnTunes Purchases ─── */}
+          {/* ─── UnTunes ─── */}
           <section className="max-w-3xl mx-auto mb-16">
             <h2 className="text-xl font-display tracking-wider text-center mb-2">UNTUNES MUSIC</h2>
             <p className="text-sm text-muted-foreground text-center mb-8">
-              Full streaming is free for all paying members. Optional purchases to own tracks, albums &amp; collectible cards.
+              42 original tracks across three albums, written and recorded in-house. Included with your membership.
             </p>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              {[
-                { name: 'Single Track', cost: 3, desc: 'Own a track + collectible card', icon: Music },
-                { name: 'Full Album', cost: 30, desc: 'All tracks + all cards + album card', icon: Package },
-                { name: 'All Albums Bundle', cost: 50, desc: 'Every album — boosted rare card odds', icon: Sparkles },
-              ].map((item, i) => (
-                <div key={i} className="rounded-2xl border border-border bg-card p-5 text-center">
-                  <div className="w-10 h-10 rounded-xl bg-muted border border-border flex items-center justify-center mx-auto mb-3">
-                    <item.icon className="w-5 h-5 text-foreground" />
-                  </div>
-                  <p className="font-display text-sm tracking-wider mb-1">{item.name.toUpperCase()}</p>
-                  <p className="font-display text-2xl tracking-wider text-primary mb-1">{item.cost}</p>
-                  <p className="text-[10px] text-muted-foreground font-display tracking-wider mb-2">TOKENS</p>
-                  <p className="text-xs text-muted-foreground">{item.desc}</p>
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-4 rounded-xl border border-border bg-card/50 px-4 py-3 text-center">
-              <p className="text-xs text-muted-foreground">
-                <span className="text-foreground font-medium">Free users</span> get 30-second previews.
-                <span className="text-foreground font-medium"> Paying members</span> (Starter+) stream everything — purchases are optional.
+            <div className="rounded-2xl border border-primary/20 bg-primary/5 p-6 text-center">
+              <div className="w-12 h-12 rounded-xl bg-primary/15 border border-primary/25 flex items-center justify-center mx-auto mb-3">
+                <Music className="w-6 h-6 text-primary" />
+              </div>
+              <p className="font-display text-sm tracking-wider mb-1">STREAM IT ALL</p>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Full streaming for every member — no tokens, no purchases, no extras.
+                Free accounts get 30-second previews.
               </p>
             </div>
           </section>
@@ -529,36 +539,36 @@ export default function AITokens() {
               <div className="flex gap-3">
                 <Coins className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                 <div>
-                  <span className="text-foreground font-medium">Monthly allocation.</span> Your tier gives you tokens each month.
-                  Monthly tokens reset on your billing date. Top-up tokens never expire.
+                  <span className="text-foreground font-medium">A full tank every month.</span> Foundation refills your coach fuel
+                  on your billing date. Anything you top up on top of that rolls over and never expires.
                 </div>
               </div>
               <div className="flex gap-3">
                 <MessageCircle className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                 <div>
-                  <span className="text-foreground font-medium">Chat is cheap.</span> A coach message costs just 0.5 tokens.
-                  50 Starter tokens = ~100 chat messages. Ask your coach anything without worrying about cost.
+                  <span className="text-foreground font-medium">Chat is cheap.</span> Talking to your coach barely moves the gauge —
+                  a month's tank is roughly 100 conversations. Ask anything, as often as you like.
                 </div>
               </div>
               <div className="flex gap-3">
                 <Plus className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                 <div>
-                  <span className="text-foreground font-medium">Top up anytime.</span> Running low? £10 gets you 25 extra tokens.
-                  They carry over and never expire — even if you downgrade or pause.
+                  <span className="text-foreground font-medium">Top up anytime.</span> Running low? £10 adds another quarter tank.
+                  Top-ups carry over and never expire — even if you downgrade or pause.
                 </div>
               </div>
               <div className="flex gap-3">
                 <ArrowRight className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                 <div>
-                  <span className="text-foreground font-medium">Upgrade or downgrade freely.</span> Switch tiers anytime.
-                  Upgrades take effect immediately. Downgrades apply next billing cycle. No penalties.
+                  <span className="text-foreground font-medium">Cancel any time.</span> Foundation is billed monthly.
+                  Cancel whenever you like and you keep access until the end of the month you've paid for. No penalties.
                 </div>
               </div>
               <div className="flex gap-3">
                 <Crown className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                 <div>
-                  <span className="text-foreground font-medium">Elite saves on everything.</span> Elite members pay fewer tokens per
-                  AI action and get priority response times. 200 tokens/month = serious coaching power.
+                  <span className="text-foreground font-medium">One plan, everything in it.</span> Foundation unlocks every
+                  pillar — no add-ons, no upsells, no feature locked behind a higher tier.
                 </div>
               </div>
               <div className="flex gap-3">

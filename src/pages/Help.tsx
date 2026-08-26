@@ -317,7 +317,7 @@ export default function Help() {
   const { generateProgramme, detectProgrammeRequest, isGenerating } = useAIProgramme();
   const { generateMealPlan, detectMealPlanRequest, isGenerating: isMealPlanGenerating } = useAIMealPlan();
   const { updateProgram, saveProgram } = useTrainingPrograms();
-  const { updateMealPlan } = useMealPlans();
+  const { updateMealPlan, createMealPlan } = useMealPlans();
   const { saveProgramme: saveMindsetProgramme, generateProgramme: generateMindsetProgramme } = useMindsetProgrammes();
   const { isDev, isCoach, role } = useUserRole();
   const callerRole = (isDev ? 'dev' : isCoach ? 'coach' : 'user') as 'dev' | 'coach' | 'user';
@@ -556,12 +556,54 @@ export default function Help() {
         } else {
           await updateMealPlan.mutateAsync({ id: editingPlan.planId, name: editedPlanData.planName, description: editedPlanData.overview });
         }
+      } else {
+        // Plan was never persisted (generation didn't save it to the hub).
+        // Create it now instead of silently discarding the user's edits.
+        if (editingPlan.type === 'programme') {
+          const saved = await saveProgram.mutateAsync({ program: editedPlanData as GeneratedProgram });
+          editingPlan.planId = saved?.id;
+          editingPlan.savedToHub = true;
+        } else if (editingPlan.type === 'mindset') {
+          const { data, error } = await supabase
+            .from('mindset_programmes')
+            .insert({
+              user_id: user!.id,
+              name: editedPlanData.name || editedPlanData.planName,
+              description: editedPlanData.description || editedPlanData.overview,
+              goal: editedPlanData.goal,
+              duration_weeks: editedPlanData.durationWeeks || editedPlanData.weeks?.length || 4,
+              daily_minutes: editedPlanData.dailyMinutes || 15,
+              focus_areas: editedPlanData.focusAreas || [],
+              programme_data: editedPlanData,
+            })
+            .select()
+            .single();
+          if (error) throw error;
+          editingPlan.planId = data?.id;
+          editingPlan.savedToHub = true;
+          queryClient.invalidateQueries({ queryKey: ['mindset-programmes'] });
+        } else {
+          const saved = await createMealPlan.mutateAsync({
+            plan: {
+              name: editedPlanData.planName || 'AI Meal Plan',
+              description: editedPlanData.overview,
+              is_active: false,
+            } as any,
+          });
+          editingPlan.planId = saved?.id;
+          editingPlan.savedToHub = true;
+        }
       }
       setGeneratedPlans(prev => prev.map(p => p.planId === editingPlan.planId || p === editingPlan ? { ...p, planData: editedPlanData } : p));
       setShowEditModal(false); setEditingPlan(null);
       toast({ title: '✅ Plan Updated!', description: 'Your changes have been applied.' });
     } catch (error) {
-      toast({ title: 'Error', description: 'Failed to save changes. Please try again.', variant: 'destructive' });
+      console.error('Failed to save plan:', error);
+      toast({
+        title: 'Error',
+        description: error instanceof Error ? error.message : 'Failed to save changes. Please try again.',
+        variant: 'destructive',
+      });
     }
   };
 

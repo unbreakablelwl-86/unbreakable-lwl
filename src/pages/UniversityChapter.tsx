@@ -34,7 +34,7 @@ export default function UniversityChapter() {
   const quizPassed = hasPassedChapterQuiz(levelNum, unitNum, chapterNum, ct);
   const quiz = getChapterQuiz(levelNum, unitNum, chapterNum, ct);
 
-  // JJ voice read-aloud
+  // Coach voice read-aloud
   const [isReading, setIsReading] = useState(false);
   const ttsAudioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -185,7 +185,7 @@ export default function UniversityChapter() {
             <SubscriptionUpgradeBanner />
           ) : (
           <>
-          {/* JJ Voice Read-Aloud */}
+          {/* Coach Voice Read-Aloud */}
           <div className="flex justify-end mb-4">
             <button
               onClick={readChapter}
@@ -196,9 +196,9 @@ export default function UniversityChapter() {
               }`}
             >
               {isReading ? (
-                <><Square className="w-3.5 h-3.5" /> STOP JJ</>
+                <><Square className="w-3.5 h-3.5" /> STOP</>
               ) : (
-                <><Volume2 className="w-3.5 h-3.5" /> JJ READ ALOUD</>
+                <><Volume2 className="w-3.5 h-3.5" /> READ ALOUD</>
               )}
             </button>
           </div>

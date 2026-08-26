@@ -1,3 +1,4 @@
+import { FEATURES } from '@/config/features';
 import { Link } from 'react-router-dom';
 const trademarkBadge = 'https://vlwcoqilwyfcrsxodtdx.supabase.co/storage/v1/object/public/site-assets/misc/trademark-badge.webp';
 
@@ -54,7 +55,7 @@ export function LandingFooter() {
             </h4>
             <ul className="space-y-2">
               {[
-                { label: 'Meet the Founder', path: '/founder' },
+                ...(FEATURES.founderStory ? [{ label: 'Meet the Founder', path: '/founder' }] : []),
                 { label: 'Plans & Pricing', path: '/plans' },
               ].map((item) => (
                 <li key={item.label}>

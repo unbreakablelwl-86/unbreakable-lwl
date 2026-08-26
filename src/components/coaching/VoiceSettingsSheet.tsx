@@ -10,10 +10,10 @@ interface VoiceSettingsSheetProps {
 }
 
 const FEATURES: { key: VoiceFeature; icon: React.ElementType; label: string; description: string }[] = [
-  { key: 'chat', icon: MessageSquare, label: 'Chat with JJ', description: 'Voice replies when chatting with your coach' },
+  { key: 'chat', icon: MessageSquare, label: 'Chat with your coach', description: 'Voice replies when chatting with your coach' },
   { key: 'mindset', icon: Brain, label: 'Mindset & Breathing', description: 'Voice guidance during meditation and exercises' },
   { key: 'cardio', icon: Activity, label: 'Cardio Updates', description: 'Voice prompts during live cardio tracking' },
-  { key: 'university', icon: GraduationCap, label: 'University Read-Aloud', description: 'JJ reads course chapters aloud' },
+  { key: 'university', icon: GraduationCap, label: 'University Read-Aloud', description: 'Your coach reads course chapters aloud' },
   { key: 'notifications', icon: Bell, label: 'Notifications', description: 'Read notifications and alerts aloud' },
 ];
 
@@ -35,7 +35,7 @@ export function VoiceSettingsSheet({ children }: VoiceSettingsSheetProps) {
       </SheetTrigger>
       <SheetContent side="right" className="w-80">
         <SheetHeader>
-          <SheetTitle className="font-display tracking-wide">JJ VOICE</SheetTitle>
+          <SheetTitle className="font-display tracking-wide">COACH VOICE</SheetTitle>
         </SheetHeader>
 
         <div className="space-y-6 mt-6">
@@ -47,7 +47,7 @@ export function VoiceSettingsSheet({ children }: VoiceSettingsSheetProps) {
                 Voice On/Off
               </Label>
               <p className="text-sm text-muted-foreground">
-                Master switch for all JJ voice features
+                Master switch for all coach voice features
               </p>
             </div>
             <Switch
@@ -78,7 +78,7 @@ export function VoiceSettingsSheet({ children }: VoiceSettingsSheetProps) {
           ))}
 
           <p className="text-xs text-muted-foreground pt-4 border-t border-border">
-            JJ's voice — powered by ElevenLabs. All voice features use the same male coach voice.
+            Your coach's voice — powered by ElevenLabs. All voice features use the same male coach voice.
           </p>
         </div>
       </SheetContent>

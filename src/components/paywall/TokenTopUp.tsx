@@ -1,7 +1,7 @@
 /**
- * TokenTopUp — Simple £10 = 25 tokens top-up purchase.
- * Top-up tokens don't expire and carry over month to month.
- * Monthly allocation resets each billing cycle.
+ * TokenTopUp — £10 top-up: a quarter tank of coach fuel.
+ * Top-up fuel doesn't expire and carries over month to month.
+ * The monthly tank refills each billing cycle.
  */
 
 import { useState } from 'react';
@@ -56,11 +56,11 @@ export function TokenTopUp({ asModal, onClose }: TokenTopUpProps) {
       <div className="text-center mb-6">
         <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 rounded-full px-3 py-1 mb-3">
           <Coins className="w-3.5 h-3.5 text-primary" />
-          <span className="text-xs font-display tracking-wider text-primary">TOKEN TOP-UP</span>
+          <span className="text-xs font-display tracking-wider text-primary">COACH FUEL</span>
         </div>
-        <h3 className="font-display text-lg tracking-wider mb-1">NEED MORE TOKENS?</h3>
+        <h3 className="font-display text-lg tracking-wider mb-1">RUNNING LOW?</h3>
         <p className="text-sm text-muted-foreground">
-          Top-up tokens never expire and carry over month to month.
+          Top-up fuel never expires and carries over month to month.
         </p>
       </div>
 
@@ -82,12 +82,11 @@ export function TokenTopUp({ asModal, onClose }: TokenTopUpProps) {
         <div className="flex-1">
           <div className="flex items-baseline gap-2 mb-1">
             <span className="font-display text-2xl tracking-wider text-foreground">
-              {topUp.tokens}
+              QUARTER TANK
             </span>
-            <span className="text-sm text-muted-foreground">tokens</span>
           </div>
           <p className="text-xs text-muted-foreground">
-            One-time purchase · Never expires · {topUp.valuePerToken}
+            One-time purchase · Never expires · Rolls over
           </p>
         </div>
         <div className="text-right">
@@ -99,8 +98,8 @@ export function TokenTopUp({ asModal, onClose }: TokenTopUpProps) {
       <div className="flex items-start gap-2 px-2 pt-2">
         <Sparkles className="w-4 h-4 text-primary shrink-0 mt-0.5" />
         <p className="text-xs text-muted-foreground">
-          <span className="text-foreground font-medium">Better value on Foundation:</span> 1,000 tokens/mo
-          for £50 — that's 5p/token vs 1p/token on top-ups.
+          <span className="text-foreground font-medium">Foundation is still the best value:</span> a full tank
+          every month for £50 — top-ups are there for the months you go big.
         </p>
       </div>
     </div>

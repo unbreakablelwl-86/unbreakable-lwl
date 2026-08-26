@@ -1,3 +1,4 @@
+import { FEATURES } from '@/config/features';
 import { useState, useCallback, lazy, Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -159,8 +160,8 @@ const App = () => {
                   <ProtectedRoute><RouteErrorBoundary section="Social"><Social /></RouteErrorBoundary></ProtectedRoute>
                 } />
                 
-                {/* Founder page - pre-sign-in */}
-                <Route path="/founder" element={<Founder />} />
+                {/* Founder page - pre-sign-in (hidden pre-launch) */}
+                {FEATURES.founderStory && <Route path="/founder" element={<Founder />} />}
                 
                 {/* Legal pages - public */}
                 <Route path="/privacy" element={<Privacy />} />

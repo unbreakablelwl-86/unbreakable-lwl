@@ -8,6 +8,7 @@ import { StatusCard } from '@/components/tracker/StatusCard';
 import { WorkoutCard } from './WorkoutCard';
 import { MilestoneCard } from './MilestoneCard';
 import { StoriesSection } from './StoriesSection';
+import { FEATURES } from '@/config/features';
 import { CreatePostBox } from '@/components/tracker/CreatePostBox';
 import { StoryEditor } from './StoryEditor';
 import { SuggestedUsers } from './SuggestedUsers';
@@ -165,7 +166,7 @@ export function UnifiedFeed({ onSignIn, onOpenMessages }: UnifiedFeedProps) {
   return (
     <div className="space-y-4">
       {/* Stories Section */}
-      {user && <StoriesSection />}
+      {FEATURES.liveStory && user && <StoriesSection />}
 
       {/* Create Post Box */}
       {user && <CreatePostBox onPostCreated={refetch} />}

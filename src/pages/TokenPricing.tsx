@@ -26,7 +26,7 @@ const FREE_FEATURES = [
 ];
 
 const TOKEN_FEATURES = [
-  { feature: 'JJ AI Coach — chat, tips & advice', icon: MessageCircle },
+  { feature: 'Unbreakable Coach — chat, tips & advice', icon: MessageCircle },
   { feature: 'AI programme & meal plan builder', icon: Dumbbell },
   { feature: 'UNBREAKABLE 86 personalised plans', icon: Rocket },
   { feature: 'Workout & nutrition analysis', icon: BarChart3 },

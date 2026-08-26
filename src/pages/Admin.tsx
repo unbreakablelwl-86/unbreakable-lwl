@@ -44,7 +44,7 @@ export default function Admin() {
   }, [activeTab]);
 
   return (
-    <AdminProtectedRoute>
+    <AdminProtectedRoute requireOwner>
       <div className="min-h-screen pb-24 bg-background">
         {/* Back nav */}
         <div className="px-4 pt-4">

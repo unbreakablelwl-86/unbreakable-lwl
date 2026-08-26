@@ -3,7 +3,7 @@
  *
  * Coaching:
  *   Free (£0)       — Home hub, socials, manual tools, 30s UnTunes previews
- *   Foundation (£50/mo) — LAUNCH OFFER (normally £89/mo). Full AI coaching, all features.
+ *   Foundation (£50/mo) — LAUNCH OFFER (normally £75/mo). Full AI coaching, all features.
  *
  * Optional one-time top-ups:
  *   Level 1 "Unbreakable"         — £20
@@ -85,7 +85,7 @@ export const TIERS: Record<TierKey, TierConfig> = {
     rank: 2,
     popular: true,
     features: [
-      'JJ AI Coach (unlimited)',
+      'Unbreakable Coach (unlimited)',
       'UNBREAKABLE 86 programme',
       'Full exercise library (1,500+)',
       'AI programme generator',
@@ -119,13 +119,30 @@ export interface CoachingTopUp {
   displayName: string;
   price: number; // GBP
   tokens: number;
+  /** How this is described to members, who never see raw token counts */
+  fuelLabel: string;
+  bestValue?: boolean;
   stripePriceId: string | null;
 }
 
+/**
+ * Coaching top-ups.
+ *
+ * Priced against the Foundation anchor: £50/month for a 1,000 token tank = 5p
+ * per token (7.5p at the £75 full price). Top-ups get cheaper the bigger they
+ * are, so the biggest is the best value, but none of them undercut the
+ * membership — otherwise members would top up instead of subscribing.
+ *
+ *   £2.50 →  50 tokens  (5.0p)  — 1/20 tank, convenience
+ *   £5.00 → 120 tokens  (4.2p)  — ~1/8 tank
+ *   £10.00 → 250 tokens (4.0p)  — 1/4 tank, best value
+ *
+ * Top-up tokens roll over and never expire.
+ */
 export const COACHING_TOPUPS: CoachingTopUp[] = [
-  { id: 'topup_1', name: 'Unbreakable', displayName: 'UNBREAKABLE', price: 2.50, tokens: 250, stripePriceId: null },
-  { id: 'topup_2', name: 'Keep Showing Up', displayName: 'KEEP SHOWING UP', price: 5, tokens: 500, stripePriceId: null },
-  { id: 'topup_3', name: 'Live Without Limits', displayName: 'LIVE WITHOUT LIMITS', price: 10, tokens: 1000, stripePriceId: null },
+  { id: 'topup_1', name: 'Unbreakable', displayName: 'UNBREAKABLE', price: 2.50, tokens: 50, fuelLabel: 'A TOP-UP', stripePriceId: null },
+  { id: 'topup_2', name: 'Keep Showing Up', displayName: 'KEEP SHOWING UP', price: 5, tokens: 120, fuelLabel: 'AN EIGHTH OF A TANK', stripePriceId: null },
+  { id: 'topup_3', name: 'Live Without Limits', displayName: 'LIVE WITHOUT LIMITS', price: 10, tokens: 250, fuelLabel: 'A QUARTER TANK', bestValue: true, stripePriceId: null },
 ];
 
 /** Get tier config by key */

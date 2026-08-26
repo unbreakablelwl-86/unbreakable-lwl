@@ -10,6 +10,8 @@ import { useUniversityProgress } from '@/hooks/useUniversityProgress';
 import { AdminControlPanel } from '@/components/university/AdminControlPanel';
 import { getCourseColors } from '@/lib/university/courseColors';
 import { useCourseAccess } from '@/hooks/useCourseAccess';
+import { FEATURES } from '@/config/features';
+import { useUserRole } from '@/hooks/useUserRole';
 import type { CourseType } from '@/lib/university/types';
 import { GuidesSection } from '@/components/university/GuidesSection';
 
@@ -46,10 +48,15 @@ function AnimatedStat({ value, suffix = '' }: { value: string; suffix?: string }
 export default function University() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const activeTab = (searchParams.get('course') as CourseType) || 'gym';
+  const requestedTab = (searchParams.get('course') as CourseType) || 'gym';
   const { getLevelCompletedChapters, hasPassedAssessment } = useUniversityProgress();
   const { hasAccess } = useCourseAccess();
+  const { isOwner } = useUserRole();
+  // Sport courses & their certificates are hidden from clients pre-launch, but stay live for the owner account.
+  const showSport = FEATURES.sportsCertificates || isOwner;
+  const visibleCourseTabs = showSport ? courseTabs : courseTabs.filter(t => t.key !== 'sport');
 
+  const activeTab: CourseType = (requestedTab === 'sport' && !showSport) ? 'gym' : requestedTab;
   // Hide Level 4 content (no images yet — re-enable when L4 images are ready)
   const courseData = (allCourses[activeTab] || []).filter(l => l.level <= 3);
   const colors = getCourseColors(activeTab);
@@ -130,7 +137,7 @@ export default function University() {
 
           {/* Horizontal scrollable on mobile, grid on desktop */}
           <div className="flex justify-center gap-2 sm:gap-3 flex-wrap">
-            {courseTabs.map((tab, i) => {
+            {visibleCourseTabs.map((tab, i) => {
               const tabColors = getCourseColors(tab.key);
               const isActive = activeTab === tab.key;
               return (
@@ -204,7 +211,7 @@ export default function University() {
           )}
 
           {/* Sport tab: grid of individual sport courses */}
-          {activeTab === 'sport' && (() => {
+          {showSport && activeTab === 'sport' && (() => {
             const sportList: { key: string; label: string; emoji: string }[] = [
               { key: 'sport-football', label: 'Football', emoji: '⚽' },
               { key: 'sport-boxing', label: 'Boxing', emoji: '🥊' },

@@ -1,3 +1,4 @@
+import { FEATURES } from '@/config/features';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -293,15 +294,7 @@ const FAQ_SECTIONS: { title: string; icon: typeof Shield; items: FAQItem[] }[] =
       },
       {
         q: 'Is the music free?',
-        a: 'Yes — all Un-Tunes tracks are free to stream. Optional collectible card packs and digital merchandise are available for purchase, with 20% of proceeds donated to Mind charity.',
-      },
-      {
-        q: 'What are the card packs?',
-        a: 'Un-Tunes card packs are collectible digital cards featuring artwork, tracks, and brand items. Each purchase includes matching base-level track cards. Collect, trade, and showcase your collection on your profile.',
-      },
-      {
-        q: 'What is the Mind charity donation?',
-        a: '20% of all Un-Tunes purchases are donated to Mind, the UK mental health charity. Every card pack, album, or bundle purchase directly supports mental health awareness and support services.',
+        a: 'Yes — all 42 Un-Tunes tracks across three albums stream free with your membership. No tokens, no purchases, no extras.',
       },
     ],
   },
@@ -445,31 +438,33 @@ export default function FAQ() {
         })}
 
         {/* Meet the Founder */}
-        <div>
-          <div className="flex items-center gap-2 mb-2 px-1">
-            <Heart className="w-4 h-4 text-primary" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.5))' }} />
-            <span className="text-xs font-display tracking-wider text-muted-foreground">THE FOUNDER</span>
-          </div>
-          <button
-            onClick={() => navigate('/founder')}
-            className="w-full rounded-xl border border-border bg-card p-5 text-left hover:border-border transition-all"
-          >
-            <div className="flex items-center gap-4 mb-3">
-              <div className="w-14 h-14 rounded-full overflow-hidden border border-primary/20">
-                <img loading="lazy" src={founderPhoto} alt="John James — Founder" className="w-full h-full object-cover" />
-              </div>
-              <div className="flex-1">
-                <p className="font-display text-base text-foreground tracking-wide">JOHN JAMES</p>
-                <p className="text-primary text-xs font-display tracking-wider mt-0.5">FOUNDER & CEO</p>
-              </div>
-              <ArrowRight className="w-4 h-4 text-muted-foreground" />
+        {FEATURES.founderStory && (
+          <div>
+            <div className="flex items-center gap-2 mb-2 px-1">
+              <Heart className="w-4 h-4 text-primary" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.5))' }} />
+              <span className="text-xs font-display tracking-wider text-muted-foreground">THE FOUNDER</span>
             </div>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              Liverpool-born fitness entrepreneur. Founded Live Without Limits LTD to prove that anyone can build an unbreakable body and mind. Keep showing up.
-            </p>
-            <p className="text-xs text-primary font-display tracking-wider mt-3">TAP TO READ THE FULL STORY →</p>
-          </button>
-        </div>
+            <button
+              onClick={() => navigate('/founder')}
+              className="w-full rounded-xl border border-border bg-card p-5 text-left hover:border-border transition-all"
+            >
+              <div className="flex items-center gap-4 mb-3">
+                <div className="w-14 h-14 rounded-full overflow-hidden border border-primary/20">
+                  <img loading="lazy" src={founderPhoto} alt="John James — Founder" className="w-full h-full object-cover" />
+                </div>
+                <div className="flex-1">
+                  <p className="font-display text-base text-foreground tracking-wide">JOHN JAMES</p>
+                  <p className="text-primary text-xs font-display tracking-wider mt-0.5">FOUNDER & CEO</p>
+                </div>
+                <ArrowRight className="w-4 h-4 text-muted-foreground" />
+              </div>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Liverpool-born fitness entrepreneur. Founded Live Without Limits LTD to prove that anyone can build an unbreakable body and mind. Keep showing up.
+              </p>
+              <p className="text-xs text-primary font-display tracking-wider mt-3">TAP TO READ THE FULL STORY →</p>
+            </button>
+          </div>
+        )}
 
         {/* Legal Links */}
         <div>

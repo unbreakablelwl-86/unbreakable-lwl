@@ -78,6 +78,7 @@ export default function Unbreakable86() {
           currentPhase={u86.currentPhase}
           onToggleHabit={u86.toggleHabit}
           onUpdateJournal={u86.updateJournal}
+          therapyChoice={u86.therapyChoice}
           onViewProgress={() => {}}
         />
         </PaywallGate>
