@@ -65,6 +65,18 @@ export default function University() {
     setSearchParams({ course: tab });
   };
 
+  // Hero stats computed from what is actually visible to this user (L2/L3 only).
+  const heroStats = (() => {
+    let courses = 0;
+    let chapters = 0;
+    for (const tab of visibleCourseTabs) {
+      const levels = (allCourses[tab.key] || []).filter(l => l.level <= 3);
+      courses += levels.length;
+      for (const l of levels) chapters += l.units.reduce((sum, u) => sum + u.chapters.length, 0);
+    }
+    return { courses, chapters, disciplines: visibleCourseTabs.length };
+  })();
+
   const activeTabData = courseTabs.find(t => t.key === activeTab) || courseTabs[0];
 
   return (
@@ -94,7 +106,7 @@ export default function University() {
 
             <p className="text-muted-foreground text-sm md:text-base max-w-2xl mx-auto leading-relaxed">
               Real education that should be taught in schools — not locked behind a qualification.
-              Level 2 &amp; 3 courses in fitness, nutrition, mindset and sports science. Unit 1 of every course is free.
+              Level 2 &amp; 3 courses in fitness, nutrition and mindset, included with your UNBREAKABLE membership.
             </p>
 
             <p className="text-xs text-muted-foreground/70 max-w-xl mx-auto">
@@ -109,9 +121,9 @@ export default function University() {
               className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 pt-2"
             >
               {[
-                { value: '19', suffix: '', label: 'Courses', icon: <BookOpen className="w-3.5 h-3.5" /> },
-                { value: '4400', suffix: '+', label: 'Quiz Questions', icon: <Award className="w-3.5 h-3.5" /> },
-                { value: '5', suffix: '', label: 'Disciplines', icon: <Zap className="w-3.5 h-3.5" /> },
+                { value: String(heroStats.courses), suffix: '', label: 'Courses', icon: <BookOpen className="w-3.5 h-3.5" /> },
+                { value: String(heroStats.chapters), suffix: '', label: 'Chapters', icon: <Award className="w-3.5 h-3.5" /> },
+                { value: String(heroStats.disciplines), suffix: '', label: 'Disciplines', icon: <Zap className="w-3.5 h-3.5" /> },
               ].map((stat) => (
                 <div key={stat.label} className="flex flex-col items-center gap-1">
                   <div className="flex items-center gap-1.5 text-primary">
