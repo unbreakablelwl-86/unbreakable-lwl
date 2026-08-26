@@ -165,3 +165,40 @@ export const U86_PHASES: U86Phase[] = [
     upsell: { course_key: 'mindset_l2', course_name: 'Mindset Level 2', message: 'Go deeper on mental performance' },
   },
 ];
+
+/* ───────────────────────────────────────────────────────────
+ * DAILY 7 — scoring rules (JJ, Aug 2026)
+ * Seven habits a day. Heat OR cold counts as one (locked choice).
+ * A minimum of 3 banks the day; the aim is to build to all 7
+ * across the 86 days. Fewer than 3 (or no log) resets to Day 1.
+ * ─────────────────────────────────────────────────────────── */
+export const U86_MIN_HABITS = 3;
+export const U86_TOTAL_HABITS = 7;
+
+/** The six tickable habit columns for a given therapy choice (journal is the 7th). */
+export function u86HabitKeys(therapyChoice: 'sauna' | 'cold_shower'): string[] {
+  return [
+    'habit_train', 'habit_learn', 'habit_hydrate',
+    'habit_numbers', 'habit_breathwork',
+    therapyChoice === 'sauna' ? 'habit_sauna' : 'habit_cold_shower',
+  ];
+}
+
+/** How many of the Daily 7 are complete for a log (journal counts when written). */
+export function u86CountDone(
+  log: Record<string, any> | null | undefined,
+  therapyChoice: 'sauna' | 'cold_shower',
+): number {
+  if (!log) return 0;
+  const ticked = u86HabitKeys(therapyChoice).filter(k => Boolean(log[k])).length;
+  const journalDone = typeof log.journal === 'string' && log.journal.trim().length > 0;
+  return ticked + (journalDone ? 1 : 0);
+}
+
+/** Does this log bank the day? */
+export function u86DayBanked(
+  log: Record<string, any> | null | undefined,
+  therapyChoice: 'sauna' | 'cold_shower',
+): boolean {
+  return u86CountDone(log, therapyChoice) >= U86_MIN_HABITS;
+}
