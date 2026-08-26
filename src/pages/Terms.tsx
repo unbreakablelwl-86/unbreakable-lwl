@@ -93,7 +93,7 @@ export default function Terms() {
               </p>
               <ul className="list-disc list-inside space-y-2 text-foreground/80">
                 <li><strong>Free</strong> — the hub, your profile, the community feed, manual trackers, calculators and habits</li>
-                <li><strong>Foundation (£50 per month)</strong> — everything on Free, plus 1,000 tokens each month, the
+                <li><strong>Unbreakable (£50 per month)</strong> — everything on Free, plus 1,000 tokens each month, the
                     Unbreakable Coach, AI programmes and nutrition plans, UNBREAKABLE 86, the full exercise library,
                     Unbreakable University and UnTunes streaming</li>
               </ul>
@@ -114,7 +114,7 @@ export default function Terms() {
               </h2>
               <p className="leading-relaxed mb-3">
                 If you are a consumer in the UK you have a statutory right to cancel within 14 days of
-                starting a subscription. Because Foundation gives you immediate access to digital content,
+                starting a subscription. Because Unbreakable gives you immediate access to digital content,
                 by subscribing you ask us to start the service straight away — if you then cancel within
                 the 14 days we may make a proportionate deduction for the period you had access.
               </p>
@@ -186,7 +186,7 @@ export default function Terms() {
                 apply your own judgement and see section 8 (Health Disclaimer).
               </p>
               <ul className="list-disc list-inside space-y-2 text-foreground/80">
-                <li>Foundation includes 1,000 tokens each month. Tokens are spent on AI actions such as building programmes, meal plans and coach conversations.</li>
+                <li>Unbreakable includes 1,000 tokens each month. Tokens are spent on AI actions such as building programmes, meal plans and coach conversations.</li>
                 <li>Tokens are a licence to use features on the platform. They are not money, have no cash value, and cannot be sold, transferred or exchanged for cash.</li>
                 <li>Your monthly allowance refreshes with your billing cycle. Unused monthly tokens do not roll over.</li>
                 <li>We may fairly limit or slow AI usage to protect the service from abuse or runaway costs.</li>

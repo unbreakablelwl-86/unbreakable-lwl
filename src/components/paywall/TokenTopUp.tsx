@@ -98,7 +98,7 @@ export function TokenTopUp({ asModal, onClose }: TokenTopUpProps) {
       <div className="flex items-start gap-2 px-2 pt-2">
         <Sparkles className="w-4 h-4 text-primary shrink-0 mt-0.5" />
         <p className="text-xs text-muted-foreground">
-          <span className="text-foreground font-medium">Foundation is still the best value:</span> a full tank
+          <span className="text-foreground font-medium">Unbreakable is still the best value:</span> a full tank
           every month for £50 — top-ups are there for the months you go big.
         </p>
       </div>

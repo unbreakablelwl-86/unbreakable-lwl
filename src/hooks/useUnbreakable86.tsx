@@ -3,7 +3,7 @@
  * Manages enrolment state, daily logs, progress tracking, and reset mechanics.
  *
  * Rules (JJ, Aug 2026):
- *   No entry fee. No fines. Included with Foundation.
+ *   No entry fee. No fines. Included with Unbreakable.
  *   All 7 daily habits must be logged every day. Sauna / cold shower is ONE habit —
  *   the user picks heat or cold at onboarding and is locked to it for the 86 days.
  *   Miss a day (or fail to complete all 7) and the calendar resets to Day 1.
@@ -151,7 +151,7 @@ export function useUnbreakable86() {
 
   useEffect(() => { fetchEnrolment(); }, [fetchEnrolment]);
 
-  /* ─── Start new enrolment (free — included with Foundation) ─── */
+  /* ─── Start new enrolment (free — included with Unbreakable) ─── */
   const startChallenge = useCallback(async (quizAnswers: U86QuizAnswers) => {
     if (!user) return null;
 

@@ -147,9 +147,9 @@ export default function UniversityLevel() {
                   {isUnitLocked && (
                     <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-background/80 backdrop-blur-sm rounded-xl">
                       <Lock className="w-8 h-8 text-primary mb-2" />
-                      <p className="font-display text-sm tracking-wider text-foreground mb-1">FOUNDATION REQUIRED</p>
+                      <p className="font-display text-sm tracking-wider text-foreground mb-1">MEMBERSHIP REQUIRED</p>
                       <p className="text-xs text-muted-foreground text-center max-w-[200px]">
-                        Upgrade to Foundation to unlock all university content
+                        Upgrade to Unbreakable to unlock all university content
                       </p>
                     </div>
                   )}

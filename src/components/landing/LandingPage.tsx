@@ -85,7 +85,7 @@ const platformFeatures = [
   {
     icon: MessageSquare,
     title: 'UNBREAKABLE COACH',
-    desc: 'Your 24/7 AI personal trainer. Programmes, meal plans, form checks and advice — whenever you need it.',
+    desc: 'Your 24/7 AI personal trainer. Programmes, meal plans, nutrition and advice — whenever you need it.',
     color: '#FF5500',
     stat: 'Coaching',
   },
@@ -132,7 +132,7 @@ const freeFeatures = [
 /* ─── Token tiers ─── */
 const tokenTiers = [
   { name: 'FREE', tokens: 0, price: '£0', desc: 'Full access to all free tools & community', highlight: false, features: ['All free tools', 'Community access', 'University preview'] },
-  { name: 'FOUNDATION', tokens: 1000, price: '£50', period: '/mo', desc: 'Full AI coaching, all features unlocked', highlight: true, features: ['1,000 tokens/month', 'Unbreakable Coach', 'All features'], originalPrice: '£75' },
+  { name: 'UNBREAKABLE', tokens: 1000, price: '£50', period: '/mo', desc: 'Full AI coaching, all features unlocked', highlight: true, features: ['1,000 tokens/month', 'Unbreakable Coach', 'All features'], originalPrice: '£75' },
 ];
 
 /* ─── What makes this different ─── */
@@ -627,7 +627,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
                 Founding Member Pricing
               </h2>
               <p className="text-[#888] mt-3 max-w-xl mx-auto text-sm">
-                🔒 Lock in the <span className="text-white font-semibold">Foundation offer price for life</span>.
+                🔒 Lock in the <span className="text-white font-semibold">Unbreakable offer price for life</span>.
                 <span className="line-through opacity-50">£75/mo</span> → <span className="text-[#FF5500] font-bold">£50/mo</span>. Your rate never increases.
               </p>
             </motion.div>

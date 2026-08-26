@@ -1,6 +1,6 @@
 /**
  * Welcome — Post-onboarding welcome screen with coach greeting,
- * quick feature tour, and Foundation offer.
+ * quick feature tour, and launch offer.
  */
 
 import { useState } from 'react';

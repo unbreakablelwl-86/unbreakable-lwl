@@ -65,7 +65,7 @@ export default function TokenPricing() {
       </div>
 
       <div className="max-w-lg mx-auto px-4 pt-6 space-y-6">
-        {/* Foundation banner */}
+        {/* Membership banner */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -73,7 +73,7 @@ export default function TokenPricing() {
         >
           <div className="flex items-center gap-2 mb-2">
             <Crown className="w-4 h-4 text-primary" />
-            <span className="font-display text-xs tracking-wider text-primary">FOUNDATION MEMBER</span>
+            <span className="font-display text-xs tracking-wider text-primary">UNBREAKABLE MEMBER</span>
           </div>
           <p className="text-sm text-foreground font-semibold mb-1">
             1,000 tokens/month

@@ -127,7 +127,7 @@ export function VideoToolView({ sessionId, exerciseName, onClose }: VideoToolVie
                 <Video className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
                 <h3 className="font-display text-lg text-foreground mb-2">No Videos Yet</h3>
                 <p className="text-sm text-muted-foreground">
-                  Record your form to get movement analysis feedback.
+                  Record your form to build your own technique library.
                 </p>
               </Card>
             )}

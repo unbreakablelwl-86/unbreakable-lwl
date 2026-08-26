@@ -159,12 +159,13 @@ export function HomeDashboard() {
   return (
     <div className="min-h-screen pb-28 bg-background">
       {/* ─── Hero Image ─── */}
-      <div className="mx-4 mt-4 rounded-2xl overflow-hidden border border-primary/30">
+      <div className="mx-4 mt-4 rounded-2xl overflow-hidden border border-primary/30 bg-black flex justify-center">
+        {/* Square shield artwork: contain (not cover) so the shield is never sliced. */}
         <img
-          src="/lwl-gym-hero.webp"
+          src="/unbreakable-shield-hero.webp"
           alt="UNBREAKABLE — Keep Showing Up"
-          className="w-full object-cover"
-          style={{ maxHeight: '240px' }}
+          className="h-full w-auto object-contain"
+          style={{ maxHeight: '280px' }}
         />
       </div>
 

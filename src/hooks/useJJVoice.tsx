@@ -6,8 +6,12 @@ export type VoiceFeature = 'chat' | 'mindset' | 'cardio' | 'notifications' | 'un
 
 const STORAGE_KEY = 'unbreakable-voice-settings';
 
+export type VoiceGender = 'male' | 'female';
+
 interface VoiceSettings {
   master: boolean;
+  /** Device voice used for cardio + mindset cues. Free — no TTS billing. */
+  gender: VoiceGender;
   chat: boolean;
   mindset: boolean;
   cardio: boolean;
@@ -17,6 +21,7 @@ interface VoiceSettings {
 
 const DEFAULT_SETTINGS: VoiceSettings = {
   master: true,
+  gender: 'male',
   chat: true,
   mindset: true,
   cardio: true,
@@ -34,6 +39,48 @@ function loadSettings(): VoiceSettings {
 
 function saveSettings(s: VoiceSettings) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(s));
+}
+
+/* ──────────────────────────────────────────────────────────────
+ * Device voice (Web Speech API).
+ * Free and unmetered — every cardio/mindset cue spoken this way
+ * costs nothing, unlike the ElevenLabs coach voice which bills
+ * per character. Used for short, repetitive cues.
+ * ────────────────────────────────────────────────────────────── */
+const FEMALE_HINTS = ['female', 'samantha', 'victoria', 'karen', 'moira', 'tessa', 'fiona', 'serena', 'zira', 'hazel', 'amelie', 'joana'];
+const MALE_HINTS = ['male', 'daniel', 'alex', 'fred', 'david', 'george', 'oliver', 'thomas', 'rishi', 'aaron'];
+
+function pickDeviceVoice(gender: VoiceGender): SpeechSynthesisVoice | null {
+  if (typeof window === 'undefined' || !window.speechSynthesis) return null;
+  const voices = window.speechSynthesis.getVoices();
+  if (!voices.length) return null;
+  const en = voices.filter(v => v.lang?.toLowerCase().startsWith('en'));
+  const pool = en.length ? en : voices;
+  const hints = gender === 'female' ? FEMALE_HINTS : MALE_HINTS;
+  // Prefer a UK voice that matches the requested gender.
+  const gb = pool.filter(v => v.lang?.toLowerCase().includes('gb'));
+  for (const list of [gb, pool]) {
+    const match = list.find(v => hints.some(h => v.name.toLowerCase().includes(h)));
+    if (match) return match;
+  }
+  return pool[0] ?? null;
+}
+
+export function speakOnDevice(text: string, gender: VoiceGender): boolean {
+  if (typeof window === 'undefined' || !window.speechSynthesis) return false;
+  try {
+    window.speechSynthesis.cancel();
+    const utter = new SpeechSynthesisUtterance(text);
+    const voice = pickDeviceVoice(gender);
+    if (voice) utter.voice = voice;
+    utter.lang = voice?.lang || 'en-GB';
+    utter.rate = 1.0;
+    utter.pitch = gender === 'female' ? 1.1 : 0.9;
+    window.speechSynthesis.speak(utter);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 /* ── Hook ── */
@@ -67,7 +114,7 @@ export function useJJVoice() {
   }, [settings]);
 
   /* Update a single setting */
-  const setSetting = useCallback((key: keyof VoiceSettings, value: boolean) => {
+  const setSetting = useCallback((key: keyof VoiceSettings, value: boolean | VoiceGender) => {
     setSettings(prev => ({ ...prev, [key]: value }));
   }, []);
 
@@ -88,6 +135,11 @@ export function useJJVoice() {
 
     // Stop current playback
     if (ttsAudioRef.current) { ttsAudioRef.current.pause(); ttsAudioRef.current = null; }
+
+    // Cardio and mindset cues use the free device voice, not billed TTS.
+    if (feature === 'cardio' || feature === 'mindset') {
+      if (speakOnDevice(cleanText, settings.gender)) return;
+    }
 
     setIsSpeaking(true);
     try {
@@ -119,6 +171,7 @@ export function useJJVoice() {
 
   const stop = useCallback(() => {
     if (ttsAudioRef.current) { ttsAudioRef.current.pause(); ttsAudioRef.current = null; }
+    if (typeof window !== 'undefined' && window.speechSynthesis) window.speechSynthesis.cancel();
     setIsSpeaking(false);
   }, []);
 
