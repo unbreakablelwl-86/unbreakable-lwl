@@ -1,5 +1,5 @@
 /**
- * Welcome — Post-onboarding welcome screen with JJ greeting,
+ * Welcome — Post-onboarding welcome screen with coach greeting,
  * quick feature tour, and Foundation offer.
  */
 
@@ -16,8 +16,8 @@ import {
 const TOUR_SLIDES = [
   {
     icon: MessageCircle,
-    title: 'JJ — YOUR AI COACH',
-    description: 'Ask JJ anything. Build programmes, meal plans, get form tips — all from your personal AI coach.',
+    title: 'YOUR UNBREAKABLE COACH',
+    description: 'Ask your coach anything. Build programmes, meal plans, get form tips — all from your personal AI coach.',
     color: '#FF5500',
   },
   {
@@ -55,7 +55,7 @@ const TOUR_SLIDES = [
 export default function Welcome() {
   const navigate = useNavigate();
   const { profile } = useProfile();
-  const [slideIndex, setSlideIndex] = useState(-1); // -1 = JJ greeting
+  const [slideIndex, setSlideIndex] = useState(-1); // -1 = coach greeting
 
   const firstName = profile?.display_name?.split(' ')[0] || 'mate';
 
@@ -82,7 +82,7 @@ export default function Welcome() {
 
       <AnimatePresence mode="wait">
         {slideIndex === -1 ? (
-          /* ── JJ GREETING ── */
+          /* ── COACH GREETING ── */
           <motion.div
             key="greeting"
             initial={{ opacity: 0, y: 20 }}
@@ -90,7 +90,7 @@ export default function Welcome() {
             exit={{ opacity: 0, y: -20 }}
             className="text-center max-w-sm relative z-10"
           >
-            {/* JJ Avatar */}
+            {/* Coach Avatar */}
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
@@ -115,7 +115,7 @@ export default function Welcome() {
               transition={{ delay: 0.6 }}
               className="text-muted-foreground text-sm leading-relaxed mb-8"
             >
-              I'm JJ, your Unbreakable Coach. Your profile is set up and everything's ready.
+              I'm your Unbreakable Coach. Your profile is set up and everything's ready.
               Let me show you around — it'll only take a minute.
             </motion.p>
 
@@ -197,7 +197,7 @@ export default function Welcome() {
                       {slideIndex < TOUR_SLIDES.length - 1 ? (
                         <>NEXT <ChevronRight className="w-4 h-4" /></>
                       ) : (
-                        <>CHAT WITH JJ <MessageCircle className="w-4 h-4" /></>
+                        <>CHAT WITH YOUR COACH <MessageCircle className="w-4 h-4" /></>
                       )}
                     </Button>
                     <Button

@@ -2,7 +2,7 @@ import { useCallback, useEffect } from 'react';
 import { useAuth } from './useAuth';
 
 const STORAGE_KEY = 'unbreakable_coach_name';
-const DEFAULT_NAME = 'JJ';
+const DEFAULT_NAME = 'UNBREAKABLE COACH';
 
 /**
  * The AI coach's name.

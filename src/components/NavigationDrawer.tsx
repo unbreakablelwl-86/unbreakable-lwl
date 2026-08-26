@@ -189,7 +189,7 @@ export function NavigationDrawer({ variant = 'default' }: NavigationDrawerProps)
               {/* UNBREAKABLE COACH — uses Unbreakable token system */}
               <Link to="/help" onClick={handleNavClick} className={linkClass('/help')}>
                 <Flame className={`w-5 h-5 ${isActive('/help') ? '' : 'text-primary'}`} />
-                <span className="flex-1">JJ COACH</span>
+                <span className="flex-1">UNBREAKABLE COACH</span>
               </Link>
 
               {/* 121 COACHING — hidden from users; coaches/devs only (may onboard later) */}

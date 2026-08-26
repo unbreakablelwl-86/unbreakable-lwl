@@ -82,7 +82,7 @@ const ALL_QUICK_ACTIONS: QuickAction[] = [
   { id: 'run', label: 'Track Run', icon: Activity, path: '/tracker?track=true', color: '#EF4444' },
   { id: 'lift', label: 'Start Lift', icon: Dumbbell, path: '/programming', color: '#FF5500' },
   { id: 'journal', label: 'Journal', icon: BookOpen, path: '/habits', color: '#8B5CF6' },
-  { id: 'coach', label: 'JJ Coach', icon: Sparkles, path: '/help', color: '#FF5500' },
+  { id: 'coach', label: 'Coach', icon: Sparkles, path: '/help', color: '#FF5500' },
   { id: 'calc', label: 'Calculators', icon: Calculator, path: '/calculators', color: '#10B981' },
   { id: 'inbox', label: 'Inbox', icon: MessageCircle, path: '/inbox', color: '#FF5500' },
   { id: 'profile', label: 'Profile', icon: User, path: '/profile', color: '#6366F1' },
@@ -144,12 +144,24 @@ export function HomeDashboard() {
     });
   }
 
+  // Coach fuel gauge label — members never see raw token counts.
+  const coachFuelLabel = (() => {
+    if (tokenState.isUnlimited) return 'FULL';
+    const allowance = tokenState.monthlyTokens || 0;
+    if (allowance <= 0) return tokenState.balance > 0 ? 'TOPPED UP' : 'EMPTY';
+    const pct = Math.max(0, Math.min(100, (tokenState.balance / allowance) * 100));
+    if (pct >= 75) return 'FULL';
+    if (pct >= 40) return 'GOOD';
+    if (pct >= 15) return 'LOW';
+    return pct > 0 ? 'NEARLY OUT' : 'EMPTY';
+  })();
+
   return (
     <div className="min-h-screen pb-28 bg-background">
-      {/* ─── JJ Hero Image ─── */}
+      {/* ─── Hero Image ─── */}
       <div className="mx-4 mt-4 rounded-2xl overflow-hidden border border-primary/30">
         <img
-          src="https://vlwcoqilwyfcrsxodtdx.supabase.co/storage/v1/object/public/site-assets/misc/jj-hero-welcome.webp"
+          src="/lwl-gym-hero.webp"
           alt="UNBREAKABLE — Keep Showing Up"
           className="w-full object-cover"
           style={{ maxHeight: '240px' }}
@@ -173,11 +185,11 @@ export function HomeDashboard() {
               </p>
             </div>
             <div className="w-px h-10 bg-muted-foreground" />
-            {/* Tokens */}
+            {/* Coach fuel — members see a gauge, never a raw token count */}
             <div className="flex-1 text-center">
-              <p className="text-2xl font-bold text-foreground">{Math.floor(tokenState.balance)}</p>
+              <p className="text-2xl font-bold text-foreground">{coachFuelLabel}</p>
               <p className="text-xs text-muted-foreground flex items-center justify-center gap-1 mt-1">
-                <span className="text-primary">🪙</span> Tokens
+                <span className="text-primary">⛽</span> Coach Fuel
               </p>
             </div>
             <div className="w-px h-10 bg-muted-foreground" />

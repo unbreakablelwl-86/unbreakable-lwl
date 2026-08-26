@@ -321,7 +321,7 @@ const MindsetBreathing = () => {
                 </span>
               </button>
 
-              {/* JJ voices everything — no gender selection */}
+              {/* Coach voice throughout — no gender selection */}
             </div>
 
             {/* Visual pattern selector — hidden, using orb only */}
@@ -410,7 +410,7 @@ const MindsetBreathing = () => {
             </div>
             <div className="text-left">
               <p className="text-[10px] text-muted-foreground">
-                {voiceEnabled ? 'JJ voice guidance' : 'Voice off'}
+                {voiceEnabled ? 'Coach voice guidance' : 'Voice off'}
               </p>
             </div>
           </div>

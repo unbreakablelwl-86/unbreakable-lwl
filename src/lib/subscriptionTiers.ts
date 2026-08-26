@@ -85,7 +85,7 @@ export const TIERS: Record<TierKey, TierConfig> = {
     rank: 2,
     popular: true,
     features: [
-      'JJ AI Coach (unlimited)',
+      'Unbreakable Coach (unlimited)',
       'UNBREAKABLE 86 programme',
       'Full exercise library (1,500+)',
       'AI programme generator',

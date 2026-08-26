@@ -1,3 +1,4 @@
+import { FEATURES } from '@/config/features';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { LandingFooter } from '@/components/landing/LandingFooter';
@@ -131,7 +132,7 @@ const freeFeatures = [
 /* ─── Token tiers ─── */
 const tokenTiers = [
   { name: 'FREE', tokens: 0, price: '£0', desc: 'Full access to all free tools & community', highlight: false, features: ['All free tools', 'Community access', 'University preview'] },
-  { name: 'FOUNDATION', tokens: 1000, price: '£50', period: '/mo', desc: 'Full AI coaching, all features unlocked', highlight: true, features: ['1,000 tokens/month', 'JJ AI Coach', 'All features'], originalPrice: '£75' },
+  { name: 'FOUNDATION', tokens: 1000, price: '£50', period: '/mo', desc: 'Full AI coaching, all features unlocked', highlight: true, features: ['1,000 tokens/month', 'Unbreakable Coach', 'All features'], originalPrice: '£75' },
 ];
 
 /* ─── What makes this different ─── */
@@ -289,7 +290,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
             {[
               { val: '6', label: 'Training Pillars' },
               { val: '4,400+', label: 'Quiz Questions' },
-              { val: '24', label: 'Original Tracks' },
+              { val: '42', label: 'Original Tracks' },
               { val: '4', label: 'Focus Games' },
               { val: '24/7', label: 'AI Coach' },
             ].map(s => (
@@ -463,7 +464,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
                   </div>
                 </div>
                 <p className="text-[#888] text-sm leading-relaxed mb-3">
-                  24 original tracks across two albums — <em>New Beginnings</em> and <em>Strong Foundations</em>.
+                  42 original tracks across three albums — <em>New Beginnings</em>, <em>Strong Foundations</em> and <em>Mind Games</em>.
                   Post-hardcore meets motivation. Built to match the pace of your training.
                 </p>
                 <div className="flex flex-wrap gap-2">
@@ -479,69 +480,71 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
       </section>
 
       {/* ━━━ Founder Story ━━━ */}
-      <section className="py-16 sm:py-20 px-6">
-        <div className="container mx-auto max-w-5xl">
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} variants={stagger}>
-            <motion.div variants={fadeUp} className="text-center mb-10">
-              <p className="text-[#FF5500] font-heading font-bold text-sm uppercase tracking-[0.2em] mb-2">The Story</p>
-              <h2 className="font-heading font-black text-2xl sm:text-3xl md:text-5xl text-white uppercase tracking-wide">
-                Built From Experience
-              </h2>
-            </motion.div>
+      {FEATURES.founderStory && (
+        <section className="py-16 sm:py-20 px-6">
+          <div className="container mx-auto max-w-5xl">
+            <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} variants={stagger}>
+              <motion.div variants={fadeUp} className="text-center mb-10">
+                <p className="text-[#FF5500] font-heading font-bold text-sm uppercase tracking-[0.2em] mb-2">The Story</p>
+                <h2 className="font-heading font-black text-2xl sm:text-3xl md:text-5xl text-white uppercase tracking-wide">
+                  Built From Experience
+                </h2>
+              </motion.div>
 
-            <motion.div variants={fadeUp} className="rounded-2xl p-6 sm:p-8 md:p-10"
-              style={{ background: 'rgba(14,14,14,0.6)', border: '1px solid rgba(255,85,0,0.1)' }}>
-              <div className="flex flex-col md:flex-row gap-8 items-center">
-                <div className="flex-shrink-0">
-                  <img
-                    src={johnFounder}
-                    alt="John James — Founder"
-                    className="w-32 h-32 sm:w-40 sm:h-40 rounded-2xl object-cover"
-                    style={{ border: '2px solid rgba(255,85,0,0.2)', boxShadow: '0 0 30px rgba(255,85,0,0.1)' }}
-                  />
+              <motion.div variants={fadeUp} className="rounded-2xl p-6 sm:p-8 md:p-10"
+                style={{ background: 'rgba(14,14,14,0.6)', border: '1px solid rgba(255,85,0,0.1)' }}>
+                <div className="flex flex-col md:flex-row gap-8 items-center">
+                  <div className="flex-shrink-0">
+                    <img
+                      src={johnFounder}
+                      alt="John James — Founder"
+                      className="w-32 h-32 sm:w-40 sm:h-40 rounded-2xl object-cover"
+                      style={{ border: '2px solid rgba(255,85,0,0.2)', boxShadow: '0 0 30px rgba(255,85,0,0.1)' }}
+                    />
+                  </div>
+                  <div>
+                    <Quote size={28} className="text-[#FF5500]/30 mb-2" />
+                    <p className="text-[#ccc] text-sm sm:text-base leading-relaxed mb-4">
+                      I didn't build UNBREAKABLE because I had it figured out. I built it because I didn't.
+                      I've trained through addiction recovery, mental health crises and years of starting over.
+                      Every feature in this app exists because I needed it myself.
+                    </p>
+                    <p className="text-[#888] text-sm leading-relaxed mb-4">
+                      This isn't a corporate fitness app built by people who've never missed a Monday.
+                      It's built by someone who's missed hundreds of Mondays — and still showed back up.
+                    </p>
+                    <p className="font-heading font-bold text-white text-sm tracking-wider">
+                      JOHN JAMES <span className="text-[#FF5500]">·</span> <span className="text-[#666] font-normal">Founder, Live Without Limits LTD</span>
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <Quote size={28} className="text-[#FF5500]/30 mb-2" />
-                  <p className="text-[#ccc] text-sm sm:text-base leading-relaxed mb-4">
-                    I didn't build UNBREAKABLE because I had it figured out. I built it because I didn't.
-                    I've trained through addiction recovery, mental health crises and years of starting over.
-                    Every feature in this app exists because I needed it myself.
-                  </p>
-                  <p className="text-[#888] text-sm leading-relaxed mb-4">
-                    This isn't a corporate fitness app built by people who've never missed a Monday.
-                    It's built by someone who's missed hundreds of Mondays — and still showed back up.
-                  </p>
-                  <p className="font-heading font-bold text-white text-sm tracking-wider">
-                    JOHN JAMES <span className="text-[#FF5500]">·</span> <span className="text-[#666] font-normal">Founder, Live Without Limits LTD</span>
-                  </p>
-                </div>
-              </div>
 
-              {/* Journey timeline */}
-              <div className="mt-8 pt-6 border-t border-white/[0.06]">
-                <p className="text-[#666] text-xs font-heading tracking-widest uppercase mb-4 text-center">The Journey</p>
-                <div className="grid grid-cols-3 gap-3 sm:gap-4">
-                  <div className="text-center">
-                    <img loading="lazy" src={jj2018} alt="2018" className="w-full aspect-square object-cover rounded-xl mb-2 opacity-80 hover:opacity-100 transition-opacity"
-                      style={{ border: '1px solid rgba(255,255,255,0.06)' }} />
-                    <p className="text-[#666] text-[10px] sm:text-xs font-heading tracking-wider">2018 — THE START</p>
-                  </div>
-                  <div className="text-center">
-                    <img loading="lazy" src={jj2020} alt="2020" className="w-full aspect-square object-cover rounded-xl mb-2 opacity-80 hover:opacity-100 transition-opacity"
-                      style={{ border: '1px solid rgba(255,255,255,0.06)' }} />
-                    <p className="text-[#666] text-[10px] sm:text-xs font-heading tracking-wider">2020 — THE GRIND</p>
-                  </div>
-                  <div className="text-center">
-                    <img loading="lazy" src={jjReturn} alt="2026" className="w-full aspect-square object-cover rounded-xl mb-2 opacity-80 hover:opacity-100 transition-opacity"
-                      style={{ border: '1px solid rgba(255,85,0,0.15)' }} />
-                    <p className="text-[#FF5500] text-[10px] sm:text-xs font-heading tracking-wider">2026 — UNBREAKABLE</p>
+                {/* Journey timeline */}
+                <div className="mt-8 pt-6 border-t border-white/[0.06]">
+                  <p className="text-[#666] text-xs font-heading tracking-widest uppercase mb-4 text-center">The Journey</p>
+                  <div className="grid grid-cols-3 gap-3 sm:gap-4">
+                    <div className="text-center">
+                      <img loading="lazy" src={jj2018} alt="2018" className="w-full aspect-square object-cover rounded-xl mb-2 opacity-80 hover:opacity-100 transition-opacity"
+                        style={{ border: '1px solid rgba(255,255,255,0.06)' }} />
+                      <p className="text-[#666] text-[10px] sm:text-xs font-heading tracking-wider">2018 — THE START</p>
+                    </div>
+                    <div className="text-center">
+                      <img loading="lazy" src={jj2020} alt="2020" className="w-full aspect-square object-cover rounded-xl mb-2 opacity-80 hover:opacity-100 transition-opacity"
+                        style={{ border: '1px solid rgba(255,255,255,0.06)' }} />
+                      <p className="text-[#666] text-[10px] sm:text-xs font-heading tracking-wider">2020 — THE GRIND</p>
+                    </div>
+                    <div className="text-center">
+                      <img loading="lazy" src={jjReturn} alt="2026" className="w-full aspect-square object-cover rounded-xl mb-2 opacity-80 hover:opacity-100 transition-opacity"
+                        style={{ border: '1px solid rgba(255,85,0,0.15)' }} />
+                      <p className="text-[#FF5500] text-[10px] sm:text-xs font-heading tracking-wider">2026 — UNBREAKABLE</p>
+                    </div>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             </motion.div>
-          </motion.div>
-        </div>
-      </section>
+          </div>
+        </section>
+      )}
 
       {/* ━━━ How it works ━━━ */}
       <section className="py-16 sm:py-20 px-6" style={{ background: 'rgba(10,10,10,0.5)' }}>

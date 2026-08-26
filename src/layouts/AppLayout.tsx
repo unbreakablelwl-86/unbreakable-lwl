@@ -167,7 +167,7 @@ const ALL_NAV_ITEMS: NavItemDef[] = [
     path: '/help',
     activeMatch: ['/help'],
     color: '#FF5500',
-    description: 'JJ — Your AI Coach',
+    description: 'Your Unbreakable Coach',
   },
   {
     id: 'threads',

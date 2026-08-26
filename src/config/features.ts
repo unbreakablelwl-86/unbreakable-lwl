@@ -18,6 +18,8 @@ export const FEATURES = {
   liveStory: false,
   /** Sports certificates & sports courses in Unbreakable University. Kept active for the owner account. */
   sportsCertificates: false,
+  /** 'Meet the Founder' story, photos and /founder page. Hidden across the site. */
+  founderStory: false,
 } as const;
 
 export type FeatureFlag = keyof typeof FEATURES;

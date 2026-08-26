@@ -476,31 +476,28 @@ export default function AITokens() {
 
           {/* ─── University Courses ─── */}
           <section className="max-w-3xl mx-auto mb-16">
-            <h2 className="text-xl font-display tracking-wider text-center mb-2">UNIVERSITY COURSES</h2>
+            <h2 className="text-xl font-display tracking-wider text-center mb-2">UNBREAKABLE UNIVERSITY</h2>
             <p className="text-sm text-muted-foreground text-center mb-2">
-              Full access to all university courses is included with every subscription tier.
+              Every course is included with your Foundation membership. No course fees, no upsells.
             </p>
             <p className="text-xs text-primary text-center mb-8 font-display tracking-wider">
-              COMPLETE EACH LEVEL TO UNLOCK THE NEXT: L1 → L2 → L3 → L4
+              FINISH LEVEL 1 TO UNLOCK LEVEL 2 — THEN PICK THE COURSE YOU WANT NEXT
             </p>
 
-            {/* Included with subscription notice */}
             <div className="rounded-2xl border border-primary/20 bg-primary/5 p-6">
               <div className="flex items-center gap-3 mb-3">
                 <div className="w-12 h-12 rounded-xl bg-primary/15 border border-primary/25 flex items-center justify-center">
                   <GraduationCap className="w-6 h-6 text-primary" />
                 </div>
                 <div>
-                  <p className="font-display text-sm tracking-wider">INCLUDED WITH YOUR SUBSCRIPTION</p>
-                  <p className="text-xs text-muted-foreground">All courses across Power, Fuel, Mindset &amp; Sport</p>
+                  <p className="font-display text-sm tracking-wider">INCLUDED WITH YOUR MEMBERSHIP</p>
+                  <p className="text-xs text-muted-foreground">Courses across Power, Fuel and Mindset</p>
                 </div>
               </div>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              <div className="grid grid-cols-2 gap-2">
                 {[
                   { level: 'L1', desc: 'Foundation' },
-                  { level: 'L2', desc: 'Intermediate' },
-                  { level: 'L3', desc: 'Advanced' },
-                  { level: 'L4', desc: 'Expert + Sport' },
+                  { level: 'L2', desc: 'Intermediate — you choose' },
                 ].map((item, i) => (
                   <div key={i} className="rounded-lg bg-background/50 border border-border/50 px-3 py-2 text-center">
                     <p className="font-display text-xs tracking-wider text-primary">{item.level}</p>
@@ -511,35 +508,21 @@ export default function AITokens() {
             </div>
           </section>
 
-          {/* ─── UnTunes Purchases ─── */}
+          {/* ─── UnTunes ─── */}
           <section className="max-w-3xl mx-auto mb-16">
             <h2 className="text-xl font-display tracking-wider text-center mb-2">UNTUNES MUSIC</h2>
             <p className="text-sm text-muted-foreground text-center mb-8">
-              Full streaming is free for all paying members. Optional purchases to own tracks, albums &amp; collectible cards.
+              42 original tracks across three albums, written and recorded in-house. Included with your membership.
             </p>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              {[
-                { name: 'Single Track', cost: 3, desc: 'Own a track + collectible card', icon: Music },
-                { name: 'Full Album', cost: 30, desc: 'All tracks + all cards + album card', icon: Package },
-                { name: 'All Albums Bundle', cost: 50, desc: 'Every album — boosted rare card odds', icon: Sparkles },
-              ].map((item, i) => (
-                <div key={i} className="rounded-2xl border border-border bg-card p-5 text-center">
-                  <div className="w-10 h-10 rounded-xl bg-muted border border-border flex items-center justify-center mx-auto mb-3">
-                    <item.icon className="w-5 h-5 text-foreground" />
-                  </div>
-                  <p className="font-display text-sm tracking-wider mb-1">{item.name.toUpperCase()}</p>
-                  <p className="font-display text-2xl tracking-wider text-primary mb-1">{item.cost}</p>
-                  <p className="text-[10px] text-muted-foreground font-display tracking-wider mb-2">TOKENS</p>
-                  <p className="text-xs text-muted-foreground">{item.desc}</p>
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-4 rounded-xl border border-border bg-card/50 px-4 py-3 text-center">
-              <p className="text-xs text-muted-foreground">
-                <span className="text-foreground font-medium">Free users</span> get 30-second previews.
-                <span className="text-foreground font-medium"> Paying members</span> (Starter+) stream everything — purchases are optional.
+            <div className="rounded-2xl border border-primary/20 bg-primary/5 p-6 text-center">
+              <div className="w-12 h-12 rounded-xl bg-primary/15 border border-primary/25 flex items-center justify-center mx-auto mb-3">
+                <Music className="w-6 h-6 text-primary" />
+              </div>
+              <p className="font-display text-sm tracking-wider mb-1">STREAM IT ALL</p>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Full streaming for every member — no tokens, no purchases, no extras.
+                Free accounts get 30-second previews.
               </p>
             </div>
           </section>
