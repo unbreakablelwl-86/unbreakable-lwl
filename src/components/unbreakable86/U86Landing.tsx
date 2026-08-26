@@ -59,7 +59,7 @@ export function U86Landing({ onStart, resetCount = 0 }: U86LandingProps) {
             transition={{ duration: 0.6 }}
           >
             <h1 className="font-display text-4xl tracking-wider">
-              <span className="text-primary" style={{ textShadow: '0 0 30px rgba(255,85,0,0.5)' }}>UNBREAKABLE</span>
+              <span className="text-primary neon-glow">UNBREAKABLE</span>
               <span className="text-foreground"> 86</span>
             </h1>
             <p className="text-muted-foreground text-sm mt-2 font-display tracking-wide">
@@ -75,9 +75,9 @@ export function U86Landing({ onStart, resetCount = 0 }: U86LandingProps) {
             className="mt-6 inline-flex items-center justify-center"
           >
             <div className="w-28 h-28 rounded-full border-2 border-primary/30 flex items-center justify-center"
-              style={{ boxShadow: '0 0 40px rgba(255,85,0,0.15), inset 0 0 20px rgba(255,85,0,0.05)' }}>
+              style={{ boxShadow: '0 0 24px rgba(255,85,0,0.45), 0 0 60px rgba(255,85,0,0.18), inset 0 0 24px rgba(255,85,0,0.1)' }}>
               <div className="text-center">
-                <span className="font-display text-5xl text-primary" style={{ textShadow: '0 0 20px rgba(255,85,0,0.4)' }}>
+                <span className="font-display text-5xl text-primary neon-glow">
                   86
                 </span>
                 <p className="text-muted-foreground text-[10px] font-display tracking-widest -mt-1">DAYS</p>
@@ -104,7 +104,7 @@ export function U86Landing({ onStart, resetCount = 0 }: U86LandingProps) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="rounded-xl border border-primary/15 bg-card p-4"
+          className="rounded-xl border bg-card p-4 neon-border-subtle"
         >
           <div className="flex items-center gap-2 mb-3">
             <Flame className="w-5 h-5 text-primary" style={{ filter: 'drop-shadow(0 0 6px rgba(255,85,0,0.5))' }} />
@@ -120,7 +120,7 @@ export function U86Landing({ onStart, resetCount = 0 }: U86LandingProps) {
         {/* ─── The Daily 7 ─── */}
         <div>
           <p className="text-xs font-display tracking-wider text-muted-foreground mb-3 px-1">THE DAILY 7</p>
-          <div className="rounded-xl border border-border bg-card divide-y divide-border">
+          <div className="rounded-xl border bg-card divide-y divide-border neon-border-subtle">
             {DAILY_7.map((h, i) => (
               <div key={h.label} className="flex items-start gap-3 p-3">
                 <span className="font-display text-xs text-primary w-4 shrink-0 pt-0.5">{i + 1}</span>
@@ -145,7 +145,7 @@ export function U86Landing({ onStart, resetCount = 0 }: U86LandingProps) {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.3 + i * 0.08 }}
-                  className="rounded-xl border border-border bg-card p-3.5 flex items-start gap-3"
+                  className="rounded-xl border bg-card p-3.5 flex items-start gap-3 neon-border-subtle"
                 >
                   <div className="w-10 h-10 rounded-lg border border-primary/30 bg-primary/5 flex items-center justify-center shrink-0">
                     <Icon className="w-5 h-5 text-primary" style={{ filter: 'drop-shadow(0 0 6px rgba(255,85,0,0.5))' }} />
@@ -198,7 +198,7 @@ export function U86Landing({ onStart, resetCount = 0 }: U86LandingProps) {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.7 + i * 0.1 }}
-                  className="rounded-xl border border-border bg-card p-3.5"
+                  className="rounded-xl border bg-card p-3.5 neon-border-subtle"
                 >
                   <div className="flex items-center gap-2 mb-1">
                     <Icon className="w-4 h-4 text-primary" />
@@ -222,7 +222,7 @@ export function U86Landing({ onStart, resetCount = 0 }: U86LandingProps) {
           <Button
             onClick={onStart}
             className="w-full h-14 rounded-xl text-lg font-display tracking-wider bg-primary hover:bg-primary/90 text-white shadow-lg"
-            style={{ boxShadow: '0 0 30px rgba(255,85,0,0.3)' }}
+            style={{ boxShadow: '0 0 30px rgba(255,85,0,0.55), 0 0 80px rgba(255,85,0,0.2)' }}
           >
             <Flame className="w-5 h-5 mr-2" />
             BEGIN YOUR 86

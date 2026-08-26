@@ -93,7 +93,7 @@ export function U86Onboarding({ onComplete, onBack }: U86OnboardingProps) {
             Back
           </button>
           <h1 className="font-display text-xl tracking-wider text-center">
-            <span className="text-primary" style={{ textShadow: '0 0 20px rgba(255,85,0,0.4)' }}>UNBREAKABLE</span>
+            <span className="text-primary neon-glow">UNBREAKABLE</span>
             <span className="text-foreground"> COACH</span>
           </h1>
           <p className="text-center text-muted-foreground text-xs mt-1 font-display tracking-wide">
@@ -106,7 +106,7 @@ export function U86Onboarding({ onComplete, onBack }: U86OnboardingProps) {
               className="h-full bg-primary rounded-full"
               animate={{ width: `${progress}%` }}
               transition={{ duration: 0.3 }}
-              style={{ boxShadow: '0 0 8px rgba(255,85,0,0.4)' }}
+              style={{ boxShadow: '0 0 12px rgba(255,85,0,0.8), 0 0 24px rgba(255,85,0,0.35)' }}
             />
           </div>
           <p className="text-muted-foreground text-[10px] mt-1.5 font-display tracking-wider text-center">
@@ -366,7 +366,7 @@ export function U86Onboarding({ onComplete, onBack }: U86OnboardingProps) {
             onClick={handleNext}
             disabled={!canProceed() || submitting}
             className="w-full h-12 rounded-xl font-display tracking-wider bg-primary hover:bg-primary/90 text-white disabled:opacity-30"
-            style={{ boxShadow: canProceed() ? '0 0 20px rgba(255,85,0,0.25)' : 'none' }}
+            style={{ boxShadow: canProceed() ? '0 0 24px rgba(255,85,0,0.5), 0 0 60px rgba(255,85,0,0.18)' : 'none' }}
           >
             {submitting ? (
               <>

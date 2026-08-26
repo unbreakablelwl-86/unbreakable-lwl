@@ -99,10 +99,10 @@ export function U86Dashboard({
       {/* ─── Hero ─── */}
       <div className="relative px-4 pt-6 pb-4 overflow-hidden">
         <div className="absolute inset-0 pointer-events-none"
-          style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(255,85,0,0.1), transparent 70%)' }} />
+          style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(255,85,0,0.22), transparent 70%)' }} />
         <div className="relative z-10">
           <h1 className="font-display text-2xl tracking-wider text-center">
-            <span className="text-primary" style={{ textShadow: '0 0 20px rgba(255,85,0,0.4)' }}>UNBREAKABLE</span>
+            <span className="text-primary neon-glow">UNBREAKABLE</span>
             <span className="text-foreground"> 86</span>
           </h1>
           <p className="text-center text-muted-foreground text-sm mt-1 font-display tracking-wide">
@@ -119,8 +119,8 @@ export function U86Dashboard({
           animate={{ scale: 1, opacity: 1 }}
           className="relative"
         >
-          <div className="w-32 h-32 rounded-full border-2 border-primary/30 flex items-center justify-center relative"
-            style={{ boxShadow: '0 0 40px rgba(255,85,0,0.15), inset 0 0 20px rgba(255,85,0,0.05)' }}>
+          <div className="w-32 h-32 rounded-full border-2 border-primary/60 flex items-center justify-center relative"
+            style={{ boxShadow: '0 0 24px rgba(255,85,0,0.45), 0 0 60px rgba(255,85,0,0.18), inset 0 0 24px rgba(255,85,0,0.1)' }}>
             {/* Progress ring */}
             <svg className="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 128 128">
               <circle cx="64" cy="64" r="60" fill="none" stroke="hsl(var(--border))" strokeWidth="3" />
@@ -129,12 +129,12 @@ export function U86Dashboard({
                 stroke="#FF5500" strokeWidth="3"
                 strokeDasharray={`${(progress / 100) * 377} 377`}
                 strokeLinecap="round"
-                style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.5))' }}
+                style={{ filter: 'drop-shadow(0 0 8px rgba(255,85,0,0.9))' }}
               />
             </svg>
             <div className="text-center relative z-10">
               <span className="font-display text-xs text-muted-foreground tracking-widest">DAY</span>
-              <span className="block font-display text-5xl text-primary" style={{ textShadow: '0 0 20px rgba(255,85,0,0.4)' }}>
+              <span className="block font-display text-5xl text-primary neon-glow">
                 {enrolment.current_day}
               </span>
               <span className="font-display text-[10px] text-muted-foreground tracking-widest">OF 86</span>
@@ -146,15 +146,15 @@ export function U86Dashboard({
       {/* ─── Quick Stats ─── */}
       <div className="px-4 mb-4">
         <div className="grid grid-cols-3 gap-2">
-          <div className="rounded-xl border border-border bg-card p-2.5 text-center">
-            <p className="font-display text-lg text-primary">{completedDays}</p>
+          <div className="rounded-xl border bg-card p-2.5 text-center neon-border-subtle">
+            <p className="font-display text-lg text-primary neon-glow-subtle">{completedDays}</p>
             <p className="text-muted-foreground text-[9px] font-display tracking-wider">COMPLETED</p>
           </div>
-          <div className="rounded-xl border border-border bg-card p-2.5 text-center">
+          <div className="rounded-xl border bg-card p-2.5 text-center neon-border-subtle">
             <p className="font-display text-lg text-foreground">{habitsCompleted}/{U86_TOTAL_HABITS}</p>
             <p className="text-muted-foreground text-[9px] font-display tracking-wider">TODAY</p>
           </div>
-          <div className="rounded-xl border border-border bg-card p-2.5 text-center">
+          <div className="rounded-xl border bg-card p-2.5 text-center neon-border-subtle">
             <p className="font-display text-lg text-foreground">{enrolment.reset_count}</p>
             <p className="text-muted-foreground text-[9px] font-display tracking-wider">RESETS</p>
           </div>
@@ -191,8 +191,8 @@ export function U86Dashboard({
         {activeTab === 'dashboard' && (
           <>
             {/* Phase Banner */}
-            <div className="rounded-xl border border-primary/20 bg-primary/5 p-3 flex items-center gap-3">
-              <PhaseIcon className="w-5 h-5 text-primary shrink-0" />
+            <div className="rounded-xl border border-primary/40 bg-primary/5 p-3 flex items-center gap-3 ub-glow">
+              <PhaseIcon className="w-5 h-5 text-primary shrink-0" style={{ filter: 'drop-shadow(0 0 6px rgba(255,85,0,0.7))' }} />
               <div>
                 <p className="font-display text-xs tracking-wider text-foreground">{phaseInfo.name} PHASE</p>
                 <p className="text-muted-foreground text-[10px] mt-0.5">{phaseInfo.focus}</p>
@@ -203,7 +203,7 @@ export function U86Dashboard({
             <div>
               <div className="flex items-center justify-between mb-2 px-1">
                 <div>
-                  <p className="text-xs font-display tracking-wider text-muted-foreground">DAILY 7</p>
+                  <p className="text-xs font-display tracking-wider text-primary neon-glow-subtle">DAILY 7</p>
                   <p className="text-[9px] text-muted-foreground/70 mt-0.5">
                     Aim for all 7. A minimum of {U86_MIN_HABITS} banks the day — build up to the full 7 across the 86.
                     Sauna &amp; cold shower are one choice, locked for the 86. Drop below {U86_MIN_HABITS} and the calendar resets.
@@ -220,6 +220,17 @@ export function U86Dashboard({
                   </motion.div>
                 )}
               </div>
+              <div className="mb-2.5 rounded-xl border border-primary/40 bg-primary/5 p-3 ub-glow">
+                <p className="font-display text-[11px] tracking-wider text-primary">
+                  TICK EACH ONE OFF AS YOU DO IT
+                </p>
+                <p className="text-[11px] text-muted-foreground leading-relaxed mt-1">
+                  Tap a habit below the moment you complete it — it saves instantly and the box lights up.
+                  Come back through the day and tick the rest. Everything must be logged before midnight:
+                  anything left unticked doesn't count towards today.
+                </p>
+              </div>
+
               <div className="space-y-1.5">
                 {DAILY_7.map(habit => {
                   const Icon = habit.icon;
@@ -234,11 +245,13 @@ export function U86Dashboard({
                           ? 'border-opacity-30'
                           : 'border-border bg-card hover:border-border/80'
                       }`}
-                      style={done ? { borderColor: `${habit.color}40`, background: `${habit.color}10` } : undefined}
+                      style={done
+                        ? { borderColor: `${habit.color}80`, background: `${habit.color}12`, boxShadow: `0 0 14px ${habit.color}40` }
+                        : undefined}
                     >
                       <div className="w-8 h-8 rounded-lg flex items-center justify-center transition-all border"
                         style={done
-                          ? { background: `${habit.color}20`, borderColor: `${habit.color}50` }
+                          ? { background: `${habit.color}20`, borderColor: `${habit.color}90`, boxShadow: `0 0 10px ${habit.color}66` }
                           : { background: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }
                         }
                       >
