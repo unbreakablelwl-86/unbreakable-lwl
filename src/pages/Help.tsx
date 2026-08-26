@@ -3,7 +3,7 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import {
   Send, MessageSquarePlus, Trash2, Loader2, Flame, Sparkles, UtensilsCrossed,
   PanelLeftClose, PanelLeftOpen, Dumbbell, TrendingUp, Brain, Zap, MessageCircle,
-  ArrowRight, Check, X, Eye, BookOpen, Target, Activity, Mic, MicOff, Volume2, VolumeX
+  ArrowRight, Check, X, Eye, BookOpen, Target, Activity, Mic, MicOff
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
@@ -47,7 +47,7 @@ interface GeneratedPlanInfo {
 /* ═══════════════════════════════════════════════════════════════════
    Neon Message Bubble
    ═══════════════════════════════════════════════════════════════════ */
-function MessageBubble({ message, onSpeak }: { message: MessageWithMedia; onSpeak?: (text: string) => void }) {
+function MessageBubble({ message }: { message: MessageWithMedia }) {
   const isUser = message.role === 'user';
 
   const formatContent = (content: string) => {
@@ -88,15 +88,6 @@ function MessageBubble({ message, onSpeak }: { message: MessageWithMedia; onSpea
           <p className="text-[10px] text-muted-foreground">
             {new Date(message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
           </p>
-          {!isUser && onSpeak && (
-            <button
-              onClick={() => onSpeak(message.content)}
-              className="text-muted-foreground hover:text-primary transition-colors p-0.5"
-              title="Listen to this response"
-            >
-              <Volume2 className="w-3 h-3" />
-            </button>
-          )}
         </div>
       </div>
     </div>
@@ -288,7 +279,6 @@ export default function Help() {
   /* ── Voice Chat State ── */
   const [isListening, setIsListening] = useState(false);
   const jjVoice = useJJVoice();
-  const [voiceEnabled, setVoiceEnabled] = useState(false);
   const recognitionRef = useRef<any>(null);
 
   const [programmeGenerating, setProgrammeGenerating] = useState(false);
@@ -689,16 +679,7 @@ export default function Help() {
     else startListening();
   }, [isListening, startListening, stopListening]);
 
-  /* ── Voice Output via centralized useJJVoice hook ── */
-
-  /* Auto-speak new assistant messages when voice mode is on */
-  useEffect(() => {
-    if (!voiceEnabled || !jjVoice.isEnabled('chat') || messages.length === 0) return;
-    const lastMsg = messages[messages.length - 1];
-    if (lastMsg.role === 'assistant' && lastMsg.content && !isLoading) {
-      jjVoice.speak(lastMsg.content, 'chat');
-    }
-  }, [messages.length, isLoading, voiceEnabled, jjVoice]);
+  /* Coach chat is text-out only — mic input stays, spoken replies removed. */
 
   /* Cleanup on unmount */
   useEffect(() => {
@@ -810,7 +791,7 @@ export default function Help() {
                 /* ─── Chat Messages ─── */
                 <div className="max-w-3xl mx-auto">
                   {enrichedMessages.map((msg) => (
-                    <MessageBubble key={msg.id} message={msg} onSpeak={(text) => jjVoice.speak(text, 'chat')} />
+                    <MessageBubble key={msg.id} message={msg} />
                   ))}
 
                   {/* Loading states */}
@@ -838,6 +819,10 @@ export default function Help() {
                         style={{ boxShadow: '0 0 20px rgba(255,85,0,0.05)' }}>
                         <span className="text-sm font-display text-primary">Building your programme...</span>
                         <p className="text-xs text-muted-foreground mt-0.5">Won't be a min 💪</p>
+                        <p className="text-[11px] text-muted-foreground/80 mt-1.5 leading-relaxed">
+                          Don't refresh — your coach will update here when it's ready. You can read it
+                          through and edit it before it saves to your library.
+                        </p>
                       </div>
                     </div>
                   )}
@@ -850,6 +835,10 @@ export default function Help() {
                       <div className="rounded-2xl rounded-bl-md px-4 py-3 bg-primary/5 border border-primary/20">
                         <span className="text-sm font-display text-primary">Building your meal plan...</span>
                         <p className="text-xs text-muted-foreground mt-0.5">Won't be a min 💪</p>
+                        <p className="text-[11px] text-muted-foreground/80 mt-1.5 leading-relaxed">
+                          Don't refresh — your coach will update here when it's ready. You can read it
+                          through and edit it before it saves to your library.
+                        </p>
                       </div>
                     </div>
                   )}
@@ -862,6 +851,10 @@ export default function Help() {
                       <div className="rounded-2xl rounded-bl-md px-4 py-3 bg-primary/5 border border-primary/20">
                         <span className="text-sm font-display text-primary">Building your mindset programme...</span>
                         <p className="text-xs text-muted-foreground mt-0.5">Won't be a min 💪</p>
+                        <p className="text-[11px] text-muted-foreground/80 mt-1.5 leading-relaxed">
+                          Don't refresh — your coach will update here when it's ready. You can read it
+                          through and edit it before it saves to your library.
+                        </p>
                       </div>
                     </div>
                   )}
@@ -907,24 +900,6 @@ export default function Help() {
             <div className="flex-shrink-0 border-t border-border p-4" style={{ background: 'rgba(15,15,15,0.8)' }}>
               <form onSubmit={handleSubmit} className="max-w-3xl mx-auto">
                 <div className="flex items-end gap-2">
-                  {/* Voice mode toggle */}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (!voiceEnabled) jjVoice.unlockAudio();
-                      setVoiceEnabled(!voiceEnabled);
-                      if (jjVoice.isSpeaking) jjVoice.stop();
-                    }}
-                    className={`h-11 w-11 rounded-xl flex items-center justify-center transition-all ${
-                      voiceEnabled
-                        ? 'bg-primary/20 border border-primary text-primary'
-                        : 'border border-border text-muted-foreground hover:border-primary/40 hover:text-foreground'
-                    }`}
-                    title={voiceEnabled ? 'Voice mode ON — tap to disable' : 'Enable voice mode'}
-                  >
-                    {voiceEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
-                  </button>
-
                   <div className="flex-1 relative">
                     <textarea
                       ref={inputRef}
