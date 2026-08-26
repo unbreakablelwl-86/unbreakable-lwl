@@ -41,7 +41,7 @@ export default function Terms() {
               TERMS OF SERVICE
             </h1>
             <p className="text-muted-foreground mb-10">
-              Last updated: May 2026
+              Last updated: August 2026
             </p>
           </motion.div>
 
@@ -89,11 +89,13 @@ export default function Terms() {
                 4. SUBSCRIPTIONS &amp; PAYMENTS
               </h2>
               <p className="leading-relaxed mb-3">
-                Unbreakable offers free and paid subscription tiers:
+                Unbreakable offers one free plan and one paid plan:
               </p>
               <ul className="list-disc list-inside space-y-2 text-foreground/80">
-                <li><strong>Free tier</strong> — basic access to the hub, profile, and limited features</li>
-                <li><strong>Paid tiers</strong> — full access to training, nutrition, university, and coaching features</li>
+                <li><strong>Free</strong> — the hub, your profile, the community feed, manual trackers, calculators and habits</li>
+                <li><strong>Foundation (£50 per month)</strong> — everything on Free, plus 1,000 tokens each month, the
+                    Unbreakable Coach, AI programmes and nutrition plans, UNBREAKABLE 86, the full exercise library,
+                    Unbreakable University and UnTunes streaming</li>
               </ul>
               <p className="leading-relaxed mt-3">
                 Paid subscriptions are billed via <strong>Stripe</strong> on a recurring basis (as shown
@@ -110,8 +112,14 @@ export default function Terms() {
               <h2 className="font-display text-xl text-primary/90 tracking-wide mb-3">
                 5. REFUNDS
               </h2>
+              <p className="leading-relaxed mb-3">
+                If you are a consumer in the UK you have a statutory right to cancel within 14 days of
+                starting a subscription. Because Foundation gives you immediate access to digital content,
+                by subscribing you ask us to start the service straight away — if you then cancel within
+                the 14 days we may make a proportionate deduction for the period you had access.
+              </p>
               <p className="leading-relaxed">
-                We offer refunds on a case-by-case basis. If you believe you are entitled to a refund,
+                Outside that period we consider refunds case by case. If you believe you are entitled to a refund,
                 contact us at{' '}
                 <a href="mailto:unbreakable.lwl@gmail.com" className="text-primary hover:underline">
                   unbreakable.lwl@gmail.com
@@ -169,7 +177,53 @@ export default function Terms() {
 
             <motion.section {...fadeUp}>
               <h2 className="font-display text-xl text-primary/90 tracking-wide mb-3">
-                9. YOUR CONTENT
+                9. THE UNBREAKABLE COACH &amp; TOKENS
+              </h2>
+              <p className="leading-relaxed mb-3">
+                The Unbreakable Coach is an AI assistant. It produces training, nutrition and mindset
+                suggestions automatically and can be wrong. It is not a personal trainer, dietitian,
+                physiotherapist or medical professional, and nothing it says is medical advice. Always
+                apply your own judgement and see section 8 (Health Disclaimer).
+              </p>
+              <ul className="list-disc list-inside space-y-2 text-foreground/80">
+                <li>Foundation includes 1,000 tokens each month. Tokens are spent on AI actions such as building programmes, meal plans and coach conversations.</li>
+                <li>Tokens are a licence to use features on the platform. They are not money, have no cash value, and cannot be sold, transferred or exchanged for cash.</li>
+                <li>Your monthly allowance refreshes with your billing cycle. Unused monthly tokens do not roll over.</li>
+                <li>We may fairly limit or slow AI usage to protect the service from abuse or runaway costs.</li>
+              </ul>
+            </motion.section>
+
+            <motion.section {...fadeUp}>
+              <h2 className="font-display text-xl text-primary/90 tracking-wide mb-3">
+                10. UNBREAKABLE 86
+              </h2>
+              <p className="leading-relaxed mb-3">
+                UNBREAKABLE 86 is a self-directed 86-day challenge. Taking part is voluntary and entirely
+                at your own risk. By starting it you accept that:
+              </p>
+              <ul className="list-disc list-inside space-y-2 text-foreground/80">
+                <li>Your progress and streak are tracked from what you log yourself — the honesty of it is on you.</li>
+                <li>Missing a required daily task resets your streak in line with the rules shown in the app at the time.</li>
+                <li>Any forfeits or challenge rules are personal motivation tools. They are not enforceable debts and we do not collect money for them.</li>
+                <li>You can stop at any time, and you should stop if you feel unwell or injured.</li>
+              </ul>
+            </motion.section>
+
+            <motion.section {...fadeUp}>
+              <h2 className="font-display text-xl text-primary/90 tracking-wide mb-3">
+                11. UN-TUNES
+              </h2>
+              <p className="leading-relaxed">
+                Music streamed through UN-TUNES is licensed to you for personal, non-commercial listening
+                while your account is active. You may not download, copy, redistribute or publicly perform
+                it except where the platform explicitly offers that. Separate UN-TUNES terms apply to
+                purchases and artist accounts and are available on the UN-TUNES terms page.
+              </p>
+            </motion.section>
+
+            <motion.section {...fadeUp}>
+              <h2 className="font-display text-xl text-primary/90 tracking-wide mb-3">
+                12. YOUR CONTENT
               </h2>
               <p className="leading-relaxed">
                 You retain ownership of all content you create on the Platform (training logs, meal
@@ -184,7 +238,7 @@ export default function Terms() {
 
             <motion.section {...fadeUp}>
               <h2 className="font-display text-xl text-primary/90 tracking-wide mb-3">
-                10. INTELLECTUAL PROPERTY
+                13. INTELLECTUAL PROPERTY
               </h2>
               <p className="leading-relaxed">
                 All Unbreakable branding, course content, designs, code, and educational material are
@@ -199,7 +253,7 @@ export default function Terms() {
 
             <motion.section {...fadeUp}>
               <h2 className="font-display text-xl text-primary/90 tracking-wide mb-3">
-                11. ACCEPTABLE USE
+                14. ACCEPTABLE USE
               </h2>
               <p className="leading-relaxed mb-3">You agree not to:</p>
               <ul className="list-disc list-inside space-y-1 text-foreground/80">
@@ -214,7 +268,7 @@ export default function Terms() {
 
             <motion.section {...fadeUp}>
               <h2 className="font-display text-xl text-primary/90 tracking-wide mb-3">
-                12. LIMITATION OF LIABILITY
+                15. LIMITATION OF LIABILITY
               </h2>
               <p className="leading-relaxed">
                 To the fullest extent permitted by law, Live Without Limits LTD shall not be liable
@@ -226,7 +280,7 @@ export default function Terms() {
 
             <motion.section {...fadeUp}>
               <h2 className="font-display text-xl text-primary/90 tracking-wide mb-3">
-                13. CHANGES TO TERMS
+                16. CHANGES TO TERMS
               </h2>
               <p className="leading-relaxed">
                 We may update these terms from time to time. We will notify you of material changes
@@ -237,7 +291,7 @@ export default function Terms() {
 
             <motion.section {...fadeUp}>
               <h2 className="font-display text-xl text-primary/90 tracking-wide mb-3">
-                14. GOVERNING LAW
+                17. GOVERNING LAW
               </h2>
               <p className="leading-relaxed">
                 These terms are governed by the laws of England &amp; Wales. Any disputes will be

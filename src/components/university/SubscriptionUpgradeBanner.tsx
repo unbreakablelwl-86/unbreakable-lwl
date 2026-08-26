@@ -6,7 +6,7 @@ import { Lock, Zap } from 'lucide-react';
 
 /**
  * Banner shown to free-tier users on gated content.
- * Shows Foundation offer price (£50/mo, normally £89).
+ * Shows Foundation offer price (£50/mo, normally £75).
  * Price only — no "X spaces left" messaging.
  */
 export function SubscriptionUpgradeBanner() {
@@ -29,7 +29,7 @@ export function SubscriptionUpgradeBanner() {
                 Unbreakable Foundation
               </p>
               <p className="text-xs text-muted-foreground mt-0.5">
-                <span className="line-through opacity-60">£89/mo</span>{' '}
+                <span className="line-through opacity-60">£75/mo</span>{' '}
                 <span className="text-primary font-display font-bold">£50/mo</span>{' '}
                 — Foundation offer
               </p>

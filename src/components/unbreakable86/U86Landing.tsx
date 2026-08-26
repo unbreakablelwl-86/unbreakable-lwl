@@ -10,6 +10,7 @@ import {
   Shield, Zap, Target, CheckCircle, Star,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
 
 interface U86LandingProps {
   onStart: () => void;
@@ -201,7 +202,12 @@ export function U86Landing({ onStart, resetCount = 0 }: U86LandingProps) {
             <ArrowRight className="w-5 h-5 ml-2" />
           </Button>
           <p className="text-center text-muted-foreground text-[10px] mt-2 font-display tracking-wide">
-            AVAILABLE ON BASIC TIER & ABOVE
+            INCLUDED WITH FOUNDATION
+          </p>
+          <p className="text-center text-muted-foreground text-[10px] mt-2 leading-relaxed">
+            By starting your 86 you agree to the{' '}
+            <Link to="/terms" className="text-primary hover:underline">UNBREAKABLE 86 terms</Link>,
+            including the rules on missed days and resets.
           </p>
         </motion.div>
       </div>

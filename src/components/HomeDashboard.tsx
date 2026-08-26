@@ -64,7 +64,7 @@ const PILLARS = [
     sub: 'Music & Podcasts',
     icon: Music,
     path: '/untunes',
-    color: '#CCFF00',
+    color: '#FF5500',
   },
 ];
 
@@ -90,7 +90,7 @@ const ALL_QUICK_ACTIONS: QuickAction[] = [
   { id: 'habits', label: 'Habits', icon: Calendar, path: '/habits', color: '#8B5CF6' },
   { id: 'faq', label: 'Help', icon: HelpCircle, path: '/faq', color: '#EF4444' },
   { id: 'mindset', label: 'Breathe', icon: Wind, path: '/mindset/breathing', color: '#8B5CF6' },
-  { id: 'untunes', label: 'Un-Tunes', icon: Music, path: '/untunes', color: '#CCFF00' },
+  { id: 'untunes', label: 'Un-Tunes', icon: Music, path: '/untunes', color: '#FF5500' },
 ];
 
 const DEFAULT_ACTION_IDS = ['snap', 'run', 'lift', 'journal'];

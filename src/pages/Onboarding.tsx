@@ -15,6 +15,7 @@ import { Dumbbell, Activity, Utensils, Brain, User, Trophy, ChevronRight, Chevro
 const SPORT_OPTIONS = [
   'Football', 'Boxing', 'Rugby', 'Running', 'Swimming',
   'MMA', 'Cycling', 'Tennis', 'Basketball', 'Cricket',
+  'Bodybuilding', 'Powerlifting',
   'None / General Fitness',
 ];
 

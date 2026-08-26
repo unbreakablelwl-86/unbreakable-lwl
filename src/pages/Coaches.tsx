@@ -5,10 +5,19 @@ import { useCoachDirectory } from '@/hooks/useCoachPublicProfile';
 import { Loader2, UserCheck, Award, PoundSterling, ChevronRight, ArrowLeft, Shield, Flame } from 'lucide-react';
 import { PaywallGate } from '@/components/paywall';
 import { motion } from 'framer-motion';
+import { Navigate } from 'react-router-dom';
+import { useUserRole } from '@/hooks/useUserRole';
+import { FEATURES } from '@/config/features';
 
 export default function Coaches() {
   const { coaches, loading } = useCoachDirectory();
   const navigate = useNavigate();
+  const { isOwner, isAdminOrOwner, role, loading: roleLoading } = useUserRole();
+  const isStaff = isOwner || isAdminOrOwner || role === 'dev' || role === 'coach';
+
+  // 1-2-1 coaching is hidden from clients pre-launch (see src/config/features.ts).
+  if (roleLoading) return null;
+  if (!FEATURES.coachesTab && !isStaff) return <Navigate to="/" replace />;
 
   return (
     <PaywallGate feature="pt_hub">

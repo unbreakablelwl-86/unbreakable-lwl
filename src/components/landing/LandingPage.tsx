@@ -120,7 +120,7 @@ const freeFeatures = [
   'Nutrition tracker & meal planner',
   'Recipe library with macros',
   'Mindset programmes & breathing exercises',
-  '9 focus & reaction games',
+  '4 focus & reaction games',
   'Community Hub — feed, stories & messaging',
   'Daily habit diary & lifestyle tracking',
   'Calculators & body composition tools',
@@ -131,7 +131,7 @@ const freeFeatures = [
 /* ─── Token tiers ─── */
 const tokenTiers = [
   { name: 'FREE', tokens: 0, price: '£0', desc: 'Full access to all free tools & community', highlight: false, features: ['All free tools', 'Community access', 'University preview'] },
-  { name: 'FOUNDATION', tokens: 1000, price: '£50', period: '/mo', desc: 'Full AI coaching, all features unlocked', highlight: true, features: ['1,000 tokens/month', 'JJ AI Coach', 'All features'], originalPrice: '£89' },
+  { name: 'FOUNDATION', tokens: 1000, price: '£50', period: '/mo', desc: 'Full AI coaching, all features unlocked', highlight: true, features: ['1,000 tokens/month', 'JJ AI Coach', 'All features'], originalPrice: '£75' },
 ];
 
 /* ─── What makes this different ─── */
@@ -290,7 +290,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
               { val: '6', label: 'Training Pillars' },
               { val: '4,400+', label: 'Quiz Questions' },
               { val: '24', label: 'Original Tracks' },
-              { val: '9', label: 'Focus Games' },
+              { val: '4', label: 'Focus Games' },
               { val: '24/7', label: 'AI Coach' },
             ].map(s => (
               <div key={s.label}>
@@ -434,7 +434,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
                   </div>
                   <div>
                     <h3 className="font-heading font-bold text-lg text-white uppercase tracking-wider">Focus Games</h3>
-                    <p className="text-[#666] text-xs">9 games. Real cognitive training.</p>
+                    <p className="text-[#666] text-xs">4 games. Real cognitive training.</p>
                   </div>
                 </div>
                 <p className="text-[#888] text-sm leading-relaxed mb-3">
@@ -442,7 +442,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
                   and reaction training with leaderboards, stages and personal bests.
                 </p>
                 <div className="flex flex-wrap gap-2">
-                  {['HUNT', 'SHATTER', 'STRIKE', 'RECALL', 'LOCK IN', 'FLOW', 'STACK', 'MATHS', 'FOCUS'].map(g => (
+                  {['HUNT', 'SHATTER', 'STACK', 'LOCK IN'].map(g => (
                     <span key={g} className="text-[10px] font-heading font-bold tracking-wider px-2 py-1 rounded-lg"
                       style={{ background: 'rgba(124,77,255,0.08)', color: '#7C4DFF' }}>{g}</span>
                   ))}
@@ -625,7 +625,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
               </h2>
               <p className="text-[#888] mt-3 max-w-xl mx-auto text-sm">
                 🔒 Lock in the <span className="text-white font-semibold">Foundation offer price for life</span>.
-                <span className="line-through opacity-50">£89/mo</span> → <span className="text-[#FF5500] font-bold">£50/mo</span>. Your rate never increases.
+                <span className="line-through opacity-50">£75/mo</span> → <span className="text-[#FF5500] font-bold">£50/mo</span>. Your rate never increases.
               </p>
             </motion.div>
 

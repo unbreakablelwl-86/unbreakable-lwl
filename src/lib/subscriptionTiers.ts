@@ -3,7 +3,7 @@
  *
  * Coaching:
  *   Free (£0)       — Home hub, socials, manual tools, 30s UnTunes previews
- *   Foundation (£50/mo) — LAUNCH OFFER (normally £89/mo). Full AI coaching, all features.
+ *   Foundation (£50/mo) — LAUNCH OFFER (normally £75/mo). Full AI coaching, all features.
  *
  * Optional one-time top-ups:
  *   Level 1 "Unbreakable"         — £20

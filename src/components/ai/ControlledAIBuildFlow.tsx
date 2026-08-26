@@ -8,6 +8,8 @@ import { AIPlanReviewModal } from './AIPlanReviewModal';
 import { useAIProgramme } from '@/hooks/useAIProgramme';
 import { useAIMealPlan } from '@/hooks/useAIMealPlan';
 import { useQueryClient } from '@tanstack/react-query';
+import { useTrainingPrograms } from '@/hooks/useTrainingPrograms';
+import { useMealPlans } from '@/hooks/useMealPlans';
 import { toast } from 'sonner';
 import {
   Sparkles,
@@ -40,11 +42,15 @@ export function ControlledAIBuildFlow({
 }: ControlledAIBuildFlowProps) {
   const [phase, setPhase] = useState<BuildPhase>('generating');
   const [generatedPlan, setGeneratedPlan] = useState<any>(null);
+  const [savedProgrammeId, setSavedProgrammeId] = useState<string | null>(null);
+  const [savedMealPlanId, setSavedMealPlanId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   
   const { generateProgramme, isGenerating: isProgrammeGenerating } = useAIProgramme();
   const { generateMealPlan, isGenerating: isMealPlanGenerating } = useAIMealPlan();
   const queryClient = useQueryClient();
+  const { saveProgram, updateProgram } = useTrainingPrograms();
+  const { createMealPlan, updateMealPlan } = useMealPlans();
 
   const isGenerating = type === 'programme' ? isProgrammeGenerating : isMealPlanGenerating;
   const Icon = type === 'programme' ? Dumbbell : UtensilsCrossed;
@@ -57,6 +63,7 @@ export function ControlledAIBuildFlow({
           const result = await generateProgramme(prompt, additionalContext);
           if (result?.program) {
             setGeneratedPlan(result.program);
+            setSavedProgrammeId(result.programId ?? null);
             setPhase('review');
           } else {
             throw new Error('Failed to generate programme');
@@ -65,6 +72,7 @@ export function ControlledAIBuildFlow({
           const result = await generateMealPlan(prompt, 'full_plan', additionalContext);
           if (result?.plan) {
             setGeneratedPlan(result.plan);
+            setSavedMealPlanId(result.planId ?? null);
             setPhase('review');
           } else {
             throw new Error('Failed to generate meal plan');
@@ -79,11 +87,41 @@ export function ControlledAIBuildFlow({
   }, []);
 
   const handleSave = async (editedPlan: any) => {
-    // The plan is already saved during generation
-    // Just refresh the queries and complete
+    // Generation may or may not have persisted the plan, and any edits made in
+    // the review modal are only in memory. Persist here so "build & publish"
+    // always ends with the programme actually in the hub.
+    try {
+      if (type === 'programme') {
+        if (savedProgrammeId) {
+          await updateProgram.mutateAsync({ programId: savedProgrammeId, programData: editedPlan });
+        } else {
+          await saveProgram.mutateAsync({ program: editedPlan });
+        }
+      } else if (savedMealPlanId) {
+        await updateMealPlan.mutateAsync({
+          id: savedMealPlanId,
+          name: editedPlan.planName,
+          description: editedPlan.overview,
+        });
+      } else {
+        await createMealPlan.mutateAsync({
+          plan: {
+            name: editedPlan.planName || 'AI Meal Plan',
+            description: editedPlan.overview,
+            is_active: false,
+          } as any,
+        });
+      }
+    } catch (err) {
+      console.error('Failed to save plan:', err);
+      toast.error(err instanceof Error ? err.message : 'Could not save. Please try again.');
+      return;
+    }
+
     queryClient.invalidateQueries({ queryKey: ['training-programs'] });
+    queryClient.invalidateQueries({ queryKey: ['active-programs'] });
     queryClient.invalidateQueries({ queryKey: ['meal-plans'] });
-    
+
     setPhase('complete');
     
     toast.success(

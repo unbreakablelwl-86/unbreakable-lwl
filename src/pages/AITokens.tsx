@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useTokenBalance } from '@/hooks/useTokenBalance';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -311,6 +311,17 @@ export default function AITokens() {
                           ? 'GET STARTED'
                           : 'SUBSCRIBE'}
                   </button>
+
+                  {/* Terms consent — required before any payment */}
+                  {isPaid && (
+                    <p className="text-[10px] text-muted-foreground leading-relaxed mt-2 text-center">
+                      By subscribing you agree to the{' '}
+                      <Link to="/terms" className="text-primary hover:underline">Terms &amp; Conditions</Link>
+                      {' '}and{' '}
+                      <Link to="/privacy" className="text-primary hover:underline">Privacy Policy</Link>.
+                      Billed monthly, cancel any time.
+                    </p>
+                  )}
                 </motion.div>
               );
             })}
@@ -550,15 +561,15 @@ export default function AITokens() {
               <div className="flex gap-3">
                 <ArrowRight className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                 <div>
-                  <span className="text-foreground font-medium">Upgrade or downgrade freely.</span> Switch tiers anytime.
-                  Upgrades take effect immediately. Downgrades apply next billing cycle. No penalties.
+                  <span className="text-foreground font-medium">Cancel any time.</span> Foundation is billed monthly.
+                  Cancel whenever you like and you keep access until the end of the month you've paid for. No penalties.
                 </div>
               </div>
               <div className="flex gap-3">
                 <Crown className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                 <div>
-                  <span className="text-foreground font-medium">Elite saves on everything.</span> Elite members pay fewer tokens per
-                  AI action and get priority response times. 200 tokens/month = serious coaching power.
+                  <span className="text-foreground font-medium">One plan, everything in it.</span> Foundation unlocks every
+                  pillar — no add-ons, no upsells, no feature locked behind a higher tier.
                 </div>
               </div>
               <div className="flex gap-3">

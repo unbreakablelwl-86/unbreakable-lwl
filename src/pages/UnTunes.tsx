@@ -26,6 +26,7 @@ import { AddToPlaylistSheet } from '@/components/untunes/AddToPlaylistSheet';
 import { toast } from 'sonner';
 import { useTokenBalance } from '@/hooks/useTokenBalance';
 
+import { FEATURES } from '@/config/features';
 import { UnTunesStore } from '@/components/untunes/UnTunesStore';
 import { CollectionGallery } from '@/components/untunes/CollectionGallery';
 import { AuctionHouse } from '@/components/untunes/AuctionHouse';
@@ -107,9 +108,11 @@ export default function UnTunes() {
     // { key: 'podcasts' as const, label: 'PODS', icon: Podcast },
     { key: 'search' as const, label: 'SEARCH', icon: Search },
     { key: 'library' as const, label: 'LIBRARY', icon: Library },
-    { key: 'store' as const, label: 'STORE', icon: ShoppingBag },
-    { key: 'collection' as const, label: 'CARDS', icon: LayoutGrid },
-    { key: 'auction' as const, label: 'TRADE', icon: Gavel },
+    ...(FEATURES.untunesCards ? [
+      { key: 'store' as const, label: 'STORE', icon: ShoppingBag },
+      { key: 'collection' as const, label: 'CARDS', icon: LayoutGrid },
+      { key: 'auction' as const, label: 'TRADE', icon: Gavel },
+    ] : []),
     // Artist signup removed — no public artist onboarding
   ];
 
@@ -125,72 +128,36 @@ export default function UnTunes() {
             </div>
             <div>
               <h1 className="font-display text-2xl tracking-wider text-foreground">UN-TUNES</h1>
-              <p className="text-xs text-muted-foreground tracking-wider">MUSIC • COLLECTIBLES</p>
+              <p className="text-xs text-muted-foreground tracking-wider">MUSIC</p>
             </div>
           </motion.div>
 
-          {/* FIFA card store CTA hidden — re-enable when ready */}
-
-          {/* Token savings banner hidden with card store */}
-          {false && (() => {
-            // Token value per tier (monthly price / monthly tokens)
-            const tierValue: Record<string, { perToken: number; bundleCost: string; albumCost: string; singleCost: string; label: string }> = {
-              elite:  { perToken: 0.20, bundleCost: '£10',    albumCost: '£6',    singleCost: '£0.60', label: 'ELITE' },
-              pro:    { perToken: 0.25, bundleCost: '£12.50', albumCost: '£7.50', singleCost: '£0.75', label: 'PRO' },
-              base:   { perToken: 0.33, bundleCost: '£16.50', albumCost: '£9.90', singleCost: '£0.99', label: 'BASE' },
-            };
-            const info = tierValue[currentTier];
-            if (info) return (
-              <div className="mb-3 rounded-lg overflow-hidden border border-primary/20 bg-gradient-to-r from-primary/10 via-zinc-900/80 to-primary/10">
-                <div className="overflow-hidden whitespace-nowrap py-2">
-                  <motion.div
-                    animate={{ x: ['100%', '-100%'] }}
-                    transition={{ duration: 24, repeat: Infinity, ease: 'linear' }}
-                    className="inline-block whitespace-nowrap font-display tracking-wider text-xs"
-                  >
-                    <Coins className="w-3 h-3 inline mr-1 text-primary" />
-                    <span className="text-primary font-bold">{info.label} MEMBER</span>
-                    <span className="text-foreground"> — Your tokens = <span className="text-primary font-bold">{info.perToken.toFixed(2)}/token</span></span>
-                    <span className="text-muted-foreground"> &nbsp;•&nbsp; </span>
-                    <span className="text-foreground">All 3 albums for just <span className="text-primary font-bold">{info.bundleCost}</span></span>
-                    <span className="text-muted-foreground"> &nbsp;•&nbsp; </span>
-                    <span className="text-foreground">Single album <span className="text-primary font-bold">{info.albumCost}</span></span>
-                    <span className="text-muted-foreground"> &nbsp;•&nbsp; </span>
-                    <span className="text-foreground">Single track <span className="text-primary font-bold">{info.singleCost}</span></span>
-                    <span className="text-muted-foreground"> &nbsp;•&nbsp; </span>
-                    <span className="text-primary font-bold">Download & own your music — buy with monthly tokens!</span>
-                    <span className="text-muted-foreground"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
-                    <Coins className="w-3 h-3 inline mr-1 text-primary" />
-                    <span className="text-primary font-bold">{info.label} SAVINGS</span>
-                    <span className="text-foreground"> — All 3 albums for <span className="text-primary font-bold">{info.bundleCost}</span> • Download & own forever with your plan tokens</span>
-                  </motion.div>
-                </div>
+          {/* ── Hero: Store & Collectibles CTA ── */}
+          {FEATURES.untunesCards && (
+          <motion.div
+            {...fadeIn}
+            transition={{ delay: 0.1 }}
+            className="mb-4 rounded-xl border border-primary/20 bg-gradient-to-r from-primary/10 via-zinc-900/80 to-violet-500/10 p-3 flex items-center gap-3 cursor-pointer hover:border-primary/40 transition-colors"
+            onClick={() => setActiveTab(activeTab === 'store' ? 'collection' : 'store')}
+          >
+            <div className="flex -space-x-2">
+              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-primary to-orange-600 flex items-center justify-center border-2 border-background z-10">
+                <ShoppingBag className="w-4 h-4 text-white" />
               </div>
-            );
-            // Free / non-subscriber — nudge to upgrade
-            if (currentTier === 'free' || currentTier === 'absolute_base') return (
-              <div className="mb-3 rounded-lg overflow-hidden border border-primary/20 bg-gradient-to-r from-primary/10 via-zinc-900/80 to-primary/10">
-                <div className="overflow-hidden whitespace-nowrap py-2">
-                  <motion.div
-                    animate={{ x: ['100%', '-100%'] }}
-                    transition={{ duration: 22, repeat: Infinity, ease: 'linear' }}
-                    className="inline-block whitespace-nowrap font-display tracking-wider text-xs"
-                  >
-                    🔥 <span className="text-primary font-bold">UPGRADE TO ELITE</span>
-                    <span className="text-foreground"> — All 3 albums for just <span className="text-primary font-bold">£10</span> with Elite tokens (vs £16.67 top-up)</span>
-                    <span className="text-muted-foreground"> &nbsp;•&nbsp; </span>
-                    <span className="text-foreground">Elite = £0.20/token &nbsp;•&nbsp; 200 tokens/month</span>
-                    <span className="text-muted-foreground"> &nbsp;•&nbsp; </span>
-                    <span className="text-primary font-bold">🔒 FOUNDING MEMBER — PRICE LOCKED FOR LIFE</span>
-                    <span className="text-muted-foreground"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
-                    🔥 <span className="text-primary font-bold">UPGRADE TO ELITE</span>
-                    <span className="text-foreground"> — Best value tokens for music, coaching & more</span>
-                  </motion.div>
-                </div>
+              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-violet-500 to-pink-500 flex items-center justify-center border-2 border-background">
+                <Diamond className="w-4 h-4 text-white" />
               </div>
-            );
-            return null;
-          })()}
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="font-display text-xs tracking-wider text-white">OWN YOUR TUNES • COLLECT RARE CARDS</p>
+              <p className="text-[10px] text-muted-foreground">Buy singles, albums & bundles → open packs → collect rare & diamond editions</p>
+            </div>
+            <div className="flex items-center gap-1 text-primary">
+              <Coins className="w-3.5 h-3.5" />
+              <ChevronRight className="w-4 h-4" />
+            </div>
+          </motion.div>
+          )}
 
           {/* Tabs */}
           <div className="flex gap-1 bg-card/50 p-1 rounded-xl border border-border/50">
@@ -761,21 +728,21 @@ export default function UnTunes() {
           )}
 
           {/* ─── Store Tab ─── */}
-          {activeTab === 'store' && (
+          {FEATURES.untunesCards && activeTab === 'store' && (
             <motion.div key="store" {...fadeIn} className="space-y-4">
               <UnTunesStore onViewCollection={() => setActiveTab('collection')} />
             </motion.div>
           )}
 
           {/* ─── Collection Tab ─── */}
-          {activeTab === 'collection' && (
+          {FEATURES.untunesCards && activeTab === 'collection' && (
             <motion.div key="collection" {...fadeIn}>
               <CollectionGallery onBack={() => setActiveTab('store')} />
             </motion.div>
           )}
 
           {/* ─── Auction / Trade Tab ─── */}
-          {activeTab === 'auction' && (
+          {FEATURES.untunesCards && activeTab === 'auction' && (
             <motion.div key="auction" {...fadeIn}>
               <AuctionHouse onBack={() => setActiveTab('store')} />
             </motion.div>

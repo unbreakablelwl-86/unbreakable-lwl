@@ -37,6 +37,8 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useConversations } from '@/hooks/useConversations';
 import { useNotifications } from '@/hooks/useNotifications';
 import { useTokenBalance } from '@/hooks/useTokenBalance';
+import { useUserRole } from '@/hooks/useUserRole';
+import { FEATURES } from '@/config/features';
 const shieldLogo = 'https://vlwcoqilwyfcrsxodtdx.supabase.co/storage/v1/object/public/site-assets/misc/unbreakable-shield.webp';
 import CasioZoneIcon from '@/components/icons/CasioZoneIcon';
 
@@ -50,6 +52,10 @@ interface NavItemDef {
   activeMatch?: string[];
   color?: string;
   description?: string;
+  /** Only show to these roles. Undefined = everyone. */
+  staffOnly?: boolean;
+  /** Hidden unless this pre-launch feature flag is on (staff still see it). */
+  flag?: 'coachesTab';
 }
 
 const ALL_NAV_ITEMS: NavItemDef[] = [
@@ -131,8 +137,8 @@ const ALL_NAV_ITEMS: NavItemDef[] = [
     label: 'Un-Tunes',
     path: '/untunes',
     activeMatch: ['/untunes'],
-    color: '#CCFF00',
-    description: 'Music & collectibles',
+    color: '#FF5500',
+    description: 'Music & podcasts',
   },
   {
     id: 'habits',
@@ -151,6 +157,8 @@ const ALL_NAV_ITEMS: NavItemDef[] = [
     activeMatch: ['/coaches'],
     color: '#14B8A6',
     description: '1-2-1 coaching',
+    staffOnly: true,
+    flag: 'coachesTab',
   },
   {
     id: 'ai-coach',
@@ -160,6 +168,16 @@ const ALL_NAV_ITEMS: NavItemDef[] = [
     activeMatch: ['/help'],
     color: '#FF5500',
     description: 'JJ — Your AI Coach',
+  },
+  {
+    id: 'threads',
+    icon: MessageSquare,
+    label: 'Threads',
+    path: '/coach?tab=threads',
+    activeMatch: [],
+    color: '#FF5500',
+    description: 'Programme builder threads (coaches/devs)',
+    staffOnly: true,
   },
   {
     id: 'notifications',
@@ -232,6 +250,7 @@ const ALL_NAV_ITEMS: NavItemDef[] = [
     activeMatch: ['/admin'],
     color: '#F97316',
     description: 'Content studio & admin',
+    staffOnly: true,
   },
 ];
 
@@ -278,6 +297,17 @@ export default function AppLayout() {
   const { unreadCount } = useConversations();
   const { unreadCount: notifUnread } = useNotifications();
   const { currentTier, loading: tierLoading } = useTokenBalance();
+  const { isAdminOrOwner, isOwner, role } = useUserRole();
+  const isStaff = isOwner || isAdminOrOwner || role === 'dev' || role === 'coach';
+  // Staff-only surfaces (Devs tools, admin/content studio, 1-2-1 coaching) are hidden from clients pre-launch.
+  const NAV_ITEMS = useMemo(
+    () => ALL_NAV_ITEMS.filter(n => {
+      if (n.staffOnly && !isStaff) return false;
+      if (n.flag && !FEATURES[n.flag] && !isStaff) return false;
+      return true;
+    }),
+    [isStaff],
+  );
   const isFreeUser = !tierLoading && (!currentTier || currentTier === 'free');
   // pillar theme removed — all neon orange
 
@@ -328,7 +358,7 @@ export default function AppLayout() {
   const moveMoreItem = useCallback((id: string, dir: -1 | 1) => {
     setMoreOrder(prev => {
       // Build the current more list in display order
-      const currentMore = ALL_NAV_ITEMS.filter(n => !activeTabs.includes(n.id));
+      const currentMore = NAV_ITEMS.filter(n => !activeTabs.includes(n.id));
       const ordered = prev.length > 0
         ? [...prev.filter(id => currentMore.find(n => n.id === id)), ...currentMore.filter(n => !prev.includes(n.id)).map(n => n.id)]
         : currentMore.map(n => n.id);
@@ -351,12 +381,12 @@ export default function AppLayout() {
 
   // Build bottom nav items from active tabs
   const bottomNavItems = activeTabs
-    .map(id => ALL_NAV_ITEMS.find(n => n.id === id))
+    .map(id => NAV_ITEMS.find(n => n.id === id))
     .filter(Boolean) as NavItemDef[];
 
   // Items NOT in bottom nav go into More menu — respect custom order
   const moreMenuItems = useMemo(() => {
-    const items = ALL_NAV_ITEMS.filter(n => !activeTabs.includes(n.id));
+    const items = NAV_ITEMS.filter(n => !activeTabs.includes(n.id));
     if (moreOrder.length === 0) return items;
     const ordered: NavItemDef[] = [];
     for (const id of moreOrder) {
@@ -368,7 +398,7 @@ export default function AppLayout() {
       if (!ordered.find(o => o.id === item.id)) ordered.push(item);
     }
     return ordered;
-  }, [activeTabs, moreOrder]);
+  }, [activeTabs, moreOrder, NAV_ITEMS]);
 
   const isActive = (item: NavItemDef) => {
     if (item.activeMatch) {
@@ -562,7 +592,7 @@ export default function AppLayout() {
                   <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold mb-2">Your tabs ({activeTabs.length}/6)</p>
                   <div className="space-y-1">
                     {activeTabs.map((id, idx) => {
-                      const item = ALL_NAV_ITEMS.find(n => n.id === id);
+                      const item = NAV_ITEMS.find(n => n.id === id);
                       if (!item) return null;
                       const Icon = item.icon;
                       return (
