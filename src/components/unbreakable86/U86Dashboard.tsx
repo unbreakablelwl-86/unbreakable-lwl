@@ -4,6 +4,7 @@
  * Matches Mindset gold standard styling.
  */
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Flame, Dumbbell, BookOpen, Droplets, Target, Wind, ThermometerSun, Snowflake,
@@ -66,6 +67,7 @@ export function U86Dashboard({
   onViewProgress,
   therapyChoice,
 }: U86DashboardProps) {
+  const navigate = useNavigate();
   const DAILY_7 = dailyHabits(therapyChoice);
   const [activeTab, setActiveTab] = useState<U86Tab>('dashboard');
   const [journalText, setJournalText] = useState(todayLog?.journal || '');
@@ -394,10 +396,12 @@ export function U86Dashboard({
                   <span className="font-display text-xs tracking-wider text-primary">LEVEL UP</span>
                 </div>
                 <p className="text-sm text-foreground">{phaseInfo.upsell.message}</p>
-                <p className="text-muted-foreground text-xs mt-1">Unlock {phaseInfo.upsell.course_name} — 50 tokens</p>
-                <Button className="mt-3 w-full h-9 rounded-lg text-xs font-display tracking-wider bg-primary/15 text-primary hover:bg-primary/25 border border-primary/20">
-                  <Lock className="w-3 h-3 mr-1.5" />
-                  UNLOCK COURSE
+                <p className="text-muted-foreground text-xs mt-1">{phaseInfo.upsell.course_name} — included with your membership</p>
+                <Button
+                  onClick={() => navigate('/university')}
+                  className="mt-3 w-full h-9 rounded-lg text-xs font-display tracking-wider bg-primary/15 text-primary hover:bg-primary/25 border border-primary/20"
+                >
+                  OPEN IN UNIVERSITY
                 </Button>
               </motion.div>
             )}
@@ -524,8 +528,11 @@ export function U86Dashboard({
                   </div>
                   <p className="text-muted-foreground text-xs mt-1">{phase.upsell.message}</p>
                   {isCurrentOrPast && (
-                    <Button className="mt-2 w-full h-8 rounded-lg text-[10px] font-display tracking-wider bg-primary/10 text-primary hover:bg-primary/20 border border-primary/20">
-                      UNLOCK — 150 TOKENS
+                    <Button
+                      onClick={() => navigate('/university')}
+                      className="mt-2 w-full h-8 rounded-lg text-[10px] font-display tracking-wider bg-primary/10 text-primary hover:bg-primary/20 border border-primary/20"
+                    >
+                      OPEN IN UNIVERSITY
                     </Button>
                   )}
                 </div>

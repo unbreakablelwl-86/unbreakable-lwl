@@ -14,6 +14,7 @@ import { FEATURES } from '@/config/features';
 import { useUserRole } from '@/hooks/useUserRole';
 import type { CourseType } from '@/lib/university/types';
 import { GuidesSection } from '@/components/university/GuidesSection';
+import { toast } from 'sonner';
 
 const courseTabs: { key: CourseType; label: string; icon: React.ReactNode; description: string; tagline: string; emoji: string }[] = [
   { key: 'gym', label: 'Power', icon: <Dumbbell className="w-5 h-5" />, description: 'Applied Fitness & Exercise Science', tagline: 'Understand how your body moves, adapts, and grows.', emoji: '💪' },
@@ -49,21 +50,49 @@ export default function University() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const requestedTab = (searchParams.get('course') as CourseType) || 'gym';
-  const { getLevelCompletedChapters, hasPassedAssessment } = useUniversityProgress();
+  const { getLevelCompletedChapters, hasPassedAssessment, progress } = useUniversityProgress();
   const { hasAccess } = useCourseAccess();
   const { isOwner } = useUserRole();
   // Sport courses & their certificates are hidden from clients pre-launch, but stay live for the owner account.
   const showSport = FEATURES.sportsCertificates || isOwner;
   const visibleCourseTabs = showSport ? courseTabs : courseTabs.filter(t => t.key !== 'sport');
 
-  const activeTab: CourseType = (requestedTab === 'sport' && !showSport) ? 'gym' : requestedTab;
+  const requestedSafe: CourseType = (requestedTab === 'sport' && !showSport) ? 'gym' : requestedTab;
   // Hide Level 4 content (no images yet — re-enable when L4 images are ready)
-  const courseData = (allCourses[activeTab] || []).filter(l => l.level <= 3);
-  const colors = getCourseColors(activeTab);
-
   const setActiveTab = (tab: CourseType) => {
     setSearchParams({ course: tab });
   };
+
+  /**
+   * One course at a time. The discipline the athlete has already started (has any
+   * chapter progress in) is their active course — the others stay locked until
+   * every L2/L3 chapter of it is complete. Owner/dev accounts are never gated.
+   */
+  const startedCourse: CourseType | null = (() => {
+    const started = (progress as any[])
+      .map(p => (p.course_type || 'gym') as string)
+      .filter(c => ['gym', 'nutrition', 'mindset'].includes(c));
+    return started.length ? (started[0] as CourseType) : null;
+  })();
+
+  const courseFinished = (course: CourseType) => {
+    const levels = (allCourses[course] || []).filter(l => l.level <= 3);
+    const total = levels.reduce((sum, l) => sum + l.units.reduce((n, u) => n + u.chapters.length, 0), 0);
+    if (!total) return false;
+    const done = levels.reduce((sum, l) => sum + getLevelCompletedChapters(l.level, course), 0);
+    return done >= total;
+  };
+
+  const lockedByActiveCourse = (course: CourseType) =>
+    !isOwner && !!startedCourse && startedCourse !== course && course !== 'sport' && !courseFinished(startedCourse);
+
+  const activeTab: CourseType = lockedByActiveCourse(requestedSafe) ? (startedCourse as CourseType) : requestedSafe;
+
+  const startedCourseLabel = courseTabs.find(t => t.key === startedCourse)?.label ?? '';
+
+  // Hide Level 4 content (no images yet — re-enable when L4 images are ready)
+  const courseData = (allCourses[activeTab] || []).filter(l => l.level <= 3);
+  const colors = getCourseColors(activeTab);
 
   // Hero stats computed from what is actually visible to this user (L2/L3 only).
   const heroStats = (() => {
@@ -152,10 +181,17 @@ export default function University() {
             {visibleCourseTabs.map((tab, i) => {
               const tabColors = getCourseColors(tab.key);
               const isActive = activeTab === tab.key;
+              const isLocked = lockedByActiveCourse(tab.key);
               return (
                 <motion.button
                   key={tab.key}
-                  onClick={() => setActiveTab(tab.key)}
+                  onClick={() => {
+                    if (isLocked) {
+                      toast.error(`One course at a time — finish ${startedCourseLabel} first.`);
+                      return;
+                    }
+                    setActiveTab(tab.key);
+                  }}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.08 }}
@@ -172,7 +208,7 @@ export default function University() {
                       ? `${tabColors.iconBg} ${tabColors.text}`
                       : 'bg-muted/50 text-muted-foreground'
                   }`}>
-                    {tab.icon}
+                    {isLocked ? <Lock className="w-4 h-4" /> : tab.icon}
                   </div>
                   <span className={`font-display text-[11px] sm:text-sm tracking-wider ${
                     isActive ? tabColors.text : 'text-foreground'
