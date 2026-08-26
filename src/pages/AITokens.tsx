@@ -268,6 +268,11 @@ export default function AITokens() {
 
                   {/* Price */}
                   <div className="mb-1">
+                    {tier.monthlyPrice > 0 && tier.originalPrice && (
+                      <span className="text-xl font-display tracking-wider text-muted-foreground line-through mr-2">
+                        £{tier.originalPrice}
+                      </span>
+                    )}
                     <span className="text-3xl font-display tracking-wider">
                       {tier.monthlyPrice === 0 ? 'FREE' : `£${tier.monthlyPrice}`}
                     </span>
