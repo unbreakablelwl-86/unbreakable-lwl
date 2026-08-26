@@ -131,7 +131,7 @@ const freeFeatures = [
 
 /* ─── Token tiers ─── */
 const tokenTiers = [
-  { name: 'FREE', tokens: 0, price: '£0', desc: 'Create your profile and look around', highlight: false, features: ['Your profile & account', 'A look around the app', 'Upgrade whenever you like'] },
+  { name: 'FREE', tokens: 0, price: '£0', desc: 'The hub, the community and the manual tools', highlight: false, features: ['Profile, hub & social feed', 'Manual trackers & calculators', 'University preview'] },
   { name: 'UNBREAKABLE', tokens: 1000, price: '£50', period: '/mo', desc: 'Full AI coaching, all features unlocked', highlight: true, features: ['1,000 tokens/month', 'Unbreakable Coach', 'All features'], originalPrice: '£75' },
 ];
 
