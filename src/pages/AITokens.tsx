@@ -43,6 +43,24 @@ export default function AITokens() {
   const usedTokens = monthlyTokens - balance;
   const usagePercent = getTokenUsagePercent(usedTokens > 0 ? usedTokens : 0, monthlyTokens);
 
+  /**
+   * Coach fuel gauge. Members never see a raw token number — they see how much
+   * fuel is left in the tank. Balance can exceed the monthly allowance when
+   * top-ups roll over, so the gauge is clamped to 100%.
+   */
+  const remainingPercent = isUnlimited
+    ? 100
+    : monthlyTokens > 0
+      ? Math.max(0, Math.min(100, Math.round((balance / monthlyTokens) * 100)))
+      : 0;
+  const fuelLabel = isUnlimited
+    ? 'UNLIMITED'
+    : remainingPercent >= 75 ? 'FULL TANK'
+    : remainingPercent >= 40 ? 'PLENTY LEFT'
+    : remainingPercent >= 15 ? 'RUNNING LOW'
+    : remainingPercent > 0 ? 'NEARLY OUT'
+    : 'EMPTY';
+
   const handleSelectTier = async (tier: TierConfig) => {
     if (!user) {
       toast.error('Please sign in first');
@@ -146,41 +164,39 @@ export default function AITokens() {
                   </div>
                   <div className="flex-1">
                     <div className="text-3xl font-display tracking-wider">
-                      {isUnlimited ? '∞' : Math.floor(balance).toLocaleString()}
+                      {isUnlimited ? '∞' : fuelLabel}
                     </div>
                     <div className="text-xs text-muted-foreground font-display tracking-wider">
-                      TOKENS REMAINING
+                      COACH FUEL
                     </div>
                   </div>
                   <div className="text-right">
                     <div className="text-sm font-display tracking-wider text-primary">
                       {tierDisplayName.toUpperCase()}
                     </div>
-                    <div className="text-xs text-muted-foreground">
-                      {lifetimeSpent} used lifetime
-                    </div>
                   </div>
                 </div>
 
-                {/* Usage bar */}
+                {/* Fuel gauge — how much is left, never a raw number */}
                 {monthlyTokens > 0 && (
                   <div>
-                    <div className="flex justify-between text-[10px] text-muted-foreground font-display tracking-wider mb-1">
-                      <span>{usagePercent}% USED</span>
-                      <span>{monthlyTokens} MONTHLY</span>
-                    </div>
-                    <div className="h-2 bg-muted rounded-full overflow-hidden">
+                    <div className="h-3 bg-muted rounded-full overflow-hidden">
                       <motion.div
                         initial={{ width: 0 }}
-                        animate={{ width: `${usagePercent}%` }}
+                        animate={{ width: `${remainingPercent}%` }}
                         transition={{ duration: 0.8, ease: 'easeOut' }}
                         className={cn(
                           'h-full rounded-full',
-                          usagePercent >= 90
+                          remainingPercent <= 10
                             ? 'bg-gradient-to-r from-red-500 to-orange-500'
                             : 'bg-gradient-to-r from-primary to-orange-400'
                         )}
                       />
+                    </div>
+                    <div className="text-[10px] text-muted-foreground font-display tracking-wider mt-1">
+                      {remainingPercent <= 15
+                        ? 'TOP UP TO KEEP YOUR COACH RUNNING'
+                        : 'REFILLS ON YOUR BILLING DATE'}
                     </div>
                   </div>
                 )}
@@ -388,8 +404,8 @@ export default function AITokens() {
                 </div>
                 <div className="space-y-3">
                   {[
-                    { label: 'Coach chat message', cost: '0.5', desc: 'Text-only AI coaching — ask anything' },
-                    { label: 'Progression tip', cost: '0.25', desc: 'Quick form & recovery suggestions' },
+                    { label: 'Coach chat message', cost: 'LIGHT', desc: 'Text-only AI coaching — ask anything' },
+                    { label: 'Progression tip', cost: 'LIGHT', desc: 'Quick form & recovery suggestions' },
                     { label: 'Motivation & mindset', cost: 'FREE', desc: 'Daily quotes & affirmations' },
                   ].map((item, i) => (
                     <div key={i} className="flex items-start justify-between gap-2">
@@ -401,14 +417,14 @@ export default function AITokens() {
                         'text-sm font-display tracking-wider shrink-0 mt-0.5',
                         item.cost === 'FREE' ? 'text-green-500' : 'text-primary'
                       )}>
-                        {item.cost === 'FREE' ? 'FREE' : `${item.cost} tk`}
+                        {item.cost}
                       </span>
                     </div>
                   ))}
                 </div>
                 <div className="mt-4 pt-3 border-t border-primary/10">
                   <p className="text-[11px] text-primary/70">
-                    💬 50 tokens ≈ 100 chat messages &nbsp;|&nbsp; Elite pays just 0.3/msg
+                    💬 Chat barely touches your fuel — a full month's tank is around 100 conversations.
                   </p>
                 </div>
               </div>
@@ -421,13 +437,13 @@ export default function AITokens() {
                 </div>
                 <div className="space-y-3">
                   {[
-                    { label: 'AI programme build', cost: '3', desc: 'Full personalised workout programme' },
-                    { label: 'AI meal plan', cost: '3', desc: 'Personalised nutrition plan' },
-                    { label: 'UNBREAKABLE 86 plan', cost: '5', desc: '86-day AI programme (Pro: 4, Elite: 3)' },
-                    { label: 'Workout review', cost: '1', desc: 'AI feedback on your logged session' },
-                    { label: 'Nutrition analysis', cost: '1', desc: 'AI analysis of your food log' },
-                    { label: 'Progress report', cost: '2', desc: 'Weekly/monthly AI summary (Elite: 1)' },
-                    { label: 'AI exercise search', cost: '0.5', desc: 'Smart exercise recommendations' },
+                    { label: 'AI programme build', cost: 'HEAVY', desc: 'Full personalised workout programme' },
+                    { label: 'AI meal plan', cost: 'HEAVY', desc: 'Personalised nutrition plan' },
+                    { label: 'UNBREAKABLE 86 plan', cost: 'HEAVY', desc: 'Your full 86-day AI programme' },
+                    { label: 'Workout review', cost: 'MEDIUM', desc: 'AI feedback on your logged session' },
+                    { label: 'Nutrition analysis', cost: 'MEDIUM', desc: 'AI analysis of your food log' },
+                    { label: 'Progress report', cost: 'MEDIUM', desc: 'Weekly & monthly AI summary' },
+                    { label: 'AI exercise search', cost: 'LIGHT', desc: 'Smart exercise recommendations' },
                   ].map((item, i) => (
                     <div key={i} className="flex items-start justify-between gap-2">
                       <div className="flex-1">
@@ -435,7 +451,7 @@ export default function AITokens() {
                         <p className="text-xs text-muted-foreground">{item.desc}</p>
                       </div>
                       <span className="text-sm font-display tracking-wider text-primary shrink-0 mt-0.5">
-                        {item.cost} tk
+                        {item.cost}
                       </span>
                     </div>
                   ))}
@@ -540,22 +556,22 @@ export default function AITokens() {
               <div className="flex gap-3">
                 <Coins className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                 <div>
-                  <span className="text-foreground font-medium">Monthly allocation.</span> Your tier gives you tokens each month.
-                  Monthly tokens reset on your billing date. Top-up tokens never expire.
+                  <span className="text-foreground font-medium">A full tank every month.</span> Foundation refills your coach fuel
+                  on your billing date. Anything you top up on top of that rolls over and never expires.
                 </div>
               </div>
               <div className="flex gap-3">
                 <MessageCircle className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                 <div>
-                  <span className="text-foreground font-medium">Chat is cheap.</span> A coach message costs just 0.5 tokens.
-                  50 Starter tokens = ~100 chat messages. Ask your coach anything without worrying about cost.
+                  <span className="text-foreground font-medium">Chat is cheap.</span> Talking to your coach barely moves the gauge —
+                  a month's tank is roughly 100 conversations. Ask anything, as often as you like.
                 </div>
               </div>
               <div className="flex gap-3">
                 <Plus className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                 <div>
-                  <span className="text-foreground font-medium">Top up anytime.</span> Running low? £10 gets you 25 extra tokens.
-                  They carry over and never expire — even if you downgrade or pause.
+                  <span className="text-foreground font-medium">Top up anytime.</span> Running low? £10 adds another quarter tank.
+                  Top-ups carry over and never expire — even if you downgrade or pause.
                 </div>
               </div>
               <div className="flex gap-3">
