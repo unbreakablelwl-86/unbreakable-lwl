@@ -128,7 +128,7 @@ export default function AITokens() {
             transition={{ duration: 18, repeat: Infinity, ease: 'linear' }}
             className="whitespace-nowrap font-display tracking-wider text-sm"
           >
-            🔒 FOUNDATION OFFER — PRICE LOCKED FOR LIFE! 🔒 &nbsp;&nbsp;&nbsp; JOIN NOW &amp; NEVER PAY MORE &nbsp;&nbsp;&nbsp; 🔒 FOUNDATION OFFER — PRICE LOCKED FOR LIFE! 🔒 &nbsp;&nbsp;&nbsp; JOIN NOW &amp; NEVER PAY MORE &nbsp;&nbsp;&nbsp; 🔒 LOCK IN YOUR PRICE FOR LIFE! 🔒
+            🔒 UNBREAKABLE OFFER — PRICE LOCKED FOR LIFE! 🔒 &nbsp;&nbsp;&nbsp; JOIN NOW &amp; NEVER PAY MORE &nbsp;&nbsp;&nbsp; 🔒 UNBREAKABLE OFFER — PRICE LOCKED FOR LIFE! 🔒 &nbsp;&nbsp;&nbsp; JOIN NOW &amp; NEVER PAY MORE &nbsp;&nbsp;&nbsp; 🔒 LOCK IN YOUR PRICE FOR LIFE! 🔒
           </motion.div>
         </div>
 
@@ -352,7 +352,7 @@ export default function AITokens() {
               </div>
               <h3 className="font-display text-lg tracking-wider mb-2">YOUR PRICE, LOCKED FOR LIFE</h3>
               <p className="text-sm text-muted-foreground mb-4 max-w-md mx-auto">
-                Lock in the Foundation offer price for life — your monthly rate will
+                Lock in the Unbreakable offer price for life — your monthly rate will
                 <span className="text-foreground font-medium"> never increase</span>, no matter how much the platform grows.
               </p>
             </div>
@@ -382,7 +382,7 @@ export default function AITokens() {
                   { icon: MessageCircle, label: 'Social feed, posts, kudos, comments' },
                   { icon: Bell, label: 'Notifications & messaging' },
                   { icon: Search, label: 'Browse exercise library' },
-                  { icon: GraduationCap, label: 'University Level 1 courses' },
+                  { icon: GraduationCap, label: 'University Level 2 courses' },
                   { icon: Music, label: '30-second UnTunes previews' },
                 ].map((item, i) => (
                   <div key={i} className="flex items-center gap-2 py-1.5">
@@ -478,10 +478,10 @@ export default function AITokens() {
           <section className="max-w-3xl mx-auto mb-16">
             <h2 className="text-xl font-display tracking-wider text-center mb-2">UNBREAKABLE UNIVERSITY</h2>
             <p className="text-sm text-muted-foreground text-center mb-2">
-              Every course is included with your Foundation membership. No course fees, no upsells.
+              Every course is included with your Unbreakable membership. No course fees, no upsells.
             </p>
             <p className="text-xs text-primary text-center mb-8 font-display tracking-wider">
-              FINISH LEVEL 1 TO UNLOCK LEVEL 2 — THEN PICK THE COURSE YOU WANT NEXT
+              FINISH LEVEL 2 TO UNLOCK LEVEL 3 — THEN PICK THE COURSE YOU WANT NEXT
             </p>
 
             <div className="rounded-2xl border border-primary/20 bg-primary/5 p-6">
@@ -496,8 +496,8 @@ export default function AITokens() {
               </div>
               <div className="grid grid-cols-2 gap-2">
                 {[
-                  { level: 'L1', desc: 'Foundation' },
-                  { level: 'L2', desc: 'Intermediate — you choose' },
+                  { level: 'L2', desc: 'Where everyone starts' },
+                  { level: 'L3', desc: 'Advanced — you choose' },
                 ].map((item, i) => (
                   <div key={i} className="rounded-lg bg-background/50 border border-border/50 px-3 py-2 text-center">
                     <p className="font-display text-xs tracking-wider text-primary">{item.level}</p>
@@ -539,7 +539,7 @@ export default function AITokens() {
               <div className="flex gap-3">
                 <Coins className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                 <div>
-                  <span className="text-foreground font-medium">A full tank every month.</span> Foundation refills your coach fuel
+                  <span className="text-foreground font-medium">A full tank every month.</span> Unbreakable refills your coach fuel
                   on your billing date. Anything you top up on top of that rolls over and never expires.
                 </div>
               </div>
@@ -560,14 +560,14 @@ export default function AITokens() {
               <div className="flex gap-3">
                 <ArrowRight className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                 <div>
-                  <span className="text-foreground font-medium">Cancel any time.</span> Foundation is billed monthly.
+                  <span className="text-foreground font-medium">Cancel any time.</span> Unbreakable is billed monthly.
                   Cancel whenever you like and you keep access until the end of the month you've paid for. No penalties.
                 </div>
               </div>
               <div className="flex gap-3">
                 <Crown className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                 <div>
-                  <span className="text-foreground font-medium">One plan, everything in it.</span> Foundation unlocks every
+                  <span className="text-foreground font-medium">One plan, everything in it.</span> Unbreakable unlocks every
                   pillar — no add-ons, no upsells, no feature locked behind a higher tier.
                 </div>
               </div>

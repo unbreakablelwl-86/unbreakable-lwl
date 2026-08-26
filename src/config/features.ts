@@ -20,6 +20,8 @@ export const FEATURES = {
   sportsCertificates: false,
   /** 'Meet the Founder' story, photos and /founder page. Hidden across the site. */
   founderStory: false,
+  /** Movement/form analysis from video — not built yet, hidden from clients. */
+  movementAnalysis: false,
 } as const;
 
 export type FeatureFlag = keyof typeof FEATURES;

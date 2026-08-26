@@ -413,7 +413,7 @@ export function usePlayerProvider() {
     supabase.auth.getUser().then(({ data }) => {
       if (data?.user) {
         supabase.from('un_tunes_plays').insert({ user_id: data.user.id, track_id: track.id }).then(() => {
-          supabase.rpc('increment_track_plays', { track_id: track.id });
+          supabase.rpc('increment_track_plays', { p_track_id: track.id });
         });
       }
     });
@@ -526,9 +526,12 @@ export function useFeaturedTracks() {
 
   useEffect(() => {
     (async () => {
+      // Trending is driven by real stream counts (play_count, incremented on
+      // every play via increment_track_plays). Only playable tracks chart.
       const { data } = await supabase
         .from('un_tunes_tracks')
         .select('*, un_tunes_artists!inner(artist_name, avatar_url)')
+        .not('audio_url', 'is', null)
         .order('play_count', { ascending: false })
         .limit(20);
 
@@ -680,7 +683,7 @@ export function useRecordPlay() {
       track_id: trackId,
     });
     // Increment play count
-    await supabase.rpc('increment_track_plays', { track_id: trackId });
+    await supabase.rpc('increment_track_plays', { p_track_id: trackId });
   }, [user]);
 }
 

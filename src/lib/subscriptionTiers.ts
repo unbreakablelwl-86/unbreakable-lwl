@@ -3,7 +3,7 @@
  *
  * Coaching:
  *   Free (£0)       — Home hub, socials, manual tools, 30s UnTunes previews
- *   Foundation (£50/mo) — LAUNCH OFFER (normally £75/mo). Full AI coaching, all features.
+ *   Unbreakable (£50/mo) — LAUNCH OFFER (normally £75/mo). Full AI coaching, all features.
  *
  * Optional one-time top-ups:
  *   Level 1 "Unbreakable"         — £20
@@ -75,7 +75,7 @@ export const TIERS: Record<TierKey, TierConfig> = {
   foundation: {
     key: 'foundation',
     name: 'foundation',
-    displayName: 'Foundation',
+    displayName: 'Unbreakable',
     monthlyPrice: 50,
     originalPrice: 89,
     isOffer: true,
@@ -128,7 +128,7 @@ export interface CoachingTopUp {
 /**
  * Coaching top-ups.
  *
- * Priced against the Foundation anchor: £50/month for a 1,000 token tank = 5p
+ * Priced against the Unbreakable anchor: £50/month for a 1,000 token tank = 5p
  * per token (7.5p at the £75 full price). Top-ups get cheaper the bigger they
  * are, so the biggest is the best value, but none of them undercut the
  * membership — otherwise members would top up instead of subscribing.

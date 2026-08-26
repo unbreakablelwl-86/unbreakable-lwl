@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Volume2, VolumeX, MessageSquare, Brain, Activity, Bell, GraduationCap } from 'lucide-react';
-import { useJJVoice, VoiceFeature } from '@/hooks/useJJVoice';
+import { useJJVoice, VoiceFeature, VoiceGender } from '@/hooks/useJJVoice';
 
 interface VoiceSettingsSheetProps {
   children?: React.ReactNode;
@@ -77,8 +77,34 @@ export function VoiceSettingsSheet({ children }: VoiceSettingsSheetProps) {
             </div>
           ))}
 
+          {/* Cardio + mindset use the free device voice, so members get a choice here. */}
+          <div className="pt-4 border-t border-border space-y-2">
+            <Label className={`font-medium flex items-center gap-2 ${settings.master ? 'text-foreground' : 'text-muted-foreground'}`}>
+              <Activity className="w-4 h-4 text-primary" />
+              Cardio &amp; Mindset voice
+            </Label>
+            <div className="grid grid-cols-2 gap-2">
+              {(['male', 'female'] as VoiceGender[]).map((g) => (
+                <Button
+                  key={g}
+                  type="button"
+                  size="sm"
+                  variant={settings.gender === g ? 'default' : 'outline'}
+                  disabled={!settings.master}
+                  onClick={() => setSetting('gender', g)}
+                  className="font-display tracking-wider text-xs"
+                >
+                  {g === 'male' ? 'MALE' : 'FEMALE'}
+                </Button>
+              ))}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Cardio and mindset cues use your device's own voice — pick whichever you prefer.
+            </p>
+          </div>
+
           <p className="text-xs text-muted-foreground pt-4 border-t border-border">
-            Your coach's voice — powered by ElevenLabs. All voice features use the same male coach voice.
+            Chat, University read-aloud and notifications use the Unbreakable Coach voice.
           </p>
         </div>
       </SheetContent>

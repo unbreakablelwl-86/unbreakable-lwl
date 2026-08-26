@@ -94,7 +94,7 @@ export default function University() {
 
             <p className="text-muted-foreground text-sm md:text-base max-w-2xl mx-auto leading-relaxed">
               Real education that should be taught in schools — not locked behind a qualification.
-              Level 2, 3 &amp; 4 courses in fitness, nutrition, mindset and sports science. Unit 1 of every course is free.
+              Level 2 &amp; 3 courses in fitness, nutrition, mindset and sports science. Unit 1 of every course is free.
             </p>
 
             <p className="text-xs text-muted-foreground/70 max-w-xl mx-auto">

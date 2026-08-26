@@ -156,15 +156,24 @@ export function HomeDashboard() {
     return pct > 0 ? 'NEARLY OUT' : 'EMPTY';
   })();
 
+  /* Remaining allowance as a percentage — drives the visible fuel bar.
+     Members see the bar, never the raw token count. */
+  const coachFuelPercent = (() => {
+    const allowance = tokenState.monthlyTokens || 0;
+    if (allowance <= 0) return tokenState.balance > 0 ? 100 : 0;
+    return Math.max(0, Math.min(100, (tokenState.balance / allowance) * 100));
+  })();
+
   return (
     <div className="min-h-screen pb-28 bg-background">
       {/* ─── Hero Image ─── */}
-      <div className="mx-4 mt-4 rounded-2xl overflow-hidden border border-primary/30">
+      <div className="mx-4 mt-4 rounded-2xl overflow-hidden border border-primary/30 bg-black flex justify-center">
+        {/* Square shield artwork: contain (not cover) so the shield is never sliced. */}
         <img
-          src="/lwl-gym-hero.webp"
+          src="/unbreakable-shield-hero.webp"
           alt="UNBREAKABLE — Keep Showing Up"
-          className="w-full object-cover"
-          style={{ maxHeight: '240px' }}
+          className="h-full w-auto object-contain"
+          style={{ maxHeight: '280px' }}
         />
       </div>
 
@@ -186,9 +195,20 @@ export function HomeDashboard() {
             </div>
             <div className="w-px h-10 bg-muted-foreground" />
             {/* Coach fuel — members see a gauge, never a raw token count */}
-            <div className="flex-1 text-center">
-              <p className="text-2xl font-bold text-foreground">{coachFuelLabel}</p>
-              <p className="text-xs text-muted-foreground flex items-center justify-center gap-1 mt-1">
+            <div className="flex-1 text-center px-2">
+              <div className="h-2.5 w-full rounded-full bg-muted/40 overflow-hidden border border-border/60">
+                <div
+                  className="h-full rounded-full transition-all duration-500"
+                  style={{
+                    width: `${coachFuelPercent}%`,
+                    background: coachFuelPercent <= 10
+                      ? 'linear-gradient(90deg,#EF4444,#F87171)'
+                      : 'linear-gradient(90deg,#FF5500,#FFB300)',
+                  }}
+                />
+              </div>
+              <p className="text-[11px] font-bold text-foreground mt-1.5">{coachFuelLabel}</p>
+              <p className="text-xs text-muted-foreground flex items-center justify-center gap-1 mt-0.5">
                 <span className="text-primary">⛽</span> Coach Fuel
               </p>
             </div>

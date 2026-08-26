@@ -73,7 +73,7 @@ export function MembershipTab() {
             <h4 className="font-display text-sm tracking-wide text-foreground">WANT MORE TOKENS?</h4>
           </div>
           <p className="text-xs text-muted-foreground leading-relaxed">
-            Foundation gives you 1,000 tokens a month and unlocks everything —
+            Unbreakable gives you 1,000 tokens a month and unlocks everything —
             your Unbreakable Coach, programmes, nutrition, University and UnTunes.
           </p>
           <Button

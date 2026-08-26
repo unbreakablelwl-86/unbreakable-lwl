@@ -11,7 +11,7 @@
  *   - Uni courses are premium one-time purchases (20 tokens L2/L3, 50 tokens L4)
  *   - UnTunes music: free streaming for paid tiers, optional purchases with tokens
  *
- * Tier tokens:  Foundation 1,000/month for £50 (£75 full price) = 5p/token.
+ * Tier tokens:  Unbreakable 1,000/month for £50 (£75 full price) = 5p/token.
  * Top-up: £10 = 250 tokens (4p/token, a quarter tank). Top-ups never expire.
  * Members never see raw token counts — the UI shows a fuel gauge.
  */

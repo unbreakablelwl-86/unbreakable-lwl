@@ -29,7 +29,7 @@ const RULES = [
   { icon: Calendar, text: '86 consecutive days. No shortcuts, no rest days.' },
   { icon: CheckCircle, text: 'Complete all 7 daily habits, every single day.' },
   { icon: RotateCcw, text: 'Miss a day, or miss a habit — the calendar resets to Day 1.' },
-  { icon: Shield, text: 'No fees, no fines. Included with your Foundation membership.' },
+  { icon: Shield, text: 'No fees, no fines. Included with your Unbreakable membership.' },
   { icon: Trophy, text: 'Complete all 86 — your certificate is issued.' },
 ];
 
@@ -229,7 +229,7 @@ export function U86Landing({ onStart, resetCount = 0 }: U86LandingProps) {
             <ArrowRight className="w-5 h-5 ml-2" />
           </Button>
           <p className="text-center text-muted-foreground text-[10px] mt-2 font-display tracking-wide">
-            INCLUDED WITH FOUNDATION
+            INCLUDED WITH UNBREAKABLE
           </p>
           <p className="text-center text-muted-foreground text-[10px] mt-2 leading-relaxed">
             By starting your 86 you agree to the{' '}

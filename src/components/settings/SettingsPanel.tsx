@@ -1,3 +1,4 @@
+import { FEATURES } from '@/config/features';
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -224,6 +225,7 @@ export function SettingsPanel() {
         <CardContent className="space-y-6">
           {/* Breathing voice now controlled via Coach Voice Settings above */}
 
+          {FEATURES.movementAnalysis && (
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
               <Label className="text-foreground font-medium flex items-center gap-2">
@@ -240,6 +242,7 @@ export function SettingsPanel() {
               disabled={aiLoading}
             />
           </div>
+          )}
         </CardContent>
       </Card>
 
