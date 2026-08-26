@@ -104,7 +104,6 @@ serve(async (req) => {
 
     if (isSubscription) {
       sessionConfig.subscription_data = {
-        trial_period_days: 7,
         metadata: { user_id: user.id },
       };
     } else {
