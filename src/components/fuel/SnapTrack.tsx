@@ -2,6 +2,7 @@ import { useState, useRef, useCallback, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useSnapTrack, SnapItem, SnapResult } from '@/hooks/useSnapTrack';
@@ -26,6 +27,9 @@ import {
   UtensilsCrossed,
   Moon,
   Cookie,
+  Pencil,
+  Trash2,
+  Info,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -63,6 +67,10 @@ export function SnapTrack({ isOpen, onClose, defaultMealType = 'lunch' }: SnapTr
   const [facingMode, setFacingMode] = useState<'user' | 'environment'>('environment');
   const [cameraActive, setCameraActive] = useState(false);
   const [cameraError, setCameraError] = useState<string | null>(null);
+
+  // Editable copy of the scan results — lets the user correct/add missed ingredients
+  const [editableItems, setEditableItems] = useState<SnapItem[]>([]);
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -220,12 +228,65 @@ export function SnapTrack({ isOpen, onClose, defaultMealType = 'lunch' }: SnapTr
     setViewState('scanning');
     const res = await scanImage(capturedImage);
     if (res) {
+      setEditableItems(res.items);
+      setEditingIndex(null);
       setViewState('results');
       refreshTokens();
     } else {
       setViewState('preview');
     }
   }, [capturedImage, scanImage, refreshTokens]);
+
+  // Editable results helpers — supports correcting the AI's guess or adding missed ingredients
+  const blankItem = (): SnapItem => ({
+    name: '',
+    portion: '',
+    calories: 0,
+    protein: 0,
+    carbs: 0,
+    fat: 0,
+    confidence: 'low',
+  });
+
+  const updateEditableItem = useCallback(
+    (index: number, patch: Partial<SnapItem>) => {
+      setEditableItems((prev) =>
+        prev.map((it, i) => (i === index ? { ...it, ...patch } : it))
+      );
+    },
+    []
+  );
+
+  const handleAddMissingItem = useCallback(() => {
+    setEditableItems((prev) => {
+      const next = [...prev, blankItem()];
+      setEditingIndex(next.length - 1);
+      return next;
+    });
+  }, []);
+
+  const handleRemoveItem = useCallback((index: number) => {
+    setEditableItems((prev) => prev.filter((_, i) => i !== index));
+    setLoggedItems((prev) => {
+      const next = new Set<number>();
+      prev.forEach((i) => {
+        if (i < index) next.add(i);
+        else if (i > index) next.add(i - 1);
+      });
+      return next;
+    });
+    setEditingIndex((cur) => (cur === index ? null : cur));
+  }, []);
+
+  const editableTotals = editableItems.reduce(
+    (acc, it) => ({
+      calories: acc.calories + (Number(it.calories) || 0),
+      protein: acc.protein + (Number(it.protein) || 0),
+      carbs: acc.carbs + (Number(it.carbs) || 0),
+      fat: acc.fat + (Number(it.fat) || 0),
+    }),
+    { calories: 0, protein: 0, carbs: 0, fat: 0 }
+  );
 
   // Log a single food item
   const handleLogItem = useCallback(
@@ -265,14 +326,12 @@ export function SnapTrack({ isOpen, onClose, defaultMealType = 'lunch' }: SnapTr
 
   // Log all items at once
   const handleLogAll = useCallback(async () => {
-    if (!result) return;
-    const unlogged = result.items.filter((_, i) => !loggedItems.has(i));
-    for (let i = 0; i < result.items.length; i++) {
+    for (let i = 0; i < editableItems.length; i++) {
       if (!loggedItems.has(i)) {
-        await handleLogItem(result.items[i], i);
+        await handleLogItem(editableItems[i], i);
       }
     }
-  }, [result, loggedItems, handleLogItem]);
+  }, [editableItems, loggedItems, handleLogItem]);
 
   // Reset everything
   const handleReset = useCallback(() => {
@@ -281,6 +340,8 @@ export function SnapTrack({ isOpen, onClose, defaultMealType = 'lunch' }: SnapTr
     setViewState('camera');
     setLoggedItems(new Set());
     setCameraError(null);
+    setEditableItems([]);
+    setEditingIndex(null);
   }, [reset]);
 
   // Retake photo
@@ -295,7 +356,8 @@ export function SnapTrack({ isOpen, onClose, defaultMealType = 'lunch' }: SnapTr
     onClose();
   }, [stopCamera, onClose]);
 
-  const allLogged = result ? result.items.every((_, i) => loggedItems.has(i)) : false;
+  const allLogged =
+    editableItems.length > 0 && editableItems.every((_, i) => loggedItems.has(i));
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
@@ -590,96 +652,199 @@ export function SnapTrack({ isOpen, onClose, defaultMealType = 'lunch' }: SnapTr
                         <div>
                           <p className="text-xs text-muted-foreground uppercase">Calories</p>
                           <p className="font-display text-xl text-primary">
-                            {result.total_calories}
+                            {editableTotals.calories}
                           </p>
                         </div>
                         <div>
                           <p className="text-xs text-muted-foreground uppercase">Protein</p>
                           <p className="font-display text-xl text-foreground">
-                            {result.total_protein}g
+                            {editableTotals.protein}g
                           </p>
                         </div>
                         <div>
                           <p className="text-xs text-muted-foreground uppercase">Carbs</p>
                           <p className="font-display text-xl text-foreground">
-                            {result.total_carbs}g
+                            {editableTotals.carbs}g
                           </p>
                         </div>
                         <div>
                           <p className="text-xs text-muted-foreground uppercase">Fat</p>
                           <p className="font-display text-xl text-foreground">
-                            {result.total_fat}g
+                            {editableTotals.fat}g
                           </p>
                         </div>
                       </div>
                     </CardContent>
                   </Card>
 
+                  {/* Reference-only disclaimer */}
+                  <div className="flex items-start gap-2 px-1">
+                    <Info className="w-3.5 h-3.5 text-muted-foreground shrink-0 mt-0.5" />
+                    <p className="text-[11px] text-muted-foreground leading-relaxed">
+                      Scans are for reference only — details may vary. Missing or wrong ingredient?
+                      Tap the pencil to edit, or add anything the scanner missed below.
+                    </p>
+                  </div>
+
                   {/* Individual items */}
                   <div className="space-y-2">
                     <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">
-                      Identified Items ({result.items.length})
+                      Identified Items ({editableItems.length})
                     </p>
-                    {result.items.map((item, index) => (
-                      <Card
-                        key={index}
-                        className={`border transition-all ${
-                          loggedItems.has(index)
-                            ? 'border-primary/30 bg-primary/5'
-                            : 'border-border hover:border-primary/30'
-                        }`}
-                      >
-                        <CardContent className="p-3">
-                          <div className="flex items-start justify-between gap-2">
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2 mb-1">
-                                <p className="font-semibold text-sm truncate">{item.name}</p>
-                                <Badge
-                                  variant="outline"
-                                  className={`text-[10px] shrink-0 ${
-                                    confidenceColors[item.confidence] || ''
-                                  }`}
-                                >
-                                  {item.confidence}
-                                </Badge>
+                    {editableItems.map((item, index) => {
+                      const isEditing = editingIndex === index;
+                      return (
+                        <Card
+                          key={index}
+                          className={`border transition-all ${
+                            loggedItems.has(index)
+                              ? 'border-primary/30 bg-primary/5'
+                              : isEditing
+                              ? 'border-primary/40'
+                              : 'border-border hover:border-primary/30'
+                          }`}
+                        >
+                          <CardContent className="p-3">
+                            {isEditing ? (
+                              <div className="space-y-2">
+                                <div className="flex gap-2">
+                                  <Input
+                                    value={item.name}
+                                    onChange={(e) => updateEditableItem(index, { name: e.target.value })}
+                                    placeholder="Food name"
+                                    className="h-8 text-sm flex-1"
+                                  />
+                                  <Input
+                                    value={item.portion}
+                                    onChange={(e) => updateEditableItem(index, { portion: e.target.value })}
+                                    placeholder="Portion"
+                                    className="h-8 text-sm flex-1"
+                                  />
+                                </div>
+                                <div className="grid grid-cols-4 gap-2">
+                                  <Input
+                                    type="number"
+                                    value={item.calories}
+                                    onChange={(e) => updateEditableItem(index, { calories: Number(e.target.value) })}
+                                    placeholder="kcal"
+                                    className="h-8 text-xs"
+                                  />
+                                  <Input
+                                    type="number"
+                                    value={item.protein}
+                                    onChange={(e) => updateEditableItem(index, { protein: Number(e.target.value) })}
+                                    placeholder="P (g)"
+                                    className="h-8 text-xs"
+                                  />
+                                  <Input
+                                    type="number"
+                                    value={item.carbs}
+                                    onChange={(e) => updateEditableItem(index, { carbs: Number(e.target.value) })}
+                                    placeholder="C (g)"
+                                    className="h-8 text-xs"
+                                  />
+                                  <Input
+                                    type="number"
+                                    value={item.fat}
+                                    onChange={(e) => updateEditableItem(index, { fat: Number(e.target.value) })}
+                                    placeholder="F (g)"
+                                    className="h-8 text-xs"
+                                  />
+                                </div>
+                                <div className="flex gap-2">
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    className="flex-1 text-destructive border-destructive/30 hover:bg-destructive/10"
+                                    onClick={() => handleRemoveItem(index)}
+                                  >
+                                    <Trash2 className="w-3.5 h-3.5 mr-1" />
+                                    Remove
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    className="flex-1 bg-primary hover:bg-primary/90"
+                                    onClick={() => setEditingIndex(null)}
+                                  >
+                                    <CheckCircle className="w-3.5 h-3.5 mr-1" />
+                                    Done
+                                  </Button>
+                                </div>
                               </div>
-                              <p className="text-xs text-muted-foreground mb-2">{item.portion}</p>
-                              <div className="flex gap-3 text-xs">
-                                <span className="text-primary font-semibold">
-                                  {item.calories} kcal
-                                </span>
-                                <span>P {item.protein}g</span>
-                                <span>C {item.carbs}g</span>
-                                <span>F {item.fat}g</span>
+                            ) : (
+                              <div className="flex items-start justify-between gap-2">
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center gap-2 mb-1">
+                                    <p className="font-semibold text-sm truncate">{item.name || 'Untitled item'}</p>
+                                    <Badge
+                                      variant="outline"
+                                      className={`text-[10px] shrink-0 ${
+                                        confidenceColors[item.confidence] || ''
+                                      }`}
+                                    >
+                                      {item.confidence}
+                                    </Badge>
+                                  </div>
+                                  <p className="text-xs text-muted-foreground mb-2">{item.portion}</p>
+                                  <div className="flex gap-3 text-xs">
+                                    <span className="text-primary font-semibold">
+                                      {item.calories} kcal
+                                    </span>
+                                    <span>P {item.protein}g</span>
+                                    <span>C {item.carbs}g</span>
+                                    <span>F {item.fat}g</span>
+                                  </div>
+                                </div>
+                                <div className="flex items-center gap-1.5 shrink-0">
+                                  <Button
+                                    size="icon"
+                                    variant="ghost"
+                                    className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                                    onClick={() => setEditingIndex(index)}
+                                    aria-label="Edit item"
+                                  >
+                                    <Pencil className="w-4 h-4" />
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    variant={loggedItems.has(index) ? 'ghost' : 'outline'}
+                                    className={
+                                      loggedItems.has(index)
+                                        ? 'text-primary cursor-default'
+                                        : 'border-primary/30 hover:bg-primary/10'
+                                    }
+                                    onClick={() => !loggedItems.has(index) && handleLogItem(item, index)}
+                                    disabled={loggedItems.has(index)}
+                                  >
+                                    {loggedItems.has(index) ? (
+                                      <>
+                                        <CheckCircle className="w-4 h-4 mr-1" />
+                                        Logged
+                                      </>
+                                    ) : (
+                                      <>
+                                        <Plus className="w-4 h-4 mr-1" />
+                                        Log
+                                      </>
+                                    )}
+                                  </Button>
+                                </div>
                               </div>
-                            </div>
-                            <Button
-                              size="sm"
-                              variant={loggedItems.has(index) ? 'ghost' : 'outline'}
-                              className={`shrink-0 ${
-                                loggedItems.has(index)
-                                  ? 'text-primary cursor-default'
-                                  : 'border-primary/30 hover:bg-primary/10'
-                              }`}
-                              onClick={() => !loggedItems.has(index) && handleLogItem(item, index)}
-                              disabled={loggedItems.has(index)}
-                            >
-                              {loggedItems.has(index) ? (
-                                <>
-                                  <CheckCircle className="w-4 h-4 mr-1" />
-                                  Logged
-                                </>
-                              ) : (
-                                <>
-                                  <Plus className="w-4 h-4 mr-1" />
-                                  Log
-                                </>
-                              )}
-                            </Button>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
+                            )}
+                          </CardContent>
+                        </Card>
+                      );
+                    })}
+
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="w-full border-dashed border-primary/30 text-primary hover:bg-primary/10"
+                      onClick={handleAddMissingItem}
+                    >
+                      <Plus className="w-4 h-4 mr-1" />
+                      Add missed ingredient
+                    </Button>
                   </div>
 
                   {/* Coach note */}
@@ -704,7 +869,7 @@ export function SnapTrack({ isOpen, onClose, defaultMealType = 'lunch' }: SnapTr
                       <Camera className="w-4 h-4 mr-2" />
                       Scan Another
                     </Button>
-                    {!allLogged && result.items.length > 0 && (
+                    {!allLogged && editableItems.length > 0 && (
                       <Button
                         className="flex-1 bg-primary hover:bg-primary/90 font-display tracking-wide"
                         onClick={handleLogAll}
