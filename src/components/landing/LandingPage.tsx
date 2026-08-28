@@ -162,7 +162,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
 
   return (
     <div className="min-h-screen" style={{ background: '#080808' }}>
-      {/* ━━━ Header ━━━ */}
+      {/* ═══ Header ═══ */}
       <header className="fixed top-0 left-0 right-0 z-50 border-b border-white/[0.05]"
         style={{ background: 'rgba(8,8,8,0.92)', backdropFilter: 'blur(20px)' }}>
         <div className="container mx-auto px-5 py-3">
@@ -196,7 +196,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
         </div>
       </header>
 
-      {/* ━━━ Hero ━━━ */}
+      {/* ═══ Hero ═══ */}
       <section className="relative min-h-[95vh] flex flex-col items-center justify-center text-center px-6 pt-24 pb-8 overflow-hidden">
         {/* Background effects */}
         <div className="absolute inset-0 pointer-events-none">
@@ -283,7 +283,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
         </motion.div>
       </section>
 
-      {/* ━━━ Social proof bar ━━━ */}
+      {/* ═══ Social proof bar ═══ */}
       <section className="border-y border-white/[0.06] py-5" style={{ background: 'rgba(14,14,14,0.5)' }}>
         <div className="container mx-auto px-6">
           <div className="flex flex-wrap justify-center gap-6 sm:gap-8 md:gap-16 text-center">
@@ -304,7 +304,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
         </div>
       </section>
 
-      {/* ━━━ Problem / Why ━━━ */}
+      {/* ═══ Problem / Why ═══ */}
       <section className="py-16 sm:py-20 px-6">
         <div className="container mx-auto max-w-4xl">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} variants={stagger}>
@@ -343,7 +343,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
         </div>
       </section>
 
-      {/* ━━━ App Showcase (Filmstrip) ━━━ */}
+      {/* ═══ App Showcase (Filmstrip) ═══ */}
       <section className="py-12 overflow-hidden">
         <motion.div
           initial={{ opacity: 0, x: -50 }}
@@ -362,7 +362,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
         </motion.div>
       </section>
 
-      {/* ━━━ Features ━━━ */}
+      {/* ═══ Features ═══ */}
       <section id="features" className="py-16 sm:py-20 px-6">
         <div className="container mx-auto max-w-6xl">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} variants={stagger}>
@@ -413,7 +413,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
         </div>
       </section>
 
-      {/* ━━━ Extras: Games + Music ━━━ */}
+      {/* ═══ Extras: Games + Music ═══ */}
       <section className="py-16 sm:py-20 px-6" style={{ background: 'rgba(10,10,10,0.5)' }}>
         <div className="container mx-auto max-w-5xl">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={stagger}>
@@ -479,8 +479,8 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
         </div>
       </section>
 
-      {/* ━━━ Founder Story ━━━ */}
-      {FEATURES.founderStory && (
+      {/* ═══ Founder Story ═══ */}
+      {FEATURES.founderStoryOnLanding && (
         <section className="py-16 sm:py-20 px-6">
           <div className="container mx-auto max-w-5xl">
             <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} variants={stagger}>
@@ -546,7 +546,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
         </section>
       )}
 
-      {/* ━━━ How it works ━━━ */}
+      {/* ═══ How it works ═══ */}
       <section className="py-16 sm:py-20 px-6" style={{ background: 'rgba(10,10,10,0.5)' }}>
         <div className="container mx-auto max-w-4xl">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={stagger}>
@@ -583,7 +583,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
         </div>
       </section>
 
-      {/* ━━━ Free features ━━━ */}
+      {/* ═══ Free features ═══ */}
       <section className="py-16 sm:py-20 px-6">
         <div className="container mx-auto max-w-4xl">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={stagger}>
@@ -612,7 +612,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
         </div>
       </section>
 
-      {/* ━━━ Tokens (pricing) ━━━ */}
+      {/* ═══ Tokens (pricing) ═══ */}
       <section className="py-16 sm:py-20 px-6" style={{ background: 'rgba(10,10,10,0.5)' }}>
         <div className="container mx-auto max-w-5xl">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={stagger}>
@@ -685,7 +685,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
         </div>
       </section>
 
-      {/* ━━━ University callout ━━━ */}
+      {/* ═══ University callout ═══ */}
       <section className="py-16 sm:py-20 px-6">
         <div className="container mx-auto max-w-4xl">
           <motion.div
@@ -720,7 +720,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
         </div>
       </section>
 
-      {/* ━━━ Final CTA ━━━ */}
+      {/* ═══ Final CTA ═══ */}
       <section className="py-20 sm:py-24 px-6 text-center relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] rounded-full blur-[180px]"
@@ -748,10 +748,10 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
         </div>
       </section>
 
-      {/* ━━━ Footer ━━━ */}
+      {/* ═══ Footer ═══ */}
       <LandingFooter />
 
-      {/* ━━━ Un-Tunes 30s Sample Player (non-users) ━━━ */}
+      {/* ═══ Un-Tunes 30s Sample Player (non-users) ═══ */}
       <SamplePlayer onSignUp={goSignUp} />
     </div>
   );
