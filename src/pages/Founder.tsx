@@ -14,10 +14,6 @@ import {
   Sparkles,
 } from 'lucide-react';
 const founderPhoto = 'https://vlwcoqilwyfcrsxodtdx.supabase.co/storage/v1/object/public/site-assets/misc/john-founder.webp';
-const journey2018 = 'https://vlwcoqilwyfcrsxodtdx.supabase.co/storage/v1/object/public/site-assets/misc/jj-journey-2018.webp';
-const journey2019 = 'https://vlwcoqilwyfcrsxodtdx.supabase.co/storage/v1/object/public/site-assets/misc/jj-journey-2019.webp';
-const journey2020 = 'https://vlwcoqilwyfcrsxodtdx.supabase.co/storage/v1/object/public/site-assets/misc/jj-journey-2020.webp';
-const returnPhoto = 'https://vlwcoqilwyfcrsxodtdx.supabase.co/storage/v1/object/public/site-assets/misc/jj-return-2025-2026.webp';
 
 const fadeUp = {
   initial: { opacity: 0, y: 24 },
@@ -171,24 +167,6 @@ const Founder = () => {
             This isn't a transformation for likes. It's what happens when you stop guessing, start understanding your body, and stay consistent. No shortcuts. No magic supplements. Just education, applied daily, over two years.
           </p>
 
-          <div className="grid grid-cols-3 gap-3">
-            {[
-              { src: journey2018, label: '2018', sub: 'Day one. No knowledge.' },
-              { src: journey2019, label: '2019', sub: 'Learning & applying.' },
-              { src: journey2020, label: '2020', sub: 'Education works.' },
-            ].map(img => (
-              <div key={img.label} className="relative">
-                <div className="aspect-[3/4] rounded-lg overflow-hidden border border-border">
-                  <img loading="lazy" src={img.src} alt={`JJ journey ${img.label}`} className="w-full h-full object-cover" />
-                </div>
-                <div className="mt-2 text-center">
-                  <p className="font-display text-sm tracking-wide text-primary">{img.label}</p>
-                  <p className="text-[10px] text-muted-foreground">{img.sub}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-
           <div className="bg-card border-l-4 border-primary rounded-r-lg p-5 mt-7 relative overflow-hidden">
             <span className="absolute top-[-10px] right-4 font-display text-[80px] text-primary/[0.08] leading-none">"</span>
             <p className="font-display text-[clamp(16px,4vw,22px)] tracking-wide leading-[1.2] text-primary relative z-10">
@@ -209,15 +187,6 @@ const Founder = () => {
           <p className="text-muted-foreground text-[15px] leading-[1.85] mb-6">
             In 2025, at 39, I was diagnosed autistic and ADHD. Suddenly a lifetime of feeling like I was wired differently had a name. It knocked me sideways — I stepped away from the gym, away from most things, and had to figure out how to plug back into the world on my own terms. Six months later, I walked back in. Not because I was fixed, but because <strong className="text-foreground">showing up is what I teach and it had to start with me.</strong>
           </p>
-
-          <div className="rounded-lg overflow-hidden border border-border">
-            <img loading="lazy" src={returnPhoto} alt="JJ transformation — Nov 2025 to Apr 2026" className="w-full h-auto" />
-          </div>
-
-          <div className="flex items-center justify-between mt-3">
-            <p className="font-mono text-[9px] tracking-[2px] text-muted-foreground uppercase">Nov 2025 → Apr 2026</p>
-            <p className="font-display text-xs tracking-[2px] text-primary">THE REBUILD</p>
-          </div>
 
           <div className="bg-card border-l-4 border-primary rounded-r-lg p-5 mt-7 relative overflow-hidden">
             <span className="absolute top-[-10px] right-4 font-display text-[80px] text-primary/[0.08] leading-none">"</span>
