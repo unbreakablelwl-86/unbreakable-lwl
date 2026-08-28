@@ -391,7 +391,7 @@ export function SnapTrack({ isOpen, onClose, defaultMealType = 'lunch' }: SnapTr
         <ScrollArea className="max-h-[calc(90vh-56px)]">
           <div className="p-4 space-y-4">
             {/* Camera / Preview / Scanning Views */}
-            <AnimatePresence mode="wait">
+            <AnimatePresence>
               {/* CAMERA VIEW */}
               {viewState === 'camera' && (
                 <motion.div
