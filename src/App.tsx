@@ -46,12 +46,12 @@ function LazyFallback() {
   );
 }
 
-// ─── Eagerly loaded (needed on first paint) ──────────────────────────
+// ─── Eagerly loaded (needed on first paint) ─────────────────────
 import Index from "./pages/Index";
 import SignIn from "./pages/SignIn";
 import NotFound from "./pages/NotFound";
 
-// ─── Lazy-loaded routes (code-split per chunk) ───────────────────────
+// ─── Lazy-loaded routes (code-split per chunk) ───────────────────
 const Social = lazy(() => import("./pages/Social"));
 const Calculators = lazy(() => import("./pages/Calculators"));
 const Tracker = lazy(() => import("./pages/Tracker"));
@@ -160,7 +160,7 @@ const App = () => {
                   <ProtectedRoute><RouteErrorBoundary section="Social"><Social /></RouteErrorBoundary></ProtectedRoute>
                 } />
                 
-                {/* Founder page - pre-sign-in (hidden pre-launch) */}
+                {/* Founder page - pre-sign-in */}
                 {FEATURES.founderStory && <Route path="/founder" element={<Founder />} />}
                 
                 {/* Legal pages - public */}
