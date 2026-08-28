@@ -155,48 +155,6 @@ const Founder = () => {
         </motion.div>
       </section>
 
-      {/* ═══ MY JOURNEY — PHOTOS ═══ */}
-      <section className="py-11 px-6 border-b border-border bg-card/30">
-        <motion.div {...fadeUp} className="max-w-lg mx-auto">
-          <p className="font-mono text-[9px] tracking-[3px] text-primary uppercase mb-2.5">The Journey</p>
-          <h2 className="font-display text-[clamp(28px,7vw,42px)] leading-[1.05] tracking-wide text-foreground mb-5">
-            2018 – 2020.{' '}
-            <span className="text-primary">EDUCATION IN ACTION.</span>
-          </h2>
-          <p className="text-muted-foreground text-[15px] leading-[1.85] mb-6">
-            This isn't a transformation for likes. It's what happens when you stop guessing, start understanding your body, and stay consistent. No shortcuts. No magic supplements. Just education, applied daily, over two years.
-          </p>
-
-          <div className="bg-card border-l-4 border-primary rounded-r-lg p-5 mt-7 relative overflow-hidden">
-            <span className="absolute top-[-10px] right-4 font-display text-[80px] text-primary/[0.08] leading-none">"</span>
-            <p className="font-display text-[clamp(16px,4vw,22px)] tracking-wide leading-[1.2] text-primary relative z-10">
-              SAME PERSON. SAME GYM. THE ONLY DIFFERENCE IS UNDERSTANDING WHAT I WAS DOING AND WHY.
-            </p>
-          </div>
-        </motion.div>
-      </section>
-
-      {/* ═══ THE RETURN — 2025–2026 ═══ */}
-      <section className="py-11 px-6 border-b border-border">
-        <motion.div {...fadeUp} className="max-w-lg mx-auto">
-          <p className="font-mono text-[9px] tracking-[3px] text-primary uppercase mb-2.5">The Return</p>
-          <h2 className="font-display text-[clamp(28px,7vw,42px)] leading-[1.05] tracking-wide text-foreground mb-5">
-            REBUILD. WEEK{' '}
-            <span className="text-primary">BY WEEK.</span>
-          </h2>
-          <p className="text-muted-foreground text-[15px] leading-[1.85] mb-6">
-            In 2025, at 39, I was diagnosed autistic and ADHD. Suddenly a lifetime of feeling like I was wired differently had a name. It knocked me sideways — I stepped away from the gym, away from most things, and had to figure out how to plug back into the world on my own terms. Six months later, I walked back in. Not because I was fixed, but because <strong className="text-foreground">showing up is what I teach and it had to start with me.</strong>
-          </p>
-
-          <div className="bg-card border-l-4 border-primary rounded-r-lg p-5 mt-7 relative overflow-hidden">
-            <span className="absolute top-[-10px] right-4 font-display text-[80px] text-primary/[0.08] leading-none">"</span>
-            <p className="font-display text-[clamp(16px,4vw,22px)] tracking-wide leading-[1.2] text-primary relative z-10">
-              THE GYM DIDN'T FIX ANYTHING. BUT IT GAVE ME SOMEWHERE TO START.
-            </p>
-          </div>
-        </motion.div>
-      </section>
-
       {/* ═══ THE REAL STORY ═══ */}
       <section className="py-11 px-6 border-b border-border bg-card/30">
         <motion.div {...fadeUp} className="max-w-lg mx-auto">
