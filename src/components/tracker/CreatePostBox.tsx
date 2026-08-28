@@ -3,8 +3,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Image, Video, X, Loader2, Globe, Users, Lock, Send, CheckCircle2, Music } from 'lucide-react';
-import { TrackPicker, type TrackClip } from './TrackPicker';
+import { Image, Video, X, Loader2, Globe, Users, Lock, Send, CheckCircle2 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useProfile } from '@/hooks/useProfile';
 import { usePosts } from '@/hooks/usePosts';
@@ -39,7 +38,6 @@ export function CreatePostBox({ onPostCreated }: CreatePostBoxProps) {
   const [progressLabel, setProgressLabel] = useState('');
   const [showSuccess, setShowSuccess] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
-  const [attachedTrack, setAttachedTrack] = useState<TrackClip | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleContentChange = useCallback((value: string) => {
@@ -246,23 +244,6 @@ export function CreatePostBox({ onPostCreated }: CreatePostBoxProps) {
         file_size_bytes: m.fileSize || null,
       }));
 
-      // Add attached Un-Tunes track as audio media (with clip bounds)
-      // Clip start/end stored via width/height (seconds × 1000) since audio has no dimensions
-      if (attachedTrack) {
-        const clipDuration = attachedTrack.clipEnd - attachedTrack.clipStart;
-        allMediaRows.push({
-          post_id: postData.id,
-          user_id: user.id,
-          media_type: 'audio',
-          media_url: `${attachedTrack.audio_url}#t=${attachedTrack.clipStart},${attachedTrack.clipEnd}`,
-          thumbnail_url: attachedTrack.cover_url,
-          sort_order: allMediaRows.length,
-          duration_seconds: clipDuration || attachedTrack.duration_seconds || null,
-          width: Math.round(attachedTrack.clipStart * 1000),
-          height: Math.round(attachedTrack.clipEnd * 1000),
-        });
-      }
-
       if (allMediaRows.length > 0) {
         await supabase.from('post_media').insert(allMediaRows);
         await refetchPosts();
@@ -277,7 +258,6 @@ export function CreatePostBox({ onPostCreated }: CreatePostBoxProps) {
         setShowSuccess(false);
         setContent('');
         setMediaItems([]);
-        setAttachedTrack(null);
         setIsExpanded(false);
         setIsSubmitting(false);
         setOverallProgress(0);
@@ -404,28 +384,6 @@ export function CreatePostBox({ onPostCreated }: CreatePostBoxProps) {
             )}
           </AnimatePresence>
 
-          {/* Attached Un-Tunes track preview — compact inline */}
-          <AnimatePresence>
-            {attachedTrack && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                className="flex items-center gap-2 px-2 py-1.5 rounded-lg border border-primary/30 bg-primary/5"
-              >
-                <Music className="w-4 h-4 text-primary flex-shrink-0" />
-                <p className="text-xs text-foreground truncate flex-1">
-                  {attachedTrack.title} · {Math.round(attachedTrack.clipEnd - attachedTrack.clipStart)}s clip
-                </p>
-                {!isSubmitting && (
-                  <Button variant="ghost" size="sm" className="h-6 w-6 p-0 flex-shrink-0" onClick={() => setAttachedTrack(null)}>
-                    <X className="w-3.5 h-3.5" />
-                  </Button>
-                )}
-              </motion.div>
-            )}
-          </AnimatePresence>
-
           {/* Upload Progress */}
           <AnimatePresence>
             {isSubmitting && overallProgress > 0 && (
@@ -450,7 +408,7 @@ export function CreatePostBox({ onPostCreated }: CreatePostBoxProps) {
                 exit={{ opacity: 0, height: 0 }}
                 className="flex flex-col gap-2 pt-2 border-t border-border"
               >
-                {/* Row 1: Media + Music */}
+                {/* Row 1: Media */}
                 <div className="flex items-center gap-2">
                   <input
                     type="file"
@@ -473,21 +431,6 @@ export function CreatePostBox({ onPostCreated }: CreatePostBoxProps) {
                       <span className="ml-1 text-xs text-primary">{mediaItems.length}/{MAX_MEDIA}</span>
                     )}
                   </Button>
-
-                  <TrackPicker
-                    onSelect={setAttachedTrack}
-                    selectedTrack={attachedTrack}
-                  >
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className={attachedTrack ? 'text-primary' : 'text-muted-foreground'}
-                      disabled={isSubmitting}
-                    >
-                      <Music className="w-5 h-5 mr-1" />
-                      Music
-                    </Button>
-                  </TrackPicker>
                 </div>
 
                 {/* Row 2: Visibility + Post */}
@@ -514,7 +457,7 @@ export function CreatePostBox({ onPostCreated }: CreatePostBoxProps) {
 
                   <Button
                     onClick={handleSubmit}
-                    disabled={isSubmitting || (!content.trim() && mediaItems.length === 0 && !attachedTrack)}
+                    disabled={isSubmitting || (!content.trim() && mediaItems.length === 0)}
                     className="font-heading tracking-wide"
                   >
                     {isSubmitting ? (
