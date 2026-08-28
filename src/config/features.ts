@@ -18,8 +18,11 @@ export const FEATURES = {
   liveStory: false,
   /** Sports certificates & sports courses in Unbreakable University. Kept active for the owner account. */
   sportsCertificates: false,
-  /** 'Meet the Founder' story, photos and /founder page. Hidden across the site. */
-  founderStory: false,
+  /** 'Meet the Founder' page (/founder) and its footer link. Re-enabled Aug 2026 (JJ). */
+  founderStory: true,
+  /** Founder Story teaser block embedded directly on the main landing page. Kept off — JJ wants
+   *  the standalone /founder page back, but nothing new added to the home page itself. */
+  founderStoryOnLanding: false,
   /** Movement/form analysis from video — not built yet, hidden from clients. */
   movementAnalysis: false,
 } as const;
