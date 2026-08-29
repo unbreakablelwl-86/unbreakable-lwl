@@ -5,8 +5,7 @@
 import { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
-import { Trophy, ChevronRight } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Trophy } from 'lucide-react';
 import { useAchievementCards } from '@/hooks/useAchievementCards';
 
 const RARITY_ORDER = ['platinum', 'diamond', 'gold', 'silver', 'bronze'] as const;
@@ -28,7 +27,6 @@ const RARITY_BG: Record<string, string> = {
 };
 
 export function AchievementSummaryBadge() {
-  const navigate = useNavigate();
   const { cards, loading } = useAchievementCards();
 
   const stats = useMemo(() => {
@@ -44,16 +42,14 @@ export function AchievementSummaryBadge() {
   if (loading || !stats) return null;
 
   return (
-    <motion.button
+    <motion.div
       className={cn(
         'w-full flex items-center gap-3 p-3 rounded-xl border',
-        'bg-gradient-to-r transition-all hover:scale-[1.02] active:scale-[0.98]',
+        'bg-gradient-to-r',
         RARITY_BG[stats.highest] || RARITY_BG.bronze,
       )}
-      onClick={() => navigate('/achievements')}
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      whileHover={{ y: -1 }}
     >
       <div className={cn(
         'w-10 h-10 rounded-lg flex items-center justify-center',
@@ -72,7 +68,6 @@ export function AchievementSummaryBadge() {
             .join(' · ')}
         </p>
       </div>
-      <ChevronRight className="w-4 h-4 text-muted-foreground" />
-    </motion.button>
+    </motion.div>
   );
 }
