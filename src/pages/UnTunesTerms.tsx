@@ -1,8 +1,6 @@
 import { motion } from 'framer-motion';
-import { ArrowLeft, FileText, Music, Shield, DollarSign, AlertTriangle, Scale } from 'lucide-react';
+import { FileText, Music, Shield, DollarSign, AlertTriangle, Scale } from 'lucide-react';
 import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { useNavigate } from 'react-router-dom';
 
 const fadeIn = { initial: { opacity: 0, y: 12 }, animate: { opacity: 1, y: 0 } };
 
@@ -92,16 +90,11 @@ Live Without Limits LTD, Liverpool, United Kingdom.`,
 ];
 
 export default function UnTunesTerms() {
-  const navigate = useNavigate();
-
   return (
     <div className="min-h-screen bg-background pb-24">
       {/* Header */}
       <div className="sticky top-0 z-40 bg-background/80 backdrop-blur-xl border-b border-border/50 px-4 py-3">
         <div className="flex items-center gap-3">
-          <Button variant="ghost" size="icon" onClick={() => navigate(-1)} className="shrink-0">
-            <ArrowLeft className="w-5 h-5" />
-          </Button>
           <div>
             <h1 className="font-display text-lg tracking-wider text-foreground">UN-TUNES TERMS</h1>
             <p className="text-[10px] text-muted-foreground font-display tracking-wider">TERMS & CONDITIONS</p>

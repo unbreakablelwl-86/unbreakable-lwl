@@ -492,12 +492,6 @@ export default function UserProfile() {
     <div className="min-h-screen bg-background">
 <main className="pt-6 pb-12">
         <div className="max-w-2xl mx-auto px-4">
-          {/* Back button */}
-          <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="mb-4 -ml-2">
-            <ArrowLeft className="w-4 h-4 mr-1" />
-            <span className="text-xs font-heading tracking-wide">BACK</span>
-          </Button>
-
           {/* ─── Profile Header (Instagram-style) ─── */}
           <motion.div
             initial={{ opacity: 0, y: 12 }}

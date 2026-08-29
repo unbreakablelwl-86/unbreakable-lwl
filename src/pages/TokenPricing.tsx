@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button';
 import { useTokenBalance } from '@/hooks/useTokenBalance';
 import {
   Coins, Zap, MessageCircle, Dumbbell, Brain, GraduationCap,
-  Music, ArrowLeft, Crown, Flame, Rocket,
+  Music, Crown, Flame, Rocket,
   Check, Users, Calculator, BookOpen, BarChart3,
 } from 'lucide-react';
 
@@ -50,9 +50,6 @@ export default function TokenPricing() {
       {/* Header */}
       <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b border-border px-4 py-3">
         <div className="max-w-lg mx-auto flex items-center gap-3">
-          <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
-            <ArrowLeft className="w-5 h-5" />
-          </Button>
           <div>
             <h1 className="font-display text-sm tracking-widest text-foreground">TOKENS</h1>
             <p className="text-xs text-muted-foreground">Your balance & what's included</p>

@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Wind, Zap, Target, Heart, Volume2, VolumeX, Flame, ArrowRight, Clock, ChevronRight, ArrowLeft, User, UserRound, Waves, BarChart3, Sparkles, Route, Circle } from "lucide-react";
+import { Wind, Zap, Target, Heart, Volume2, VolumeX, Flame, ArrowRight, Clock, ChevronRight, User, UserRound, Waves, BarChart3, Sparkles, Route, Circle } from "lucide-react";
 import { ThemedLogo } from "@/components/ThemedLogo";
 import { ThemeToggle } from "@/components/hub/ThemeToggle";
 import { CountdownOverlay } from "@/components/CountdownOverlay";
@@ -26,7 +26,6 @@ const BREATH_PATTERNS: { id: BreathPattern; name: string; icon: React.ReactNode;
 ];
 
 const MindsetBreathing = () => {
-  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [view, setView] = useState<ViewState>("selection");
   const [selectedExercise, setSelectedExercise] = useState<BreathingExercise | null>(null);
@@ -264,12 +263,6 @@ const MindsetBreathing = () => {
   if (view === "selection") {
     return (
       <div className="min-h-screen pb-24" >
-        {/* Back nav */}
-        <div className="px-4 pt-4">
-          <button onClick={() => navigate(-1)} className="flex items-center gap-1 text-muted-foreground text-sm hover:text-muted-foreground transition-colors">
-            <ArrowLeft className="w-4 h-4" /> Mind
-          </button>
-        </div>
         {/* Compact Mindset Hero */}
         <div className="relative px-4 pt-3 pb-5 overflow-hidden">
           <div className="absolute inset-0 pointer-events-none"

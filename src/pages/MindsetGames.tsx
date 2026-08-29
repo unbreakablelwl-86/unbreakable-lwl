@@ -1,5 +1,5 @@
 import { useState, useEffect, lazy, Suspense } from "react";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Gamepad2, Zap, Blocks, Shapes, ChevronRight, ArrowLeft, Music, Volume2, VolumeX } from "lucide-react";
 
@@ -65,7 +65,6 @@ const GAME_COMPONENTS: Record<string, React.LazyExoticComponent<React.ComponentT
 };
 
 const MindsetGames = () => {
-  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [view, setView] = useState<ViewState>("selection");
   const [musicEnabled, setMusicEnabled] = useState(() => {
@@ -119,12 +118,6 @@ const MindsetGames = () => {
 
   return (
     <div className="min-h-screen pb-24" >
-      {/* Back nav */}
-      <div className="px-4 pt-4">
-        <button onClick={() => navigate(-1)} className="flex items-center gap-1 text-muted-foreground text-sm hover:text-muted-foreground transition-colors">
-          <ArrowLeft className="w-4 h-4" /> Mind
-        </button>
-      </div>
       {/* Compact Mindset Hero */}
       <div className="relative px-4 pt-3 pb-5 overflow-hidden">
         <div className="absolute inset-0 pointer-events-none"

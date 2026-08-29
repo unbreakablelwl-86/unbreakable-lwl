@@ -1,7 +1,6 @@
 import { useParams, useNavigate, Navigate } from 'react-router-dom';
 import { CertificateView } from '@/components/university/CertificateView';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft } from 'lucide-react';
 import { useProfile } from '@/hooks/useProfile';
 import { useAuth } from '@/hooks/useAuth';
 import { useUniversityProgress } from '@/hooks/useUniversityProgress';
@@ -45,10 +44,6 @@ export default function UniversityCertificate() {
 <section className="pt-6 pb-8 border-b border-primary/20 relative overflow-hidden">
         <div className={`absolute inset-0 bg-gradient-to-b ${colors.bgGradient} opacity-20 pointer-events-none`} />
         <div className="container mx-auto px-4 max-w-3xl relative z-10">
-          <Button variant="ghost" size="sm" className="mb-4 gap-1.5" onClick={() => navigate(-1)}>
-            <ArrowLeft className="w-4 h-4" /> Back
-          </Button>
-
           <h1 className="font-display text-3xl sm:text-4xl tracking-wide text-center">
             <span className="text-primary">YOUR </span>
             <span className="text-foreground">CERTIFICATE</span>

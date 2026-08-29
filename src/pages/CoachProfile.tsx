@@ -11,7 +11,7 @@ import { CoachBookingFlow } from '@/components/coaching/CoachBookingFlow';
 import {
   Loader2, Award, Clock, PoundSterling,
   Instagram, Globe, MessageSquare, UserCheck,
-  Dumbbell, Target, Heart, ArrowLeft,
+  Dumbbell, Target, Heart,
 } from 'lucide-react';
 
 export default function CoachProfile() {
@@ -82,11 +82,6 @@ export default function CoachProfile() {
   if (!profile) {
     return (
       <div className="min-h-screen pb-24" >
-        <div className="px-4 pt-4">
-          <button onClick={() => navigate('/coaches')} className="flex items-center gap-1 text-muted-foreground text-sm hover:text-muted-foreground transition-colors">
-            <ArrowLeft className="w-4 h-4" /> Coaches
-          </button>
-        </div>
         <div className="px-4 py-24 max-w-2xl mx-auto text-center">
           <UserCheck className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
           <h1 className="font-display text-2xl tracking-wide text-foreground mb-2">COACH NOT FOUND</h1>
@@ -109,13 +104,6 @@ export default function CoachProfile() {
 
   return (
     <div className="min-h-screen pb-24" >
-      {/* Back nav */}
-      <div className="px-4 pt-4">
-        <button onClick={() => navigate('/coaches')} className="flex items-center gap-1 text-muted-foreground text-sm hover:text-muted-foreground transition-colors">
-          <ArrowLeft className="w-4 h-4" /> Coaches
-        </button>
-      </div>
-
       <div className="px-4 pt-4 max-w-2xl mx-auto space-y-6">
         {/* Profile Header */}
         <div className="text-center space-y-4">
