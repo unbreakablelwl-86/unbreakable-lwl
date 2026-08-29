@@ -86,7 +86,7 @@ const ALL_QUICK_ACTIONS: QuickAction[] = [
   { id: 'calc', label: 'Calculators', icon: Calculator, path: '/calculators', color: '#10B981' },
   { id: 'inbox', label: 'Inbox', icon: MessageCircle, path: '/inbox', color: '#FF5500' },
   { id: 'profile', label: 'Profile', icon: User, path: '/profile', color: '#6366F1' },
-  { id: 'explore', label: 'Explore', icon: Search, path: '/explore', color: '#EC4899' },
+  { id: 'explore', label: 'Explore', icon: Search, path: '/explore', color: '#FF5500' },
   { id: 'habits', label: 'Habits', icon: Calendar, path: '/habits', color: '#8B5CF6' },
   { id: 'faq', label: 'Help', icon: HelpCircle, path: '/faq', color: '#EF4444' },
   { id: 'mindset', label: 'Breathe', icon: Wind, path: '/mindset/breathing', color: '#8B5CF6' },
