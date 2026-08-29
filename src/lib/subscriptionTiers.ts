@@ -149,14 +149,17 @@ export const COACHING_TOPUPS: CoachingTopUp[] = [
  * Get tier config by key.
  *
  * Defensive: some callers pass a tier string sourced from the backend
- * (e.g. a role-based override like "elite" for dev/coach accounts, or a
- * stale/legacy tier name) that isn't one of the three real TierKeys.
- * Rather than crash the whole page with "Cannot read properties of
- * undefined (reading 'rank')", fall back to the highest real tier so
- * privileged/unknown tiers are treated as fully unlocked, not locked out.
+ * (e.g. a stale/legacy tier name, or a malformed value) that isn't one of
+ * the three real TierKeys. Rather than crash the whole page with "Cannot
+ * read properties of undefined (reading 'rank')", fall back to the free
+ * tier. Dev/coach accounts already bypass tier checks entirely via their
+ * role flags (see PaywallGate), so this fallback is never load-bearing for
+ * legitimate privileged access — it only affects genuinely unrecognised
+ * tier values, and failing closed (no paid features unlocked) is the safe
+ * default there rather than silently granting full paid access.
  */
 export function getTier(key: TierKey): TierConfig {
-  return TIERS[key] ?? TIERS.foundation;
+  return TIERS[key] ?? TIERS.free;
 }
 
 /** Check if a tier is at least a given rank */
