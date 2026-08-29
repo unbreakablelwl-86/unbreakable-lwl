@@ -8,6 +8,8 @@
  *   Wilks-2 coefficient function
  */
 
+import { wilks2Points, ipfGLPoints } from '@/lib/wilksIpfEngine';
+
 export type Gender = 'male' | 'female';
 export type Exercise =
   | 'bench' | 'incline_bench'
@@ -56,38 +58,24 @@ export function calculateOneRepMax(weight: number, reps: number): number {
 /**
  * Wilks-2 Score (2020 revision)
  * Normalises a total to bodyweight for fair comparison across weight classes
+ *
+ * Delegates to the shared wilksIpfEngine so this figure always matches the
+ * one used by the PB Card / achievement system — previously this file kept
+ * its own, differently-tuned coefficient table, so the same lift could score
+ * differently depending on which screen calculated it.
  */
 export function calculateWilks2(totalKg: number, bodyweightKg: number, gender: Gender): number {
-  if (bodyweightKg <= 0 || totalKg <= 0) return 0;
-  const x = bodyweightKg;
-
-  // Wilks-2 polynomial coefficients (2020)
-  const coeffs = gender === 'female'
-    ? { a: -125.4255398, b: 13.71219419, c: -0.03307250631, d: -0.001050400051, e: 9.38773881462799e-6, f: -2.3334613884954e-8 }
-    : { a: 47.46178854, b: 8.472061379, c: 0.07369410346, d: -0.001395833811, e: 7.07665973070743e-6, f: -1.20804336482315e-8 };
-
-  const denom = coeffs.a + coeffs.b * x + coeffs.c * x ** 2 + coeffs.d * x ** 3 + coeffs.e * x ** 4 + coeffs.f * x ** 5;
-  if (denom <= 0) return 0;
-
-  return Math.round((500 / denom) * totalKg * 100) / 100;
+  return wilks2Points(totalKg, bodyweightKg, gender);
 }
 
 /**
  * IPF GL Score (Goodlift Points)
  * Used by the IPF for cross-bodyweight comparison
+ *
+ * Delegates to the shared wilksIpfEngine (see calculateWilks2 above for why).
  */
 export function calculateIPFGL(totalKg: number, bodyweightKg: number, gender: Gender): number {
-  if (bodyweightKg <= 0 || totalKg <= 0) return 0;
-
-  // IPF GL coefficients (SBD — full powerlifting total)
-  const coeffs = gender === 'female'
-    ? { A: 610.32796, B: 1045.59282, C: 0.03048 }
-    : { A: 1199.72839, B: 1025.18162, C: 0.00921 };
-
-  const denom = coeffs.A - coeffs.B * Math.exp(-coeffs.C * bodyweightKg);
-  if (denom <= 0) return 0;
-
-  return Math.round((totalKg * 100 / denom) * 100) / 100;
+  return ipfGLPoints(totalKg, bodyweightKg, gender);
 }
 
 // ═══════════════════════════════════════════════════
@@ -309,10 +297,17 @@ function calculatePercentileFromRatio(ratio: number, standards: number[]): { lev
 }
 
 /**
- * Overall rating (40-99 scale) from BW ratio + standards
- * Used by PB Card stat engine
+ * Overall rating (40-99 scale) from BW ratio + John's spec-aligned standards.
+ * Used by the standalone Strength Calculator tool (calculateStrengthLevel below).
+ *
+ * NOTE: renamed from `calculateOverallRating` — wilksIpfEngine.ts exports a
+ * different, unrelated function with that exact name (different signature,
+ * different 0-99 scale, used by the achievement/PB Card system). Keeping two
+ * same-named-but-incompatible exports across the codebase was a standing
+ * foot-gun for future edits, even though today's imports are correctly
+ * scoped per-module and never actually collide.
  */
-export function calculateOverallRating(
+export function calculateStandardsRating(
   ratio: number,
   standards: number[],
   ageCoefficient: number = 1.0,
@@ -363,7 +358,7 @@ export function calculateStrengthLevel(
   const { percentile: ageAdjustedPercentile } = calculatePercentileFromRatio(adjustedRatio, standards);
 
   // Overall rating (40-99)
-  const overallRating = calculateOverallRating(ratio, standards, ipfAgeCoeff);
+  const overallRating = calculateStandardsRating(ratio, standards, ipfAgeCoeff);
 
   // Wilks and IPF GL (use 1RM as "total" for single lift comparison)
   const wilksScore = calculateWilks2(oneRepMax, bodyweight, gender);
