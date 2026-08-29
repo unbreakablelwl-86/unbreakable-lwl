@@ -221,7 +221,7 @@ const ALL_NAV_ITEMS: NavItemDef[] = [
     label: 'Explore',
     path: '/explore',
     activeMatch: ['/explore'],
-    color: '#EC4899',
+    color: '#FF5500',
     description: 'Discover content',
   },
   {
@@ -418,7 +418,7 @@ export default function AppLayout() {
       </main>
 
       {/* ━━━ Scrolling Founding Member Banner — visible on ALL pages above nav ━━━ */}
-      {!hideBottomNav && (
+      {!hideBottomNav && isFreeUser && (
         <Link
           to="/ai-tokens"
           className="fixed left-0 right-0 z-[49] overflow-hidden py-2"
