@@ -38,7 +38,7 @@ function getFunctionCost(functionName: string): number {
 
 interface TokenGuardResult {
   error?: {
-    code: "insufficient_tokens";
+    code: "insufficient_tokens" | "token_check_failed";
     message: string;
     balance: number;
     required: number;
@@ -64,8 +64,19 @@ export async function requireToken(
 
   if (error) {
     console.error("Token deduction error:", error);
-    // On DB error, allow through (fail open) to avoid blocking users
-    return { remaining: -1 };
+    // Fail CLOSED: an RPC/DB error must not let the action through for free.
+    // Treat this the same as a blocked request so the caller's existing
+    // `if (tokenGuard.error)` check trips and the AI action does not proceed
+    // without a token being deducted.
+    return {
+      error: {
+        code: "token_check_failed",
+        message: "We couldn't verify your AI token balance. Please try again in a moment.",
+        balance: 0,
+        required: actualCost,
+      },
+      remaining: 0,
+    };
   }
 
   if (remaining === -1) {
