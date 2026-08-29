@@ -41,13 +41,14 @@ import {
   Wind,
   BookOpen,
   Eye,
+  Activity,
 } from 'lucide-react';
 import { GeneratedProgram, WorkoutDay, Exercise } from '@/lib/programTypes';
 import { ScrollableExerciseLibrary } from '@/components/programming/ScrollableExerciseLibrary';
 import { LibraryExercise } from '@/lib/exerciseLibrary';
 import { useRecipes } from '@/hooks/useRecipes';
 
-type PlanType = 'programme' | 'meal_plan' | 'mindset';
+type PlanType = 'programme' | 'meal_plan' | 'mindset' | 'cardio';
 
 interface AIPlanReviewModalProps {
   isOpen: boolean;
@@ -219,14 +220,16 @@ export function AIPlanReviewModal({
   const isProgramme = planType === 'programme';
   const isMindset = planType === 'mindset';
   const isMealPlan = planType === 'meal_plan';
-  const Icon = isProgramme ? Dumbbell : isMindset ? Brain : UtensilsCrossed;
-  const title = isProgramme ? 'YOUR PROGRAMME' : isMindset ? 'YOUR MINDSET PROGRAMME' : 'YOUR MEAL PLAN';
-  const hubName = isProgramme ? 'My Programmes' : isMindset ? 'Mindset Programmes' : 'My Meal Plans';
+  const isCardio = planType === 'cardio';
+  const Icon = isProgramme ? Dumbbell : isMindset ? Brain : isCardio ? Activity : UtensilsCrossed;
+  const title = isProgramme ? 'YOUR PROGRAMME' : isMindset ? 'YOUR MINDSET PROGRAMME' : isCardio ? 'YOUR MOVEMENT PROGRAMME' : 'YOUR MEAL PLAN';
+  const hubName = isProgramme ? 'My Programmes' : isMindset ? 'Mindset Programmes' : isCardio ? 'Movement Programmes' : 'My Meal Plans';
 
   const isEditing = step === 'edit';
   const programmeDays: WorkoutDay[] = isProgramme ? (editedPlan.templateWeek?.days || []) : [];
   const mealPlanDays: any[] = isMealPlan ? (editedPlan.days || []) : [];
   const mindsetWeeks: any[] = isMindset ? (editedPlan.weeks || []) : [];
+  const cardioWeeks: any[] = isCardio ? (editedPlan.weeks || []) : [];
 
   const updatePlanField = useCallback((field: string, value: string) => {
     setEditedPlan((prev: any) => ({ ...prev, [field]: value }));
@@ -395,7 +398,7 @@ export function AIPlanReviewModal({
               </DialogTitle>
               <DialogDescription className="text-sm text-muted-foreground mt-1">
                 {isEditing
-                  ? (isProgramme ? 'Edit exercises, swap, or add new ones' : isMindset ? 'Edit activities, durations, and instructions' : 'Tap the swap icon to change meals from your recipe library')
+                  ? (isProgramme ? 'Edit exercises, swap, or add new ones' : isMindset ? 'Edit activities, durations, and instructions' : isCardio ? 'Edit sessions, durations, and details' : 'Tap the swap icon to change meals from your recipe library')
                   : `Review, edit, and save to your ${hubName}`}
               </DialogDescription>
             </div>
@@ -419,7 +422,7 @@ export function AIPlanReviewModal({
                     <Input
                       value={editedPlan.programName || editedPlan.planName || editedPlan.name || ''}
                       onChange={(e) => {
-                        if (isProgramme) updatePlanField('programName', e.target.value);
+                        if (isProgramme || isCardio) updatePlanField('programName', e.target.value);
                         else if (isMindset) updatePlanField('name', e.target.value);
                         else updatePlanField('planName', e.target.value);
                       }}
@@ -662,6 +665,124 @@ export function AIPlanReviewModal({
                   </div>
                 )}
 
+                {/* ═══ MOVEMENT/CARDIO: Weeks & Sessions ═══ */}
+                {isCardio && cardioWeeks.length > 0 && (
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2 mb-1">
+                      <Activity className="w-4 h-4 text-primary" />
+                      <span className="font-display text-sm tracking-wide text-primary">
+                        {cardioWeeks.length} WEEK PROGRAMME
+                      </span>
+                    </div>
+                    {cardioWeeks.map((week: any, weekIndex: number) => (
+                      <Collapsible key={weekIndex} open={expandedDay === weekIndex} onOpenChange={() => setExpandedDay(expandedDay === weekIndex ? null : weekIndex)}>
+                        <CollapsibleTrigger asChild>
+                          <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30 border border-border cursor-pointer hover:bg-muted/50 transition-colors">
+                            <div className="flex items-center gap-2">
+                              <span className="font-display text-sm tracking-wide text-primary">WEEK {week.weekNumber || weekIndex + 1}</span>
+                              {week.phase && <span className="text-xs text-muted-foreground">— {week.phase}</span>}
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Badge variant="secondary" className="text-[10px]">{week.sessions?.length || 0} sessions</Badge>
+                              {expandedDay === weekIndex ? <ChevronUp className="w-4 h-4 text-muted-foreground" /> : <ChevronDown className="w-4 h-4 text-muted-foreground" />}
+                            </div>
+                          </div>
+                        </CollapsibleTrigger>
+                        <CollapsibleContent>
+                          <div className="mt-1 p-3 rounded-b-lg border border-t-0 border-border space-y-2">
+                            {week.totalDistance && !isEditing && (
+                              <p className="text-xs text-muted-foreground italic">Total distance: {week.totalDistance}</p>
+                            )}
+                            {(week.sessions || []).map((session: any, sessIndex: number) => (
+                              <div key={sessIndex} className="p-2.5 bg-background/50 rounded-lg border border-border/50 space-y-1.5">
+                                <div className="flex items-center justify-between">
+                                  <span className="font-display text-xs tracking-wide">
+                                    {session.day || `Session ${sessIndex + 1}`}
+                                  </span>
+                                  {!isEditing && <span className="text-[10px] text-muted-foreground">{session.duration}</span>}
+                                </div>
+                                {isEditing ? (
+                                  <div className="space-y-1.5">
+                                    <Input
+                                      value={session.sessionType || ''}
+                                      onChange={(e) => {
+                                        setEditedPlan((prev: any) => {
+                                          const updated = JSON.parse(JSON.stringify(prev));
+                                          if (updated.weeks?.[weekIndex]?.sessions?.[sessIndex]) {
+                                            updated.weeks[weekIndex].sessions[sessIndex].sessionType = e.target.value;
+                                          }
+                                          return updated;
+                                        });
+                                      }}
+                                      className="h-7 text-xs border-primary/30"
+                                      placeholder="Session type..."
+                                    />
+                                    <div className="flex gap-1.5">
+                                      <Input
+                                        value={session.duration || ''}
+                                        onChange={(e) => {
+                                          setEditedPlan((prev: any) => {
+                                            const updated = JSON.parse(JSON.stringify(prev));
+                                            if (updated.weeks?.[weekIndex]?.sessions?.[sessIndex]) {
+                                              updated.weeks[weekIndex].sessions[sessIndex].duration = e.target.value;
+                                            }
+                                            return updated;
+                                          });
+                                        }}
+                                        className="h-6 text-[10px] w-20 px-1"
+                                        placeholder="Duration"
+                                      />
+                                      <Input
+                                        value={session.distance || ''}
+                                        onChange={(e) => {
+                                          setEditedPlan((prev: any) => {
+                                            const updated = JSON.parse(JSON.stringify(prev));
+                                            if (updated.weeks?.[weekIndex]?.sessions?.[sessIndex]) {
+                                              updated.weeks[weekIndex].sessions[sessIndex].distance = e.target.value;
+                                            }
+                                            return updated;
+                                          });
+                                        }}
+                                        className="h-6 text-[10px] w-20 px-1"
+                                        placeholder="Distance"
+                                      />
+                                      <Input
+                                        value={session.intensity || ''}
+                                        onChange={(e) => {
+                                          setEditedPlan((prev: any) => {
+                                            const updated = JSON.parse(JSON.stringify(prev));
+                                            if (updated.weeks?.[weekIndex]?.sessions?.[sessIndex]) {
+                                              updated.weeks[weekIndex].sessions[sessIndex].intensity = e.target.value;
+                                            }
+                                            return updated;
+                                          });
+                                        }}
+                                        className="h-6 text-[10px] w-24 px-1"
+                                        placeholder="Intensity"
+                                      />
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <>
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-xs font-medium">{session.sessionType}</span>
+                                      {session.distance && <Badge variant="secondary" className="text-[9px]">{session.distance}</Badge>}
+                                      {session.intensity && <Badge variant="outline" className="text-[9px] border-primary/30 text-primary">{session.intensity}</Badge>}
+                                    </div>
+                                    {session.notes && (
+                                      <p className="text-[10px] text-muted-foreground mt-0.5 line-clamp-2">{session.notes}</p>
+                                    )}
+                                  </>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        </CollapsibleContent>
+                      </Collapsible>
+                    ))}
+                  </div>
+                )}
+
                 {/* ═══ MEAL PLAN: All Days with Meals ═══ */}
                 {isMealPlan && mealPlanDays.length > 0 && (
                   <div className="space-y-2">
@@ -852,7 +973,7 @@ export function AIPlanReviewModal({
                   </div>
                   <h2 className="font-display text-2xl tracking-wide">READY TO SAVE?</h2>
                   <p className="text-muted-foreground max-w-md mx-auto">
-                    Your {isProgramme ? 'programme' : isMindset ? 'mindset programme' : 'meal plan'} will be saved to{' '}
+                    Your {isProgramme ? 'programme' : isMindset ? 'mindset programme' : isCardio ? 'movement programme' : 'meal plan'} will be saved to{' '}
                     <span className="text-primary">{hubName}</span> with status{' '}
                     <Badge variant="secondary">Not Started</Badge>
                   </p>
@@ -870,6 +991,8 @@ export function AIPlanReviewModal({
                               ? `${editedPlan.templateWeek?.days?.length || 0} training days per week`
                               : isMindset
                               ? `${editedPlan.weeks?.length || 0} weeks · ${editedPlan.dailyMinutes || 15} min/day`
+                              : isCardio
+                              ? `${editedPlan.weeks?.length || 0} week movement programme`
                               : `${editedPlan.days?.length || 7} day meal plan`}
                           </p>
                         </div>
