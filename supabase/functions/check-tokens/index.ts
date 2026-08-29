@@ -94,7 +94,13 @@ serve(async (req) => {
         balance: isUnlimited ? 999999 : balance?.balance ?? 0,
         lifetime_earned: balance?.lifetime_earned ?? 0,
         lifetime_spent: balance?.lifetime_spent ?? 0,
-        current_tier: isUnlimited ? "elite" : balance?.current_tier ?? "free",
+        // Dev/coach accounts get unlimited access via is_unlimited below, but
+        // current_tier must stay one of the real subscription tiers
+        // ('free' | 'absolute_base' | 'foundation') — the frontend's TierKey
+        // type doesn't know an "elite" tier, and indexing TIERS['elite']
+        // crashed the AI Coach page with "Cannot read properties of
+        // undefined (reading 'rank')" for dev/coach testers.
+        current_tier: balance?.current_tier ?? "free",
         tier_display_name: isUnlimited ? (isDev ? "Dev" : "Coach") : tier?.display_name ?? "Free",
         monthly_tokens: isUnlimited ? 999999 : tier?.monthly_tokens ?? 5,
         tier_renews_at: balance?.tier_renews_at,
