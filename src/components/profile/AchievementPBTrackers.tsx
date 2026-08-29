@@ -7,12 +7,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import {
   Dumbbell, Footprints, Trophy, Crown, Diamond, Sparkles,
-  Medal, Award, ChevronRight, ChevronDown, TrendingUp, Timer, Flame,
+  Medal, Award, ChevronDown, TrendingUp, Timer, Flame,
   Zap, Target,
 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { useAchievementCards, AchievementCard, AchievementRarity } from '@/hooks/useAchievementCards';
-import { Link } from 'react-router-dom';
 
 /* ═══ Rarity config ═══ */
 const RARITY_CONFIG: Record<AchievementRarity, {
@@ -215,9 +214,6 @@ export function StrengthPBTracker() {
             </p>
           </div>
         </div>
-        <Link to="/achievements" className="text-[10px] text-primary font-display tracking-wider flex items-center gap-1 hover:underline">
-          VIEW ALL <ChevronRight className="w-3 h-3" />
-        </Link>
       </div>
 
       {/* Exercise groups */}
@@ -292,9 +288,6 @@ export function CardioPBTracker() {
             </p>
           </div>
         </div>
-        <Link to="/achievements" className="text-[10px] text-primary font-display tracking-wider flex items-center gap-1 hover:underline">
-          VIEW ALL <ChevronRight className="w-3 h-3" />
-        </Link>
       </div>
 
       <div className="px-4 pb-4 space-y-2">
@@ -341,9 +334,6 @@ export function ProfileAchievements() {
               <p className="text-[10px] text-muted-foreground">{counts.total} cards collected</p>
             </div>
           </div>
-          <Link to="/achievements" className="text-[10px] text-primary font-display tracking-wider flex items-center gap-1 hover:underline">
-            COLLECTION <ChevronRight className="w-3 h-3" />
-          </Link>
         </div>
 
         {counts.total > 0 && (
