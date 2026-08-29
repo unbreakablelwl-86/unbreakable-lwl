@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Slider } from '@/components/ui/slider';
 import { Input } from '@/components/ui/input';
@@ -41,6 +41,7 @@ import {
 type ViewState = 'select' | 'wizard' | 'program';
 
 export default function TrackerCreate() {
+  const navigate = useNavigate();
   const { user, loading } = useAuth();
   const { saveProgram: saveProgramMutation } = useCardioPrograms();
   const { toast } = useToast();
@@ -182,13 +183,10 @@ export default function TrackerCreate() {
       setShowAuthModal(true);
       return;
     }
+    if (mode === 'auto') { navigate('/help?mode=cardio'); return; }
     setBuilderMode(mode);
-    if (mode === 'auto') {
-      setView('wizard');
-    } else {
-      setView('wizard');
-      setManualStep(1);
-    }
+    setView('wizard');
+    setManualStep(1);
   };
 
   const handleBackToSelect = () => {

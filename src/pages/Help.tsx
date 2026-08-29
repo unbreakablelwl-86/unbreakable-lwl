@@ -26,6 +26,7 @@ import { useAIMealPlan } from '@/hooks/useAIMealPlan';
 import { useTrainingPrograms } from '@/hooks/useTrainingPrograms';
 import { PaywallGate } from '@/components/paywall';
 import { useMindsetProgrammes } from '@/hooks/useMindsetProgrammes';
+import { useCardioPrograms } from '@/hooks/useCardioPrograms';
 import { useMealPlans } from '@/hooks/useMealPlans';
 import { useUserRole } from '@/hooks/useUserRole';
 import { toast } from '@/hooks/use-toast';
@@ -37,7 +38,7 @@ import { useQueryClient } from '@tanstack/react-query';
 type MessageWithMedia = Message;
 
 interface GeneratedPlanInfo {
-  type: 'programme' | 'meal_plan' | 'mindset';
+  type: 'programme' | 'meal_plan' | 'mindset' | 'cardio';
   planData: any;
   planId: string;
   savedToHub: boolean;
@@ -135,7 +136,7 @@ function BuildConfirmDialog({
   onConfirm,
   onCancel,
 }: {
-  type: 'programme' | 'meal_plan' | 'mindset';
+  type: 'programme' | 'meal_plan' | 'mindset' | 'cardio';
   onConfirm: () => void;
   onCancel: () => void;
 }) {
@@ -143,6 +144,7 @@ function BuildConfirmDialog({
     programme: { title: 'BUILD TRAINING PROGRAMME', desc: 'Your coach is ready to build a bespoke training programme based on your conversation.', icon: Dumbbell },
     meal_plan: { title: 'BUILD MEAL PLAN', desc: 'Your coach is ready to create a personalised meal plan based on your conversation.', icon: UtensilsCrossed },
     mindset: { title: 'BUILD MINDSET PROGRAMME', desc: 'Your coach is ready to build a mindset programme based on your conversation.', icon: Brain },
+    cardio: { title: 'BUILD MOVEMENT PROGRAMME', desc: 'Your coach is ready to build a movement/cardio programme based on your conversation.', icon: Activity },
   };
   const config = labels[type];
   const Icon = config.icon;
@@ -284,12 +286,13 @@ export default function Help() {
   const [programmeGenerating, setProgrammeGenerating] = useState(false);
   const [mealPlanGenerating, setMealPlanGenerating] = useState(false);
   const [mindsetGenerating, setMindsetGenerating] = useState(false);
+  const [cardioGenerating, setCardioGenerating] = useState(false);
   const [generatedPlans, setGeneratedPlans] = useState<GeneratedPlanInfo[]>([]);
   const [editingPlan, setEditingPlan] = useState<GeneratedPlanInfo | null>(null);
   const [showEditModal, setShowEditModal] = useState(false);
 
   // Build confirmation
-  const [pendingBuild, setPendingBuild] = useState<{ type: 'programme' | 'meal_plan' | 'mindset'; chatContext: string } | null>(null);
+  const [pendingBuild, setPendingBuild] = useState<{ type: 'programme' | 'meal_plan' | 'mindset' | 'cardio'; chatContext: string; cardioParams?: any } | null>(null);
 
   const chatEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -309,6 +312,7 @@ export default function Help() {
   const { updateProgram, saveProgram } = useTrainingPrograms();
   const { updateMealPlan, createMealPlan } = useMealPlans();
   const { saveProgramme: saveMindsetProgramme, generateProgramme: generateMindsetProgramme } = useMindsetProgrammes();
+  const { saveProgram: saveCardioProgram, generateProgramme: generateCardioProgramme } = useCardioPrograms();
   const { isDev, isCoach, role } = useUserRole();
   const callerRole = (isDev ? 'dev' : isCoach ? 'coach' : 'user') as 'dev' | 'coach' | 'user';
   const queryClient = useQueryClient();
@@ -336,11 +340,20 @@ export default function Help() {
       setPendingBuild({ type: 'meal_plan', chatContext });
     } else if (content.match(/\[BUILD_MINDSET_PROGRAMME\](\{.*\})?/) || content.match(/\[BUILD_MINDSET\](\{.*\})?/)) {
       setPendingBuild({ type: 'mindset', chatContext });
+    } else {
+      const movementMatch = content.match(/\[BUILD_MOVEMENT\](\{.*\})?/);
+      if (movementMatch) {
+        let cardioParams: any = {};
+        if (movementMatch[1]) {
+          try { cardioParams = JSON.parse(movementMatch[1]); } catch { /* fall back to defaults on execute */ }
+        }
+        setPendingBuild({ type: 'cardio', chatContext, cardioParams });
+      }
     }
   }, [messages, isLoading]);
 
   // Execute confirmed build
-  const executeBuild = useCallback(async (type: 'programme' | 'meal_plan' | 'mindset', chatContext: string) => {
+  const executeBuild = useCallback(async (type: 'programme' | 'meal_plan' | 'mindset' | 'cardio', chatContext: string, cardioParams?: any) => {
     if (type === 'programme') {
       setProgrammeGenerating(true);
       try {
@@ -373,8 +386,22 @@ export default function Help() {
       } catch {
         toast({ title: 'Error', description: 'Failed to generate mindset programme', variant: 'destructive' });
       } finally { setMindsetGenerating(false); }
+    } else if (type === 'cardio') {
+      setCardioGenerating(true);
+      try {
+        const defaults = { activityType: 'run', goal: 'fitness', currentLevel: 'beginner', sessionsPerWeek: 3, sessionLength: 30 };
+        const params = { ...defaults, ...cardioParams };
+        const result = await generateCardioProgramme(params);
+        if (result?.program) {
+          const planInfo: GeneratedPlanInfo = { type: 'cardio', planData: result.program, planId: '', savedToHub: false };
+          setGeneratedPlans(prev => [...prev, planInfo]);
+          toast({ title: '✅ Movement Programme Ready', description: 'Review your plan below, then save it to your library.' });
+        }
+      } catch {
+        toast({ title: 'Error', description: 'Failed to generate movement programme', variant: 'destructive' });
+      } finally { setCardioGenerating(false); }
     }
-  }, [generateProgramme, generateMealPlan, generateMindsetProgramme]);
+  }, [generateProgramme, generateMealPlan, generateMindsetProgramme, generateCardioProgramme]);
 
   // Context from URL params or sessionStorage
   useEffect(() => {
@@ -391,6 +418,11 @@ export default function Help() {
     }
     if (modeParam === 'mindset') {
       setInput('Build me a mindset programme. Pull my profile info and ask me what I want to focus on.');
+      setSearchParams({});
+      return;
+    }
+    if (modeParam === 'cardio') {
+      setInput('Build me a movement/cardio programme. Pull my profile info and ask me what I want to focus on.');
       setSearchParams({});
       return;
     }
@@ -480,6 +512,21 @@ export default function Help() {
             </button>
           ),
         });
+      } else if (plan.type === 'cardio') {
+        const result = await saveCardioProgram.mutateAsync({ program: plan.planData });
+        setGeneratedPlans(prev => prev.map(p => p === plan ? { ...p, planId: result.id, savedToHub: true } : p));
+        toast({
+          title: '✅ Movement Programme Saved!',
+          description: 'View it in Movement → My Programmes',
+          action: (
+            <button
+              onClick={() => navigate('/tracker/my-programmes')}
+              className="px-3 py-1.5 rounded-lg bg-primary text-white text-xs font-display"
+            >
+              VIEW IN LIBRARY
+            </button>
+          ),
+        });
       } else {
         const { data: savedPlan, error } = await supabase
           .from('meal_plans')
@@ -543,6 +590,18 @@ export default function Help() {
             .eq('id', editingPlan.planId)
             .eq('user_id', user!.id);
           queryClient.invalidateQueries({ queryKey: ['mindset-programmes'] });
+        } else if (editingPlan.type === 'cardio') {
+          await supabase
+            .from('cardio_programs')
+            .update({
+              name: editedPlanData.programName || editedPlanData.name,
+              overview: editedPlanData.overview,
+              program_data: JSON.parse(JSON.stringify(editedPlanData)),
+              updated_at: new Date().toISOString(),
+            })
+            .eq('id', editingPlan.planId)
+            .eq('user_id', user!.id);
+          queryClient.invalidateQueries({ queryKey: ['cardio-programs'] });
         } else {
           await updateMealPlan.mutateAsync({ id: editingPlan.planId, name: editedPlanData.planName, description: editedPlanData.overview });
         }
@@ -572,6 +631,10 @@ export default function Help() {
           editingPlan.planId = data?.id;
           editingPlan.savedToHub = true;
           queryClient.invalidateQueries({ queryKey: ['mindset-programmes'] });
+        } else if (editingPlan.type === 'cardio') {
+          const saved = await saveCardioProgram.mutateAsync({ program: editedPlanData });
+          editingPlan.planId = saved?.id;
+          editingPlan.savedToHub = true;
         } else {
           const saved = await createMealPlan.mutateAsync({
             plan: {
@@ -598,10 +661,15 @@ export default function Help() {
   };
 
   const handleViewInHub = (plan: GeneratedPlanInfo) => {
-    navigate(plan.type === 'programme' ? '/programming' : plan.type === 'mindset' ? '/mindset' : '/fuel');
+    navigate(
+      plan.type === 'programme' ? '/programming'
+      : plan.type === 'mindset' ? '/mindset'
+      : plan.type === 'cardio' ? '/tracker/my-programmes'
+      : '/fuel'
+    );
   };
 
-  const isAnyGenerating = isGenerating || isMealPlanGenerating || mindsetGenerating;
+  const isAnyGenerating = isGenerating || isMealPlanGenerating || mindsetGenerating || cardioGenerating;
   const enrichedMessages: MessageWithMedia[] = messages.map((msg) => {
     if (msg.role === 'assistant') {
       const cleanContent = msg.content
@@ -963,9 +1031,9 @@ export default function Help() {
             <BuildConfirmDialog
               type={pendingBuild.type}
               onConfirm={() => {
-                const { type, chatContext } = pendingBuild;
+                const { type, chatContext, cardioParams } = pendingBuild;
                 setPendingBuild(null);
-                executeBuild(type, chatContext);
+                executeBuild(type, chatContext, cardioParams);
               }}
               onCancel={() => setPendingBuild(null)}
             />
@@ -980,7 +1048,7 @@ export default function Help() {
             planType={editingPlan.type}
             planData={editingPlan.planData}
             onSave={handleSaveEditedPlan}
-            isSaving={updateProgram.isPending || updateMealPlan.isPending}
+            isSaving={updateProgram.isPending || updateMealPlan.isPending || saveCardioProgram.isPending}
           />
         )}
       </div>
