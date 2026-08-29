@@ -5,7 +5,7 @@ import { FoodTracker } from '@/components/fuel/FoodTracker';
 import { useAuth } from '@/hooks/useAuth';
 import { AuthModal } from '@/components/tracker/AuthModal';
 import {
-  Flame, BookOpen, Calendar, Apple, BarChart3, History,
+  Flame, BookOpen, Calendar, BarChart3, History,
   ArrowRight, Camera, ChevronRight, UtensilsCrossed,
 } from 'lucide-react';
 import { SnapTrack } from '@/components/fuel/SnapTrack';
@@ -128,7 +128,6 @@ export default function Fuel() {
                   { path: '/fuel/recipes', icon: BookOpen, title: 'RECIPES', desc: 'Browse and save recipes with full macro breakdowns' },
                   { path: '/fuel/planning', icon: Calendar, title: 'MEAL PLANNING', desc: 'Build weekly meal plans tailored to your macros' },
                   { path: '/fuel/history', icon: History, title: 'HISTORY', desc: 'Review past nutrition logs and track trends' },
-                  { path: '/fuel/foods', icon: Apple, title: 'STORE CUPBOARD', desc: 'Your scanned ingredients with real product macros' },
                   { path: '/fuel/my-fuel', icon: BarChart3, title: 'MY FUEL', desc: 'Goals, progress overview & nutrition insights' },
                 ].map(card => {
                   const Icon = card.icon;
@@ -136,17 +135,17 @@ export default function Fuel() {
                     <Link key={card.path} to={card.path} className="block">
                       <div className="w-full flex items-center gap-3 p-3.5 rounded-xl border border-border bg-card hover:border-border hover:bg-card transition-all text-left">
                         <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 border"
-                         >
-                          <Icon className="w-5 h-5 text-primary" style={{ filter: 'drop-shadow(0 0 4px hsl(var(--primary) / 0.4))' }} />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <h4 className="font-display text-sm text-foreground tracking-wide">{card.title}</h4>
-                          <p className="text-muted-foreground text-xs mt-0.5 line-clamp-1">{card.desc}</p>
-                        </div>
-                        <ChevronRight className="w-4 h-4 text-muted-foreground shrink-0" />
+                       >
+                        <Icon className="w-5 h-5 text-primary" style={{ filter: 'drop-shadow(0 0 4px hsl(var(--primary) / 0.4))' }} />
                       </div>
-                    </Link>
-                  );
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-display text-sm text-foreground tracking-wide">{card.title}</h4>
+                        <p className="text-muted-foreground text-xs mt-0.5 line-clamp-1">{card.desc}</p>
+                      </div>
+                      <ChevronRight className="w-4 h-4 text-muted-foreground shrink-0" />
+                    </div>
+                  </Link>
+                );
                 })}
               </div>
 
