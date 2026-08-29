@@ -32,8 +32,9 @@ import {
   LogOut,
   Bell,
   MessageSquare,
+  ChevronLeft,
 } from 'lucide-react';
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useConversations } from '@/hooks/useConversations';
 import { useNotifications } from '@/hooks/useNotifications';
 import { useTokenBalance } from '@/hooks/useTokenBalance';
@@ -286,6 +287,80 @@ function loadMoreOrder(): string[] {
 
 const HIDE_NAV_PATHS = ['/onboarding'];
 
+/* Top-level destinations reachable directly from bottom nav / More — no back button needed here */
+const ROOT_PATHS = [
+  '/', '/social', '/programming', '/fuel', '/tracker', '/mindset', '/zone',
+  '/university', '/untunes', '/habits', '/coaches', '/help', '/inbox',
+  '/ai-tokens', '/calculators', '/explore', '/profile', '/faq', '/admin',
+  '/coach', '/my-coaching', '/command-centre', '/signin', '/welcome',
+];
+
+/**
+ * Wraps page content with an edge-swipe-to-go-back gesture: starting a
+ * touch drag from within ~24px of the left edge and dragging right past
+ * the threshold triggers `onBack`. Purely additive to whatever the page
+ * itself does with touch/drag (e.g. SwipeNavigationWrapper's lateral
+ * pillar-to-pillar swipe on Help/Calculators, which starts anywhere on
+ * the page rather than the extreme edge).
+ */
+function BackSwipeZone({ children, onBack, enabled }: { children: React.ReactNode; onBack: () => void; enabled: boolean }) {
+  const startX = useRef<number | null>(null);
+  const startY = useRef<number | null>(null);
+  const [dragX, setDragX] = useState(0);
+  const [dragging, setDragging] = useState(false);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (!enabled) return;
+    const t = e.touches[0];
+    if (t.clientX <= 24) {
+      startX.current = t.clientX;
+      startY.current = t.clientY;
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (startX.current === null) return;
+    const t = e.touches[0];
+    const dx = t.clientX - startX.current;
+    const dy = Math.abs(t.clientY - (startY.current ?? 0));
+    if (dx > 8 && dy < 60) {
+      setDragging(true);
+      setDragX(Math.min(dx, 120));
+    }
+  };
+
+  const handleTouchEnd = () => {
+    if (dragging && dragX > 70) onBack();
+    startX.current = null;
+    startY.current = null;
+    setDragging(false);
+    setDragX(0);
+  };
+
+  return (
+    <div
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+      onTouchCancel={handleTouchEnd}
+      style={{
+        transform: dragging ? `translateX(${dragX * 0.35}px)` : undefined,
+        transition: dragging ? 'none' : 'transform 0.2s ease',
+      }}
+    >
+      {dragging && dragX > 16 && (
+        <div
+          className="fixed left-2 top-1/2 -translate-y-1/2 z-[60] w-9 h-9 rounded-full bg-primary flex items-center justify-center pointer-events-none"
+          style={{ opacity: Math.min(dragX / 70, 1), boxShadow: '0 0 16px hsl(var(--primary) / 0.5)' }}
+        >
+          <ChevronLeft className="w-5 h-5 text-white" />
+        </div>
+      )}
+      {children}
+    </div>
+  );
+}
+
 export default function AppLayout() {
   const { user, signOut } = useAuth();
   const location = useLocation();
@@ -314,6 +389,19 @@ export default function AppLayout() {
   const isHiddenPath = HIDE_NAV_PATHS.some(p => location.pathname.startsWith(p));
   const hideNav = isHiddenPath;
   const hideBottomNav = isHiddenPath;
+  const isRootPath = ROOT_PATHS.includes(location.pathname);
+  const showBackNav = !hideBottomNav && !isRootPath;
+
+  const handleBack = useCallback(() => {
+    if (window.history.length > 2) {
+      navigate(-1);
+    } else {
+      // No real history to go back to (e.g. deep link) — fall back to the parent path
+      const segments = location.pathname.split('/').filter(Boolean);
+      segments.pop();
+      navigate(segments.length ? `/${segments.join('/')}` : '/');
+    }
+  }, [navigate, location.pathname]);
 
   // Close overlays on route change
   useEffect(() => {
@@ -414,8 +502,27 @@ export default function AppLayout() {
       {/* Theme toggle moved to More panel — no longer floating on every page */}
 
       <main className={hideBottomNav ? '' : 'pb-32'}>
-        <Outlet />
+        <BackSwipeZone onBack={handleBack} enabled={showBackNav}>
+          <Outlet />
+        </BackSwipeZone>
       </main>
+
+      {/* ━━━ Universal back button — shown on every page that isn't a bottom-nav root ━━━ */}
+      {showBackNav && (
+        <button
+          onClick={handleBack}
+          aria-label="Go back"
+          className="fixed left-3 z-40 w-9 h-9 rounded-full flex items-center justify-center border border-border active:scale-95 transition-transform"
+          style={{
+            top: 'calc(env(safe-area-inset-top, 0px) + 10px)',
+            background: 'hsl(var(--background) / 0.85)',
+            backdropFilter: 'blur(12px)',
+            WebkitBackdropFilter: 'blur(12px)',
+          }}
+        >
+          <ChevronLeft className="w-5 h-5 text-foreground" />
+        </button>
+      )}
 
       {/* ━━━ Scrolling Founding Member Banner — visible on ALL pages above nav ━━━ */}
       {!hideBottomNav && isFreeUser && (
