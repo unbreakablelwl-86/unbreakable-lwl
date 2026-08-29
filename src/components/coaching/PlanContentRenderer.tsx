@@ -73,7 +73,7 @@ function WorkoutDayCard({ day, dayIndex }: { day: WorkoutDay; dayIndex: number }
   const [isOpen, setIsOpen] = useState(dayIndex === 0);
   
   return (
-    <Card className="border-border/50/50 border-border bg-card">
+    <Card className="border-border/50 bg-card">
       <Collapsible open={isOpen} onOpenChange={setIsOpen}>
         <CollapsibleTrigger asChild>
           <div className="flex items-center justify-between p-3 cursor-pointer hover:bg-muted/30 transition-colors">
@@ -204,7 +204,7 @@ function MealDayCard({ day, dayIndex }: { day: any; dayIndex: number }) {
   const meals = buildMealsArray();
 
   return (
-    <Card className="border-border/50/50 border-border bg-card">
+    <Card className="border-border/50 bg-card">
       <Collapsible open={isOpen} onOpenChange={setIsOpen}>
         <CollapsibleTrigger asChild>
           <div className="flex items-center justify-between p-3 cursor-pointer hover:bg-muted/30 transition-colors">
@@ -257,7 +257,7 @@ function MindsetWeekCard({ week, weekIndex }: { week: any; weekIndex: number }) 
   const [isOpen, setIsOpen] = useState(weekIndex === 0);
 
   return (
-    <Card className="border-border/50/50 border-border bg-card">
+    <Card className="border-border/50 bg-card">
       <Collapsible open={isOpen} onOpenChange={setIsOpen}>
         <CollapsibleTrigger asChild>
           <div className="flex items-center justify-between p-3 cursor-pointer hover:bg-muted/30 transition-colors">
@@ -321,7 +321,7 @@ function CardioWeekCard({ week, weekIndex }: { week: any; weekIndex: number }) {
   const [isOpen, setIsOpen] = useState(weekIndex === 0);
 
   return (
-    <Card className="border-border/50/50 border-border bg-card">
+    <Card className="border-border/50 bg-card">
       <Collapsible open={isOpen} onOpenChange={setIsOpen}>
         <CollapsibleTrigger asChild>
           <div className="flex items-center justify-between p-3 cursor-pointer hover:bg-muted/30 transition-colors">
