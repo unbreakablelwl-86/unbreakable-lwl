@@ -309,23 +309,23 @@ const App = () => {
                   <CoachRoute><RouteErrorBoundary section="Coach"><CoachDashboard /></RouteErrorBoundary></CoachRoute>
                 } />
                 <Route path="/my-coaching" element={
-                  <CoachRoute><MyCoaching /></CoachRoute>
+                  <CoachRoute><RouteErrorBoundary section="Coach"><MyCoaching /></RouteErrorBoundary></CoachRoute>
                 } />
                 <Route path="/coach-profile-edit" element={
-                  <CoachRoute><CoachProfileEdit /></CoachRoute>
+                  <CoachRoute><RouteErrorBoundary section="Coach"><CoachProfileEdit /></RouteErrorBoundary></CoachRoute>
                 } />
                 <Route path="/coach/:userId" element={
-                  <CoachRoute><CoachProfile /></CoachRoute>
+                  <CoachRoute><RouteErrorBoundary section="Coach"><CoachProfile /></RouteErrorBoundary></CoachRoute>
                 } />
                 <Route path="/coaches" element={
-                  <CoachRoute><Coaches /></CoachRoute>
+                  <CoachRoute><RouteErrorBoundary section="Coach"><Coaches /></RouteErrorBoundary></CoachRoute>
                 } />
                 <Route path="/command-centre" element={
-                  <CoachRoute><CoachCommandCentre /></CoachRoute>
+                  <CoachRoute><RouteErrorBoundary section="Coach"><CoachCommandCentre /></RouteErrorBoundary></CoachRoute>
                 } />
-                
+
                 {/* Admin Dashboard - role-protected (dev only) */}
-                <Route path="/admin" element={<AdminRoute><Admin /></AdminRoute>} />
+                <Route path="/admin" element={<AdminRoute><RouteErrorBoundary section="Admin"><Admin /></RouteErrorBoundary></AdminRoute>} />
                 
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
