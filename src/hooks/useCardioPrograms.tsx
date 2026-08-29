@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
@@ -6,6 +7,18 @@ import { useUserRole } from './useUserRole';
 import { GeneratedCardioProgram } from '@/lib/cardioTypes';
 
 export type CardioProgramStatus = 'not_started' | 'active' | 'completed' | 'paused';
+
+export interface CardioGenerateParams {
+  activityType: 'walk' | 'run' | 'cycle';
+  goal: 'fitness' | 'distance' | 'speed' | 'endurance' | 'weight_loss';
+  currentLevel: 'beginner' | 'intermediate' | 'advanced';
+  sessionsPerWeek: number;
+  sessionLength: number;
+  targetDistance?: string;
+  currentPace?: string;
+  age?: number;
+  gender?: 'male' | 'female';
+}
 
 export interface CardioProgram {
   id: string;
@@ -46,6 +59,32 @@ export function useCardioPrograms() {
   const { toast } = useToast();
   const { isDev, isCoach } = useUserRole();
   const queryClient = useQueryClient();
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  const generateProgramme = async (params: CardioGenerateParams): Promise<{ program: GeneratedCardioProgram } | null> => {
+    if (!user) {
+      toast({ title: 'Sign in required', description: 'Please sign in to generate a movement programme.', variant: 'destructive' });
+      return null;
+    }
+    setIsGenerating(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-cardio-program', {
+        body: params,
+      });
+      if (error) throw new Error(error.message || 'Failed to generate movement programme');
+      if (!data?.program) throw new Error('No programme returned');
+      return data as { program: GeneratedCardioProgram };
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: error instanceof Error ? error.message : 'Failed to generate movement programme',
+        variant: 'destructive',
+      });
+      return null;
+    } finally {
+      setIsGenerating(false);
+    }
+  };
 
   const { data: programs, isLoading } = useQuery({
     queryKey: ['cardio-programs', user?.id],
@@ -236,5 +275,7 @@ export function useCardioPrograms() {
     startProgrammeExecution,
     deactivateProgram,
     deleteProgram,
+    generateProgramme,
+    isGenerating,
   };
 }
