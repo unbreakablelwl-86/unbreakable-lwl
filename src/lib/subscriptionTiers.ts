@@ -1,4 +1,4 @@
-/**
+undefined/**
  * UNBREAKABLE Coaching Subscription & Top-Up Configuration
  *
  * Coaching:
@@ -145,26 +145,35 @@ export const COACHING_TOPUPS: CoachingTopUp[] = [
   { id: 'topup_3', name: 'Live Without Limits', displayName: 'LIVE WITHOUT LIMITS', price: 10, tokens: 250, fuelLabel: 'A QUARTER TANK', bestValue: true, stripePriceId: null },
 ];
 
-/** Get tier config by key */
+/**
+ * Get tier config by key.
+ *
+ * Defensive: some callers pass a tier string sourced from the backend
+ * (e.g. a role-based override like "elite" for dev/coach accounts, or a
+ * stale/legacy tier name) that isn't one of the three real TierKeys.
+ * Rather than crash the whole page with "Cannot read properties of
+ * undefined (reading 'rank')", fall back to the highest real tier so
+ * privileged/unknown tiers are treated as fully unlocked, not locked out.
+ */
 export function getTier(key: TierKey): TierConfig {
-  return TIERS[key];
+  return TIERS[key] ?? TIERS.foundation;
 }
 
 /** Check if a tier is at least a given rank */
 export function tierAtLeast(currentTier: TierKey, requiredTier: TierKey): boolean {
-  return TIERS[currentTier].rank >= TIERS[requiredTier].rank;
+  return getTier(currentTier).rank >= getTier(requiredTier).rank;
 }
 
 /** Get the next tier up from current */
 export function getNextTierUp(currentTier: TierKey): TierConfig | null {
-  const currentRank = TIERS[currentTier].rank;
+  const currentRank = getTier(currentTier).rank;
   const next = VISIBLE_TIERS.find(t => t.rank > currentRank);
   return next ?? null;
 }
 
 /** Get the tier below current (for downgrade) */
 export function getTierBelow(currentTier: TierKey): TierConfig | null {
-  const currentRank = TIERS[currentTier].rank;
+  const currentRank = getTier(currentTier).rank;
   const below = [...VISIBLE_TIERS].reverse().find(t => t.rank < currentRank);
   return below ?? null;
 }
