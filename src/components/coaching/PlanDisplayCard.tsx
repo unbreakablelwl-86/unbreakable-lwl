@@ -15,12 +15,13 @@ import {
   ChevronUp,
   Save,
   Brain,
+  Activity,
 } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { PlanContentRenderer } from './PlanContentRenderer';
 import { GeneratedProgram, WorkoutDay } from '@/lib/programTypes';
 
-type PlanType = 'programme' | 'meal_plan' | 'mindset';
+type PlanType = 'programme' | 'meal_plan' | 'mindset' | 'cardio';
 
 interface PlanDisplayCardProps {
   planType: PlanType;
@@ -44,9 +45,10 @@ export function PlanDisplayCard({
   const [showDetails, setShowDetails] = useState(false);
   const isProgramme = planType === 'programme';
   const isMindset = planType === 'mindset';
-  const Icon = isProgramme ? Dumbbell : isMindset ? Brain : UtensilsCrossed;
-  const hubLabel = isProgramme ? 'My Programmes' : isMindset ? 'My Programmes' : 'My Meal Plans';
-  const navLabel = isProgramme ? 'POWER' : isMindset ? 'MINDSET' : 'FUEL';
+  const isCardio = planType === 'cardio';
+  const Icon = isProgramme ? Dumbbell : isMindset ? Brain : isCardio ? Activity : UtensilsCrossed;
+  const hubLabel = isProgramme ? 'My Programmes' : isMindset ? 'My Programmes' : isCardio ? 'My Programmes' : 'My Meal Plans';
+  const navLabel = isProgramme ? 'POWER' : isMindset ? 'MINDSET' : isCardio ? 'MOVEMENT' : 'FUEL';
 
   const planName = planData.programName || planData.planName || planData.name || 'Your Plan';
   const overview = planData.overview || planData.description || '';
@@ -63,6 +65,13 @@ export function PlanDisplayCard({
       return {
         primary: `${planData.durationWeeks || 4} weeks`,
         secondary: `${planData.dailyMinutes || 15} min/day`,
+      };
+    } else if (isCardio) {
+      const weeks = planData.weeks?.length || 12;
+      const sessionsPerWeek = planData.weeks?.[0]?.sessions?.length || 3;
+      return {
+        primary: `${sessionsPerWeek} sessions/week`,
+        secondary: `${weeks} week plan`,
       };
     } else {
       const days = planData.days?.length || 7;
@@ -90,7 +99,7 @@ export function PlanDisplayCard({
             <div className="flex items-center gap-2 mb-0.5">
               <Flame className="w-3.5 h-3.5 text-primary" />
               <span className="text-xs font-display tracking-wide text-primary">
-                YOUR {isProgramme ? 'PROGRAMME' : isMindset ? 'MINDSET PROGRAMME' : 'MEAL PLAN'} IS READY
+                YOUR {isProgramme ? 'PROGRAMME' : isMindset ? 'MINDSET PROGRAMME' : isCardio ? 'MOVEMENT PROGRAMME' : 'MEAL PLAN'} IS READY
               </span>
             </div>
             <p className="text-[10px] text-muted-foreground italic mt-0.5">

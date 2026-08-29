@@ -23,12 +23,13 @@ import {
   Wind,
   BookOpen,
   Eye,
+  Activity,
 } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { GeneratedProgram, WorkoutDay, Exercise } from '@/lib/programTypes';
 
 interface PlanContentRendererProps {
-  planType: 'programme' | 'meal_plan' | 'mindset';
+  planType: 'programme' | 'meal_plan' | 'mindset' | 'cardio';
   planData: GeneratedProgram | any;
 }
 
@@ -315,10 +316,106 @@ function MindsetWeekCard({ week, weekIndex }: { week: any; weekIndex: number }) 
   );
 }
 
+// Movement/Cardio Week Card
+function CardioWeekCard({ week, weekIndex }: { week: any; weekIndex: number }) {
+  const [isOpen, setIsOpen] = useState(weekIndex === 0);
+
+  return (
+    <Card className="border-border/50/50 border-border bg-card">
+      <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+        <CollapsibleTrigger asChild>
+          <div className="flex items-center justify-between p-3 cursor-pointer hover:bg-muted/30 transition-colors">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center">
+                <Activity className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <p className="font-display text-sm tracking-wide text-primary">
+                  WEEK {week.weekNumber || weekIndex + 1}
+                </p>
+                <p className="text-xs text-muted-foreground">{week.phase || week.totalDistance || 'Training Week'}</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <Badge variant="outline" className="text-xs">{week.sessions?.length || 0} sessions</Badge>
+              {isOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+            </div>
+          </div>
+        </CollapsibleTrigger>
+        <CollapsibleContent>
+          <div className="px-3 pb-3 space-y-2">
+            {(week.sessions || []).map((session: any, si: number) => (
+              <div key={si} className="p-2.5 bg-background/50 rounded-lg border border-border/50 space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <span className="font-display text-xs tracking-wide">{session.day || `Session ${si + 1}`}</span>
+                  <Badge variant="outline" className="text-[10px] gap-1">
+                    <Clock className="w-3 h-3" />
+                    {session.duration}
+                  </Badge>
+                </div>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="text-xs font-medium">{session.sessionType}</span>
+                  {session.distance && <Badge variant="secondary" className="text-[10px]">{session.distance}</Badge>}
+                  {session.intensity && <Badge variant="outline" className="text-[10px] border-primary/30 text-primary">{session.intensity}</Badge>}
+                </div>
+                {session.warmup && (
+                  <p className="text-[10px] text-muted-foreground"><span className="text-foreground font-medium">Warmup:</span> {session.warmup}</p>
+                )}
+                {session.cooldown && (
+                  <p className="text-[10px] text-muted-foreground"><span className="text-foreground font-medium">Cooldown:</span> {session.cooldown}</p>
+                )}
+                {session.notes && (
+                  <p className="text-[10px] text-muted-foreground italic">{session.notes}</p>
+                )}
+              </div>
+            ))}
+          </div>
+        </CollapsibleContent>
+      </Collapsible>
+    </Card>
+  );
+}
+
 export function PlanContentRenderer({ planType, planData }: PlanContentRendererProps) {
   const isProgramme = planType === 'programme';
   const isMindset = planType === 'mindset';
-  
+  const isCardio = planType === 'cardio';
+
+  // Movement/Cardio programme rendering
+  if (isCardio) {
+    const weeks = planData.weeks || [];
+    return (
+      <div className="space-y-4 max-w-full">
+        {weeks.length > 0 ? (
+          <ScrollArea className="h-[280px] pr-2">
+            <div className="space-y-2">
+              {weeks.map((week: any, wi: number) => (
+                <CardioWeekCard key={wi} week={week} weekIndex={wi} />
+              ))}
+            </div>
+          </ScrollArea>
+        ) : (
+          <div className="p-4 bg-muted/30 rounded-lg text-center">
+            <p className="text-sm text-muted-foreground">Movement programme structure loading...</p>
+          </div>
+        )}
+        {planData.progressionRules?.length > 0 && (
+          <div className="p-3 bg-muted/30 rounded-lg">
+            <p className="font-medium text-sm text-foreground mb-2">Progression Rules</p>
+            <ul className="space-y-1">
+              {planData.progressionRules.slice(0, 3).map((rule: string, idx: number) => (
+                <li key={idx} className="text-xs text-muted-foreground flex items-start gap-2">
+                  <span className="text-primary">•</span>
+                  {rule}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+    );
+  }
+
   // Mindset programme rendering
   if (isMindset) {
     const weeks = planData.weeks || [];
