@@ -120,7 +120,7 @@ export interface U86DayPlan {
 
 /* ─── UI State ─── */
 
-export type U86Tab = 'dashboard' | 'programme' | 'progress' | 'education';
+export type U86Tab = 'dashboard' | 'progress';
 
 export const U86_PILLARS = [
   { id: 'power', label: 'POWER', emoji: '🏋️', colour: '#FF5500' },

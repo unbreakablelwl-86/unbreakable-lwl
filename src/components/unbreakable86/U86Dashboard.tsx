@@ -4,12 +4,11 @@
  * Matches Mindset gold standard styling.
  */
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Flame, Dumbbell, BookOpen, Droplets, Target, Wind, ThermometerSun, Snowflake,
-  Activity, Apple, Brain, GraduationCap, PenLine, ChevronDown, Check, BarChart3,
-  Trophy, RotateCcw, Zap, Star, Shield, Calendar, ArrowRight, Sparkles, Lock,
+  PenLine, ChevronDown, Check, BarChart3,
+  Trophy, RotateCcw, Zap, Star, Shield, ArrowRight, Lock,
 } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
@@ -51,9 +50,7 @@ function dailyHabits(therapyChoice: 'sauna' | 'cold_shower') {
 
 const TABS: { id: U86Tab; icon: typeof Flame; label: string; color: string }[] = [
   { id: 'dashboard', icon: Flame, label: 'TODAY', color: '#FF5500' },
-  { id: 'programme', icon: Dumbbell, label: 'PLAN', color: '#EF4444' },
   { id: 'progress', icon: BarChart3, label: 'PROGRESS', color: '#10B981' },
-  { id: 'education', icon: GraduationCap, label: 'LEARN', color: '#3B82F6' },
 ];
 
 export function U86Dashboard({
@@ -67,7 +64,6 @@ export function U86Dashboard({
   onViewProgress,
   therapyChoice,
 }: U86DashboardProps) {
-  const navigate = useNavigate();
   const DAILY_7 = dailyHabits(therapyChoice);
   const [activeTab, setActiveTab] = useState<U86Tab>('dashboard');
   const [journalText, setJournalText] = useState(todayLog?.journal || '');
@@ -325,102 +321,6 @@ export function U86Dashboard({
           </>
         )}
 
-        {/* ─── PROGRAMME Tab ─── */}
-        {activeTab === 'programme' && (
-          <>
-            <div className="rounded-xl border border-primary/15 bg-card p-4">
-              <h3 className="font-display text-sm tracking-wider text-foreground mb-3">TODAY'S PROGRAMME</h3>
-              {[
-                { icon: Dumbbell, label: 'POWER', task: phaseInfo.power_focus, color: '#FF5500' },
-                { icon: Activity, label: 'MOVEMENT', task: phaseInfo.movement_focus, color: '#EF4444' },
-                { icon: Apple, label: 'FUEL', task: phaseInfo.fuel_focus, color: '#10B981' },
-                { icon: Brain, label: 'MINDSET', task: phaseInfo.mindset_focus, color: '#8B5CF6' },
-                { icon: GraduationCap, label: 'EDUCATION', task: phaseInfo.education_focus, color: '#3B82F6' },
-              ].map(item => {
-                const Icon = item.icon;
-                return (
-                  <div key={item.label} className="flex items-start gap-3 py-2.5 border-b border-border last:border-0">
-                    <div className="w-8 h-8 rounded-lg border flex items-center justify-center shrink-0"
-                      style={{ borderColor: `${item.color}40`, background: `${item.color}10` }}>
-                      <Icon className="w-4 h-4" style={{ color: item.color, filter: `drop-shadow(0 0 3px ${item.color}60)` }} />
-                    </div>
-                    <div>
-                      <p className="font-display text-xs tracking-wider" style={{ color: item.color }}>{item.label}</p>
-                      <p className="text-muted-foreground text-xs mt-0.5">{item.task}</p>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Add to Calendar */}
-            <Button
-              onClick={() => {
-                // Generate ICS for remaining days
-                const startDate = new Date(enrolment.start_date);
-                const lines = [
-                  'BEGIN:VCALENDAR',
-                  'VERSION:2.0',
-                  'PRODID:-//UNBREAKABLE//U86//EN',
-                  'CALSCALE:GREGORIAN',
-                ];
-                for (let d = enrolment.current_day; d <= 86; d++) {
-                  const date = new Date(startDate);
-                  date.setDate(date.getDate() + d - 1);
-                  const dateStr = date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
-                  const endDate = new Date(date);
-                  endDate.setHours(endDate.getHours() + 1);
-                  const endStr = endDate.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
-                  const phase = d <= 28 ? 'FOUNDATION' : d <= 56 ? 'BUILD' : 'PEAK';
-                  lines.push(
-                    'BEGIN:VEVENT',
-                    `DTSTART:${dateStr}`,
-                    `DTEND:${endStr}`,
-                    `SUMMARY:UNBREAKABLE 86 — Day ${d} (${phase})`,
-                    `DESCRIPTION:Complete your Daily 7 habits. Train • Learn • Hydrate • Hit Numbers • Breathwork • Sauna • Cold Shower`,
-                    'END:VEVENT'
-                  );
-                }
-                lines.push('END:VCALENDAR');
-                const blob = new Blob([lines.join('\r\n')], { type: 'text/calendar' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'UNBREAKABLE-86.ics';
-                a.click();
-                URL.revokeObjectURL(url);
-              }}
-              variant="outline"
-              className="w-full h-10 rounded-xl text-xs font-display tracking-wider border-primary/20 text-primary hover:bg-primary/10"
-            >
-              <Calendar className="w-4 h-4 mr-2" />
-              ADD TO CALENDAR
-            </Button>
-
-            {/* Upsell Card */}
-            {phaseInfo.upsell && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="rounded-xl border border-primary/20 bg-primary/5 p-4"
-              >
-                <div className="flex items-center gap-2 mb-2">
-                  <Sparkles className="w-4 h-4 text-primary" />
-                  <span className="font-display text-xs tracking-wider text-primary">LEVEL UP</span>
-                </div>
-                <p className="text-sm text-foreground">{phaseInfo.upsell.message}</p>
-                <p className="text-muted-foreground text-xs mt-1">{phaseInfo.upsell.course_name} — included with your membership</p>
-                <Button
-                  onClick={() => navigate('/university')}
-                  className="mt-3 w-full h-9 rounded-lg text-xs font-display tracking-wider bg-primary/15 text-primary hover:bg-primary/25 border border-primary/20"
-                >
-                  OPEN IN UNIVERSITY
-                </Button>
-              </motion.div>
-            )}
-          </>
-        )}
-
         {/* ─── PROGRESS Tab ─── */}
         {activeTab === 'progress' && (
           <>
@@ -501,56 +401,6 @@ export function U86Dashboard({
                 <p className="text-muted-foreground text-[9px] font-display tracking-wider">DAYS LEFT</p>
               </div>
             </div>
-          </>
-        )}
-
-        {/* ─── EDUCATION Tab ─── */}
-        {activeTab === 'education' && (
-          <>
-            <div className="rounded-xl border border-primary/15 bg-card p-4">
-              <div className="flex items-center gap-2 mb-3">
-                <GraduationCap className="w-5 h-5 text-primary" style={{ filter: 'drop-shadow(0 0 6px rgba(255,85,0,0.5))' }} />
-                <h3 className="font-display text-sm tracking-wider text-foreground">EDUCATION PILLAR</h3>
-              </div>
-              <p className="text-muted-foreground text-sm leading-relaxed">
-                Learning is not optional. Every day you open a page, watch a lesson, absorb something new.
-                The <span className="text-primary">Unbreakable University</span> is your classroom.
-              </p>
-            </div>
-
-            {/* Current phase education focus */}
-            <div className="rounded-xl border border-border bg-card p-3.5">
-              <p className="font-display text-xs tracking-wider text-muted-foreground mb-2">THIS PHASE</p>
-              <p className="text-foreground text-sm">{phaseInfo.education_focus}</p>
-            </div>
-
-            {/* Upsell courses */}
-            {U86_PHASES.map((phase, i) => {
-              if (!phase.upsell) return null;
-              const isCurrentOrPast = enrolment.current_day >= (phase.weeks[0] - 1) * 7 + 1;
-              return (
-                <div key={i} className={`rounded-xl border p-3.5 ${
-                  isCurrentOrPast ? 'border-primary/20 bg-primary/5' : 'border-border bg-card opacity-50'
-                }`}>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Sparkles className="w-4 h-4 text-primary" />
-                      <span className="font-display text-xs tracking-wider text-foreground">{phase.upsell.course_name}</span>
-                    </div>
-                    <span className="text-muted-foreground text-[10px]">Weeks {phase.weeks[0]}–{phase.weeks[1]}</span>
-                  </div>
-                  <p className="text-muted-foreground text-xs mt-1">{phase.upsell.message}</p>
-                  {isCurrentOrPast && (
-                    <Button
-                      onClick={() => navigate('/university')}
-                      className="mt-2 w-full h-8 rounded-lg text-[10px] font-display tracking-wider bg-primary/10 text-primary hover:bg-primary/20 border border-primary/20"
-                    >
-                      OPEN IN UNIVERSITY
-                    </Button>
-                  )}
-                </div>
-              );
-            })}
           </>
         )}
       </div>

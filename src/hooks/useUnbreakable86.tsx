@@ -207,12 +207,17 @@ export function useUnbreakable86() {
       setState(s => ({ ...s, todayLog: data as U86DailyLog }));
     } else {
       const currentVal = (state.todayLog as any)[habit];
+      const wasBanked = Boolean((state.todayLog as any).all_habits_done);
       const updates: any = { [habit]: !currentVal, updated_at: new Date().toISOString() };
 
       // Sauna and cold shower are ONE habit — the user's locked choice is the only one that counts.
       // A minimum of 3 of the Daily 7 banks the day (journal counts as the 7th).
+      // Banking is a one-way ratchet for the day: once banked, unticking a habit
+      // afterwards must NOT un-bank it — otherwise re-ticking later the same day
+      // flips all_habits_done false→true again and double-advances current_day
+      // for a single calendar day.
       const projected: any = { ...(state.todayLog as any), [habit]: !currentVal };
-      updates.all_habits_done = u86DayBanked(projected, therapyChoice);
+      updates.all_habits_done = wasBanked || u86DayBanked(projected, therapyChoice);
 
       const { data, error } = await supabase
         .from('unbreakable86_daily_logs' as any)
@@ -226,8 +231,9 @@ export function useUnbreakable86() {
       const updatedLog = data as U86DailyLog;
       setState(s => ({ ...s, todayLog: updatedLog }));
 
-      // Day banked (>= 3 of the Daily 7) — advance the day
-      if (updatedLog.all_habits_done && !(state.todayLog as any).all_habits_done) {
+      // Day banked for the first time (>= 3 of the Daily 7) — advance the day.
+      // wasBanked guards this from ever firing twice for the same log.
+      if (updatedLog.all_habits_done && !wasBanked) {
         await supabase
           .from('unbreakable86_enrolments' as any)
           .update({
@@ -246,9 +252,12 @@ export function useUnbreakable86() {
   const updateJournal = useCallback(async (journal: string) => {
     if (!state.todayLog) return;
 
-    const projected: any = { ...(state.todayLog as any), journal };
-    const banked = u86DayBanked(projected, therapyChoice);
     const wasBanked = Boolean((state.todayLog as any).all_habits_done);
+    const projected: any = { ...(state.todayLog as any), journal };
+    // Same one-way ratchet as toggleHabit — once the day is banked it stays
+    // banked, so clearing the journal text afterwards can't un-bank it and
+    // let a later edit re-fire the "bank the day" advance below.
+    const banked = wasBanked || u86DayBanked(projected, therapyChoice);
 
     await supabase
       .from('unbreakable86_daily_logs' as any)
