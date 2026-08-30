@@ -60,8 +60,19 @@ function OtpInput({ value, onChange, disabled }: { value: string; onChange: (v: 
 }
 
 
+function GoogleIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
+      <path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.9c1.7-1.56 2.7-3.87 2.7-6.62z"/>
+      <path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.9-2.26c-.8.54-1.84.86-3.06.86-2.35 0-4.34-1.59-5.05-3.72H.95v2.33A9 9 0 0 0 9 18z"/>
+      <path fill="#FBBC05" d="M3.95 10.7A5.4 5.4 0 0 1 3.67 9c0-.59.1-1.17.28-1.7V4.96H.95A9 9 0 0 0 0 9c0 1.45.35 2.83.95 4.04l3-2.33z"/>
+      <path fill="#EA4335" d="M9 3.58c1.32 0 2.51.46 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A9 9 0 0 0 .95 4.96l3 2.33C4.66 5.17 6.65 3.58 9 3.58z"/>
+    </svg>
+  );
+}
+
 export default function SignIn() {
-  const { user, signIn, signUp } = useAuth();
+  const { user, signIn, signUp, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
@@ -83,6 +94,19 @@ export default function SignIn() {
   const [otpCode, setOtpCode] = useState('');
   const [verifying, setVerifying] = useState(false);
   const [resendCooldown, setResendCooldown] = useState(0);
+  const [googleLoading, setGoogleLoading] = useState(false);
+
+  const handleGoogle = async () => {
+    setGoogleLoading(true);
+    setFormError(null);
+    const { error } = await signInWithGoogle();
+    if (error) {
+      setFormError(error.message || 'Failed to continue with Google.');
+      toast.error(error.message || 'Failed to continue with Google.');
+      setGoogleLoading(false);
+    }
+    // On success, Supabase redirects the browser to Google.
+  };
 
   // Redirect if already logged in
   useEffect(() => {
@@ -352,7 +376,24 @@ export default function SignIn() {
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-5 space-y-4">
+        <div className="px-5 pt-5 space-y-4">
+          <button
+            type="button"
+            onClick={handleGoogle}
+            disabled={googleLoading || loading}
+            className="w-full flex items-center justify-center gap-2.5 py-3 rounded-xl text-sm font-semibold text-foreground bg-background/50 border border-border transition-all hover:bg-background/80 disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            <GoogleIcon />
+            {googleLoading ? 'Redirecting…' : 'Continue with Google'}
+          </button>
+          <div className="flex items-center gap-3">
+            <div className="h-px flex-1 bg-border" />
+            <span className="text-[11px] text-muted-foreground uppercase tracking-wider">or</span>
+            <div className="h-px flex-1 bg-border" />
+          </div>
+        </div>
+
+        <form onSubmit={handleSubmit} className="p-5 pt-1 space-y-4">
           {mode === 'signup' && (
             <>
               <div className="space-y-1.5">

@@ -111,7 +111,7 @@ serve(async (req) => {
     });
     const hasFullAccess = isDevRole || isCoachRole;
 
-    // Check token balance
+    // Check token balance (pre-check for UX; atomic deduction happens via spend_tokens below)
     const { data: balanceRow } = await supabase
       .from("token_balances")
       .select("balance")
@@ -144,16 +144,40 @@ serve(async (req) => {
       );
     }
 
-    // Deduct tokens
-    let newBalance = currentBalance;
-    if (!hasFullAccess) {
-      newBalance = currentBalance - CARD_COST;
-      const { error: updateError } = await supabase
-        .from("token_balances")
-        .update({ balance: newBalance, updated_at: new Date().toISOString() })
-        .eq("user_id", user.id);
+    // Get card title for transaction log
+    let cardTitle = "Un-Tunes Card";
+    if (card.track_id) {
+      const { data: track } = await supabase
+        .from("un_tunes_tracks")
+        .select("title")
+        .eq("id", card.track_id)
+        .single();
+      if (track) cardTitle = track.title;
+    } else if (card.album_id) {
+      const { data: album } = await supabase
+        .from("un_tunes_albums")
+        .select("title")
+        .eq("id", card.album_id)
+        .single();
+      if (album) cardTitle = album.title;
+    }
 
-      if (updateError) {
+    // Deduct tokens atomically (locks the balance row, prevents double-spend) unless full-access bypass
+    let newBalance = currentBalance;
+    let tokensSpent = 0;
+    if (!hasFullAccess) {
+      const { data: newBal, error: spendErr } = await supabase.rpc(
+        "spend_tokens",
+        {
+          p_user_id: user.id,
+          p_amount: CARD_COST,
+          p_type: "untunes_card_purchase",
+          p_description: `Un-Tunes card purchase, ${cardTitle} [${card.rarity}]`,
+        }
+      );
+
+      if (spendErr) {
+        console.error("spend_tokens error:", spendErr);
         return new Response(
           JSON.stringify({ error: "Failed to deduct tokens" }),
           {
@@ -163,31 +187,21 @@ serve(async (req) => {
         );
       }
 
-      // Get card title for transaction log
-      let cardTitle = "Un-Tunes Card";
-      if (card.track_id) {
-        const { data: track } = await supabase
-          .from("un_tunes_tracks")
-          .select("title")
-          .eq("id", card.track_id)
-          .single();
-        if (track) cardTitle = track.title;
-      } else if (card.album_id) {
-        const { data: album } = await supabase
-          .from("un_tunes_albums")
-          .select("title")
-          .eq("id", card.album_id)
-          .single();
-        if (album) cardTitle = album.title;
+      if (Number(newBal) < 0) {
+        return new Response(
+          JSON.stringify({
+            error: "Not enough tokens",
+            required: CARD_COST,
+          }),
+          {
+            status: 402,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          }
+        );
       }
 
-      await supabase.from("token_transactions").insert({
-        user_id: user.id,
-        amount: -CARD_COST,
-        balance_after: newBalance,
-        type: "untunes_card_purchase",
-        description: `Un-Tunes card purchase, ${cardTitle} [${card.rarity}]`,
-      });
+      newBalance = Number(newBal);
+      tokensSpent = CARD_COST;
     }
 
     // Mark card as purchased
@@ -199,20 +213,14 @@ serve(async (req) => {
     if (purchaseError) {
       // Refund
       if (!hasFullAccess) {
-        await supabase
-          .from("token_balances")
-          .update({
-            balance: currentBalance,
-            updated_at: new Date().toISOString(),
-          })
-          .eq("user_id", user.id);
-        await supabase.from("token_transactions").insert({
-          user_id: user.id,
-          amount: CARD_COST,
-          balance_after: currentBalance,
-          type: "refund",
-          description: "Refund, Un-Tunes card purchase failed",
+        const { error: refundErr } = await supabase.rpc("refund_tokens", {
+          p_user_id: user.id,
+          p_amount: CARD_COST,
+          p_description: "Refund, Un-Tunes card purchase failed",
         });
+        if (refundErr) {
+          console.error("refund_tokens error:", refundErr);
+        }
       }
       return new Response(
         JSON.stringify({ error: "Purchase failed. Tokens refunded." }),
@@ -227,8 +235,8 @@ serve(async (req) => {
       JSON.stringify({
         success: true,
         purchased: true,
-        tokensSpent: hasFullAccess ? 0 : CARD_COST,
-        newBalance: hasFullAccess ? currentBalance : newBalance,
+        tokensSpent,
+        newBalance,
         cardId,
         message: "Card unlocked! PDF download now available.",
       }),

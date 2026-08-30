@@ -19,7 +19,7 @@ export interface Post {
 
 export interface PostMediaItem {
   id: string;
-  media_type: 'image' | 'video' | 'audio';
+  media_type: 'image' | 'video';
   media_url: string;
   thumbnail_url: string | null;
   sort_order: number;

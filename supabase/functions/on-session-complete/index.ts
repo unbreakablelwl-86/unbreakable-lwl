@@ -23,16 +23,49 @@ serve(async (req) => {
   }
 
   try {
-    const { sessionId, userId } = await req.json();
+    // Require the caller's own JWT — this endpoint triggers a paid Anthropic
+    // API call plus writes (habits, notifications, PB cards) against a
+    // user's account, so a client-supplied userId is never trusted alone.
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
-    if (!sessionId || !userId) {
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+    const authClient = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: authHeader } },
+    });
+
+    const token = authHeader.replace("Bearer ", "");
+    const { data: claimsData, error: authError } = await authClient.auth.getClaims(token);
+    if (authError || !claimsData?.claims) {
+      return new Response(JSON.stringify({ error: "Unauthorized - Invalid session" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const verifiedUserId = (claimsData.claims as any).sub as string;
+
+    const { sessionId, userId: bodyUserId } = await req.json();
+
+    if (!sessionId) {
       return new Response(
-        JSON.stringify({ error: "sessionId and userId required" }),
+        JSON.stringify({ error: "sessionId required" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    // Ignore any client-supplied userId — always act as the verified caller.
+    const userId = verifiedUserId;
+    if (bodyUserId && bodyUserId !== verifiedUserId) {
+      console.warn("on-session-complete: ignoring mismatched body userId", { bodyUserId, verifiedUserId });
+    }
+
     const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, serviceKey);
 
@@ -79,6 +112,16 @@ serve(async (req) => {
       return new Response(
         JSON.stringify({ error: "Session not found" }),
         { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Ownership check — the verified caller must own this session. Without
+    // this, any authenticated user could feed in someone else's sessionId
+    // and get free AI coaching, notifications, and PB cards on that data.
+    if (session.user_id !== userId) {
+      return new Response(
+        JSON.stringify({ error: "Forbidden - session does not belong to caller" }),
+        { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 

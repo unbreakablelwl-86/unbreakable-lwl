@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
-import { Mail, Lock, User, Cake, Gift } from 'lucide-react';
+import { Mail, Lock, User, Cake, Gift, ShieldCheck, ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface AuthModalProps {
@@ -16,17 +16,114 @@ interface AuthModalProps {
   defaultMode?: 'signin' | 'signup';
 }
 
+/* ═══ OTP Code Input — 6 individual digits ═══ */
+function OtpInput({ value, onChange, disabled }: { value: string; onChange: (v: string) => void; disabled?: boolean }) {
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const digits = value.padEnd(6, '').slice(0, 6).split('');
+
+  const handleChange = (index: number, char: string) => {
+    const digit = char.replace(/\D/g, '').slice(-1);
+    const newDigits = [...digits];
+    newDigits[index] = digit;
+    onChange(newDigits.join(''));
+    if (digit && index < 5) {
+      inputRefs.current[index + 1]?.focus();
+    }
+  };
+
+  const handleKeyDown = (index: number, e: React.KeyboardEvent) => {
+    if (e.key === 'Backspace' && !digits[index] && index > 0) {
+      inputRefs.current[index - 1]?.focus();
+    }
+  };
+
+  const handlePaste = (e: React.ClipboardEvent) => {
+    e.preventDefault();
+    const pasted = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
+    onChange(pasted);
+    const focusIdx = Math.min(pasted.length, 5);
+    inputRefs.current[focusIdx]?.focus();
+  };
+
+  return (
+    <div className="flex gap-2 justify-center">
+      {[0, 1, 2, 3, 4, 5].map(i => (
+        <input
+          key={i}
+          ref={el => { inputRefs.current[i] = el; }}
+          type="text"
+          inputMode="numeric"
+          maxLength={1}
+          value={digits[i] || ''}
+          onChange={e => handleChange(i, e.target.value)}
+          onKeyDown={e => handleKeyDown(i, e)}
+          onPaste={i === 0 ? handlePaste : undefined}
+          disabled={disabled}
+          className="w-11 h-14 text-center text-xl font-bold rounded-xl bg-input border border-border text-foreground outline-none transition-all focus:ring-2 focus:ring-primary/50 focus:border-primary/50 disabled:opacity-40"
+        />
+      ))}
+    </div>
+  );
+}
+
+function GoogleIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
+      <path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.9c1.7-1.56 2.7-3.87 2.7-6.62z"/>
+      <path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.9-2.26c-.8.54-1.84.86-3.06.86-2.35 0-4.34-1.59-5.05-3.72H.95v2.33A9 9 0 0 0 9 18z"/>
+      <path fill="#FBBC05" d="M3.95 10.7A5.4 5.4 0 0 1 3.67 9c0-.59.1-1.17.28-1.7V4.96H.95A9 9 0 0 0 0 9c0 1.45.35 2.83.95 4.04l3-2.33z"/>
+      <path fill="#EA4335" d="M9 3.58c1.32 0 2.51.46 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A9 9 0 0 0 .95 4.96l3 2.33C4.66 5.17 6.65 3.58 9 3.58z"/>
+    </svg>
+  );
+}
+
 export function AuthModal({ isOpen, onClose, defaultMode = 'signin' }: AuthModalProps) {
-  const { signIn, signUp } = useAuth();
+  const { signIn, signUp, signInWithGoogle } = useAuth();
   const [mode, setMode] = useState<'signin' | 'signup'>(defaultMode);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
   const [dateOfBirth, setDateOfBirth] = useState('');
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [promoCode, setPromoCode] = useState('');
   const [formError, setFormError] = useState<string | null>(null);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
+
+  // OTP verification state
+  const [verifyStep, setVerifyStep] = useState(false);
+  const [otpCode, setOtpCode] = useState('');
+  const [verifying, setVerifying] = useState(false);
+  const [resendCooldown, setResendCooldown] = useState(0);
+
+  // Reset all local state whenever the modal is closed, so re-opening starts fresh
+  useEffect(() => {
+    if (!isOpen) {
+      setVerifyStep(false);
+      setOtpCode('');
+      setFormError(null);
+    }
+  }, [isOpen]);
+
+  // Resend cooldown timer
+  useEffect(() => {
+    if (resendCooldown <= 0) return;
+    const timer = setTimeout(() => setResendCooldown(resendCooldown - 1), 1000);
+    return () => clearTimeout(timer);
+  }, [resendCooldown]);
+
+  const handleGoogle = async () => {
+    setGoogleLoading(true);
+    setFormError(null);
+    const { error } = await signInWithGoogle();
+    if (error) {
+      setFormError(error.message || 'Failed to continue with Google.');
+      toast.error(error.message || 'Failed to continue with Google.');
+      setGoogleLoading(false);
+    }
+    // On success, Supabase redirects the browser to Google — no further
+    // state update needed here.
+  };
 
   // Sync mode when defaultMode changes
   useEffect(() => {
@@ -92,42 +189,12 @@ export function AuthModal({ isOpen, onClose, defaultMode = 'signin' }: AuthModal
           setFormError(msg);
           toast.error(msg);
         } else {
-          // Save DOB to profile after successful signup
-          try {
-            const { data: { user: newUser } } = await supabase.auth.getUser();
-            if (newUser && dateOfBirth) {
-              await supabase
-                .from('profiles')
-                .update({ date_of_birth: dateOfBirth })
-                .eq('user_id', newUser.id);
-            }
-
-            // Redeem promo code if provided
-            if (newUser && promoCode.trim()) {
-              try {
-                const { data: promoResult, error: promoError } = await supabase.functions.invoke('redeem-promo-code', {
-                  body: { code: promoCode.trim() },
-                });
-                if (promoError) {
-                  console.error('Promo code error:', promoError);
-                } else if (promoResult?.success) {
-                  toast.success(`🎉 Promo code applied! ${promoResult.tokens_credited} coins credited — ${promoResult.tier} tier for ${promoResult.duration_months} months`);
-                } else {
-                  toast.error(promoResult?.error || 'Invalid promo code');
-                }
-              } catch (promoErr) {
-                console.error('Failed to redeem promo code:', promoErr);
-              }
-            }
-          } catch (dobErr) {
-            console.error('Failed to save DOB:', dobErr);
-          }
-          // Meta Pixel — track signup conversion
-          if (typeof window !== 'undefined' && (window as any).fbq) {
-            (window as any).fbq('track', 'CompleteRegistration');
-          }
-          toast.success('Account created! Welcome to the movement.');
-          onClose();
+          // Account created but not yet confirmed — move to the code-entry step.
+          // DOB, promo code, and the conversion pixel all fire after the code
+          // is verified (see handleVerifyOtp), once there's an actual session.
+          setVerifyStep(true);
+          setResendCooldown(60);
+          toast.success('Verification code sent to your email!');
         }
       }
     } catch (err: any) {
@@ -139,6 +206,141 @@ export function AuthModal({ isOpen, onClose, defaultMode = 'signin' }: AuthModal
       setLoading(false);
     }
   };
+
+  const handleVerifyOtp = async () => {
+    if (otpCode.length !== 6) {
+      setFormError('Enter the 6-digit code from your email.');
+      return;
+    }
+    setVerifying(true);
+    setFormError(null);
+
+    try {
+      const { data, error } = await supabase.auth.verifyOtp({
+        email,
+        token: otpCode,
+        type: 'email',
+      });
+
+      if (error) {
+        setFormError(error.message || 'Invalid code. Please try again.');
+        toast.error('Invalid code. Please try again.');
+      } else if (data?.user) {
+        // Email confirmed — now save profile extras (DOB, promo code)
+        try {
+          if (dateOfBirth) {
+            await supabase.from('profiles').update({ date_of_birth: dateOfBirth }).eq('user_id', data.user.id);
+          }
+          if (promoCode.trim()) {
+            try {
+              const { data: promoResult, error: promoError } = await supabase.functions.invoke('redeem-promo-code', {
+                body: { code: promoCode.trim() },
+              });
+              if (promoError) {
+                console.error('Promo code error:', promoError);
+              } else if (promoResult?.success) {
+                toast.success(`🎉 Promo code applied! ${promoResult.tokens_credited} coins credited — ${promoResult.tier} tier for ${promoResult.duration_months} months`);
+              } else {
+                toast.error(promoResult?.error || 'Invalid promo code');
+              }
+            } catch (promoErr) {
+              console.error('Failed to redeem promo code:', promoErr);
+            }
+          }
+        } catch (dobErr) {
+          console.error('Failed to save DOB:', dobErr);
+        }
+        // Meta Pixel — track signup conversion
+        if (typeof window !== 'undefined' && (window as any).fbq) {
+          (window as any).fbq('track', 'CompleteRegistration');
+        }
+        toast.success('Email verified! Welcome to the movement.');
+        onClose();
+      }
+    } catch (err: any) {
+      setFormError(err?.message || 'Verification failed.');
+    } finally {
+      setVerifying(false);
+    }
+  };
+
+  const handleResendCode = async () => {
+    if (resendCooldown > 0) return;
+    setFormError(null);
+
+    try {
+      const { error } = await supabase.auth.resend({ type: 'signup', email });
+      if (error) {
+        setFormError(error.message || 'Failed to resend code.');
+      } else {
+        setResendCooldown(60);
+        toast.success('New verification code sent!');
+      }
+    } catch (err: any) {
+      setFormError(err?.message || 'Failed to resend code.');
+    }
+  };
+
+  // ─── OTP Verification Step ───
+  if (verifyStep) {
+    return (
+      <Dialog open={isOpen} onOpenChange={onClose}>
+        <DialogContent className="sm:max-w-md bg-card border-border bg-background border-border">
+          <DialogHeader>
+            <button
+              type="button"
+              onClick={() => { setVerifyStep(false); setOtpCode(''); setFormError(null); }}
+              className="absolute left-4 top-4 flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors text-sm"
+            >
+              <ArrowLeft size={16} />
+            </button>
+            <div className="flex flex-col items-center pt-2">
+              <div className="w-16 h-16 rounded-full bg-primary/10 border border-primary/30 flex items-center justify-center mb-3">
+                <ShieldCheck className="w-8 h-8 text-primary" />
+              </div>
+              <DialogTitle className="font-display text-xl tracking-wide text-center">
+                VERIFY YOUR EMAIL
+              </DialogTitle>
+              <DialogDescription className="text-center text-muted-foreground text-sm mt-1">
+                We sent a 6-digit code to<br />
+                <span className="text-foreground font-medium">{email}</span>
+              </DialogDescription>
+            </div>
+          </DialogHeader>
+
+          <div className="space-y-5 py-2">
+            <OtpInput value={otpCode} onChange={setOtpCode} disabled={verifying} />
+
+            {formError && (
+              <div className="bg-destructive/10 border border-destructive/30 rounded-md p-3 text-sm text-destructive text-center">
+                {formError}
+              </div>
+            )}
+
+            <Button
+              type="button"
+              className="w-full font-display tracking-wide"
+              onClick={handleVerifyOtp}
+              disabled={verifying || otpCode.length !== 6}
+            >
+              {verifying ? 'Verifying…' : 'Verify'}
+            </Button>
+
+            <div className="text-center">
+              <button
+                type="button"
+                onClick={handleResendCode}
+                disabled={resendCooldown > 0}
+                className="text-sm text-muted-foreground hover:text-primary transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                {resendCooldown > 0 ? `Resend code in ${resendCooldown}s` : "Didn't receive the code? Resend"}
+              </button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -153,6 +355,23 @@ export function AuthModal({ isOpen, onClose, defaultMode = 'signin' }: AuthModal
         </DialogHeader>
 
         <div className="space-y-6 py-4">
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full gap-2.5 bg-background border-border"
+            onClick={handleGoogle}
+            disabled={googleLoading || loading}
+          >
+            <GoogleIcon />
+            {googleLoading ? 'Redirecting…' : 'Continue with Google'}
+          </Button>
+
+          <div className="flex items-center gap-3">
+            <div className="h-px flex-1 bg-border" />
+            <span className="text-xs text-muted-foreground uppercase tracking-wider">or</span>
+            <div className="h-px flex-1 bg-border" />
+          </div>
+
           <form onSubmit={handleSubmit} className="space-y-4">
             {mode === 'signup' && (
               <>

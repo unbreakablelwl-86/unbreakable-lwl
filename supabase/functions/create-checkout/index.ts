@@ -31,6 +31,31 @@ const SUBSCRIPTION_PRICES = new Set([
   "price_1T6Gc7RgwCgvPuKnfH1WiggU", // Old Tier 2
 ]);
 
+// One-time purchase price IDs actually sold by this app (courses, course bundles, and
+// token top-ups — must mirror stripe-webhook.ts's PRICE_TO_COURSE / PRICE_TO_BUNDLE /
+// PRICE_TO_TOPUP). SECURITY: anything outside this list plus SUBSCRIPTION_PRICES is
+// rejected below, so a client can no longer check out an arbitrary Stripe price ID that
+// happens to exist in the same Stripe account (test prices, internal prices, etc).
+const ONE_TIME_PRICES = new Set([
+  // Power pillar
+  "price_1TaPpuD5KOEmeWH2SgCLX7TY", "price_1TaPptD5KOEmeWH2Sqnp8zbG", "price_1TaPpzD5KOEmeWH2dKbZDJZq",
+  // Fuel pillar
+  "price_1TaPq3D5KOEmeWH2cKqTXZBC", "price_1TaPqAD5KOEmeWH2AfXOGEM0", "price_1TaPqBD5KOEmeWH2tx9eGeCQ",
+  // Mindset pillar
+  "price_1TaPqJD5KOEmeWH2bwG0iwL1", "price_1TaPqID5KOEmeWH2Dc3CNb6w", "price_1TaPqOD5KOEmeWH2aFTrPnKF",
+  // Sport courses
+  "price_1TaPqPD5KOEmeWH2DtBH1LZ5", "price_1TaPqLD5KOEmeWH2OQFR2rSh", "price_1TaPqJD5KOEmeWH2A6GMlIbO",
+  "price_1TaPqND5KOEmeWH2wegxy9AP", "price_1TaPqQD5KOEmeWH2P2DwUhNB", "price_1TaPqMD5KOEmeWH2CWobt6Tl",
+  "price_1TaPqQD5KOEmeWH2QLZaol8s", "price_1TaPqMD5KOEmeWH2wTi8yOBy", "price_1TaPqMD5KOEmeWH2RtsHUKsO",
+  "price_1TaPqQD5KOEmeWH2B5G3ogSW",
+  // Bundles
+  "price_1TaPqQD5KOEmeWH2XLjqBvgo", "price_1TaPqQD5KOEmeWH2eYRVS2Yd", "price_1TaPqQD5KOEmeWH2vNGarseX",
+  "price_1TaPqQD5KOEmeWH29Dy4Q3kN", "price_1TXuJ2D5KOEmeWH2u32ngbbo",
+  // Token top-ups
+  "price_1U8jm2D5KOEmeWH249kqt6M0", "price_1TaPmmD5KOEmeWH2lbJWYqDf",
+  "price_1TaPmmD5KOEmeWH2aoxZv7uk", "price_1TaPmsD5KOEmeWH2NmqQQnW1",
+]);
+
 // Tier 2 (121 coaching) price IDs that trigger dev notifications
 const COACHING_121_PRICES = new Set([
   "price_1TOZ0jD5KOEmeWH23osCaN4Y",
@@ -40,12 +65,14 @@ const COACHING_121_PRICES = new Set([
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
+  }
 
-  // Rate limiting
+  // Rate limiting — this previously lived inside the OPTIONS branch above
+  // (the closing brace was misplaced), so it never actually ran on a real
+  // POST request. Moved outside so it applies to every non-OPTIONS request.
   const ip = getClientIP(req);
   const rl = rateLimit(ip, 10, 60);
   if (!rl.allowed) return rateLimitResponse(rl.retryAfter!);
-  }
 
   const supabaseClient = createClient(
     Deno.env.get("SUPABASE_URL") ?? "",
@@ -71,6 +98,9 @@ serve(async (req) => {
     const { priceId } = await req.json();
     if (!priceId || typeof priceId !== "string" || !priceId.startsWith("price_")) {
       throw new Error("Invalid price ID");
+    }
+    if (!SUBSCRIPTION_PRICES.has(priceId) && !ONE_TIME_PRICES.has(priceId)) {
+      throw new Error("This price is not available for checkout");
     }
     logStep("Price ID received", { priceId });
 

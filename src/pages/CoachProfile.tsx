@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { useCoachPublicProfile } from '@/hooks/useCoachPublicProfile';
 import { useCoachAvailability } from '@/hooks/useCoachAvailability';
 import { useAuth } from '@/hooks/useAuth';
+import { useTokenBalance } from '@/hooks/useTokenBalance';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { CoachBookingFlow } from '@/components/coaching/CoachBookingFlow';
@@ -19,6 +20,11 @@ export default function CoachProfile() {
   const { profile, loading } = useCoachPublicProfile(userId);
   const { user } = useAuth();
   const navigate = useNavigate();
+  // Shared balance query — same source the coach fuel bar (HomeDashboard,
+  // TokenBalanceBadge) reads from, so calling refresh() after unlocking a
+  // coach updates the fuel bar everywhere immediately instead of leaving it
+  // showing the stale pre-spend value until its cache expires.
+  const { balance: tokenBalance, isUnlimited: hasUnlimitedTokens, refresh: refreshTokenBalance } = useTokenBalance();
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [unlockLoading, setUnlockLoading] = useState(true);
   const [availSlots, setAvailSlots] = useState<any[]>([]);
@@ -54,22 +60,36 @@ export default function CoachProfile() {
 
   const handleUnlock = useCallback(async () => {
     if (!user || !userId) return;
+    // Pre-check against the shared balance query (was calling get_token_balance
+    // with a p_user_id argument, but that RPC takes no parameters and reads
+    // auth.uid() internally — the mismatched call errored on every attempt,
+    // so `bal` was always undefined and this always reported "not enough
+    // tokens" regardless of actual balance).
+    if (!hasUnlimitedTokens && tokenBalance < 5) {
+      toast.error('Not enough tokens. You need 5 tokens to unlock this coach.');
+      return;
+    }
     try {
-      // Deduct tokens
-      const { data: bal } = await supabase.rpc('get_token_balance', { p_user_id: user.id });
-      if ((bal || 0) < 5) {
+      // deduct_tokens ultimately calls the row-locked deduct_token() function,
+      // so the real spend is still atomic/safe even though the balance check
+      // above is a plain (non-atomic) read.
+      const { data: result, error: deductError } = await supabase.rpc('deduct_tokens', {
+        p_user_id: user.id,
+        p_amount: 5,
+        p_reason: `Unlock coach: ${userId}`,
+      });
+      if (deductError || (result && typeof result === 'object' && 'error' in result)) {
         toast.error('Not enough tokens. You need 5 tokens to unlock this coach.');
         return;
       }
-      // Deduct and create unlock
-      await supabase.rpc('deduct_tokens', { p_user_id: user.id, p_amount: 5, p_reason: `Unlock coach: ${userId}` });
       await supabase.from('coach_unlocks').insert({ user_id: user.id, coach_id: userId, tokens_spent: 5 });
       setIsUnlocked(true);
+      refreshTokenBalance();
       toast.success('Coach unlocked! You can now book sessions.');
     } catch (err) {
       toast.error('Failed to unlock coach. Please try again.');
     }
-  }, [user, userId]);
+  }, [user, userId, tokenBalance, hasUnlimitedTokens, refreshTokenBalance]);
 
   if (loading) {
     return (

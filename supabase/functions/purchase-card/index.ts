@@ -28,12 +28,12 @@ const VIDEO_COST = 5;
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
+  }
 
   // Rate limiting
   const ip = getClientIP(req);
   const rl = rateLimit(ip, 10, 60);
   if (!rl.allowed) return rateLimitResponse(rl.retryAfter!);
-  }
 
   try {
     const authHeader = req.headers.get("Authorization");
@@ -167,15 +167,19 @@ serve(async (req) => {
     }
 
     // Deduct tokens
+    // Uses the spend_tokens RPC, which row-locks the balance, checks funds,
+    // deducts, and logs the token_transactions row atomically — preventing
+    // the double-spend race that the old read-then-write pattern allowed.
     let newBalance = currentBalance;
     if (!hasFullAccess) {
-      newBalance = currentBalance - cost;
-      const { error: updateError } = await supabase
-        .from("token_balances")
-        .update({ balance: newBalance, updated_at: new Date().toISOString() })
-        .eq("user_id", user.id);
+      const { data: newBal, error: spendErr } = await supabase.rpc('spend_tokens', {
+        p_user_id: user.id,
+        p_amount: cost,
+        p_type: 'card_purchase',
+        p_description: `PB Card purchase (${mediaType}), ${card.exercise_name || card.title} [${card.rarity}]`,
+      });
 
-      if (updateError) {
+      if (spendErr) {
         return new Response(
           JSON.stringify({ error: "Failed to deduct tokens" }),
           {
@@ -184,15 +188,16 @@ serve(async (req) => {
           }
         );
       }
-
-      // Log transaction
-      await supabase.from("token_transactions").insert({
-        user_id: user.id,
-        amount: -cost,
-        balance_after: newBalance,
-        type: "card_purchase",
-        description: `PB Card purchase (${mediaType}), ${card.exercise_name || card.title} [${card.rarity}]`,
-      });
+      if (Number(newBal) < 0) {
+        return new Response(
+          JSON.stringify({ error: "Not enough tokens", required: cost }),
+          {
+            status: 402,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          }
+        );
+      }
+      newBalance = Number(newBal);
     }
 
     // Mark card as purchased
@@ -202,21 +207,12 @@ serve(async (req) => {
       .eq("id", cardId);
 
     if (purchaseError) {
-      // Refund
+      // Refund (only if we actually deducted tokens)
       if (!hasFullAccess) {
-        await supabase
-          .from("token_balances")
-          .update({
-            balance: currentBalance,
-            updated_at: new Date().toISOString(),
-          })
-          .eq("user_id", user.id);
-        await supabase.from("token_transactions").insert({
-          user_id: user.id,
-          amount: cost,
-          balance_after: currentBalance,
-          type: "refund",
-          description: "Refund, card purchase failed",
+        await supabase.rpc('refund_tokens', {
+          p_user_id: user.id,
+          p_amount: cost,
+          p_description: "Refund, card purchase failed",
         });
       }
       return new Response(

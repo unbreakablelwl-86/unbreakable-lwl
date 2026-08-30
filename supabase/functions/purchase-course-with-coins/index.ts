@@ -117,7 +117,7 @@ serve(async (req) => {
       }
       expectedCost = bundle.coinCost;
     } else {
-      // Calculate cost per item, guides cost GUIDE_COIN_COST, courses cost COURSE_COIN_COST
+      // Calculate cost per item — guides cost GUIDE_COIN_COST, courses cost COURSE_COIN_COST
       expectedCost = courseKeys.reduce((sum: number, key: string) => {
         return sum + (GUIDE_KEYS.has(key) ? GUIDE_COIN_COST : COURSE_COIN_COST);
       }, 0);
@@ -147,7 +147,7 @@ serve(async (req) => {
       });
     }
 
-    // ── Check coin balance ──
+    // ── Check coin balance (pre-check for UX; atomic deduction happens via spend_tokens below) ──
     const { data: balanceRow, error: balError } = await supabase
       .from("token_balances")
       .select("balance")
@@ -173,29 +173,30 @@ serve(async (req) => {
       });
     }
 
-    // ── Deduct coins ──
-    const newBalance = currentBalance - expectedCost;
-    const { error: updateError } = await supabase
-      .from("token_balances")
-      .update({ balance: newBalance, updated_at: new Date().toISOString() })
-      .eq("user_id", user.id);
+    // ── Deduct coins atomically (locks the balance row, prevents double-spend) ──
+    const { data: newBal, error: spendErr } = await supabase.rpc("spend_tokens", {
+      p_user_id: user.id,
+      p_amount: expectedCost,
+      p_type: "course_purchase",
+      p_description: label || `Purchased: ${newCourses.join(", ")}`,
+    });
 
-    if (updateError) {
-      console.error("Balance update error:", updateError);
+    if (spendErr) {
+      console.error("spend_tokens error:", spendErr);
       return new Response(JSON.stringify({ error: "Failed to deduct coins" }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    // ── Log token transaction ──
-    await supabase.from("token_transactions").insert({
-      user_id: user.id,
-      amount: -expectedCost,
-      balance_after: newBalance,
-      action: "course_purchase",
-      description: label || `Purchased: ${newCourses.join(", ")}`,
-    });
+    if (Number(newBal) < 0) {
+      return new Response(JSON.stringify({ error: "Not enough coins", required: expectedCost }), {
+        status: 402,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const newBalance = Number(newBal);
 
     // ── Grant course access ──
     const purchases = newCourses.map((key: string) => ({
@@ -212,17 +213,14 @@ serve(async (req) => {
     if (insertError) {
       // Refund coins on failure
       console.error("Course insert error:", insertError);
-      await supabase
-        .from("token_balances")
-        .update({ balance: currentBalance, updated_at: new Date().toISOString() })
-        .eq("user_id", user.id);
-      await supabase.from("token_transactions").insert({
-        user_id: user.id,
-        amount: expectedCost,
-        balance_after: currentBalance,
-        action: "refund",
-        description: `Refund, course purchase failed: ${newCourses.join(", ")}`,
+      const { error: refundErr } = await supabase.rpc("refund_tokens", {
+        p_user_id: user.id,
+        p_amount: expectedCost,
+        p_description: `Refund — course purchase failed: ${newCourses.join(", ")}`,
       });
+      if (refundErr) {
+        console.error("refund_tokens error:", refundErr);
+      }
 
       return new Response(JSON.stringify({ error: "Failed to grant course access. Coins refunded." }), {
         status: 500,

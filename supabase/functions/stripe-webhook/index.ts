@@ -64,10 +64,6 @@ const PRICE_TO_TOPUP: Record<string, { tokens: number; label: string }> = {
   "price_1TaPmsD5KOEmeWH2NmqQQnW1": { tokens: 300, label: "Large Top-Up (300 tokens)" },
 };
 
-// ── AI Token tier price IDs ──
-// Dynamically loaded from ai_tiers table (see lookupTier helper below)
-// Covers both legacy and new subscription tiers automatically.
-
 serve(async (req) => {
   if (req.method !== "POST") {
     return new Response("Method not allowed", { status: 405 });
@@ -103,6 +99,24 @@ serve(async (req) => {
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
     { auth: { persistSession: false } }
   );
+
+  // ── Idempotency guard: Stripe retries webhook delivery (e.g. on timeout or a 5xx
+  // response), which without this would double-credit tokens / re-grant subscriptions
+  // every time the same event is redelivered. Record processed event IDs and bail early
+  // on a repeat before doing any state-changing work. ──
+  const { data: alreadyProcessed } = await serviceClient
+    .from("processed_stripe_events")
+    .select("event_id")
+    .eq("event_id", event.id)
+    .maybeSingle();
+
+  if (alreadyProcessed) {
+    log("Event already processed, skipping", { id: event.id });
+    return new Response(JSON.stringify({ received: true, duplicate: true }), {
+      headers: { "Content-Type": "application/json" },
+      status: 200,
+    });
+  }
 
   // ── Helper: look up AI tier from DB by stripe_price_id ──
   async function lookupTier(priceId: string) {
@@ -433,6 +447,48 @@ serve(async (req) => {
         break;
       }
 
+      // ━━━ INVOICE PAYMENT FAILED ━━━
+      case "invoice.payment_failed": {
+        const invoice = event.data.object as Stripe.Invoice;
+        const subscriptionId = typeof invoice.subscription === "string"
+          ? invoice.subscription
+          : (invoice.subscription as any)?.id;
+
+        if (!subscriptionId) { log("No subscription on failed invoice"); break; }
+
+        const { data: balRow } = await serviceClient
+          .from("token_balances")
+          .select("user_id")
+          .eq("stripe_subscription_id", subscriptionId)
+          .maybeSingle();
+
+        let userId = balRow?.user_id;
+        if (!userId) {
+          const custId = typeof invoice.customer === "string"
+            ? invoice.customer
+            : (invoice.customer as any)?.id;
+          userId = await resolveUserId(stripe, custId) ?? undefined;
+        }
+
+        if (!userId) { log("Cannot resolve user for payment failure", { subscriptionId }); break; }
+
+        log("Payment failed", { userId, subscriptionId, attempt: invoice.attempt_count });
+
+        // Don't change tier/tokens here — Stripe Smart Retries will keep trying, and
+        // customer.subscription.deleted (already handled below) is what actually ends
+        // access if every retry fails. Just make sure the member knows now, not days
+        // later when the subscription silently lapses.
+        await serviceClient.from("notifications").insert({
+          user_id: userId,
+          type: "payment_failed",
+          title: "⚠️ Payment Failed",
+          body: "We couldn't process your last payment. Please update your payment method to keep your membership active.",
+          data: { subscription_id: subscriptionId, attempt: invoice.attempt_count, link: "/ai-tokens" },
+        }).catch(() => {});
+
+        break;
+      }
+
       // ━━━ SUBSCRIPTION UPDATED (upgrade/downgrade) ━━━
       case "customer.subscription.updated": {
         const subscription = event.data.object as Stripe.Subscription;
@@ -554,6 +610,15 @@ serve(async (req) => {
     log("Processing error", { error: err.message });
     return new Response(`Webhook Error: ${err.message}`, { status: 500 });
   }
+
+  // Mark this event as processed only after the switch above completed without throwing —
+  // if it threw, we returned 500 above already and Stripe will retry, which is correct
+  // (we want a genuine processing failure to be retried; we only want to skip TRUE repeats).
+  await serviceClient
+    .from("processed_stripe_events")
+    .insert({ event_id: event.id, event_type: event.type })
+    .then(() => {})
+    .catch((e) => log("Failed to record processed event (non-fatal)", { error: String(e) }));
 
   return new Response(JSON.stringify({ received: true }), {
     headers: { "Content-Type": "application/json" },

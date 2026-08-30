@@ -18,7 +18,35 @@ serve(async (req) => {
   }
 
   try {
-    const { new_user_id } = await req.json();
+    // Require the caller's own JWT — this flow may only be triggered by a
+    // user for themselves right after their own onboarding completes.
+    // Never trust a client-supplied user ID for who gets welcomed.
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+    const authClient = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: authHeader } },
+    });
+
+    const token = authHeader.replace("Bearer ", "");
+    const { data: claimsData, error: authError } = await authClient.auth.getClaims(token);
+    if (authError || !claimsData?.claims) {
+      return new Response(JSON.stringify({ error: "Unauthorized - Invalid session" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Derive the user being welcomed from the verified JWT itself — a
+    // client-supplied new_user_id is never trusted, even if present.
+    const new_user_id = (claimsData.claims as any).sub as string;
 
     if (!new_user_id || new_user_id === FOUNDER_ID) {
       return new Response(JSON.stringify({ skipped: true }), {
@@ -26,9 +54,24 @@ serve(async (req) => {
       });
     }
 
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
+
+    // Idempotency guard — this flow (auto-follow, welcome DM, drip emails,
+    // dev notifications) should only ever fire once per user. Without this,
+    // an authenticated user could re-trigger it repeatedly against themselves,
+    // spamming duplicate DMs/emails and the founder's notification inbox.
+    const { data: existingCoachingProfile } = await supabase
+      .from("coaching_profiles")
+      .select("onboarding_completed_at")
+      .eq("user_id", new_user_id)
+      .maybeSingle();
+
+    if (existingCoachingProfile?.onboarding_completed_at) {
+      return new Response(JSON.stringify({ skipped: true, reason: "already_welcomed" }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
     // Get the new user's profile info for the notification
     // NOTE: profiles.user_id = auth user ID, NOT profiles.id
@@ -67,6 +110,28 @@ serve(async (req) => {
         };
       });
       await supabase.from("email_drip").insert(dripRows);
+    }
+
+    // 0c. Queue the same welcome arc as in-app DMs from the founder account.
+    // Days 1-7 (day 0 is the instant welcome DM sent below). This runs
+    // independently of email delivery, so onboarding messages still land
+    // even if email sending is degraded.
+    {
+      const messageDayOffsets = [1, 2, 3, 4, 5, 6, 7];
+      const now = new Date();
+      const messageRows = messageDayOffsets.map((dayOffset) => {
+        const scheduled = new Date(now);
+        scheduled.setDate(scheduled.getDate() + dayOffset);
+        scheduled.setHours(10, 0, 0, 0); // 10am BST — a couple hours after the email drip
+        return {
+          user_id: new_user_id,
+          day_number: dayOffset,
+          scheduled_for: scheduled.toISOString(),
+          status: "pending",
+          sequence_name: "welcome",
+        };
+      });
+      await supabase.from("message_drip").insert(messageRows);
     }
 
     // 1. Auto-follow: Founder follows the new user
