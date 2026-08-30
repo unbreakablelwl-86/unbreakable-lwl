@@ -6,12 +6,8 @@ export type VoiceFeature = 'chat' | 'mindset' | 'cardio' | 'notifications' | 'un
 
 const STORAGE_KEY = 'unbreakable-voice-settings';
 
-export type VoiceGender = 'male' | 'female';
-
 interface VoiceSettings {
   master: boolean;
-  /** Device voice used for cardio + mindset cues. Free — no TTS billing. */
-  gender: VoiceGender;
   chat: boolean;
   mindset: boolean;
   cardio: boolean;
@@ -21,7 +17,6 @@ interface VoiceSettings {
 
 const DEFAULT_SETTINGS: VoiceSettings = {
   master: true,
-  gender: 'male',
   chat: true,
   mindset: true,
   cardio: true,
@@ -32,7 +27,14 @@ const DEFAULT_SETTINGS: VoiceSettings = {
 function loadSettings(): VoiceSettings {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) return { ...DEFAULT_SETTINGS, ...JSON.parse(raw) };
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      // 'gender' is a legacy key from when cardio/mindset offered a male/female
+      // choice — Unbreakable is a male coach everywhere now, so it's dropped
+      // on read rather than carried forward.
+      delete parsed.gender;
+      return { ...DEFAULT_SETTINGS, ...parsed };
+    }
   } catch {}
   return { ...DEFAULT_SETTINGS };
 }
@@ -46,36 +48,48 @@ function saveSettings(s: VoiceSettings) {
  * Free and unmetered — every cardio/mindset cue spoken this way
  * costs nothing, unlike the ElevenLabs coach voice which bills
  * per character. Used for short, repetitive cues.
+ *
+ * Unbreakable Coach is male, always — no gender choice. Voices are
+ * matched by name against MALE_HINTS, with FEMALE_EXCLUDE names
+ * filtered out first. That exclusion step matters: the old matcher
+ * checked for the bare substring "male", and "female" itself
+ * contains "male" ("fe-MALE"), so it would happily match a voice
+ * named e.g. "Google UK English Female" and hand back a female
+ * voice whenever one happened to be listed before the male one.
  * ────────────────────────────────────────────────────────────── */
-const FEMALE_HINTS = ['female', 'samantha', 'victoria', 'karen', 'moira', 'tessa', 'fiona', 'serena', 'zira', 'hazel', 'amelie', 'joana'];
-const MALE_HINTS = ['male', 'daniel', 'alex', 'fred', 'david', 'george', 'oliver', 'thomas', 'rishi', 'aaron'];
+const FEMALE_EXCLUDE = ['female', 'samantha', 'victoria', 'karen', 'moira', 'tessa', 'fiona', 'serena', 'zira', 'hazel', 'amelie', 'joana', 'susan', 'kate', 'emma', 'olivia', 'zoe'];
+const MALE_HINTS = ['male', 'daniel', 'alex', 'fred', 'david', 'george', 'oliver', 'thomas', 'rishi', 'aaron', 'arthur', 'james', 'ryan', 'nathan', 'brian', 'guy'];
 
-function pickDeviceVoice(gender: VoiceGender): SpeechSynthesisVoice | null {
+function pickMaleDeviceVoice(): SpeechSynthesisVoice | null {
   if (typeof window === 'undefined' || !window.speechSynthesis) return null;
   const voices = window.speechSynthesis.getVoices();
   if (!voices.length) return null;
+
+  const notFemale = (v: SpeechSynthesisVoice) => !FEMALE_EXCLUDE.some(h => v.name.toLowerCase().includes(h));
   const en = voices.filter(v => v.lang?.toLowerCase().startsWith('en'));
-  const pool = en.length ? en : voices;
-  const hints = gender === 'female' ? FEMALE_HINTS : MALE_HINTS;
-  // Prefer a UK voice that matches the requested gender.
+  const enMale = en.filter(notFemale);
+  const pool = enMale.length ? enMale : (en.length ? en : voices.filter(notFemale));
+
+  // Prefer a UK voice that matches a male hint.
   const gb = pool.filter(v => v.lang?.toLowerCase().includes('gb'));
   for (const list of [gb, pool]) {
-    const match = list.find(v => hints.some(h => v.name.toLowerCase().includes(h)));
+    const match = list.find(v => MALE_HINTS.some(h => v.name.toLowerCase().includes(h)));
     if (match) return match;
   }
-  return pool[0] ?? null;
+  // Last resort: any voice we haven't already ruled out as female-named.
+  return pool[0] ?? voices[0] ?? null;
 }
 
-export function speakOnDevice(text: string, gender: VoiceGender): boolean {
+export function speakOnDevice(text: string): boolean {
   if (typeof window === 'undefined' || !window.speechSynthesis) return false;
   try {
     window.speechSynthesis.cancel();
     const utter = new SpeechSynthesisUtterance(text);
-    const voice = pickDeviceVoice(gender);
+    const voice = pickMaleDeviceVoice();
     if (voice) utter.voice = voice;
     utter.lang = voice?.lang || 'en-GB';
     utter.rate = 1.0;
-    utter.pitch = gender === 'female' ? 1.1 : 0.9;
+    utter.pitch = 0.9;
     window.speechSynthesis.speak(utter);
     return true;
   } catch {
@@ -114,7 +128,7 @@ export function useJJVoice() {
   }, [settings]);
 
   /* Update a single setting */
-  const setSetting = useCallback((key: keyof VoiceSettings, value: boolean | VoiceGender) => {
+  const setSetting = useCallback((key: keyof VoiceSettings, value: boolean) => {
     setSettings(prev => ({ ...prev, [key]: value }));
   }, []);
 
@@ -138,7 +152,7 @@ export function useJJVoice() {
 
     // Cardio and mindset cues use the free device voice, not billed TTS.
     if (feature === 'cardio' || feature === 'mindset') {
-      if (speakOnDevice(cleanText, settings.gender)) return;
+      if (speakOnDevice(cleanText)) return;
     }
 
     setIsSpeaking(true);

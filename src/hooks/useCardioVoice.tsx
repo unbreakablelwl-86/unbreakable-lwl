@@ -1,21 +1,17 @@
 import { useCallback } from "react";
-import { speakOnDevice, useJJVoice } from "@/hooks/useJJVoice";
+import { speakOnDevice } from "@/hooks/useJJVoice";
 
 /**
  * Cardio voice updates.
  * Uses the device's own voice (Web Speech API) so live cardio cues —
  * which fire constantly during a session — cost nothing to run.
- * Members pick male or female in Coach Voice settings.
+ * Unbreakable Coach is male only — no gender choice.
  */
 export function useCardioVoice({ enabled }: { enabled: boolean }) {
-  const { settings } = useJJVoice();
-
   const speak = useCallback(async (text: string) => {
     if (!enabled) return;
-    speakOnDevice(text, settings.gender);
-  }, [enabled, settings.gender]);
-
-
+    speakOnDevice(text);
+  }, [enabled]);
 
   const stop = useCallback(() => {
     if (typeof window !== "undefined" && window.speechSynthesis) {

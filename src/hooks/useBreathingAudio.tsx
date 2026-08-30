@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { speakOnDevice, useJJVoice } from "@/hooks/useJJVoice";
+import { speakOnDevice } from "@/hooks/useJJVoice";
 
 interface UseBreathingAudioOptions {
   enabled: boolean;
@@ -10,18 +10,16 @@ interface UseBreathingAudioOptions {
  * Uses the device's own voice (Web Speech API) rather than billed TTS —
  * breathing cues are short, highly repetitive and fire many times per
  * session, so metered speech here would cost real money per member.
- * Members choose male or female in Coach Voice settings.
+ * Unbreakable Coach is male only — no gender choice.
  */
 export function useBreathingAudio({ enabled }: UseBreathingAudioOptions) {
-  const { settings } = useJJVoice();
-
   /* ── Play ── */
   const playAudio = useCallback(
     async (text: string) => {
       if (!enabled) return;
-      speakOnDevice(text, settings.gender);
+      speakOnDevice(text);
     },
-    [enabled, settings.gender]
+    [enabled]
   );
 
   /* ── Stop ── */

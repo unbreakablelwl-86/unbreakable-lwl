@@ -457,6 +457,10 @@ export default function Help() {
     e.preventDefault();
     if (!input.trim() || isLoading || isGenerating || isMealPlanGenerating) return;
     if (!user) { setShowAuthModal(true); return; }
+    // Unlock audio playback on this user gesture — the coach's spoken reply
+    // plays later, after the streamed response finishes, and by then it's
+    // too late on iOS/mobile browsers to count as a user-initiated gesture.
+    jjVoice.unlockAudio();
     sendMessage(input, { callerRole });
     setInput('');
   };
@@ -724,7 +728,10 @@ export default function Help() {
       console.error('Speech recognition error:', event.error);
       setIsListening(false);
       recognitionRef.current = null;
-      if (event.error !== 'aborted') {
+      // 'aborted' fires on a deliberate stop; 'no-speech' fires constantly
+      // any time the mic goes quiet for a beat — neither is a real error,
+      // so don't scare the user with a toast for either.
+      if (event.error !== 'aborted' && event.error !== 'no-speech') {
         toast({ title: 'Voice error', description: `Mic error: ${event.error}. Try again.`, variant: 'destructive' });
       }
     };

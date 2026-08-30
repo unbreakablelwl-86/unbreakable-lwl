@@ -40,9 +40,7 @@ const MindsetBreathing = () => {
   
   const { preferences: aiPrefs, updatePreferences } = useAIPreferences();
   const voiceEnabled = aiPrefs?.voice_feedback_enabled ?? true; // Default ON
-  const voiceGender = aiPrefs?.voice_gender ?? 'male';
   const setVoiceEnabled = (enabled: boolean) => updatePreferences.mutate({ voice_feedback_enabled: enabled });
-  const setVoiceGender = (gender: 'male' | 'female') => updatePreferences.mutate({ voice_gender: gender });
   
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const startTimeRef = useRef<number>(0);

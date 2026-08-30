@@ -4,6 +4,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from '@/hooks/use-toast';
 import { useCoachContext, CoachUserContext } from './useCoachContext';
+import { useJJVoice } from './useJJVoice';
 
 export interface Message {
   id: string;
@@ -35,6 +36,7 @@ export function useHelpChat() {
   const [isLoading, setIsLoading] = useState(false);
   const [tokenBalance, setTokenBalance] = useState<number | null>(null);
   const { gatherContext, gatherContextForUser, formatContextForAI } = useCoachContext();
+  const { speak: speakVoice, isEnabled: isVoiceEnabled } = useJJVoice();
 
   // Fetch all conversations
   const { data: conversations = [], isLoading: conversationsLoading } = useQuery({
@@ -283,8 +285,23 @@ export function useHelpChat() {
       // Save assistant message
       if (assistantContent) {
         await saveMessage(convId, 'assistant', assistantContent);
+
+        // Speak the reply aloud when the member has chat voice on — but
+        // not in coach mode, where a coach is drafting for an athlete and
+        // doesn't want the draft read back to them. Strip build-tag JSON
+        // blobs first so they don't get read out.
+        if (!coachMode && isVoiceEnabled('chat')) {
+          const speakable = assistantContent
+            .replace(/\[BUILD_PROGRAMME\](\{.*\})?/g, '')
+            .replace(/\[BUILD_MEAL_PLAN\](\{.*\})?/g, '')
+            .replace(/\[BUILD_MOVEMENT\](\{.*\})?/g, '')
+            .replace(/\[BUILD_MINDSET\](\{.*\})?/g, '')
+            .replace(/\[BUILD_MINDSET_PROGRAMME\](\{.*\})?/g, '')
+            .trim();
+          if (speakable) speakVoice(speakable, 'chat');
+        }
       }
-      
+
       queryClient.invalidateQueries({ queryKey: ['help-conversations'] });
     } catch (error) {
       console.error('Chat error:', error);
