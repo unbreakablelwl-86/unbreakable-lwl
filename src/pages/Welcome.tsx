@@ -35,19 +35,19 @@ const TOUR_SLIDES = [
   {
     icon: Users,
     title: 'COMMUNITY',
-    description: 'Post updates, share stories, follow your people. This is YOUR timeline.',
+    description: 'Post updates, follow your people, like and comment. This is YOUR timeline.',
     color: '#FF5500',
   },
   {
     icon: Music,
     title: 'UN-TUNES',
-    description: 'Training music built for the grind. Collect cards, trade with others, build your playlist.',
+    description: 'Training music built for the grind. Stream the full library, like tracks, and build playlists.',
     color: '#FF5500',
   },
   {
     icon: GraduationCap,
     title: 'UNIVERSITY',
-    description: 'Level 1 is free — learn the fundamentals of training, nutrition, and mindset.',
+    description: 'Unit 1 of Level 2 is free — real fitness, nutrition & mindset education, included with membership.',
     color: '#3B82F6',
   },
 ];
