@@ -97,6 +97,18 @@ export function FloatingMiniPlayer() {
     } catch { /* cancelled */ }
   };
 
+  const handleDownload = () => {
+    if (!track?.audio_url) return;
+    const a = document.createElement('a');
+    a.href = track.audio_url;
+    a.download = `${track.title} - ${track.artist_name || 'UNBREAKABLE'}.mp3`;
+    a.target = '_blank';
+    a.rel = 'noopener';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  };
+
   const handleShareSocial = async () => {
     try {
       toast.loading('Creating share card...');
@@ -405,7 +417,7 @@ export function FloatingMiniPlayer() {
               <button
                 onClick={() => {
                   if (hasFullAccess || ownedTrackIds.has(track.id)) {
-                    handleShareSocial();
+                    handleDownload();
                   } else {
                     toast.error('Purchase this track to download');
                   }
@@ -415,6 +427,7 @@ export function FloatingMiniPlayer() {
                     ? 'text-white hover:text-primary'
                     : 'text-white/30 hover:text-white/50'
                 }`}
+                title="Download"
               >
                 <Download className="w-5 h-5" />
               </button>
