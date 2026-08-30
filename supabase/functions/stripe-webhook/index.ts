@@ -4,6 +4,8 @@ import { createClient } from "npm:@supabase/supabase-js@2.57.2";
 
 const log = (_step: string, _details?: any) => {};
 
+const FOUNDER_ID = "c219f448-c05a-4fe3-ae11-793222b7dced"; // John's user ID — same account as founder-welcome's DM
+
 // ── Price ID → course key mapping (one-time purchases) ──
 // Updated 2026-05-26 to match current Stripe products
 const PRICE_TO_COURSE: Record<string, string> = {
@@ -485,6 +487,172 @@ serve(async (req) => {
           body: "We couldn't process your last payment. Please update your payment method to keep your membership active.",
           data: { subscription_id: subscriptionId, attempt: invoice.attempt_count, link: "/ai-tokens" },
         }).catch(() => {});
+
+        break;
+      }
+
+      // ━━━ TRIAL ENDING SOON (NEWBEGINNING7 trial) ━━━
+      // Stripe fires this automatically 3 days before a trial converts to a paid
+      // subscription. We use it to warn the member before they're charged — an
+      // in-app notification, a DM from the founder, and an email — rather than
+      // letting the card just get charged silently.
+      case "customer.subscription.trial_will_end": {
+        const subscription = event.data.object as Stripe.Subscription;
+
+        const { data: balRow } = await serviceClient
+          .from("token_balances")
+          .select("user_id")
+          .eq("stripe_subscription_id", subscription.id)
+          .maybeSingle();
+
+        let userId = balRow?.user_id;
+        if (!userId) {
+          const custId = typeof subscription.customer === "string"
+            ? subscription.customer
+            : (subscription.customer as any)?.id;
+          userId = await resolveUserId(stripe, custId, subscription.metadata?.user_id) ?? undefined;
+        }
+
+        if (!userId) { log("Cannot resolve user for trial_will_end"); break; }
+
+        const priceId = subscription.items.data[0]?.price?.id;
+        const amount = subscription.items.data[0]?.price?.unit_amount;
+        const priceLabel = amount ? `£${(amount / 100).toFixed(0)}/mo` : "the normal monthly price";
+
+        const trialEndDate = subscription.trial_end
+          ? new Date(subscription.trial_end * 1000)
+          : null;
+        const daysLeft = trialEndDate
+          ? Math.max(1, Math.round((trialEndDate.getTime() - Date.now()) / 86400000))
+          : 3;
+        const dateLabel = trialEndDate
+          ? trialEndDate.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })
+          : "in a few days";
+
+        const { data: profile } = await serviceClient
+          .from("profiles")
+          .select("display_name")
+          .eq("user_id", userId)
+          .maybeSingle();
+        const firstName = (profile?.display_name || "").split(" ")[0] || "there";
+
+        log("Trial ending soon", { userId, subscriptionId: subscription.id, daysLeft, dateLabel });
+
+        // 1. In-app notification
+        await serviceClient.from("notifications").insert({
+          user_id: userId,
+          type: "trial_ending",
+          title: `Your free trial ends in ${daysLeft} day${daysLeft === 1 ? "" : "s"}`,
+          body: `Unless you cancel before ${dateLabel}, your card will be charged ${priceLabel} and your membership continues automatically.`,
+          data: { subscription_id: subscription.id, price_id: priceId, trial_end: subscription.trial_end, link: "/ai-tokens" },
+        }).catch((e) => log("Notification error (non-fatal)", { error: String(e) }));
+
+        // 2. Founder DM — find or create the shared 1:1 conversation (same
+        // lookup pattern as send-drip-messages).
+        try {
+          const { data: founderRows } = await serviceClient
+            .from("conversation_participants")
+            .select("conversation_id")
+            .eq("user_id", FOUNDER_ID);
+          const { data: userRows } = await serviceClient
+            .from("conversation_participants")
+            .select("conversation_id")
+            .eq("user_id", userId);
+
+          const founderConvos = new Set((founderRows || []).map((r: any) => r.conversation_id));
+          let conversationId = (userRows || []).find((r: any) => founderConvos.has(r.conversation_id))?.conversation_id;
+
+          if (!conversationId) {
+            const { data: convo } = await serviceClient.from("conversations").insert({}).select("id").single();
+            if (convo) {
+              conversationId = convo.id;
+              await serviceClient.from("conversation_participants").insert([
+                { conversation_id: convo.id, user_id: FOUNDER_ID },
+                { conversation_id: convo.id, user_id: userId },
+              ]);
+            }
+          }
+
+          if (conversationId) {
+            const dmText = `Quick heads up, ${firstName} — your free trial ends on ${dateLabel}. After that you'll move onto the normal ${priceLabel} membership automatically and your card will be charged, unless you cancel before then. No pressure either way, just didn't want it to catch you off guard. You can manage or cancel any time from the Membership page.`;
+            await serviceClient.from("messages").insert({
+              conversation_id: conversationId,
+              sender_id: FOUNDER_ID,
+              content: dmText,
+            });
+            await serviceClient.from("conversations").update({ last_message_at: new Date().toISOString() }).eq("id", conversationId);
+          }
+        } catch (dmErr) {
+          log("Trial-ending DM error (non-fatal)", { error: String(dmErr) });
+        }
+
+        // 3. Email via Resend
+        const resendKey = Deno.env.get("RESEND_API_KEY");
+        if (resendKey) {
+          try {
+            const { data: authData } = await serviceClient.auth.admin.getUserById(userId);
+            const userEmail = authData?.user?.email;
+            if (userEmail) {
+              const html = `<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="color-scheme" content="dark"/>
+<title>UNBREAKABLE</title>
+</head>
+<body style="margin:0;padding:0;background:#0a0a0a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#e5e5e5;-webkit-text-size-adjust:100%">
+<div style="display:none;max-height:0;overflow:hidden">Your free trial ends ${dateLabel} — here's what happens next.&#8199;&#65279;&#847;</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#0a0a0a">
+<tr><td align="center" style="padding:24px 16px">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;margin:0 auto">
+<tr><td align="center" style="padding:0 0 24px">
+  <a href="https://www.unbreakable-lwl.com" style="text-decoration:none">
+    <span style="font-size:28px;font-weight:800;letter-spacing:3px;color:#f97316">UNBREAKABLE</span><br/>
+    <span style="font-size:10px;letter-spacing:2px;color:#a3a3a3;text-transform:uppercase">Live Without Limits</span>
+  </a>
+</td></tr>
+<tr><td style="background:#141414;border:1px solid #262626;border-radius:12px;padding:32px 28px">
+  <h1 style="margin:0 0 16px;font-size:22px;font-weight:800;letter-spacing:1px;color:#e5e5e5;line-height:1.3">
+    Your trial ends in ${daysLeft} day${daysLeft === 1 ? "" : "s"}, ${firstName}.
+  </h1>
+  <p style="color:#a3a3a3;font-size:15px;line-height:1.7;margin:0 0 20px">
+    Just a heads up — your free trial ends on <strong style="color:#e5e5e5">${dateLabel}</strong>. If you do nothing, your card will be charged <strong style="color:#e5e5e5">${priceLabel}</strong> and your membership continues automatically, no action needed.
+  </p>
+  <p style="color:#a3a3a3;font-size:15px;line-height:1.7;margin:0 0 24px">
+    Want to cancel instead? You can do that any time before ${dateLabel} from your Membership page — no charge if you cancel before then.
+  </p>
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+  <tr><td align="center"><a href="https://www.unbreakable-lwl.com/ai-tokens" style="display:inline-block;background:#f97316;color:#fff;font-weight:700;font-size:14px;letter-spacing:1px;text-decoration:none;padding:14px 32px;border-radius:8px;text-transform:uppercase">MANAGE MEMBERSHIP</a></td></tr>
+  </table>
+  <hr style="border:none;border-top:1px solid #262626;margin:24px 0"/>
+  <p style="color:#a3a3a3;font-size:13px;line-height:1.6;margin:0 0 4px">
+    I've sent you a DM in the app too if you'd rather just message me directly.
+  </p>
+  <p style="color:#a3a3a3;font-size:13px;margin:0">— John, Founder</p>
+</td></tr>
+<tr><td align="center" style="padding:24px 0 0;font-size:11px;color:#a3a3a3;line-height:1.6">
+  <a href="https://www.unbreakable-lwl.com" style="color:#f97316;text-decoration:none">UNBREAKABLE</a> &middot; Liverpool, UK<br/>
+  Built by one person, for real people.
+</td></tr>
+</table></td></tr></table></body></html>`;
+
+              const emailRes = await fetch("https://api.resend.com/emails", {
+                method: "POST",
+                headers: { Authorization: `Bearer ${resendKey}`, "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  from: "UNBREAKABLE <noreply@mail.unbreakable-lwl.com>",
+                  to: [userEmail],
+                  subject: `Your trial ends in ${daysLeft} day${daysLeft === 1 ? "" : "s"} — here's what happens next`,
+                  html,
+                }),
+              });
+              if (!emailRes.ok) {
+                log("Trial-ending email failed", { status: emailRes.status });
+              }
+            }
+          } catch (emailErr) {
+            log("Trial-ending email error (non-fatal)", { error: String(emailErr) });
+          }
+        }
 
         break;
       }
