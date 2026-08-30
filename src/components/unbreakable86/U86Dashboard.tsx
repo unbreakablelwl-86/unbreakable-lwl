@@ -3,12 +3,12 @@
  * The core daily view: day counter, Daily 7 habits, today's programme, journal
  * Matches Mindset gold standard styling.
  */
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Flame, Dumbbell, BookOpen, Droplets, Target, Wind, ThermometerSun, Snowflake,
   PenLine, ChevronDown, Check, BarChart3,
-  Trophy, RotateCcw, Zap, Star, Shield, ArrowRight, Lock,
+  Trophy, RotateCcw, Zap, Star, Shield, ArrowRight, Lock, Award, History,
 } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
@@ -27,6 +27,10 @@ interface U86DashboardProps {
   onViewProgress: () => void;
   /** The user's locked heat/cold choice for the full 86 days. */
   therapyChoice: 'sauna' | 'cold_shower';
+  /** Past runs (reset or completed) — kept even after a reset so completed days are never lost. */
+  fetchPastRuns?: () => Promise<U86Enrolment[]>;
+  /** Set once the certificate has unlocked (completed_at is stamped) — the tracker keeps running past it. */
+  onViewCertificate?: () => void;
 }
 
 const HABITS = [
@@ -63,12 +67,22 @@ export function U86Dashboard({
   onUpdateJournal,
   onViewProgress,
   therapyChoice,
+  fetchPastRuns,
+  onViewCertificate,
 }: U86DashboardProps) {
   const DAILY_7 = dailyHabits(therapyChoice);
   const [activeTab, setActiveTab] = useState<U86Tab>('dashboard');
   const [journalText, setJournalText] = useState(todayLog?.journal || '');
   const [journalSaving, setJournalSaving] = useState(false);
   const [expandedSection, setExpandedSection] = useState<string | null>('habits');
+  const [pastRuns, setPastRuns] = useState<U86Enrolment[]>([]);
+  const beyondCore = enrolment.current_day > 86;
+
+  useEffect(() => {
+    if (activeTab === 'progress' && fetchPastRuns) {
+      fetchPastRuns().then(setPastRuns).catch(() => {});
+    }
+  }, [activeTab, fetchPastRuns]);
 
   const habitsCompleted = u86CountDone(todayLog as any, therapyChoice);
   const allDone = habitsCompleted >= U86_TOTAL_HABITS;
@@ -133,11 +147,34 @@ export function U86Dashboard({
               <span className="block font-display text-5xl text-primary neon-glow">
                 {enrolment.current_day}
               </span>
-              <span className="font-display text-[10px] text-muted-foreground tracking-widest">OF 86</span>
+              <span className="font-display text-[10px] text-muted-foreground tracking-widest">
+                {beyondCore ? '🏆 BEYOND 86' : 'OF 86'}
+              </span>
             </div>
           </div>
         </motion.div>
       </div>
+
+      {/* ─── Certificate unlocked banner ─── */}
+      {enrolment.completed_at && onViewCertificate && (
+        <div className="px-4 mb-4">
+          <button
+            onClick={onViewCertificate}
+            className="w-full rounded-xl border border-primary/40 bg-primary/10 p-3 flex items-center justify-between gap-3 ub-glow"
+          >
+            <div className="flex items-center gap-2.5">
+              <Award className="w-5 h-5 text-primary shrink-0" style={{ filter: 'drop-shadow(0 0 6px rgba(255,85,0,0.7))' }} />
+              <div className="text-left">
+                <p className="font-display text-xs tracking-wider text-foreground">86-DAY CERTIFICATE UNLOCKED</p>
+                <p className="text-muted-foreground text-[10px] mt-0.5">
+                  {beyondCore ? `Still going — ${enrolment.current_day - 86} bonus day${enrolment.current_day - 86 === 1 ? '' : 's'} beyond 86.` : 'View your Platinum certificate.'}
+                </p>
+              </div>
+            </div>
+            <ArrowRight className="w-4 h-4 text-primary shrink-0" />
+          </button>
+        </div>
+      )}
 
       {/* ─── Quick Stats ─── */}
       <div className="px-4 mb-4">
@@ -313,7 +350,9 @@ export function U86Dashboard({
                   <Trophy className="w-10 h-10 text-primary mx-auto mb-2" style={{ filter: 'drop-shadow(0 0 10px rgba(255,85,0,0.5))' }} />
                   <h3 className="font-display text-lg tracking-wider text-foreground">DAY {enrolment.current_day} COMPLETE</h3>
                   <p className="text-muted-foreground text-xs mt-1">
-                    {86 - enrolment.current_day} days to go. Keep showing up.
+                    {beyondCore
+                      ? `Bonus streak day ${enrolment.current_day - 86}. Keep showing up.`
+                      : `${86 - enrolment.current_day} days to go. Keep showing up.`}
                   </p>
                 </motion.div>
               )}
@@ -326,27 +365,33 @@ export function U86Dashboard({
           <>
             {/* Progress Grid */}
             <div className="rounded-xl border border-border bg-card p-4">
-              <h3 className="font-display text-xs tracking-wider text-muted-foreground mb-3">86-DAY CALENDAR</h3>
+              <h3 className="font-display text-xs tracking-wider text-muted-foreground mb-3">
+                {beyondCore ? `${enrolment.current_day}-DAY CALENDAR — CORE 86 + BONUS STREAK` : '86-DAY CALENDAR'}
+              </h3>
               <div className="grid grid-cols-7 gap-1.5">
                 {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((d, i) => (
                   <div key={`h${i}`} className="text-center text-[9px] font-display tracking-wider text-muted-foreground pb-0.5">
                     {d}
                   </div>
                 ))}
-                {Array.from({ length: 86 }, (_, i) => {
+                {Array.from({ length: Math.max(86, enrolment.current_day) }, (_, i) => {
                   const dayNum = i + 1;
                   const isCompleted = dayNum < enrolment.current_day;
                   const isToday = dayNum === enrolment.current_day;
+                  const isBonus = isCompleted && dayNum > 86;
                   return (
                     <div
                       key={dayNum}
                       className={`w-full aspect-square rounded-md flex items-center justify-center font-display text-[11px] transition-all border ${
-                        isCompleted ? 'bg-primary/90 border-primary text-white'
+                        isBonus ? 'text-[#1a1a1a]'
+                        : isCompleted ? 'bg-primary/90 border-primary text-white'
                         : isToday ? 'bg-primary/20 border-primary text-primary'
                         : 'bg-card border-border text-muted-foreground/50'
                       }`}
-                      style={isCompleted ? { boxShadow: '0 0 6px rgba(255,85,0,0.35)' } : {}}
-                      title={`Day ${dayNum}`}
+                      style={isBonus
+                        ? { background: 'linear-gradient(135deg,#FFD700,#FFA500)', borderColor: '#FFD700', boxShadow: '0 0 8px rgba(255,215,0,0.5)' }
+                        : isCompleted ? { boxShadow: '0 0 6px rgba(255,85,0,0.35)' } : {}}
+                      title={`Day ${dayNum}${isBonus ? ' — bonus streak' : ''}`}
                     >
                       {isCompleted ? <Check className="w-3.5 h-3.5" /> : dayNum}
                     </div>
@@ -355,6 +400,11 @@ export function U86Dashboard({
               </div>
               <div className="flex items-center gap-4 mt-3 text-[10px] text-muted-foreground flex-wrap">
                 <div className="flex items-center gap-1"><div className="w-2.5 h-2.5 rounded-sm bg-primary" /> Completed</div>
+                {beyondCore && (
+                  <div className="flex items-center gap-1">
+                    <div className="w-2.5 h-2.5 rounded-sm" style={{ background: 'linear-gradient(135deg,#FFD700,#FFA500)' }} /> Bonus streak
+                  </div>
+                )}
                 <div className="flex items-center gap-1"><div className="w-2.5 h-2.5 rounded-sm bg-primary/20 ring-1 ring-primary" /> Today</div>
                 <div className="flex items-center gap-1"><div className="w-2.5 h-2.5 rounded-sm bg-border/50" /> Remaining</div>
               </div>
@@ -397,10 +447,45 @@ export function U86Dashboard({
                 <p className="text-muted-foreground text-[9px] font-display tracking-wider">OVERALL</p>
               </div>
               <div className="rounded-xl border border-border bg-card p-3 text-center">
-                <p className="font-display text-2xl text-foreground">{86 - enrolment.current_day + 1}</p>
-                <p className="text-muted-foreground text-[9px] font-display tracking-wider">DAYS LEFT</p>
+                <p className="font-display text-2xl text-foreground">
+                  {beyondCore ? enrolment.current_day - 86 : 86 - enrolment.current_day + 1}
+                </p>
+                <p className="text-muted-foreground text-[9px] font-display tracking-wider">
+                  {beyondCore ? 'BONUS DAYS' : 'DAYS LEFT'}
+                </p>
               </div>
             </div>
+
+            {/* Past Attempts — every reset keeps the days completed on record */}
+            {pastRuns.length > 0 && (
+              <div className="rounded-xl border border-border bg-card p-4">
+                <div className="flex items-center gap-2 mb-3">
+                  <History className="w-4 h-4 text-muted-foreground" />
+                  <h3 className="font-display text-xs tracking-wider text-muted-foreground">PAST ATTEMPTS</h3>
+                </div>
+                <div className="space-y-1.5">
+                  {pastRuns.map(run => {
+                    const daysReached = Math.max(0, run.current_day - 1);
+                    const wasCompleted = !!run.completed_at;
+                    return (
+                      <div key={run.id} className="flex items-center justify-between rounded-lg bg-background/60 border border-border/60 px-3 py-2">
+                        <div className="flex items-center gap-2">
+                          {wasCompleted
+                            ? <Trophy className="w-3.5 h-3.5 text-primary shrink-0" />
+                            : <RotateCcw className="w-3.5 h-3.5 text-muted-foreground shrink-0" />}
+                          <span className="text-xs text-foreground">
+                            {wasCompleted ? `Completed — ${daysReached} days` : `Reached day ${daysReached}`}
+                          </span>
+                        </div>
+                        <span className="text-[10px] text-muted-foreground">
+                          {new Date(run.completed_at || run.updated_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </>
         )}
       </div>

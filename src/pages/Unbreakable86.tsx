@@ -40,11 +40,14 @@ export default function Unbreakable86() {
   const u86 = useUnbreakable86();
   const [view, setView] = useState<U86View | null>(null);
 
-  // Determine initial view based on enrolment state
+  // Determine initial view based on enrolment state.
+  // Completing day 86 unlocks the certificate but does NOT lock the user out of
+  // the dashboard — the tracker keeps running (day 87, 88...) until an actual
+  // missed day resets it, so 'completed' lands on the dashboard same as 'active'.
+  // The certificate is reached from a button on the dashboard instead.
   const activeView = view ?? (
     u86.loading ? null
-    : u86.isCompleted ? 'certificate'
-    : u86.isEnrolled ? 'dashboard'
+    : (u86.isEnrolled || u86.isCompleted) ? 'dashboard'
     : 'landing'
   );
 
@@ -176,6 +179,8 @@ export default function Unbreakable86() {
           onUpdateJournal={u86.updateJournal}
           therapyChoice={u86.therapyChoice}
           onViewProgress={() => {}}
+          fetchPastRuns={u86.fetchPastRuns}
+          onViewCertificate={u86.enrolment.completed_at ? () => setView('certificate') : undefined}
         />
         </PaywallGate>
       ) : null;
@@ -185,6 +190,7 @@ export default function Unbreakable86() {
         <U86Certificate
           enrolment={u86.enrolment}
           userName={user?.user_metadata?.full_name || user?.email || 'ATHLETE'}
+          onBack={() => setView('dashboard')}
         />
       ) : null;
   }

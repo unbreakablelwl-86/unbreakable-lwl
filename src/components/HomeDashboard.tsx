@@ -5,6 +5,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useProfile } from '@/hooks/useProfile';
 import { useTokenBalance } from '@/hooks/useTokenBalance';
 import { useLoginStreak } from '@/hooks/useLoginStreak';
+import { useUnbreakable86 } from '@/hooks/useUnbreakable86';
 import { UpgradeNudge } from '@/components/paywall/UpgradeNudge';
 import { NotificationsPanel } from '@/components/hub/NotificationsPanel';
 import { useNotifications } from '@/hooks/useNotifications';
@@ -116,6 +117,8 @@ export function HomeDashboard() {
   const { profile } = useProfile();
   const tokenState = useTokenBalance();
   const { streak: loginStreak } = useLoginStreak();
+  const u86 = useUnbreakable86();
+  const u86Active = !!u86.enrolment && (u86.enrolment.status === 'active' || u86.enrolment.status === 'completed');
   const { unreadCount } = useNotifications();
   const [activeActions, setActiveActions] = useState<string[]>(loadSavedActions);
   const [editing, setEditing] = useState(false);
@@ -249,14 +252,35 @@ export function HomeDashboard() {
                 style={{ boxShadow: '0 0 20px rgba(255,85,0,0.2)' }}>
                 <Flame className="w-6 h-6 text-primary" style={{ filter: 'drop-shadow(0 0 8px rgba(255,85,0,0.6))' }} />
               </div>
-              <div className="flex-1">
-                <h3 className="font-display text-base tracking-wider text-primary"
-                  style={{ textShadow: '0 0 15px rgba(255,85,0,0.3)' }}>
-                  UNBREAKABLE 86
-                </h3>
-                <p className="text-xs text-muted-foreground">86 days · 5 pillars · No days off</p>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <h3 className="font-display text-base tracking-wider text-primary"
+                    style={{ textShadow: '0 0 15px rgba(255,85,0,0.3)' }}>
+                    UNBREAKABLE 86
+                  </h3>
+                  {u86Active && (
+                    <span className="font-display text-[10px] tracking-wider text-primary bg-primary/15 border border-primary/30 rounded-full px-2 py-0.5 shrink-0">
+                      DAY {u86.enrolment!.current_day}
+                    </span>
+                  )}
+                </div>
+                {u86Active ? (
+                  <div className="mt-1.5">
+                    <div className="h-1.5 w-full rounded-full bg-muted/40 overflow-hidden border border-border/60">
+                      <div
+                        className="h-full rounded-full transition-all duration-500"
+                        style={{ width: `${u86.progress}%`, background: 'linear-gradient(90deg,#FF5500,#FFB300)' }}
+                      />
+                    </div>
+                    <p className="text-[11px] text-muted-foreground mt-1">
+                      {u86.progress}% of the core 86{u86.enrolment!.current_day > 86 ? ` · +${u86.enrolment!.current_day - 86} bonus streak` : ''}
+                    </p>
+                  </div>
+                ) : (
+                  <p className="text-xs text-muted-foreground">86 days · 5 pillars · No days off</p>
+                )}
               </div>
-              <ChevronRight className="w-5 h-5 text-primary/60" />
+              <ChevronRight className="w-5 h-5 text-primary/60 shrink-0" />
             </div>
           </motion.div>
         </Link>

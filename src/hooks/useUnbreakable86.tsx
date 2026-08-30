@@ -104,8 +104,11 @@ export function useUnbreakable86() {
 
         completedDays = count || 0;
 
-        // Check for missed / incomplete days — miss one and the calendar resets to Day 1
-        if ((enrolment as any).status === 'active') {
+        // Check for missed / incomplete days — miss one and the calendar resets to Day 1.
+        // This still applies after the 86-day certificate unlocks ('completed' status):
+        // the tracker keeps running day 87, 88, 89... and only breaks on an actual miss,
+        // it doesn't stop just because the formal challenge is done.
+        if ((enrolment as any).status === 'active' || (enrolment as any).status === 'completed') {
           const startDate = parseISO((enrolment as any).start_date);
           const daysSinceStart = differenceInCalendarDays(new Date(), startDate);
 
@@ -180,6 +183,17 @@ export function useUnbreakable86() {
   const therapyChoice: 'sauna' | 'cold_shower' =
     (state.enrolment?.quiz_answers as any)?.therapy_choice === 'sauna' ? 'sauna' : 'cold_shower';
 
+  /**
+   * Crossing day 86 unlocks the certificate, but the tracker doesn't stop —
+   * it keeps counting day 87, 88, 89... and only breaks on an actual missed
+   * day (see the status==='completed' branch in fetchEnrolment above). This
+   * only fires the email once, the first time completed_at gets set.
+   */
+  const maybeFireCertificateEmail = useCallback((enrolmentId: string) => {
+    supabase.functions.invoke('send-u86-certificate', { body: { enrolment_id: enrolmentId } })
+      .catch(() => {}); // Non-blocking — a failed email must never block the tracker
+  }, []);
+
   /* ─── Toggle habit ─── */
   const toggleHabit = useCallback(async (habit: keyof U86DailyLog) => {
     if (!user || !state.enrolment) return;
@@ -234,19 +248,24 @@ export function useUnbreakable86() {
       // Day banked for the first time (>= 3 of the Daily 7) — advance the day.
       // wasBanked guards this from ever firing twice for the same log.
       if (updatedLog.all_habits_done && !wasBanked) {
+        // completed_at is a one-way flag too — only set (and only email) the
+        // very first time the user crosses day 86. Every day after that keeps
+        // advancing current_day without re-stamping completed_at.
+        const firstCompletion = currentDay + 1 > 86 && !state.enrolment.completed_at;
         await supabase
           .from('unbreakable86_enrolments' as any)
           .update({
             current_day: currentDay + 1,
             updated_at: new Date().toISOString(),
-            ...(currentDay + 1 > 86 ? { status: 'completed', completed_at: new Date().toISOString() } : {}),
+            ...(firstCompletion ? { status: 'completed', completed_at: new Date().toISOString() } : {}),
           })
           .eq('id', enrolmentId);
 
+        if (firstCompletion) maybeFireCertificateEmail(enrolmentId);
         await fetchEnrolment();
       }
     }
-  }, [user, state.enrolment, state.todayLog, today, fetchEnrolment, therapyChoice]);
+  }, [user, state.enrolment, state.todayLog, today, fetchEnrolment, therapyChoice, maybeFireCertificateEmail]);
 
   /* ─── Update journal + trigger AI consistency update ─── */
   const updateJournal = useCallback(async (journal: string) => {
@@ -271,14 +290,16 @@ export function useUnbreakable86() {
     // Writing the journal can be the 3rd habit — bank and advance the day
     if (banked && !wasBanked && state.enrolment) {
       const nextDay = state.enrolment.current_day + 1;
+      const firstCompletion = nextDay > 86 && !state.enrolment.completed_at;
       await supabase
         .from('unbreakable86_enrolments' as any)
         .update({
           current_day: nextDay,
           updated_at: new Date().toISOString(),
-          ...(nextDay > 86 ? { status: 'completed', completed_at: new Date().toISOString() } : {}),
+          ...(firstCompletion ? { status: 'completed', completed_at: new Date().toISOString() } : {}),
         })
         .eq('id', state.enrolment.id);
+      if (firstCompletion) maybeFireCertificateEmail(state.enrolment.id);
       await fetchEnrolment();
     }
 
@@ -288,7 +309,7 @@ export function useUnbreakable86() {
         body: { enrolment_id: state.enrolment.id, day_number: state.todayLog.day_number },
       }).catch(() => {}); // Non-blocking
     }
-  }, [state.todayLog, state.enrolment, therapyChoice, fetchEnrolment]);
+  }, [state.todayLog, state.enrolment, therapyChoice, fetchEnrolment, maybeFireCertificateEmail]);
 
   /* ─── Manual reset (user-triggered restart) ─── */
   const resetEnrolment = useCallback(async (enrolmentId: string, currentResets: number) => {
@@ -309,6 +330,20 @@ export function useUnbreakable86() {
     return (data || []) as U86DailyLog[];
   }, [state.enrolment]);
 
+  /** Every past run (reset or completed) — the record of days completed stays even after a reset. */
+  const fetchPastRuns = useCallback(async (): Promise<U86Enrolment[]> => {
+    if (!user) return [];
+
+    const { data } = await supabase
+      .from('unbreakable86_enrolments' as any)
+      .select('*')
+      .eq('user_id', user.id)
+      .in('status', ['reset', 'abandoned'])
+      .order('created_at', { ascending: false });
+
+    return (data || []) as U86Enrolment[];
+  }, [user]);
+
   return {
     ...state,
     therapyChoice,
@@ -317,10 +352,13 @@ export function useUnbreakable86() {
     toggleHabit,
     updateJournal,
     fetchAllLogs,
+    fetchPastRuns,
     refresh: fetchEnrolment,
     isEnrolled: !!state.enrolment && state.enrolment.status === 'active',
     isCompleted: !!state.enrolment && state.enrolment.status === 'completed',
-    progress: state.enrolment ? Math.round((state.completedDays / 86) * 100) : 0,
+    // Once the tracker keeps running past day 86, completedDays can exceed 86 —
+    // clamp the display percentage at 100 rather than showing 108%, 130%, etc.
+    progress: state.enrolment ? Math.min(100, Math.round((state.completedDays / 86) * 100)) : 0,
     currentPhase: state.enrolment
       ? state.enrolment.current_day <= 28 ? 'FOUNDATION'
       : state.enrolment.current_day <= 56 ? 'BUILD'

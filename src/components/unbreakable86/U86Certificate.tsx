@@ -5,7 +5,7 @@
  */
 import { useRef, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { Trophy, Award, Calendar, Flame, Share2, Download, RotateCcw } from 'lucide-react';
+import { Trophy, Award, Calendar, Flame, Share2, Download, RotateCcw, ChevronLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
@@ -16,9 +16,11 @@ interface U86CertificateProps {
   userName: string;
   /** True when a coach/dev is viewing someone else's certificate */
   isViewerMode?: boolean;
+  /** Return to the live tracker — the challenge keeps running past day 86, this isn't a dead end. */
+  onBack?: () => void;
 }
 
-export function U86Certificate({ enrolment, userName, isViewerMode }: U86CertificateProps) {
+export function U86Certificate({ enrolment, userName, isViewerMode, onBack }: U86CertificateProps) {
   const certRef = useRef<HTMLDivElement>(null);
   const completedDate = enrolment.completed_at ? format(new Date(enrolment.completed_at), 'dd MMMM yyyy') : '';
   const startDate = format(new Date(enrolment.start_date), 'dd MMMM yyyy');
@@ -76,6 +78,17 @@ export function U86Certificate({ enrolment, userName, isViewerMode }: U86Certifi
 
   return (
     <div className="min-h-screen pb-24 bg-background">
+      {/* ─── Back to tracker ─── */}
+      {onBack && (
+        <div className="px-4 pt-4">
+          <button
+            onClick={onBack}
+            className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors font-display tracking-wider"
+          >
+            <ChevronLeft className="w-4 h-4" /> BACK TO TRACKER
+          </button>
+        </div>
+      )}
       {/* ─── Viewer badge for coaches/devs ─── */}
       {isViewerMode && (
         <motion.div
