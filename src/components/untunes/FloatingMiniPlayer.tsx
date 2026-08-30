@@ -299,10 +299,9 @@ export function FloatingMiniPlayer() {
 
             {/* Cover Art */}
             <div className="flex-1 min-h-0 flex flex-col items-center justify-center px-8 py-4 relative">
-              <motion.div
-                animate={{ rotate: state.isPlaying ? 360 : 0 }}
-                transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
-                className="w-56 h-56 sm:w-64 sm:h-64 md:w-72 md:h-72 rounded-2xl overflow-hidden border-2 border-primary/20 shadow-[0_0_40px_rgba(255,85,0,0.2)] shrink-0"
+              <div
+                className="w-56 h-56 sm:w-64 sm:h-64 md:w-72 md:h-72 rounded-2xl overflow-hidden border-2 border-primary/20 shadow-[0_0_40px_rgba(255,85,0,0.2)] shrink-0 animate-[spin_8s_linear_infinite]"
+                style={{ animationPlayState: state.isPlaying ? 'running' : 'paused' }}
               >
                 {track.cover_url ? (
                   <img loading="lazy" src={track.cover_url} alt={track.title} className="w-full h-full object-cover" />
@@ -311,7 +310,7 @@ export function FloatingMiniPlayer() {
                     <Music className="w-16 h-16 text-primary/40 drop-shadow-[0_0_12px_rgba(255,85,0,0.3)]" />
                   </div>
                 )}
-              </motion.div>
+              </div>
             </div>
 
             {/* Track Info */}
