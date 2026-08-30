@@ -56,6 +56,20 @@ const ONE_TIME_PRICES = new Set([
   "price_1TaPmmD5KOEmeWH2aoxZv7uk", "price_1TaPmsD5KOEmeWH2NmqQQnW1",
 ]);
 
+// Token top-up price IDs specifically (subset of ONE_TIME_PRICES above) — must
+// mirror stripe-webhook.ts's PRICE_TO_TOPUP. Top-ups only make sense for
+// members who actually have coach access to spend the fuel on; a free/manual
+// account has none (see featureGating.ts's ai_coach_basic gate), so selling
+// them a top-up would just be a confusing charge for something they can't
+// use. Checked server-side too — not just hidden in the UI — since this
+// endpoint is callable directly with any priceId in ONE_TIME_PRICES.
+const TOPUP_PRICES = new Set([
+  "price_1U8jm2D5KOEmeWH249kqt6M0",
+  "price_1TaPmmD5KOEmeWH2lbJWYqDf",
+  "price_1TaPmmD5KOEmeWH2aoxZv7uk",
+  "price_1TaPmsD5KOEmeWH2NmqQQnW1",
+]);
+
 // Tier 2 (121 coaching) price IDs that trigger dev notifications
 const COACHING_121_PRICES = new Set([
   "price_1TOZ0jD5KOEmeWH23osCaN4Y",
@@ -115,6 +129,32 @@ serve(async (req) => {
       throw new Error("This price is not available for checkout");
     }
     logStep("Price ID received", { priceId });
+
+    // Top-ups require existing coach access (Unbreakable, or the £7 retention
+    // tier which gets limited coach access too). Free/manual accounts have no
+    // tier that can spend coach fuel, so block the purchase before it reaches
+    // Stripe rather than let someone pay £10 for tokens they can't use.
+    // Dev/coach roles bypass this, same as every other paywall in the app.
+    if (TOPUP_PRICES.has(priceId)) {
+      const { data: roleRow } = await serviceClient
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", user.id)
+        .in("role", ["dev", "coach"])
+        .maybeSingle();
+
+      if (!roleRow) {
+        const { data: balanceRow } = await serviceClient
+          .from("token_balances")
+          .select("current_tier")
+          .eq("user_id", user.id)
+          .maybeSingle();
+        const tier = balanceRow?.current_tier || "free";
+        if (tier === "free") {
+          throw new Error("Top-ups are for members with coach access — upgrade to Unbreakable first.");
+        }
+      }
+    }
 
     const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", { apiVersion: "2025-08-27.basil" });
 
