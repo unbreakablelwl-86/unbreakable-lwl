@@ -239,7 +239,8 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
             className="text-[#888] text-base sm:text-lg md:text-xl leading-relaxed max-w-2xl mx-auto mb-8"
           >
             Training, nutrition, mindset and education in one platform.
-            Your own AI coach. A community that keeps you accountable.
+            Your own AI coach — beginner to sport-specific, it covers every level.
+            Just tell it what you need. A community that keeps you accountable.
             Built for people who are done quitting.
           </motion.p>
 
