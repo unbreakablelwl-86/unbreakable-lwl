@@ -16,6 +16,7 @@ import { useHelpChat, Message } from '@/hooks/useHelpChat';
 import { ThemedLogo } from '@/components/ThemedLogo';
 import { ProfileButton } from '@/components/coaching/ProfileButton';
 import { PlanDisplayCard } from '@/components/coaching/PlanDisplayCard';
+import { VoiceSettingsSheet } from '@/components/coaching/VoiceSettingsSheet';
 import { useAIPreferences } from '@/hooks/useAIPreferences';
 import { useJJVoice } from '@/hooks/useJJVoice';
 import { useCoachName } from '@/hooks/useCoachName';
@@ -838,6 +839,7 @@ export default function Help() {
                   <span className="hidden sm:inline">DELETE</span>
                 </button>
               )}
+              <VoiceSettingsSheet />
               <ProfileButton />
             </div>
 
