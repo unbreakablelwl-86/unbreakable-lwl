@@ -257,19 +257,27 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
               onClick={goSignUp}
             >
               <Sparkles size={18} />
-              JOIN — £50/MO, LAUNCH OFFER
+              JOIN — 7 DAYS FREE
             </button>
           </motion.div>
 
           <motion.div
             variants={fadeUp}
             transition={{ duration: 0.6 }}
-            className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-[#666] text-xs sm:text-sm"
+            className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-[#666] text-xs sm:text-sm mb-3"
           >
-            <span className="flex items-center gap-1.5"><Check size={14} className="text-[#FF5500]" /> £75/mo → £50/mo for launch</span>
+            <span className="flex items-center gap-1.5"><Check size={14} className="text-[#FF5500]" /> 7 days free, then £50/mo</span>
             <span className="flex items-center gap-1.5"><Check size={14} className="text-[#FF5500]" /> 1,000 coach tokens a month</span>
             <span className="flex items-center gap-1.5"><Check size={14} className="text-[#FF5500]" /> Cancel anytime</span>
           </motion.div>
+
+          <motion.p
+            variants={fadeUp}
+            transition={{ duration: 0.6 }}
+            className="text-[#666] text-xs sm:text-sm"
+          >
+            New here? Use code <span className="text-[#FF5500] font-bold">NEWBEGINNING7</span> at sign up.
+          </motion.p>
         </motion.div>
 
         {/* Scroll indicator */}
@@ -630,6 +638,10 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
                 🔒 Lock in the <span className="text-white font-semibold">Unbreakable offer price for life</span>.
                 <span className="line-through opacity-50">£75/mo</span> → <span className="text-[#FF5500] font-bold">£50/mo</span>. Your rate never increases.
               </p>
+              <p className="text-[#888] mt-2 max-w-xl mx-auto text-sm">
+                🆕 New members get <span className="text-white font-semibold">7 days free</span> with code{' '}
+                <span className="text-[#FF5500] font-bold">NEWBEGINNING7</span> — cancel anytime before it ends and you won't be charged.
+              </p>
             </motion.div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
@@ -742,9 +754,11 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
             }}
             onClick={goSignUp}
           >
-            START NOW — £50/MO
+            START NOW — 7 DAYS FREE
           </button>
-          <p className="text-[#555] text-xs mt-4">Launch price locked for life · 1,000 tokens a month · Cancel anytime</p>
+          <p className="text-[#555] text-xs mt-4">
+            7 days free with code <span className="text-[#FF5500] font-semibold">NEWBEGINNING7</span>, then £50/mo · Launch price locked for life · Cancel anytime
+          </p>
         </div>
       </section>
 

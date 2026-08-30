@@ -62,6 +62,18 @@ const COACHING_121_PRICES = new Set([
   "price_1T6Gc7RgwCgvPuKnfH1WiggU",
 ]);
 
+// "New Beginning" launch offer: 7-day free trial, then billed at the normal
+// rate. Stripe coupons can't set a subscription's trial length — only
+// subscription_data.trial_period_days on the Checkout Session can — so this
+// code is validated here rather than as a Stripe promotion code. Restricted
+// to brand-new customers (no existing Stripe customer record for the email)
+// so it can't be repeatedly reapplied by an existing/returning subscriber.
+const TRIAL_OFFER_CODE = "NEWBEGINNING7";
+const TRIAL_OFFER_DAYS = 7;
+const TRIAL_ELIGIBLE_PRICES = new Set([
+  "price_1TxFZED5KOEmeWH2ZSHP5Azn", // Foundation £50/mo
+]);
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -95,7 +107,7 @@ serve(async (req) => {
     if (!user?.email) throw new Error("User not authenticated or email not available");
     logStep("User authenticated", { email: user.email });
 
-    const { priceId } = await req.json();
+    const { priceId, promoCode } = await req.json();
     if (!priceId || typeof priceId !== "string" || !priceId.startsWith("price_")) {
       throw new Error("Invalid price ID");
     }
@@ -120,6 +132,16 @@ serve(async (req) => {
 
     logStep("Checkout mode", { mode, isSubscription });
 
+    const normalizedPromo = typeof promoCode === "string" ? promoCode.trim().toUpperCase() : "";
+    const grantsTrial =
+      isSubscription &&
+      TRIAL_ELIGIBLE_PRICES.has(priceId) &&
+      normalizedPromo === TRIAL_OFFER_CODE &&
+      !customerId; // new customers only
+    if (normalizedPromo === TRIAL_OFFER_CODE) {
+      logStep("Trial offer code presented", { grantsTrial, hadExistingCustomer: !!customerId });
+    }
+
     // Build session config
     const sessionConfig: any = {
       customer: customerId,
@@ -135,6 +157,7 @@ serve(async (req) => {
     if (isSubscription) {
       sessionConfig.subscription_data = {
         metadata: { user_id: user.id },
+        ...(grantsTrial ? { trial_period_days: TRIAL_OFFER_DAYS } : {}),
       };
     } else {
       // One-time payment, attach user_id for webhook processing
@@ -144,7 +167,7 @@ serve(async (req) => {
     }
 
     // Idempotency key: prevents duplicate sessions from double-click / retry
-    const idempotencyKey = `checkout_${user.id}_${priceId}_${Math.floor(Date.now() / 30000)}`;
+    const idempotencyKey = `checkout_${user.id}_${priceId}_${grantsTrial ? "trial" : "std"}_${Math.floor(Date.now() / 30000)}`;
     const session = await stripe.checkout.sessions.create(sessionConfig, {
       idempotencyKey,
     });

@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { useTokenBalance } from '@/hooks/useTokenBalance';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -29,6 +29,10 @@ const TIER_ICONS: Record<string, React.ElementType> = {
   foundation: Crown,
 };
 
+/* ─── "New Beginning" launch offer ─── */
+const TRIAL_OFFER_CODE = 'NEWBEGINNING7';
+const TRIAL_OFFER_DAYS = 7;
+
 export default function AITokens() {
   const { user } = useAuth();
   const {
@@ -36,8 +40,18 @@ export default function AITokens() {
     monthlyTokens, isUnlimited, loading,
   } = useTokenBalance();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
   const [showCancel, setShowCancel] = useState(false);
+  const [promoCode, setPromoCode] = useState('');
+
+  // Auto-fill the offer code from a marketing link (?promo=NEWBEGINNING7)
+  useEffect(() => {
+    const fromUrl = searchParams.get('promo') || searchParams.get('code');
+    if (fromUrl) setPromoCode(fromUrl.toUpperCase());
+  }, [searchParams]);
+
+  const promoApplied = promoCode.trim().toUpperCase() === TRIAL_OFFER_CODE;
 
   const userTier = (currentTier || 'free') as TierKey;
   const usedTokens = monthlyTokens - balance;
@@ -89,7 +103,10 @@ export default function AITokens() {
     setCheckoutLoading(tier.key);
     try {
       const { data, error } = await supabase.functions.invoke('create-checkout', {
-        body: { priceId: tier.stripePriceId },
+        body: {
+          priceId: tier.stripePriceId,
+          ...(promoApplied ? { promoCode: TRIAL_OFFER_CODE } : {}),
+        },
       });
       if (error) throw error;
       if (data?.url) {
@@ -125,10 +142,10 @@ export default function AITokens() {
         <div className="w-full overflow-hidden bg-primary text-primary-foreground py-2.5 mb-6">
           <motion.div
             animate={{ x: ['100%', '-100%'] }}
-            transition={{ duration: 18, repeat: Infinity, ease: 'linear' }}
+            transition={{ duration: 22, repeat: Infinity, ease: 'linear' }}
             className="whitespace-nowrap font-display tracking-wider text-sm"
           >
-            🔒 UNBREAKABLE OFFER — PRICE LOCKED FOR LIFE! 🔒 &nbsp;&nbsp;&nbsp; JOIN NOW &amp; NEVER PAY MORE &nbsp;&nbsp;&nbsp; 🔒 UNBREAKABLE OFFER — PRICE LOCKED FOR LIFE! 🔒 &nbsp;&nbsp;&nbsp; JOIN NOW &amp; NEVER PAY MORE &nbsp;&nbsp;&nbsp; 🔒 LOCK IN YOUR PRICE FOR LIFE! 🔒
+            🆕 NEW BEGINNING OFFER — 7 DAYS FREE, THEN £50/MO 🆕 &nbsp;&nbsp;&nbsp; USE CODE <strong>NEWBEGINNING7</strong> AT SIGN UP &nbsp;&nbsp;&nbsp; CANCEL ANYTIME &nbsp;&nbsp;&nbsp; 🔒 PRICE LOCKED FOR LIFE 🔒 &nbsp;&nbsp;&nbsp; 🆕 NEW BEGINNING OFFER — 7 DAYS FREE, THEN £50/MO 🆕 &nbsp;&nbsp;&nbsp; USE CODE <strong>NEWBEGINNING7</strong> AT SIGN UP &nbsp;&nbsp;&nbsp; CANCEL ANYTIME &nbsp;&nbsp;&nbsp; 🔒 PRICE LOCKED FOR LIFE 🔒
           </motion.div>
         </div>
 
@@ -148,6 +165,32 @@ export default function AITokens() {
               Choose your level. Free gets you the hub, socials &amp; manual tools.
               Upgrade to unlock AI coaching, programmes, and the full platform.
             </p>
+
+            {/* ─── New Beginning offer code ─── */}
+            <div className="flex flex-col items-center gap-2 mt-5">
+              <div className="flex items-center gap-2">
+                <div className="relative">
+                  <Tag className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
+                  <input
+                    value={promoCode}
+                    onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
+                    placeholder="OFFER CODE"
+                    maxLength={20}
+                    className="pl-8 pr-3 py-2 rounded-lg bg-muted border border-border text-xs font-display tracking-wider
+                      text-center outline-none focus:ring-2 focus:ring-primary/40 w-40"
+                  />
+                </div>
+              </div>
+              {promoApplied ? (
+                <p className="text-xs text-primary font-display tracking-wide flex items-center gap-1.5">
+                  <Check className="w-3.5 h-3.5" /> NEWBEGINNING7 applied — {TRIAL_OFFER_DAYS} days free, then £50/mo
+                </p>
+              ) : (
+                <p className="text-[11px] text-muted-foreground">
+                  New here? Use code <span className="text-primary font-semibold">NEWBEGINNING7</span> for {TRIAL_OFFER_DAYS} days free.
+                </p>
+              )}
+            </div>
           </div>
 
           {/* ─── Current Balance Card ─── */}
@@ -283,10 +326,20 @@ export default function AITokens() {
 
                   {/* Founding member badge */}
                   {isPaid && (
-                    <div className="flex items-center gap-1.5 mb-3 bg-primary/10 rounded-lg px-2 py-1 w-fit">
+                    <div className="flex items-center gap-1.5 mb-2 bg-primary/10 rounded-lg px-2 py-1 w-fit">
                       <Lock className="w-3.5 h-3.5 text-primary" />
                       <span className="text-xs text-primary font-display tracking-wide">
                         FOUNDING MEMBER — <span className="font-bold">PRICE LOCKED FOR LIFE</span>
+                      </span>
+                    </div>
+                  )}
+
+                  {/* New Beginning trial badge */}
+                  {isPaid && promoApplied && (
+                    <div className="flex items-center gap-1.5 mb-3 bg-green-500/10 rounded-lg px-2 py-1 w-fit">
+                      <Sparkles className="w-3.5 h-3.5 text-green-500" />
+                      <span className="text-xs text-green-500 font-display tracking-wide">
+                        {TRIAL_OFFER_DAYS} DAYS FREE with NEWBEGINNING7
                       </span>
                     </div>
                   )}
@@ -330,7 +383,9 @@ export default function AITokens() {
                         ? 'LOADING...'
                         : tier.monthlyPrice === 0
                           ? 'GET STARTED'
-                          : 'SUBSCRIBE'}
+                          : isPaid && promoApplied
+                            ? `START ${TRIAL_OFFER_DAYS}-DAY FREE TRIAL`
+                            : 'SUBSCRIBE'}
                   </button>
 
                   {/* Terms consent — required before any payment */}
@@ -340,7 +395,9 @@ export default function AITokens() {
                       <Link to="/terms" className="text-primary hover:underline">Terms &amp; Conditions</Link>
                       {' '}and{' '}
                       <Link to="/privacy" className="text-primary hover:underline">Privacy Policy</Link>.
-                      Billed monthly, cancel any time.
+                      {promoApplied
+                        ? ` ${TRIAL_OFFER_DAYS} days free, then billed monthly. Cancel any time before the trial ends and you won't be charged.`
+                        : ' Billed monthly, cancel any time.'}
                     </p>
                   )}
                 </motion.div>
