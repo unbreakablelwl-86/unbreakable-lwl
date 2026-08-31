@@ -139,7 +139,7 @@ export const U86_PHASES: U86Phase[] = [
     movement_focus: 'Base cardio & mobility',
     fuel_focus: 'Track everything, learn portions',
     mindset_focus: 'Daily breathwork & journaling',
-    education_focus: 'Level 1 fundamentals',
+    education_focus: 'Power & movement fundamentals',
     upsell: { course_key: 'gym_l2', course_name: 'Power Level 2', message: 'Want to understand WHY this programme works?' },
   },
   {
