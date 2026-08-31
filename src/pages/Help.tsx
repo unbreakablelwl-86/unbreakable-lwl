@@ -705,19 +705,28 @@ export default function Help() {
     recognition.continuous = true;
     recognition.maxAlternatives = 1;
 
-    let finalTranscript = input;
+    const baseText = input;
 
+    // Rebuild the final + interim transcript from scratch on every event,
+    // reading the whole event.results list rather than incrementally
+    // appending from event.resultIndex. Some browsers don't advance
+    // resultIndex reliably in continuous mode, which was causing already-
+    // finalized phrases to get appended again on the next event — the
+    // "words repeated/duplicated" echo. Recomputing the full transcript
+    // each time is immune to that, since nothing is ever added twice.
     recognition.onresult = (event: any) => {
-      let interim = '';
-      for (let i = event.resultIndex; i < event.results.length; i++) {
+      let finalText = '';
+      let interimText = '';
+      for (let i = 0; i < event.results.length; i++) {
         const transcript = event.results[i][0].transcript;
         if (event.results[i].isFinal) {
-          finalTranscript += (finalTranscript ? ' ' : '') + transcript;
+          finalText += (finalText ? ' ' : '') + transcript;
         } else {
-          interim = transcript;
+          interimText += (interimText ? ' ' : '') + transcript;
         }
       }
-      setInput(finalTranscript + (interim ? ' ' + interim : ''));
+      const combined = [baseText, finalText, interimText].filter(Boolean).join(' ');
+      setInput(combined);
     };
 
     recognition.onend = () => {
