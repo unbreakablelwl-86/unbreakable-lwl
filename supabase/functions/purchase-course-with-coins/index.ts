@@ -7,23 +7,23 @@ const corsHeaders = {
 };
 
 /**
- * Purchase a university course (or bundle of courses) by spending coins.
+ * Purchase a Training Guide (PDF) — or the all-guides bundle — with coins.
  *
- * Body: { courseKeys: string[], coinCost: number, label: string }
- *   - courseKeys: array of course keys to unlock (e.g. ['gym_l2'] or ['gym_l2','gym_l3','gym_l4'])
+ * University courses are no longer sold with tokens; access is
+ * subscription-only (see src/hooks/useCourseAccess.tsx). Course/sport
+ * purchasing has been removed from this function — Guides are the only
+ * thing it still sells.
+ *
+ * Body: { courseKeys: string[], coinCost: number, label: string, bundleKey?: string }
+ *   - courseKeys: guide keys to unlock (e.g. ['guide_01'] or all guide keys for the bundle)
  *   - coinCost: total coins to deduct (validated server-side against known pricing)
  *   - label: human-readable name for the transaction log
  */
 
-// ── Known pricing (must match frontend coursePricing.ts & guideData.ts) ──
-const COURSE_COIN_COST = 150;
+// ── Known pricing (must match frontend guideData.ts) ──
 const GUIDE_COIN_COST = 15;
 
 const BUNDLE_COSTS: Record<string, { courses: string[]; coinCost: number }> = {
-  power:   { courses: ["gym_l2", "gym_l3", "gym_l4"], coinCost: 375 },
-  fuel:    { courses: ["nutrition_l2", "nutrition_l3", "nutrition_l4"], coinCost: 375 },
-  mindset: { courses: ["mindset_l2", "mindset_l3"], coinCost: 250 },
-  all:     { courses: ["gym_l2", "gym_l3", "gym_l4", "nutrition_l2", "nutrition_l3", "nutrition_l4", "mindset_l2", "mindset_l3"], coinCost: 900 },
   guide_bundle_all: {
     courses: ["guide_01","guide_02","guide_03","guide_04","guide_05","guide_06","guide_07","guide_08","guide_09","guide_10",
               "guide_11","guide_12","guide_13","guide_14","guide_15","guide_16","guide_17","guide_18","guide_19","guide_20"],
@@ -39,16 +39,7 @@ const GUIDE_KEYS = new Set([
   "guide_16","guide_17","guide_18","guide_19","guide_20",
 ]);
 
-const VALID_COURSE_KEYS = new Set([
-  "gym_l2", "gym_l3", "gym_l4",
-  "nutrition_l2", "nutrition_l3", "nutrition_l4",
-  "mindset_l2", "mindset_l3",
-  "sport_football", "sport_rugby", "sport_cricket", "sport_tennis",
-  "sport_swimming", "sport_boxing", "sport_athletics", "sport_cycling",
-  "sport_gymnastics", "sport_martial_arts",
-  // Guides
-  ...GUIDE_KEYS,
-]);
+const VALID_COURSE_KEYS = GUIDE_KEYS;
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -117,10 +108,8 @@ serve(async (req) => {
       }
       expectedCost = bundle.coinCost;
     } else {
-      // Calculate cost per item — guides cost GUIDE_COIN_COST, courses cost COURSE_COIN_COST
-      expectedCost = courseKeys.reduce((sum: number, key: string) => {
-        return sum + (GUIDE_KEYS.has(key) ? GUIDE_COIN_COST : COURSE_COIN_COST);
-      }, 0);
+      // Every valid key at this point is a guide key (VALID_COURSE_KEYS === GUIDE_KEYS)
+      expectedCost = courseKeys.reduce((sum: number) => sum + GUIDE_COIN_COST, 0);
     }
 
     if (coinCost !== expectedCost) {
@@ -203,7 +192,7 @@ serve(async (req) => {
       user_id: user.id,
       course_key: key,
       payment_method: "coins",
-      coins_spent: bundleKey ? null : COURSE_COIN_COST,
+      coins_spent: bundleKey ? null : GUIDE_COIN_COST,
     }));
 
     const { error: insertError } = await supabase
