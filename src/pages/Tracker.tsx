@@ -6,15 +6,13 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/hooks/useAuth';
 import { useRuns, Run, CardioActivityType } from '@/hooks/useRuns';
-import { useMedals } from '@/hooks/useMedals';
 import { usePersonalRecords, PersonalRecord } from '@/hooks/usePersonalRecords';
 import { useSegments, Segment } from '@/hooks/useSegments';
 import { CardioTrackerModal } from '@/components/tracker/CardioTrackerModal';
 import { AuthModal } from '@/components/tracker/AuthModal';
-import { MEDAL_DEFINITIONS } from '@/lib/medalDefinitions';
 import { format, startOfWeek, endOfWeek, isWithinInterval, subWeeks } from 'date-fns';
 import {
-  Footprints, Bike, Play, Trophy, Medal, Crown,
+  Footprints, Bike, Play, Crown,
   MapPin, Clock, Flame, TrendingUp, TrendingDown, ChevronRight,
   Timer, Activity, Waves, Droplets, BarChart3, Route,
   Zap, Target, Star, Award, Calendar, Edit3, Layers,
@@ -30,7 +28,7 @@ const ACTIVITY_LABELS: Record<CardioActivityType, string> = {
 };
 
 /* ── Tabs ── */
-type TabId = 'overview' | 'activity' | 'trophies' | 'stats';
+type TabId = 'overview' | 'activity' | 'records' | 'stats';
 type ActivityFilter = 'all' | CardioActivityType;
 
 function formatDuration(seconds: number): string {
@@ -90,7 +88,6 @@ function useWeeklyStats(runs: Run[]) {
 export default function Tracker() {
   const { user } = useAuth();
   const { runs, loading: runsLoading } = useRuns();
-  const { medals, loading: medalsLoading } = useMedals();
   const { records, loading: recordsLoading } = usePersonalRecords();
   const { segments, loading: segmentsLoading } = useSegments();
   const [activeTab, setActiveTab] = useState<TabId>('overview');
@@ -148,7 +145,7 @@ export default function Tracker() {
   const TABS: { id: TabId; label: string; icon: React.ComponentType<any> }[] = [
     { id: 'overview', label: 'Overview', icon: Zap },
     { id: 'activity', label: 'Activity', icon: Activity },
-    { id: 'trophies', label: 'Trophies', icon: Trophy },
+    { id: 'records', label: 'Records', icon: Award },
     { id: 'stats', label: 'Stats', icon: BarChart3 },
   ];
 
@@ -228,7 +225,7 @@ export default function Tracker() {
               <div className="p-4 rounded-xl border border-primary/15 bg-card">
                 <p className="text-muted-foreground text-sm leading-relaxed">
                   The <span className="text-primary font-semibold">Unbreakable Movement</span> system
-                  tracks every step, every stride, every rep. GPS sessions, structured cardio programmes, trophies and personal records
+                  tracks every step, every stride, every rep. GPS sessions, structured cardio programmes, and personal records
                   — all built to keep you <span className="text-primary font-semibold">moving forward</span>.
                 </p>
                 <p className="text-primary font-display text-sm tracking-wide mt-3" style={{ textShadow: '0 0 10px hsl(var(--primary) / 0.3)' }}>
@@ -431,91 +428,9 @@ export default function Tracker() {
             </motion.div>
           )}
 
-          {/* ═══ TROPHIES TAB ═══ */}
-          {activeTab === 'trophies' && (
-            <motion.div key="trophies" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
-              {/* Summary banner */}
-              <div className="flex items-center justify-between mb-4 p-3 rounded-xl bg-card border border-border">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 border"
-                   >
-                    <Trophy className="w-5 h-5 text-primary" style={{ filter: 'drop-shadow(0 0 4px hsl(var(--primary) / 0.4))' }} />
-                  </div>
-                  <div>
-                    <p className="font-display text-sm text-foreground tracking-wide">{medals.length} / {MEDAL_DEFINITIONS.length} Trophies</p>
-                    <p className="text-[10px] text-muted-foreground">Keep pushing to unlock more</p>
-                  </div>
-                </div>
-                <div className="w-20 h-2 bg-card rounded-full overflow-hidden">
-                  <div 
-                    className="h-full bg-gradient-to-r from-primary to-[#FF7733] rounded-full transition-all"
-                    style={{ width: `${MEDAL_DEFINITIONS.length > 0 ? (medals.length / MEDAL_DEFINITIONS.length) * 100 : 0}%` }}
-                  />
-                </div>
-              </div>
-
-              {/* Earned Trophies */}
-              <div className="mb-6">
-                <h3 className="text-xs font-display tracking-wider text-muted-foreground mb-3">EARNED</h3>
-                {medalsLoading ? (
-                  <div className="flex justify-center py-8">
-                    <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                  </div>
-                ) : medals.length === 0 ? (
-                  <div className="p-8 text-center rounded-xl border border-border bg-card">
-                    <Trophy className="w-12 h-12 text-primary mx-auto mb-4" style={{ filter: 'drop-shadow(0 0 10px hsl(var(--primary) / 0.4))' }} />
-                    <h3 className="font-display text-lg text-foreground mb-2">EARN YOUR FIRST TROPHY</h3>
-                    <p className="text-muted-foreground text-sm">Complete activities to unlock trophies and medals</p>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-3 gap-3">
-                    {medals.map(medal => (
-                      <div key={medal.id} className="p-4 text-center rounded-xl border border-primary/20 bg-card hover:border-primary/40 transition-all">
-                        <div className="text-3xl mb-2">{medal.icon || '🏅'}</div>
-                        <p className="text-xs font-display text-foreground tracking-wide truncate">{medal.name}</p>
-                        <p className="text-[10px] text-muted-foreground mt-1">{format(new Date(medal.earned_at), 'MMM d, yyyy')}</p>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* Locked Trophies */}
-              {(() => {
-                const earnedCodes = new Set(medals.map(m => m.code));
-                const locked = MEDAL_DEFINITIONS.filter(d => !earnedCodes.has(d.code));
-                if (locked.length === 0) return null;
-                
-                const categories = [...new Set(locked.map(d => d.category))];
-                const categoryLabels: Record<string, string> = {
-                  distance: 'Distance', pace: 'Speed', milestone: 'Milestones', 
-                  streak: 'Consistency', special: 'Special', strength: 'Strength', cardio: 'Cardio'
-                };
-                
-                return (
-                  <div className="mb-6">
-                    <h3 className="text-xs font-display tracking-wider text-muted-foreground mb-3">LOCKED</h3>
-                    {categories.map(cat => {
-                      const items = locked.filter(d => d.category === cat);
-                      return (
-                        <div key={cat} className="mb-4">
-                          <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-2">{categoryLabels[cat] || cat}</p>
-                          <div className="grid grid-cols-3 gap-2">
-                            {items.map(d => (
-                              <div key={d.code} className="p-3 text-center rounded-xl border border-border/50 bg-background opacity-50">
-                                <div className="text-2xl mb-1 grayscale">{d.icon}</div>
-                                <p className="text-[10px] font-display text-muted-foreground tracking-wide truncate">{d.name}</p>
-                                <p className="text-[8px] text-muted-foreground mt-0.5 line-clamp-1">{d.description}</p>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                );
-              })()}
-
+          {/* ═══ RECORDS TAB ═══ */}
+          {activeTab === 'records' && (
+            <motion.div key="records" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
               {/* Personal Records */}
               <div>
                 <h3 className="text-xs font-display tracking-wider text-muted-foreground mb-3">PERSONAL RECORDS</h3>
@@ -576,7 +491,6 @@ export default function Tracker() {
                   { label: 'Elevation Gained', value: `${totalElev.toFixed(0)} m`, icon: TrendingUp },
                   { label: 'Longest Run', value: `${longestRun.toFixed(2)} km`, icon: Target },
                   { label: 'Fastest Pace', value: fastestPace > 0 ? `${formatPace(fastestPace)}/km` : '--', icon: Zap },
-                  { label: 'Medals Earned', value: `${medals.length}`, icon: Medal },
                 ];
 
                 return (
