@@ -709,18 +709,36 @@ export default function Help() {
 
     // Rebuild the final + interim transcript from scratch on every event,
     // reading the whole event.results list rather than incrementally
-    // appending from event.resultIndex. Some browsers don't advance
-    // resultIndex reliably in continuous mode, which was causing already-
-    // finalized phrases to get appended again on the next event — the
-    // "words repeated/duplicated" echo. Recomputing the full transcript
-    // each time is immune to that, since nothing is ever added twice.
+    // appending from event.resultIndex (some browsers don't advance
+    // resultIndex reliably in continuous mode).
+    //
+    // That alone isn't enough: some browsers (notably mobile Safari) mark
+    // several GROWING RESTATEMENTS of the same utterance as isFinal — e.g.
+    // "there" / "there is" / "there is still" can each arrive as their own
+    // isFinal:true result. Blindly concatenating every isFinal entry turns
+    // that into "there there is there is still ..." — the snowballing echo.
+    // Instead, when the next final entry is just a longer version of the
+    // one we're already holding, REPLACE it rather than appending; when
+    // it's a shorter/stale restatement of what we already have, ignore it;
+    // only a genuinely distinct segment gets appended.
     recognition.onresult = (event: any) => {
       let finalText = '';
       let interimText = '';
       for (let i = 0; i < event.results.length; i++) {
-        const transcript = event.results[i][0].transcript;
+        const transcript = event.results[i][0].transcript.trim();
         if (event.results[i].isFinal) {
-          finalText += (finalText ? ' ' : '') + transcript;
+          if (!transcript) continue;
+          const finalLower = finalText.toLowerCase();
+          const transcriptLower = transcript.toLowerCase();
+          if (!finalText) {
+            finalText = transcript;
+          } else if (transcriptLower.startsWith(finalLower)) {
+            finalText = transcript; // longer restatement of the same segment
+          } else if (finalLower.startsWith(transcriptLower)) {
+            // shorter/stale restatement of what we already have — ignore
+          } else {
+            finalText += ' ' + transcript; // genuinely new, distinct segment
+          }
         } else {
           interimText += (interimText ? ' ' : '') + transcript;
         }
