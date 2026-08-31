@@ -22,6 +22,7 @@ export type FeatureId =
   | 'habit_tracker'
   | 'calculators'
   | 'exercise_browse'     // Browse exercises (viewing is free)
+  | 'university_l1'       // Level 1 courses
   | 'profile'
   | 'inbox'
   // Base features
@@ -99,6 +100,12 @@ const FEATURE_GATES: Record<FeatureId, FeatureGate> = {
     id: 'exercise_browse',
     name: 'Exercise Browser',
     description: 'View and search 1,500+ exercises',
+    requiredTier: 'free',
+  },
+  university_l1: {
+    id: 'university_l1',
+    name: 'University Level 1',
+    description: 'Free introductory courses for all pillars',
     requiredTier: 'free',
   },
   profile: {

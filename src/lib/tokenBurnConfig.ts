@@ -69,6 +69,13 @@ export const TOKEN_ACTIONS: Record<string, TokenAction> = {
     category: 'free',
     baseCost: 0,
   },
+  university_l1: {
+    id: 'university_l1',
+    name: 'University Level 1',
+    description: 'Free introductory courses for all pillars',
+    category: 'free',
+    baseCost: 0,
+  },
   profile_timeline: {
     id: 'profile_timeline',
     name: 'Profile & timeline',
@@ -169,8 +176,7 @@ export const TOKEN_ACTIONS: Record<string, TokenAction> = {
 
   // ─── UNI COURSES (one-time purchase, lifetime access) ───
   // All courses L2-L4: 50 tokens each (£20 equivalent)
-  // University starts at Level 2 — no free Level 1 tier. Must complete
-  // the previous level to unlock the next: L2 → L3 → L4
+  // Must complete previous level to unlock next: L1(free) → L2 → L3 → L4
   course_l2: {
     id: 'course_l2',
     name: 'Level 2 course',
