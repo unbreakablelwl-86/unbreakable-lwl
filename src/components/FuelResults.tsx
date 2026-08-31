@@ -1,6 +1,9 @@
-import { Flame, Zap, Wheat, Droplets, Activity, TrendingUp } from 'lucide-react';
+import { Flame, Zap, Wheat, Droplets, Activity, TrendingUp, Save, ArrowRight } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
+import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
+import { useNutritionGoals } from '@/hooks/useNutritionGoals';
 import type { FuelResult } from '@/lib/fuelCalculations';
 
 interface FuelResultsProps {
@@ -8,6 +11,24 @@ interface FuelResultsProps {
 }
 
 export function FuelResults({ result }: FuelResultsProps) {
+  const navigate = useNavigate();
+  const { saveGoals } = useNutritionGoals();
+
+  const handleSaveToTracker = () => {
+    saveGoals.mutate(
+      {
+        daily_calories: result.targetCalories,
+        daily_protein_g: result.protein,
+        daily_carbs_g: result.carbs,
+        daily_fat_g: result.fat,
+        goals_mode: 'manual',
+      },
+      {
+        onSuccess: () => navigate('/fuel/my-fuel'),
+      }
+    );
+  };
+
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* Target Calories - Matches Speed Calculator Hero Card */}
@@ -24,9 +45,22 @@ export function FuelResults({ result }: FuelResultsProps) {
               {result.targetCalories.toLocaleString()}
             </div>
           </div>
-          <p className="text-muted-foreground">
+          <p className="text-muted-foreground mb-4">
             calories per day
           </p>
+          <Button
+            onClick={handleSaveToTracker}
+            disabled={saveGoals.isPending}
+            className="w-full font-display tracking-wide"
+          >
+            {saveGoals.isPending ? (
+              <div className="w-4 h-4 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin mr-2" />
+            ) : (
+              <Save className="w-4 h-4 mr-2" />
+            )}
+            SAVE TO FUEL TRACKER
+            <ArrowRight className="w-4 h-4 ml-2" />
+          </Button>
         </CardContent>
       </Card>
 

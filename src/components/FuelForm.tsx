@@ -35,7 +35,8 @@ export function FuelForm({ onCalculate }: FuelFormProps) {
   const [heightFt, setHeightFt] = useState('5');
   const [heightIn, setHeightIn] = useState('10');
   const [heightCm, setHeightCm] = useState('178');
-  const [weight, setWeight] = useState('180');
+  const [weightLbs, setWeightLbs] = useState('180');
+  const [weightKg, setWeightKg] = useState('82');
   const [activityLevel, setActivityLevel] = useState<ActivityLevel>('moderate');
   const [goal, setGoal] = useState<Goal>('maintain');
   const [macroSplit, setMacroSplit] = useState<MacroSplit>('balanced');
@@ -44,8 +45,8 @@ export function FuelForm({ onCalculate }: FuelFormProps) {
     e.preventDefault();
     
     const ageNum = parseInt(age);
-    const weightNum = parseFloat(weight);
-    
+    const weightNum = unit === 'imperial' ? parseFloat(weightLbs) : parseFloat(weightKg);
+
     if (isNaN(ageNum) || isNaN(weightNum)) return;
     
     if (unit === 'imperial') {
@@ -197,14 +198,25 @@ export function FuelForm({ onCalculate }: FuelFormProps) {
         <div>
           <Label htmlFor="weight">Weight</Label>
           <div className="flex items-center gap-2 mt-1">
-            <Input
-              id="weight"
-              type="number"
-              value={weight}
-              onChange={(e) => setWeight(e.target.value)}
-              min="50"
-              max="500"
-            />
+            {unit === 'imperial' ? (
+              <Input
+                id="weight"
+                type="number"
+                value={weightLbs}
+                onChange={(e) => setWeightLbs(e.target.value)}
+                min="50"
+                max="500"
+              />
+            ) : (
+              <Input
+                id="weight"
+                type="number"
+                value={weightKg}
+                onChange={(e) => setWeightKg(e.target.value)}
+                min="25"
+                max="250"
+              />
+            )}
             <span className="text-muted-foreground">{unit === 'imperial' ? 'lbs' : 'kg'}</span>
           </div>
         </div>
