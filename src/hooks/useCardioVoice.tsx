@@ -10,7 +10,7 @@ import { speakOnDevice } from "@/hooks/useJJVoice";
 export function useCardioVoice({ enabled }: { enabled: boolean }) {
   const speak = useCallback(async (text: string) => {
     if (!enabled) return;
-    speakOnDevice(text);
+    await speakOnDevice(text);
   }, [enabled]);
 
   const stop = useCallback(() => {

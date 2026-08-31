@@ -17,7 +17,7 @@ export function useBreathingAudio({ enabled }: UseBreathingAudioOptions) {
   const playAudio = useCallback(
     async (text: string) => {
       if (!enabled) return;
-      speakOnDevice(text);
+      await speakOnDevice(text);
     },
     [enabled]
   );

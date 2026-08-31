@@ -60,32 +60,78 @@ function saveSettings(s: VoiceSettings) {
 const FEMALE_EXCLUDE = ['female', 'samantha', 'victoria', 'karen', 'moira', 'tessa', 'fiona', 'serena', 'zira', 'hazel', 'amelie', 'joana', 'susan', 'kate', 'emma', 'olivia', 'zoe'];
 const MALE_HINTS = ['male', 'daniel', 'alex', 'fred', 'david', 'george', 'oliver', 'thomas', 'rishi', 'aaron', 'arthur', 'james', 'ryan', 'nathan', 'brian', 'guy'];
 
-function pickMaleDeviceVoice(): SpeechSynthesisVoice | null {
-  if (typeof window === 'undefined' || !window.speechSynthesis) return null;
-  const voices = window.speechSynthesis.getVoices();
+/* getVoices() commonly returns an empty list the first time it's called —
+ * most browsers (mobile Chrome/Safari especially) load the voice list
+ * asynchronously in the background and only fire 'voiceschanged' once it's
+ * ready. Breathwork and cardio cues are often the very first speech request
+ * of a session, so they were hitting that empty window: no voice ever got
+ * set on the utterance, and the browser fell back to its own system
+ * default — which on iOS Safari, for one, is a female voice (Samantha).
+ * That's what made it look like "male voice everywhere except breathwork
+ * and cardio". This caches the list and, when it's not ready yet, waits
+ * (briefly, with a timeout) for it before picking a voice. */
+let cachedVoices: SpeechSynthesisVoice[] = [];
+
+function getVoicesReady(): Promise<SpeechSynthesisVoice[]> {
+  if (typeof window === 'undefined' || !window.speechSynthesis) return Promise.resolve([]);
+  const existing = window.speechSynthesis.getVoices();
+  if (existing.length) {
+    cachedVoices = existing;
+    return Promise.resolve(existing);
+  }
+  if (cachedVoices.length) return Promise.resolve(cachedVoices);
+
+  return new Promise((resolve) => {
+    let done = false;
+    const finish = () => {
+      if (done) return;
+      done = true;
+      const voices = window.speechSynthesis.getVoices();
+      cachedVoices = voices;
+      resolve(voices);
+    };
+    window.speechSynthesis.addEventListener('voiceschanged', finish, { once: true });
+    // Some browsers never fire voiceschanged (voices were already available
+    // some other way) — don't hang the first cue of a session waiting.
+    setTimeout(finish, 350);
+  });
+}
+
+function pickMaleDeviceVoice(voices: SpeechSynthesisVoice[]): SpeechSynthesisVoice | null {
   if (!voices.length) return null;
 
   const notFemale = (v: SpeechSynthesisVoice) => !FEMALE_EXCLUDE.some(h => v.name.toLowerCase().includes(h));
-  const en = voices.filter(v => v.lang?.toLowerCase().startsWith('en'));
-  const enMale = en.filter(notFemale);
-  const pool = enMale.length ? enMale : (en.length ? en : voices.filter(notFemale));
+  const isMaleHint = (v: SpeechSynthesisVoice) => MALE_HINTS.some(h => v.name.toLowerCase().includes(h));
+  const isGB = (v: SpeechSynthesisVoice) => v.lang?.toLowerCase().includes('gb');
+  const isEn = (v: SpeechSynthesisVoice) => v.lang?.toLowerCase().startsWith('en');
 
-  // Prefer a UK voice that matches a male hint.
-  const gb = pool.filter(v => v.lang?.toLowerCase().includes('gb'));
-  for (const list of [gb, pool]) {
-    const match = list.find(v => MALE_HINTS.some(h => v.name.toLowerCase().includes(h)));
-    if (match) return match;
+  // Every tier below is filtered through notFemale first — a female-named
+  // voice is only ever returned if literally no other voice exists on the
+  // device at all, which the old fallback chain didn't guarantee.
+  const nonFemale = voices.filter(notFemale);
+  const tiers = [
+    nonFemale.filter(v => isGB(v) && isMaleHint(v)),
+    nonFemale.filter(v => isEn(v) && isMaleHint(v)),
+    nonFemale.filter(isMaleHint),
+    nonFemale.filter(isGB),
+    nonFemale.filter(isEn),
+    nonFemale,
+    voices.filter(isGB),
+    voices.filter(isEn),
+  ];
+  for (const list of tiers) {
+    if (list.length) return list[0];
   }
-  // Last resort: any voice we haven't already ruled out as female-named.
-  return pool[0] ?? voices[0] ?? null;
+  return voices[0] ?? null;
 }
 
-export function speakOnDevice(text: string): boolean {
+export async function speakOnDevice(text: string): Promise<boolean> {
   if (typeof window === 'undefined' || !window.speechSynthesis) return false;
   try {
+    const voices = await getVoicesReady();
     window.speechSynthesis.cancel();
     const utter = new SpeechSynthesisUtterance(text);
-    const voice = pickMaleDeviceVoice();
+    const voice = pickMaleDeviceVoice(voices);
     if (voice) utter.voice = voice;
     utter.lang = voice?.lang || 'en-GB';
     utter.rate = 1.0;
@@ -152,7 +198,7 @@ export function useJJVoice() {
 
     // Cardio and mindset cues use the free device voice, not billed TTS.
     if (feature === 'cardio' || feature === 'mindset') {
-      if (speakOnDevice(cleanText)) return;
+      if (await speakOnDevice(cleanText)) return;
     }
 
     setIsSpeaking(true);
