@@ -68,6 +68,11 @@ export default function SignIn() {
   // Default to signup mode if ?mode=signup in URL (e.g. from "JOIN FREE" on landing)
   const initialMode = searchParams.get('mode') === 'signup' ? 'signup' : 'signin';
   const [mode, setMode] = useState<'signin' | 'signup'>(initialMode);
+  // "7 days free coaching" hero button appends &plan=trial — once this account
+  // is verified we route straight into the Foundation trial checkout instead
+  // of the home feed, so the free-trial promise doesn't dead-end on a plain
+  // free account.
+  const wantsTrial = searchParams.get('plan') === 'trial';
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -183,7 +188,11 @@ export default function SignIn() {
           }
         } catch {}
         toast.success('Email verified! Welcome to the movement. 🔥');
-        navigate('/');
+        if (wantsTrial) {
+          navigate('/ai-tokens?promo=NEWBEGINNING7');
+        } else {
+          navigate('/');
+        }
       }
     } catch (err: any) {
       setFormError(err?.message || 'Verification failed.');
@@ -353,6 +362,11 @@ export default function SignIn() {
         </div>
 
         <form onSubmit={handleSubmit} className="p-5 pt-5 space-y-4">
+          {mode === 'signup' && wantsTrial && (
+            <div className="text-xs text-primary bg-primary/10 border border-primary/20 rounded-xl px-3 py-2.5 text-center">
+              🎉 7 days free coaching — you'll go straight to checkout after verifying your email. Cancel anytime before day 7 and you won't be charged.
+            </div>
+          )}
           {mode === 'signup' && (
             <>
               <div className="space-y-1.5">

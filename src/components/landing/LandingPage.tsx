@@ -159,6 +159,10 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
 
   const goSignIn = () => navigate('/signin');
   const goSignUp = () => navigate('/signin?mode=signup');
+  // "7 days free coaching" — same signup form, but flags intent so SignIn
+  // routes straight into the Foundation trial checkout (NEWBEGINNING7)
+  // once the account is verified, instead of dropping them on the home feed.
+  const goSignUpTrial = () => navigate('/signin?mode=signup&plan=trial');
 
   return (
     <div className="min-h-screen" style={{ background: '#080808' }}>
@@ -248,38 +252,51 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
           <motion.div
             variants={fadeUp}
             transition={{ duration: 0.6 }}
-            className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-5"
+            className="flex flex-col sm:flex-row gap-5 sm:gap-4 justify-center items-stretch sm:items-start mb-5 max-w-xl mx-auto"
           >
-            <button
-              className="w-full sm:w-auto px-10 py-4 rounded-xl font-heading font-bold text-lg uppercase tracking-wider text-white transition-all active:scale-[0.97] flex items-center justify-center gap-2"
-              style={{
-                background: 'linear-gradient(135deg, #FF5500 0%, #CC4400 100%)',
-                boxShadow: '0 0 24px rgba(255,85,0,0.4), 0 0 80px rgba(255,85,0,0.15)',
-              }}
-              onClick={goSignUp}
-            >
-              <Sparkles size={18} />
-              JOIN — 7 DAYS FREE
-            </button>
+            <div className="flex-1 flex flex-col items-center gap-2">
+              <button
+                className="w-full px-6 py-4 rounded-xl font-heading font-bold text-base sm:text-lg uppercase tracking-wider text-white transition-all active:scale-[0.97] flex items-center justify-center gap-2"
+                style={{
+                  background: 'linear-gradient(135deg, #FF5500 0%, #CC4400 100%)',
+                  boxShadow: '0 0 24px rgba(255,85,0,0.4), 0 0 80px rgba(255,85,0,0.15)',
+                }}
+                onClick={goSignUpTrial}
+              >
+                <Sparkles size={18} />
+                7 DAYS FREE COACHING
+              </button>
+              <p className="text-[#777] text-xs sm:text-sm leading-snug">
+                Full AI coaching, programmes &amp; meal plans. Then £50/mo — cancel anytime before day 7.
+              </p>
+            </div>
+
+            <div className="flex-1 flex flex-col items-center gap-2">
+              <button
+                className="w-full px-6 py-4 rounded-xl font-heading font-bold text-base sm:text-lg uppercase tracking-wider text-white transition-all active:scale-[0.97] flex items-center justify-center gap-2"
+                style={{
+                  background: 'rgba(255,255,255,0.05)',
+                  border: '1px solid rgba(255,255,255,0.15)',
+                }}
+                onClick={goSignUp}
+              >
+                FREE SIGN UP
+              </button>
+              <p className="text-[#777] text-xs sm:text-sm leading-snug">
+                Trackers, nutrition, community &amp; more. Free forever, no card needed.
+              </p>
+            </div>
           </motion.div>
 
           <motion.div
             variants={fadeUp}
             transition={{ duration: 0.6 }}
-            className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-[#666] text-xs sm:text-sm mb-3"
+            className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-[#666] text-xs sm:text-sm"
           >
-            <span className="flex items-center gap-1.5"><Check size={14} className="text-[#FF5500]" /> 7 days free, then £50/mo</span>
-            <span className="flex items-center gap-1.5"><Check size={14} className="text-[#FF5500]" /> 1,000 coach tokens a month</span>
+            <span className="flex items-center gap-1.5"><Check size={14} className="text-[#FF5500]" /> No card needed to start free</span>
+            <span className="flex items-center gap-1.5"><Check size={14} className="text-[#FF5500]" /> 1,000 coach tokens a month on Unbreakable</span>
             <span className="flex items-center gap-1.5"><Check size={14} className="text-[#FF5500]" /> Cancel anytime</span>
           </motion.div>
-
-          <motion.p
-            variants={fadeUp}
-            transition={{ duration: 0.6 }}
-            className="text-[#666] text-xs sm:text-sm"
-          >
-            New here? Use code <span className="text-[#FF5500] font-bold">NEWBEGINNING7</span> at sign up.
-          </motion.p>
         </motion.div>
 
         {/* Scroll indicator */}
@@ -748,18 +765,27 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
           <p className="text-[#888] mb-8 max-w-md mx-auto text-sm sm:text-base">
             Stop starting over. Join the platform built for people who keep showing up.
           </p>
-          <button
-            className="w-full sm:w-auto px-12 py-4 rounded-xl font-heading font-bold text-lg uppercase tracking-wider text-white transition-all active:scale-[0.97]"
-            style={{
-              background: 'linear-gradient(135deg, #FF5500 0%, #CC4400 100%)',
-              boxShadow: '0 0 30px rgba(255,85,0,0.4), 0 0 80px rgba(255,85,0,0.15)',
-            }}
-            onClick={goSignUp}
-          >
-            START NOW — 7 DAYS FREE
-          </button>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
+            <button
+              className="w-full sm:w-auto px-10 py-4 rounded-xl font-heading font-bold text-base sm:text-lg uppercase tracking-wider text-white transition-all active:scale-[0.97]"
+              style={{
+                background: 'linear-gradient(135deg, #FF5500 0%, #CC4400 100%)',
+                boxShadow: '0 0 30px rgba(255,85,0,0.4), 0 0 80px rgba(255,85,0,0.15)',
+              }}
+              onClick={goSignUpTrial}
+            >
+              7 DAYS FREE COACHING
+            </button>
+            <button
+              className="w-full sm:w-auto px-10 py-4 rounded-xl font-heading font-bold text-base sm:text-lg uppercase tracking-wider text-white transition-all active:scale-[0.97]"
+              style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.15)' }}
+              onClick={goSignUp}
+            >
+              FREE SIGN UP
+            </button>
+          </div>
           <p className="text-[#555] text-xs mt-4">
-            7 days free with code <span className="text-[#FF5500] font-semibold">NEWBEGINNING7</span>, then £50/mo · Launch price locked for life · Cancel anytime
+            Free forever, no card needed · Or 7 days free coaching, then £50/mo · Launch price locked for life · Cancel anytime
           </p>
         </div>
       </section>
