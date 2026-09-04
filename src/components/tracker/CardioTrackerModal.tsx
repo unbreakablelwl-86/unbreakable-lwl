@@ -437,6 +437,13 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
   }, []);
 
   const resumeTracking = useCallback(() => {
+    // Re-arm the audio unlock on this real tap — some browsers (especially
+    // iOS Safari) can re-suspend audio after the app has been backgrounded
+    // or the screen dimmed while paused, so the unlock from the original
+    // "Start" tap can't always be assumed to still be in effect minutes
+    // later. Cheap and harmless to repeat.
+    unlockCoachAudio();
+
     // Calculate how long we were paused and add to pausedDuration
     if (pauseStartRef.current) {
       const pausedTime = Math.floor((Date.now() - pauseStartRef.current) / 1000);
@@ -1272,7 +1279,10 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
                   <Button
                     variant={voiceEnabled ? "default" : "outline"}
                     size="sm"
-                    onClick={() => setVoiceEnabled(!voiceEnabled)}
+                    onClick={() => {
+                      unlockCoachAudio();
+                      setVoiceEnabled(!voiceEnabled);
+                    }}
                     className="gap-2 font-display tracking-wide text-xs"
                   >
                     {voiceEnabled ? '🔊 VOICE ON' : '🔇 VOICE OFF'}

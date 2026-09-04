@@ -1,5 +1,6 @@
 import { useCallback, useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 /* ── Granular voice setting keys ── */
 export type VoiceFeature = 'chat' | 'mindset' | 'cardio' | 'notifications' | 'university';
@@ -108,6 +109,22 @@ export function unlockCoachAudio() {
   }
 }
 
+/* Voice failures used to be entirely silent — a dropped network call or a
+ * browser autoplay block looked identical to the user as "nothing
+ * happened", which made this near-impossible to diagnose remotely. Surface
+ * the first failure per short window as a toast, with a message that
+ * actually distinguishes "the browser wouldn't let this play" (needs a tap)
+ * from "the server call failed" (network/API issue) — two completely
+ * different fixes, previously indistinguishable from the outside. */
+let lastVoiceErrorToastAt = 0;
+function reportVoiceError(message: string) {
+  const now = Date.now();
+  if (now - lastVoiceErrorToastAt > 20000) {
+    lastVoiceErrorToastAt = now;
+    toast.error(message);
+  }
+}
+
 /**
  * Speak text through the shared ElevenLabs coach voice (with server-side
  * caching for repeated phrases). Returns true once playback has started;
@@ -130,6 +147,7 @@ export async function speakViaCoachVoice(text: string, onDone?: () => void): Pro
 
     if (res.error || !res.data) {
       console.error('Coach voice TTS error:', res.error);
+      reportVoiceError('Coach voice unavailable right now — check back shortly.');
       return false;
     }
 
@@ -148,6 +166,13 @@ export async function speakViaCoachVoice(text: string, onDone?: () => void): Pro
     return true;
   } catch (e) {
     console.error('Coach voice playback error:', e);
+    // NotAllowedError is the browser's autoplay block — a completely
+    // different fix (needs a fresh tap) from every other failure here.
+    if (e instanceof Error && e.name === 'NotAllowedError') {
+      reportVoiceError('Voice blocked by your browser — tap anywhere on screen, then try again.');
+    } else {
+      reportVoiceError("Coach voice couldn't play — try again.");
+    }
     onDone?.();
     return false;
   }

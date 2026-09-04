@@ -302,7 +302,10 @@ const MindsetBreathing = () => {
             <div className="flex items-center gap-2">
               {/* Voice on/off toggle */}
               <button
-                onClick={() => setVoiceEnabled(!voiceEnabled)}
+                onClick={() => {
+                  unlockCoachAudio();
+                  setVoiceEnabled(!voiceEnabled);
+                }}
                 className={`flex items-center gap-2 px-3 py-2.5 rounded-xl border transition-all flex-1 ${
                   voiceEnabled
                     ? 'border-primary/30 bg-primary/5'
