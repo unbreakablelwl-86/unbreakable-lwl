@@ -14,8 +14,8 @@ export const FEATURES = {
   pbCards: false,
   /** 1-2-1 coaching marketplace tab for clients. */
   coachesTab: false,
-  /** Live Story ring / story editor on the hub feed. */
-  liveStory: false,
+  /** Live Story ring / story editor on the hub feed. Re-enabled Aug/Sep 2026 (JJ). */
+  liveStory: true,
   /** Sports certificates & sports courses in Unbreakable University. Kept active for the owner account. */
   sportsCertificates: false,
   /** 'Meet the Founder' page (/founder) and its footer link. Re-enabled Aug 2026 (JJ). */

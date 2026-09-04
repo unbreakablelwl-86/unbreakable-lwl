@@ -192,18 +192,17 @@ ${btn("Visit the Community", `${B.url}/community`)}`)
   /* ── DAY 4: UNIVERSITY ── */
   case 4: return {
     subject: "Learn how your body actually works",
-    preheader: "19 courses, real content, study at your own pace.",
-    html: wrap("19 courses, real content, study at your own pace.",
+    preheader: "Level 2 & 3 courses in fitness, nutrition and mindset, included with your membership.",
+    html: wrap("Level 2 & 3 courses in fitness, nutrition and mindset, included with your membership.",
       `${h1(`The ${ac("University")}.`)}
-${p(`This is the part of Unbreakable most people miss at first. Proper course content, anatomy, nutrition science, programming, sport-specific training, psychology, broken into pieces you can actually get through.`)}
-${pb(`<strong>19 courses across 4 disciplines:</strong>`)}
-${feat("🏋️","Power (L2–L4)","Exercise science, programming, strength & conditioning")}
-${feat("🥗","Fuel (L2–L4)","Nutrition science, meal planning, dietary analysis")}
-${feat("🧠","Mindset (L2–L4)","Psychology, behaviour change, mental performance")}
-${feat("⚽","Sport (10 courses)","Football, boxing, rugby, running, swimming, MMA, cycling, tennis, basketball, cricket")}
+${p(`This is the part of Unbreakable most people miss at first. Proper course content, anatomy, nutrition science, programming, psychology, broken into pieces you can actually get through.`)}
+${pb(`<strong>Level 2 & 3 courses across three disciplines:</strong>`)}
+${feat("🏋️","Power","Exercise science, programming, strength & conditioning")}
+${feat("🥗","Fuel","Nutrition science, meal planning, dietary analysis")}
+${feat("🧠","Mindset","Psychology, behaviour change, mental performance")}
 ${ps(`Each course has chapter content, quizzes at an 80% pass mark, unit assessments, and a final exam. Get through all of them and you've earned the certificate.`)}
 ${hr()}
-${ps(`Courses unlock with Unbreakable Tokens, or a bundle if that works out better for you. Either way, you end up actually understanding your own body.`)}
+${ps(`It's all included with your membership, nothing extra to unlock. You end up actually understanding your own body.`)}
 ${btn("Browse the University", `${B.url}/university`)}`)
   };
 
@@ -220,7 +219,7 @@ ${feat("🍽️","Create Meal Plans","Nutrition plans based on your targets and 
 ${feat("💬","Answer Questions","Ask it anything, training, nutrition, recovery, technique. No daft question.")}
 ${feat("📊","Read Your Progress","Feedback on your training and where it's actually heading")}
 ${hr()}
-${ps(`It runs on Unbreakable Tokens. You get 5 free to try it properly. A quick question costs 0.2, building a full programme costs 1.`)}
+${ps(`It runs on Unbreakable Tokens, and your membership includes 1,000 of them every month to use as you like. A chat message costs 10, building a full programme costs 50.`)}
 ${btn("Talk to the Coach", `${B.url}/ai-coach`)}`)
   };
 

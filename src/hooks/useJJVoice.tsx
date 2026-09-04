@@ -44,101 +44,80 @@ function saveSettings(s: VoiceSettings) {
 }
 
 /* ──────────────────────────────────────────────────────────────
- * Device voice (Web Speech API).
- * Free and unmetered — every cardio/mindset cue spoken this way
- * costs nothing, unlike the ElevenLabs coach voice which bills
- * per character. Used for short, repetitive cues.
+ * The on-device Web Speech API voice picker that used to live here has
+ * been retired. It was never reliable: different browsers/OSes expose
+ * wildly different voice lists, so no amount of name-hint matching could
+ * guarantee a male English voice — it surfaced a female voice on some
+ * devices, and even a completely different-language (German) voice on
+ * others when no good match existed on that device at all. Cardio and
+ * breathwork cues now go through the same single ElevenLabs "James" voice
+ * as everything else (see speakViaCoachVoice below), so the voice is
+ * always right, everywhere, on every device — no per-browser guessing.
  *
- * Unbreakable Coach is male, always — no gender choice. Voices are
- * matched by name against MALE_HINTS, with FEMALE_EXCLUDE names
- * filtered out first. That exclusion step matters: the old matcher
- * checked for the bare substring "male", and "female" itself
- * contains "male" ("fe-MALE"), so it would happily match a voice
- * named e.g. "Google UK English Female" and hand back a female
- * voice whenever one happened to be listed before the male one.
+ * The obvious worry with that switch is cost: cardio and breathing cues
+ * fire constantly and used to be free specifically to avoid billing
+ * ElevenLabs per character for that volume. speakViaCoachVoice covers
+ * this with a *shared, server-side* cache — the breathing-tts edge
+ * function caches generated audio by a hash of the exact text in a public
+ * Supabase Storage bucket, so a phrase like "One kilometre. Nice and
+ * steady." is only ever sent to ElevenLabs once, ever, across every user
+ * and every session — not once per device the way a client-side cache
+ * would be.
  * ────────────────────────────────────────────────────────────── */
-const FEMALE_EXCLUDE = ['female', 'samantha', 'victoria', 'karen', 'moira', 'tessa', 'fiona', 'serena', 'zira', 'hazel', 'amelie', 'joana', 'susan', 'kate', 'emma', 'olivia', 'zoe'];
-const MALE_HINTS = ['male', 'daniel', 'alex', 'fred', 'david', 'george', 'oliver', 'thomas', 'rishi', 'aaron', 'arthur', 'james', 'ryan', 'nathan', 'brian', 'guy'];
 
-/* getVoices() commonly returns an empty list the first time it's called —
- * most browsers (mobile Chrome/Safari especially) load the voice list
- * asynchronously in the background and only fire 'voiceschanged' once it's
- * ready. Breathwork and cardio cues are often the very first speech request
- * of a session, so they were hitting that empty window: no voice ever got
- * set on the utterance, and the browser fell back to its own system
- * default — which on iOS Safari, for one, is a female voice (Samantha).
- * That's what made it look like "male voice everywhere except breathwork
- * and cardio". This caches the list and, when it's not ready yet, waits
- * (briefly, with a timeout) for it before picking a voice. */
-let cachedVoices: SpeechSynthesisVoice[] = [];
+/* Track whatever coach-voice audio is currently playing so a new cue can
+ * cut off a stale one, and so stop() (used across chat/cardio/breathwork)
+ * has one thing to pause regardless of which feature started it. */
+let currentAudio: HTMLAudioElement | null = null;
 
-function getVoicesReady(): Promise<SpeechSynthesisVoice[]> {
-  if (typeof window === 'undefined' || !window.speechSynthesis) return Promise.resolve([]);
-  const existing = window.speechSynthesis.getVoices();
-  if (existing.length) {
-    cachedVoices = existing;
-    return Promise.resolve(existing);
+export function stopCoachVoice() {
+  if (currentAudio) {
+    currentAudio.pause();
+    currentAudio = null;
   }
-  if (cachedVoices.length) return Promise.resolve(cachedVoices);
-
-  return new Promise((resolve) => {
-    let done = false;
-    const finish = () => {
-      if (done) return;
-      done = true;
-      const voices = window.speechSynthesis.getVoices();
-      cachedVoices = voices;
-      resolve(voices);
-    };
-    window.speechSynthesis.addEventListener('voiceschanged', finish, { once: true });
-    // Some browsers never fire voiceschanged (voices were already available
-    // some other way) — don't hang the first cue of a session waiting.
-    setTimeout(finish, 350);
-  });
 }
 
-function pickMaleDeviceVoice(voices: SpeechSynthesisVoice[]): SpeechSynthesisVoice | null {
-  if (!voices.length) return null;
+/**
+ * Speak text through the shared ElevenLabs coach voice (with server-side
+ * caching for repeated phrases). Returns true once playback has started;
+ * `onDone` fires when playback ends or errors, for callers that track an
+ * "is speaking" state.
+ */
+export async function speakViaCoachVoice(text: string, onDone?: () => void): Promise<boolean> {
+  const cleanText = text.trim();
+  if (!cleanText) return false;
 
-  const notFemale = (v: SpeechSynthesisVoice) => !FEMALE_EXCLUDE.some(h => v.name.toLowerCase().includes(h));
-  const isMaleHint = (v: SpeechSynthesisVoice) => MALE_HINTS.some(h => v.name.toLowerCase().includes(h));
-  const isGB = (v: SpeechSynthesisVoice) => v.lang?.toLowerCase().includes('gb');
-  const isEn = (v: SpeechSynthesisVoice) => v.lang?.toLowerCase().startsWith('en');
-
-  // Every tier below is filtered through notFemale first — a female-named
-  // voice is only ever returned if literally no other voice exists on the
-  // device at all, which the old fallback chain didn't guarantee.
-  const nonFemale = voices.filter(notFemale);
-  const tiers = [
-    nonFemale.filter(v => isGB(v) && isMaleHint(v)),
-    nonFemale.filter(v => isEn(v) && isMaleHint(v)),
-    nonFemale.filter(isMaleHint),
-    nonFemale.filter(isGB),
-    nonFemale.filter(isEn),
-    nonFemale,
-    voices.filter(isGB),
-    voices.filter(isEn),
-  ];
-  for (const list of tiers) {
-    if (list.length) return list[0];
-  }
-  return voices[0] ?? null;
-}
-
-export async function speakOnDevice(text: string): Promise<boolean> {
-  if (typeof window === 'undefined' || !window.speechSynthesis) return false;
   try {
-    const voices = await getVoicesReady();
-    window.speechSynthesis.cancel();
-    const utter = new SpeechSynthesisUtterance(text);
-    const voice = pickMaleDeviceVoice(voices);
-    if (voice) utter.voice = voice;
-    utter.lang = voice?.lang || 'en-GB';
-    utter.rate = 1.0;
-    utter.pitch = 0.9;
-    window.speechSynthesis.speak(utter);
+    stopCoachVoice();
+
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return false;
+
+    const res = await supabase.functions.invoke('breathing-tts', {
+      body: { text: cleanText.slice(0, 5000) },
+    });
+
+    if (res.error || !res.data) {
+      console.error('Coach voice TTS error:', res.error);
+      return false;
+    }
+
+    const blob = new Blob([res.data], { type: 'audio/mpeg' });
+    const url = URL.createObjectURL(blob);
+    const audio = new Audio(url);
+    currentAudio = audio;
+    const cleanup = () => {
+      if (currentAudio === audio) currentAudio = null;
+      URL.revokeObjectURL(url);
+      onDone?.();
+    };
+    audio.onended = cleanup;
+    audio.onerror = cleanup;
+    await audio.play();
     return true;
-  } catch {
+  } catch (e) {
+    console.error('Coach voice playback error:', e);
+    onDone?.();
     return false;
   }
 }
@@ -147,7 +126,6 @@ export async function speakOnDevice(text: string): Promise<boolean> {
 export function useJJVoice() {
   const [settings, setSettings] = useState<VoiceSettings>(loadSettings);
   const audioCtxRef = useRef<AudioContext | null>(null);
-  const ttsAudioRef = useRef<HTMLAudioElement | null>(null);
   const [isSpeaking, setIsSpeaking] = useState(false);
 
   // Persist on change
@@ -193,45 +171,13 @@ export function useJJVoice() {
       .trim();
     if (!cleanText) return;
 
-    // Stop current playback
-    if (ttsAudioRef.current) { ttsAudioRef.current.pause(); ttsAudioRef.current = null; }
-
-    // Cardio and mindset cues use the free device voice, not billed TTS.
-    if (feature === 'cardio' || feature === 'mindset') {
-      if (await speakOnDevice(cleanText)) return;
-    }
-
     setIsSpeaking(true);
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) { setIsSpeaking(false); return; }
-
-      const res = await supabase.functions.invoke('breathing-tts', {
-        body: { text: cleanText.slice(0, 5000) },
-      });
-
-      if (res.error || !res.data) {
-        console.error('TTS error:', res.error);
-        setIsSpeaking(false);
-        return;
-      }
-
-      const blob = new Blob([res.data], { type: 'audio/mpeg' });
-      const url = URL.createObjectURL(blob);
-      const audio = new Audio(url);
-      ttsAudioRef.current = audio;
-      audio.onended = () => { setIsSpeaking(false); URL.revokeObjectURL(url); ttsAudioRef.current = null; };
-      audio.onerror = () => { setIsSpeaking(false); URL.revokeObjectURL(url); ttsAudioRef.current = null; };
-      await audio.play();
-    } catch (e) {
-      console.error('TTS playback error:', e);
-      setIsSpeaking(false);
-    }
+    const ok = await speakViaCoachVoice(cleanText, () => setIsSpeaking(false));
+    if (!ok) setIsSpeaking(false);
   }, [settings]);
 
   const stop = useCallback(() => {
-    if (ttsAudioRef.current) { ttsAudioRef.current.pause(); ttsAudioRef.current = null; }
-    if (typeof window !== 'undefined' && window.speechSynthesis) window.speechSynthesis.cancel();
+    stopCoachVoice();
     setIsSpeaking(false);
   }, []);
 

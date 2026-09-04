@@ -19,6 +19,7 @@ const DEFAULT_HASHTAGS = '\n\n#Unbreakable #LiveWithoutLimits #KeepShowingUp';
 const MAX_MEDIA = 5;
 const MAX_IMAGE_SIZE = 20 * 1024 * 1024; // 20MB
 const MAX_VIDEO_SIZE = 500 * 1024 * 1024; // 500MB
+const MAX_POST_LENGTH = 2000; // post text had no cap at all before this
 
 interface CreatePostBoxProps {
   onPostCreated?: () => void;
@@ -320,6 +321,7 @@ export function CreatePostBox({ onPostCreated }: CreatePostBoxProps) {
             onFocus={() => setIsExpanded(true)}
             enableHashtags={true}
             enableMentions={true}
+            maxLength={MAX_POST_LENGTH}
           />
 
           {/* Media Previews */}

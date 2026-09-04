@@ -9,6 +9,20 @@ const corsHeaders = {
 // JJ voice — James (deep, authoritative, male — ElevenLabs premade)
 const VOICE_ID = "ZQe5CZNOzWyzPSCn5a3c";
 
+/* Cache generated audio by a hash of the exact text in the public
+ * "tts-cache" storage bucket. Cardio and breathing cues in particular are
+ * drawn from a small set of repeated template phrases ("One kilometre.
+ * Nice and steady.", "Breathe in...") spoken constantly across every user's
+ * every session — without this, moving those off the free on-device voice
+ * and onto ElevenLabs would bill the same phrase over and over, for every
+ * user, forever. With it, the whole userbase shares one cached file per
+ * distinct phrase, generated once. */
+async function sha256Hex(text: string): Promise<string> {
+  const data = new TextEncoder().encode(text.trim().toLowerCase());
+  const digest = await crypto.subtle.digest("SHA-256", data);
+  return Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2, "0")).join("");
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -55,6 +69,20 @@ serve(async (req) => {
       );
     }
 
+    // ── Check the shared cache before paying ElevenLabs for this text again ──
+    const cacheKey = `${await sha256Hex(text)}.mp3`;
+    const storageClient = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
+    );
+
+    const { data: cached } = await storageClient.storage.from("tts-cache").download(cacheKey);
+    if (cached) {
+      return new Response(cached, {
+        headers: { ...corsHeaders, "Content-Type": "audio/mpeg", "X-TTS-Cache": "hit" },
+      });
+    }
+
     const ELEVENLABS_API_KEY = Deno.env.get("ELEVENLABS_API_KEY");
 
     if (!ELEVENLABS_API_KEY) {
@@ -97,10 +125,19 @@ serve(async (req) => {
 
     const audioBuffer = await response.arrayBuffer();
 
+    // Save to the shared cache for next time — best-effort, never blocks the response.
+    storageClient.storage
+      .from("tts-cache")
+      .upload(cacheKey, audioBuffer, { contentType: "audio/mpeg", upsert: true })
+      .then(({ error: uploadError }) => {
+        if (uploadError) console.error("TTS cache upload error:", uploadError);
+      });
+
     return new Response(audioBuffer, {
       headers: {
         ...corsHeaders,
         "Content-Type": "audio/mpeg",
+        "X-TTS-Cache": "miss",
       },
     });
   } catch (error) {

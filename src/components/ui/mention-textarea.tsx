@@ -18,6 +18,8 @@ interface MentionTextareaProps {
   enableMentions?: boolean;
   minHeight?: string;
   maxHeight?: string;
+  /** Hard character cap — further input is blocked once reached, and a counter shows near the limit. */
+  maxLength?: number;
 }
 
 export function MentionTextarea({
@@ -32,6 +34,7 @@ export function MentionTextarea({
   enableMentions = true,
   minHeight = "40px",
   maxHeight = "120px",
+  maxLength,
 }: MentionTextareaProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [cursorPosition, setCursorPosition] = useState(0);
@@ -148,7 +151,20 @@ export function MentionTextarea({
         onKeyDown={onKeyDown}
         onFocus={onFocus}
         onBlur={handleBlur}
+        maxLength={maxLength}
       />
+
+      {/* Character counter — only shown once there's a cap and the user's getting close to it */}
+      {maxLength && value.length >= maxLength * 0.8 && (
+        <div
+          className={cn(
+            "absolute bottom-1 right-2 text-xs pointer-events-none",
+            value.length >= maxLength ? "text-destructive" : "text-muted-foreground"
+          )}
+        >
+          {value.length}/{maxLength}
+        </div>
+      )}
 
       {/* Mention Suggestions Dropdown */}
       <AnimatePresence>

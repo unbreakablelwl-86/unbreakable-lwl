@@ -28,10 +28,10 @@ function getMessage(day: number, name: string): string {
     return `Have a look at the community tab when you get a sec. It's not like other social feeds — no algorithm, no ads, just people actually training. Post something if you fancy it, even just to say hello.`;
 
   case 4:
-    return `Worth knowing this is in there — the University. 19 courses on training, nutrition, and sport-specific stuff, real content not fluff. No rush, it's there whenever you want to dig in.`;
+    return `Worth knowing this is in there — the University. Level 2 & 3 courses on training, nutrition and mindset, included with your membership, real content not fluff. No rush, it's there whenever you want to dig in.`;
 
   case 5:
-    return `Give the AI Coach a go if you haven't already. It can build you a full programme, sort a meal plan, or just answer whatever you're wondering about. You've got 5 free tokens to try it properly.`;
+    return `Give the AI Coach a go if you haven't already. It can build you a full programme, sort a meal plan, or just answer whatever you're wondering about. Your membership includes 1,000 tokens a month to use on it.`;
 
   case 6:
     return `Set up a few daily habits if you haven't — water, sleep, training, whatever's relevant. Small stuff tracked daily adds up more than people expect.`;
