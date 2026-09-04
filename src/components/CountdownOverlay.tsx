@@ -20,17 +20,21 @@ export function CountdownOverlay({
   isActive, 
   onComplete, 
   exerciseName,
+  welcomeMessage,
+  onPlayAudio,
   onStartGps,
   accent,
 }: CountdownOverlayProps) {
   const accentColor = accent ?? '#FF5500';
   const [phase, setPhase] = useState<CountdownPhase>("power");
   const gpsStartedRef = useRef(false);
+  const audioPlayedRef = useRef(false);
 
   useEffect(() => {
     if (isActive) {
       setPhase("power");
       gpsStartedRef.current = false;
+      audioPlayedRef.current = false;
     }
   }, [isActive]);
 
@@ -40,6 +44,18 @@ export function CountdownOverlay({
       onStartGps();
     }
   }, [isActive, onStartGps]);
+
+  // welcomeMessage/onPlayAudio were declared on the props interface but never
+  // read here -- callers (mindset breathing) pass an intro line expecting it
+  // to be spoken during the countdown, and it was silently dropped on the
+  // floor every time. Speak it once per countdown activation, same
+  // once-per-run guard pattern as the GPS pre-acquire above.
+  useEffect(() => {
+    if (isActive && !audioPlayedRef.current && onPlayAudio && welcomeMessage) {
+      audioPlayedRef.current = true;
+      onPlayAudio(welcomeMessage);
+    }
+  }, [isActive, onPlayAudio, welcomeMessage]);
 
   const PHASE_DURATION: Record<CountdownPhase, number> = {
     power: 800,
