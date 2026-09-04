@@ -2,6 +2,11 @@ import { useCallback, useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
+// Raw fetch config for the breathing-tts call below -- see the comment
+// on that call for why it bypasses supabase.functions.invoke().
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string;
+const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string;
+
 /* ── Granular voice setting keys ── */
 export type VoiceFeature = 'chat' | 'mindset' | 'cardio' | 'notifications' | 'university';
 
@@ -159,29 +164,50 @@ export async function speakViaCoachVoice(text: string, onDone?: () => void): Pro
     return false;
   }
 
-  let res;
+  // Raw fetch instead of supabase.functions.invoke() -- the server confirmed
+  // (via a separate debug log) that it was generating real, correctly-sized
+  // audio, yet playback kept failing on-device with a generic error. That
+  // combination points at invoke()'s automatic response-body parsing
+  // mishandling the binary "audio/mpeg" payload rather than a server issue.
+  // A plain fetch + res.blob() reads the bytes exactly as sent, with no
+  // content-type sniffing in between.
+  let res: Response;
   try {
-    res = await supabase.functions.invoke('breathing-tts', {
-      body: { text: cleanText.slice(0, 5000) },
+    res = await fetch(`${SUPABASE_URL}/functions/v1/breathing-tts`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${session.access_token}`,
+        'apikey': SUPABASE_PUBLISHABLE_KEY,
+      },
+      body: JSON.stringify({ text: cleanText.slice(0, 5000) }),
     });
   } catch (e) {
-    console.error('Coach voice: functions.invoke threw:', e);
+    console.error('Coach voice: fetch threw:', e);
     reportVoiceError('Coach voice: request never reached the server — check your connection.');
     onDone?.();
     return false;
   }
 
-  if (res.error || !res.data) {
-    console.error('Coach voice TTS error:', res.error);
+  if (!res.ok) {
+    console.error('Coach voice TTS error:', res.status);
+    reportVoiceError('Coach voice unavailable right now — check back shortly.');
+    onDone?.();
+    return false;
+  }
+
+  let audioBlob: Blob;
+  try {
+    audioBlob = await res.blob();
+  } catch (e) {
+    console.error('Coach voice: reading audio response failed:', e);
     reportVoiceError('Coach voice unavailable right now — check back shortly.');
     onDone?.();
     return false;
   }
 
   try {
-
-    const blob = new Blob([res.data], { type: 'audio/mpeg' });
-    const url = URL.createObjectURL(blob);
+    const url = URL.createObjectURL(audioBlob);
     const audio = new Audio(url);
     currentAudio = audio;
     const cleanup = () => {
@@ -203,7 +229,12 @@ export async function speakViaCoachVoice(text: string, onDone?: () => void): Pro
       // A newer cue interrupted this one via stopCoachVoice() (e.g. two cues
       // fired back-to-back) — expected, not a real failure. Stay silent.
     } else {
-      reportVoiceError("Coach voice couldn't play — try again.");
+      // Temporary: include the raw error so the actual cause is visible in
+      // the toast itself (this has been reported as "couldn't play" with no
+      // way to see what the underlying browser error actually was).
+      const errName = e instanceof Error ? e.name : typeof e;
+      const errMsg = e instanceof Error ? e.message : String(e);
+      reportVoiceError(`Coach voice couldn't play (${errName}: ${errMsg.slice(0, 60)}) — try again.`);
     }
     onDone?.();
     return false;
