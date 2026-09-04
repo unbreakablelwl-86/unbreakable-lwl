@@ -6,8 +6,13 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-// JJ voice — James (deep, authoritative, male — ElevenLabs premade)
-const VOICE_ID = "ZQe5CZNOzWyzPSCn5a3c";
+// JJ voice — James, Husky/Engaging/Bold (ElevenLabs voice in this workspace).
+// NOTE: the previous ID (ZQe5CZNOzWyzPSCn5a3c) does not exist in this
+// account's voice library at all — every TTS call was failing at ElevenLabs
+// (voice not found), which is why voice was completely silent app-wide
+// despite plenty of quota remaining. Confirmed against the live account's
+// voice list on 2026-09-04.
+const VOICE_ID = "EkK5I93UQWFDigLMpZcX";
 
 /* Cache generated audio by a hash of the exact text in the public
  * "tts-cache" storage bucket. Cardio and breathing cues in particular are
