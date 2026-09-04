@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import {
@@ -21,6 +22,7 @@ import {
   ChevronRight,
   Loader2,
   AlertCircle,
+  Sparkles,
 } from 'lucide-react';
 import { useCardioPrograms, CardioProgram, CardioProgramStatus } from '@/hooks/useCardioPrograms';
 import { GeneratedCardioProgram, activityLabels, ActivityType } from '@/lib/cardioTypes';
@@ -82,7 +84,33 @@ export function SavedCardioPrograms({ onViewProgram }: SavedCardioProgramsProps)
   }
 
   if (!programs || programs.length === 0) {
-    return null;
+    // Every other pillar's library (Power, Mindset, Fuel) shows an empty
+    // state with an icon, message and a way to create something -- this one
+    // just rendered nothing, so a signed-in user with no saved cardio
+    // programmes saw a blank page below the header. Matches the pattern in
+    // MyProgramsSection (Power) and MindsetProgrammes.
+    return (
+      <Card className="p-6 border border-border text-center bg-card">
+        <Footprints className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+        <h3 className="font-display text-lg text-foreground mb-2">No saved programmes</h3>
+        <p className="text-sm text-muted-foreground mb-4">
+          Ask your Unbreakable Coach to build a bespoke movement programme, or build one manually.
+        </p>
+        <div className="flex flex-col sm:flex-row gap-2 justify-center">
+          <Link to="/help?mode=cardio">
+            <Button variant="default" className="gap-2 w-full sm:w-auto">
+              <Sparkles className="w-4 h-4" />
+              Build with Coach
+            </Button>
+          </Link>
+          <Link to="/tracker/create">
+            <Button variant="outline" className="w-full sm:w-auto">
+              Build Manually
+            </Button>
+          </Link>
+        </div>
+      </Card>
+    );
   }
 
   // Show execution view if tracking
