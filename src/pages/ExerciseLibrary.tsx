@@ -70,10 +70,15 @@ function ExerciseDetail({
         onClick={(e) => e.stopPropagation()}
       >
         {/* Animated GIF */}
-        <div className="relative bg-card border-b border-border">
+        <div className="relative bg-card border-b border-border ring-1 ring-inset ring-primary/15">
           <button onClick={onClose} className="absolute top-3 right-3 z-10 p-2 rounded-full bg-background/60 text-foreground">
             <X className="w-4 h-4" />
           </button>
+          <div
+            className="absolute top-0 left-0 w-6 h-6 bg-primary z-10"
+            style={{ clipPath: 'polygon(0 0, 100% 0, 0 100%)' }}
+            aria-hidden="true"
+          />
           <div className="flex items-center justify-center p-4 min-h-[280px]">
             {gifSrc ? (
               <img
@@ -87,6 +92,9 @@ function ExerciseDetail({
                 <BodyPartIcon bodyPart={exercise.bodyPart} size="lg" />
               </div>
             )}
+          </div>
+          <div className="absolute bottom-0 inset-x-0 flex items-center justify-center py-1 bg-gradient-to-t from-background/80 to-transparent">
+            <span className="font-display text-[9px] tracking-[0.25em] text-primary/70">UNBREAKABLE</span>
           </div>
         </div>
 
@@ -197,7 +205,12 @@ function ExerciseCard({ exercise, onSelect }: { exercise: LibraryExercise; onSel
       <Card className={`overflow-hidden border-2 transition-all h-full ${
         hasCoaching ? 'border-primary/25 hover:border-primary/50' : 'border-border hover:border-primary/30'
       }`}>
-        <div className="relative bg-card aspect-square flex items-center justify-center p-2">
+        <div className="relative bg-card aspect-square flex items-center justify-center p-2 ring-1 ring-inset ring-primary/15">
+          <div
+            className="absolute top-0 left-0 w-3.5 h-3.5 bg-primary"
+            style={{ clipPath: 'polygon(0 0, 100% 0, 0 100%)' }}
+            aria-hidden="true"
+          />
           {gifSrc ? (
             <img
               src={gifSrc}
