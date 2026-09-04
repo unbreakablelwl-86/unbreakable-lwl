@@ -170,6 +170,9 @@ export async function speakViaCoachVoice(text: string, onDone?: () => void): Pro
     // different fix (needs a fresh tap) from every other failure here.
     if (e instanceof Error && e.name === 'NotAllowedError') {
       reportVoiceError('Voice blocked by your browser — tap anywhere on screen, then try again.');
+    } else if (e instanceof Error && e.name === 'AbortError') {
+      // A newer cue interrupted this one via stopCoachVoice() (e.g. two cues
+      // fired back-to-back) — expected, not a real failure. Stay silent.
     } else {
       reportVoiceError("Coach voice couldn't play — try again.");
     }
