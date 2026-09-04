@@ -11,6 +11,16 @@
 // back to the placeholder icon, rather than risk showing the wrong movement.
 export const EXERCISE_GIF_IDS: Record<string, string> = {
 
+  // --- Batch 4: full-text search incl. instructions/muscle fields (2026-09-04) ---
+  // Batches 2-3 only matched on exercise NAME. This pass also searched the raw
+  // dataset's instruction text and muscle tags, catching exercises filed under an
+  // unexpected title (a barbell-loaded ab rollout is the ab-wheel rollout, just
+  // named 'barbell standing ab rollerout'; 'ski ergometer' beats the earlier weak
+  // 'ski step' guess for Ski Erg).
+  'sledgehammer-swings': 'REXmfVC',
+  'barbell-rollout': 'xnInPfE',
+  'ski-erg': 'vpQaQkH',
+
   // --- Batch 3: deeper keyword search against the raw dataset (2026-09-04) ---
   // Went past simple token/ratio scoring and searched the raw names directly for
   // exercise-specific terms (t-bar, hip thrust, face pull, hollow body, etc). Most of
