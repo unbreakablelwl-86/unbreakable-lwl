@@ -11,6 +11,33 @@
 // back to the placeholder icon, rather than risk showing the wrong movement.
 export const EXERCISE_GIF_IDS: Record<string, string> = {
 
+  // --- Batch 3: deeper keyword search against the raw dataset (2026-09-04) ---
+  // Went past simple token/ratio scoring and searched the raw names directly for
+  // exercise-specific terms (t-bar, hip thrust, face pull, hollow body, etc). Most of
+  // those terms simply don't exist in this dataset (it's a general gym-exercise db, not
+  // glute-isolation/conditioning focused), so this batch is smaller and higher-confidence.
+  // A few matches cross dumbbell/kettlebell equipment tags deliberately (renegade rows,
+  // overhead carry) since both implements look nearly identical in that specific movement;
+  // barbell<->dumbbell/machine crossovers were still rejected as too visually different.
+  'jump-rope': 'e1e76I2',
+  'plyometric-push-ups': 'Snj1wSv',
+  'incline-machine-press': 'jHAnWmT',
+  'cable-crossover': '0CXGHya',
+  'two-arm-dumbbell-row': 'BJ0Hz5L',
+  'renegade-rows': 'b9kqlBy',
+  'barbell-skull-crushers': 'h8LFzo9',
+  'dumbbell-russian-twist': 'fZFZ704',
+  'toe-touches': 'BbfB8Gb',
+  'machine-hip-abduction': 'CHpahtl',
+  'medicine-ball-slams': 'oHg8eop',
+  'battle-ropes': 'RJa4tCo',
+  'overhead-carry': 'mWBtgmb',
+  'tyre-flips': 'oZjMu1t',
+  'rope-climbs': 'yaAxcQr',
+  'circuit-tyre-flips': 'oZjMu1t',
+  'circuit-assault-bike': '1ZFqTDN',
+  'circuit-turkish-getup': 'Ha7SZ3y',
+
   // --- Batch 2: extended matches (2026-09-04), same strict review process ---
   // Reviewed for genuine movement equivalence, not just token/equipment overlap --
   // rejected candidates where the raw dataset's closest name shared words but was a
