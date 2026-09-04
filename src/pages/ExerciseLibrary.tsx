@@ -266,7 +266,7 @@ export default function ExerciseLibrary() {
   const [selectedExercise, setSelectedExercise] = useState<LibraryExercise | null>(null);
 
   const isSearching = query.trim().length > 0;
-  const showCategoryGrid = !isSearching && !selectedBodyPart;
+  const showCategoryGrid = !isSearching && !selectedBodyPart && !selectedDifficulty && !selectedEquipment;
 
   const categoryCounts = useMemo(() => {
     const counts: Partial<Record<BodyPart, number>> = {};
@@ -281,11 +281,12 @@ export default function ExerciseLibrary() {
       result = result.filter(ex =>
         ex.name.toLowerCase().includes(q) ||
         ex.bodyPart.toLowerCase().includes(q) ||
-        ex.equipment.some(e => e.toLowerCase().includes(q))
+        ex.equipment.some(e => e.toLowerCase().includes(q)) ||
+        ex.difficulty.toLowerCase().includes(q)
       );
     } else if (selectedBodyPart) {
       result = result.filter(ex => ex.bodyPart === selectedBodyPart);
-    } else {
+    } else if (!selectedDifficulty && !selectedEquipment) {
       return [];
     }
     if (selectedEquipment) result = result.filter(ex => ex.equipment.includes(selectedEquipment));
@@ -317,6 +318,20 @@ export default function ExerciseLibrary() {
               {ALL_EXERCISES.length} hand-picked exercises, organised by body part, with animated demos,
               coaching breakdowns, and linked alternatives. No clutter, no duplicates.
             </p>
+            <div className="flex items-center justify-center gap-4 pt-1">
+              <div className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-green-500" />
+                <span className="text-[11px] text-muted-foreground">Beginner</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-yellow-500" />
+                <span className="text-[11px] text-muted-foreground">Intermediate</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-red-500" />
+                <span className="text-[11px] text-muted-foreground">Advanced</span>
+              </div>
+            </div>
           </motion.div>
         </div>
       </section>
@@ -349,18 +364,16 @@ export default function ExerciseLibrary() {
                 </button>
               )}
             </div>
-            {(selectedBodyPart || isSearching) && (
-              <button
-                onClick={() => setShowFilters(!showFilters)}
-                className={`p-2.5 rounded-xl border transition-all ${
-                  showFilters || hasFilters
-                    ? 'border-primary/40 bg-primary/10 text-primary'
-                    : 'border-border text-muted-foreground hover:text-foreground'
-                }`}
-              >
-                <Filter className="w-4 h-4" />
-              </button>
-            )}
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className={`p-2.5 rounded-xl border transition-all ${
+                showFilters || hasFilters
+                  ? 'border-primary/40 bg-primary/10 text-primary'
+                  : 'border-border text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              <Filter className="w-4 h-4" />
+            </button>
           </div>
 
           {/* Current category chip */}
@@ -374,7 +387,7 @@ export default function ExerciseLibrary() {
 
           {/* Filter chips */}
           <AnimatePresence>
-            {showFilters && (selectedBodyPart || isSearching) && (
+            {showFilters && (
               <motion.div
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: 'auto', opacity: 1 }}
