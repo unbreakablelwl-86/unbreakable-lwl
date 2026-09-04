@@ -47,6 +47,7 @@ interface Position {
   timestamp: number;
   accuracy: number;
   speed: number | null;
+  altitude: number | null;
 }
 
 const ACTIVITY_CONFIG = {
@@ -91,7 +92,7 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
   const { createRun } = useRuns();
   const { checkAndUpdatePRs } = usePersonalRecords();
   const { checkAndAwardMedals } = useMedals();
-  const { segments, matchRunToSegments, saveSegmentEfforts, autoDetectSegments } = useSegments();
+  const { segments, matchRunToSegments, saveSegmentEfforts } = useSegments();
   // const { checkAndAwardTrophies } = useTrophies(); // Trophy system hidden for now
   const { profile } = useProfile();
   const { user } = useAuth();
@@ -128,6 +129,11 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
   const activityRef = useRef<ActivityType | null>(initialActivity || null);
   const lastAcceptedPositionRef = useRef<Position | null>(null);
   const distanceRef = useRef(0);
+  // Cumulative elevation gain (metres), summed from real GPS altitude readings only —
+  // never fabricated. Most phones report altitude with a lot of jitter, so small
+  // negative/positive noise below the threshold is ignored and only sustained gains count.
+  const elevationGainRef = useRef(0);
+  const lastAltitudeRef = useRef<number | null>(null);
   const voiceEnabledRef = useRef(voiceEnabled);
   const lastSegmentCheckKmRef = useRef(0);
   const liveSegmentResultsRef = useRef<any[]>([]);
@@ -194,7 +200,7 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
   }, []);
 
   const processGpsPosition = useCallback((position: GeolocationPosition) => {
-    const { latitude, longitude, accuracy, speed } = position.coords;
+    const { latitude, longitude, accuracy, speed, altitude, altitudeAccuracy } = position.coords;
 
     setGpsAccuracy(accuracy);
     gpsLastReceivedRef.current = Date.now();
@@ -208,13 +214,32 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
     }
     // >250m — leave status as-is (probably still 'acquiring')
 
+    // Altitude is only trustworthy when the device reports a reasonable
+    // altitudeAccuracy — many phones return a wildly noisy or null value.
+    const trustedAltitude = altitude !== null && (altitudeAccuracy === null || altitudeAccuracy <= 25)
+      ? altitude
+      : null;
+
     const nextPosition: Position = {
       lat: latitude,
       lng: longitude,
       timestamp: position.timestamp || Date.now(),
       accuracy,
       speed,
+      altitude: trustedAltitude,
     };
+
+    // Accumulate elevation gain from consecutive trusted altitude readings —
+    // only count sustained climbs above a 2m noise floor, never fabricate a value.
+    if (trustedAltitude !== null) {
+      if (lastAltitudeRef.current !== null) {
+        const delta = trustedAltitude - lastAltitudeRef.current;
+        if (delta > 2) {
+          elevationGainRef.current += delta;
+        }
+      }
+      lastAltitudeRef.current = trustedAltitude;
+    }
 
     const distanceResult = calculateDistanceIncrement({
       activity: (activityRef.current || 'run') as CardioTrackerActivity,
@@ -360,6 +385,8 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
     setPositions([]);
     setDistance(0);
     distanceRef.current = 0;
+    elevationGainRef.current = 0;
+    lastAltitudeRef.current = null;
     setElapsedSeconds(0);
     setPausedDuration(0);
     pausedDurationRef.current = 0;
@@ -372,6 +399,14 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
     restartElapsedTimer();
     startGpsTracking();
     requestCurrentPosition();
+
+    // Browsers fully suspend GPS tracking once the screen locks or the app is
+    // backgrounded — there's no way round that without a native app. Wake Lock
+    // (elsewhere) keeps the screen on while foregrounded, but the user still needs
+    // to know not to lock it manually mid-session.
+    toast.info('Keep your screen unlocked and this tab open to keep tracking your run', {
+      duration: 6000,
+    });
   }, [requestCurrentPosition, restartElapsedTimer, startGpsTracking]);
 
   const pauseTracking = useCallback(() => {
@@ -682,7 +717,7 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
       ended_at: new Date().toISOString(),
       pace_per_km_seconds: paceSeconds,
       average_speed_kph: Math.round(speedKph * 100) / 100,
-      elevation_gain_m: null,
+      elevation_gain_m: elevationGainRef.current > 0 ? Math.round(elevationGainRef.current) : null,
       calories_burned: Math.round(distance * 60),
       route_polyline: routePolyline,
       map_snapshot_url: null,
@@ -725,10 +760,11 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
                 toast.success(`🏆 Segment PR on ${newPRs.length} segment${newPRs.length > 1 ? 's' : ''}!`);
               }
             }
-            // Auto-detect new segments from this run
-            if (user) {
-              await autoDetectSegments(polyline, user.id);
-            }
+            // NOTE: automatic segment creation from arbitrary 400m-5km slices of every
+            // run is intentionally disabled — it produced meaningless auto-named
+            // clutter ("Sprint 0.4km", "Loop 1.2km", etc.) rather than real landmarks.
+            // Segments are now only ever created when a user deliberately names one
+            // themselves; matching/leaderboards above still work against those.
           } catch (segErr) {
             console.error('Segment processing error:', segErr);
           }
@@ -1195,6 +1231,12 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
                       </span>
                     )}
                   </div>
+
+                  {/* Locking the screen suspends GPS in the browser — no way round that
+                      without a native app, so make sure the user knows while tracking. */}
+                  <p className="text-xs text-muted-foreground mt-3">
+                    Keep your screen unlocked to keep tracking
+                  </p>
                 </div>
 
                 {/* Stats Grid */}

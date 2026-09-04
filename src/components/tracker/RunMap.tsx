@@ -255,14 +255,23 @@ export function RunMap({
     return null;
   }, [positions, isReplaying, replayIndex]);
 
-  // Elevation data for chart
+  // Elevation data for chart — real GPS altitude only, never fabricated.
+  // A position with no altitude reading is stored as 0, which is indistinguishable
+  // from genuine sea-level, so we only show the chart when the route has some real
+  // variation in it (a dead-flat 0m reading for every single point almost always
+  // means the data isn't there, not that the run was literally at sea level throughout).
+  const hasElevationData = useMemo(() => {
+    if (!showElevation) return false;
+    return positions.some(p => typeof p.elevation === 'number' && p.elevation !== 0);
+  }, [positions, showElevation]);
+
   const elevationData = useMemo(() => {
-    if (!showElevation) return [];
+    if (!hasElevationData) return [];
     return positions.map((p, i) => ({
       distance: i,
-      elevation: p.elevation || Math.random() * 50 + 10,
+      elevation: p.elevation ?? 0,
     }));
-  }, [positions, showElevation]);
+  }, [positions, hasElevationData]);
 
   // Start replay
   const startReplay = useCallback(() => {
@@ -389,8 +398,8 @@ export function RunMap({
         </div>
       )}
 
-      {/* Elevation Chart */}
-      {showElevation && elevationData.length > 1 && (
+      {/* Elevation Chart — only rendered when we actually have real altitude data */}
+      {hasElevationData && elevationData.length > 1 && (
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}

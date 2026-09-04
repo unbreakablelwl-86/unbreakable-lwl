@@ -6,6 +6,7 @@ export interface CardioTrackerPosition {
   timestamp: number;
   accuracy: number;
   speed: number | null;
+  altitude?: number | null;
 }
 
 interface ActivityTrackingRules {
@@ -148,13 +149,15 @@ export function getPersistedTrackerPositions<T>(positions: T[], maxPoints: numbe
 }
 
 export function positionsToRouteGeoJSON(
-  positions: Array<Pick<CardioTrackerPosition, 'lat' | 'lng' | 'timestamp'>>
+  positions: Array<Pick<CardioTrackerPosition, 'lat' | 'lng' | 'timestamp' | 'altitude'>>
 ): string {
   return JSON.stringify({
     type: 'Feature',
     geometry: {
       type: 'LineString',
-      coordinates: positions.map((position) => [position.lng, position.lat, 0, position.timestamp]),
+      // Real GPS altitude when we have it, 0 as a neutral placeholder when we don't —
+      // never a fabricated value. Consumers (RunMap) treat 0 as "no elevation data".
+      coordinates: positions.map((position) => [position.lng, position.lat, position.altitude ?? 0, position.timestamp]),
     },
     properties: {
       timestamps: positions.map((position) => position.timestamp),

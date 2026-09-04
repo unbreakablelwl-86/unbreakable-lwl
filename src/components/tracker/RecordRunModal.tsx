@@ -40,7 +40,7 @@ export function RecordRunModal({ isOpen, onClose }: RecordRunModalProps) {
   // const { checkAndAwardTrophies } = useTrophies(); // Trophy system hidden for now
   const { profile } = useProfile();
   const { user } = useAuth();
-  const { matchRunToSegments, saveSegmentEfforts, autoDetectSegments } = useSegments();
+  const { matchRunToSegments, saveSegmentEfforts } = useSegments();
   const [mode, setMode] = useState<'gps' | 'manual'>('gps');
   const [loading, setLoading] = useState(false);
   const [showCountdown, setShowCountdown] = useState(false);
@@ -265,8 +265,9 @@ export function RecordRunModal({ isOpen, onClose }: RecordRunModalProps) {
         }
       }
 
-      // Auto-detect new segments from this run
-      await autoDetectSegments(runData.route_polyline, user.id);
+      // NOTE: automatic segment creation from arbitrary slices of every run is
+      // intentionally disabled — see CardioTrackerModal for why. Segments are now
+      // only ever created when a user deliberately names one themselves.
     } catch (error) {
       console.error('Error processing segments:', error);
     }

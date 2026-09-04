@@ -1,10 +1,10 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { ClickableAvatar } from '@/components/ClickableAvatar';
 import { ClickableUsername } from '@/components/ClickableUsername';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Dumbbell, MessageCircle, MapPin, Clock, Zap, TrendingUp, Globe, Users, Lock } from 'lucide-react';
+import { Dumbbell, MessageCircle, MapPin, Clock, Zap, TrendingUp, Globe, Users, Lock, Map as MapIcon, ChevronUp } from 'lucide-react';
 import { RunWithProfile } from '@/hooks/useRuns';
 import { useAuth } from '@/hooks/useAuth';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -13,6 +13,7 @@ import { CommentSection } from './CommentSection';
 import { PostMenu } from './PostMenu';
 import { ShareMenu } from './ShareMenu';
 import { EditRunModal } from './EditRunModal';
+import { RunMap, geoJSONToPositions } from './RunMap';
 import { toast } from 'sonner';
 import type { StoryPreFill } from '@/components/hub/UnifiedFeed';
 
@@ -30,9 +31,23 @@ export function ActivityCard({ run, onKudos, onDelete, onToggleComments, onUpdat
   const [isLiking, setIsLiking] = useState(false);
   const [showComments, setShowComments] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showMap, setShowMap] = useState(false);
   const [floatingDumbbells, setFloatingDumbbells] = useState<{ id: number; x: number; y: number; rotate: number }[]>([]);
 
   const isOwner = user?.id === run.user_id;
+
+  // Post-session map view: parse the saved route (GPS runs only) into positions
+  // RunMap can render. Only worth doing when the run actually has a route.
+  const routePolyline = (run as any).route_polyline as string | null | undefined;
+  const hasRoute = run.is_gps_tracked && !!routePolyline;
+  const mapPositions = useMemo(() => {
+    if (!hasRoute || !routePolyline) return [];
+    try {
+      return geoJSONToPositions(routePolyline);
+    } catch {
+      return [];
+    }
+  }, [hasRoute, routePolyline]);
 
   const spawnDumbbells = useCallback(() => {
     const newDumbbells = Array.from({ length: 4 }, (_, i) => ({
@@ -219,11 +234,30 @@ export function ActivityCard({ run, onKudos, onDelete, onToggleComments, onUpdat
 
         {/* GPS tracked indicator */}
         {run.is_gps_tracked && (
-          <div className="px-4 py-2">
+          <div className="px-4 py-2 flex items-center justify-between">
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
               <div className="w-2 h-2 rounded-full bg-emerald-500" />
               <span>GPS Tracked</span>
             </div>
+            {hasRoute && mapPositions.length > 1 && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-7 gap-1 text-xs text-muted-foreground hover:text-foreground"
+                onClick={() => setShowMap((prev) => !prev)}
+              >
+                {showMap ? <ChevronUp className="w-3.5 h-3.5" /> : <MapIcon className="w-3.5 h-3.5" />}
+                {showMap ? 'Hide Map' : 'View Map'}
+              </Button>
+            )}
+          </div>
+        )}
+
+        {/* Post-session map view — only mounted once expanded, so feeds full of
+            run cards don't all pay Leaflet's load cost up front. */}
+        {showMap && hasRoute && mapPositions.length > 1 && (
+          <div className="px-4 pb-3">
+            <RunMap positions={mapPositions} showElevation showExport />
           </div>
         )}
 
