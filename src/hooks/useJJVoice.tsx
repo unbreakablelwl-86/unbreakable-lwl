@@ -135,21 +135,50 @@ export async function speakViaCoachVoice(text: string, onDone?: () => void): Pro
   const cleanText = text.trim();
   if (!cleanText) return false;
 
+  stopCoachVoice();
+
+  // Each network step gets its own try/catch with a distinct message —
+  // this call was going completely silent (no server log at all, meaning
+  // the request never left the device) with no way to tell whether it
+  // never reached Supabase, never reached the function, or failed after a
+  // real response. That ambiguity is the actual problem now, not the
+  // voice pipeline itself (server-side generation is confirmed working).
+  let session;
   try {
-    stopCoachVoice();
+    const sessionRes = await supabase.auth.getSession();
+    session = sessionRes.data.session;
+  } catch (e) {
+    console.error('Coach voice: getSession threw:', e);
+    reportVoiceError('Coach voice: session check failed — check your connection.');
+    onDone?.();
+    return false;
+  }
+  if (!session) {
+    reportVoiceError('Coach voice: not signed in — try logging out and back in.');
+    onDone?.();
+    return false;
+  }
 
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) return false;
-
-    const res = await supabase.functions.invoke('breathing-tts', {
+  let res;
+  try {
+    res = await supabase.functions.invoke('breathing-tts', {
       body: { text: cleanText.slice(0, 5000) },
     });
+  } catch (e) {
+    console.error('Coach voice: functions.invoke threw:', e);
+    reportVoiceError('Coach voice: request never reached the server — check your connection.');
+    onDone?.();
+    return false;
+  }
 
-    if (res.error || !res.data) {
-      console.error('Coach voice TTS error:', res.error);
-      reportVoiceError('Coach voice unavailable right now — check back shortly.');
-      return false;
-    }
+  if (res.error || !res.data) {
+    console.error('Coach voice TTS error:', res.error);
+    reportVoiceError('Coach voice unavailable right now — check back shortly.');
+    onDone?.();
+    return false;
+  }
+
+  try {
 
     const blob = new Blob([res.data], { type: 'audio/mpeg' });
     const url = URL.createObjectURL(blob);

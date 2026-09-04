@@ -9,9 +9,7 @@ import { CountdownOverlay } from "@/components/CountdownOverlay";
 import { getVisibleExercises, getExerciseById, BreathingExercise, DURATION_OPTIONS } from "@/lib/breathingExercises";
 import { ImmersiveSessionView } from "@/components/mindset/ImmersiveSessionView";
 import { useBreathingAudio } from "@/hooks/useBreathingAudio";
-import { unlockCoachAudio } from "@/hooks/useJJVoice";
-import { useAIPreferences } from "@/hooks/useAIPreferences";
-import { VoiceSettingsSheet } from "@/components/coaching/VoiceSettingsSheet";
+import { unlockCoachAudio, useJJVoice } from "@/hooks/useJJVoice";
 import type { BreathPattern } from "@/components/mindset/BreathingVisual";
 
 type BreathPhase = "idle" | "inhale" | "hold" | "exhale" | "rest" | "complete";
@@ -39,9 +37,17 @@ const MindsetBreathing = () => {
   const [selectedPattern, setSelectedPattern] = useState<BreathPattern>("orb");
   const [phaseProgress, setPhaseProgress] = useState(0);
   
-  const { preferences: aiPrefs, updatePreferences } = useAIPreferences();
-  const voiceEnabled = aiPrefs?.voice_feedback_enabled ?? true; // Default ON
-  const setVoiceEnabled = (enabled: boolean) => updatePreferences.mutate({ voice_feedback_enabled: enabled });
+  // Mindset breathing's own local voice toggle -- NOT the shared
+  // user_ai_preferences.voice_feedback_enabled flag (that's a separate,
+  // unrelated "AI movement analysis feedback" setting that defaults to
+  // OFF in the database for every account; wiring breathwork voice to it
+  // meant breathing was silently muted for every user unless they found
+  // and flipped a toggle tied to a different feature). This mirrors how
+  // cardio's voice toggle already works: a dedicated, default-on setting
+  // for this feature specifically.
+  const { isEnabled, setSetting } = useJJVoice();
+  const voiceEnabled = isEnabled('mindset');
+  const setVoiceEnabled = (enabled: boolean) => setSetting('mindset', enabled);
   
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const startTimeRef = useRef<number>(0);
