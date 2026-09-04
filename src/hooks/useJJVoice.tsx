@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState, useEffect } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
 /* ── Granular voice setting keys ── */
@@ -77,6 +77,37 @@ export function stopCoachVoice() {
   }
 }
 
+/* Shared unlock for mobile browsers' autoplay restrictions — playing a
+ * silent buffer through a WebAudio context during a real user gesture
+ * (a tap/click) grants the page permission to play audio afterwards,
+ * including from async callbacks with no gesture of their own (a GPS
+ * fix, a countdown finishing, a breathing-phase timer). Chat already
+ * calls this from its send button. Cardio and breathwork need it too —
+ * their "Start" tap is followed by a 3s countdown before the first
+ * voice cue ever fires, which is well outside the gesture window, so
+ * without an explicit unlock at the tap itself every cue afterwards
+ * gets silently dropped by the browser instead of played. */
+let sharedAudioCtx: AudioContext | null = null;
+
+export function unlockCoachAudio() {
+  try {
+    if (!sharedAudioCtx) {
+      sharedAudioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+    }
+    if (sharedAudioCtx.state === 'suspended') {
+      sharedAudioCtx.resume();
+    }
+    const silent = sharedAudioCtx.createBuffer(1, 1, 22050);
+    const src = sharedAudioCtx.createBufferSource();
+    src.buffer = silent;
+    src.connect(sharedAudioCtx.destination);
+    src.start();
+  } catch {
+    // Best-effort — a failed unlock just means we fall back to whatever
+    // the browser's default autoplay behaviour is, same as before.
+  }
+}
+
 /**
  * Speak text through the shared ElevenLabs coach voice (with server-side
  * caching for repeated phrases). Returns true once playback has started;
@@ -125,7 +156,6 @@ export async function speakViaCoachVoice(text: string, onDone?: () => void): Pro
 /* ── Hook ── */
 export function useJJVoice() {
   const [settings, setSettings] = useState<VoiceSettings>(loadSettings);
-  const audioCtxRef = useRef<AudioContext | null>(null);
   const [isSpeaking, setIsSpeaking] = useState(false);
 
   // Persist on change
@@ -133,17 +163,7 @@ export function useJJVoice() {
 
   /* Unlock audio for mobile — call on user gesture */
   const unlockAudio = useCallback(() => {
-    if (!audioCtxRef.current) {
-      audioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
-    }
-    if (audioCtxRef.current.state === 'suspended') {
-      audioCtxRef.current.resume();
-    }
-    const silent = audioCtxRef.current.createBuffer(1, 1, 22050);
-    const src = audioCtxRef.current.createBufferSource();
-    src.buffer = silent;
-    src.connect(audioCtxRef.current.destination);
-    src.start();
+    unlockCoachAudio();
   }, []);
 
   /* Check if a feature is enabled */

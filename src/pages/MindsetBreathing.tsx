@@ -9,6 +9,7 @@ import { CountdownOverlay } from "@/components/CountdownOverlay";
 import { getVisibleExercises, getExerciseById, BreathingExercise, DURATION_OPTIONS } from "@/lib/breathingExercises";
 import { ImmersiveSessionView } from "@/components/mindset/ImmersiveSessionView";
 import { useBreathingAudio } from "@/hooks/useBreathingAudio";
+import { unlockCoachAudio } from "@/hooks/useJJVoice";
 import { useAIPreferences } from "@/hooks/useAIPreferences";
 import { VoiceSettingsSheet } from "@/components/coaching/VoiceSettingsSheet";
 import type { BreathPattern } from "@/components/mindset/BreathingVisual";
@@ -182,7 +183,13 @@ const MindsetBreathing = () => {
 
   const startWithDuration = useCallback((minutes: number) => {
     setSelectedMinutes(minutes);
-    
+
+    // Unlock audio HERE, synchronously inside the tap that starts the
+    // countdown — the first voice cue actually fires later, once the
+    // countdown finishes, which is outside any user-gesture window a
+    // browser would otherwise require before it allows audio to play.
+    if (voiceEnabled) unlockCoachAudio();
+
     if (selectedExercise && voiceEnabled) {
       const textsToPreload = [
         "Get ready", "Power", "Movement", "Fuel", "Mindset", "Go!",

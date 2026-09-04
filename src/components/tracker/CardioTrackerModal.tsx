@@ -23,6 +23,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { PostSessionSummary } from './PostSessionSummary';
 import { CountdownOverlay } from '@/components/CountdownOverlay';
 import { useCardioVoice } from '@/hooks/useCardioVoice';
+import { unlockCoachAudio } from '@/hooks/useJJVoice';
 import {
   calculateDistanceIncrement,
   getPersistedTrackerPositions,
@@ -319,6 +320,11 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
         toast.error('Geolocation is not supported by your browser');
         return;
       }
+      // Unlock audio playback HERE, synchronously inside the tap that starts
+      // the session — voice cues only ever fire later from the countdown
+      // finishing or a GPS callback, both well outside any user-gesture
+      // window a browser would otherwise require to allow audio.
+      unlockCoachAudio();
       setPhase('countdown');
     } else {
       setPhase('manual');

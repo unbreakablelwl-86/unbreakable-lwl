@@ -156,16 +156,33 @@ export function useUnbreakable86() {
 
   useEffect(() => { fetchEnrolment(); }, [fetchEnrolment]);
 
-  /* ─── Start new enrolment (free — included with Unbreakable) ─── */
+  /* ─── Start new enrolment (free — included with Unbreakable) ───
+   * The 86 day-count is NOT synced with the main daily login streak going
+   * forward — once 86 begins the two tracks are fully independent (86
+   * lives entirely in the 86 hub from here on). But the main streak itself
+   * doesn't reset just because 86 begins: if someone's already on a run of
+   * daily logins, 86 picks up the count where that run currently stands
+   * instead of dropping them back to Day 1. (JJ, Sept 2026)
+   */
   const startChallenge = useCallback(async (quizAnswers: U86QuizAnswers) => {
     if (!user) return null;
+
+    // Read (never write) today's main login streak — a one-time handoff at
+    // the moment of enrolment, not an ongoing sync.
+    const { data: streakRow } = await supabase
+      .from('login_streaks')
+      .select('current_streak')
+      .eq('user_id', user.id)
+      .maybeSingle();
+
+    const startingDay = Math.max(1, streakRow?.current_streak || 1);
 
     const { data, error } = await supabase
       .from('unbreakable86_enrolments' as any)
       .insert({
         user_id: user.id,
         status: 'active',
-        current_day: 1,
+        current_day: startingDay,
         start_date: today,
         reset_count: 0,
         quiz_answers: quizAnswers as any,
@@ -174,7 +191,11 @@ export function useUnbreakable86() {
       .single();
 
     if (error) throw error;
-    toast.success('UNBREAKABLE 86 activated. Day 1 starts now.');
+    toast.success(
+      startingDay > 1
+        ? `UNBREAKABLE 86 activated. Picking up from Day ${startingDay} — your streak carries in.`
+        : 'UNBREAKABLE 86 activated. Day 1 starts now.'
+    );
     await fetchEnrolment();
     return data as U86Enrolment;
   }, [user, today, fetchEnrolment]);
