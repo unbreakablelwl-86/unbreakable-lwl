@@ -2,18 +2,19 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/co
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { Volume2, VolumeX, MessageSquare, Brain, Activity, Bell, GraduationCap } from 'lucide-react';
+import { Volume2, VolumeX, Brain, Activity, Bell } from 'lucide-react';
 import { useJJVoice, VoiceFeature } from '@/hooks/useJJVoice';
 
 interface VoiceSettingsSheetProps {
   children?: React.ReactNode;
 }
 
+// 'chat' (spoken chat replies) and 'university' (chapter read-aloud) have
+// been removed as user-facing options for now — chat stays mic-input-only,
+// and University no longer offers a read-aloud voice option.
 const FEATURES: { key: VoiceFeature; icon: React.ElementType; label: string; description: string }[] = [
-  { key: 'chat', icon: MessageSquare, label: 'Chat with your coach', description: 'Voice replies when chatting with your coach' },
   { key: 'mindset', icon: Brain, label: 'Mindset & Breathing', description: 'Voice guidance during meditation and exercises' },
   { key: 'cardio', icon: Activity, label: 'Cardio Updates', description: 'Voice prompts during live cardio tracking' },
-  { key: 'university', icon: GraduationCap, label: 'University Read-Aloud', description: 'Your coach reads course chapters aloud' },
   { key: 'notifications', icon: Bell, label: 'Notifications', description: 'Read notifications and alerts aloud' },
 ];
 
@@ -78,8 +79,8 @@ export function VoiceSettingsSheet({ children }: VoiceSettingsSheetProps) {
           ))}
 
           <p className="text-xs text-muted-foreground pt-4 border-t border-border">
-            Unbreakable Coach is a male voice throughout — chat, mindset, cardio,
-            University read-aloud and notifications.
+            Unbreakable Coach is a male voice throughout — mindset, cardio,
+            and notifications.
           </p>
         </div>
       </SheetContent>

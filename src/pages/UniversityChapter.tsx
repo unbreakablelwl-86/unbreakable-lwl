@@ -1,9 +1,9 @@
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { ChapterContent } from '@/components/university/ChapterContent';
-import { ChevronLeft, ChevronRight, CheckCircle, ClipboardCheck, Lock, BookOpen, Clock, Volume2, VolumeX, Square } from 'lucide-react';
+import { ChevronLeft, ChevronRight, CheckCircle, ClipboardCheck, Lock, BookOpen, Clock } from 'lucide-react';
 import { getChapterData, getUnitData, getChapterQuiz } from '@/lib/university/courseStructure';
 import { useUniversityProgress } from '@/hooks/useUniversityProgress';
 import { useCourseAccess } from '@/hooks/useCourseAccess';
@@ -12,8 +12,6 @@ import { SubscriptionUpgradeBanner } from '@/components/university/SubscriptionU
 import { AdminControlPanel } from '@/components/university/AdminControlPanel';
 import { getCourseColors, getReadingTime } from '@/lib/university/courseColors';
 import { toast } from 'sonner';
-import { supabase } from '@/integrations/supabase/client';
-import type { ContentSection } from '@/lib/university/types';
 
 export default function UniversityChapter() {
   const { courseType, level, unit, chapter } = useParams();
@@ -34,52 +32,8 @@ export default function UniversityChapter() {
   const quizPassed = hasPassedChapterQuiz(levelNum, unitNum, chapterNum, ct);
   const quiz = getChapterQuiz(levelNum, unitNum, chapterNum, ct);
 
-  // Coach voice read-aloud
-  const [isReading, setIsReading] = useState(false);
-  const ttsAudioRef = useRef<HTMLAudioElement | null>(null);
-
-  const stopReading = useCallback(() => {
-    if (ttsAudioRef.current) { ttsAudioRef.current.pause(); ttsAudioRef.current = null; }
-    setIsReading(false);
-  }, []);
-
-  const readChapter = useCallback(async () => {
-    if (isReading) { stopReading(); return; }
-    if (!chapterData) return;
-
-    // Extract plain text from chapter content
-    const sections = Array.isArray(chapterData.content) ? chapterData.content as ContentSection[] : [];
-    let text = chapterData.title + '. ';
-    for (const s of sections) {
-      if (s.heading) text += s.heading + '. ';
-      if (s.paragraphs) text += s.paragraphs.join(' ') + ' ';
-      if (s.bullets) text += s.bullets.join('. ') + ' ';
-    }
-    if (chapterData.unbreakableInsight) text += 'Unbreakable Insight. ' + chapterData.unbreakableInsight + ' ';
-    if (chapterData.coachNote) text += 'Coach Note. ' + chapterData.coachNote;
-    text = text.slice(0, 5000);
-
-    setIsReading(true);
-    try {
-      const res = await supabase.functions.invoke('breathing-tts', { body: { text } });
-      if (res.error || !res.data) {
-        setIsReading(false);
-        return;
-      }
-      const blob = new Blob([res.data], { type: 'audio/mpeg' });
-      const url = URL.createObjectURL(blob);
-      const audio = new Audio(url);
-      ttsAudioRef.current = audio;
-      audio.onended = () => { setIsReading(false); URL.revokeObjectURL(url); ttsAudioRef.current = null; };
-      audio.onerror = () => { setIsReading(false); URL.revokeObjectURL(url); ttsAudioRef.current = null; };
-      await audio.play();
-    } catch { setIsReading(false); }
-  }, [chapterData, isReading, stopReading]);
-
-  // Stop reading on chapter change
   // Scroll to top on chapter change
   useEffect(() => {
-    stopReading();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [chapterNum, unitNum, levelNum, ct]);
 
@@ -185,24 +139,6 @@ export default function UniversityChapter() {
             <SubscriptionUpgradeBanner />
           ) : (
           <>
-          {/* Coach Voice Read-Aloud */}
-          <div className="flex justify-end mb-4">
-            <button
-              onClick={readChapter}
-              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl border text-xs font-display tracking-wider transition-all ${
-                isReading
-                  ? 'border-primary/40 bg-primary/10 text-primary shadow-[0_0_12px_hsl(var(--primary)/0.2)]'
-                  : 'border-border bg-card/50 text-muted-foreground hover:text-foreground hover:border-primary/30'
-              }`}
-            >
-              {isReading ? (
-                <><Square className="w-3.5 h-3.5" /> STOP</>
-              ) : (
-                <><Volume2 className="w-3.5 h-3.5" /> READ ALOUD</>
-              )}
-            </button>
-          </div>
-
           <motion.div
             key={`${ct}-${levelNum}-${unitNum}-${chapterNum}`}
             initial={{ opacity: 0, y: 12 }}

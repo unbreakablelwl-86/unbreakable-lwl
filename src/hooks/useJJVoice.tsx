@@ -254,8 +254,13 @@ export function useJJVoice() {
     unlockCoachAudio();
   }, []);
 
-  /* Check if a feature is enabled */
+  /* Check if a feature is enabled.
+   * 'chat' (spoken chat replies) and 'university' (chapter read-aloud) are
+   * removed features for now — always report disabled regardless of
+   * whatever a user's localStorage happens to hold from before this was
+   * pulled, rather than trusting a legacy stored value. */
   const isEnabled = useCallback((feature: VoiceFeature) => {
+    if (feature === 'chat' || feature === 'university') return false;
     return settings.master && settings[feature];
   }, [settings]);
 
@@ -266,6 +271,9 @@ export function useJJVoice() {
 
   /* Speak text via ElevenLabs TTS (James voice) */
   const speak = useCallback(async (text: string, feature?: VoiceFeature): Promise<void> => {
+    // 'chat' and 'university' are removed features — never speak for them,
+    // regardless of a legacy stored setting.
+    if (feature === 'chat' || feature === 'university') return;
     // Check if feature is enabled
     if (feature && !settings.master) return;
     if (feature && !settings[feature]) return;
