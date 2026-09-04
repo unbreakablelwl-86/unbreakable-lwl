@@ -75,7 +75,12 @@ const ALL_NAV_ITEMS: NavItemDef[] = [
     label: 'Social',
     path: '/social',
     activeMatch: ['/social'],
-    color: '#FFFFFF',
+    // Was '#FFFFFF' -- invisible against the light theme's near-white
+    // background (icon + label both render this colour when inactive,
+    // since colour is inherited by the label span too). Every other pillar
+    // has its own brand colour; this gives Social one that reads on both
+    // themes instead of assuming a permanently dark background.
+    color: '#38BDF8',
     description: 'Timeline & feed',
   },
   {
@@ -577,7 +582,14 @@ export default function AppLayout() {
                     navigate(item.path);
                   }}
                   className="flex flex-col items-center gap-0.5 px-2 py-1.5 rounded-lg transition-all relative"
-                  style={{ color: active ? (item.color || '#FF5500') : '#FFFFFF' }}
+                  // Inactive icons/labels were hardcoded to '#FFFFFF', which only
+                  // worked because the app was dark-mode-only in practice --
+                  // against the light theme's near-white background every
+                  // inactive bottom-nav icon and its label went invisible. The
+                  // "More" button two blocks below already gets this right with
+                  // hsl(var(--muted-foreground)); match that here so inactive
+                  // tabs read correctly in both themes.
+                  style={{ color: active ? (item.color || '#FF5500') : 'hsl(var(--muted-foreground))' }}
                 >
                   {item.isShield ? (
                     <img
