@@ -99,7 +99,7 @@ const FEATURE_GATES: Record<FeatureId, FeatureGate> = {
   exercise_browse: {
     id: 'exercise_browse',
     name: 'Exercise Browser',
-    description: 'View and search 1,500+ exercises',
+    description: 'View and search the exercise library',
     requiredTier: 'free',
   },
   university_l1: {
@@ -164,7 +164,7 @@ const FEATURE_GATES: Record<FeatureId, FeatureGate> = {
   exercise_library: {
     id: 'exercise_library',
     name: 'Full Exercise Library',
-    description: 'Full 1,500+ exercise library with AI recommendations',
+    description: 'Full exercise library with AI recommendations',
     requiredTier: 'foundation',
   },
   progress_reports: {

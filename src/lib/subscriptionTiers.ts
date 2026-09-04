@@ -87,7 +87,7 @@ export const TIERS: Record<TierKey, TierConfig> = {
     features: [
       'Unbreakable Coach (unlimited)',
       'UNBREAKABLE 86 programme',
-      'Full exercise library (1,500+)',
+      'Full exercise library',
       'AI programme generator',
       'AI nutrition plans',
       'Full UnTunes streaming',

@@ -9,6 +9,7 @@ import {
   BarChart3, Play, Target, Activity, Zap, Calendar, Sparkles, ArrowRight,
 } from 'lucide-react';
 import { AuthModal } from '@/components/tracker/AuthModal';
+import { BODY_PART_ICONS } from '@/components/programming/BodyPartIcon';
 
 type PowerTab = 'overview' | 'exercises' | 'logs';
 
@@ -102,7 +103,7 @@ export default function Programming() {
               <div className="p-4 rounded-xl border border-primary/15 bg-card">
                 <p className="text-muted-foreground text-sm leading-relaxed">
                   Your body is your armour. The <span className="text-primary font-semibold">Unbreakable Power</span> system
-                  combines Unbreakable Coaching, a 1,500-exercise library, and bespoke programme building to create training that's
+                  combines Unbreakable Coaching, a fully categorised exercise library, and bespoke programme building to create training that's
                   built for <span className="text-primary font-semibold">you</span>.
                 </p>
                 <p className="text-primary font-display text-sm tracking-wide mt-3" style={{ textShadow: '0 0 10px hsl(var(--primary) / 0.3)' }}>
@@ -115,7 +116,7 @@ export default function Programming() {
                 <h3 className="text-xs font-display tracking-wider text-muted-foreground">EXPLORE</h3>
                 {[
                   { path: '/programming/create', icon: Wrench, title: 'CREATE PROGRAMME', desc: 'Unbreakable Coach or Manual Builder — build bespoke training plans', onClick: handleCreate },
-                  { path: '/programming/exercises', icon: Dumbbell, title: 'EXERCISE LIBRARY', desc: '1,500 exercises with images & Unbreakable coaching breakdowns' },
+                  { path: '/programming/exercises', icon: Dumbbell, title: 'EXERCISE LIBRARY', desc: 'Hand-picked exercises by body part, with images & Unbreakable coaching breakdowns' },
                   { path: '/programming/my-programmes', icon: BookOpen, title: 'MY PROGRAMMES', desc: 'View saved programmes, track progress & execute sessions' },
                   { path: '/programming/logs', icon: BarChart3, title: 'SESSION LOGS', desc: 'Review past workouts and training history' },
                 ].map(card => {
@@ -185,23 +186,24 @@ export default function Programming() {
               <div className="p-4 rounded-xl border border-primary/15 bg-card">
                 <h3 className="font-display text-sm text-primary mb-1">UNBREAKABLE EXERCISE LIBRARY</h3>
                 <p className="text-muted-foreground text-sm leading-relaxed">
-                  1,500 exercises with images, coaching breakdowns, and step-by-step instructions. 
-                  500+ enriched with <span className="text-primary">Unbreakable coaching</span> tips.
+                  Hand-picked exercises with images, coaching breakdowns, and step-by-step instructions --
+                  organised by body part, with <span className="text-primary">Unbreakable coaching</span> tips
+                  and linked alternatives on every one.
                 </p>
               </div>
 
-              {/* Muscle group quick links */}
+              {/* Body part quick links */}
               <div className="space-y-2">
-                <h3 className="text-xs font-display tracking-wider text-muted-foreground">BY MUSCLE GROUP</h3>
+                <h3 className="text-xs font-display tracking-wider text-muted-foreground">BY BODY PART</h3>
                 <div className="flex flex-wrap gap-1.5">
-                  {['chest', 'shoulders', 'biceps', 'triceps', 'lats', 'middle back', 'lower back',
-                    'quadriceps', 'hamstrings', 'glutes', 'calves', 'abdominals', 'forearms', 'traps'].map(m => (
+                  {BODY_PART_ICONS.map(({ value, label, Icon }) => (
                     <Link
-                      key={m}
-                      to={`/programming/exercises?muscle=${m}`}
-                      className="px-3 py-1.5 rounded-full text-xs font-display border border-border bg-card text-muted-foreground hover:text-primary hover:border-primary/30 transition-all"
+                      key={value}
+                      to={`/programming/exercises?bodyPart=${value}`}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-display border border-border bg-card text-muted-foreground hover:text-primary hover:border-primary/30 transition-all"
                     >
-                      {m}
+                      <Icon className="w-3.5 h-3.5" />
+                      {label}
                     </Link>
                   ))}
                 </div>
@@ -216,7 +218,7 @@ export default function Programming() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <h4 className="font-display text-sm text-foreground tracking-wide">BROWSE FULL LIBRARY</h4>
-                    <p className="text-muted-foreground text-xs mt-0.5">Search, filter & explore all 1,500 exercises</p>
+                    <p className="text-muted-foreground text-xs mt-0.5">Search, filter & explore the full library</p>
                   </div>
                   <ArrowRight className="w-4 h-4 text-primary shrink-0" />
                 </div>

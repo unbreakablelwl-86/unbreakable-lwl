@@ -1,44 +1,57 @@
-import { useState, useEffect, useMemo } from 'react';
-import { useNavigate, useSearchParams, Link } from 'react-router-dom';
+import { useState, useMemo } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Card } from '@/components/ui/card';
 import {
-  ArrowLeft, Search, Filter, X, ChevronDown, ChevronUp,
-  Dumbbell, ArrowRight, Flame, Info, Lightbulb, Target,
+  ArrowLeft, Search, Filter, X,
+  Dumbbell, Flame, Lightbulb, Link2,
 } from 'lucide-react';
 import { getExerciseGifUrl } from '@/lib/exercise-images';
-import type { Exercise } from '@/lib/exercise-types';
+import { EXERCISE_GIF_IDS } from '@/lib/exercise-library-gifs';
+import {
+  EXERCISE_LIBRARY, CARDIO_EXERCISES, EQUIPMENT_OPTIONS,
+  findExerciseByName,
+  type LibraryExercise, type BodyPart, type Equipment,
+} from '@/lib/exerciseLibrary';
+import { BodyPartIcon, BODY_PART_ICONS } from '@/components/programming/BodyPartIcon';
+import { findCoachingDataByName } from '@/lib/exerciseCoachingData';
+import { ExerciseCoachingPanel } from '@/components/programming/ExerciseCoachingPanel';
 import { PaywallGate } from '@/components/paywall';
 
-/* ── Filter options ── */
-const MUSCLE_FILTERS = [
-  'chest', 'shoulders', 'biceps', 'triceps', 'lats', 'middle back', 'lower back',
-  'quadriceps', 'hamstrings', 'glutes', 'calves', 'abdominals', 'forearms', 'traps', 'neck',
-  'adductors', 'abductors',
-];
-const EQUIPMENT_FILTERS = [
-  'barbell', 'dumbbell', 'body only', 'cable', 'machine', 'kettlebells',
-  'bands', 'e-z curl bar', 'exercise ball', 'medicine ball',
-];
-const LEVEL_FILTERS = ['beginner', 'intermediate', 'expert'];
+/* -- All exercises in the curated library (main set + cardio equipment) -- */
+const ALL_EXERCISES: LibraryExercise[] = [...EXERCISE_LIBRARY, ...CARDIO_EXERCISES];
 
-/* ── Enriched exercise type ── */
-interface EnrichedExercise extends Exercise {
-  unbreakableDescription?: string;
-  unbreakableTips?: string[];
-  defaultSets?: number;
-  defaultReps?: string;
+const DIFFICULTY_FILTERS: LibraryExercise['difficulty'][] = ['beginner', 'intermediate', 'advanced'];
+
+/* Legacy deep-link support: the old page used ?muscle=<free-exercise-db muscle>,
+   e.g. from Programming.tsx's old quick-link chips. Map the ones that still
+   have a live link into the new, coarser body part groups. */
+const LEGACY_MUSCLE_TO_BODY_PART: Record<string, BodyPart> = {
+  chest: 'chest', shoulders: 'shoulders', biceps: 'arms', triceps: 'arms', forearms: 'arms',
+  lats: 'back', 'middle back': 'back', 'lower back': 'back', traps: 'back',
+  quadriceps: 'legs', hamstrings: 'legs', calves: 'legs', glutes: 'glutes', abdominals: 'core',
+};
+
+function getGifUrlFor(exercise: LibraryExercise): string {
+  const dbId = EXERCISE_GIF_IDS[exercise.id];
+  return dbId ? getExerciseGifUrl({ exerciseDbId: dbId }) : '';
 }
 
-/* ── Exercise Detail Panel ── */
+/* -- Exercise Detail Panel -- */
 function ExerciseDetail({
   exercise,
   onClose,
+  onJumpTo,
 }: {
-  exercise: EnrichedExercise;
+  exercise: LibraryExercise;
   onClose: () => void;
+  onJumpTo: (ex: LibraryExercise) => void;
 }) {
-  const gifSrc = getExerciseGifUrl(exercise);
+  const gifSrc = getGifUrlFor(exercise);
+  const coaching = findCoachingDataByName(exercise.name);
+
+  const relatedNames = [...exercise.alternatives, ...(exercise.machineAlternatives || [])];
+  const uniqueRelated = Array.from(new Set(relatedNames)).filter(n => n.toLowerCase() !== exercise.name.toLowerCase());
 
   return (
     <motion.div
@@ -71,7 +84,7 @@ function ExerciseDetail({
               />
             ) : (
               <div className="w-24 h-24 rounded-2xl bg-primary/10 border border-primary/25 flex items-center justify-center">
-                <Dumbbell className="w-10 h-10 text-primary/40" />
+                <BodyPartIcon bodyPart={exercise.bodyPart} size="lg" />
               </div>
             )}
           </div>
@@ -83,171 +96,193 @@ function ExerciseDetail({
             <h2 className="font-display text-xl text-foreground tracking-wide">{exercise.name}</h2>
             <div className="flex flex-wrap gap-2 mt-2">
               <span className="px-2 py-0.5 rounded-md text-[10px] font-display tracking-wider border border-primary/30 bg-primary/10 text-primary">
-                {exercise.level?.toUpperCase() || 'ALL LEVELS'}
+                {exercise.difficulty.toUpperCase()}
               </span>
-              {exercise.equipment && (
-                <span className="px-2 py-0.5 rounded-md text-[10px] font-display tracking-wider border border-border bg-card text-muted-foreground">
-                  {exercise.equipment.toUpperCase()}
-                </span>
-              )}
-              <span className="px-2 py-0.5 rounded-md text-[10px] font-display tracking-wider border border-border bg-card text-muted-foreground">
-                {exercise.category.toUpperCase()}
-              </span>
-            </div>
-          </div>
-
-          {/* Muscles */}
-          <div>
-            <h3 className="font-display text-xs text-primary tracking-wider mb-2">MUSCLES TARGETED</h3>
-            <div className="flex flex-wrap gap-1.5">
-              {exercise.primaryMuscles.map(m => (
-                <span key={m} className="px-2.5 py-1 rounded-lg text-xs border border-primary/25 bg-primary/10 text-primary">
-                  {m}
+              {exercise.equipment.map(eq => (
+                <span key={eq} className="px-2 py-0.5 rounded-md text-[10px] font-display tracking-wider border border-border bg-card text-muted-foreground capitalize">
+                  {eq}
                 </span>
               ))}
-              {exercise.secondaryMuscles.map(m => (
-                <span key={m} className="px-2.5 py-1 rounded-lg text-xs border border-border text-muted-foreground">
-                  {m}
-                </span>
-              ))}
+              <span className="px-2 py-0.5 rounded-md text-[10px] font-display tracking-wider border border-border bg-card text-muted-foreground capitalize">
+                {exercise.category}
+              </span>
             </div>
           </div>
 
           {/* Defaults */}
-          {(exercise.defaultSets || exercise.defaultReps) && (
-            <div className="flex gap-4">
-              {exercise.defaultSets && (
-                <div className="p-3 rounded-xl border border-border bg-card text-center flex-1">
-                  <p className="text-primary font-display text-lg">{exercise.defaultSets}</p>
-                  <p className="text-muted-foreground text-[10px]">SETS</p>
-                </div>
-              )}
-              {exercise.defaultReps && (
-                <div className="p-3 rounded-xl border border-border bg-card text-center flex-1">
-                  <p className="text-primary font-display text-lg">{exercise.defaultReps}</p>
-                  <p className="text-muted-foreground text-[10px]">REPS</p>
-                </div>
-              )}
+          <div className="flex gap-4">
+            <div className="p-3 rounded-xl border border-border bg-card text-center flex-1">
+              <p className="text-primary font-display text-lg">{exercise.defaultSets}</p>
+              <p className="text-muted-foreground text-[10px]">SETS</p>
             </div>
-          )}
+            <div className="p-3 rounded-xl border border-border bg-card text-center flex-1">
+              <p className="text-primary font-display text-lg">{exercise.defaultReps}</p>
+              <p className="text-muted-foreground text-[10px]">REPS</p>
+            </div>
+          </div>
 
-          {/* Unbreakable coaching description */}
-          {exercise.unbreakableDescription && (
-            <div className="p-4 rounded-xl border border-primary/15 bg-primary/5">
-              <div className="flex items-center gap-2 mb-2">
-                <Flame className="w-4 h-4 text-primary" />
-                <h3 className="font-display text-xs text-primary tracking-wider">UNBREAKABLE COACHING</h3>
+          {/* Full Unbreakable coaching breakdown, when we have one -- otherwise the
+              curated description + tips every exercise in the library carries. */}
+          {coaching ? (
+            <ExerciseCoachingPanel coachingData={coaching} exerciseName={exercise.name} />
+          ) : (
+            <>
+              <div className="p-4 rounded-xl border border-primary/15 bg-primary/5">
+                <div className="flex items-center gap-2 mb-2">
+                  <Flame className="w-4 h-4 text-primary" />
+                  <h3 className="font-display text-xs text-primary tracking-wider">UNBREAKABLE COACHING</h3>
+                </div>
+                <p className="text-muted-foreground text-sm leading-relaxed">{exercise.description}</p>
               </div>
-              <p className="text-muted-foreground text-sm leading-relaxed">{exercise.unbreakableDescription}</p>
-            </div>
+
+              {exercise.tips.length > 0 && (
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Lightbulb className="w-4 h-4 text-primary" />
+                    <h3 className="font-display text-xs text-primary tracking-wider">COACHING TIPS</h3>
+                  </div>
+                  <ul className="space-y-1.5">
+                    {exercise.tips.map((tip, i) => (
+                      <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
+                        <span className="text-primary mt-0.5 text-xs">&#9656;</span>
+                        <span>{tip}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </>
           )}
 
-          {/* Unbreakable tips */}
-          {exercise.unbreakableTips && exercise.unbreakableTips.length > 0 && (
+          {/* Related exercises -- tap to jump straight to it */}
+          {uniqueRelated.length > 0 && (
             <div className="space-y-2">
               <div className="flex items-center gap-2">
-                <Lightbulb className="w-4 h-4 text-primary" />
-                <h3 className="font-display text-xs text-primary tracking-wider">COACHING TIPS</h3>
+                <Link2 className="w-4 h-4 text-primary" />
+                <h3 className="font-display text-xs text-primary tracking-wider">RELATED EXERCISES</h3>
               </div>
-              <ul className="space-y-1.5">
-                {exercise.unbreakableTips.map((tip, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
-                    <span className="text-primary mt-0.5 text-xs">▸</span>
-                    <span>{tip}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {/* Standard instructions */}
-          {exercise.instructions && exercise.instructions.length > 0 && (
-            <div className="space-y-2">
-              <h3 className="font-display text-xs text-muted-foreground tracking-wider">STEP-BY-STEP</h3>
-              <ol className="space-y-2">
-                {exercise.instructions.map((step, i) => (
-                  <li key={i} className="flex items-start gap-3 text-sm text-muted-foreground">
-                    <span className="flex-shrink-0 w-5 h-5 rounded-full bg-primary/15 border border-primary/30 text-primary text-[10px] flex items-center justify-center font-display">
-                      {i + 1}
+              <div className="flex flex-wrap gap-1.5">
+                {uniqueRelated.map(name => {
+                  const match = findExerciseByName(name);
+                  return match ? (
+                    <button
+                      key={name}
+                      onClick={() => onJumpTo(match)}
+                      className="px-2.5 py-1 rounded-lg text-xs border border-primary/25 bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
+                    >
+                      {name}
+                    </button>
+                  ) : (
+                    <span key={name} className="px-2.5 py-1 rounded-lg text-xs border border-border text-muted-foreground">
+                      {name}
                     </span>
-                    <span className="leading-relaxed">{step}</span>
-                  </li>
-                ))}
-              </ol>
+                  );
+                })}
+              </div>
             </div>
           )}
-
-          {/* Force / Mechanic */}
-          <div className="flex gap-4 text-xs text-muted-foreground">
-            {exercise.force && <span>Force: <span className="text-muted-foreground">{exercise.force}</span></span>}
-            {exercise.mechanic && <span>Mechanic: <span className="text-muted-foreground">{exercise.mechanic}</span></span>}
-          </div>
         </div>
       </motion.div>
     </motion.div>
   );
 }
 
-/* ═══════════════════════════════════════════════════════════════════
+/* -- Exercise Card -- */
+function ExerciseCard({ exercise, onSelect }: { exercise: LibraryExercise; onSelect: () => void }) {
+  const gifSrc = getGifUrlFor(exercise);
+  const hasCoaching = !!findCoachingDataByName(exercise.name);
+
+  return (
+    <motion.div whileTap={{ scale: 0.97 }} className="cursor-pointer" onClick={onSelect}>
+      <Card className={`overflow-hidden border-2 transition-all h-full ${
+        hasCoaching ? 'border-primary/25 hover:border-primary/50' : 'border-border hover:border-primary/30'
+      }`}>
+        <div className="relative bg-card aspect-square flex items-center justify-center p-2">
+          {gifSrc ? (
+            <img
+              src={gifSrc}
+              alt={exercise.name}
+              className="max-h-full max-w-full object-contain"
+              loading="lazy"
+              onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+            />
+          ) : (
+            <BodyPartIcon bodyPart={exercise.bodyPart} size="lg" showGlow={false} className="text-primary/30" />
+          )}
+          {hasCoaching && (
+            <div className="absolute top-1.5 right-1.5">
+              <div className="w-5 h-5 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center" title="Full Unbreakable coaching breakdown available">
+                <Flame className="w-2.5 h-2.5 text-primary" />
+              </div>
+            </div>
+          )}
+        </div>
+        <div className="p-2.5">
+          <h3 className="font-display text-[11px] text-foreground tracking-wide leading-tight line-clamp-2 min-h-[28px]">
+            {exercise.name.toUpperCase()}
+          </h3>
+          <div className="flex items-center gap-1 mt-1.5">
+            <span className={`w-1.5 h-1.5 rounded-full ${
+              exercise.difficulty === 'beginner' ? 'bg-green-500' :
+              exercise.difficulty === 'intermediate' ? 'bg-yellow-500' : 'bg-red-500'
+            }`} />
+            <span className="text-[9px] text-muted-foreground capitalize">{exercise.equipment[0]}</span>
+            <span className="text-[9px] text-muted-foreground">&bull; {exercise.defaultSets}&times;{exercise.defaultReps}</span>
+          </div>
+        </div>
+      </Card>
+    </motion.div>
+  );
+}
+
+/* =====================================================================
    Exercise Library Page
-   ═══════════════════════════════════════════════════════════════════ */
+   ===================================================================== */
 export default function ExerciseLibrary() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const initialMuscle = searchParams.get('muscle') || '';
+  const bodyPartParam = searchParams.get('bodyPart') as BodyPart | null;
+  const legacyMuscleParam = searchParams.get('muscle');
+  const initialBodyPart = bodyPartParam || (legacyMuscleParam ? LEGACY_MUSCLE_TO_BODY_PART[legacyMuscleParam] : undefined) || null;
 
-  const [exercises, setExercises] = useState<EnrichedExercise[]>([]);
-  const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState('');
-  const [selectedMuscle, setSelectedMuscle] = useState(initialMuscle);
-  const [selectedEquipment, setSelectedEquipment] = useState('');
-  const [selectedLevel, setSelectedLevel] = useState('');
-  const [showFilters, setShowFilters] = useState(!!initialMuscle);
-  const [selectedExercise, setSelectedExercise] = useState<EnrichedExercise | null>(null);
-  const [page, setPage] = useState(1);
-  const PAGE_SIZE = 30;
+  const [selectedBodyPart, setSelectedBodyPart] = useState<BodyPart | null>(initialBodyPart);
+  const [selectedEquipment, setSelectedEquipment] = useState<Equipment | ''>('');
+  const [selectedDifficulty, setSelectedDifficulty] = useState<LibraryExercise['difficulty'] | ''>('');
+  const [showFilters, setShowFilters] = useState(false);
+  const [selectedExercise, setSelectedExercise] = useState<LibraryExercise | null>(null);
 
-  useEffect(() => {
-    fetch('/data/exercises.json')
-      .then(r => r.json())
-      .then((data: EnrichedExercise[]) => {
-        setExercises(data);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
+  const isSearching = query.trim().length > 0;
+  const showCategoryGrid = !isSearching && !selectedBodyPart;
+
+  const categoryCounts = useMemo(() => {
+    const counts: Partial<Record<BodyPart, number>> = {};
+    for (const ex of ALL_EXERCISES) counts[ex.bodyPart] = (counts[ex.bodyPart] || 0) + 1;
+    return counts;
   }, []);
 
   const filtered = useMemo(() => {
-    let result = exercises;
-    if (query.trim()) {
+    let result = ALL_EXERCISES;
+    if (isSearching) {
       const q = query.toLowerCase();
       result = result.filter(ex =>
         ex.name.toLowerCase().includes(q) ||
-        ex.primaryMuscles.some(m => m.includes(q)) ||
-        (ex.equipment || '').toLowerCase().includes(q)
+        ex.bodyPart.toLowerCase().includes(q) ||
+        ex.equipment.some(e => e.toLowerCase().includes(q))
       );
+    } else if (selectedBodyPart) {
+      result = result.filter(ex => ex.bodyPart === selectedBodyPart);
+    } else {
+      return [];
     }
-    if (selectedMuscle) {
-      result = result.filter(ex =>
-        ex.primaryMuscles.includes(selectedMuscle) ||
-        ex.secondaryMuscles.includes(selectedMuscle)
-      );
-    }
-    if (selectedEquipment) {
-      result = result.filter(ex => ex.equipment === selectedEquipment);
-    }
-    if (selectedLevel) {
-      result = result.filter(ex => ex.level === selectedLevel);
-    }
+    if (selectedEquipment) result = result.filter(ex => ex.equipment.includes(selectedEquipment));
+    if (selectedDifficulty) result = result.filter(ex => ex.difficulty === selectedDifficulty);
     return result;
-  }, [exercises, query, selectedMuscle, selectedEquipment, selectedLevel]);
+  }, [query, isSearching, selectedBodyPart, selectedEquipment, selectedDifficulty]);
 
-  const paginated = filtered.slice(0, page * PAGE_SIZE);
-  const hasMore = paginated.length < filtered.length;
-  const hasFilters = selectedMuscle || selectedEquipment || selectedLevel;
-
-  // Reset page when filters change
-  useEffect(() => { setPage(1); }, [query, selectedMuscle, selectedEquipment, selectedLevel]);
+  const hasFilters = !!selectedEquipment || !!selectedDifficulty;
+  const currentBodyPartMeta = selectedBodyPart ? BODY_PART_ICONS.find(bp => bp.value === selectedBodyPart) : null;
+  const CurrentBodyPartIcon = currentBodyPartMeta?.Icon;
 
   return (
     <PaywallGate feature="exercise_library">
@@ -266,8 +301,8 @@ export default function ExerciseLibrary() {
               <span className="text-foreground">EXERCISE LIBRARY</span>
             </h1>
             <p className="text-muted-foreground text-sm md:text-base max-w-xl mx-auto">
-              {exercises.length} exercises with animated demos, coaching tips, and step-by-step breakdowns.
-              Master every movement.
+              {ALL_EXERCISES.length} hand-picked exercises, organised by body part, with animated demos,
+              coaching breakdowns, and linked alternatives. No clutter, no duplicates.
             </p>
           </motion.div>
         </div>
@@ -277,16 +312,22 @@ export default function ExerciseLibrary() {
       <div className="sticky top-0 z-30 border-b border-border bg-background/95 backdrop-blur-xl">
         <div className="container mx-auto px-4 py-3 max-w-4xl">
           <div className="flex items-center gap-2">
-            <button onClick={() => navigate('/programming')} className="p-2 rounded-lg text-muted-foreground hover:text-foreground transition-colors">
-              <ArrowLeft className="w-5 h-5" />
-            </button>
+            {selectedBodyPart && !isSearching ? (
+              <button onClick={() => setSelectedBodyPart(null)} className="p-2 rounded-lg text-muted-foreground hover:text-foreground transition-colors">
+                <ArrowLeft className="w-5 h-5" />
+              </button>
+            ) : (
+              <button onClick={() => navigate('/programming')} className="p-2 rounded-lg text-muted-foreground hover:text-foreground transition-colors">
+                <ArrowLeft className="w-5 h-5" />
+              </button>
+            )}
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <input
                 type="text"
                 value={query}
                 onChange={e => setQuery(e.target.value)}
-                placeholder="Search exercises..."
+                placeholder={currentBodyPartMeta ? `Search ${currentBodyPartMeta.label.toLowerCase()}...` : 'Search all exercises...'}
                 className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-border bg-card text-foreground text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary/30"
               />
               {query && (
@@ -295,21 +336,32 @@ export default function ExerciseLibrary() {
                 </button>
               )}
             </div>
-            <button
-              onClick={() => setShowFilters(!showFilters)}
-              className={`p-2.5 rounded-xl border transition-all ${
-                showFilters || hasFilters
-                  ? 'border-primary/40 bg-primary/10 text-primary'
-                  : 'border-border text-muted-foreground hover:text-foreground'
-              }`}
-            >
-              <Filter className="w-4 h-4" />
-            </button>
+            {(selectedBodyPart || isSearching) && (
+              <button
+                onClick={() => setShowFilters(!showFilters)}
+                className={`p-2.5 rounded-xl border transition-all ${
+                  showFilters || hasFilters
+                    ? 'border-primary/40 bg-primary/10 text-primary'
+                    : 'border-border text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                <Filter className="w-4 h-4" />
+              </button>
+            )}
           </div>
+
+          {/* Current category chip */}
+          {currentBodyPartMeta && CurrentBodyPartIcon && !isSearching && (
+            <div className="flex items-center gap-2 mt-3">
+              <CurrentBodyPartIcon className="w-4 h-4 text-primary" />
+              <span className="font-display text-sm tracking-wider text-foreground">{currentBodyPartMeta.label.toUpperCase()}</span>
+              <span className="text-xs text-muted-foreground">({categoryCounts[selectedBodyPart!] || 0})</span>
+            </div>
+          )}
 
           {/* Filter chips */}
           <AnimatePresence>
-            {showFilters && (
+            {showFilters && (selectedBodyPart || isSearching) && (
               <motion.div
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: 'auto', opacity: 1 }}
@@ -317,66 +369,47 @@ export default function ExerciseLibrary() {
                 className="overflow-hidden"
               >
                 <div className="pt-3 space-y-3">
-                  {/* Muscle */}
-                  <div>
-                    <p className="text-[10px] font-display tracking-wider text-muted-foreground mb-1.5">MUSCLE GROUP</p>
-                    <div className="flex flex-wrap gap-1.5">
-                      {MUSCLE_FILTERS.map(m => (
-                        <button
-                          key={m}
-                          onClick={() => setSelectedMuscle(selectedMuscle === m ? '' : m)}
-                          className={`px-2.5 py-1 rounded-lg text-xs transition-all ${
-                            selectedMuscle === m
-                              ? 'bg-primary/20 border border-primary/40 text-primary'
-                              : 'bg-card border border-border text-muted-foreground hover:text-foreground'
-                          }`}
-                        >
-                          {m}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
                   {/* Equipment */}
                   <div>
                     <p className="text-[10px] font-display tracking-wider text-muted-foreground mb-1.5">EQUIPMENT</p>
                     <div className="flex flex-wrap gap-1.5">
-                      {EQUIPMENT_FILTERS.map(e => (
+                      {EQUIPMENT_OPTIONS.map(({ value, label }) => (
                         <button
-                          key={e}
-                          onClick={() => setSelectedEquipment(selectedEquipment === e ? '' : e)}
+                          key={value}
+                          onClick={() => setSelectedEquipment(selectedEquipment === value ? '' : value)}
                           className={`px-2.5 py-1 rounded-lg text-xs transition-all ${
-                            selectedEquipment === e
+                            selectedEquipment === value
                               ? 'bg-primary/20 border border-primary/40 text-primary'
                               : 'bg-card border border-border text-muted-foreground hover:text-foreground'
                           }`}
                         >
-                          {e}
+                          {label}
                         </button>
                       ))}
                     </div>
                   </div>
-                  {/* Level */}
+                  {/* Difficulty */}
                   <div>
-                    <p className="text-[10px] font-display tracking-wider text-muted-foreground mb-1.5">LEVEL</p>
+                    <p className="text-[10px] font-display tracking-wider text-muted-foreground mb-1.5">DIFFICULTY</p>
                     <div className="flex flex-wrap gap-1.5">
-                      {LEVEL_FILTERS.map(l => (
+                      {DIFFICULTY_FILTERS.map(d => (
                         <button
-                          key={l}
-                          onClick={() => setSelectedLevel(selectedLevel === l ? '' : l)}
-                          className={`px-2.5 py-1 rounded-lg text-xs transition-all ${
-                            selectedLevel === l
+                          key={d}
+                          onClick={() => setSelectedDifficulty(selectedDifficulty === d ? '' : d)}
+                          className={`px-2.5 py-1 rounded-lg text-xs capitalize transition-all ${
+                            selectedDifficulty === d
                               ? 'bg-primary/20 border border-primary/40 text-primary'
                               : 'bg-card border border-border text-muted-foreground hover:text-foreground'
                           }`}
                         >
-                          {l}
+                          {d}
                         </button>
                       ))}
                     </div>
                   </div>
                   {hasFilters && (
                     <button
-                      onClick={() => { setSelectedMuscle(''); setSelectedEquipment(''); setSelectedLevel(''); }}
+                      onClick={() => { setSelectedEquipment(''); setSelectedDifficulty(''); }}
                       className="text-xs text-primary hover:underline"
                     >
                       Clear all filters
@@ -389,104 +422,47 @@ export default function ExerciseLibrary() {
         </div>
       </div>
 
-      {/* Results count */}
-      <div className="container mx-auto px-4 py-3 max-w-4xl">
-        <p className="text-xs text-muted-foreground font-display tracking-wider">
-          {filtered.length} EXERCISE{filtered.length !== 1 ? 'S' : ''}
-          {hasFilters || query ? ' FOUND' : ''}
-        </p>
-      </div>
-
-      {/* Exercise Grid */}
       <main className="container mx-auto px-4 pb-12 max-w-4xl">
-        {loading ? (
-          <div className="flex items-center justify-center py-20">
-            <div className="w-10 h-10 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-          </div>
-        ) : filtered.length === 0 ? (
-          <div className="text-center py-16">
-            <Dumbbell className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-            <p className="text-muted-foreground">No exercises found. Try different filters.</p>
+        {showCategoryGrid ? (
+          /* -- Category tile grid: the default landing flow -- */
+          <div className="pt-6">
+            <p className="text-xs text-muted-foreground font-display tracking-wider mb-3">BROWSE BY BODY PART</p>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              {BODY_PART_ICONS.map(({ value, label, Icon }) => (
+                <motion.button
+                  key={value}
+                  whileTap={{ scale: 0.97 }}
+                  onClick={() => setSelectedBodyPart(value)}
+                  className="text-left"
+                >
+                  <Card className="p-4 border-2 border-border hover:border-primary/40 transition-all flex flex-col items-center justify-center gap-2 aspect-square">
+                    <Icon className="w-8 h-8 text-primary drop-shadow-[0_0_6px_hsl(var(--primary)/0.5)]" />
+                    <span className="font-display text-sm tracking-wide text-foreground">{label}</span>
+                    <span className="text-[10px] text-muted-foreground">{categoryCounts[value] || 0} exercises</span>
+                  </Card>
+                </motion.button>
+              ))}
+            </div>
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-              {paginated.map(ex => {
-                const gifSrc = getExerciseGifUrl(ex);
-                const hasCoaching = !!ex.unbreakableDescription;
-                return (
-                  <motion.div
-                    key={ex.id}
-                    whileTap={{ scale: 0.97 }}
-                    className="cursor-pointer"
-                    onClick={() => setSelectedExercise(ex)}
-                  >
-                    <Card className={`overflow-hidden border-2 transition-all h-full ${
-                      hasCoaching
-                        ? 'border-primary/25 hover:border-primary/50'
-                        : 'border-border hover:border-primary/30'
-                    }`}>
-                      {/* Animated GIF */}
-                      <div className="relative bg-card aspect-square flex items-center justify-center p-2">
-                        {gifSrc ? (
-                          <img
-                            src={gifSrc}
-                            alt={ex.name}
-                            className="max-h-full max-w-full object-contain"
-                            loading="lazy"
-                            onError={(e) => {
-                              const target = e.target as HTMLImageElement;
-                              target.style.display = 'none';
-                              // Show fallback icon
-                              const parent = target.parentElement;
-                              if (parent && !parent.querySelector('.fallback-icon')) {
-                                const div = document.createElement('div');
-                                div.className = 'fallback-icon flex items-center justify-center w-full h-full';
-                                div.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#FF5500" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.3"><path d="m6.5 6.5 11 11"/><path d="m21 21-1-1"/><path d="m3 3 1 1"/><path d="m18 22 4-4"/><path d="m2 6 4-4"/><path d="m3 10 7-7"/><path d="m14 21 7-7"/></svg>';
-                                parent.appendChild(div);
-                              }
-                            }}
-                          />
-                        ) : (
-                          <Dumbbell className="w-8 h-8 text-primary/30" />
-                        )}
-                        {hasCoaching && (
-                          <div className="absolute top-1.5 right-1.5">
-                            <div className="w-5 h-5 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center"
-                              title="Unbreakable coaching available">
-                              <Flame className="w-2.5 h-2.5 text-primary" />
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                      {/* Info */}
-                      <div className="p-2.5">
-                        <h3 className="font-display text-[11px] text-foreground tracking-wide leading-tight line-clamp-2 min-h-[28px]">
-                          {ex.name.toUpperCase()}
-                        </h3>
-                        <div className="flex items-center gap-1 mt-1.5">
-                          <span className={`w-1.5 h-1.5 rounded-full ${
-                            ex.level === 'beginner' ? 'bg-green-500' :
-                            ex.level === 'intermediate' ? 'bg-yellow-500' : 'bg-red-500'
-                          }`} />
-                          <span className="text-[9px] text-muted-foreground">{ex.primaryMuscles[0] || ''}</span>
-                        </div>
-                      </div>
-                    </Card>
-                  </motion.div>
-                );
-              })}
+            {/* Results count */}
+            <div className="py-3">
+              <p className="text-xs text-muted-foreground font-display tracking-wider">
+                {filtered.length} EXERCISE{filtered.length !== 1 ? 'S' : ''}{isSearching ? ' FOUND' : ''}
+              </p>
             </div>
 
-            {/* Load more */}
-            {hasMore && (
-              <div className="text-center mt-8">
-                <button
-                  onClick={() => setPage(p => p + 1)}
-                  className="px-6 py-2.5 rounded-xl border border-primary/30 text-primary text-sm font-display tracking-wider hover:bg-primary/10 transition-all"
-                >
-                  LOAD MORE ({filtered.length - paginated.length} remaining)
-                </button>
+            {filtered.length === 0 ? (
+              <div className="text-center py-16">
+                <Dumbbell className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                <p className="text-muted-foreground">No exercises found. Try different filters.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                {filtered.map(ex => (
+                  <ExerciseCard key={ex.id} exercise={ex} onSelect={() => setSelectedExercise(ex)} />
+                ))}
               </div>
             )}
           </>
@@ -499,6 +475,7 @@ export default function ExerciseLibrary() {
           <ExerciseDetail
             exercise={selectedExercise}
             onClose={() => setSelectedExercise(null)}
+            onJumpTo={(ex) => setSelectedExercise(ex)}
           />
         )}
       </AnimatePresence>

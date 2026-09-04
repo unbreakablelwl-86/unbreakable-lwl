@@ -23,7 +23,7 @@ const TOUR_SLIDES = [
   {
     icon: Dumbbell,
     title: 'POWER & MOVEMENT',
-    description: 'Track every session. 1,500+ exercises, AI programme generator, cardio tracker with GPS.',
+    description: 'Track every session. Curated exercise library, AI programme generator, cardio tracker with GPS.',
     color: '#EF4444',
   },
   {
