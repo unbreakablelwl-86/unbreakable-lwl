@@ -94,7 +94,7 @@ export function InlineExerciseLibrary({
         <div className="relative mb-3">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-primary/60" />
           <Input
-            placeholder="Search 230+ movements..."
+            placeholder="Search 1000+ movements..."
             value={searchQuery}
             onChange={(e) => {
               setSearchQuery(e.target.value);
