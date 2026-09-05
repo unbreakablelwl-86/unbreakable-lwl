@@ -27,6 +27,7 @@ import { Badge } from '@/components/ui/badge';
 import { CombinedStatsView } from '@/components/tracker/CombinedStatsView';
 import { CombinedRecordsView } from '@/components/tracker/CombinedRecordsView';
 import { SettingsPanel } from '@/components/settings/SettingsPanel';
+import { NotificationPreferences } from '@/components/profile/NotificationPreferences';
 import { MembershipTab } from '@/components/profile/MembershipTab';
 import { SocialLinksDisplay } from '@/components/profile/SocialLinksDisplay';
 import { toast } from 'sonner';
@@ -611,6 +612,7 @@ export function ProfileView() {
         <TabsContent value="settings" className="mt-6 space-y-6">
           {/* Coach Bio / About You — editable profile info */}
           <CoachingBioForm />
+          <NotificationPreferences />
           <SettingsPanel />
         </TabsContent>
       </Tabs>

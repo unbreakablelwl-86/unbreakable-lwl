@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ProfileView } from '@/components/tracker/ProfileView';
 import { AthleteCoachSection } from '@/components/profile/AthleteCoachSection';
-import { PasswordChangeCard } from '@/components/profile/PasswordChangeCard';
 import { useAuth } from '@/hooks/useAuth';
 import { useProfile } from '@/hooks/useProfile';
 import { useFollow, FollowUser } from '@/hooks/useFollow';
@@ -36,7 +35,6 @@ import { format, formatDistanceToNow } from 'date-fns';
 const shieldLogo = 'https://vlwcoqilwyfcrsxodtdx.supabase.co/storage/v1/object/public/site-assets/misc/unbreakable-shield.webp';
 import { ProfileAchievements } from '@/components/profile/AchievementPBTrackers';
 import { ProfileSkeleton } from '@/components/ui/PageSkeleton';
-import { NotificationPreferences } from '@/components/profile/NotificationPreferences';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 interface OwnPost {
@@ -766,8 +764,6 @@ export default function Profile() {
           </div>
           <AthleteCoachSection />
           <ProfileView />
-          <NotificationPreferences />
-          <PasswordChangeCard />
         </section>
       )}
 
