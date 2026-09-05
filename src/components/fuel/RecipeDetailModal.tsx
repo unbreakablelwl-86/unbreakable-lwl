@@ -16,6 +16,7 @@ import {
   ShoppingCart,
   CheckCircle2,
   CalendarPlus,
+  X,
 } from 'lucide-react';
 
 const DIETARY_TAG_FULL: Record<string, string> = {
@@ -67,7 +68,7 @@ export function RecipeDetailModal({
 
   return (
     <Dialog open={!!recipe} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto p-0 gap-0 bg-background border-border">
+      <DialogContent hideDefaultClose className="max-w-2xl max-h-[90vh] overflow-y-auto p-0 gap-0 bg-background border-border">
         {/* Hero Section */}
         <div className="relative">
           {recipe.image_url ? (
@@ -100,16 +101,17 @@ export function RecipeDetailModal({
             )}
           </div>
 
-          {/* Favourite button */}
+          {/* Close button (replaces the default Dialog close, which was
+              tucked in the same corner as the favourite star below and
+              barely visible over the hero photo) */}
           <Button
             variant="ghost"
             size="icon"
             className="absolute top-4 right-4 h-10 w-10 rounded-full bg-background/60 backdrop-blur-sm hover:bg-background/80"
-            onClick={() => onToggleFavourite(recipe.id)}
+            onClick={onClose}
           >
-            <Star
-              className={`w-5 h-5 ${recipe.is_favourite ? 'text-primary fill-primary' : 'text-foreground'}`}
-            />
+            <X className="w-5 h-5 text-foreground" />
+            <span className="sr-only">Close</span>
           </Button>
 
           {/* Title overlay */}
