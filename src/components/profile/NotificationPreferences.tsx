@@ -2,19 +2,22 @@ import { useState, useEffect } from 'react';
 import { Switch } from '@/components/ui/switch';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { useUserRole } from '@/hooks/useUserRole';
 import { Bot, Trophy, Heart, UserPlus, MessageCircle, Dumbbell, Package, Apple } from 'lucide-react';
 import { toast } from 'sonner';
 
-const PREF_SECTIONS = [
-  {
-    label: 'AI Coach',
-    items: [
-      { key: 'ai_daily_fill', label: 'Daily auto-fill completed', icon: Bot },
-      { key: 'ai_programme', label: 'Programme generated', icon: Bot },
-      { key: 'ai_meal_plan', label: 'Meal plan generated', icon: Bot },
-      // { key: 'weekly_pack', label: 'Weekly pack ready', icon: Package }, // Card system hidden
-    ],
-  },
+function getPrefSections(isDev: boolean) {
+  return [
+    {
+      label: 'AI Coach',
+      items: [
+        // Dev-only: ties to the daily-autofill cron, which only ever runs for dev-role accounts.
+        ...(isDev ? [{ key: 'ai_daily_fill', label: 'Daily auto-fill completed', icon: Bot }] : []),
+        { key: 'ai_programme', label: 'Programme generated', icon: Bot },
+        { key: 'ai_meal_plan', label: 'Meal plan generated', icon: Bot },
+        // { key: 'weekly_pack', label: 'Weekly pack ready', icon: Package }, // Card system hidden
+      ],
+    },
   {
     label: 'Training',
     items: [
@@ -36,7 +39,8 @@ const PREF_SECTIONS = [
       { key: 'coach_message', label: 'Coach message', icon: Apple },
     ],
   },
-];
+  ];
+}
 
 const DEFAULT_PREFS: Record<string, boolean> = {
   ai_daily_fill: true,
@@ -53,8 +57,10 @@ const DEFAULT_PREFS: Record<string, boolean> = {
 
 export function NotificationPreferences() {
   const { user } = useAuth();
+  const { isDev } = useUserRole();
   const [prefs, setPrefs] = useState<Record<string, boolean>>(DEFAULT_PREFS);
   const [loading, setLoading] = useState(true);
+  const PREF_SECTIONS = getPrefSections(isDev);
 
   useEffect(() => {
     if (!user) return;
