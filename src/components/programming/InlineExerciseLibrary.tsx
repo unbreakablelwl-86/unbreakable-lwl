@@ -142,7 +142,7 @@ export function InlineExerciseLibrary({
       </div>
 
       {/* Scrollable Exercise List */}
-      <ScrollArea className="h-[300px] min-h-[200px]">
+      <ScrollArea className="h-[300px] min-h-[200px] w-full [&>div>div]:!block [&>div>div]:!w-full">
         <div className="p-2 space-y-1">
           {Object.entries(groupedExercises).map(([bodyPart, exercises]) => (
             <div key={bodyPart} className="mb-3">
