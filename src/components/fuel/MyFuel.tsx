@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -20,13 +20,14 @@ import {
   Settings,
   ChevronRight,
   History,
+  RotateCcw,
 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { format, subDays, eachDayOfInterval } from 'date-fns';
 
 export function MyFuel() {
   const { user } = useAuth();
-  const { goals, saveGoals } = useNutritionGoals();
+  const { goals, saveGoals, isAutoMode } = useNutritionGoals();
   const { activePlans } = useMealPlans();
   const [showGoalsModal, setShowGoalsModal] = useState(false);
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -36,6 +37,19 @@ export function MyFuel() {
     daily_carbs_g: goals?.daily_carbs_g || 200,
     daily_fat_g: goals?.daily_fat_g || 70,
   });
+
+  // Re-sync the edit form from the current (effective) goals every time the
+  // dialog is opened, so it never shows stale defaults from first mount.
+  useEffect(() => {
+    if (showGoalsModal && goals) {
+      setEditedGoals({
+        daily_calories: goals.daily_calories,
+        daily_protein_g: goals.daily_protein_g,
+        daily_carbs_g: goals.daily_carbs_g,
+        daily_fat_g: goals.daily_fat_g,
+      });
+    }
+  }, [showGoalsModal, goals]);
 
   const { data: recentLogs } = useQuery({
     queryKey: ['food-logs-streak', user?.id],
@@ -87,7 +101,15 @@ export function MyFuel() {
   }, [recentLogs, goals]);
 
   const handleSaveGoals = async () => {
-    await saveGoals.mutateAsync(editedGoals);
+    // Manually-set goals must actually stick as manual — otherwise the auto
+    // calculator's effectiveGoals recompute (useNutritionGoals) silently
+    // overwrites whatever gets saved here on the very next render.
+    await saveGoals.mutateAsync({ ...editedGoals, goals_mode: 'manual' });
+    setShowGoalsModal(false);
+  };
+
+  const handleResetToAuto = async () => {
+    await saveGoals.mutateAsync({ goals_mode: 'auto' });
     setShowGoalsModal(false);
   };
 
@@ -113,6 +135,11 @@ export function MyFuel() {
                 <div className="flex items-center gap-2">
                   <Target className="w-5 h-5 text-primary" />
                   DAILY GOALS
+                  {goals && (
+                    <Badge variant="outline" className="text-[10px] font-normal tracking-normal">
+                      {isAutoMode ? 'AUTO' : 'MANUAL'}
+                    </Badge>
+                  )}
                 </div>
                 <Dialog open={showGoalsModal} onOpenChange={setShowGoalsModal}>
                   <DialogTrigger asChild>
@@ -146,6 +173,17 @@ export function MyFuel() {
                       <Button className="w-full font-display tracking-wide" onClick={handleSaveGoals} disabled={saveGoals.isPending}>
                         SAVE GOALS
                       </Button>
+                      {!isAutoMode && (
+                        <Button
+                          variant="ghost"
+                          className="w-full font-display tracking-wide text-muted-foreground"
+                          onClick={handleResetToAuto}
+                          disabled={saveGoals.isPending}
+                        >
+                          <RotateCcw className="w-4 h-4 mr-1.5" />
+                          RESET TO AUTO-CALCULATED
+                        </Button>
+                      )}
                     </div>
                   </DialogContent>
                 </Dialog>
