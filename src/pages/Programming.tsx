@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/hooks/useAuth';
+import { useUserRole } from '@/hooks/useUserRole';
 import { useTrainingPrograms } from '@/hooks/useTrainingPrograms';
 import { useWorkoutSessions } from '@/hooks/useWorkoutSessions';
 import {
@@ -15,6 +16,7 @@ type PowerTab = 'overview' | 'exercises' | 'logs';
 
 export default function Programming() {
   const { user } = useAuth();
+  const { isAdminOrOwner } = useUserRole();
   const { programs, loading: progsLoading } = useTrainingPrograms();
   const { sessions, loading: sessionsLoading } = useWorkoutSessions();
   const [activeTab, setActiveTab] = useState<PowerTab>('overview');
@@ -27,7 +29,9 @@ export default function Programming() {
 
   const TABS: { id: PowerTab; label: string; icon: React.ComponentType<any> }[] = [
     { id: 'overview', label: 'Overview', icon: Zap },
-    { id: 'exercises', label: 'Exercises', icon: Dumbbell },
+    // Full exercise library browsing is a staff tool (coaches/dev) - clients
+    // pick exercises via the manual builder's own in-context picker instead.
+    ...(isAdminOrOwner ? [{ id: 'exercises' as PowerTab, label: 'Exercises', icon: Dumbbell }] : []),
     { id: 'logs', label: 'Session Logs', icon: BarChart3 },
   ];
 
@@ -116,7 +120,9 @@ export default function Programming() {
                 <h3 className="text-xs font-display tracking-wider text-muted-foreground">EXPLORE</h3>
                 {[
                   { path: '/programming/create', icon: Wrench, title: 'CREATE PROGRAMME', desc: 'Unbreakable Coach or Manual Builder — build bespoke training plans', onClick: handleCreate },
-                  { path: '/programming/exercises', icon: Dumbbell, title: 'EXERCISE LIBRARY', desc: 'Hand-picked exercises by body part, with images & Unbreakable coaching breakdowns' },
+                  // Full exercise library browsing is a staff tool (coaches/dev) - clients
+                  // pick exercises via the manual builder's own in-context picker instead.
+                  ...(isAdminOrOwner ? [{ path: '/programming/exercises', icon: Dumbbell, title: 'EXERCISE LIBRARY', desc: 'Hand-picked exercises by body part, with images & Unbreakable coaching breakdowns' }] : []),
                   { path: '/programming/my-programmes', icon: BookOpen, title: 'MY PROGRAMMES', desc: 'View saved programmes, track progress & execute sessions' },
                   { path: '/programming/logs', icon: BarChart3, title: 'SESSION LOGS', desc: 'Review past workouts and training history' },
                 ].map(card => {
@@ -181,7 +187,7 @@ export default function Programming() {
           )}
 
           {/* ═══ EXERCISES TAB ═══ */}
-          {activeTab === 'exercises' && (
+          {activeTab === 'exercises' && isAdminOrOwner && (
             <motion.div key="exercises" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-4">
               <div className="p-4 rounded-xl border border-primary/15 bg-card">
                 <h3 className="font-display text-sm text-primary mb-1">UNBREAKABLE EXERCISE LIBRARY</h3>
