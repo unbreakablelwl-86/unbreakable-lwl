@@ -336,7 +336,18 @@ export default function Help() {
     const chatContext = messages.slice(-10).map(m => `${m.role}: ${m.content}`).join('\n');
 
     if (content.match(/\[BUILD_PROGRAMME\](\{.*\})?/)) {
-      setPendingBuild({ type: 'programme', chatContext });
+      // A confirmed strength programme can carry a [BUILD_MOVEMENT] tag
+      // right after it when the client also agreed to cardio in the same
+      // intake — build both, but keep them as separate programmes/hubs.
+      const programmeMovementMatch = content.match(/\[BUILD_MOVEMENT\](\{.*\})?/);
+      let programmeCardioParams: any = undefined;
+      if (programmeMovementMatch) {
+        programmeCardioParams = {};
+        if (programmeMovementMatch[1]) {
+          try { programmeCardioParams = JSON.parse(programmeMovementMatch[1]); } catch { /* fall back to defaults on execute */ }
+        }
+      }
+      setPendingBuild({ type: 'programme', chatContext, cardioParams: programmeCardioParams });
     } else if (content.match(/\[BUILD_MEAL_PLAN\](\{.*\})?/)) {
       setPendingBuild({ type: 'meal_plan', chatContext });
     } else if (content.match(/\[BUILD_MINDSET_PROGRAMME\](\{.*\})?/) || content.match(/\[BUILD_MINDSET\](\{.*\})?/)) {
@@ -365,6 +376,25 @@ export default function Help() {
           toast({ title: '✅ Programme Ready', description: 'Review your plan below, then save it to your library.' });
         }
       } finally { setProgrammeGenerating(false); }
+
+      // Cardio agreed in the same intake — build it as its own Movement
+      // programme, delivered separately, never merged into the strength
+      // programme above.
+      if (cardioParams && Object.keys(cardioParams).length > 0) {
+        setCardioGenerating(true);
+        try {
+          const defaults = { activityType: 'run', goal: 'fitness', currentLevel: 'beginner', sessionsPerWeek: 3, sessionLength: 30 };
+          const params = { ...defaults, ...cardioParams };
+          const result = await generateCardioProgramme(params);
+          if (result?.program) {
+            const planInfo: GeneratedPlanInfo = { type: 'cardio', planData: result.program, planId: '', savedToHub: false };
+            setGeneratedPlans(prev => [...prev, planInfo]);
+            toast({ title: '✅ Movement Programme Ready', description: 'Review your plan below, then save it to your library.' });
+          }
+        } catch {
+          toast({ title: 'Error', description: 'Failed to generate movement programme', variant: 'destructive' });
+        } finally { setCardioGenerating(false); }
+      }
     } else if (type === 'meal_plan') {
       setMealPlanGenerating(true);
       try {
@@ -458,6 +488,9 @@ export default function Help() {
     e.preventDefault();
     if (!input.trim() || isLoading || isGenerating || isMealPlanGenerating) return;
     if (!user) { setShowAuthModal(true); return; }
+    // Mic stays on through pauses in speech (see startListening/onend) —
+    // it should only stop once the user actually sends the message.
+    if (isListening) stopListening();
     // Unlock audio playback on this user gesture — the coach's spoken reply
     // plays later, after the streamed response finishes, and by then it's
     // too late on iOS/mobile browsers to count as a user-initiated gesture.
@@ -691,12 +724,23 @@ export default function Help() {
 
   const hasMessages = enrichedMessages.length > 0;
 
-  /* ── Voice Input (Speech-to-Text) ── */
-  const startListening = useCallback(() => {
+  /* ── Voice Input (Speech-to-Text) ──
+   * `continuous = true` still gets auto-ended by the browser after a short
+   * pause in speech (varies by browser/OS) — that's not the user asking to
+   * stop, so we track the user's actual intent separately (shouldListenRef)
+   * and, if the engine ends on its own while the user still wants to be
+   * listening, transparently start a fresh recognition session. The mic
+   * only truly turns off when the user presses the mic button again or
+   * hits send. */
+  const shouldListenRef = useRef(false);
+  const voiceBaseTextRef = useRef('');
+  voiceBaseTextRef.current = input;
+
+  const createRecognition = useCallback(() => {
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SpeechRecognition) {
       toast({ title: 'Voice not supported', description: 'Your browser doesn\'t support speech recognition. Try Chrome or Safari.', variant: 'destructive' });
-      return;
+      return null;
     }
 
     const recognition = new SpeechRecognition();
@@ -705,7 +749,7 @@ export default function Help() {
     recognition.continuous = true;
     recognition.maxAlternatives = 1;
 
-    const baseText = input;
+    const baseText = voiceBaseTextRef.current;
 
     // Rebuild the final + interim transcript from scratch on every event,
     // reading the whole event.results list rather than incrementally
@@ -748,28 +792,49 @@ export default function Help() {
     };
 
     recognition.onend = () => {
-      setIsListening(false);
       recognitionRef.current = null;
+      if (shouldListenRef.current) {
+        // The engine stopped on its own (silence timeout) but the user
+        // hasn't pressed stop or send — seamlessly restart so the mic
+        // effectively stays on until they do.
+        const next = createRecognition();
+        if (next) {
+          recognitionRef.current = next;
+          next.start();
+          return;
+        }
+      }
+      setIsListening(false);
     };
 
     recognition.onerror = (event: any) => {
       console.error('Speech recognition error:', event.error);
-      setIsListening(false);
-      recognitionRef.current = null;
       // 'aborted' fires on a deliberate stop; 'no-speech' fires constantly
-      // any time the mic goes quiet for a beat — neither is a real error,
-      // so don't scare the user with a toast for either.
+      // any time the mic goes quiet for a beat — neither is a real error.
+      // Both are followed by onend, which restarts us if the user still
+      // wants to be listening, so don't tear down intent here for those.
       if (event.error !== 'aborted' && event.error !== 'no-speech') {
+        shouldListenRef.current = false;
+        recognitionRef.current = null;
+        setIsListening(false);
         toast({ title: 'Voice error', description: `Mic error: ${event.error}. Try again.`, variant: 'destructive' });
       }
     };
 
+    return recognition;
+  }, [toast]);
+
+  const startListening = useCallback(() => {
+    const recognition = createRecognition();
+    if (!recognition) return;
+    shouldListenRef.current = true;
     recognitionRef.current = recognition;
     recognition.start();
     setIsListening(true);
-  }, [input]);
+  }, [createRecognition]);
 
   const stopListening = useCallback(() => {
+    shouldListenRef.current = false;
     if (recognitionRef.current) {
       recognitionRef.current.stop();
       recognitionRef.current = null;
@@ -787,6 +852,7 @@ export default function Help() {
   /* Cleanup on unmount */
   useEffect(() => {
     return () => {
+      shouldListenRef.current = false;
       if (recognitionRef.current) recognitionRef.current.stop();
     };
   }, []);

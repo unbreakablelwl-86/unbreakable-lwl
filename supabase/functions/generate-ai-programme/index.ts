@@ -1549,6 +1549,17 @@ for (const [id, name, bodyPart, equipment] of EXERCISE_CATALOG) {
   NAME_LOOKUP.set(name.toLowerCase(), { id, bodyPart, equipment });
 }
 
+// Every catalog entry has a matching demo image (ExerciseDB gif/artwork).
+// When the model invents a name that doesn't match anything in the catalog,
+// swapping in a same-bodyPart catalog exercise instead guarantees the client
+// never renders a no-image exercise.
+const CATALOG_BY_BODYPART = new Map<string, { id: string; name: string; bodyPart: string; equipment: string }[]>();
+for (const [id, name, bodyPart, equipment] of EXERCISE_CATALOG) {
+  if (!CATALOG_BY_BODYPART.has(bodyPart)) CATALOG_BY_BODYPART.set(bodyPart, []);
+  CATALOG_BY_BODYPART.get(bodyPart)!.push({ id, name, bodyPart, equipment });
+}
+const ALL_CATALOG_EXERCISES = EXERCISE_CATALOG.map(([id, name, bodyPart, equipment]) => ({ id, name, bodyPart, equipment }));
+
 // Generate the prompt exercise list from the catalog (names only, grouped by body part)
 function buildExercisePromptList(): string {
   const groups: Record<string, string[]> = {};
@@ -1605,12 +1616,39 @@ function matchExercise(name: string): { id: string; bodyPart: string; equipment:
 function enrichProgramWithLibraryData(program: any): any {
   const enrichExercises = (exercises: any[]) => {
     if (!Array.isArray(exercises)) return exercises;
-    return exercises.map((ex: any) => {
-      const match = matchExercise(ex.name);
+
+    // First pass: match everything we can, and tally which bodyParts came
+    // up in this day so an unmatched exercise falls back to something from
+    // the same muscle group rather than a random pick.
+    const matched = exercises.map((ex: any) => ({ ex, match: matchExercise(ex.name) }));
+    const bodyPartCounts = new Map<string, number>();
+    for (const { match } of matched) {
+      if (match) bodyPartCounts.set(match.bodyPart, (bodyPartCounts.get(match.bodyPart) || 0) + 1);
+    }
+    let dominantBodyPart = '';
+    let topCount = 0;
+    for (const [bp, count] of bodyPartCounts) {
+      if (count > topCount) { dominantBodyPart = bp; topCount = count; }
+    }
+    const usedIds = new Set(matched.filter(m => m.match).map(m => m.match!.id));
+
+    return matched.map(({ ex, match }) => {
       if (match) {
         return { ...ex, id: match.id, bodyPart: match.bodyPart, equipment: match.equipment };
       }
-      console.warn(`[exercise-match] No library match for: "${ex.name}"`);
+
+      // No confident match in the approved (image-backed) catalog — the
+      // name is almost certainly AI-invented, which means no exercise
+      // image on the client. Swap in a real catalog exercise from the
+      // same muscle group used elsewhere in this session instead of
+      // shipping a no-image exercise.
+      console.warn(`[exercise-match] No library match for: "${ex.name}" — substituting a catalog exercise`);
+      const pool = CATALOG_BY_BODYPART.get(dominantBodyPart) || ALL_CATALOG_EXERCISES;
+      const fallback = pool.find(c => !usedIds.has(c.id)) || pool[0];
+      if (fallback) {
+        usedIds.add(fallback.id);
+        return { ...ex, name: fallback.name, id: fallback.id, bodyPart: fallback.bodyPart, equipment: fallback.equipment };
+      }
       return ex;
     });
   };
@@ -1809,7 +1847,7 @@ ${EXERCISE_NAMES_PROMPT}
 
 Rules: Match equipment+experience. Periodize for goals. Account for injuries. Include warmup/cooldown. Use EXACT exercise names from the list above. If the user has a Sport Preference, tailor the programme with sport-specific conditioning, movement patterns, and energy system work relevant to that sport, but ONLY use exercises from the list above.
 
-MANDATORY: Every programme MUST include 2 x 30-minute cardio sessions per week (steady-state walk, run, cycle, row, or swim). Schedule these on non-lifting days or after lighter sessions. Label them clearly in the weekly schedule as "Cardio, 30 min steady state" with the recommended activity type.
+This programme is strength-only. Any cardio/conditioning the client wants is built and delivered separately as its own Movement programme — do not add cardio sessions, cardio days, or cardio notes into this programme's weeklySchedule or templateWeek.
 
 Return ONLY valid JSON:
 {"programName":"string","overview":"string","weeklySchedule":[{"day":"Monday","focus":"string","type":"strength|running|rest|active_recovery"}],"phases":[{"name":"string","weeks":"1-4","focus":"string","notes":"string"}],"templateWeek":{"days":[{"day":"Monday","sessionType":"string","duration":"60 mins","warmup":"string","exercises":[{"name":"Flat Barbell Bench Press","equipment":"barbell","sets":4,"reps":"6-8","intensity":"RPE 7","rest":"3 min","notes":"string"}],"cooldown":"string"}]},"phaseProgressions":[{"phase":"string","adjustments":"string"}],"progressionRules":["string"],"nutritionTips":["string"],"metadata":{"origin":"ai_chat","createdFor":"${userName}"}}`;

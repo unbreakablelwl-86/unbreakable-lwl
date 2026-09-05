@@ -18,6 +18,11 @@ interface CardioRequest {
   currentPace?: string; // e.g., "6:30/km"
   age?: number;
   gender?: 'male' | 'female';
+  // Specific weekdays for the sessions, e.g. ["Tuesday","Friday"] — set when
+  // this cardio plan is being built alongside a strength programme, so the
+  // sessions land on that programme's rest/lighter days instead of an
+  // arbitrary day chosen independently.
+  preferredDays?: string[];
 }
 
 serve(async (req) => {
@@ -114,7 +119,8 @@ serve(async (req) => {
       targetDistance,
       currentPace,
       age,
-      gender
+      gender,
+      preferredDays
     } = requestData;
 
     // Build context
@@ -123,6 +129,7 @@ serve(async (req) => {
     if (currentPace) context += `\nCurrent Pace: ${currentPace}`;
     if (age) context += `\nAge: ${age}`;
     if (gender) context += `\nGender: ${gender}`;
+    if (preferredDays && preferredDays.length > 0) context += `\nRequired Session Days: ${preferredDays.join(', ')} — these were chosen to land on rest/lighter days of the user's separate strength programme. Use EXACTLY these days for every session, every week (rotate through them if there are more sessions/week than days listed).`;
 
     const activityName = activityType === 'walk' ? 'Walking' : activityType === 'run' ? 'Running' : 'Cycling';
 
@@ -177,7 +184,7 @@ SESSIONS/WEEK: ${sessionsPerWeek}
 SESSION LENGTH: ${sessionLength} minutes
 ${context}
 
-Create a progressive 12-week programme with ${sessionsPerWeek} sessions per week, each around ${sessionLength} minutes. Include variety: easy sessions, tempo work, intervals (if appropriate for level), and recovery. Be specific with distances, paces, and intensity zones. Generate ALL 12 weeks with proper periodization.`;
+Create a progressive 12-week programme with ${sessionsPerWeek} sessions per week, each around ${sessionLength} minutes.${preferredDays && preferredDays.length > 0 ? ` Every session's "day" field MUST be one of: ${preferredDays.join(', ')} — do not use any other day.` : ''} Include variety: easy sessions, tempo work, intervals (if appropriate for level), and recovery. Be specific with distances, paces, and intensity zones. Generate ALL 12 weeks with proper periodization.`;
 
     // Retry logic with exponential backoff
     const maxRetries = 3;

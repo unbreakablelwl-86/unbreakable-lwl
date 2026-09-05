@@ -18,6 +18,10 @@ export interface CardioGenerateParams {
   currentPace?: string;
   age?: number;
   gender?: 'male' | 'female';
+  // Specific weekdays for the sessions — set when this cardio plan is built
+  // alongside a strength programme so it lands on that programme's rest
+  // days rather than an arbitrary day picked independently.
+  preferredDays?: string[];
 }
 
 export interface CardioProgram {
