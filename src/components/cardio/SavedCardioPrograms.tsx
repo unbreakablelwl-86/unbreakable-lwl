@@ -25,6 +25,9 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { useCardioPrograms, CardioProgram, CardioProgramStatus } from '@/hooks/useCardioPrograms';
+import { useUserRole } from '@/hooks/useUserRole';
+import { Switch } from '@/components/ui/switch';
+import { Bot } from 'lucide-react';
 import { GeneratedCardioProgram, activityLabels, ActivityType } from '@/lib/cardioTypes';
 import { format } from 'date-fns';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -64,7 +67,9 @@ export function SavedCardioPrograms({ onViewProgram }: SavedCardioProgramsProps)
     startProgrammeExecution,
     deactivateProgram,
     deleteProgram,
+    setAutoTrack,
   } = useCardioPrograms();
+  const { isDev } = useUserRole();
 
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [executingProgramId, setExecutingProgramId] = useState<string | null>(null);
@@ -228,6 +233,20 @@ export function SavedCardioPrograms({ onViewProgram }: SavedCardioProgramsProps)
                     </span>
                   )}
                 </div>
+                {isDev && program.is_active && (
+                  <div
+                    className="flex items-center gap-2 mt-2 ml-10 text-xs"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <Bot className="w-3.5 h-3.5 text-muted-foreground" />
+                    <span className="text-muted-foreground">Auto-track (dev only)</span>
+                    <Switch
+                      checked={program.auto_track_enabled}
+                      onCheckedChange={(checked) => setAutoTrack.mutate({ programId: program.id, enabled: checked })}
+                      disabled={setAutoTrack.isPending}
+                    />
+                  </div>
+                )}
               </div>
 
               <div className="flex items-center gap-2 ml-4">

@@ -33,6 +33,7 @@ export interface CardioProgram {
   current_week: number;
   current_day: number;
   status: CardioProgramStatus;
+  auto_track_enabled: boolean;
 }
 
 function toCardioProgram(row: any): CardioProgram {
@@ -49,6 +50,7 @@ function toCardioProgram(row: any): CardioProgram {
     current_week: row.current_week ?? 1,
     current_day: row.current_day ?? 1,
     status,
+    auto_track_enabled: row.auto_track_enabled ?? false,
   };
 }
 
@@ -265,6 +267,27 @@ export function useCardioPrograms() {
     },
   });
 
+  // Dev-only: toggles the scheduled auto-track-progression edge function on
+  // for this programme, which auto-completes missed sessions (clearly
+  // tagged is_auto_tracked, never mixed with real completions).
+  const setAutoTrack = useMutation({
+    mutationFn: async ({ programId, enabled }: { programId: string; enabled: boolean }) => {
+      if (!isDev) throw new Error('Auto-track is only available on dev accounts');
+      const { error } = await supabase
+        .from('cardio_programs')
+        .update({ auto_track_enabled: enabled })
+        .eq('id', programId);
+      if (error) throw error;
+    },
+    onSuccess: (_data, { enabled }) => {
+      queryClient.invalidateQueries({ queryKey: ['cardio-programs'] });
+      toast({ title: enabled ? 'Auto-track enabled' : 'Auto-track disabled' });
+    },
+    onError: (error: Error) => {
+      toast({ title: 'Could not change auto-track', description: error.message, variant: 'destructive' });
+    },
+  });
+
   return {
     programs,
     isLoading,
@@ -277,5 +300,6 @@ export function useCardioPrograms() {
     deleteProgram,
     generateProgramme,
     isGenerating,
+    setAutoTrack,
   };
 }

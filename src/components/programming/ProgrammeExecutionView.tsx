@@ -16,6 +16,9 @@ import {
 import { useSessionPlanners, SessionPlanner } from '@/hooks/useSessionPlanners';
 import { useWorkoutSessions, WorkoutSession } from '@/hooks/useWorkoutSessions';
 import { TrainingProgram, useTrainingPrograms } from '@/hooks/useTrainingPrograms';
+import { useUserRole } from '@/hooks/useUserRole';
+import { Switch } from '@/components/ui/switch';
+import { Bot } from 'lucide-react';
 import { ActiveWorkoutModal } from './ActiveWorkoutModal';
 import { SessionResultsView } from './SessionResultsView';
 import { PowerProgressionDialog, PowerProgressionSuggestion } from './PowerProgressionDialog';
@@ -93,7 +96,8 @@ export function ProgrammeExecutionView({ program, onClose }: ProgrammeExecutionV
     addExerciseToSession,
     addSetToExercise,
   } = useWorkoutSessions();
-  const { updateProgress } = useTrainingPrograms();
+  const { updateProgress, setAutoTrack } = useTrainingPrograms();
+  const { isDev } = useUserRole();
   const { toast } = useToast();
   
   const [showWorkoutModal, setShowWorkoutModal] = useState(false);
@@ -504,6 +508,26 @@ export function ProgrammeExecutionView({ program, onClose }: ProgrammeExecutionV
         </h2>
         <p className="text-muted-foreground">{program.overview}</p>
       </div>
+
+      {/* Dev-only: auto-track toggle. When on, missed sessions get
+          auto-completed with realistic (clearly auto-tagged) data instead
+          of sitting pending. */}
+      {isDev && (
+        <Card className="p-4 border border-border bg-card flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <Bot className="w-4 h-4 text-muted-foreground" />
+            <div>
+              <p className="text-sm font-medium text-foreground">Auto-track this programme</p>
+              <p className="text-xs text-muted-foreground">Dev only — auto-completes missed sessions, tagged separately from real PBs</p>
+            </div>
+          </div>
+          <Switch
+            checked={program.auto_track_enabled}
+            onCheckedChange={(checked) => setAutoTrack.mutate({ programId: program.id, enabled: checked })}
+            disabled={setAutoTrack.isPending}
+          />
+        </Card>
+      )}
 
       {/* Progress Card */}
       <Card className="p-5 border border-primary/50   border-border bg-card">

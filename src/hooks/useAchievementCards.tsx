@@ -57,6 +57,7 @@ export interface AchievementCard {
   edition_number?: number;
   edition_total?: number;
   purchased?: boolean;
+  is_auto?: boolean;
 }
 
 export interface AchievementCounts {
