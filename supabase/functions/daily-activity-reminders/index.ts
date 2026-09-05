@@ -39,8 +39,15 @@ Deno.serve(async (req) => {
     // Fetch all users who logged in within the last 14 days
     const { data: activeStreaks } = await supabase
       .from("login_streaks")
-      .select("user_id, current_streak, best_streak")
+      .select("user_id, current_streak, best_streak, last_login_date")
       .gte("last_login_date", new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString().split("T")[0]);
+
+    // A streak is only "live" if the user logged in today or yesterday — if
+    // they've gone quiet, current_streak is a stale number sitting in the DB
+    // (it only updates on next login) and must not be re-announced as intact.
+    const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().split("T")[0];
+    const isStreakLive = (lastLoginDate: string | null | undefined) =>
+      lastLoginDate === today || lastLoginDate === yesterday;
 
     // Also fetch users who don't have streak rows yet but have profiles
     const { data: allProfiles } = await supabase
@@ -88,7 +95,9 @@ Deno.serve(async (req) => {
     for (const userId of allActiveUserIds) {
       const streakData = (activeStreaks || []).find(s => s.user_id === userId);
       const streak = streakData?.current_streak || 0;
-      const streakNote = streak > 1 ? ` 🔥 ${streak}-day streak, don't break it!` : "";
+      const streakNote = streak > 1 && isStreakLive(streakData?.last_login_date)
+        ? ` 🔥 ${streak}-day streak, don't break it!`
+        : "";
 
       notifications.push({
         user_id: userId,
