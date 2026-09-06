@@ -1,4 +1,4 @@
-
+import { useState } from 'react';
 import { GeneratedProgram, WorkoutDay } from '@/lib/programTypes';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -6,13 +6,18 @@ import { Button } from '@/components/ui/button';
 import { useTrainingPrograms } from '@/hooks/useTrainingPrograms';
 import { useAuth } from '@/hooks/useAuth';
 import { AskCoachCTA } from '@/components/coaching/AskCoachCTA';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   RefreshCw,
   Save,
   Loader2,
   TrendingUp,
   Utensils,
-  Sparkles
+  Sparkles,
+  ChevronLeft,
+  ChevronRight,
+  Calendar,
+  Clock,
 } from 'lucide-react';
 
 interface ProgramDisplayProps {
@@ -28,6 +33,9 @@ export function ProgramDisplay({ program, onReset, savedProgramId, forUserId }: 
   const { saveProgram } = useTrainingPrograms();
 
   const phases = program?.phases || [];
+  const templateDays = program?.templateWeek?.days || [];
+  const [selectedDayIndex, setSelectedDayIndex] = useState(0);
+  const currentDay = templateDays[selectedDayIndex];
 
   const handleSaveProgram = () => {
     if (!user) return;
@@ -104,6 +112,122 @@ export function ProgramDisplay({ program, onReset, savedProgramId, forUserId }: 
                 </div>
               ))}
             </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* This Block's Sessions - Day-by-day breakdown, same pattern as Movement */}
+      {templateDays.length > 0 && currentDay && (
+        <Card className="border-border border-border bg-card">
+          <CardContent className="p-6">
+            <h3 className="font-display text-lg text-muted-foreground mb-4 tracking-wide">
+              THIS BLOCK'S SESSIONS
+            </h3>
+
+            {/* Day Navigation */}
+            <div className="flex items-center justify-between mb-6">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setSelectedDayIndex((i) => Math.max(0, i - 1))}
+                disabled={selectedDayIndex === 0}
+                className="font-display tracking-wide"
+              >
+                <ChevronLeft className="w-4 h-4 mr-1" />
+                PREV
+              </Button>
+
+              <div className="flex items-center gap-2">
+                <Calendar className="w-5 h-5 text-primary" />
+                <span className="font-display text-lg tracking-wide">
+                  {currentDay.day?.toUpperCase()}
+                </span>
+                <Badge variant="outline" className="ml-1">
+                  {selectedDayIndex + 1} / {templateDays.length}
+                </Badge>
+              </div>
+
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setSelectedDayIndex((i) => Math.min(templateDays.length - 1, i + 1))}
+                disabled={selectedDayIndex === templateDays.length - 1}
+                className="font-display tracking-wide"
+              >
+                NEXT
+                <ChevronRight className="w-4 h-4 ml-1" />
+              </Button>
+            </div>
+
+            {/* Session Card */}
+            <Card className="bg-card border-border border-l-4 border-l-primary">
+              <CardContent className="p-6">
+                <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
+                  <div>
+                    <p className="font-display text-primary tracking-wide text-sm">
+                      {currentDay.day}
+                    </p>
+                    <h4 className="font-display text-xl text-foreground tracking-wide">
+                      {currentDay.sessionType}
+                    </h4>
+                  </div>
+                  <Badge variant="outline" className="flex items-center gap-1">
+                    <Clock className="w-3 h-3" />
+                    {currentDay.duration}
+                  </Badge>
+                </div>
+
+                <Tabs defaultValue="main" className="w-full">
+                  <TabsList className="grid w-full grid-cols-3">
+                    <TabsTrigger value="warmup" className="font-display text-xs tracking-wide">
+                      WARMUP
+                    </TabsTrigger>
+                    <TabsTrigger value="main" className="font-display text-xs tracking-wide">
+                      MAIN
+                    </TabsTrigger>
+                    <TabsTrigger value="cooldown" className="font-display text-xs tracking-wide">
+                      COOLDOWN
+                    </TabsTrigger>
+                  </TabsList>
+                  <TabsContent value="warmup" className="mt-4">
+                    <p className="text-muted-foreground">{currentDay.warmup}</p>
+                  </TabsContent>
+                  <TabsContent value="main" className="mt-4">
+                    <div className="space-y-3">
+                      {currentDay.exercises?.map((ex, idx) => (
+                        <div
+                          key={idx}
+                          className="flex items-start gap-3 p-3 bg-muted/20 rounded-lg"
+                        >
+                          <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-xs text-primary font-display shrink-0">
+                            {idx + 1}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-foreground font-medium">{ex.name}</p>
+                            <p className="text-sm text-muted-foreground">
+                              {ex.sets} × {ex.reps}
+                              {ex.intensity ? ` · ${ex.intensity}` : ''}
+                              {ex.rest ? ` · ${ex.rest} rest` : ''}
+                            </p>
+                            {ex.notes && (
+                              <p className="text-xs text-muted-foreground mt-1">{ex.notes}</p>
+                            )}
+                          </div>
+                          {ex.equipment && ex.equipment !== 'bodyweight' && (
+                            <Badge variant="outline" className="text-[10px] shrink-0">
+                              {ex.equipment}
+                            </Badge>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </TabsContent>
+                  <TabsContent value="cooldown" className="mt-4">
+                    <p className="text-muted-foreground">{currentDay.cooldown}</p>
+                  </TabsContent>
+                </Tabs>
+              </CardContent>
+            </Card>
           </CardContent>
         </Card>
       )}
