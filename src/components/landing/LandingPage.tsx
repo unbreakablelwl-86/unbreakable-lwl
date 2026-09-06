@@ -242,11 +242,10 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
             transition={{ duration: 0.6 }}
             className="text-[#888] text-base sm:text-lg md:text-xl leading-relaxed max-w-2xl mx-auto mb-8"
           >
-            Training, nutrition, mindset and education in one platform.
-            Your own AI coach — beginner to sport-specific, bodyweight and home workouts
-            to superset and tri-set circuits, it covers every level.
-            Just tell it what you need. A community that keeps you accountable.
-            Built for people who are done quitting.
+            Training, nutrition, mindset and education — one platform, one AI coach
+            built around you. Tell it what you need, it builds the plan. No more juggling
+            five different apps for one goal. A community that keeps you showing up,
+            even on the days you don't want to.
           </motion.p>
 
           <motion.div
@@ -342,7 +341,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
                 Fitness Apps Are Broken
               </h2>
               <p className="text-[#888] max-w-2xl mx-auto text-sm sm:text-base leading-relaxed">
-                One app to track meals. Another for training. A YouTube video for mindset. A course that costs £3,000.
+                One app to track meals. Another for training. A YouTube video for mindset. A course with a ridiculous price tag.
                 None of them talk to each other. None of them care if you show up tomorrow.
               </p>
             </motion.div>
