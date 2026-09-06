@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Play, Pause, Share2, Dumbbell, ListPlus, Check, Download } from 'lucide-react';
-import { usePlayer } from '@/hooks/useUnTunes';
+import { usePlayer, getResizedCoverUrl } from '@/hooks/useUnTunes';
 import type { Track } from '@/hooks/useUnTunes';
 
 interface TrackRowProps {
@@ -66,7 +66,7 @@ export function UnTunesTrackRow({ track, index, onPlay, onShare, isLiked, onTogg
         isActive ? 'bg-primary/20 shadow-[0_0_12px_rgba(255,85,0,0.3)]' : 'bg-card/60'
       }`}>
         {track.cover_url ? (
-          <img loading="lazy" src={track.cover_url} alt="" className="w-full h-full object-cover rounded-lg" />
+          <img loading="lazy" src={getResizedCoverUrl(track.cover_url, 96)} alt="" className="w-full h-full object-cover rounded-lg" />
         ) : (
           <Play className={`w-4 h-4 ${isActive ? 'text-primary' : 'text-muted-foreground/40'}`} />
         )}

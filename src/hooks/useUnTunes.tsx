@@ -4,6 +4,25 @@ import { useAuth } from '@/hooks/useAuth';
 import { useUserRole } from '@/hooks/useUserRole';
 import { useTokenBalance } from '@/hooks/useTokenBalance';
 
+/* ─── Image helpers ─── */
+/**
+ * Rewrites a Supabase Storage public object URL into a resized/optimized
+ * render URL via Supabase's Image Transformations, so we never ship a full
+ * multi-megabyte source image just to display a small thumbnail. This
+ * matters most on memory-constrained embedded browsers (e.g. Smart TV /
+ * projector browsers), which can crash their render process when forced to
+ * decode many large images at once. Falls back to the original URL if it
+ * isn't a Supabase storage object URL.
+ */
+export function getResizedCoverUrl(url: string, width: number, height: number = width, quality: number = 75): string {
+  const marker = '/storage/v1/object/public/';
+  const idx = url.indexOf(marker);
+  if (idx === -1) return url;
+  const base = url.slice(0, idx);
+  const path = url.slice(idx + marker.length);
+  return `${base}/storage/v1/render/image/public/${path}?width=${width}&height=${height}&resize=cover&quality=${quality}`;
+}
+
 /* ─── Types ─── */
 export interface Artist {
   id: string;
