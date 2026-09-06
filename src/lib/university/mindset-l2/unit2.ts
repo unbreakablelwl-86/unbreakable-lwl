@@ -329,6 +329,8 @@ export const mindsetL2Unit2: Unit = {
             'Your nose is not just a passive air hole — it is a sophisticated filtration, humidification, and conditioning system. Nasal breathing warms incoming air to body temperature, humidifies it to protect delicate lung tissue, and filters out pathogens and particles. None of this happens when you breathe through your mouth.',
             'Perhaps most importantly, nasal breathing triggers the production of nitric oxide (NO) in the paranasal sinuses. Nitric oxide is a vasodilator — it widens blood vessels, improving blood flow and oxygen delivery to tissues. It also has antimicrobial properties, helping protect against respiratory infections.',
           ],
+          imageUrl: getUniversityImage('mindl2-u2-ch7-nasal-benefits'),
+          imageAlt: 'Five physiological benefits of nasal breathing',
         },
         {
           heading: 'Mouth Breathing — The Hidden Problem',
@@ -393,6 +395,8 @@ export const mindsetL2Unit2: Unit = {
             'Pre-sleep — 5 minutes of slow diaphragmatic breathing with extended exhale to downregulate the nervous system',
             'Focus work — 2 minutes of controlled nasal breathing before deep work sessions to prime attention',
           ],
+          imageUrl: getUniversityImage('mindl2-u2-ch8-daily-schedule'),
+          imageAlt: 'Breathwork techniques matched to six points across the day',
         },
         {
           heading: 'Building Your Weekly Programme',

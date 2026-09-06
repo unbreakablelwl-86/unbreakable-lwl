@@ -347,6 +347,8 @@ export const nutritionL3Unit4: Unit = {
             'Action planning (10 min) — Co-create specific, achievable actions for the next 1–2 weeks. Each action should pass the "would you bet £50 you will do this?" test. Fewer, realistic actions beat ambitious wishlists',
             'Close (5 min) — Summarise the agreed actions. Set a follow-up date. Ask: "Is there anything else that is important that we have not covered?"',
           ],
+          imageUrl: getUniversityImage('nutl3-u4-ch7-consultation-flow'),
+          imageAlt: 'Six-step nutrition client consultation flow',
         },
         {
           heading: 'Common Consultation Mistakes',
@@ -401,6 +403,8 @@ export const nutritionL3Unit4: Unit = {
             'Media translation — Headlines distort research. Always read the abstract of the actual study before forming an opinion based on a news article or social media post',
             'Reproducibility — Has the finding been replicated by independent researchers? Single studies — no matter how well-designed — should not change practice until confirmed',
           ],
+          imageUrl: getUniversityImage('nutl3-u4-ch8-evidence-hierarchy'),
+          imageAlt: 'Hierarchy of nutrition research evidence quality',
         },
         {
           heading: 'Building Your CPD Framework',

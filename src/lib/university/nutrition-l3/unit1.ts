@@ -405,6 +405,8 @@ export const nutritionL3Unit1: Unit = {
             'Resistant starch — Reaches the large intestine intact where it is fermented by gut bacteria, producing short-chain fatty acids (SCFAs). Found in cooked and cooled potatoes, green bananas, and legumes',
             'Prebiotic fibre — Specifically feeds beneficial gut bacteria. Includes inulin, fructo-oligosaccharides (FOS), and galacto-oligosaccharides (GOS). Found in garlic, onions, leeks, asparagus, and bananas',
           ],
+          imageUrl: getUniversityImage('nutl3-u1-ch7-fibre-types'),
+          imageAlt: 'Four types of dietary fibre and their food sources',
         },
         {
           heading: 'The Gut Microbiome — Your Internal Ecosystem',
@@ -459,6 +461,8 @@ export const nutritionL3Unit1: Unit = {
             'Omega-3 fatty acids — EPA and DHA regulate inflammatory responses. They do not suppress inflammation entirely but help resolve it more efficiently. 2–3g combined EPA/DHA daily from oily fish or supplementation',
             'Protein — Amino acids are the building blocks of immune cells and antibodies. Inadequate protein directly impairs immune function. Maintain 1.6–2.2g/kg during illness or heavy training',
           ],
+          imageUrl: getUniversityImage('nutl3-u1-ch8-immune-nutrients'),
+          imageAlt: 'Six key nutrients that support immune function',
         },
         {
           heading: 'Nutrition Strategies for Training Recovery',

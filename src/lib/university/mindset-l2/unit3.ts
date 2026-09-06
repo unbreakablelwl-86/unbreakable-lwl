@@ -346,6 +346,8 @@ export const mindsetL2Unit3: Unit = {
             'Procrastination is not a character flaw or a lack of discipline — it is an emotional regulation problem. When a task triggers negative emotions (boredom, anxiety, self-doubt, overwhelm), your brain seeks immediate relief by switching to something more pleasant. Scrolling your phone, checking emails, or tidying your desk are not productive — they are emotional escape routes.',
             'Understanding this distinction is critical. If you frame procrastination as laziness, the solution feels like "try harder." But research by Dr Tim Pychyl and others shows that the real solution is managing the emotions attached to the task, not simply exerting more willpower.',
           ],
+          imageUrl: getUniversityImage('mindl2-u3-ch7-procrastination-cycle'),
+          imageAlt: 'The procrastination cycle from trigger to guilt',
         },
         {
           heading: 'Common Procrastination Triggers',
@@ -407,6 +409,8 @@ export const mindsetL2Unit3: Unit = {
             'Public accountability — Sharing goals publicly (social media, community groups). Powerful motivator but carries risk of ego-driven goal pursuit',
             'Environmental accountability — Designing your environment so the default action is the desired one. The most underrated form — it works without requiring willpower',
           ],
+          imageUrl: getUniversityImage('mindl2-u3-ch8-accountability-types'),
+          imageAlt: 'Five types of accountability ranked by impact',
         },
         {
           heading: 'Designing Your Tracking System',

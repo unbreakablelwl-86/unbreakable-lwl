@@ -351,6 +351,8 @@ export const mindsetL3Unit3: Unit = {
             'Most education and work environments heavily reward convergent thinking and neglect divergent thinking. This creates blind spots in problem solving',
             'The creative process requires both: diverge first (generate many ideas without judgement), then converge (evaluate and select the best ones). Mixing them kills creativity — judging ideas while generating them shuts down the process',
           ],
+          imageUrl: getUniversityImage('mindl3-u3-ch7-creative-process'),
+          imageAlt: 'The creative process diverging then converging around an idea',
         },
         {
           heading: 'Practical Creativity Techniques',
@@ -401,6 +403,8 @@ export const mindsetL3Unit3: Unit = {
             'Light sleep (N2) — Sleep spindles in N2 are associated with motor learning and procedural memory. Important for athletes learning new movement patterns',
             'Sleep cycles — A complete cycle (N1→N2→N3→N2→REM) takes approximately 90 minutes. Planning sleep in 90-minute multiples (e.g., 7.5 hours = 5 cycles) can improve wake quality',
           ],
+          imageUrl: getUniversityImage('mindl3-u3-ch8-sleep-architecture'),
+          imageAlt: 'Sleep stages rising and falling across a night',
         },
         {
           heading: 'Sleep Debt — The Hidden Performance Killer',

@@ -332,6 +332,8 @@ export const mindsetL2Unit1: Unit = {
             'Common humanity — Recognising that struggle, failure, and imperfection are universal human experiences, not personal defects. Everyone has bad sessions, bad days, and setbacks',
             'Mindful awareness — Acknowledging painful thoughts and feelings without suppressing them or being consumed by them. You observe: "I am frustrated" rather than spiralling into "I am useless"',
           ],
+          imageUrl: getUniversityImage('mindl2-u1-ch7-self-compassion'),
+          imageAlt: 'Three components of self-compassion converging',
         },
         {
           heading: 'Restructuring Your Inner Dialogue',
@@ -396,6 +398,8 @@ export const mindsetL2Unit1: Unit = {
             'Set boundaries — Not all relationships support resilience. Some drain it. Protect your energy by limiting time with consistently negative or toxic people',
             'Be vulnerable — Authentic connection requires showing up honestly. Pretending everything is fine prevents people from actually supporting you',
           ],
+          imageUrl: getUniversityImage('mindl2-u1-ch8-support-network'),
+          imageAlt: 'Five elements of building a support network',
         },
       ],
       unbreakableInsight: 'You are not meant to do this alone. The strongest people in the world have support systems — they just do not always talk about them. Asking for help is not weakness; refusing to is stubbornness disguised as strength.',

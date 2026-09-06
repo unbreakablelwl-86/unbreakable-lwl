@@ -399,6 +399,8 @@ export const nutritionL3Unit2: Unit = {
             'Physical hazards — Foreign objects in food: glass, bone fragments, plastic, metal. More relevant in commercial food production but also applicable to home kitchens',
             'Allergens — The 14 major allergens (including gluten, dairy, nuts, soy, eggs) must be considered when preparing food for others. Cross-contamination is as dangerous as direct inclusion',
           ],
+          imageUrl: getUniversityImage('nutl3-u2-ch7-hazard-types'),
+          imageAlt: 'Four categories of food safety hazards',
         },
         {
           heading: 'Safe Food Handling Principles',
@@ -464,6 +466,8 @@ export const nutritionL3Unit2: Unit = {
             'Hydration — Water is essential for digestive function, from saliva production to stool formation. Dehydration directly impairs digestion',
             'Mindful eating — Eating slowly, chewing thoroughly, and eating without distraction improves digestive efficiency and reduces bloating',
           ],
+          imageUrl: getUniversityImage('nutl3-u2-ch8-gut-pillars'),
+          imageAlt: 'Six pillars of a gut-supportive diet',
         },
       ],
       unbreakableInsight: 'Your gut is the gateway to every nutrient your body needs. If the gateway is compromised, nothing downstream — muscle building, fat loss, energy production, immune function — works at full capacity. Fix the foundation first.',

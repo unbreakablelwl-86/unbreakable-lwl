@@ -397,6 +397,8 @@ export const mindsetL3Unit2: Unit = {
             'Legs-up-the-wall breathing — Lie with legs elevated against a wall. Combine with slow nasal breathing for 5 minutes. Gravity assists venous return while breathwork accelerates nervous system downregulation',
             'Crocodile breathing — Lie face down with forehead on stacked hands. Breathe into the belly, feeling the abdomen push into the floor. This position restricts chest breathing and forces diaphragmatic patterns. 3–5 minutes',
           ],
+          imageUrl: getUniversityImage('mindl3-u2-ch7-sympathetic-shift'),
+          imageAlt: 'Shifting from sympathetic to parasympathetic state via breathwork techniques',
         },
         {
           heading: 'Pre-Sleep Breathing Protocols',
@@ -459,6 +461,8 @@ export const mindsetL3Unit2: Unit = {
             'Week 7 (Peak) — Combine stressors in single sessions: breathwork → cold → heat → breathwork. Push comfort zone boundaries safely',
             'Week 8 (Deload) — Reduce all exposures by 50%. Maintain daily breathwork only. Assess progress and plan next cycle',
           ],
+          imageUrl: getUniversityImage('mindl3-u2-ch8-hormesis-programme'),
+          imageAlt: 'Eight-week environmental stress tolerance programme intensity by week',
         },
       ],
       unbreakableInsight: 'Comfort is not the enemy of resilience — but permanent comfort is. You need controlled discomfort to expand your capacity. The goal is not to suffer; it is to systematically expand the range of conditions under which you can function well.',

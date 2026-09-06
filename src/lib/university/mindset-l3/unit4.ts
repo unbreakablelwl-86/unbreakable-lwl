@@ -355,6 +355,8 @@ export const mindsetL3Unit4: Unit = {
             'Autumn — Transition period. Good for reflection, skill refinement, and preparing systems for winter maintenance',
             'These are general patterns — your individual rhythm may differ. Track your energy and motivation monthly for a year to identify your personal peaks and valleys',
           ],
+          imageUrl: getUniversityImage('mindl3-u4-ch7-seasonal-wheel'),
+          imageAlt: 'Four seasons and their resilience-training focus',
         },
         {
           heading: 'Life-Phase Periodisation',
@@ -408,6 +410,8 @@ export const mindsetL3Unit4: Unit = {
             'Application — You adjust your practice based on the learning: "I will make morning breathwork non-negotiable, even on busy days"',
             'Repeat — The cycle continues. Each iteration deepens your self-knowledge and refines your practice',
           ],
+          imageUrl: getUniversityImage('mindl3-u4-ch8-reflective-cycle'),
+          imageAlt: 'The four-stage reflective practice cycle',
         },
         {
           heading: 'Building Your Development Portfolio',

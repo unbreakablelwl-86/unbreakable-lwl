@@ -338,6 +338,8 @@ export const mindsetL3Unit1: Unit = {
             'Psychoneuroimmunology (PNI) is the study of how psychological processes interact with the nervous and immune systems. It demolishes the outdated idea that mind and body operate independently. Your thoughts, emotions, and stress levels directly influence your immune cells, inflammatory markers, wound healing speed, and susceptibility to illness.',
             'This is not metaphorical. Chronic psychological stress measurably reduces natural killer cell activity, slows wound healing by 25–40%, increases susceptibility to upper respiratory infections, and accelerates cellular ageing through telomere shortening. Your mental state is a physiological variable — as real and measurable as your heart rate.',
           ],
+          imageUrl: getUniversityImage('mindl3-u1-ch7-mind-body-bridge'),
+          imageAlt: 'The mind-body bridge connecting mental state to immune function',
         },
         {
           heading: 'The Stress-Immunity Pathway',
@@ -391,6 +393,8 @@ export const mindsetL3Unit1: Unit = {
             'Earlier chapters focused on managing your own emotions — the internal dimension of emotional intelligence. This chapter extends outward: understanding others, reading social dynamics, navigating conflict, and building the interpersonal skills that advanced resilience requires. Resilience is not a solo sport.',
             'Daniel Goleman\'s emotional intelligence framework identifies four domains: self-awareness (recognising your own emotions), self-management (regulating your responses), social awareness (reading others and situations), and relationship management (influencing, coaching, and resolving conflict). Levels 2 and earlier Level 3 chapters developed the first two. This chapter develops the latter two.',
           ],
+          imageUrl: getUniversityImage('mindl3-u1-ch8-ei-quadrant'),
+          imageAlt: 'Goleman\'s four domains of emotional intelligence',
         },
         {
           heading: 'Empathy — The Foundation of Social Intelligence',

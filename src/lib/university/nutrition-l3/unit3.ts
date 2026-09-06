@@ -375,6 +375,8 @@ export const nutritionL3Unit3: Unit = {
             '30 minutes before — Sip water or electrolyte drink. Avoid large volumes that may cause stomach discomfort',
             'Caffeine — If you use it, 3–6mg/kg body weight 30–60 minutes before competition. Only if previously tested in training',
           ],
+          imageUrl: getUniversityImage('nutl3-u3-ch7-competition-day'),
+          imageAlt: 'Competition day fuelling timeline from the night before to competition',
         },
         {
           heading: 'Travel Nutrition Challenges',
@@ -428,6 +430,8 @@ export const nutritionL3Unit3: Unit = {
             'Competition preparation — Carbohydrate loading if appropriate (7–12g/kg for 24–48 hours). Fibre reduction to minimise GI distress. Familiar foods only. Hydration strategy rehearsed',
             'Recovery / Deload phase — Return to maintenance calories. Emphasise micronutrient-dense foods, anti-inflammatory nutrition, sleep-supporting foods. Reduce stimulant use',
           ],
+          imageUrl: getUniversityImage('nutl3-u3-ch8-nutrition-phases'),
+          imageAlt: 'Nutrition intake levels across five training phases',
         },
         {
           heading: 'Building a Periodised Plan',

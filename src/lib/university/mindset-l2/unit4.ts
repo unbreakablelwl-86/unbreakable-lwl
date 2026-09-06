@@ -403,6 +403,8 @@ export const mindsetL2Unit4: Unit = {
             'Magnesium — Supports nervous system function and sleep quality. Found in dark chocolate, nuts, seeds, leafy greens',
             'Iron — Carries oxygen to the brain. Deficiency causes fatigue, poor concentration, and low mood. Found in red meat, lentils, spinach',
           ],
+          imageUrl: getUniversityImage('mindl2-u4-ch7-brain-nutrients'),
+          imageAlt: 'Six nutrients that fuel mental performance',
         },
       ],
       unbreakableInsight: 'You would not put the wrong fuel in a high-performance car and expect it to run well. Your brain is the highest-performance machine you own — and most people fuel it with caffeine and hope.',
@@ -444,6 +446,8 @@ export const mindsetL2Unit4: Unit = {
             'Adjust for next week — Based on your review, what one or two adjustments will you make? Do not overhaul everything — small, targeted changes compound',
             'Set intentions — Write 3–5 specific intentions for the coming week. Make them process-based and within your control',
           ],
+          imageUrl: getUniversityImage('mindl2-u4-ch8-review-cycle'),
+          imageAlt: 'Six-step weekly review framework',
         },
         {
           heading: 'Continuous Improvement Principles',
