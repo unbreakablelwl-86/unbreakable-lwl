@@ -317,7 +317,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
           <div className="flex flex-wrap justify-center gap-6 sm:gap-8 md:gap-16 text-center">
             {[
               { val: '6', label: 'Training Pillars' },
-              { val: '4,400+', label: 'Quiz Questions' },
+              { val: '2,500+', label: 'Quiz Questions' },
               { val: '42', label: 'Original Tracks' },
               { val: '4', label: 'Focus Games' },
               { val: '24/7', label: 'AI Coach' },
@@ -743,8 +743,8 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
                   Unbreakable University
                 </h3>
                 <p className="text-[#888] text-sm leading-relaxed max-w-lg">
-                  Real PT-level content at Level 2 and Level 3 — training science, nutrition science, mindset psychology and sport-specific modules.
-                  Over 4,400 quiz questions. Certificates on completion. All for a fraction of what traditional PT courses charge.
+                  Real PT-level content at Level 2 and Level 3 — training science, nutrition science and mindset psychology.
+                  Over 2,500 quiz questions. Certificates on completion. All for a fraction of what traditional PT courses charge.
                 </p>
               </div>
             </div>
