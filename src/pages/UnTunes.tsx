@@ -127,7 +127,9 @@ export default function UnTunes() {
               <Music className="w-5 h-5 text-primary drop-shadow-[0_0_6px_hsl(var(--primary) / 0.6)]" />
             </div>
             <div>
-              <h1 className="font-display text-2xl tracking-wider text-foreground">UN-TUNES</h1>
+              <h1 className="font-display text-2xl tracking-wider text-foreground">
+                <span className="text-primary" style={{ textShadow: '0 0 20px hsl(var(--primary) / 0.4)' }}>UNBREAKABLE</span> UN-TUNES
+              </h1>
               <p className="text-xs text-muted-foreground tracking-wider">MUSIC</p>
             </div>
           </motion.div>

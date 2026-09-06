@@ -78,11 +78,11 @@ const FAQ_SECTIONS: { title: string; icon: typeof Shield; items: FAQItem[] }[] =
       },
       {
         q: 'Can I build my own programme manually?',
-        a: 'Absolutely. Choose "Manual Builder" to create your own programme from scratch using our full exercise library of 800+ exercises with detailed breakdowns.',
+        a: 'Absolutely. Choose "Manual Builder" to create your own programme from scratch using our full exercise library of 1,200+ exercises with detailed breakdowns.',
       },
       {
         q: 'What exercises are in the library?',
-        a: 'We have 800+ exercises covering every muscle group, movement pattern, and equipment type. Each exercise includes proper form descriptions, target muscles, difficulty ratings, and images. Every description is written to UNBREAKABLE standards.',
+        a: 'We have 1,200+ exercises covering every muscle group, movement pattern, and equipment type. Each exercise includes proper form descriptions, target muscles, difficulty ratings, and images. Every description is written to UNBREAKABLE standards.',
       },
       {
         q: 'Can I track my workouts and progress?',
@@ -454,7 +454,7 @@ export default function FAQ() {
                 </div>
                 <div className="flex-1">
                   <p className="font-display text-base text-foreground tracking-wide">JOHN JAMES</p>
-                  <p className="text-primary text-xs font-display tracking-wider mt-0.5">FOUNDER & CEO</p>
+                  <p className="text-primary text-xs font-display tracking-wider mt-0.5">FOUNDER & CREATOR</p>
                 </div>
                 <ArrowRight className="w-4 h-4 text-muted-foreground" />
               </div>

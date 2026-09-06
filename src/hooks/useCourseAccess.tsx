@@ -16,7 +16,7 @@ interface CourseAccessResult {
  *
  * Access rules (post-paywall removal):
  *   - Dev / Coach roles → always have access
- *   - Any paying subscriber (Starter / Pro / Elite / Absolute Base) → access
+ *   - Any paying subscriber (Foundation / Absolute Base) → access
  *   - Free tier → no access to L2+ courses
  *
  * Level-progression requirements are handled separately in UniversityLevel

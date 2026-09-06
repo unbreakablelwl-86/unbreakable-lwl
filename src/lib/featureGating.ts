@@ -2,9 +2,9 @@
  * Feature Gating — defines which features are available at each tier
  *
  * Free: Home hub, socials, manual tools (trackers, builders, calculators, habits)
- * Base: Opens AI features + UNBREAKABLE 86
- * Pro: Full AI Coach, exercise library, programme generator
- * Elite: PT Hub, priority AI, coach command centre
+ * Foundation (the paid "Unbreakable" membership): everything — AI Coach,
+ * UNBREAKABLE 86, pillar tabs, exercise library, programme generator, PT Hub.
+ * Absolute Base: hidden retention-only tier, subset of Foundation.
  *
  * AI Coach does NOT accept or track videos or images for assessment.
  */
@@ -34,13 +34,13 @@ export type FeatureId =
   | 'ai_coach_basic'      // Basic AI chat
   | 'unbreakable_86'      // 86-day challenge
   | 'manual_programme'    // Manual programme builder
-  // Pro features
+  // Full-membership features
   | 'ai_coach_full'       // Full AI Coach (nutrition, programmes, analysis)
   | 'ai_programme'        // AI programme generator
   | 'ai_meal_plan'        // AI nutrition plans
   | 'exercise_library'    // Full exercise library with AI search
   | 'progress_reports'    // AI progress reports
-  // Elite features
+  // Full-membership features (coaching/marketplace)
   | 'pt_hub'              // 1-to-1 coaching marketplace
   | 'coach_command'       // Coach command centre
   | 'priority_ai'         // Priority AI responses

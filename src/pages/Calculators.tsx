@@ -191,7 +191,7 @@ const Calculators = () => {
 
         {/* Back nav */}
         <div className="px-4 pt-4">
-          <button onClick={() => navigate('/power')} className="flex items-center gap-1 text-muted-foreground text-sm hover:text-muted-foreground transition-colors">
+          <button onClick={() => navigate('/programming')} className="flex items-center gap-1 text-muted-foreground text-sm hover:text-muted-foreground transition-colors">
             <ArrowLeft className="w-4 h-4" /> Power
           </button>
         </div>

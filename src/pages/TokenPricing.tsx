@@ -36,9 +36,9 @@ const TOKEN_FEATURES = [
 ];
 
 const TOP_UPS = [
-  { name: 'UNBREAKABLE', tokens: 250, price: '£2.50', color: '#FF5500', icon: Flame },
-  { name: 'KEEP SHOWING UP', tokens: 500, price: '£5', color: '#FF5500', icon: Zap },
-  { name: 'LIVE WITHOUT LIMITS', tokens: 1000, price: '£10', color: '#FF5500', icon: Rocket },
+  { name: 'UNBREAKABLE', tokens: 50, price: '£2.50', color: '#FF5500', icon: Flame },
+  { name: 'KEEP SHOWING UP', tokens: 120, price: '£5', color: '#FF5500', icon: Zap },
+  { name: 'LIVE WITHOUT LIMITS', tokens: 250, price: '£10', color: '#FF5500', icon: Rocket },
 ];
 
 export default function TokenPricing() {

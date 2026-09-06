@@ -114,7 +114,7 @@ export default function ProgrammingCreate() {
         <div className="absolute inset-0 pointer-events-none"
           style={{ background: 'radial-gradient(ellipse at 50% 0%, hsl(var(--primary) / 0.08), transparent 70%)' }} />
         <div className="relative z-10">
-          <button onClick={() => navigate('/power')} className="flex items-center gap-1 text-muted-foreground text-sm mb-4 hover:text-muted-foreground transition-colors">
+          <button onClick={() => navigate('/programming')} className="flex items-center gap-1 text-muted-foreground text-sm mb-4 hover:text-muted-foreground transition-colors">
             <ArrowLeft className="w-4 h-4" /> Power
           </button>
           <h1 className="font-display text-2xl tracking-wider text-center">
