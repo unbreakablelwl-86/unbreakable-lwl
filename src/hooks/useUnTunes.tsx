@@ -430,12 +430,20 @@ export function usePlayerProvider() {
     }));
     // Record play in background. play_count is incremented atomically by a
     // DB trigger (trg_bump_track_play_count) on this insert -- no separate
-    // RPC round trip needed (that used to be a fire-and-forget call that
-    // silently failed to complete often enough to matter).
-    if (user) {
-      supabase.from('un_tunes_plays').insert({ user_id: user.id, track_id: track.id });
-    }
-  }, [user]);
+    // RPC round trip needed. We read the session directly from the Supabase
+    // client here rather than relying on the `user` captured via React
+    // context: that closure-captured value was observed going stale in
+    // production, silently skipping this insert with no error. Reading the
+    // client's own live session sidesteps that, and errors are now logged
+    // instead of swallowed.
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      const uid = session?.user?.id;
+      if (!uid) return;
+      supabase.from('un_tunes_plays').insert({ user_id: uid, track_id: track.id }).then(({ error }) => {
+        if (error) console.error('[UnTunes] failed to record play:', error);
+      });
+    });
+  }, []);
 
   const togglePlay = useCallback(() => {
     if (!audioRef.current || !state.currentTrack) return;
@@ -692,17 +700,19 @@ export function useMyPlaylists() {
 
 /** Record a play */
 export function useRecordPlay() {
-  const { user } = useAuth();
-
   return useCallback(async (trackId: string) => {
-    if (!user) return;
     // play_count is incremented atomically by a DB trigger
-    // (trg_bump_track_play_count) on this insert.
-    await supabase.from('un_tunes_plays').insert({
-      user_id: user.id,
+    // (trg_bump_track_play_count) on this insert. Read the session directly
+    // rather than relying on the closure-captured `user` (see playTrack).
+    const { data: { session } } = await supabase.auth.getSession();
+    const uid = session?.user?.id;
+    if (!uid) return;
+    const { error } = await supabase.from('un_tunes_plays').insert({
+      user_id: uid,
       track_id: trackId,
     });
-  }, [user]);
+    if (error) console.error('[UnTunes] failed to record play:', error);
+  }, []);
 }
 
 /** Toggle like on a track (dumbbell button) */
