@@ -58,14 +58,14 @@ const platformFeatures = [
     icon: Activity,
     title: 'MOVEMENT',
     desc: 'Run, cycle, swim, row or walk — structured cardio with distance, pace and heart-rate tracking.',
-    color: '#00C853',
+    color: '#EF4444',
     stat: 'Cardio',
   },
   {
     icon: Flame,
     title: 'FUEL',
     desc: 'Track nutrition, plan meals, discover recipes and get AI-generated meal plans tailored to your goals.',
-    color: '#FF8C00',
+    color: '#10B981',
     stat: 'Nutrition',
   },
   {
@@ -97,7 +97,7 @@ const howItWorks = [
     step: '01',
     icon: UserPlus,
     title: 'SIGN UP FREE',
-    desc: 'Create your account in seconds. Everything is free to use — no card, no catch.',
+    desc: 'Create your free account in seconds — no card required. Unlock full coaching with Unbreakable membership.',
   },
   {
     step: '02',
