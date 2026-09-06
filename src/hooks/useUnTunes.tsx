@@ -428,15 +428,14 @@ export function usePlayerProvider() {
       queueIndex: idx >= 0 ? idx : 0,
       isPlaying: true,
     }));
-    // Record play in background
-    supabase.auth.getUser().then(({ data }) => {
-      if (data?.user) {
-        supabase.from('un_tunes_plays').insert({ user_id: data.user.id, track_id: track.id }).then(() => {
-          supabase.rpc('increment_track_plays', { p_track_id: track.id });
-        });
-      }
-    });
-  }, []);
+    // Record play in background. play_count is incremented atomically by a
+    // DB trigger (trg_bump_track_play_count) on this insert -- no separate
+    // RPC round trip needed (that used to be a fire-and-forget call that
+    // silently failed to complete often enough to matter).
+    if (user) {
+      supabase.from('un_tunes_plays').insert({ user_id: user.id, track_id: track.id });
+    }
+  }, [user]);
 
   const togglePlay = useCallback(() => {
     if (!audioRef.current || !state.currentTrack) return;
@@ -697,12 +696,12 @@ export function useRecordPlay() {
 
   return useCallback(async (trackId: string) => {
     if (!user) return;
+    // play_count is incremented atomically by a DB trigger
+    // (trg_bump_track_play_count) on this insert.
     await supabase.from('un_tunes_plays').insert({
       user_id: user.id,
       track_id: trackId,
     });
-    // Increment play count
-    await supabase.rpc('increment_track_plays', { p_track_id: trackId });
   }, [user]);
 }
 

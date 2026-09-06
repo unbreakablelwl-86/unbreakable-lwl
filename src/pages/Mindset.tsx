@@ -6,20 +6,18 @@ import {
   Brain, Wind, Gamepad2, Flame, ArrowRight, BookOpen, Snowflake, ThermometerSun,
   Timer, Play, Pause, RotateCcw, ChevronDown, ChevronRight as ChevronRightIcon,
   ChevronLeft, ChevronRight,
-  Check, Plus, Sparkles, Target, Heart, Activity, Droplets, Settings2, Volume2,
+  Check, Plus, Sparkles, Heart, Activity, Droplets, Settings2, Volume2,
   Zap, Trophy, Calendar, BarChart3, Clock, TrendingUp,
   Crosshair, Grid3X3, Shapes
 } from "lucide-react";
-import { useDailyHabits } from "@/hooks/useDailyHabits";
 import { useMindsetProgrammes } from "@/hooks/useMindsetProgrammes";
 import { useAuth } from "@/hooks/useAuth";
 import { format, subDays } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
 
 /* ─── Types ─── */
-type MindsetTab = 'overview' | 'breathwork' | 'exposure' | 'games' | 'habits' | 'programmes';
+type MindsetTab = 'overview' | 'breathwork' | 'exposure' | 'games' | 'programmes';
 import { ExposureTimer, EXPOSURE_PROTOCOLS, type ExposureProtocol } from '@/components/mindset/ExposureTimer';
-import { HabitsTab, JournalHistory } from '@/components/mindset/HabitsTab';
 
 const Mindset = () => {
   const [activeTab, setActiveTab] = useState<MindsetTab>('overview');
@@ -27,7 +25,6 @@ const Mindset = () => {
   const [exposureFilter, setExposureFilter] = useState<'all' | 'cold' | 'heat'>('all');
   const { user } = useAuth();
   const navigate = useNavigate();
-  const { habits, saveHabits, isToday, loading: habitsLoading, dateStr } = useDailyHabits();
   const { programmes, activeProgrammes, isLoading: progsLoading, saveProgramme } = useMindsetProgrammes();
   const [showManualBuilder, setShowManualBuilder] = useState(false);
   const [manualForm, setManualForm] = useState({
@@ -43,7 +40,6 @@ const Mindset = () => {
     { id: 'breathwork', label: 'Breathwork', icon: Wind },
     { id: 'exposure', label: 'Cold & Heat', icon: Snowflake },
     { id: 'games', label: 'Focus', icon: Gamepad2 },
-    { id: 'habits', label: 'Habits', icon: Target },
     { id: 'programmes', label: 'Programmes', icon: Sparkles },
   ];
 
@@ -51,8 +47,6 @@ const Mindset = () => {
     ? EXPOSURE_PROTOCOLS
     : EXPOSURE_PROTOCOLS.filter(p => p.category === exposureFilter);
 
-  const allHabitKeys: (keyof typeof habits)[] = ['train', 'learnDaily', 'water', 'hitYourNumbers', 'sauna', 'coldShower', 'breathworkDone'];
-  const completedToday = allHabitKeys.filter(k => habits[k]).length;
 
   /* ─── Active protocol timer ─── */
   if (activeProtocol) {
@@ -114,11 +108,7 @@ const Mindset = () => {
           {activeTab === 'overview' && (
             <motion.div key="overview" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-5">
               {/* Quick Stats */}
-              <div className="grid grid-cols-3 gap-3">
-                <div className="p-3 rounded-xl border border-border bg-card text-center">
-                  <p className="text-primary font-display text-xl">{completedToday}/7</p>
-                  <p className="text-muted-foreground text-[10px] mt-0.5">TODAY'S HABITS</p>
-                </div>
+              <div className="grid grid-cols-2 gap-3">
                 <div className="p-3 rounded-xl border border-border bg-card text-center">
                   <p className="text-primary font-display text-xl">{activeProgrammes?.length || 0}</p>
                   <p className="text-muted-foreground text-[10px] mt-0.5">ACTIVE PROGS</p>
@@ -133,7 +123,7 @@ const Mindset = () => {
               <div className="p-4 rounded-xl border border-primary/15 bg-card">
                 <p className="text-muted-foreground text-sm leading-relaxed">
                   Your mind is your ultimate weapon. The <span className="text-primary font-semibold">Unbreakable Mindset Method</span> combines
-                  controlled breathwork, cold & heat exposure, focus training, and daily habit tracking to build 
+                  controlled breathwork, cold & heat exposure, and focus training to build 
                   a mind that stays calm in chaos — focused, present, and <span className="text-primary font-semibold">UNBREAKABLE</span>.
                 </p>
                 <p className="text-primary font-display text-sm tracking-wide mt-3" style={{ textShadow: '0 0 10px hsl(var(--primary) / 0.3)' }}>
@@ -148,7 +138,6 @@ const Mindset = () => {
                   { tab: 'breathwork' as MindsetTab, icon: Wind, title: 'BREATHWORK', desc: 'Voice-guided sessions — Box Breathing, 4-7-8, Tactical Calm', colour: 'var(--pillar-accent)' },
                   { tab: 'exposure' as MindsetTab, icon: Snowflake, title: 'COLD & HEAT', desc: 'Cold showers, ice baths, sauna protocols — guided timers', colour: 'var(--pillar-accent)' },
                   { tab: 'games' as MindsetTab, icon: Gamepad2, title: 'FOCUS GAMES', desc: 'Reaction training, hand-eye coordination, global leaderboards', colour: 'var(--pillar-accent)' },
-                  { tab: 'habits' as MindsetTab, icon: Target, title: 'DAILY HABITS', desc: 'Track your Daily 7 — train, learn, hydrate, numbers, breathwork, sauna, cold', colour: 'var(--pillar-accent)' },
                   { tab: 'programmes' as MindsetTab, icon: Sparkles, title: 'PROGRAMMES', desc: 'Unbreakable Coach or manual mindset programmes — breathwork, cold exposure, focus plans', colour: 'var(--pillar-accent)' },
                 ].map(card => (
                   <button
@@ -314,18 +303,6 @@ const Mindset = () => {
                 </button>
               ))}
             </motion.div>
-          )}
-
-          {/* ═══ HABITS TAB ═══ */}
-          {activeTab === 'habits' && (
-            <HabitsTab
-              habits={habits}
-              saveHabits={saveHabits}
-              isToday={isToday}
-              user={user}
-              completedToday={completedToday}
-              navigate={navigate}
-            />
           )}
 
           {/* ═══ PROGRAMMES TAB ═══ */}
