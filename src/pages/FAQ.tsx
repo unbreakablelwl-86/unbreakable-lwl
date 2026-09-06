@@ -48,7 +48,7 @@ const FAQ_SECTIONS: { title: string; icon: typeof Shield; items: FAQItem[] }[] =
       },
       {
         q: 'Is UNBREAKABLE free to use?',
-        a: 'Yes! The free tier gives you access to training tools, the community feed, habit tracking, and limited Unbreakable Coach interactions. Upgrade to Pro for full coaching tokens, bespoke programme generation, 1-2-1 coaching, and premium content.',
+        a: 'Yes! The free tier gives you your profile, timeline, the community feed, habit tracking, calculators and Un-Tunes (30-second previews). Power, Movement, Fuel, Mindset and the Unbreakable Coach are part of the paid Unbreakable membership.',
       },
       {
         q: 'How do I set up my profile?',
@@ -64,7 +64,7 @@ const FAQ_SECTIONS: { title: string; icon: typeof Shield; items: FAQItem[] }[] =
       },
       {
         q: 'Do I need to create an account?',
-        a: 'You can browse as a guest, but to unlock tracking, programmes, the community feed, and Unbreakable Coach you\'ll need a free account. Sign up takes 30 seconds.',
+        a: 'You can browse as a guest, but you\'ll need a free account for your profile, the community feed and habit tracking. Tracking, programmes and the Unbreakable Coach are part of the paid Unbreakable membership. Sign up takes 30 seconds.',
       },
     ],
   },
@@ -178,7 +178,7 @@ const FAQ_SECTIONS: { title: string; icon: typeof Shield; items: FAQItem[] }[] =
       },
       {
         q: 'How many messages do I get?',
-        a: 'Free users get a limited number of Unbreakable Coach interactions per month. Pro users get a generous monthly token allocation that resets each billing cycle.',
+        a: 'The Unbreakable Coach is part of the paid Unbreakable membership — free accounts don\'t have coach access. Once you\'re on Unbreakable, you get a generous monthly token allocation that resets each billing cycle.',
       },
     ],
   },
@@ -205,8 +205,8 @@ const FAQ_SECTIONS: { title: string; icon: typeof Shield; items: FAQItem[] }[] =
     icon: Users,
     items: [
       {
-        q: 'What does Pro unlock?',
-        a: 'Pro gives you full Unbreakable Coach tokens, bespoke programme generation, advanced analytics, and the option for hybrid 1-2-1 human coaching with real UNBREAKABLE-verified coaches.',
+        q: 'What does Unbreakable membership unlock?',
+        a: 'Unbreakable unlocks every pillar — Power, Movement, Fuel and Mindset — plus full Unbreakable Coach tokens, bespoke programme generation, and the option for hybrid 1-2-1 human coaching with real UNBREAKABLE-verified coaches.',
       },
       {
         q: 'How does 1-2-1 coaching work?',
@@ -227,16 +227,16 @@ const FAQ_SECTIONS: { title: string; icon: typeof Shield; items: FAQItem[] }[] =
     icon: CreditCard,
     items: [
       {
-        q: 'How do I upgrade to Pro?',
+        q: 'How do I upgrade to Unbreakable?',
         a: 'Go to your Profile → Settings → Subscription, or tap the upgrade prompt anywhere in the app. Payment is handled securely through Stripe.',
       },
       {
         q: 'Can I cancel my subscription?',
-        a: 'Yes, you can cancel any time from your subscription settings. You\'ll keep Pro access until the end of your current billing period.',
+        a: 'Yes, you can cancel any time from your subscription settings. You\'ll keep Unbreakable access until the end of your current billing period.',
       },
       {
         q: 'How do AI tokens work?',
-        a: 'Tokens are used each time you interact with the Unbreakable Coach. Free users get a starter allocation. Pro users get a generous monthly allocation that resets with each billing cycle.',
+        a: 'Tokens are used each time you interact with the Unbreakable Coach, which is part of the paid Unbreakable membership — free accounts don\'t hold a token balance. Once you\'re on Unbreakable, you get a generous monthly allocation that resets with each billing cycle.',
       },
       {
         q: 'Is my payment information secure?',
@@ -290,11 +290,11 @@ const FAQ_SECTIONS: { title: string; icon: typeof Shield; items: FAQItem[] }[] =
     items: [
       {
         q: 'What is Un-Tunes?',
-        a: 'Un-Tunes is UNBREAKABLE\'s music platform. All tracks are free to stream during your sessions. Browse albums, create playlists, and add background music to your training.',
+        a: 'Un-Tunes is UNBREAKABLE\'s music platform, free for every account to browse. Free accounts get 30-second previews of each track; Unbreakable members (or anyone who\'s bought a track) get full unlimited streaming. Browse albums, create playlists, and add background music to your training.',
       },
       {
         q: 'Is the music free?',
-        a: 'Yes — all 42 Un-Tunes tracks across three albums stream free with your membership. No tokens, no purchases, no extras.',
+        a: 'Every account can browse and preview all Un-Tunes tracks free — each preview plays the first 30 seconds. For full-length streaming, you\'ll need an Unbreakable membership or to buy the track. No tokens either way.',
       },
     ],
   },

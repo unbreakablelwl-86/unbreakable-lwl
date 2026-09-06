@@ -113,8 +113,8 @@ const howItWorks = [
   },
 ];
 
-/* ─── Free features ─── */
-const freeFeatures = [
+/* ─── What Unbreakable (paid) unlocks ─── */
+const membershipFeatures = [
   'Full training programme builder',
   'Session logging with progressive overload',
   'Cardio tracker (run, cycle, swim, row, walk)',
@@ -131,7 +131,7 @@ const freeFeatures = [
 
 /* ─── Token tiers ─── */
 const tokenTiers = [
-  { name: 'FREE', tokens: 0, price: '£0', desc: 'The hub, the community and the manual tools', highlight: false, features: ['Profile, hub & social feed', 'Manual trackers & calculators', 'University preview'] },
+  { name: 'FREE', tokens: 0, price: '£0', desc: 'Your profile, the community and Un-Tunes', highlight: false, features: ['Profile, timeline & social feed', 'Calculators, habits & Un-Tunes', 'University preview'] },
   { name: 'UNBREAKABLE', tokens: 1000, price: '£50', period: '/mo', desc: 'Full AI coaching, all features unlocked', highlight: true, features: ['1,000 tokens/month', 'Unbreakable Coach', 'All features'], originalPrice: '£75' },
 ];
 
@@ -267,7 +267,8 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
                 7 DAYS FREE COACHING
               </button>
               <p className="text-[#777] text-xs sm:text-sm leading-snug">
-                Full AI coaching, programmes &amp; meal plans. Then £50/mo — cancel anytime before day 7.
+                Full AI coaching, programmes &amp; meal plans with code{' '}
+                <span className="text-[#FF5500] font-semibold">NEWBEGINNING7</span>. Then £50/mo — cancel anytime before day 7.
               </p>
             </div>
 
@@ -283,7 +284,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
                 FREE SIGN UP
               </button>
               <p className="text-[#777] text-xs sm:text-sm leading-snug">
-                Trackers, nutrition, community &amp; more. Free forever, no card needed.
+                Profile, timeline, UnTunes &amp; community. Free forever, no card needed.
               </p>
             </div>
           </motion.div>
@@ -610,24 +611,24 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
         </div>
       </section>
 
-      {/* ═══ Free features ═══ */}
+      {/* ═══ Membership features ═══ */}
       <section className="py-16 sm:py-20 px-6">
         <div className="container mx-auto max-w-4xl">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={stagger}>
             <motion.div variants={fadeUp} className="text-center mb-10">
-              <p className="text-[#FF5500] font-heading font-bold text-sm uppercase tracking-[0.2em] mb-2">One Membership</p>
+              <p className="text-[#FF5500] font-heading font-bold text-sm uppercase tracking-[0.2em] mb-2">Go Unbreakable</p>
               <h2 className="font-heading font-black text-2xl sm:text-3xl md:text-5xl text-white uppercase tracking-wide">
-                Everything. One Price.
+                One Price. Everything Unlocked.
               </h2>
               <p className="text-[#888] mt-3 max-w-xl mx-auto text-sm sm:text-base">
-                One membership unlocks the lot — every tracker, every builder, your Unbreakable Coach and the University. No add-ons, no upsells, no locked tabs.
+                One membership unlocks the lot — every tracker, every builder, your Unbreakable Coach and the University. No add-ons, no upsells, just one price.
               </p>
             </motion.div>
 
             <motion.div variants={fadeUp} className="rounded-2xl p-6"
               style={{ background: 'rgba(14,14,14,0.5)', border: '1px solid rgba(255,85,0,0.1)' }}>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {freeFeatures.map(f => (
+                {membershipFeatures.map(f => (
                   <div key={f} className="flex items-start gap-2.5">
                     <Check size={16} className="text-[#FF5500] flex-shrink-0 mt-0.5" />
                     <span className="text-[#ccc] text-sm">{f}</span>
@@ -785,7 +786,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
             </button>
           </div>
           <p className="text-[#555] text-xs mt-4">
-            Free forever, no card needed · Or 7 days free coaching, then £50/mo · Launch price locked for life · Cancel anytime
+            Free forever, no card needed · Or 7 days free coaching with code NEWBEGINNING7, then £50/mo · Launch price locked for life · Cancel anytime
           </p>
         </div>
       </section>

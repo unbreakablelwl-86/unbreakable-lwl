@@ -9,6 +9,10 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { useAuth } from '@/hooks/useAuth';
 import { useProfile } from '@/hooks/useProfile';
 import { useUserRole } from '@/hooks/useUserRole';
+import { useTokenBalance } from '@/hooks/useTokenBalance';
+import { hasFeatureAccess } from '@/lib/featureGating';
+import type { FeatureId } from '@/lib/featureGating';
+import type { TierKey } from '@/lib/subscriptionTiers';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { AuthModal } from '@/components/tracker/AuthModal';
@@ -19,17 +23,17 @@ interface NavigationDrawerProps {
 }
 
 const freeHubLinks = [
-  { to: '/calculators', label: 'CALCULATORS', icon: Calculator, paid: false },
-  { to: '/habits', label: 'HABITS', icon: Calendar, paid: false },
+  { to: '/calculators', label: 'CALCULATORS', icon: Calculator, paid: false, feature: null as FeatureId | null },
+  { to: '/habits', label: 'HABITS', icon: Calendar, paid: false, feature: null as FeatureId | null },
 ];
 
 const paidHubLinks = [
-  { to: '/unbreakable-86', label: 'UNBREAKABLE 86', icon: Flame, paid: true },
-  { to: '/programming', label: 'POWER', icon: Dumbbell, paid: true },
-  { to: '/tracker', label: 'MOVEMENT', icon: Footprints, paid: true },
-  { to: '/fuel', label: 'FUEL', icon: Apple, paid: true },
-  { to: '/mindset', label: 'MINDSET', icon: Brain, paid: true },
-  { to: '/untunes', label: 'UN-TUNES', icon: Music, paid: false },
+  { to: '/unbreakable-86', label: 'UNBREAKABLE 86', icon: Flame, paid: true, feature: 'unbreakable_86' as FeatureId | null },
+  { to: '/programming', label: 'POWER', icon: Dumbbell, paid: true, feature: 'power_pillar' as FeatureId | null },
+  { to: '/tracker', label: 'MOVEMENT', icon: Footprints, paid: true, feature: 'movement_pillar' as FeatureId | null },
+  { to: '/fuel', label: 'FUEL', icon: Apple, paid: true, feature: 'fuel_pillar' as FeatureId | null },
+  { to: '/mindset', label: 'MINDSET', icon: Brain, paid: true, feature: 'mindset_pillar' as FeatureId | null },
+  { to: '/untunes', label: 'UN-TUNES', icon: Music, paid: false, feature: null as FeatureId | null },
 ];
 
 const hubLinks = [...freeHubLinks, ...paidHubLinks];
@@ -41,11 +45,17 @@ export function NavigationDrawer({ variant = 'default' }: NavigationDrawerProps)
   const { user, signOut } = useAuth();
   const { profile } = useProfile();
   const { isAdminOrOwner, isOwner, role } = useUserRole();
+  const { currentTier } = useTokenBalance();
   
   const location = useLocation();
 
   const isCoach = role === 'coach';
   const isDev = role === 'dev';
+  // Dev/coach bypass every paywall (same as PaywallGate); everyone else's lock
+  // state reflects their real tier against the link's feature gate, if any.
+  const userTier = (currentTier || 'free') as TierKey;
+  const hasHubAccess = (feature: FeatureId | null) =>
+    isDev || isCoach || !feature || hasFeatureAccess(userTier, feature);
 
   const getInitials = () => {
     if (profile?.display_name) {
@@ -158,7 +168,7 @@ export function NavigationDrawer({ variant = 'default' }: NavigationDrawerProps)
                 </CollapsibleTrigger>
                 <CollapsibleContent className="pl-4 space-y-1 mt-1">
                   {hubLinks.map((link) => {
-                    const isLocked = false;
+                    const isLocked = !hasHubAccess(link.feature);
                     return (
                       <Link
                         key={link.to}

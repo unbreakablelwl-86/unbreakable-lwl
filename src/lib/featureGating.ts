@@ -25,6 +25,11 @@ export type FeatureId =
   | 'university_l1'       // Level 1 courses
   | 'profile'
   | 'inbox'
+  // Pillar tab access (whole section locked for free accounts)
+  | 'power_pillar'      // Power tab (workout builder, programmes)
+  | 'movement_pillar'   // Movement tab (cardio/workout tracker)
+  | 'fuel_pillar'       // Fuel tab (nutrition)
+  | 'mindset_pillar'    // Mindset tab (breathwork, focus, games)
   // Base features
   | 'ai_coach_basic'      // Basic AI chat
   | 'unbreakable_86'      // 86-day challenge
@@ -119,6 +124,36 @@ const FEATURE_GATES: Record<FeatureId, FeatureGate> = {
     name: 'Inbox',
     description: 'Messages and notifications',
     requiredTier: 'free',
+  },
+
+  // ─── PILLAR TAB ACCESS ───
+  // Whole-section locks for Power/Movement/Fuel/Mindset — free accounts see a
+  // locked description + upgrade CTA instead of the tab's content. Distinct from
+  // the finer-grained gates below (ai_programme, manual_tracker, etc.), which
+  // still apply once a user has unlocked the tab itself.
+  power_pillar: {
+    id: 'power_pillar',
+    name: 'Power',
+    description: 'AI & manual strength programmes, exercise library and session logs',
+    requiredTier: 'foundation',
+  },
+  movement_pillar: {
+    id: 'movement_pillar',
+    name: 'Movement',
+    description: 'Cardio & movement programmes, activity tracking and personal records',
+    requiredTier: 'foundation',
+  },
+  fuel_pillar: {
+    id: 'fuel_pillar',
+    name: 'Fuel',
+    description: 'Nutrition tracking, meal planning and recipes',
+    requiredTier: 'foundation',
+  },
+  mindset_pillar: {
+    id: 'mindset_pillar',
+    name: 'Mindset',
+    description: 'Breathwork, exposure training, focus games and mindset programmes',
+    requiredTier: 'foundation',
   },
 
   // ─── BASE FEATURES ───

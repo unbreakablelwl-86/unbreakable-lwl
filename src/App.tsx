@@ -13,6 +13,7 @@ import { AdminRoute } from "@/components/AdminRoute";
 import { CoachRoute } from "@/components/CoachRoute";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { RouteErrorBoundary } from "@/components/RouteErrorBoundary";
+import { PaywallGate } from "@/components/paywall/PaywallGate";
 import { InstallPrompt } from "@/components/pwa/InstallPrompt";
 import { SplashScreen } from "@/components/SplashScreen";
 import AppLayout from "@/layouts/AppLayout";
@@ -206,7 +207,7 @@ const App = () => {
                 
                 {/* Programming (Power) routes */}
                 <Route path="/programming" element={
-                  <ProtectedRoute><RouteErrorBoundary section="Power"><Programming /></RouteErrorBoundary></ProtectedRoute>
+                  <ProtectedRoute><RouteErrorBoundary section="Power"><PaywallGate feature="power_pillar"><Programming /></PaywallGate></RouteErrorBoundary></ProtectedRoute>
                 } />
                 <Route path="/programming/create" element={
                   <ProtectedRoute><RouteErrorBoundary section="Power"><ProgrammingCreate /></RouteErrorBoundary></ProtectedRoute>
@@ -221,7 +222,7 @@ const App = () => {
                 
                 {/* Tracker (Movement) routes */}
                 <Route path="/tracker" element={
-                  <ProtectedRoute><RouteErrorBoundary section="Movement"><Tracker /></RouteErrorBoundary></ProtectedRoute>
+                  <ProtectedRoute><RouteErrorBoundary section="Movement"><PaywallGate feature="movement_pillar"><Tracker /></PaywallGate></RouteErrorBoundary></ProtectedRoute>
                 } />
                 <Route path="/tracker/create" element={
                   <ProtectedRoute><RouteErrorBoundary section="Movement"><TrackerCreate /></RouteErrorBoundary></ProtectedRoute>
@@ -232,7 +233,7 @@ const App = () => {
                 
                 {/* Fuel routes */}
                 <Route path="/fuel" element={
-                  <ProtectedRoute><RouteErrorBoundary section="Fuel"><Fuel /></RouteErrorBoundary></ProtectedRoute>
+                  <ProtectedRoute><RouteErrorBoundary section="Fuel"><PaywallGate feature="fuel_pillar"><Fuel /></PaywallGate></RouteErrorBoundary></ProtectedRoute>
                 } />
                 <Route path="/fuel/history" element={
                   <ProtectedRoute><RouteErrorBoundary section="Fuel"><FuelHistory /></RouteErrorBoundary></ProtectedRoute>
@@ -252,7 +253,7 @@ const App = () => {
                 
                 {/* Mindset routes */}
                 <Route path="/mindset" element={
-                  <ProtectedRoute><RouteErrorBoundary section="Mindset"><Mindset /></RouteErrorBoundary></ProtectedRoute>
+                  <ProtectedRoute><RouteErrorBoundary section="Mindset"><PaywallGate feature="mindset_pillar"><Mindset /></PaywallGate></RouteErrorBoundary></ProtectedRoute>
                 } />
                 <Route path="/mindset/breathing" element={
                   <ProtectedRoute><RouteErrorBoundary section="Mindset"><MindsetBreathing /></RouteErrorBoundary></ProtectedRoute>
