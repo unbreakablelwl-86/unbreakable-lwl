@@ -112,7 +112,7 @@ export default function UnTunesTerms() {
             <Card className="p-4 border-border/30 bg-card/50">
               <div className="flex items-start gap-3">
                 <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
-                  <section.icon className="w-4 h-4 text-primary drop-shadow-[0_0_4px_rgba(255,85,0,0.4)]" />
+                  <section.icon className="w-4 h-4 text-primary drop-shadow-[0_0_4px_hsl(var(--primary)/0.4)]" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <h3 className="font-display text-sm tracking-wider text-foreground mb-2">{section.title}</h3>

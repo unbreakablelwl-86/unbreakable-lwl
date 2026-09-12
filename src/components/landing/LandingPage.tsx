@@ -187,8 +187,8 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
               <button
                 className="px-5 py-2.5 rounded-xl font-heading font-bold text-sm uppercase tracking-wider text-white transition-all active:scale-[0.97] flex items-center gap-2"
                 style={{
-                  background: 'linear-gradient(135deg, #FF5500 0%, #CC4400 100%)',
-                  boxShadow: '0 0 16px rgba(255,85,0,0.3), 0 0 50px rgba(255,85,0,0.1)',
+                  background: 'linear-gradient(135deg, hsl(var(--primary)) 0%, #CC4400 100%)',
+                  boxShadow: '0 0 16px hsl(var(--primary)/0.3), 0 0 50px hsl(var(--primary)/0.1)',
                 }}
                 onClick={goSignUp}
               >
@@ -205,7 +205,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
         {/* Background effects */}
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full blur-[180px]"
-            style={{ background: 'rgba(255,85,0,0.08)' }} />
+            style={{ background: 'hsl(var(--primary)/0.08)' }} />
           <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#080808] to-transparent" />
         </div>
 
@@ -230,8 +230,8 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
           >
             STOP STARTING OVER.
             <br />
-            <span className="text-[#FF5500]" style={{
-              textShadow: '0 0 20px rgba(255,85,0,0.5), 0 0 60px rgba(255,85,0,0.2)',
+            <span className="text-[hsl(var(--primary))]" style={{
+              textShadow: '0 0 20px hsl(var(--primary)/0.5), 0 0 60px hsl(var(--primary)/0.2)',
             }}>
               START BUILDING.
             </span>
@@ -257,8 +257,8 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
               <button
                 className="w-full px-6 py-4 rounded-xl font-heading font-bold text-base sm:text-lg uppercase tracking-wider text-white transition-all active:scale-[0.97] flex items-center justify-center gap-2"
                 style={{
-                  background: 'linear-gradient(135deg, #FF5500 0%, #CC4400 100%)',
-                  boxShadow: '0 0 24px rgba(255,85,0,0.4), 0 0 80px rgba(255,85,0,0.15)',
+                  background: 'linear-gradient(135deg, hsl(var(--primary)) 0%, #CC4400 100%)',
+                  boxShadow: '0 0 24px hsl(var(--primary)/0.4), 0 0 80px hsl(var(--primary)/0.15)',
                 }}
                 onClick={goSignUpTrial}
               >
@@ -267,7 +267,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
               </button>
               <p className="text-[#777] text-xs sm:text-sm leading-snug">
                 Full AI coaching, programmes &amp; meal plans with code{' '}
-                <span className="text-[#FF5500] font-semibold">NEWBEGINNING7</span>. Then £50/mo — cancel anytime before day 7.
+                <span className="text-[hsl(var(--primary))] font-semibold">NEWBEGINNING7</span>. Then £50/mo — cancel anytime before day 7.
               </p>
             </div>
 
@@ -293,9 +293,9 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
             transition={{ duration: 0.6 }}
             className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-[#666] text-xs sm:text-sm"
           >
-            <span className="flex items-center gap-1.5"><Check size={14} className="text-[#FF5500]" /> No card needed to start free</span>
-            <span className="flex items-center gap-1.5"><Check size={14} className="text-[#FF5500]" /> 1,000 coach tokens a month on Unbreakable</span>
-            <span className="flex items-center gap-1.5"><Check size={14} className="text-[#FF5500]" /> Cancel anytime</span>
+            <span className="flex items-center gap-1.5"><Check size={14} className="text-[hsl(var(--primary))]" /> No card needed to start free</span>
+            <span className="flex items-center gap-1.5"><Check size={14} className="text-[hsl(var(--primary))]" /> 1,000 coach tokens a month on Unbreakable</span>
+            <span className="flex items-center gap-1.5"><Check size={14} className="text-[hsl(var(--primary))]" /> Cancel anytime</span>
           </motion.div>
         </motion.div>
 
@@ -322,8 +322,8 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
               { val: '24/7', label: 'AI Coach' },
             ].map(s => (
               <div key={s.label}>
-                <p className="font-heading font-black text-xl sm:text-2xl md:text-3xl text-[#FF5500]"
-                  style={{ textShadow: '0 0 10px rgba(255,85,0,0.3)' }}>{s.val}</p>
+                <p className="font-heading font-black text-xl sm:text-2xl md:text-3xl text-[hsl(var(--primary))]"
+                  style={{ textShadow: '0 0 10px hsl(var(--primary)/0.3)' }}>{s.val}</p>
                 <p className="text-[#666] text-[10px] sm:text-xs tracking-widest uppercase">{s.label}</p>
               </div>
             ))}
@@ -336,7 +336,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
         <div className="container mx-auto max-w-4xl">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} variants={stagger}>
             <motion.div variants={fadeUp} className="text-center mb-12">
-              <p className="text-[#FF5500] font-heading font-bold text-sm uppercase tracking-[0.2em] mb-2">The Problem</p>
+              <p className="text-[hsl(var(--primary))] font-heading font-bold text-sm uppercase tracking-[0.2em] mb-2">The Problem</p>
               <h2 className="font-heading font-black text-2xl sm:text-3xl md:text-5xl text-white uppercase tracking-wide mb-4">
                 Fitness Apps Are Broken
               </h2>
@@ -357,8 +357,8 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
                     style={{ background: 'rgba(14,14,14,0.6)', border: '1px solid rgba(255,255,255,0.05)' }}
                   >
                     <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-3"
-                      style={{ background: 'rgba(255,85,0,0.1)' }}>
-                      <Icon size={20} className="text-[#FF5500]" />
+                      style={{ background: 'hsl(var(--primary)/0.1)' }}>
+                      <Icon size={20} className="text-[hsl(var(--primary))]" />
                     </div>
                     <h3 className="font-heading font-bold text-sm text-white uppercase tracking-wider mb-2">{d.title}</h3>
                     <p className="text-[#888] text-sm leading-relaxed">{d.desc}</p>
@@ -384,7 +384,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
             src={lwlFilmstrip}
             alt="UNBREAKABLE App"
             className="w-full max-w-5xl mx-auto opacity-80"
-            style={{ filter: 'drop-shadow(0 0 40px rgba(255,85,0,0.1))' }}
+            style={{ filter: 'drop-shadow(0 0 40px hsl(var(--primary)/0.1))' }}
           />
         </motion.div>
       </section>
@@ -394,7 +394,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
         <div className="container mx-auto max-w-6xl">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} variants={stagger}>
             <motion.div variants={fadeUp} className="text-center mb-14">
-              <p className="text-[#FF5500] font-heading font-bold text-sm uppercase tracking-[0.2em] mb-2">The Platform</p>
+              <p className="text-[hsl(var(--primary))] font-heading font-bold text-sm uppercase tracking-[0.2em] mb-2">The Platform</p>
               <h2 className="font-heading font-black text-2xl sm:text-3xl md:text-5xl text-white uppercase tracking-wide">
                 Six Pillars. One Platform.
               </h2>
@@ -445,7 +445,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
         <div className="container mx-auto max-w-5xl">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={stagger}>
             <motion.div variants={fadeUp} className="text-center mb-10">
-              <p className="text-[#FF5500] font-heading font-bold text-sm uppercase tracking-[0.2em] mb-2">Beyond Training</p>
+              <p className="text-[hsl(var(--primary))] font-heading font-bold text-sm uppercase tracking-[0.2em] mb-2">Beyond Training</p>
               <h2 className="font-heading font-black text-2xl sm:text-3xl md:text-5xl text-white uppercase tracking-wide">
                 More Than a Fitness App
               </h2>
@@ -479,11 +479,11 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
 
               {/* Music */}
               <motion.div variants={fadeUp} className="p-6 rounded-2xl"
-                style={{ background: 'rgba(14,14,14,0.6)', border: '1px solid rgba(255,85,0,0.15)' }}>
+                style={{ background: 'rgba(14,14,14,0.6)', border: '1px solid hsl(var(--primary)/0.15)' }}>
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-12 h-12 rounded-xl flex items-center justify-center"
-                    style={{ background: 'rgba(255,85,0,0.1)' }}>
-                    <Music size={24} className="text-[#FF5500]" />
+                    style={{ background: 'hsl(var(--primary)/0.1)' }}>
+                    <Music size={24} className="text-[hsl(var(--primary))]" />
                   </div>
                   <div>
                     <h3 className="font-heading font-bold text-lg text-white uppercase tracking-wider">Un-Tunes</h3>
@@ -497,7 +497,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
                 <div className="flex flex-wrap gap-2">
                   {['POWER', 'MOVEMENT', 'MINDSET', 'FUEL', 'RECOVERY'].map(p => (
                     <span key={p} className="text-[10px] font-heading font-bold tracking-wider px-2 py-1 rounded-lg"
-                      style={{ background: 'rgba(255,85,0,0.08)', color: '#FF5500' }}>{p}</span>
+                      style={{ background: 'hsl(var(--primary)/0.08)', color: 'hsl(var(--primary))' }}>{p}</span>
                   ))}
                 </div>
               </motion.div>
@@ -512,25 +512,25 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
           <div className="container mx-auto max-w-5xl">
             <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} variants={stagger}>
               <motion.div variants={fadeUp} className="text-center mb-10">
-                <p className="text-[#FF5500] font-heading font-bold text-sm uppercase tracking-[0.2em] mb-2">The Story</p>
+                <p className="text-[hsl(var(--primary))] font-heading font-bold text-sm uppercase tracking-[0.2em] mb-2">The Story</p>
                 <h2 className="font-heading font-black text-2xl sm:text-3xl md:text-5xl text-white uppercase tracking-wide">
                   Built From Experience
                 </h2>
               </motion.div>
 
               <motion.div variants={fadeUp} className="rounded-2xl p-6 sm:p-8 md:p-10"
-                style={{ background: 'rgba(14,14,14,0.6)', border: '1px solid rgba(255,85,0,0.1)' }}>
+                style={{ background: 'rgba(14,14,14,0.6)', border: '1px solid hsl(var(--primary)/0.1)' }}>
                 <div className="flex flex-col md:flex-row gap-8 items-center">
                   <div className="flex-shrink-0">
                     <img
                       src={johnFounder}
                       alt="John James — Founder"
                       className="w-32 h-32 sm:w-40 sm:h-40 rounded-2xl object-cover"
-                      style={{ border: '2px solid rgba(255,85,0,0.2)', boxShadow: '0 0 30px rgba(255,85,0,0.1)' }}
+                      style={{ border: '2px solid hsl(var(--primary)/0.2)', boxShadow: '0 0 30px hsl(var(--primary)/0.1)' }}
                     />
                   </div>
                   <div>
-                    <Quote size={28} className="text-[#FF5500]/30 mb-2" />
+                    <Quote size={28} className="text-[hsl(var(--primary))]/30 mb-2" />
                     <p className="text-[#ccc] text-sm sm:text-base leading-relaxed mb-4">
                       I didn't build UNBREAKABLE because I had it figured out. I built it because I didn't.
                       I've trained through addiction recovery, mental health crises and years of starting over.
@@ -541,7 +541,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
                       It's built by someone who's missed hundreds of Mondays — and still showed back up.
                     </p>
                     <p className="font-heading font-bold text-white text-sm tracking-wider">
-                      JOHN JAMES <span className="text-[#FF5500]">·</span> <span className="text-[#666] font-normal">Founder, Live Without Limits LTD</span>
+                      JOHN JAMES <span className="text-[hsl(var(--primary))]">·</span> <span className="text-[#666] font-normal">Founder, Live Without Limits LTD</span>
                     </p>
                   </div>
                 </div>
@@ -562,8 +562,8 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
                     </div>
                     <div className="text-center">
                       <img loading="lazy" src={jjReturn} alt="2026" className="w-full aspect-square object-cover rounded-xl mb-2 opacity-80 hover:opacity-100 transition-opacity"
-                        style={{ border: '1px solid rgba(255,85,0,0.15)' }} />
-                      <p className="text-[#FF5500] text-[10px] sm:text-xs font-heading tracking-wider">2026 — UNBREAKABLE</p>
+                        style={{ border: '1px solid hsl(var(--primary)/0.15)' }} />
+                      <p className="text-[hsl(var(--primary))] text-[10px] sm:text-xs font-heading tracking-wider">2026 — UNBREAKABLE</p>
                     </div>
                   </div>
                 </div>
@@ -578,7 +578,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
         <div className="container mx-auto max-w-4xl">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={stagger}>
             <motion.div variants={fadeUp} className="text-center mb-14">
-              <p className="text-[#FF5500] font-heading font-bold text-sm uppercase tracking-[0.2em] mb-2">Getting Started</p>
+              <p className="text-[hsl(var(--primary))] font-heading font-bold text-sm uppercase tracking-[0.2em] mb-2">Getting Started</p>
               <h2 className="font-heading font-black text-2xl sm:text-3xl md:text-5xl text-white uppercase tracking-wide">
                 3 Steps. No Excuses.
               </h2>
@@ -595,8 +595,8 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
                     style={{ background: 'rgba(14,14,14,0.5)', border: '1px solid rgba(255,255,255,0.04)' }}
                   >
                     <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
-                      style={{ background: 'rgba(255,85,0,0.1)', border: '1px solid rgba(255,85,0,0.2)' }}>
-                      <span className="font-heading font-black text-[#FF5500] text-lg">{s.step}</span>
+                      style={{ background: 'hsl(var(--primary)/0.1)', border: '1px solid hsl(var(--primary)/0.2)' }}>
+                      <span className="font-heading font-black text-[hsl(var(--primary))] text-lg">{s.step}</span>
                     </div>
                     <div>
                       <h3 className="font-heading font-bold text-base sm:text-lg text-white uppercase tracking-wider mb-1">{s.title}</h3>
@@ -615,7 +615,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
         <div className="container mx-auto max-w-4xl">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={stagger}>
             <motion.div variants={fadeUp} className="text-center mb-10">
-              <p className="text-[#FF5500] font-heading font-bold text-sm uppercase tracking-[0.2em] mb-2">Go Unbreakable</p>
+              <p className="text-[hsl(var(--primary))] font-heading font-bold text-sm uppercase tracking-[0.2em] mb-2">Go Unbreakable</p>
               <h2 className="font-heading font-black text-2xl sm:text-3xl md:text-5xl text-white uppercase tracking-wide">
                 One Price. Everything Unlocked.
               </h2>
@@ -625,11 +625,11 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
             </motion.div>
 
             <motion.div variants={fadeUp} className="rounded-2xl p-6"
-              style={{ background: 'rgba(14,14,14,0.5)', border: '1px solid rgba(255,85,0,0.1)' }}>
+              style={{ background: 'rgba(14,14,14,0.5)', border: '1px solid hsl(var(--primary)/0.1)' }}>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {membershipFeatures.map(f => (
                   <div key={f} className="flex items-start gap-2.5">
-                    <Check size={16} className="text-[#FF5500] flex-shrink-0 mt-0.5" />
+                    <Check size={16} className="text-[hsl(var(--primary))] flex-shrink-0 mt-0.5" />
                     <span className="text-[#ccc] text-sm">{f}</span>
                   </div>
                 ))}
@@ -645,8 +645,8 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={stagger}>
             <motion.div variants={fadeUp} className="text-center mb-10">
               <div className="flex items-center justify-center gap-2 mb-2">
-                <Coins size={18} className="text-[#FF5500]" />
-                <p className="text-[#FF5500] font-heading font-bold text-sm uppercase tracking-[0.2em]">
+                <Coins size={18} className="text-[hsl(var(--primary))]" />
+                <p className="text-[hsl(var(--primary))] font-heading font-bold text-sm uppercase tracking-[0.2em]">
                   Unbreakable Tokens
                 </p>
               </div>
@@ -655,11 +655,11 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
               </h2>
               <p className="text-[#888] mt-3 max-w-xl mx-auto text-sm">
                 🔒 Lock in the <span className="text-white font-semibold">Unbreakable offer price for life</span>.
-                <span className="line-through opacity-50">£75/mo</span> → <span className="text-[#FF5500] font-bold">£50/mo</span>. Your rate never increases.
+                <span className="line-through opacity-50">£75/mo</span> → <span className="text-[hsl(var(--primary))] font-bold">£50/mo</span>. Your rate never increases.
               </p>
               <p className="text-[#888] mt-2 max-w-xl mx-auto text-sm">
                 🆕 New members get <span className="text-white font-semibold">7 days free</span> with code{' '}
-                <span className="text-[#FF5500] font-bold">NEWBEGINNING7</span> — cancel anytime before it ends and you won't be charged.
+                <span className="text-[hsl(var(--primary))] font-bold">NEWBEGINNING7</span> — cancel anytime before it ends and you won't be charged.
               </p>
             </motion.div>
 
@@ -670,14 +670,14 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
                   variants={fadeUp}
                   className="rounded-2xl p-5 relative transition-all hover:scale-[1.02]"
                   style={{
-                    background: t.highlight ? 'rgba(255,85,0,0.08)' : 'rgba(14,14,14,0.5)',
-                    border: t.highlight ? '1.5px solid rgba(255,85,0,0.3)' : '1px solid rgba(255,255,255,0.05)',
-                    boxShadow: t.highlight ? '0 0 30px rgba(255,85,0,0.1)' : 'none',
+                    background: t.highlight ? 'hsl(var(--primary)/0.08)' : 'rgba(14,14,14,0.5)',
+                    border: t.highlight ? '1.5px solid hsl(var(--primary)/0.3)' : '1px solid rgba(255,255,255,0.05)',
+                    boxShadow: t.highlight ? '0 0 30px hsl(var(--primary)/0.1)' : 'none',
                   }}
                 >
                   {t.highlight && (
                     <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider text-white"
-                      style={{ background: 'linear-gradient(135deg, #FF5500, #CC4400)', boxShadow: '0 0 12px rgba(255,85,0,0.4)' }}>
+                      style={{ background: 'linear-gradient(135deg, hsl(var(--primary)), #CC4400)', boxShadow: '0 0 12px hsl(var(--primary)/0.4)' }}>
                       Most Popular
                     </div>
                   )}
@@ -686,13 +686,13 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
                     {'originalPrice' in t && t.originalPrice && (
                       <span className="text-[#666] text-sm line-through mr-1">{t.originalPrice}</span>
                     )}
-                    <span className="font-heading font-black text-2xl text-[#FF5500]">{t.price}</span>
+                    <span className="font-heading font-black text-2xl text-[hsl(var(--primary))]">{t.price}</span>
                     {t.period && <span className="text-[#666] text-xs">{t.period}</span>}
                   </div>
                   <ul className="space-y-1.5 mb-3">
                     {t.features.map(f => (
                       <li key={f} className="flex items-center gap-2 text-xs">
-                        <Check size={12} className="text-[#FF5500] flex-shrink-0" />
+                        <Check size={12} className="text-[hsl(var(--primary))] flex-shrink-0" />
                         <span className="text-[#aaa]">{f}</span>
                       </li>
                     ))}
@@ -705,8 +705,8 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
             {/* Top-ups & credit info */}
             <motion.div variants={fadeUp} className="mt-6 text-center space-y-1.5">
               <p className="text-[#aaa] text-xs">
-                <span className="text-[#FF5500] font-bold">1,000 tokens/month</span> refresh each billing cycle &nbsp;·&nbsp;
-                <span className="text-[#FF5500] font-bold">Top-ups carry over</span> — never lose purchased tokens
+                <span className="text-[hsl(var(--primary))] font-bold">1,000 tokens/month</span> refresh each billing cycle &nbsp;·&nbsp;
+                <span className="text-[hsl(var(--primary))] font-bold">Top-ups carry over</span> — never lose purchased tokens
               </p>
               <p className="text-[#666] text-[11px]">
                 Need more? £10 top-ups — anything you don't use rolls over
@@ -755,12 +755,12 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
       <section className="py-20 sm:py-24 px-6 text-center relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] rounded-full blur-[180px]"
-            style={{ background: 'rgba(255,85,0,0.06)' }} />
+            style={{ background: 'hsl(var(--primary)/0.06)' }} />
         </div>
         <div className="relative max-w-2xl mx-auto">
           <img loading="lazy" src={shieldLogo} alt="" className="h-16 w-16 mx-auto mb-5 shield-pulse" />
           <h2 className="font-heading font-black text-3xl md:text-5xl text-white uppercase tracking-wide mb-4">
-            Ready to Be <span className="text-[#FF5500]">Unbreakable</span>?
+            Ready to Be <span className="text-[hsl(var(--primary))]">Unbreakable</span>?
           </h2>
           <p className="text-[#888] mb-8 max-w-md mx-auto text-sm sm:text-base">
             Stop starting over. Join the platform built for people who keep showing up.
@@ -769,8 +769,8 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
             <button
               className="w-full sm:w-auto px-10 py-4 rounded-xl font-heading font-bold text-base sm:text-lg uppercase tracking-wider text-white transition-all active:scale-[0.97]"
               style={{
-                background: 'linear-gradient(135deg, #FF5500 0%, #CC4400 100%)',
-                boxShadow: '0 0 30px rgba(255,85,0,0.4), 0 0 80px rgba(255,85,0,0.15)',
+                background: 'linear-gradient(135deg, hsl(var(--primary)) 0%, #CC4400 100%)',
+                boxShadow: '0 0 30px hsl(var(--primary)/0.4), 0 0 80px hsl(var(--primary)/0.15)',
               }}
               onClick={goSignUpTrial}
             >

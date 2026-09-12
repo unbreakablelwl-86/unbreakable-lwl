@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Play, Pause, Share2, Dumbbell, ListPlus, Check, Download } from 'lucide-react';
-import { usePlayer, getResizedCoverUrl } from '@/hooks/useUnTunes';
+import { usePlayer } from '@/hooks/useUnTunes';
 import type { Track } from '@/hooks/useUnTunes';
 
 interface TrackRowProps {
@@ -47,9 +47,9 @@ export function UnTunesTrackRow({ track, index, onPlay, onShare, isLiked, onTogg
       <div className="w-7 text-center shrink-0">
         {isActive && isPlaying ? (
           <div className="flex items-center justify-center gap-0.5">
-            <span className="w-0.5 h-3 bg-primary rounded-full animate-pulse drop-shadow-[0_0_4px_rgba(255,85,0,0.6)]" />
-            <span className="w-0.5 h-4 bg-primary rounded-full animate-pulse delay-100 drop-shadow-[0_0_4px_rgba(255,85,0,0.6)]" />
-            <span className="w-0.5 h-2.5 bg-primary rounded-full animate-pulse delay-200 drop-shadow-[0_0_4px_rgba(255,85,0,0.6)]" />
+            <span className="w-0.5 h-3 bg-primary rounded-full animate-pulse drop-shadow-[0_0_4px_hsl(var(--primary)/0.6)]" />
+            <span className="w-0.5 h-4 bg-primary rounded-full animate-pulse delay-100 drop-shadow-[0_0_4px_hsl(var(--primary)/0.6)]" />
+            <span className="w-0.5 h-2.5 bg-primary rounded-full animate-pulse delay-200 drop-shadow-[0_0_4px_hsl(var(--primary)/0.6)]" />
           </div>
         ) : (
           <span className={`text-xs ${isActive ? 'text-primary font-bold' : 'text-muted-foreground group-hover:hidden'}`}>
@@ -57,16 +57,16 @@ export function UnTunesTrackRow({ track, index, onPlay, onShare, isLiked, onTogg
           </span>
         )}
         {!isActive && (
-          <Play className="w-3.5 h-3.5 text-primary hidden group-hover:block mx-auto drop-shadow-[0_0_4px_rgba(255,85,0,0.5)]" />
+          <Play className="w-3.5 h-3.5 text-primary hidden group-hover:block mx-auto drop-shadow-[0_0_4px_hsl(var(--primary)/0.5)]" />
         )}
       </div>
 
       {/* Cover art */}
       <div className={`w-10 h-10 rounded-lg shrink-0 flex items-center justify-center ${
-        isActive ? 'bg-primary/20 shadow-[0_0_12px_rgba(255,85,0,0.3)]' : 'bg-card/60'
+        isActive ? 'bg-primary/20 shadow-[0_0_12px_hsl(var(--primary)/0.3)]' : 'bg-card/60'
       }`}>
         {track.cover_url ? (
-          <img loading="lazy" src={getResizedCoverUrl(track.cover_url, 96)} alt="" className="w-full h-full object-cover rounded-lg" />
+          <img loading="lazy" src={track.cover_url} alt="" className="w-full h-full object-cover rounded-lg" />
         ) : (
           <Play className={`w-4 h-4 ${isActive ? 'text-primary' : 'text-muted-foreground/40'}`} />
         )}
@@ -91,7 +91,7 @@ export function UnTunesTrackRow({ track, index, onPlay, onShare, isLiked, onTogg
           onClick={(e) => { e.stopPropagation(); onToggleLike(); }}
           className={`w-7 h-7 rounded-lg flex items-center justify-center transition-all ${
             isLiked
-              ? 'text-primary drop-shadow-[0_0_6px_rgba(255,85,0,0.5)]'
+              ? 'text-primary drop-shadow-[0_0_6px_hsl(var(--primary)/0.5)]'
               : 'text-white hover:text-primary'
           }`}
           title={isLiked ? 'Unlike' : 'Like'}

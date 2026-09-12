@@ -14,7 +14,7 @@ import { Play, Pause, RotateCcw, Timer, ChevronUp, ChevronDown, Music, X } from 
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
-const NEON_ORANGE = '#FF5500';
+const NEON_ORANGE = 'hsl(var(--primary))';
 
 const PRESETS = [
   { label: '30s', value: 30 },

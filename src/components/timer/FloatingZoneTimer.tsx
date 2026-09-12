@@ -13,7 +13,7 @@ import {
 // Premium build · UNBREAKABLE · 2026
 // ═══════════════════════════════════════════════════════════════
 
-const NEON_ORANGE = '#FF5500';
+const NEON_ORANGE = 'hsl(var(--primary))';
 
 const PRESETS = [
   { label: '30s', value: 30 },
@@ -172,7 +172,7 @@ export function FloatingZoneTimer() {
                 boxShadow: isDone
                   ? '0 0 15px rgba(34,197,94,0.4)'
                   : isRunning
-                  ? '0 0 15px rgba(255,85,0,0.3)'
+                  ? '0 0 15px hsl(var(--primary)/0.3)'
                   : '0 4px 20px rgba(0,0,0,0.5)',
                 backdropFilter: 'blur(20px)',
               }}
@@ -277,7 +277,7 @@ export function FloatingZoneTimer() {
                     strokeDashoffset={2 * Math.PI * 50 * (1 - progress)}
                     style={{
                       transition: 'stroke-dashoffset 0.3s linear',
-                      filter: `drop-shadow(0 0 6px ${isDone ? 'rgba(34,197,94,0.5)' : 'rgba(255,85,0,0.4)'})`,
+                      filter: `drop-shadow(0 0 6px ${isDone ? 'rgba(34,197,94,0.5)' : 'hsl(var(--primary)/0.4)'})`,
                     }}
                   />
                 </svg>
@@ -291,7 +291,7 @@ export function FloatingZoneTimer() {
                     className="font-mono text-2xl font-bold"
                     style={{
                       color: isDone ? '#22c55e' : '#fff',
-                      textShadow: isRunning ? '0 0 10px rgba(255,85,0,0.4)' : 'none',
+                      textShadow: isRunning ? '0 0 10px hsl(var(--primary)/0.4)' : 'none',
                     }}
                   >
                     {formatTime(remaining)}
@@ -319,9 +319,9 @@ export function FloatingZoneTimer() {
                   onClick={isRunning ? () => setIsRunning(false) : handleStart}
                   className="w-11 h-11 rounded-full flex items-center justify-center"
                   style={{
-                    background: isRunning ? 'rgba(255,85,0,0.15)' : `linear-gradient(135deg, ${NEON_ORANGE}, #cc4400)`,
+                    background: isRunning ? 'hsl(var(--primary)/0.15)' : `linear-gradient(135deg, ${NEON_ORANGE}, #cc4400)`,
                     border: `2px solid ${NEON_ORANGE}`,
-                    boxShadow: isRunning ? 'none' : '0 0 15px rgba(255,85,0,0.4)',
+                    boxShadow: isRunning ? 'none' : '0 0 15px hsl(var(--primary)/0.4)',
                   }}
                 >
                   {isRunning ? <Pause className="w-5 h-5 text-primary" /> : <Play className="w-5 h-5 text-white ml-0.5" />}

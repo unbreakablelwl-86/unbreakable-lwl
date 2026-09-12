@@ -968,7 +968,7 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
                 exit={{ opacity: 0 }}
               >
                 <DialogHeader>
-                  <DialogTitle className="font-display text-2xl tracking-wide text-center text-primary" style={{ textShadow: '0 0 20px rgba(255,85,0,0.4)' }}>
+                  <DialogTitle className="font-display text-2xl tracking-wide text-center text-primary" style={{ textShadow: '0 0 20px hsl(var(--primary)/0.4)' }}>
                     CARDIO TRACKER
                   </DialogTitle>
                 </DialogHeader>
@@ -1036,8 +1036,8 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
                         >
                           <div className="flex flex-col items-center gap-3">
                             <div className="w-14 h-14 rounded-full bg-card border border-primary/20 flex items-center justify-center"
-                              style={{ boxShadow: '0 0 15px rgba(255,85,0,0.15)' }}>
-                              <Icon className="w-7 h-7 text-primary" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.5))' }} />
+                              style={{ boxShadow: '0 0 15px hsl(var(--primary)/0.15)' }}>
+                              <Icon className="w-7 h-7 text-primary" style={{ filter: 'drop-shadow(0 0 4px hsl(var(--primary)/0.5))' }} />
                             </div>
                             <span className="font-display text-sm tracking-wide text-primary">
                               {cfg.label}

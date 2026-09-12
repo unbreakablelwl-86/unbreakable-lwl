@@ -73,7 +73,7 @@ export function CardioNextSessionPreview({ programId, currentWeek, currentDay }:
       <div className="flex items-center gap-3">
         <div className="flex-1 h-1.5 bg-muted/30 rounded-full overflow-hidden">
           <div
-            className="h-full bg-primary rounded-full transition-all shadow-[0_0_6px_rgba(255,85,0,0.4)]"
+            className="h-full bg-primary rounded-full transition-all shadow-[0_0_6px_hsl(var(--primary)/0.4)]"
             style={{ width: `${totalCount > 0 ? (completedCount / totalCount) * 100 : 0}%` }}
           />
         </div>
@@ -83,9 +83,9 @@ export function CardioNextSessionPreview({ programId, currentWeek, currentDay }:
       </div>
 
       {/* Next Session Card */}
-      <Card className="p-4 border-primary/25 bg-gradient-to-br from-primary/5 to-transparent shadow-[0_0_15px_rgba(255,85,0,0.08)]">
+      <Card className="p-4 border-primary/25 bg-gradient-to-br from-primary/5 to-transparent shadow-[0_0_15px_hsl(var(--primary)/0.08)]">
         <div className="flex items-center gap-2 mb-3">
-          <Flame className="w-4 h-4 text-primary" style={{ filter: 'drop-shadow(0 0 4px #FF550066)' }} />
+          <Flame className="w-4 h-4 text-primary" style={{ filter: 'drop-shadow(0 0 4px hsl(var(--primary))66)' }} />
           <span className="font-display text-xs tracking-wider text-primary">NEXT SESSION</span>
           <Badge variant="outline" className="ml-auto text-[10px] border-primary/30 text-primary bg-primary/10">
             Week {nextSession.week_number} · Day {nextSession.day_number}

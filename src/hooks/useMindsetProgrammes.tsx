@@ -16,6 +16,7 @@ export interface MindsetProgramme {
   status: string;
   programme_data: any;
   is_active: boolean;
+  completed_activities?: string[];
   created_at: string;
   updated_at: string;
 }

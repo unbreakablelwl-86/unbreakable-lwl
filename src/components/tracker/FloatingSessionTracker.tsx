@@ -107,20 +107,20 @@ function GymSessionPill({
 
   return (
     <div
-      className="bg-card/95 backdrop-blur-xl border border-primary/25 rounded-2xl shadow-[0_4px_24px_rgba(0,0,0,0.4),0_0_20px_rgba(255,85,0,0.15)] overflow-hidden"
+      className="bg-card/95 backdrop-blur-xl border border-primary/25 rounded-2xl shadow-[0_4px_24px_rgba(0,0,0,0.4),0_0_20px_hsl(var(--primary)/0.15)] overflow-hidden"
       style={{ width: 260 }}
     >
       {/* Progress bar */}
       <div className="h-1 bg-muted/20">
         <div
-          className="h-full bg-primary transition-[width] duration-500 shadow-[0_0_4px_rgba(255,85,0,0.6)]"
+          className="h-full bg-primary transition-[width] duration-500 shadow-[0_0_4px_hsl(var(--primary)/0.6)]"
           style={{ width: `${progressPct}%` }}
         />
       </div>
 
       <div className="flex items-center gap-2.5 px-3 py-2.5" onClick={onExpand}>
         {/* Icon */}
-        <div className="w-10 h-10 rounded-lg bg-primary/15 flex items-center justify-center shrink-0 shadow-[0_0_8px_rgba(255,85,0,0.2)]">
+        <div className="w-10 h-10 rounded-lg bg-primary/15 flex items-center justify-center shrink-0 shadow-[0_0_8px_hsl(var(--primary)/0.2)]">
           <Dumbbell className="w-5 h-5 text-primary" />
         </div>
 
@@ -136,7 +136,7 @@ function GymSessionPill({
         {/* Expand button */}
         <button
           onClick={(e) => { e.stopPropagation(); onExpand(); }}
-          className="w-8 h-8 rounded-full bg-primary flex items-center justify-center shadow-[0_0_12px_rgba(255,85,0,0.3)] active:scale-90 transition-transform shrink-0"
+          className="w-8 h-8 rounded-full bg-primary flex items-center justify-center shadow-[0_0_12px_hsl(var(--primary)/0.3)] active:scale-90 transition-transform shrink-0"
         >
           <Maximize2 className="w-3.5 h-3.5 text-primary-foreground" />
         </button>
@@ -175,13 +175,13 @@ function CardioSessionPill({
 
   return (
     <div
-      className="bg-card/95 backdrop-blur-xl border border-primary/25 rounded-2xl shadow-[0_4px_24px_rgba(0,0,0,0.4),0_0_20px_rgba(255,85,0,0.15)] overflow-hidden"
+      className="bg-card/95 backdrop-blur-xl border border-primary/25 rounded-2xl shadow-[0_4px_24px_rgba(0,0,0,0.4),0_0_20px_hsl(var(--primary)/0.15)] overflow-hidden"
       style={{ width: 260 }}
     >
       {/* Animated pulse bar for active tracking */}
       <div className="h-1 bg-muted/20">
         <div
-          className={`h-full bg-primary shadow-[0_0_4px_rgba(255,85,0,0.6)] ${
+          className={`h-full bg-primary shadow-[0_0_4px_hsl(var(--primary)/0.6)] ${
             session.isPaused ? 'w-1/2' : 'w-full animate-pulse'
           }`}
         />
@@ -189,7 +189,7 @@ function CardioSessionPill({
 
       <div className="flex items-center gap-2.5 px-3 py-2.5" onClick={onExpand}>
         {/* Activity icon */}
-        <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 shadow-[0_0_8px_rgba(255,85,0,0.2)] ${
+        <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 shadow-[0_0_8px_hsl(var(--primary)/0.2)] ${
           session.isPaused ? 'bg-yellow-500/15' : 'bg-primary/15'
         }`}>
           <span className={session.isPaused ? 'text-yellow-400' : 'text-primary'}>
@@ -214,7 +214,7 @@ function CardioSessionPill({
         {/* Expand button */}
         <button
           onClick={(e) => { e.stopPropagation(); onExpand(); }}
-          className="w-8 h-8 rounded-full bg-primary flex items-center justify-center shadow-[0_0_12px_rgba(255,85,0,0.3)] active:scale-90 transition-transform shrink-0"
+          className="w-8 h-8 rounded-full bg-primary flex items-center justify-center shadow-[0_0_12px_hsl(var(--primary)/0.3)] active:scale-90 transition-transform shrink-0"
         >
           <Maximize2 className="w-3.5 h-3.5 text-primary-foreground" />
         </button>

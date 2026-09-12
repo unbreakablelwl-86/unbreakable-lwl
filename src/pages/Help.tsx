@@ -71,7 +71,7 @@ function MessageBubble({ message }: { message: MessageWithMedia }) {
       {!isUser && (
         <div className="flex-shrink-0 mr-3 mt-1">
           <div className="w-8 h-8 rounded-full flex items-center justify-center border border-primary/30 bg-primary/10"
-            style={{ boxShadow: '0 0 12px rgba(255,85,0,0.15)' }}>
+            style={{ boxShadow: '0 0 12px hsl(var(--primary)/0.15)' }}>
             <Flame className="w-4 h-4 text-primary" />
           </div>
         </div>
@@ -157,9 +157,9 @@ function BuildConfirmDialog({
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/70 backdrop-blur-sm"
     >
       <div className="w-full max-w-sm rounded-2xl border border-primary/20 bg-card p-6 text-center"
-        style={{ boxShadow: '0 0 40px rgba(255,85,0,0.1)' }}>
+        style={{ boxShadow: '0 0 40px hsl(var(--primary)/0.1)' }}>
         <div className="w-14 h-14 rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center mx-auto mb-4"
-          style={{ boxShadow: '0 0 20px rgba(255,85,0,0.2)' }}>
+          style={{ boxShadow: '0 0 20px hsl(var(--primary)/0.2)' }}>
           <Icon className="w-7 h-7 text-primary" />
         </div>
         <h3 className="font-display text-lg text-foreground tracking-wide mb-2">{config.title}</h3>
@@ -174,7 +174,7 @@ function BuildConfirmDialog({
           <button
             onClick={onConfirm}
             className="flex-1 py-2.5 rounded-xl bg-primary hover:bg-primary/80 text-white text-sm font-display transition-all"
-            style={{ boxShadow: '0 0 15px rgba(255,85,0,0.3)' }}
+            style={{ boxShadow: '0 0 15px hsl(var(--primary)/0.3)' }}
           >
             BUILD IT
           </button>
@@ -931,7 +931,7 @@ export default function Help() {
                   min-w-0 has to be on the h2 itself for its truncate to take. */}
               <div className="flex items-center gap-2 flex-1 min-w-0">
                 <div className="w-7 h-7 rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center flex-shrink-0"
-                  style={{ boxShadow: '0 0 10px rgba(255,85,0,0.15)' }}>
+                  style={{ boxShadow: '0 0 10px hsl(var(--primary)/0.15)' }}>
                   <Flame className="w-3.5 h-3.5 text-primary" />
                 </div>
                 {currentConversationId ? (
@@ -962,8 +962,8 @@ export default function Help() {
                 <div className="flex flex-col items-center justify-center h-full">
                   <div className="text-center mb-8">
                     <div className="w-16 h-16 rounded-full bg-primary/10 border border-primary/25 flex items-center justify-center mx-auto mb-5"
-                      style={{ boxShadow: '0 0 35px rgba(255,85,0,0.15)' }}>
-                      <Flame className="w-8 h-8 text-primary" style={{ filter: 'drop-shadow(0 0 8px rgba(255,85,0,0.5))' }} />
+                      style={{ boxShadow: '0 0 35px hsl(var(--primary)/0.15)' }}>
+                      <Flame className="w-8 h-8 text-primary" style={{ filter: 'drop-shadow(0 0 8px hsl(var(--primary)/0.5))' }} />
                     </div>
                     <CoachNameEditor coachName={coachName} onSave={setCoachName} variant="hero" />
                     <p className="text-muted-foreground max-w-sm mx-auto text-sm leading-relaxed mt-3">
@@ -1005,7 +1005,7 @@ export default function Help() {
                         <Sparkles className="w-4 h-4 text-primary animate-pulse" />
                       </div>
                       <div className="rounded-2xl rounded-bl-md px-4 py-3 bg-primary/5 border border-primary/20"
-                        style={{ boxShadow: '0 0 20px rgba(255,85,0,0.05)' }}>
+                        style={{ boxShadow: '0 0 20px hsl(var(--primary)/0.05)' }}>
                         <span className="text-sm font-display text-primary">Building your programme...</span>
                         <p className="text-xs text-muted-foreground mt-0.5">Won't be a min 💪</p>
                         <p className="text-[11px] text-muted-foreground/80 mt-1.5 leading-relaxed">
@@ -1132,7 +1132,7 @@ export default function Help() {
                     disabled={isLoading || isAnyGenerating || !input.trim()}
                     className="h-11 w-11 rounded-xl bg-primary hover:bg-primary/80 text-white
                       flex items-center justify-center transition-all disabled:opacity-30 disabled:cursor-not-allowed"
-                    style={{ boxShadow: input.trim() ? '0 0 15px rgba(255,85,0,0.3)' : 'none' }}
+                    style={{ boxShadow: input.trim() ? '0 0 15px hsl(var(--primary)/0.3)' : 'none' }}
                   >
                     {isLoading || isAnyGenerating ? (
                       <Loader2 className="w-4 h-4 animate-spin" />

@@ -158,7 +158,7 @@ export default function AITokens() {
               <span className="text-sm font-display tracking-wider text-primary">UNBREAKABLE</span>
             </div>
             <h1 className="text-3xl md:text-4xl font-display tracking-wider mb-3"
-              style={{ textShadow: '0 0 30px rgba(255,85,0,0.15)' }}>
+              style={{ textShadow: '0 0 30px hsl(var(--primary)/0.15)' }}>
               PLANS & TOKENS
             </h1>
             <p className="text-muted-foreground max-w-lg mx-auto text-sm">

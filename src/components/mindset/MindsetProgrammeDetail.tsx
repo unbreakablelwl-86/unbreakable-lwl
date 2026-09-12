@@ -66,7 +66,11 @@ export function MindsetProgrammeDetail({ programme, onBack }: Props) {
   const navigate = useNavigate();
   const [expandedWeek, setExpandedWeek] = useState<number>(0);
   const [expandedDay, setExpandedDay] = useState<number | null>(null);
-  const [completedActivities, setCompletedActivities] = useState<Set<string>>(new Set());
+  // Seeded from the persisted column so progress survives refresh/navigation —
+  // previously this only lived in local state and was lost every time.
+  const [completedActivities, setCompletedActivities] = useState<Set<string>>(
+    () => new Set(programme.completed_activities || [])
+  );
 
   const data = programme.programme_data as any;
   const weeks = data?.weeks || [];
@@ -86,11 +90,32 @@ export function MindsetProgrammeDetail({ programme, onBack }: Props) {
   const handleActivityComplete = async (wi: number, di: number, ai: number, activity: any) => {
     const key = getActivityKey(wi, di, ai);
     const newCompleted = new Set(completedActivities);
-    
+    const wasIncomplete = !newCompleted.has(key);
+
     if (newCompleted.has(key)) {
       newCompleted.delete(key);
     } else {
       newCompleted.add(key);
+    }
+
+    // Persist immediately so the checkmark survives a refresh or navigating away —
+    // this used to only live in local component state.
+    setCompletedActivities(newCompleted);
+    try {
+      const { error } = await supabase
+        .from('mindset_programmes')
+        .update({
+          completed_activities: Array.from(newCompleted),
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', programme.id);
+      if (error) throw error;
+    } catch (err) {
+      console.error('Failed to save activity completion:', err);
+      toast.error('Could not save progress — check your connection');
+    }
+
+    if (wasIncomplete) {
       // Notify coach of completion
       if (user) {
         try {
@@ -123,8 +148,6 @@ export function MindsetProgrammeDetail({ programme, onBack }: Props) {
       }
       toast.success(`${activity.name || activityLabels[activity.type]} completed! ✅`);
     }
-    
-    setCompletedActivities(newCompleted);
   };
 
   return (
