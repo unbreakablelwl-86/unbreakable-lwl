@@ -374,7 +374,18 @@ export default function Help() {
           const planInfo: GeneratedPlanInfo = { type: 'programme', planData: result.program, planId: '', savedToHub: false };
           setGeneratedPlans(prev => [...prev, planInfo]);
           toast({ title: '✅ Programme Ready', description: 'Review your plan below, then save it to your library.' });
+        } else if (result) {
+          // Request succeeded but didn't come back as a usable programme (e.g.
+          // the AI replied with plain text instead of the structured plan).
+          // Surface this instead of failing silently with no card and no toast.
+          toast({
+            title: 'Programme Not Ready',
+            description: (result as any).content || 'The coach couldn\'t build a structured programme from that. Try asking again.',
+            variant: 'destructive',
+          });
         }
+      } catch {
+        toast({ title: 'Error', description: 'Failed to generate programme', variant: 'destructive' });
       } finally { setProgrammeGenerating(false); }
 
       // Cardio agreed in the same intake — build it as its own Movement
@@ -390,6 +401,12 @@ export default function Help() {
             const planInfo: GeneratedPlanInfo = { type: 'cardio', planData: result.program, planId: '', savedToHub: false };
             setGeneratedPlans(prev => [...prev, planInfo]);
             toast({ title: '✅ Movement Programme Ready', description: 'Review your plan below, then save it to your library.' });
+          } else if (result) {
+            toast({
+              title: 'Movement Programme Not Ready',
+              description: (result as any).content || 'The coach couldn\'t build a structured movement programme from that. Try asking again.',
+              variant: 'destructive',
+            });
           }
         } catch {
           toast({ title: 'Error', description: 'Failed to generate movement programme', variant: 'destructive' });
@@ -425,6 +442,15 @@ export default function Help() {
           const planInfo: GeneratedPlanInfo = { type: 'mindset', planData: result.programme, planId: '', savedToHub: false };
           setGeneratedPlans(prev => [...prev, planInfo]);
           toast({ title: '✅ Mindset Programme Ready', description: 'Review below, then save it.' });
+        } else if (result) {
+          // Request succeeded but didn't come back as a usable programme (e.g.
+          // the AI replied with plain text instead of the structured plan).
+          // Surface this instead of failing silently with no card and no toast.
+          toast({
+            title: 'Mindset Programme Not Ready',
+            description: (result as any).content || 'The coach couldn\'t build a structured mindset programme from that. Try asking again.',
+            variant: 'destructive',
+          });
         }
       } catch {
         toast({ title: 'Error', description: 'Failed to generate mindset programme', variant: 'destructive' });
@@ -439,6 +465,12 @@ export default function Help() {
           const planInfo: GeneratedPlanInfo = { type: 'cardio', planData: result.program, planId: '', savedToHub: false };
           setGeneratedPlans(prev => [...prev, planInfo]);
           toast({ title: '✅ Movement Programme Ready', description: 'Review your plan below, then save it to your library.' });
+        } else if (result) {
+          toast({
+            title: 'Movement Programme Not Ready',
+            description: (result as any).content || 'The coach couldn\'t build a structured movement programme from that. Try asking again.',
+            variant: 'destructive',
+          });
         }
       } catch {
         toast({ title: 'Error', description: 'Failed to generate movement programme', variant: 'destructive' });
