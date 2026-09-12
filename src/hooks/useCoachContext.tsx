@@ -104,6 +104,13 @@ export interface CoachUserContext {
     pacePerKmSeconds: number | null;
     achievedAt: string;
   }[];
+  nutritionTargets: {
+    dailyCalories: number | null;
+    dailyProteinG: number | null;
+    dailyCarbsG: number | null;
+    dailyFatG: number | null;
+    goalsMode: string | null;
+  } | null;
 }
 
 export function useCoachContext() {
@@ -122,6 +129,7 @@ export function useCoachContext() {
         activeMealPlans: [],
         progressionHistory: [],
         personalRecords: [],
+        nutritionTargets: null,
       };
     }
 
@@ -129,7 +137,7 @@ export function useCoachContext() {
     const thirtyDaysAgo = subDays(new Date(), 30).toISOString();
 
     // Fetch all data in parallel
-    const [workoutRes, foodRes, programRes, mealPlanRes, mealPlanItemsRes, progressionRes, prRes] = await Promise.all([
+    const [workoutRes, foodRes, programRes, mealPlanRes, mealPlanItemsRes, progressionRes, prRes, nutritionGoalsRes] = await Promise.all([
       supabase
         .from('workout_sessions')
         .select('*, exercise_logs(*)')
@@ -171,6 +179,11 @@ export function useCoachContext() {
         .eq('user_id', user.id)
         .order('achieved_at', { ascending: false })
         .limit(20),
+      supabase
+        .from('nutrition_goals')
+        .select('daily_calories, daily_protein_g, daily_carbs_g, daily_fat_g, goals_mode')
+        .eq('user_id', user.id)
+        .maybeSingle(),
     ]);
 
     // Fetch meal plan items for active plans
@@ -323,6 +336,13 @@ export function useCoachContext() {
         pacePerKmSeconds: pr.pace_per_km_seconds,
         achievedAt: format(new Date(pr.achieved_at), 'yyyy-MM-dd'),
       })),
+      nutritionTargets: nutritionGoalsRes.data ? {
+        dailyCalories: (nutritionGoalsRes.data as any).daily_calories,
+        dailyProteinG: (nutritionGoalsRes.data as any).daily_protein_g,
+        dailyCarbsG: (nutritionGoalsRes.data as any).daily_carbs_g,
+        dailyFatG: (nutritionGoalsRes.data as any).daily_fat_g,
+        goalsMode: (nutritionGoalsRes.data as any).goals_mode,
+      } : null,
     };
   };
 
@@ -372,6 +392,18 @@ export function useCoachContext() {
 
       if (cp.sportPreference) parts.push(`SPORT PREFERENCE: ${cp.sportPreference}`);
       if (cp.injuries) parts.push(`INJURIES/LIMITATIONS: ${cp.injuries}`);
+    }
+
+    if (context.nutritionTargets) {
+      const nt = context.nutritionTargets;
+      const targetParts: string[] = [];
+      if (nt.dailyCalories) targetParts.push(`${nt.dailyCalories} kcal/day`);
+      if (nt.dailyProteinG) targetParts.push(`${nt.dailyProteinG}g protein`);
+      if (nt.dailyCarbsG) targetParts.push(`${nt.dailyCarbsG}g carbs`);
+      if (nt.dailyFatG) targetParts.push(`${nt.dailyFatG}g fat`);
+      if (targetParts.length) {
+        parts.push(`SAVED CALORIE/MACRO TARGETS (${nt.goalsMode === 'manual' ? 'manually set' : 'calculator-set'}): ${targetParts.join(', ')}`);
+      }
     }
 
     if (context.profile) {

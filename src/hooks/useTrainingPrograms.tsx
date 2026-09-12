@@ -155,20 +155,25 @@ export function useTrainingPrograms() {
 
   // START PROGRAMME EXECUTION - The key action that wires everything
   const startProgrammeExecution = useMutation({
-    mutationFn: async (programId: string) => {
+    mutationFn: async (input: string | { programId: string; startDate?: Date }) => {
+      const programId = typeof input === 'string' ? input : input.programId;
+      // Callers that don't go through the start-date picker (resume, quick-start)
+      // keep defaulting to today; the picker now actually passes its selection.
+      const startDate = (typeof input === 'object' && input.startDate) ? input.startDate : new Date();
+
       if (!user) throw new Error('Must be logged in');
-      
+
       // 1. Check current active count
       const { data: currentActive, error: countError } = await supabase
         .from('training_programs')
         .select('id')
         .eq('user_id', user.id)
         .eq('is_active', true);
-      
+
       if (countError) throw countError;
-      
+
       const isAlreadyActive = currentActive?.some(p => p.id === programId);
-      
+
       // Coach/dev bypass for own library
       const bypassLimit = isDev || isCoach;
       if (!bypassLimit && !isAlreadyActive && (currentActive?.length ?? 0) >= MAX_ACTIVE_PROGRAMS) {
@@ -181,44 +186,47 @@ export function useTrainingPrograms() {
         .select('*')
         .eq('id', programId)
         .single();
-      
+
       if (programError) throw programError;
 
       // 3. Check if session planners already exist for this program
       const { data: existingPlanners } = await supabase
         .from('session_planners')
-        .select('id')
-        .eq('program_id', programId)
-        .limit(1);
-      
-      // 4. Activate the program
+        .select('id, week_number, day_number, status')
+        .eq('program_id', programId);
+
+      // 4. Activate the program — always honour the chosen start date, even on
+      // a re-start, so "started_at" reflects what the user actually picked
+      // rather than sticking to whatever the coach's build first set.
       const { error: activateError } = await supabase
         .from('training_programs')
-        .update({ 
-          is_active: true, 
-          started_at: programRow.started_at || new Date().toISOString(),
+        .update({
+          is_active: true,
+          started_at: startDate.toISOString(),
           current_week: programRow.current_week || 1,
           current_day: programRow.current_day || 1,
         })
         .eq('id', programId);
-      
+
       if (activateError) throw activateError;
 
-      // 5. Generate session planners if they don't exist
+      // 5. Generate session planners if they don't exist, or reschedule the
+      // existing ones onto the newly chosen start date. Previously this only
+      // ever ran on first activation, so picking a new start date on an
+      // already-scheduled programme silently did nothing to the calendar —
+      // the coach's original dates just stayed put.
       if (!existingPlanners || existingPlanners.length === 0) {
         const programData = programRow.program_data as any;
         const templateDays = programData.templateWeek?.days || programData.weeks?.[0]?.days || [];
-        const startDate = new Date();
-        // Note: startDate could be parameterized in future via mutation args
         if (templateDays.length > 0) {
           const plannerEntries: any[] = [];
-          
+
           // Generate 12 weeks of planners
           for (let week = 1; week <= 12; week++) {
             templateDays.forEach((day: any, dayIndex: number) => {
               const scheduledDate = new Date(startDate);
               scheduledDate.setDate(scheduledDate.getDate() + ((week - 1) * 7) + dayIndex);
-              
+
               plannerEntries.push({
                 user_id: user.id,
                 program_id: programId,
@@ -241,14 +249,29 @@ export function useTrainingPrograms() {
               });
             });
           }
-          
+
           if (plannerEntries.length > 0) {
             const { error: plannerError } = await supabase
               .from('session_planners')
               .insert(plannerEntries);
-            
+
             if (plannerError) throw plannerError;
           }
+        }
+      } else if (typeof input === 'object' && input.startDate) {
+        // Re-start with an explicit new date: shift every not-yet-completed
+        // planner onto the new schedule, keeping its week/day offset intact.
+        // Completed/in-progress sessions are left alone so logged history
+        // never gets rewritten.
+        const updates = existingPlanners.filter(p => p.status === 'pending' || p.status === 'skipped');
+        for (const planner of updates) {
+          const scheduledDate = new Date(startDate);
+          scheduledDate.setDate(scheduledDate.getDate() + ((planner.week_number - 1) * 7) + (planner.day_number - 1));
+          const { error: rescheduleError } = await supabase
+            .from('session_planners')
+            .update({ scheduled_date: scheduledDate.toISOString().split('T')[0], status: 'pending' })
+            .eq('id', planner.id);
+          if (rescheduleError) throw rescheduleError;
         }
       }
 

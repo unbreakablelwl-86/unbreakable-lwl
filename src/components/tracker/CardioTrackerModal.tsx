@@ -36,7 +36,11 @@ interface CardioTrackerModalProps {
   isOpen: boolean;
   onClose: () => void;
   initialActivity?: 'walk' | 'run' | 'cycle' | 'row' | 'swim';
-  onSessionSaved?: () => void;
+  // Stats are passed back (not just a bare notification) so callers driving
+  // a programmed session — see MovementExecutionView — can mark their own
+  // planner complete with what was actually tracked, whether that came from
+  // live GPS tracking or the manual-entry tab.
+  onSessionSaved?: (stats: { distanceKm: number; durationMinutes: number }) => void;
 }
 
 type ActivityType = 'walk' | 'run' | 'cycle' | 'row' | 'swim';
@@ -785,7 +789,7 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
       }
       setLoading(false);
       toast.success('Session saved!');
-      onSessionSaved?.();
+      onSessionSaved?.({ distanceKm: Math.round(distance * 1000) / 1000, durationMinutes: elapsedSeconds / 60 });
       resetAndClose();
     }
   };
@@ -853,7 +857,7 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
       }
       setLoading(false);
       toast.success('Session saved!');
-      onSessionSaved?.();
+      onSessionSaved?.({ distanceKm, durationMinutes: totalSeconds / 60 });
       resetAndClose();
     }
   };

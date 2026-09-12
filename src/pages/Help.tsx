@@ -403,7 +403,19 @@ export default function Help() {
           const planInfo: GeneratedPlanInfo = { type: 'meal_plan', planData: result.plan, planId: '', savedToHub: false };
           setGeneratedPlans(prev => [...prev, planInfo]);
           toast({ title: '✅ Meal Plan Ready', description: 'Review your plan below, then save it to your library.' });
+        } else if (result) {
+          // Request succeeded but didn't come back as a usable plan (e.g. the
+          // AI's response came back as plain suggestions rather than the
+          // structured plan). Surface this instead of failing silently with
+          // no popup and nothing added to the review list.
+          toast({
+            title: 'Meal Plan Not Ready',
+            description: result.content || 'The coach couldn\'t build a structured plan from that. Try asking again.',
+            variant: 'destructive',
+          });
         }
+      } catch {
+        toast({ title: 'Error', description: 'Failed to generate meal plan. Please try again.', variant: 'destructive' });
       } finally { setMealPlanGenerating(false); }
     } else if (type === 'mindset') {
       setMindsetGenerating(true);
@@ -906,17 +918,24 @@ export default function Help() {
             <div className="flex items-center gap-3 px-4 py-3 border-b border-border flex-shrink-0"
               style={{ background: 'rgba(15,15,15,0.8)' }}>
               {user && !sidebarOpen && (
-                <button onClick={() => setSidebarOpen(true)} className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground">
+                <button onClick={() => setSidebarOpen(true)} className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground flex-shrink-0">
                   <PanelLeftOpen className="w-4 h-4" />
                 </button>
               )}
+              {/* min-w-0 on the outer flex-1 wrapper alone isn't enough — the
+                  h2 below is itself a flex item, and flex items default to
+                  min-width:auto (their full, unwrapped text width), so
+                  `truncate` on the h2 was overridden and long titles (up to
+                  50 chars, see createConversation) forced the whole header
+                  to overflow, pushing DELETE / voice / profile off the edge.
+                  min-w-0 has to be on the h2 itself for its truncate to take. */}
               <div className="flex items-center gap-2 flex-1 min-w-0">
-                <div className="w-7 h-7 rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center"
+                <div className="w-7 h-7 rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center flex-shrink-0"
                   style={{ boxShadow: '0 0 10px rgba(255,85,0,0.15)' }}>
                   <Flame className="w-3.5 h-3.5 text-primary" />
                 </div>
                 {currentConversationId ? (
-                  <h2 className="font-display text-xs tracking-wider text-foreground truncate">
+                  <h2 className="font-display text-xs tracking-wider text-foreground truncate min-w-0">
                     {conversations.find(c => c.id === currentConversationId)?.title || 'CONVERSATION'}
                   </h2>
                 ) : (
@@ -925,15 +944,15 @@ export default function Help() {
               </div>
               {currentConversationId && (
                 <button
-                  className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-red-400/70 hover:text-red-400 hover:bg-red-500/10 transition-all text-[10px] font-display tracking-wider"
+                  className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-red-400/70 hover:text-red-400 hover:bg-red-500/10 transition-all text-[10px] font-display tracking-wider flex-shrink-0"
                   onClick={() => { if (window.confirm('Delete this conversation?')) deleteConversation(currentConversationId); }}
                 >
                   <Trash2 className="w-3.5 h-3.5" />
                   <span className="hidden sm:inline">DELETE</span>
                 </button>
               )}
-              <VoiceSettingsSheet />
-              <ProfileButton />
+              <div className="flex-shrink-0"><VoiceSettingsSheet /></div>
+              <div className="flex-shrink-0"><ProfileButton /></div>
             </div>
 
             {/* ─── Messages area ─── */}

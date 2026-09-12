@@ -25,7 +25,7 @@ export default function Programming() {
 
   const activeProgs = programs?.filter(p => p.status === 'active') || [];
   const totalProgs = programs?.length || 0;
-  const totalSessions = sessions?.length || 0;
+  const totalSessions = sessions?.filter(s => s.status === 'completed').length || 0;
 
   const TABS: { id: PowerTab; label: string; icon: React.ComponentType<any> }[] = [
     { id: 'overview', label: 'Overview', icon: Zap },

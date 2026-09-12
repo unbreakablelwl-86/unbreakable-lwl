@@ -56,6 +56,7 @@ import { getExerciseDetails } from '@/lib/exerciseLibrary';
 import { findCoachingDataByName } from '@/lib/exerciseCoachingData';
 import type { Exercise } from '@/lib/exercise-types';
 import { getExerciseGifUrl } from '@/lib/exercise-images';
+import { EXERCISE_GIF_IDS } from '@/lib/exercise-library-gifs';
 
 interface ActiveWorkoutModalProps {
   session: WorkoutSession;
@@ -233,7 +234,17 @@ export function ActiveWorkoutModal({
 
   return (
     <>
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={onOpenChange} modal={false}>
+      {/* modal={false}: Radix's modal Dialog (the default) disables pointer
+          interaction with everything outside the dialog while it's open.
+          This live-session view has its own floating "pop out" rest timer
+          (FloatingZoneTimer) portaled to document.body as a sibling — under
+          the default modal behaviour its buttons stop responding (can't
+          close it, can't drag it) the instant this dialog is open, and only
+          come back to life once the user backs out of the session. Turning
+          modal off keeps everything else about this dialog (overlay, close
+          on outside click/Escape) working, it just stops it from disabling
+          the outside world. */}
       <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto p-0 bg-background border-border">
         {/* Header */}
         <DialogHeader className="p-4 pb-0">
@@ -349,8 +360,19 @@ export function ActiveWorkoutModal({
                     {Object.values(exerciseGroups).map((exercise) => {
                       const details = getExerciseDetails(exercise.name);
                       const coachingData = findCoachingDataByName(exercise.name);
+                      // exercises.json is the raw 1500-exercise ExerciseDB dump — its names
+                      // rarely match the coach's exercise names exactly (e.g. "Back Squat" vs
+                      // whatever exercises.json happens to call it), so an exact lookup misses
+                      // the vast majority of exercises the coach actually programmes, even
+                      // though every one of them was picked from a list guaranteed to have a
+                      // gif. Prefer the curated exerciseLibrary.ts match (which uses fuzzy
+                      // name matching) mapped through EXERCISE_GIF_IDS to the real gif id;
+                      // only fall back to the brittle exact match against exercises.json.
                       const dbExercise = exerciseDbMap.get(exercise.name.toLowerCase());
-                      const gifUrl = dbExercise ? getExerciseGifUrl(dbExercise) : '';
+                      const curatedGifId = details.exercise?.id ? EXERCISE_GIF_IDS[details.exercise.id] : undefined;
+                      const gifUrl = curatedGifId
+                        ? getExerciseGifUrl({ exerciseDbId: curatedGifId })
+                        : (dbExercise ? getExerciseGifUrl(dbExercise) : '');
                       const isExpanded = expandedExercise === exercise.name;
                       const hasDetails = details.exercise || coachingData || dbExercise;
 

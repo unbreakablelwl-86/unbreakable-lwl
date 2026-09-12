@@ -3,7 +3,6 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Input } from '@/components/ui/input';
 import { useCardioSessionPlanners, CardioSessionPlanner } from '@/hooks/useCardioSessionPlanners';
 import { CardioProgram } from '@/hooks/useCardioPrograms';
 import { format } from 'date-fns';
@@ -11,7 +10,6 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import {
   Play,
-  Check,
   Loader2,
   Target,
   ArrowLeft,
@@ -25,16 +23,9 @@ import {
   Shuffle,
   TrendingUp,
 } from 'lucide-react';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from '@/components/ui/dialog';
 import { MovementSessionSwapSheet } from './MovementSessionSwapSheet';
-import { CardioRouteMap } from './CardioRouteMap';
 import { MovementProgressionDialog, ProgressionSuggestion } from './MovementProgressionDialog';
+import { CardioTrackerModal } from '@/components/tracker/CardioTrackerModal';
 
 interface MovementExecutionViewProps {
   program: CardioProgram;
@@ -44,10 +35,14 @@ interface MovementExecutionViewProps {
 export function MovementExecutionView({ program, onClose }: MovementExecutionViewProps) {
   const { planners, isLoading } = useCardioSessionPlanners(program.id);
   const [activeSessionPlanner, setActiveSessionPlanner] = useState<CardioSessionPlanner | null>(null);
-  const [completingPlanner, setCompletingPlanner] = useState<CardioSessionPlanner | null>(null);
-  const [actualDuration, setActualDuration] = useState('');
-  const [actualDistance, setActualDistance] = useState('');
-  const [routeCoordinates, setRouteCoordinates] = useState<any[]>([]);
+  // Programmed sessions used to launch a bespoke "segment view" here (a static
+  // list of the plan + a manual-entry dialog for duration/distance) instead of
+  // the same standard live tracker (GPS map, pre-run power/movement/fuel/
+  // mindset check-in, GO! countdown) that freeform sessions get from the
+  // Movement hub. showLiveTracker opens that standard CardioTrackerModal —
+  // its own manual-entry tab covers the no-GPS fallback too, so the old
+  // bespoke completion dialog is no longer needed.
+  const [showLiveTracker, setShowLiveTracker] = useState(false);
   const { markComplete, markSkipped, swapSession, applyProgression } = useCardioSessionPlanners(program.id);
   const [viewingResultIndex, setViewingResultIndex] = useState(0);
   const { toast } = useToast();
@@ -95,33 +90,29 @@ export function MovementExecutionView({ program, onClose }: MovementExecutionVie
     setActiveSessionPlanner(planner);
   };
 
-  const handleCompleteSession = () => {
-    if (!activeSessionPlanner) return;
-    setCompletingPlanner(activeSessionPlanner);
-    setActiveSessionPlanner(null);
-    setActualDuration('');
-    setActualDistance('');
-  };
+  // Fires when the standard live tracker (CardioTrackerModal) saves a
+  // session started from here — replaces the old handleConfirmComplete,
+  // which read manually-typed duration/distance out of this component's own
+  // dialog. durationMinutes/distanceKm now come from whatever the tracker
+  // actually recorded (GPS-tracked or its own manual-entry tab).
+  const handleTrackerSessionSaved = async ({ distanceKm, durationMinutes }: { distanceKm: number; durationMinutes: number }) => {
+    const planner = activeSessionPlanner;
+    if (!planner) return;
 
-  const handleConfirmComplete = async () => {
-    if (!completingPlanner) return;
-    const durMinutes = actualDuration ? parseInt(actualDuration) : undefined;
-    const distKm = actualDistance ? parseFloat(actualDistance) : undefined;
-    
     markComplete.mutate({
-      plannerId: completingPlanner.id,
-      actualDuration: durMinutes,
-      actualDistance: distKm,
+      plannerId: planner.id,
+      actualDuration: durationMinutes,
+      actualDistance: distanceKm,
     });
 
     // Auto-award PB Card for cardio session
     try {
       const { data: { user: currentUser } } = await supabase.auth.getUser();
-      if (currentUser && durMinutes && distKm) {
-        const sessionType = completingPlanner.session_type || 'run';
-        const distanceLabel = distKm >= 42 ? 'Marathon' : distKm >= 21 ? 'Half Marathon' : distKm >= 10 ? '10K' : distKm >= 5 ? '5K' : `${distKm}km`;
-        const timeSeconds = durMinutes * 60;
-        
+      if (currentUser && durationMinutes && distanceKm) {
+        const sessionType = planner.session_type || 'run';
+        const distanceLabel = distanceKm >= 42 ? 'Marathon' : distanceKm >= 21 ? 'Half Marathon' : distanceKm >= 10 ? '10K' : distanceKm >= 5 ? '5K' : `${distanceKm}km`;
+        const timeSeconds = durationMinutes * 60;
+
         const { data: cardId } = await supabase.rpc('award_pb_card', {
           p_user_id: currentUser.id,
           p_activity_category: sessionType,
@@ -144,8 +135,9 @@ export function MovementExecutionView({ program, onClose }: MovementExecutionVie
     } catch (cardErr) {
       console.error('Cardio PB card award failed (non-blocking):', cardErr);
     }
-    
-    setCompletingPlanner(null);
+
+    setShowLiveTracker(false);
+    setActiveSessionPlanner(null);
 
     // Check for progression after completing a session
     checkForProgression();
@@ -341,21 +333,14 @@ export function MovementExecutionView({ program, onClose }: MovementExecutionVie
           )}
         </Card>
 
-        {/* Live Route Map */}
-        <CardioRouteMap
-          isTracking={true}
-          onCoordinatesUpdate={setRouteCoordinates}
-          className="border border-primary/20"
-        />
-
         <div className="flex gap-3">
           <Button
             size="lg"
             className="flex-1 gap-2 font-display tracking-wide"
-            onClick={handleCompleteSession}
+            onClick={() => setShowLiveTracker(true)}
           >
-            <Check className="w-5 h-5" />
-            COMPLETE SESSION
+            <Play className="w-5 h-5" />
+            START LIVE TRACKING
           </Button>
           <Button
             variant="outline"
@@ -376,6 +361,16 @@ export function MovementExecutionView({ program, onClose }: MovementExecutionVie
           activityType={program.program_data.activityType}
           onSwap={handleSwap}
           isSwapping={swapSession.isPending}
+        />
+
+        {/* Standard live tracker — same GPS map, pre-run power/movement/fuel/
+            mindset check-in and GO! countdown as a freeform Movement session,
+            instead of the old bare segment list. */}
+        <CardioTrackerModal
+          isOpen={showLiveTracker}
+          onClose={() => setShowLiveTracker(false)}
+          initialActivity={program.program_data.activityType}
+          onSessionSaved={handleTrackerSessionSaved}
         />
       </div>
     );
@@ -538,43 +533,6 @@ export function MovementExecutionView({ program, onClose }: MovementExecutionVie
           })()}
         </Card>
       )}
-
-      {/* Completion Dialog */}
-      <Dialog open={!!completingPlanner} onOpenChange={(open) => { if (!open) setCompletingPlanner(null); }}>
-        <DialogContent className="sm:max-w-md bg-background border-border">
-          <DialogHeader>
-            <DialogTitle className="font-display tracking-wide">SESSION COMPLETE 🎉</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div>
-              <label className="text-sm text-muted-foreground mb-1 block">Duration (minutes)</label>
-              <Input
-                type="number"
-                placeholder="e.g. 30"
-                value={actualDuration}
-                onChange={(e) => setActualDuration(e.target.value)}
-              />
-            </div>
-            <div>
-              <label className="text-sm text-muted-foreground mb-1 block">Distance (km)</label>
-              <Input
-                type="number"
-                step="0.1"
-                placeholder="e.g. 5.0"
-                value={actualDistance}
-                onChange={(e) => setActualDistance(e.target.value)}
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setCompletingPlanner(null)}>Cancel</Button>
-            <Button onClick={handleConfirmComplete} disabled={markComplete.isPending} className="gap-2 font-display tracking-wide">
-              {markComplete.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
-              SAVE RESULTS
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
 
       {/* Progression Dialog */}
       <MovementProgressionDialog

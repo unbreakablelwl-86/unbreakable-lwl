@@ -379,12 +379,6 @@ export function SnapTrack({ isOpen, onClose, defaultMealType = 'lunch' }: SnapTr
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <Badge variant="outline" className="text-xs font-mono border-primary/30">
-              <Zap className="w-3 h-3 mr-1 text-primary" />
-              0.5 tokens
-            </Badge>
-          </div>
         </div>
 
         <ScrollArea className="max-h-[calc(90vh-56px)]">

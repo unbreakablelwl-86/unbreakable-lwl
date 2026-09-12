@@ -172,23 +172,29 @@ export function useCardioPrograms() {
       // Check if planners already exist
       const { data: existingPlanners } = await supabase
         .from('cardio_session_planners')
-        .select('id')
-        .eq('program_id', programId)
-        .limit(1);
+        .select('id, week_number, day_number, status')
+        .eq('program_id', programId);
 
-      // Activate the program with user-chosen start date
+      // Activate the program with user-chosen start date. This used to only
+      // apply startDate when started_at was still empty (`programRow.started_at
+      // || startDate...`), so re-opening "Start Programme" to pick a new date
+      // on an already-started programme silently kept the old date.
       const { error: activateError } = await supabase
         .from('cardio_programs')
         .update({
           is_active: true,
-          started_at: programRow.started_at || startDate.toISOString(),
+          started_at: startDate.toISOString(),
           current_week: programRow.current_week || 1,
           current_day: programRow.current_day || 1,
         })
         .eq('id', programId);
       if (activateError) throw activateError;
 
-      // Generate session planners if they don't exist
+      // Generate session planners if they don't exist, or reschedule the
+      // existing ones onto the newly chosen start date — previously a
+      // re-start with a new date left already-generated planners (e.g. the
+      // coach's original build) completely untouched, so the calendar never
+      // reflected what the user picked.
       if (!existingPlanners || existingPlanners.length === 0) {
         const programData = programRow.program_data as any;
         const weeks = programData.weeks || [];
@@ -225,6 +231,20 @@ export function useCardioPrograms() {
               .insert(plannerEntries);
             if (plannerError) throw plannerError;
           }
+        }
+      } else {
+        // Re-start with a new date: shift every not-yet-completed planner
+        // onto the new schedule, keeping its week/day offset intact. Leave
+        // completed/skipped-and-logged sessions alone so history isn't rewritten.
+        const updates = existingPlanners.filter(p => p.status === 'pending' || p.status === 'skipped');
+        for (const planner of updates) {
+          const scheduledDate = new Date(startDate);
+          scheduledDate.setDate(scheduledDate.getDate() + ((planner.week_number - 1) * 7) + (planner.day_number - 1));
+          const { error: rescheduleError } = await supabase
+            .from('cardio_session_planners')
+            .update({ scheduled_date: scheduledDate.toISOString().split('T')[0], status: 'pending' })
+            .eq('id', planner.id);
+          if (rescheduleError) throw rescheduleError;
         }
       }
 

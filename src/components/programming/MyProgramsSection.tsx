@@ -113,7 +113,10 @@ export function MyProgramsSection() {
   const handleConfirmStart = async (date: Date) => {
     if (!startDateProgramId) return;
     try {
-      await startProgrammeExecution.mutateAsync(startDateProgramId);
+      // Pass the picked date through — this used to be dropped entirely,
+      // so the calendar always fell back to "today" (or, on a re-start,
+      // didn't move at all) regardless of what the user chose here.
+      await startProgrammeExecution.mutateAsync({ programId: startDateProgramId, startDate: date });
       setStartDateProgramId(null);
       setExecutingProgramId(startDateProgramId);
       setExpandedProgramId(null);

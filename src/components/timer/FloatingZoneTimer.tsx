@@ -148,11 +148,15 @@ export function FloatingZoneTimer() {
     <AnimatePresence>
       {visible && (
         <motion.div
+          drag
+          dragMomentum={false}
+          dragElastic={0.08}
+          whileDrag={{ cursor: 'grabbing' }}
           initial={{ y: 80, opacity: 0, scale: 0.8 }}
           animate={{ y: 0, opacity: 1, scale: 1 }}
           exit={{ y: 80, opacity: 0, scale: 0.8 }}
           transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-          className="fixed z-[9998] select-none"
+          className="fixed z-[9998] select-none cursor-grab"
           style={{
             bottom: expanded ? '80px' : '80px',
             right: '16px',
