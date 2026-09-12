@@ -95,16 +95,21 @@ const Founder = () => {
             The Founder
           </span>
           <h1 className="font-display text-[clamp(48px,12vw,80px)] leading-[0.88] tracking-wide text-foreground mb-6">
-            BUILT FOR<br />
-            <span className="text-primary">DECADES.</span><br />
-            <span className="text-[clamp(28px,7vw,48px)]">NOT FOR<br />SUMMER.</span>
+            NOT A<br />
+            <span className="text-primary">GURU.</span><br />
+            <span className="text-[clamp(28px,7vw,48px)]">JUST SOMEONE<br />WHO GETS IT.</span>
           </h1>
           <p className="text-muted-foreground text-[15px] leading-relaxed max-w-[380px] mx-auto mb-4">
-            Forget the mirror. This is about what your body can actually <em className="text-primary not-italic">do</em> — lift, move, run, recover, and still be doing it in twenty years. Education first, ego second, "summer body" nowhere on the list.
+            I built Unbreakable because I needed it and it didn't exist. Not a programme, not a coaching package, not another influencer chasing a look for the next twelve weeks.{' '}
+            <strong className="text-foreground">This is about ability and longevity — what your body can actually do, and how long it can keep doing it — not what it looks like in a mirror for one summer.</strong>
+          </p>
+          <p className="text-muted-foreground text-[15px] leading-relaxed max-w-[380px] mx-auto mb-4">
+            Education comes first, always. Understand how your body actually works and you stop chasing someone else's idea of "ideal" and start building the one that's actually yours — the one that lifts, runs, carries, and recovers, on your terms.{' '}
+            <em className="text-primary not-italic">Fuel the activity. Respect the recovery. Enjoy getting there</em>, instead of white-knuckling through it for a result that never lasts.
           </p>
           <p className="text-muted-foreground text-[15px] leading-relaxed max-w-[380px] mx-auto mb-8">
             Turns out a routine-driven, hyperfocused, slightly obsessive AuDHD brain is basically built for this — structure, consistency, and something to properly get lost in.{' '}
-            <strong className="text-foreground">Fuel the activity, respect the recovery, build the body that's actually yours — and enjoy getting there.</strong>
+            <strong className="text-foreground">That's not a coincidence. That's the whole reason Unbreakable exists.</strong>
           </p>
           <p className="font-mono text-[10px] tracking-[3px] text-primary uppercase">
             Live Without Limits · Keep Showing Up
@@ -175,6 +180,9 @@ const Founder = () => {
           <p className="text-muted-foreground text-[15px] leading-[1.85] mb-4">
             I'm open about it because I think we need more people to be. Not in a performative way. Not for content. <strong className="text-foreground">Just honestly.</strong> If one person reads this and recognises something in themselves — the constant masking, the feeling of being slightly out of sync with the rest of the world — then it was worth writing.
           </p>
+          <p className="text-muted-foreground text-[15px] leading-[1.85] mb-4">
+            It's also, funnily enough, why training makes total sense to me. Routine. Structure. One thing to hyperfocus on for an hour where the rest of the noise finally shuts up. <strong className="text-foreground">The gym never felt like a chore — it felt like the one part of the day that was actually built for how my brain works.</strong> That's the energy Unbreakable is built on: routine and structure that work with your brain, not against it.
+          </p>
           <p className="text-muted-foreground text-[15px] leading-[1.85]">
             Unbreakable was always built for people who've been through something and are still standing. <em className="text-primary not-italic">That includes me.</em>
           </p>
@@ -197,6 +205,9 @@ const Founder = () => {
           </p>
           <p className="text-muted-foreground text-[15px] leading-[1.85] mb-4">
             Here's the truth: <strong className="text-foreground">when you understand how your body actually works, you don't need a guru.</strong> You need the basics, delivered honestly, in a community that holds you to them. That information should be taught in schools. It belongs to you, not to an industry that profits from your confusion.
+          </p>
+          <p className="text-muted-foreground text-[15px] leading-[1.85] mb-4">
+            That's ability and longevity in practice: <strong className="text-foreground">fuel what you actually do, respect the recovery as much as the training, and build a body that's yours</strong> — one that works for the next fifty years, not one borrowed from somebody else's Instagram for the next five weeks.
           </p>
           <p className="text-muted-foreground text-[15px] leading-[1.85]">
             <em className="text-primary not-italic">So I stopped coaching. And I started building the thing that should have existed all along.</em>
