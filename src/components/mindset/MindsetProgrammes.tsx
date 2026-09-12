@@ -8,24 +8,17 @@ import { useAuth } from '@/hooks/useAuth';
 import { MindsetProgrammeDetail } from './MindsetProgrammeDetail';
 import {
   Brain,
-  Plus,
   Sparkles,
   Play,
   Pause,
   Trash2,
-  ChevronRight,
+  Eye,
+  ChevronDown,
   Flame,
   ArrowRight,
   Loader2,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { MoreVertical } from 'lucide-react';
 
 export function MindsetProgrammes() {
   const { user } = useAuth();
@@ -82,34 +75,30 @@ export function MindsetProgrammes() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <h2 className="font-display text-xl tracking-wide flex items-center gap-2">
-          <Brain className="w-5 h-5 text-primary" />
-          MY PROGRAMMES
-        </h2>
-        <Link to="/help?context=Build%20me%20a%20mindset%20programme">
-          <Button variant="outline" size="sm" className="font-display tracking-wide gap-1">
-            <Sparkles className="w-4 h-4" />
-            BUILD NEW
-          </Button>
-        </Link>
-      </div>
-
-      {/* Active count */}
-      {programmes && programmes.length > 0 && (
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <Flame className="w-4 h-4 text-primary" />
-          <span>{activeProgrammes.length}/2 active</span>
+      {/* Header — active count + always-visible Build with Coach CTA, matching Power */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-4 bg-surface rounded-lg border border-border">
+        <div className="flex items-center gap-3">
+          <Flame className="w-5 h-5 text-primary shrink-0" />
+          <span className="text-sm md:text-base text-muted-foreground">
+            Active: <span className="text-foreground font-medium">{activeProgrammes.length}</span> / 2
+          </span>
         </div>
-      )}
+        <div className="flex items-center gap-2">
+          <Link to="/help?context=Build%20me%20a%20mindset%20programme">
+            <Button variant="outline" size="sm" className="gap-1.5 shrink-0">
+              <Sparkles className="w-4 h-4" />
+              Build with Coach
+            </Button>
+          </Link>
+        </div>
+      </div>
 
       {isLoading ? (
         <div className="flex items-center justify-center py-12">
           <Loader2 className="w-6 h-6 text-primary animate-spin" />
         </div>
       ) : programmes && programmes.length > 0 ? (
-        <div className="space-y-3">
+        <div className="space-y-4">
           <AnimatePresence>
             {programmes.map((prog) => (
               <motion.div
@@ -118,80 +107,85 @@ export function MindsetProgrammes() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
               >
+                {/* Same card anatomy as Power/Movement/Fuel: name+badge row,
+                    description, meta row, then two action rows with every
+                    action visible — this used to hide Activate/Delete behind
+                    a kebab menu and combine "view" and "track" into one
+                    whole-card click. */}
                 <Card
-                  className={`border-2 cursor-pointer transition-all hover:shadow-[0_0_15px_hsl(var(--primary)/0.2)] ${
-                    prog.is_active
-                      ? 'border-primary/50 bg-primary/5'
-                      : 'border-border hover:border-primary/30'
+                  className={`p-5 border bg-card transition-all ${
+                    prog.is_active ? 'border-primary shadow-[0_0_15px_hsl(var(--primary)/0.15)]' : 'border-border'
                   }`}
-                  onClick={() => setViewingProgramme(prog)}
                 >
-                  <CardContent className="p-4">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="font-display tracking-wide text-foreground truncate">
-                            {prog.name}
-                          </span>
-                          {prog.is_active && (
-                            <Badge variant="default" className="bg-primary/20 text-primary text-xs shrink-0">
-                              Active
-                            </Badge>
-                          )}
-                        </div>
-                        {prog.description && (
-                          <p className="text-xs text-muted-foreground line-clamp-1 mb-2">
-                            {prog.description}
-                          </p>
-                        )}
-                        <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                          <span>{prog.duration_weeks} weeks</span>
-                          <span>·</span>
-                          <span>{prog.daily_minutes} min/day</span>
-                          {prog.focus_areas && prog.focus_areas.length > 0 && (
-                            <>
-                              <span>·</span>
-                              <span>{prog.focus_areas.map(a => focusAreaIcon(a)).join(' ')}</span>
-                            </>
-                          )}
-                        </div>
+                  <div className="flex items-start justify-between gap-3 mb-3">
+                    <div className="flex items-center gap-2 flex-wrap flex-1 min-w-0">
+                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                        <Brain className="w-4 h-4 text-primary" />
                       </div>
-
-                      <div className="flex items-center gap-1 shrink-0 ml-2">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-                            <Button variant="ghost" size="icon" className="h-8 w-8">
-                              <MoreVertical className="w-4 h-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                toggleActive.mutate(prog.id);
-                              }}
-                            >
-                              {prog.is_active ? (
-                                <><Pause className="w-4 h-4 mr-2" /> Deactivate</>
-                              ) : (
-                                <><Play className="w-4 h-4 mr-2" /> Activate</>
-                              )}
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              className="text-destructive"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                deleteProgramme.mutate(prog.id);
-                              }}
-                            >
-                              <Trash2 className="w-4 h-4 mr-2" /> Delete
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                        <ChevronRight className="w-4 h-4 text-muted-foreground" />
-                      </div>
+                      <h3 className="font-display text-xl text-foreground leading-tight">{prog.name}</h3>
+                      {prog.is_active && (
+                        <Badge variant="outline" className="bg-primary text-primary-foreground border-primary">
+                          Active
+                        </Badge>
+                      )}
                     </div>
-                  </CardContent>
+                    {prog.is_active && (
+                      <div className="w-2 h-2 rounded-full bg-primary animate-pulse shrink-0 mt-2" />
+                    )}
+                  </div>
+
+                  <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
+                    {prog.description || 'Custom mindset programme'}
+                  </p>
+
+                  <div className="flex items-center gap-4 mb-4 text-xs text-muted-foreground">
+                    <span>{prog.duration_weeks} weeks</span>
+                    <span>{prog.daily_minutes} min/day</span>
+                    {prog.focus_areas && prog.focus_areas.length > 0 && (
+                      <span>{prog.focus_areas.map(a => focusAreaIcon(a)).join(' ')}</span>
+                    )}
+                  </div>
+
+                  <div className="space-y-2 pt-3 border-t border-border/50">
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="default"
+                        size="sm"
+                        onClick={() => toggleActive.mutate(prog.id)}
+                        disabled={toggleActive.isPending}
+                        className="gap-1.5 flex-1"
+                      >
+                        {toggleActive.isPending ? (
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : prog.is_active ? (
+                          <Pause className="w-4 h-4" />
+                        ) : (
+                          <Play className="w-4 h-4" />
+                        )}
+                        {prog.is_active ? 'Pause' : 'Activate Programme'}
+                      </Button>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setViewingProgramme(prog)}
+                        className="gap-1.5 flex-1"
+                      >
+                        <Eye className="w-4 h-4" />
+                        View Plan
+                        <ChevronDown className="w-3.5 h-3.5 -rotate-90" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => deleteProgramme.mutate(prog.id)}
+                        className="text-destructive hover:text-destructive shrink-0"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
                 </Card>
               </motion.div>
             ))}

@@ -390,11 +390,11 @@ export default function FAQ() {
       <div className="relative px-4 pt-6 pb-5 overflow-hidden">
         <div
           className="absolute inset-0 pointer-events-none"
-          style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(255,85,0,0.08), transparent 70%)' }}
+          style={{ background: 'radial-gradient(ellipse at 50% 0%, hsl(var(--primary) / 0.08), transparent 70%)' }}
         />
         <div className="relative z-10">
           <h1 className="font-display text-2xl tracking-wider text-center">
-            <span className="text-primary" style={{ textShadow: '0 0 20px rgba(255,85,0,0.4)' }}>UNBREAKABLE</span>
+            <span className="text-primary" style={{ textShadow: '0 0 20px hsl(var(--primary) / 0.4)' }}>UNBREAKABLE</span>
             <span className="text-foreground"> FAQ</span>
           </h1>
           <p className="text-center text-muted-foreground text-sm font-display tracking-wide mt-2">
@@ -409,8 +409,8 @@ export default function FAQ() {
           onClick={() => navigate('/help')}
           className="w-full flex items-center gap-3 p-3.5 rounded-xl border border-primary/20 bg-primary/5 hover:bg-primary/10 transition-all text-left"
         >
-          <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 border border-primary/30" style={{ background: 'rgba(255,85,0,0.1)' }}>
-            <Sparkles className="w-5 h-5 text-primary" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.6))' }} />
+          <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 border border-primary/30" style={{ background: 'hsl(var(--primary) / 0.1)' }}>
+            <Sparkles className="w-5 h-5 text-primary" style={{ filter: 'drop-shadow(0 0 4px hsl(var(--primary) / 0.6))' }} />
           </div>
           <div className="flex-1 min-w-0">
             <h4 className="font-display text-sm text-foreground tracking-wide">NEED HELP?</h4>
@@ -425,7 +425,7 @@ export default function FAQ() {
           return (
             <div key={section.title}>
               <div className="flex items-center gap-2 mb-2 px-1">
-                <Icon className="w-4 h-4 text-primary" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.5))' }} />
+                <Icon className="w-4 h-4 text-primary" style={{ filter: 'drop-shadow(0 0 4px hsl(var(--primary) / 0.5))' }} />
                 <span className="text-xs font-display tracking-wider text-muted-foreground">{section.title.toUpperCase()}</span>
               </div>
               <div className="rounded-xl border border-border bg-card overflow-hidden">
@@ -441,7 +441,7 @@ export default function FAQ() {
         {FEATURES.founderStory && (
           <div>
             <div className="flex items-center gap-2 mb-2 px-1">
-              <Heart className="w-4 h-4 text-primary" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.5))' }} />
+              <Heart className="w-4 h-4 text-primary" style={{ filter: 'drop-shadow(0 0 4px hsl(var(--primary) / 0.5))' }} />
               <span className="text-xs font-display tracking-wider text-muted-foreground">THE FOUNDER</span>
             </div>
             <button
@@ -469,7 +469,7 @@ export default function FAQ() {
         {/* Legal Links */}
         <div>
           <div className="flex items-center gap-2 mb-2 px-1">
-            <FileText className="w-4 h-4 text-primary" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.5))' }} />
+            <FileText className="w-4 h-4 text-primary" style={{ filter: 'drop-shadow(0 0 4px hsl(var(--primary) / 0.5))' }} />
             <span className="text-xs font-display tracking-wider text-muted-foreground">LEGAL</span>
           </div>
           <div className="rounded-xl border border-border bg-card overflow-hidden">
@@ -495,7 +495,7 @@ export default function FAQ() {
         {/* Contact */}
         <div>
           <div className="flex items-center gap-2 mb-2 px-1">
-            <Mail className="w-4 h-4 text-primary" style={{ filter: 'drop-shadow(0 0 4px rgba(255,85,0,0.5))' }} />
+            <Mail className="w-4 h-4 text-primary" style={{ filter: 'drop-shadow(0 0 4px hsl(var(--primary) / 0.5))' }} />
             <span className="text-xs font-display tracking-wider text-muted-foreground">CONTACT US</span>
           </div>
           <div className="rounded-xl border border-border bg-card p-4 space-y-3">
@@ -515,7 +515,7 @@ export default function FAQ() {
         <button
           onClick={() => navigate('/help')}
           className="w-full py-3.5 rounded-xl bg-primary text-black font-display tracking-wider text-sm hover:bg-primary/90 transition-all"
-          style={{ boxShadow: '0 0 20px rgba(255,85,0,0.3)' }}
+          style={{ boxShadow: '0 0 20px hsl(var(--primary) / 0.3)' }}
         >
           CHAT WITH UNBREAKABLE COACH
         </button>

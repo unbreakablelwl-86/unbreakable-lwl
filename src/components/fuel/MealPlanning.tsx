@@ -9,10 +9,9 @@ import { useMealPlans } from '@/hooks/useMealPlans';
 import { MealType, mealTypeLabels, dayLabels } from '@/lib/fuelTypes';
 import { MealPlanExecutionView } from './MealPlanExecutionView';
 import { AIBuildBanner } from '@/components/ai/AIBuildBanner';
-import { 
-  Plus, 
+import {
+  Plus,
   Calendar,
-  MoreVertical,
   Coffee,
   UtensilsCrossed,
   Moon,
@@ -21,10 +20,11 @@ import {
   Pause,
   Flame,
   ChevronLeft,
-  Trash2
+  Eye,
+  Trash2,
+  Loader2,
 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 
@@ -456,87 +456,109 @@ export function MealPlanning({ forUserId }: MealPlanningProps = {}) {
 
         {mealPlans?.map((plan) => {
           const itemCount = planItems?.filter(i => i.meal_plan_id === plan.id).length || 0;
-          
+
           return (
             <motion.div
               key={plan.id}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
             >
+              {/* Same card anatomy as Power/Movement: name+badge row, description,
+                  meta row, then two full-width action rows with every action as
+                  a visible button — this used to hide Activate/Deactivate/Delete
+                  behind a kebab menu, which reads as "missing" next to the other
+                  hubs' fully exposed controls. */}
               <Card
-                className={`border-2 cursor-pointer transition-all hover:shadow-[0_0_15px_hsl(var(--primary)/0.2)] ${
-                  plan.is_active ? 'border-primary/50 bg-primary/5' : 'border-border hover:border-primary/30'
+                className={`p-5 border bg-card transition-all ${
+                  plan.is_active ? 'border-primary shadow-[0_0_15px_hsl(var(--primary)/0.15)]' : 'border-border'
                 }`}
-                onClick={() => {
-                  setEditingPlanId(plan.id);
-                  setSelectedDay(0);
-                }}
               >
-                <CardContent className="p-5">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        {plan.is_active && (
-                          <Badge variant="default" className="bg-primary/20 text-primary text-xs">
-                            <Flame className="w-3 h-3 mr-1" />
-                            Active
-                          </Badge>
-                        )}
-                        <span className="font-display tracking-wide text-lg">{plan.name}</span>
-                      </div>
-                      {plan.description && (
-                        <p className="text-sm text-muted-foreground">{plan.description}</p>
-                      )}
-                      <p className="text-xs text-muted-foreground mt-1">
-                        {itemCount} meals planned · Tap to edit
-                      </p>
+                <div className="flex items-start justify-between gap-3 mb-3">
+                  <div className="flex items-center gap-2 flex-wrap flex-1 min-w-0">
+                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                      <Flame className="w-4 h-4 text-primary" />
                     </div>
-                    
-                    <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
-                      {plan.is_active && (
+                    <h3 className="font-display text-xl text-foreground leading-tight">{plan.name}</h3>
+                    {plan.is_active && (
+                      <Badge variant="outline" className="bg-primary text-primary-foreground border-primary">
+                        Active
+                      </Badge>
+                    )}
+                  </div>
+                  {plan.is_active && (
+                    <div className="w-2 h-2 rounded-full bg-primary animate-pulse shrink-0 mt-2" />
+                  )}
+                </div>
+
+                <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
+                  {plan.description || 'Custom meal plan'}
+                </p>
+
+                <div className="flex items-center gap-4 mb-4 text-xs text-muted-foreground">
+                  <span className="flex items-center gap-1.5">
+                    <Calendar className="w-3.5 h-3.5 text-primary/60" />
+                    {itemCount} meals planned
+                  </span>
+                </div>
+
+                <div className="space-y-2 pt-3 border-t border-border/50">
+                  <div className="flex items-center gap-2">
+                    {plan.is_active ? (
+                      <>
                         <Button
                           variant="default"
                           size="sm"
-                          className="font-display tracking-wide"
                           onClick={() => setExecutingPlanId(plan.id)}
+                          className="gap-1.5 flex-1"
                         >
-                          <Play className="w-4 h-4 mr-1" />
+                          <Play className="w-4 h-4" />
                           Track
                         </Button>
-                      )}
-                      
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon" className="h-8 w-8">
-                            <MoreVertical className="w-4 h-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          {plan.is_active ? (
-                            <DropdownMenuItem onClick={() => deactivatePlan.mutate(plan.id)}>
-                              <Pause className="w-4 h-4 mr-2" />
-                              Deactivate
-                            </DropdownMenuItem>
-                          ) : (
-                            <DropdownMenuItem 
-                              onClick={() => handleActivatePlan(plan.id)}
-                              disabled={!canActivateMore}
-                            >
-                              <Play className="w-4 h-4 mr-2" />
-                              Activate
-                            </DropdownMenuItem>
-                          )}
-                          <DropdownMenuItem 
-                            className="text-destructive"
-                            onClick={() => deleteMealPlan.mutate(plan.id)}
-                          >
-                            Delete Plan
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </div>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => deactivatePlan.mutate(plan.id)}
+                          disabled={deactivatePlan.isPending}
+                          className="gap-1.5"
+                        >
+                          {deactivatePlan.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Pause className="w-4 h-4" />}
+                          Pause
+                        </Button>
+                      </>
+                    ) : (
+                      <Button
+                        variant="default"
+                        size="sm"
+                        onClick={() => handleActivatePlan(plan.id)}
+                        disabled={!canActivateMore || setActivePlan.isPending}
+                        className="gap-1.5 flex-1"
+                        title={!canActivateMore ? 'Maximum 3 active meal plans' : undefined}
+                      >
+                        {setActivePlan.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4" />}
+                        Activate Plan
+                      </Button>
+                    )}
                   </div>
-                </CardContent>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => { setEditingPlanId(plan.id); setSelectedDay(0); }}
+                      className="gap-1.5 flex-1"
+                    >
+                      <Eye className="w-4 h-4" />
+                      View Plan
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => deleteMealPlan.mutate(plan.id)}
+                      className="text-destructive hover:text-destructive shrink-0"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
               </Card>
             </motion.div>
           );

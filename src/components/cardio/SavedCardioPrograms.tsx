@@ -19,7 +19,8 @@ import {
   Play,
   Pause,
   Target,
-  ChevronRight,
+  Clock,
+  ChevronDown,
   Loader2,
   AlertCircle,
   Sparkles,
@@ -32,6 +33,7 @@ import { GeneratedCardioProgram, activityLabels, ActivityType } from '@/lib/card
 import { format } from 'date-fns';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CardioProgramDisplay } from './CardioProgramDisplay';
+import { CardioNextSessionPreview } from './CardioNextSessionPreview';
 import { MovementExecutionView } from './MovementExecutionView';
 import { StartDatePickerDialog } from './StartDatePickerDialog';
 
@@ -154,6 +156,22 @@ export function SavedCardioPrograms({ onViewProgram }: SavedCardioProgramsProps)
     setExpandedId(null);
   };
 
+  // A paused programme (was started, then deactivated) used to fall through
+  // to the same "Start" button as a never-started one, which reopened the
+  // date picker every time — silently rescheduling the whole calendar just
+  // to resume where you left off. Power's equivalent resumes onto today's
+  // date without asking, so do the same here.
+  const handleResumePaused = async (program: CardioProgram, e: React.MouseEvent) => {
+    e.stopPropagation();
+    try {
+      await startProgrammeExecution.mutateAsync({ programId: program.id, startDate: new Date() });
+      setExecutingProgramId(program.id);
+      setExpandedId(null);
+    } catch {
+      // handled by mutation
+    }
+  };
+
   const handleDeactivate = (programId: string, e: React.MouseEvent) => {
     e.stopPropagation();
     deactivateProgram.mutate(programId);
@@ -180,8 +198,8 @@ export function SavedCardioPrograms({ onViewProgram }: SavedCardioProgramsProps)
 
   return (
     <div className="space-y-4">
-      {/* Header with status */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-4 bg-card rounded-lg border border-border">
+      {/* Header — same layout as Power: active count + always-visible Build with Coach CTA */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-4 bg-surface rounded-lg border border-border">
         <div className="flex items-center gap-3">
           <AlertCircle className="w-5 h-5 text-primary shrink-0" />
           <span className="text-sm md:text-base text-muted-foreground">
@@ -193,80 +211,98 @@ export function SavedCardioPrograms({ onViewProgram }: SavedCardioProgramsProps)
             </Badge>
           )}
         </div>
+        <div className="flex items-center gap-2">
+          <Link to="/help?mode=cardio">
+            <Button variant="outline" size="sm" className="gap-1.5 shrink-0">
+              <Sparkles className="w-4 h-4" />
+              Build with Coach
+            </Button>
+          </Link>
+        </div>
       </div>
 
       {programs.map((program) => (
         <div key={program.id}>
           <Card
-            className={`p-4 border bg-card cursor-pointer transition-all hover:border-primary/50 ${
-              program.is_active ? 'border-primary' : 'border-border'
+            className={`p-5 border bg-card transition-all ${
+              program.is_active ? 'border-primary shadow-[0_0_15px_hsl(var(--primary)/0.15)]' : 'border-border'
             }`}
-            onClick={() => handleExpand(program.id)}
           >
-            <div className="flex items-center justify-between">
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-1 flex-wrap">
-                  <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                    {getActivityIcon(program.program_data.activityType)}
-                  </div>
-                  <h3 className="font-display text-lg text-foreground truncate">
-                    {program.name}
-                  </h3>
-                  <Badge variant="outline" className={statusConfig[program.status].className}>
-                    {statusConfig[program.status].label}
-                  </Badge>
-                  <Badge variant="outline" className="text-xs">
-                    {activityLabels[program.program_data.activityType]}
-                  </Badge>
+            {/* Top row: icon + name + status/activity badges + live dot */}
+            <div className="flex items-start justify-between gap-3 mb-3">
+              <div className="flex items-center gap-2 flex-wrap flex-1 min-w-0">
+                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                  {getActivityIcon(program.program_data.activityType)}
                 </div>
-                <p className="text-sm text-muted-foreground line-clamp-1 ml-10">
-                  {program.overview || 'Custom movement programme'}
-                </p>
-                <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground ml-10">
-                  <span className="flex items-center gap-1">
-                    <CalendarIcon className="w-3 h-3" />
-                    {format(new Date(program.created_at), 'MMM d, yyyy')}
-                  </span>
-                  {program.is_active && program.current_week && (
-                    <span className="flex items-center gap-1">
-                      Week {program.current_week}, Day {program.current_day}
-                    </span>
-                  )}
-                </div>
-                {isDev && program.is_active && (
-                  <div
-                    className="flex items-center gap-2 mt-2 ml-10 text-xs"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <Bot className="w-3.5 h-3.5 text-muted-foreground" />
-                    <span className="text-muted-foreground">Auto-track (dev only)</span>
-                    <Switch
-                      checked={program.auto_track_enabled}
-                      onCheckedChange={(checked) => setAutoTrack.mutate({ programId: program.id, enabled: checked })}
-                      disabled={setAutoTrack.isPending}
-                    />
-                  </div>
-                )}
+                <h3 className="font-display text-xl text-foreground leading-tight">
+                  {program.name}
+                </h3>
+                <Badge variant="outline" className={statusConfig[program.status].className}>
+                  {statusConfig[program.status].label}
+                </Badge>
+                <Badge variant="outline" className="text-xs">
+                  {activityLabels[program.program_data.activityType]}
+                </Badge>
               </div>
+              {program.is_active && (
+                <div className="w-2 h-2 rounded-full bg-primary animate-pulse shrink-0 mt-2" />
+              )}
+            </div>
 
-              <div className="flex items-center gap-2 ml-4">
+            {/* Description */}
+            <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
+              {program.overview || 'Custom movement programme'}
+            </p>
+
+            {/* Meta row: date + progress */}
+            <div className="flex items-center gap-4 mb-4 text-xs text-muted-foreground">
+              <span className="flex items-center gap-1.5">
+                <CalendarIcon className="w-3.5 h-3.5 text-primary/60" />
+                {format(new Date(program.created_at), 'MMM d, yyyy')}
+              </span>
+              {(program.is_active || program.status === 'paused') && program.current_week && (
+                <span className="flex items-center gap-1.5">
+                  <Clock className="w-3.5 h-3.5 text-primary/60" />
+                  Week {program.current_week}, Day {program.current_day}
+                  {program.status === 'paused' && (
+                    <span className="text-primary/60">(paused)</span>
+                  )}
+                </span>
+              )}
+            </div>
+
+            {isDev && program.is_active && (
+              <div className="flex items-center gap-2 mb-3 text-xs">
+                <Bot className="w-3.5 h-3.5 text-muted-foreground" />
+                <span className="text-muted-foreground">Auto-track (dev only)</span>
+                <Switch
+                  checked={program.auto_track_enabled}
+                  onCheckedChange={(checked) => setAutoTrack.mutate({ programId: program.id, enabled: checked })}
+                  disabled={setAutoTrack.isPending}
+                />
+              </div>
+            )}
+
+            {/* Actions — two rows, matching Power's mobile-friendly layout */}
+            <div className="space-y-2 pt-3 border-t border-border/50">
+              <div className="flex items-center gap-2">
                 {program.is_active ? (
                   <>
                     <Button
                       variant="default"
                       size="sm"
                       onClick={(e) => handleResumeClick(program.id, e)}
-                      className="gap-1"
+                      className="gap-1.5 flex-1"
                     >
                       <Target className="w-4 h-4" />
-                      Track
+                      Track Session
                     </Button>
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={(e) => handleDeactivate(program.id, e)}
                       disabled={deactivateProgram.isPending}
-                      className="gap-1"
+                      className="gap-1.5"
                     >
                       {deactivateProgram.isPending ? (
                         <Loader2 className="w-4 h-4 animate-spin" />
@@ -276,13 +312,13 @@ export function SavedCardioPrograms({ onViewProgram }: SavedCardioProgramsProps)
                       Pause
                     </Button>
                   </>
-                ) : (
+                ) : program.status === 'paused' ? (
                   <Button
                     variant="default"
                     size="sm"
-                    onClick={(e) => handleStartClick(program, e)}
+                    onClick={(e) => handleResumePaused(program, e)}
                     disabled={startProgrammeExecution.isPending || !canActivateMore}
-                    className="gap-1"
+                    className="gap-1.5 flex-1"
                     title={!canActivateMore ? `Maximum ${maxActivePrograms} active programmes` : undefined}
                   >
                     {startProgrammeExecution.isPending ? (
@@ -290,20 +326,45 @@ export function SavedCardioPrograms({ onViewProgram }: SavedCardioProgramsProps)
                     ) : (
                       <Play className="w-4 h-4" />
                     )}
-                    Start
+                    Resume — Week {program.current_week}, Day {program.current_day}
+                  </Button>
+                ) : (
+                  <Button
+                    variant="default"
+                    size="sm"
+                    onClick={(e) => handleStartClick(program, e)}
+                    disabled={startProgrammeExecution.isPending || !canActivateMore}
+                    className="gap-1.5 flex-1"
+                    title={!canActivateMore ? `Maximum ${maxActivePrograms} active programmes` : undefined}
+                  >
+                    {startProgrammeExecution.isPending ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Play className="w-4 h-4" />
+                    )}
+                    Start Programme
                   </Button>
                 )}
+              </div>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={(e) => { e.stopPropagation(); handleExpand(program.id); }}
+                  className={`gap-1.5 flex-1 ${expandedId === program.id ? 'border-primary/40 bg-primary/5 text-primary' : ''}`}
+                >
+                  <Eye className="w-4 h-4" />
+                  View Plan
+                  <ChevronDown className={`w-3.5 h-3.5 transition-transform ${expandedId === program.id ? 'rotate-180' : ''}`} />
+                </Button>
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={(e) => handleDelete(program.id, e)}
-                  className="text-destructive hover:text-destructive"
+                  className="text-destructive hover:text-destructive shrink-0"
                 >
                   <Trash2 className="w-4 h-4" />
                 </Button>
-                <ChevronRight className={`w-5 h-5 text-muted-foreground transition-transform ${
-                  expandedId === program.id ? 'rotate-90' : ''
-                }`} />
               </div>
             </div>
           </Card>
@@ -318,6 +379,14 @@ export function SavedCardioPrograms({ onViewProgram }: SavedCardioProgramsProps)
                 className="overflow-hidden"
               >
                 <div className="pt-4">
+                  {/* Next Session Preview — same progress bar + session breakdown as Power */}
+                  {(program.status === 'active' || program.status === 'paused') && (
+                    <CardioNextSessionPreview
+                      programId={program.id}
+                      currentWeek={program.current_week}
+                      currentDay={program.current_day}
+                    />
+                  )}
                   <CardioProgramDisplay
                     program={program.program_data}
                     onBack={() => setExpandedId(null)}

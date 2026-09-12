@@ -45,7 +45,7 @@ This licence ends when you remove the content or close your artist account. We d
   {
     icon: Scale,
     title: '5. Listener Terms',
-    content: `Free tracks are available to all Unbreakable app users. Purchased tracks are for personal, non-commercial use only. You may not:
+    content: `Every account can browse and preview all Un-Tunes tracks free — each preview plays the first 30 seconds. Full-length streaming requires an Unbreakable membership or purchasing the track. Purchased and member-streamed tracks are for personal, non-commercial use only. You may not:
 • Redistribute, resell, or publicly perform purchased content
 • Rip, download, or extract audio from the streaming player
 • Use any content for commercial purposes without the artist's written permission

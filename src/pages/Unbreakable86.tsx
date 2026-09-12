@@ -56,7 +56,7 @@ export default function Unbreakable86() {
   const [cardioState, setCardioState] = useState<'idle' | 'building' | 'done' | 'failed'>('idle');
 
   /**
-   * UNBREAKABLE 86 is a five-pillar challenge, so enrolment has to deliver the
+   * UNBREAKABLE 86 is a multi-pillar challenge, so enrolment has to deliver the
    * Movement (cardio) plan as well as the strength programme. Runs once, right
    * after the strength build is published, and never blocks the dashboard.
    */
