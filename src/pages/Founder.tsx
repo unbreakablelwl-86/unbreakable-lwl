@@ -95,13 +95,16 @@ const Founder = () => {
             The Founder
           </span>
           <h1 className="font-display text-[clamp(48px,12vw,80px)] leading-[0.88] tracking-wide text-foreground mb-6">
-            NOT A<br />
-            <span className="text-primary">GURU.</span><br />
-            <span className="text-[clamp(28px,7vw,48px)]">JUST SOMEONE<br />WHO GETS IT.</span>
+            BUILT FOR<br />
+            <span className="text-primary">DECADES.</span><br />
+            <span className="text-[clamp(28px,7vw,48px)]">NOT FOR<br />SUMMER.</span>
           </h1>
+          <p className="text-muted-foreground text-[15px] leading-relaxed max-w-[380px] mx-auto mb-4">
+            Forget the mirror. This is about what your body can actually <em className="text-primary not-italic">do</em> — lift, move, run, recover, and still be doing it in twenty years. Education first, ego second, "summer body" nowhere on the list.
+          </p>
           <p className="text-muted-foreground text-[15px] leading-relaxed max-w-[380px] mx-auto mb-8">
-            I built Unbreakable because I needed it and it didn't exist. Not a programme, not a coaching package, not another influencer selling a transformation.{' '}
-            <strong className="text-foreground">A community built on truth, education, and the kind of honest connection the fitness industry never bothered to offer.</strong>
+            Turns out a routine-driven, hyperfocused, slightly obsessive AuDHD brain is basically built for this — structure, consistency, and something to properly get lost in.{' '}
+            <strong className="text-foreground">Fuel the activity, respect the recovery, build the body that's actually yours — and enjoy getting there.</strong>
           </p>
           <p className="font-mono text-[10px] tracking-[3px] text-primary uppercase">
             Live Without Limits · Keep Showing Up
