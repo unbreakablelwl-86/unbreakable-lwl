@@ -305,7 +305,7 @@ export default function Help() {
   const {
     messages, conversations, currentConversationId, isLoading,
     conversationsLoading, tokenBalance, sendMessage, loadConversation,
-    deleteConversation, startNewConversation,
+    deleteConversation, startNewConversation, addAssistantMessage,
   } = useHelpChat();
 
   const { generateProgramme, detectProgrammeRequest, isGenerating } = useAIProgramme();
@@ -366,6 +366,10 @@ export default function Help() {
 
   // Execute confirmed build
   const executeBuild = useCallback(async (type: 'programme' | 'meal_plan' | 'mindset' | 'cardio', chatContext: string, cardioParams?: any) => {
+    // Full programme builds genuinely take a minute or two — drop a heads-up
+    // in chat right away so it doesn't look stuck or broken while it works.
+    addAssistantMessage('Building this now — full programmes can take 1-2 minutes to put together properly, so bear with me.');
+
     if (type === 'programme') {
       setProgrammeGenerating(true);
       try {
@@ -476,7 +480,7 @@ export default function Help() {
         toast({ title: 'Error', description: 'Failed to generate movement programme', variant: 'destructive' });
       } finally { setCardioGenerating(false); }
     }
-  }, [generateProgramme, generateMealPlan, generateMindsetProgramme, generateCardioProgramme]);
+  }, [generateProgramme, generateMealPlan, generateMindsetProgramme, generateCardioProgramme, addAssistantMessage]);
 
   // Context from URL params or sessionStorage
   useEffect(() => {

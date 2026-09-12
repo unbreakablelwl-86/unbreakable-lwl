@@ -32,7 +32,7 @@ const PILLAR_MAP: Record<string, PillarDef> = {
   '/tracker':          { hex: '#EF4444', hsl: '0 84% 60%' },
   '/mindset':          { hex: '#8B5CF6', hsl: '263 70% 66%' },
   '/university':       { hex: '#3B82F6', hsl: '217 91% 60%' },
-  '/habits':           { hex: '#10B981', hsl: '160 84% 39%' },
+  '/habits':           { hex: '#8B5CF6', hsl: '263 70% 66%' },
   '/coaches':          { hex: '#FF5500', hsl: '22 100% 50%' },
   '/inbox':            { hex: '#FF5500', hsl: '20 100% 50%' },
   '/ai-tokens':        { hex: '#FFB300', hsl: '42 100% 50%' },

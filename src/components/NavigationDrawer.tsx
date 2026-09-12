@@ -10,6 +10,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useProfile } from '@/hooks/useProfile';
 import { useUserRole } from '@/hooks/useUserRole';
 import { useTokenBalance } from '@/hooks/useTokenBalance';
+import { useUnbreakable86 } from '@/hooks/useUnbreakable86';
 import { hasFeatureAccess } from '@/lib/featureGating';
 import type { FeatureId } from '@/lib/featureGating';
 import type { TierKey } from '@/lib/subscriptionTiers';
@@ -46,7 +47,8 @@ export function NavigationDrawer({ variant = 'default' }: NavigationDrawerProps)
   const { profile } = useProfile();
   const { isAdminOrOwner, isOwner, role } = useUserRole();
   const { currentTier } = useTokenBalance();
-  
+  const { enrolment } = useUnbreakable86();
+
   const location = useLocation();
 
   const isCoach = role === 'coach';
@@ -56,6 +58,11 @@ export function NavigationDrawer({ variant = 'default' }: NavigationDrawerProps)
   const userTier = (currentTier || 'free') as TierKey;
   const hasHubAccess = (feature: FeatureId | null) =>
     isDev || isCoach || !feature || hasFeatureAccess(userTier, feature);
+
+  // Unbreakable 86 already gives enrolled users a daily habit tracker —
+  // hide the generic manual one from the menu so only one is ever active.
+  const u86Active = !!enrolment && (enrolment.status === 'active' || enrolment.status === 'completed');
+  const visibleHubLinks = u86Active ? hubLinks.filter(l => l.to !== '/habits') : hubLinks;
 
   const getInitials = () => {
     if (profile?.display_name) {
@@ -167,7 +174,7 @@ export function NavigationDrawer({ variant = 'default' }: NavigationDrawerProps)
                   <ChevronDown className={`w-4 h-4 transition-transform ${(hubOpen || isHubActive) ? 'rotate-180' : ''}`} />
                 </CollapsibleTrigger>
                 <CollapsibleContent className="pl-4 space-y-1 mt-1">
-                  {hubLinks.map((link) => {
+                  {visibleHubLinks.map((link) => {
                     const isLocked = !hasHubAccess(link.feature);
                     return (
                       <Link

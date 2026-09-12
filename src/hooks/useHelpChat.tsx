@@ -307,6 +307,22 @@ export function useHelpChat() {
     setMessages([]);
   }, []);
 
+  // Drop a message into the chat as the coach, without going through the
+  // AI/streaming pipeline — used for local status updates like "building
+  // this now, give it a minute or two" right when a build is confirmed.
+  const addAssistantMessage = useCallback(async (content: string) => {
+    const msg: Message = {
+      id: crypto.randomUUID(),
+      role: 'assistant',
+      content,
+      created_at: new Date().toISOString(),
+    };
+    setMessages(prev => [...prev, msg]);
+    if (currentConversationId) {
+      await saveMessage(currentConversationId, 'assistant', content);
+    }
+  }, [currentConversationId, saveMessage]);
+
   return {
     messages,
     conversations,
@@ -318,5 +334,6 @@ export function useHelpChat() {
     loadConversation,
     deleteConversation: deleteConversation.mutate,
     startNewConversation,
+    addAssistantMessage,
   };
 }

@@ -126,11 +126,18 @@ export function HomeDashboard() {
 
   const tierLabel = tokenState.tierDisplayName || 'Free';
 
+  // Unbreakable 86 already gives enrolled users a daily habit tracker —
+  // don't also surface the generic manual one (Journal/Habits both point
+  // at /habits) so there's only ever one active habit tracker in view.
+  const quickActionPool = u86Active
+    ? ALL_QUICK_ACTIONS.filter(a => a.id !== 'journal' && a.id !== 'habits')
+    : ALL_QUICK_ACTIONS;
+
   const visibleActions = activeActions
-    .map(id => ALL_QUICK_ACTIONS.find(a => a.id === id))
+    .map(id => quickActionPool.find(a => a.id === id))
     .filter(Boolean) as QuickAction[];
 
-  const availableActions = ALL_QUICK_ACTIONS.filter(a => !activeActions.includes(a.id));
+  const availableActions = quickActionPool.filter(a => !activeActions.includes(a.id));
 
   function toggleAction(id: string) {
     setActiveActions(prev => {
