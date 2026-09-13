@@ -158,7 +158,7 @@ const Founder = () => {
             What struck me most during those qualifications wasn't how complicated the science was — <strong className="text-foreground">it was how straightforward it should have been.</strong> Anatomy, nutrition, how muscles grow, how to train properly. None of it was rocket science. It was basic human knowledge about the vehicle you live in every single day. The kind of thing that should be taught in schools, not hidden behind a certificate and a price tag that most people can't afford.
           </p>
           <p className="text-muted-foreground text-[15px] leading-[1.85]">
-            In September 2024 I levelled up to <strong className="text-foreground">Level 4 Strength & Conditioning</strong> — adding sport-specific training, periodisation, and performance science to what I could offer through Unbreakable. Not because I needed more letters after my name, but because I believe if you're going to educate people, <em className="text-primary not-italic">you should never stop learning yourself.</em>
+            In September 2024 I levelled up to <strong className="text-foreground">Level 4 Strength & Conditioning</strong> — adding sport-specific training, periodisation, and performance science to my own toolkit. I did that one for me, not for Unbreakable. Not because I needed more letters after my name, but because I believe if you're going to educate people, <em className="text-primary not-italic">you should never stop learning yourself.</em>
           </p>
         </motion.div>
       </section>
