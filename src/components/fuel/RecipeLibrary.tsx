@@ -221,7 +221,6 @@ export function RecipeLibrary() {
         fat_g: recipe.fat_g || 0,
         servings: 1,
         sort_order: 0,
-        notes: null,
       });
       toast.success('ADDED TO PLAN ✓', {
         description: `${recipe.name} added to meal plan`,

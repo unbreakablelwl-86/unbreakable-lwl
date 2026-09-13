@@ -35,8 +35,15 @@ export default function CoachProfile() {
     // Coach always unlocked to themselves
     if (user.id === userId) { setIsUnlocked(true); setUnlockLoading(false); return; }
     (async () => {
+      // `coach_unlocks` is a genuine table this feature depends on (see the
+      // 20260529_coach_hub_bookings.sql migration) but it was never actually
+      // created against this database despite that migration being recorded
+      // as applied — so it's absent from the generated types too, and every
+      // unlock currently can't persist (see handleUnlock below). The `as any`
+      // here just keeps this compiling until the table exists; it changes
+      // nothing about the (currently broken) runtime behaviour.
       const { data } = await supabase
-        .from('coach_unlocks')
+        .from('coach_unlocks' as any)
         .select('id')
         .eq('user_id', user.id)
         .eq('coach_id', userId)
@@ -82,7 +89,21 @@ export default function CoachProfile() {
         toast.error('Not enough tokens. You need 5 tokens to unlock this coach.');
         return;
       }
-      await supabase.from('coach_unlocks').insert({ user_id: user.id, coach_id: userId, tokens_spent: 5 });
+      // This insert currently fails every time (see the `coach_unlocks` note
+      // above — the table doesn't exist yet) — it used to be fire-and-forget
+      // here, which meant the 5-token spend above went through but the
+      // unlock silently never persisted, so a user unlocking the same coach
+      // again next visit would be charged again for a coach they already
+      // "unlocked". Checking the error at least surfaces the failure instead
+      // of falsely reporting success; once the table exists this path works
+      // as originally intended with no further changes needed.
+      const { error: unlockError } = await supabase
+        .from('coach_unlocks' as any)
+        .insert({ user_id: user.id, coach_id: userId, tokens_spent: 5 });
+      if (unlockError) {
+        toast.error('Unlock could not be saved — please contact support before spending tokens again.');
+        return;
+      }
       setIsUnlocked(true);
       refreshTokenBalance();
       toast.success('Coach unlocked! You can now book sessions.');

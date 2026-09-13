@@ -113,7 +113,7 @@ export function StoryEditor({ onPublish, onClose, preFill }: StoryEditorProps) {
   const [bgColor, setBgColor] = useState(preFill?.background_color || '#1C1C1E');
 
   // Per-slide overlays: key = media index (0 = background-only / first slide)
-  const [overlaysBySlide, setOverlaysBySlide] = useState<Record<number, TextOverlayData[]>>(() => {
+  const [overlaysBySlide, setOverlaysBySlide] = useState<Record<number, TextOverlayData[]>>((): Record<number, TextOverlayData[]> => {
     if (preFill?.content) {
       const id = crypto.randomUUID();
       return { 0: [{ ...DEFAULT_OVERLAY, id, text: preFill.content, x: 50, y: 50, fontSize: 24 }] };

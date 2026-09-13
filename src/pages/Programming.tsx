@@ -17,8 +17,8 @@ type PowerTab = 'overview' | 'exercises' | 'logs';
 export default function Programming() {
   const { user } = useAuth();
   const { isAdminOrOwner } = useUserRole();
-  const { programs, loading: progsLoading } = useTrainingPrograms();
-  const { sessions, loading: sessionsLoading } = useWorkoutSessions();
+  const { programs, isLoading: progsLoading } = useTrainingPrograms();
+  const { sessions, isLoading: sessionsLoading } = useWorkoutSessions();
   const [activeTab, setActiveTab] = useState<PowerTab>('overview');
   const [showAuth, setShowAuth] = useState(false);
   const navigate = useNavigate();

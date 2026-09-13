@@ -105,7 +105,7 @@ export function AdminActivityPanel() {
                     </div>
                   )}
                   <div className="text-xs text-muted-foreground mt-1">
-                    {format(new Date(log.created_at), 'MMM d, yyyy h:mm a')}
+                    {log.created_at ? format(new Date(log.created_at), 'MMM d, yyyy h:mm a') : 'Unknown time'}
                   </div>
                 </div>
               </div>

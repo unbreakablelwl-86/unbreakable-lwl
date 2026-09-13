@@ -14,6 +14,14 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
+// `programme_threads` / `programme_thread_messages` are genuine tables this
+// feature depends on (see the 20260529_coach_hub_bookings.sql migration) but
+// they were never actually created against this database despite that
+// migration being recorded as applied — so they're absent from the generated
+// types too. The `as any` casts on `.from(...)` below just keep this
+// compiling; the try/catch blocks already treat a missing table as an empty
+// state, so this component degrades gracefully until the tables exist.
+
 interface Thread {
   id: string;
   title: string;
@@ -67,13 +75,17 @@ export function CoachProgrammeThreads() {
     setLoading(true);
     try {
       const { data, error } = await supabase
-        .from('programme_threads')
+        .from('programme_threads' as any)
         .select('*')
         .or(`coach_id.eq.${user.id},assigned_users.cs.{${user.id}}`)
         .order('updated_at', { ascending: false });
 
       if (error) throw error;
-      setThreads(data || []);
+      // `as any` on `.from()` above (the table isn't in the generated types
+      // yet) makes Supabase unable to infer a real result type for `.select()`
+      // — it falls back to a `SelectQueryError` placeholder type rather than
+      // `any`, so a plain cast is needed here to recover the actual shape.
+      setThreads((data as unknown as Thread[]) || []);
     } catch (err) {
       console.error('Failed to fetch threads:', err);
       // Table might not exist yet, show empty state
@@ -90,7 +102,7 @@ export function CoachProgrammeThreads() {
     setCreating(true);
     try {
       const { data, error } = await supabase
-        .from('programme_threads')
+        .from('programme_threads' as any)
         .insert({
           coach_id: user.id,
           title: newTitle.trim(),
@@ -104,18 +116,19 @@ export function CoachProgrammeThreads() {
         .single();
 
       if (error) throw error;
+      const newThread = data as unknown as Thread;
 
       // Add initial AI message
-      await supabase.from('programme_thread_messages').insert({
-        thread_id: data.id,
+      await supabase.from('programme_thread_messages' as any).insert({
+        thread_id: newThread.id,
         sender_id: 'ai',
         sender_name: 'Unbreakable AI',
         content: `Programme thread created: "${newTitle}". ${parseInt(newWeeks) || 4} week ${PROGRAMME_TYPES.find(t => t.id === newType)?.label || newType} plan. Start building sessions, I'll suggest progressions and periodisation as you go.`,
         message_type: 'ai_suggestion',
       });
 
-      setThreads(prev => [{ ...data, messages: [] }, ...prev]);
-      setActiveThread({ ...data, messages: [] });
+      setThreads(prev => [{ ...newThread, messages: [] }, ...prev]);
+      setActiveThread({ ...newThread, messages: [] });
       setNewTitle('');
       setNewDesc('');
       toast.success('Programme thread created');
@@ -140,7 +153,7 @@ export function CoachProgrammeThreads() {
       const senderName = profile?.display_name || profile?.username || 'Coach';
 
       const { data, error } = await supabase
-        .from('programme_thread_messages')
+        .from('programme_thread_messages' as any)
         .insert({
           thread_id: activeThread.id,
           sender_id: user.id,
@@ -152,17 +165,18 @@ export function CoachProgrammeThreads() {
         .single();
 
       if (error) throw error;
+      const newMsg = data as unknown as ThreadMessage;
 
       setActiveThread(prev => prev ? {
         ...prev,
-        messages: [...(prev.messages || []), data],
+        messages: [...(prev.messages || []), newMsg],
       } : null);
 
       setNewMessage('');
 
       // Update thread's updated_at
       await supabase
-        .from('programme_threads')
+        .from('programme_threads' as any)
         .update({ updated_at: new Date().toISOString() })
         .eq('id', activeThread.id);
 
@@ -176,12 +190,12 @@ export function CoachProgrammeThreads() {
   const loadMessages = async (thread: Thread) => {
     try {
       const { data } = await supabase
-        .from('programme_thread_messages')
+        .from('programme_thread_messages' as any)
         .select('*')
         .eq('thread_id', thread.id)
         .order('created_at', { ascending: true });
 
-      setActiveThread({ ...thread, messages: data || [] });
+      setActiveThread({ ...thread, messages: (data as unknown as ThreadMessage[]) || [] });
     } catch {
       setActiveThread({ ...thread, messages: [] });
     }

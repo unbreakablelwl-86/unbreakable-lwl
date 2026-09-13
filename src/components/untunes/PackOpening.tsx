@@ -540,20 +540,25 @@ export function PackOpening({ cards, purchaseType, packTierId, onClose, onMarkOp
         {phase === 'shake' && (
           <motion.div
             key="shake"
-            animate={{
-              rotate: [0, -4, 4, -3, 3, -2, 2, -1, 0],
-              scale: [1, 1.02, 0.98, 1.03, 0.97, 1.02, 0.99, 1.01, 1],
+            // `exit` isn't a valid key inside a `transition` object — the
+            // shake animation (duration 2) and the tear-away exit (duration
+            // 0.5) need their own transitions, so express them as variants
+            // instead, each carrying its own `transition`.
+            variants={{
+              shake: {
+                rotate: [0, -4, 4, -3, 3, -2, 2, -1, 0],
+                scale: [1, 1.02, 0.98, 1.03, 0.97, 1.02, 0.99, 1.01, 1],
+                transition: { duration: 2, ease: 'easeInOut' },
+              },
+              torn: {
+                scale: [1, 1.15, 0],
+                opacity: [1, 1, 0],
+                filter: ['blur(0px)', 'blur(0px)', 'blur(30px)'],
+                transition: { duration: 0.5 },
+              },
             }}
-            exit={{
-              scale: [1, 1.15, 0],
-              opacity: [1, 1, 0],
-              filter: ['blur(0px)', 'blur(0px)', 'blur(30px)'],
-            }}
-            transition={{
-              duration: 2,
-              ease: 'easeInOut',
-              exit: { duration: 0.5 },
-            }}
+            animate="shake"
+            exit="torn"
             className="relative w-64 h-80"
           >
             <PackBackDesign tier={packTierId} />

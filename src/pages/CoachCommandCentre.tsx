@@ -128,34 +128,35 @@ export default function CoachCommandCentre() {
       setMessages([]);
       return;
     }
+    const conversationId = selectedClient.conversationId;
     let mounted = true;
     const loadMessages = async () => {
       setMessagesLoading(true);
       const { data } = await supabase
         .from('messages')
         .select('*, sender:profiles!messages_sender_id_fkey(display_name, username, avatar_url)')
-        .eq('conversation_id', selectedClient.conversationId)
+        .eq('conversation_id', conversationId)
         .eq('is_deleted', false)
         .order('created_at', { ascending: true })
         .limit(100);
       if (mounted && data) setMessages(data as any);
       setMessagesLoading(false);
-      if (selectedClient.conversationId) markConversationAsRead(selectedClient.conversationId);
+      markConversationAsRead(conversationId);
     };
     loadMessages();
 
     // Subscribe to new messages
     const channel = supabase
-      .channel(`coach-msgs-${selectedClient.conversationId}`)
+      .channel(`coach-msgs-${conversationId}`)
       .on('postgres_changes', {
         event: 'INSERT',
         schema: 'public',
         table: 'messages',
-        filter: `conversation_id=eq.${selectedClient.conversationId}`,
+        filter: `conversation_id=eq.${conversationId}`,
       }, (payload) => {
         if (mounted) {
           setMessages(prev => [...prev, payload.new as any]);
-          if (selectedClient.conversationId) markConversationAsRead(selectedClient.conversationId);
+          markConversationAsRead(conversationId);
         }
       })
       .subscribe();

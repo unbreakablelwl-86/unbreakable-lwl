@@ -447,15 +447,13 @@ export const level2Unit1: Unit = {
           heading: 'Why Beginners Get Stronger Before They Get Bigger',
           paragraphs: [
             'When you first start training, your strength increases rapidly — but your muscles don\'t visibly grow for weeks or months. This is because early strength gains are neural, not muscular. Your nervous system learns to:',
+            'This is why practising a movement makes you stronger at that movement, even before hypertrophy occurs. Neural efficiency is the first adaptation.',
           ],
           bullets: [
             'Recruit more motor units simultaneously (more total fibres firing)',
             'Fire motor units more rapidly (rate coding) — producing more force per contraction',
             'Coordinate opposing muscle groups better — reducing wasted energy from co-contraction',
             'Improve the timing and sequencing of muscle activation patterns',
-          ],
-          paragraphs: [
-            'This is why practising a movement makes you stronger at that movement, even before hypertrophy occurs. Neural efficiency is the first adaptation.',
           ],
         },
         {
@@ -530,13 +528,11 @@ export const level2Unit1: Unit = {
           heading: 'Flexibility vs Mobility',
           paragraphs: [
             'These terms are often used interchangeably, but they mean different things:',
+            'For training, mobility is what matters. Being passively flexible but unable to control that range under load is a recipe for injury. A gymnast might be hypermobile but get hurt if they can\'t stabilise those positions. A powerlifter needs enough mobility to hit depth in a squat — but also enough stability to stay rigid under maximal load.',
           ],
           bullets: [
             'Flexibility — the passive range of motion at a joint. How far a muscle can be stretched (e.g., touching your toes with straight legs).',
             'Mobility — the active range of motion at a joint under control. How much range you can use with strength (e.g., reaching overhead with a loaded barbell).',
-          ],
-          paragraphs: [
-            'For training, mobility is what matters. Being passively flexible but unable to control that range under load is a recipe for injury. A gymnast might be hypermobile but get hurt if they can\'t stabilise those positions. A powerlifter needs enough mobility to hit depth in a squat — but also enough stability to stay rigid under maximal load.',
           ],
         },
         {

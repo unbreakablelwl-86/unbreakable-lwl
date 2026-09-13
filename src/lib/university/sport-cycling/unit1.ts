@@ -3,6 +3,7 @@ import type { Unit } from '../types';
 export const sportCyclingUnit1: Unit = {
   number: 1,
   title: 'Cycling — Sport-Specific Training',
+  description: 'Sport-specific demands analysis, strength training, endurance and threshold work, sprint development, injury prevention, nutrition, mental skills, and season planning for cycling.',
   chapters: [
     {
       number: 1,

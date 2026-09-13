@@ -505,7 +505,7 @@ export default function Inbox() {
                     })()}
                     <DropdownMenuItem
                       onClick={() => {
-                        deleteConversation(selectedConversationId);
+                        deleteConversation(selectedConversation.id);
                         setSelectedConversationId(null);
                       }}
                       className="text-destructive"

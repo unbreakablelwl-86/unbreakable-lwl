@@ -82,7 +82,7 @@ function RecipePicker({
 
   const categories = useMemo(() => {
     if (!recipes) return [];
-    const cats = new Set(recipes.map(r => r.category).filter(Boolean));
+    const cats = new Set(recipes.map(r => r.category).filter((c): c is string => Boolean(c)));
     return Array.from(cats).sort();
   }, [recipes]);
 

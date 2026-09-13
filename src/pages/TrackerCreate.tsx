@@ -266,27 +266,38 @@ export default function TrackerCreate() {
       
       setIsSaving(true);
       try {
+        const midpoint = Math.ceil(manualData.weeks / 2);
         const program: GeneratedCardioProgram = {
-          name: manualData.name,
-          activity_type: manualData.activityType,
-          goal: 'fitness',
-          level: 'intermediate',
-          weeks: manualData.weeks,
-          sessions_per_week: manualData.sessionsPerWeek,
+          programName: manualData.name,
           overview: `Custom ${activityLabels[manualData.activityType]} programme — ${manualData.weeks} weeks, ${manualData.sessionsPerWeek} sessions/week`,
-          weekly_plan: Array.from({ length: manualData.weeks }, (_, weekIdx) => ({
-            week: weekIdx + 1,
-            focus: weekIdx < manualData.weeks / 2 ? 'Build phase' : 'Peak phase',
-            sessions: manualData.sessions.map((s, sIdx) => ({
-              day: sIdx + 1,
-              title: s.title || `Session ${sIdx + 1}`,
-              description: s.description || `${s.type} session`,
-              distance_km: s.distance ? parseFloat(s.distance) || undefined : undefined,
-              duration_minutes: s.duration ? parseInt(s.duration) || undefined : undefined,
-              type: s.type.toLowerCase(),
+          activityType: manualData.activityType,
+          weeklySchedule: manualData.sessions.map((s) => ({
+            day: `Day ${s.day}`,
+            focus: s.title || s.type,
+            type: manualData.activityType,
+          })),
+          phases: [
+            { name: 'Build Phase', weeks: `1-${midpoint}`, focus: 'Build consistency and base fitness', notes: '' },
+            { name: 'Peak Phase', weeks: `${midpoint + 1}-${manualData.weeks}`, focus: 'Peak performance and race readiness', notes: '' },
+          ],
+          weeks: Array.from({ length: manualData.weeks }, (_, weekIdx) => ({
+            weekNumber: weekIdx + 1,
+            phase: weekIdx < manualData.weeks / 2 ? 'Build phase' : 'Peak phase',
+            sessions: manualData.sessions.map((s) => ({
+              day: `Day ${s.day}`,
+              sessionType: s.type,
+              duration: s.duration || '',
+              distance: s.distance,
+              intensity: s.type,
+              warmup: '',
+              mainSession: [{ segment: s.title || `Session ${s.day}`, duration: s.duration || '', notes: s.description || undefined }],
+              cooldown: '',
+              notes: s.description || undefined,
             })),
           })),
-          tips: ['Stay consistent', 'Listen to your body', 'Track every session'],
+          progressionRules: ['Stay consistent', 'Listen to your body', 'Track every session'],
+          recoveryTips: [],
+          nutritionTips: [],
         };
         
         await saveProgramMutation.mutateAsync({ program });

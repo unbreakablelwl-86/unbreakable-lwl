@@ -525,7 +525,7 @@ export function useCoachContext() {
     const thirtyDaysAgo = subDays(new Date(), 30).toISOString();
 
     // Fetch profile + coaching profile + all data in parallel
-    const [profileRes, coachProfileRes, workoutRes, foodRes, programRes, mealPlanRes, progressionRes, prRes] = await Promise.all([
+    const [profileRes, coachProfileRes, workoutRes, foodRes, programRes, mealPlanRes, progressionRes, prRes, nutritionGoalsRes] = await Promise.all([
       supabase.from('profiles').select('*').eq('user_id', targetUserId).maybeSingle(),
       supabase.from('coaching_profiles').select('*').eq('user_id', targetUserId).maybeSingle(),
       supabase.from('workout_sessions').select('*, exercise_logs(*)').eq('user_id', targetUserId).eq('status', 'completed').gte('started_at', fourteenDaysAgo).order('started_at', { ascending: false }).limit(10),
@@ -534,6 +534,7 @@ export function useCoachContext() {
       supabase.from('meal_plans').select('id, name, description').eq('user_id', targetUserId).eq('is_active', true).limit(2),
       supabase.from('progression_history').select('*').eq('user_id', targetUserId).gte('recorded_at', thirtyDaysAgo).order('recorded_at', { ascending: false }).limit(30),
       supabase.from('personal_records').select('*').eq('user_id', targetUserId).order('achieved_at', { ascending: false }).limit(20),
+      supabase.from('nutrition_goals').select('daily_calories, daily_protein_g, daily_carbs_g, daily_fat_g, goals_mode').eq('user_id', targetUserId).maybeSingle(),
     ]);
 
     const targetProfile = profileRes.data;
@@ -619,6 +620,13 @@ export function useCoachContext() {
         distanceType: pr.distance_type, activityType: pr.activity_type, timeSeconds: pr.time_seconds,
         distanceKm: pr.distance_km, pacePerKmSeconds: pr.pace_per_km_seconds, achievedAt: format(new Date(pr.achieved_at), 'yyyy-MM-dd'),
       })),
+      nutritionTargets: nutritionGoalsRes.data ? {
+        dailyCalories: (nutritionGoalsRes.data as any).daily_calories,
+        dailyProteinG: (nutritionGoalsRes.data as any).daily_protein_g,
+        dailyCarbsG: (nutritionGoalsRes.data as any).daily_carbs_g,
+        dailyFatG: (nutritionGoalsRes.data as any).daily_fat_g,
+        goalsMode: (nutritionGoalsRes.data as any).goals_mode,
+      } : null,
     };
   };
 

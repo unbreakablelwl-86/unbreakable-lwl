@@ -10,7 +10,7 @@ export interface AdminActivityLog {
   target_type: string | null;
   target_id: string | null;
   details: Record<string, unknown>;
-  created_at: string;
+  created_at: string | null;
   // Joined data
   admin_profile?: {
     display_name: string | null;

@@ -3,6 +3,7 @@ import type { Unit } from '../types';
 export const sportBoxingUnit1: Unit = {
   number: 1,
   title: 'Boxing — Sport-Specific Training',
+  description: 'Sport-specific demands analysis, strength and power, footwork, conditioning, injury prevention, weight management, mental toughness, and fight camp programming for boxing.',
   chapters: [
     {
       number: 1,

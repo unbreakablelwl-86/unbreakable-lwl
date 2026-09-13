@@ -70,8 +70,12 @@ export function NotificationPreferences() {
         .select('notification_preferences')
         .eq('user_id', user.id)
         .maybeSingle();
-      if (data?.notification_preferences) {
-        setPrefs({ ...DEFAULT_PREFS, ...data.notification_preferences });
+      if (
+        data?.notification_preferences &&
+        typeof data.notification_preferences === 'object' &&
+        !Array.isArray(data.notification_preferences)
+      ) {
+        setPrefs({ ...DEFAULT_PREFS, ...(data.notification_preferences as Record<string, boolean>) });
       }
       setLoading(false);
     })();

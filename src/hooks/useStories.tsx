@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { notifyMentionedUsers } from '@/lib/mentionNotifications';
 import type { StoryMediaItem } from '@/components/hub/StoryEditor';
+import type { Json } from '@/integrations/supabase/types';
 
 export interface Story {
   id: string;
@@ -113,8 +114,8 @@ export function useStories() {
         visibility: story.visibility || 'public',
         text_overlays: story.text_overlays || [],
         background_color: story.background_color || null,
-        media_items: story.media_items || [],
-      } as Record<string, unknown>)
+        media_items: (story.media_items || []) as unknown as Json,
+      })
       .select()
       .single();
 

@@ -105,6 +105,10 @@ export function ActiveWorkoutModal({
     learnDaily: false,
     water: false,
     hitYourNumbers: false,
+    sauna: false,
+    coldShower: false,
+    breathworkDone: false,
+    waterGlasses: 0,
     journal: '',
   });
   const [expandedExercise, setExpandedExercise] = useState<string | null>(null);

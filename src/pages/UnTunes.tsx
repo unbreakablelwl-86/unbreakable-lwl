@@ -263,7 +263,11 @@ export default function UnTunes() {
                             <UnTunesTrackRow
                               key={track.id}
                               track={track}
-                              index={track.track_number || i + 1}
+                              // `track_number` is a real column on un_tunes_tracks
+                              // (useAlbumTracks orders by it) but the shared `Track`
+                              // interface in useUnTunes.tsx doesn't declare it yet —
+                              // widen locally here rather than editing that shared hook.
+                              index={(track as Track & { track_number?: number | null }).track_number || i + 1}
                               onPlay={() => playTrack(track, albumTracks)}
                               onShare={() => handleShareToTimeline(track)}
                               isLiked={isLiked(track.id)}

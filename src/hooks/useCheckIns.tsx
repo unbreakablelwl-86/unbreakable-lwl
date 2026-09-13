@@ -9,7 +9,7 @@ export interface CheckIn {
   assignment_id: string;
   coach_id: string;
   athlete_id: string;
-  check_in_number: number;
+  check_in_number: number | null;
   due_date: string | null;
   submitted_at: string | null;
   reviewed_at: string | null;

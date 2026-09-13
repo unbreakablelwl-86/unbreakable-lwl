@@ -121,8 +121,6 @@ export function MovementExecutionView({ program, onClose }: MovementExecutionVie
           p_unit: 'seconds',
           p_rank: 1,
           p_distance_type: distanceLabel,
-          p_source_run_id: null,
-          p_source_session_id: null,
         });
         if (cardId) {
           const { data: cardData } = await supabase.from('achievement_cards').select('rarity').eq('id', cardId).single();

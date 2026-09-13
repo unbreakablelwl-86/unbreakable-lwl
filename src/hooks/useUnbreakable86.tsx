@@ -47,12 +47,12 @@ export function useUnbreakable86() {
   ) => {
     if (!user) return;
     await supabase
-      .from('unbreakable86_enrolments' as any)
+      .from('unbreakable86_enrolments')
       .update({ status: 'reset', updated_at: new Date().toISOString() })
       .eq('id', enrolmentId);
 
     await supabase
-      .from('unbreakable86_enrolments' as any)
+      .from('unbreakable86_enrolments')
       .insert({
         user_id: user.id,
         status: 'active',
@@ -71,7 +71,7 @@ export function useUnbreakable86() {
     try {
       // Get active or most recent enrolment
       const { data: enrolment, error } = await supabase
-        .from('unbreakable86_enrolments' as any)
+        .from('unbreakable86_enrolments')
         .select('*')
         .eq('user_id', user.id)
         .in('status', ['active', 'completed'])
@@ -87,7 +87,7 @@ export function useUnbreakable86() {
       if (enrolment) {
         // Check for today's log
         const { data: logData } = await supabase
-          .from('unbreakable86_daily_logs' as any)
+          .from('unbreakable86_daily_logs')
           .select('*')
           .eq('enrolment_id', (enrolment as any).id)
           .eq('log_date', today)
@@ -97,7 +97,7 @@ export function useUnbreakable86() {
 
         // Count completed days
         const { count } = await supabase
-          .from('unbreakable86_daily_logs' as any)
+          .from('unbreakable86_daily_logs')
           .select('*', { count: 'exact', head: true })
           .eq('enrolment_id', (enrolment as any).id)
           .eq('all_habits_done', true);
@@ -114,7 +114,7 @@ export function useUnbreakable86() {
 
           // Which past dates were completed in full?
           const { data: allLogs } = await supabase
-            .from('unbreakable86_daily_logs' as any)
+            .from('unbreakable86_daily_logs')
             .select('log_date, all_habits_done')
             .eq('enrolment_id', (enrolment as any).id);
 
@@ -178,7 +178,7 @@ export function useUnbreakable86() {
     const startingDay = Math.max(1, streakRow?.current_streak || 1);
 
     const { data, error } = await supabase
-      .from('unbreakable86_enrolments' as any)
+      .from('unbreakable86_enrolments')
       .insert({
         user_id: user.id,
         status: 'active',
@@ -233,7 +233,7 @@ export function useUnbreakable86() {
       };
 
       const { data, error } = await supabase
-        .from('unbreakable86_daily_logs' as any)
+        .from('unbreakable86_daily_logs')
         .insert(newLog)
         .select()
         .single();
@@ -255,7 +255,7 @@ export function useUnbreakable86() {
       updates.all_habits_done = wasBanked || u86DayBanked(projected, therapyChoice);
 
       const { data, error } = await supabase
-        .from('unbreakable86_daily_logs' as any)
+        .from('unbreakable86_daily_logs')
         .update(updates)
         .eq('id', state.todayLog.id)
         .select()
@@ -274,7 +274,7 @@ export function useUnbreakable86() {
         // advancing current_day without re-stamping completed_at.
         const firstCompletion = currentDay + 1 > 86 && !state.enrolment.completed_at;
         await supabase
-          .from('unbreakable86_enrolments' as any)
+          .from('unbreakable86_enrolments')
           .update({
             current_day: currentDay + 1,
             updated_at: new Date().toISOString(),
@@ -300,7 +300,7 @@ export function useUnbreakable86() {
     const banked = wasBanked || u86DayBanked(projected, therapyChoice);
 
     await supabase
-      .from('unbreakable86_daily_logs' as any)
+      .from('unbreakable86_daily_logs')
       .update({ journal, all_habits_done: banked, updated_at: new Date().toISOString() })
       .eq('id', state.todayLog.id);
 
@@ -313,7 +313,7 @@ export function useUnbreakable86() {
       const nextDay = state.enrolment.current_day + 1;
       const firstCompletion = nextDay > 86 && !state.enrolment.completed_at;
       await supabase
-        .from('unbreakable86_enrolments' as any)
+        .from('unbreakable86_enrolments')
         .update({
           current_day: nextDay,
           updated_at: new Date().toISOString(),
@@ -343,7 +343,7 @@ export function useUnbreakable86() {
     if (!state.enrolment) return [];
 
     const { data } = await supabase
-      .from('unbreakable86_daily_logs' as any)
+      .from('unbreakable86_daily_logs')
       .select('*')
       .eq('enrolment_id', state.enrolment.id)
       .order('day_number', { ascending: true });
@@ -356,7 +356,7 @@ export function useUnbreakable86() {
     if (!user) return [];
 
     const { data } = await supabase
-      .from('unbreakable86_enrolments' as any)
+      .from('unbreakable86_enrolments')
       .select('*')
       .eq('user_id', user.id)
       .in('status', ['reset', 'abandoned'])

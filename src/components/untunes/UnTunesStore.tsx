@@ -266,10 +266,11 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
       if (!hasFullAccess) {
         const { error: deductErr } = await supabase.rpc('deduct_tokens', { _amount: tier.cost });
         if (deductErr) {
-          // Fallback: try direct update
-          const { error: upErr } = await supabase.from('profiles')
-            .update({ token_balance: balance - tier.cost })
-            .eq('id', user.id);
+          // Fallback: try direct update. Token balance lives in its own
+          // `token_balances` table (keyed by user_id), not on `profiles`.
+          const { error: upErr } = await supabase.from('token_balances')
+            .update({ balance: balance - tier.cost })
+            .eq('user_id', user.id);
           if (upErr) throw upErr;
         }
       }
@@ -576,7 +577,7 @@ export function UnTunesStore({ onViewCollection }: UnTunesStoreProps) {
                       )}
                       <div className="flex-1 min-w-0">
                         <p className="font-display text-sm tracking-wider text-white truncate">{album.title}</p>
-                        <p className="text-[10px] text-muted-foreground">{album.total_tracks || 12} tracks • Album + all track cards</p>
+                        <p className="text-[10px] text-muted-foreground">{album.track_count || 12} tracks • Album + all track cards</p>
                         <div className="flex items-center gap-1 mt-0.5">
                           <Crown className="w-2.5 h-2.5 text-yellow-400" />
                           <span className="text-[9px] text-yellow-300">Gold cards included</span>

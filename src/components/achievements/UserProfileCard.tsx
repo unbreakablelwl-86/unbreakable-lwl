@@ -531,7 +531,7 @@ export default function UserProfileCard() {
           open={showShareSheet}
           onOpenChange={(open) => !open && setShowShareSheet(false)}
           cardSystem="pb"
-          displayName={profile?.display_name || profile?.username}
+          displayName={profile?.display_name || profile?.username || undefined}
         />
       )}
 

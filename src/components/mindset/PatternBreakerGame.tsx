@@ -118,7 +118,7 @@ const PatternBreakerGame = () => {
 
   // Live elapsed timer
   useEffect(() => {
-    if (gameState === "playing") {
+    if (gameState === "watching" || gameState === "input" || gameState === "success" || gameState === "fail") {
       timerStartRef.current = Date.now();
       setElapsedSecs(0);
       timerIntervalRef.current = setInterval(() => {
@@ -326,11 +326,7 @@ const PatternBreakerGame = () => {
         
           const finalScore = score + sequence.length * 5;
           if (finalScore > 0) {
-            saveScore(finalScore, {
-              max_sequence: maxSequence,
-              total_correct_taps: totalCorrectTaps,
-              perfect_rounds: perfectRounds,
-            });
+            saveScore(finalScore, maxSequence);
           }
         } else {
           // Lives remaining — replay same sequence

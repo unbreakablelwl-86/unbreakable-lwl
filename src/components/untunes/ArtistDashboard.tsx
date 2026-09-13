@@ -16,6 +16,14 @@ import { toast } from 'sonner';
 
 const fadeIn = { initial: { opacity: 0, y: 12 }, animate: { opacity: 1, y: 0 } };
 
+// GENRES (from useUnTunes) doesn't carry an emoji field — just a Lucide
+// `icon` name — so map genre keys to a display emoji locally here.
+const GENRE_EMOJI: Record<string, string> = {
+  power: '⚡',
+  movement: '🏃',
+  mindset: '🧠',
+};
+
 interface ArtistDashboardProps {
   artist: Artist;
 }
@@ -57,7 +65,7 @@ export function UnTunesArtistDashboard({ artist }: ArtistDashboardProps) {
         .getPublicUrl(audioPath);
 
       // Upload cover if provided
-      let coverUrl = null;
+      let coverUrl: string | null = null;
       if (coverFile) {
         const coverPath = `${artist.id}/${Date.now()}-${coverFile.name}`;
         const { error: coverErr } = await supabase.storage
@@ -227,7 +235,7 @@ export function UnTunesArtistDashboard({ artist }: ArtistDashboardProps) {
                       : 'border-border/50 text-muted-foreground hover:border-primary/50'
                   }`}
                 >
-                  {g.emoji} {g.label}
+                  {GENRE_EMOJI[g.key] || '🎵'} {g.label}
                 </button>
               ))}
             </div>

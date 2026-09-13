@@ -77,6 +77,28 @@ export const CARDIO_STAT_ORDER = ['spd', 'end', 'con', 'dst', 'elv', 'rnk'] as c
 export const STAT_LABELS = STRENGTH_STAT_LABELS;
 export const STAT_ORDER = STRENGTH_STAT_ORDER;
 
+/** Shape of the JSONB payload returned by the calculate_pb_card_stats / get_athlete_stats RPCs. */
+interface AthleteStatsRpcResult {
+  str?: number;
+  pwr?: number;
+  spd?: number;
+  end?: number;
+  con?: number;
+  pgs?: number;
+  exp?: number;
+  rnk?: number;
+  dst?: number;
+  elv?: number;
+  overall?: number;
+  total_volume_kg?: number;
+  max_e1rm?: number;
+  gl_score?: number;
+  total_run_km?: number;
+  best_pace?: number;
+  longest_run_km?: number;
+  bodyweight?: number;
+}
+
 export function useAthleteStats() {
   const { user } = useAuth();
   const [stats, setStats] = useState<AthleteStats | null>(null);
@@ -88,15 +110,17 @@ export function useAthleteStats() {
 
     try {
       // Try new per-type stats function first
-      const { data, error } = await supabase.rpc('calculate_pb_card_stats', {
+      const { data: dataRaw, error } = await supabase.rpc('calculate_pb_card_stats', {
         p_user_id: user.id,
         p_activity_category: activityCategory || 'lift',
-        p_exercise_name: exerciseName || null,
+        p_exercise_name: exerciseName || undefined,
       });
+      const data = dataRaw as AthleteStatsRpcResult | null;
 
       if (error) {
         // Fallback to legacy function if new one isn't deployed yet
-        const { data: legacyData } = await supabase.rpc('get_athlete_stats', { p_user_id: user.id });
+        const { data: legacyDataRaw } = await supabase.rpc('get_athlete_stats', { p_user_id: user.id });
+        const legacyData = legacyDataRaw as AthleteStatsRpcResult | null;
         if (legacyData) {
           const parsed: AthleteStats = {
             str: legacyData?.str ?? 0, pwr: legacyData?.pwr ?? 0,

@@ -297,17 +297,13 @@ export const mindsetL3Unit2: Unit = {
           heading: 'Acute vs Chronic Responses to Hypoxia',
           paragraphs: [
             'When you first experience reduced oxygen, your body mounts an immediate response:',
+            'If the hypoxic exposure is repeated consistently over days and weeks, chronic adaptations begin:',
           ],
           bullets: [
             'Breathing rate increases — your body tries to get more air in',
             'Heart rate rises — pumping blood faster to deliver available oxygen more quickly',
             'Blood pressure increases — prioritising oxygen delivery to vital organs',
             'Cognitive function may decrease — the brain is extremely sensitive to oxygen levels',
-          ],
-          paragraphs: [
-            'If the hypoxic exposure is repeated consistently over days and weeks, chronic adaptations begin:',
-          ],
-          bullets: [
             'EPO production increases — erythropoietin, a hormone produced by the kidneys, stimulates the bone marrow to produce more red blood cells',
             'Haemoglobin concentration rises — more oxygen-carrying capacity per unit of blood',
             'Capillary density increases — more blood vessels in muscle tissue means better oxygen delivery at the cellular level',
@@ -333,6 +329,7 @@ export const mindsetL3Unit2: Unit = {
           heading: 'Breath-Hold Walking Protocol',
           paragraphs: [
             'Developed from the Oxygen Advantage methodology, breath-hold walking is the simplest way to introduce hypoxic training without any equipment:',
+            'This protocol creates repeated transient drops in blood oxygen saturation, triggering a mild version of the same adaptations seen at altitude. It also trains your chemoreceptors to tolerate higher CO2 levels, which improves breathing efficiency during exercise.',
           ],
           bullets: [
             'Walk at a normal pace on flat ground',
@@ -341,9 +338,6 @@ export const mindsetL3Unit2: Unit = {
             'Release the hold, breathe normally through your nose for 30-60 seconds',
             'Repeat 8-10 times',
             'Your step count will typically increase over weeks as your CO2 tolerance and oxygen efficiency improve',
-          ],
-          paragraphs: [
-            'This protocol creates repeated transient drops in blood oxygen saturation, triggering a mild version of the same adaptations seen at altitude. It also trains your chemoreceptors to tolerate higher CO2 levels, which improves breathing efficiency during exercise.',
           ],
         },
         {

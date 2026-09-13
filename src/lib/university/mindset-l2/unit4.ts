@@ -222,15 +222,13 @@ export const mindsetL2Unit4: Unit = {
           heading: 'The Architecture of Sleep',
           paragraphs: [
             'Sleep isn\'t one uniform state — it cycles through distinct stages roughly every 90 minutes:',
+            'Deep sleep (N3) dominates the first half of the night. REM sleep dominates the second half. This is why cutting sleep short costs you REM, and going to bed too late costs you deep sleep. Both matter — you need a full 7-9 hours to cycle through all stages adequately.',
           ],
           bullets: [
             'Stage 1 (N1) — light sleep, transition from wakefulness. Lasts 5-10 minutes. Easy to wake from.',
             'Stage 2 (N2) — body temperature drops, heart rate slows. Memory consolidation begins. Makes up about 50% of total sleep.',
             'Stage 3 (N3) — deep sleep / slow-wave sleep. This is where physical recovery happens: growth hormone release peaks, muscle repair occurs, immune function is restored. Hardest to wake from.',
             'REM Sleep — rapid eye movement sleep. Brain activity increases to near-waking levels. This is where emotional processing, creativity, and procedural memory consolidation occur. Dreams happen here.',
-          ],
-          paragraphs: [
-            'Deep sleep (N3) dominates the first half of the night. REM sleep dominates the second half. This is why cutting sleep short costs you REM, and going to bed too late costs you deep sleep. Both matter — you need a full 7-9 hours to cycle through all stages adequately.',
           ],
           imageUrl: getUniversityImage('mindl2-u4-ch5-sleep-stages'),
           imageAlt: 'Hypnogram showing sleep architecture across an 8-hour night with deep sleep dominant early and REM dominant later',

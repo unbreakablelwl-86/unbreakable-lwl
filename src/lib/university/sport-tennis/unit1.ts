@@ -3,6 +3,7 @@ import type { Unit } from '../types';
 export const sportTennisUnit1: Unit = {
   number: 1,
   title: 'Tennis — Sport-Specific Training',
+  description: 'Sport-specific demands analysis, strength and power, speed and agility, conditioning, injury prevention, nutrition, mental skills, and season planning for tennis.',
   chapters: [
     {
       number: 1,

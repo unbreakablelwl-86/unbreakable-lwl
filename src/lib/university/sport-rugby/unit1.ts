@@ -3,6 +3,7 @@ import type { Unit } from '../types';
 export const sportRugbyUnit1: Unit = {
   number: 1,
   title: 'Rugby — Sport-Specific Training',
+  description: 'Sport-specific demands analysis, strength and power, speed and evasion, conditioning, injury prevention, nutrition, mental resilience, and season planning for rugby.',
   chapters: [
     {
       number: 1,

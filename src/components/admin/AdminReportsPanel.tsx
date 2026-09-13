@@ -127,7 +127,7 @@ export function AdminReportsPanel() {
 
                 <div className="flex items-center justify-between text-sm">
                   <div className="text-muted-foreground">
-                    Reported by {report.reporter_profile?.display_name || 'Unknown'} • {format(new Date(report.created_at), 'MMM d, yyyy h:mm a')}
+                    Reported by {report.reporter_profile?.display_name || 'Unknown'} • {report.created_at ? format(new Date(report.created_at), 'MMM d, yyyy h:mm a') : 'Unknown time'}
                   </div>
                   {report.status === 'pending' && (
                     <div className="flex gap-2">

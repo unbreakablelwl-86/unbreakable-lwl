@@ -10,7 +10,7 @@ export interface Milestone {
   description: string | null;
   icon: string | null;
   value: number | null;
-  is_shared: boolean;
+  is_shared: boolean | null;
   visibility: 'public' | 'friends' | 'private';
   achieved_at: string;
   created_at: string;

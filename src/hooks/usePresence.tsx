@@ -20,7 +20,9 @@ export function usePresenceHeartbeat() {
   const sendHeartbeat = useCallback(async () => {
     if (!user) return;
     try {
-      await supabase.rpc('update_presence' as string, { p_page: location.pathname });
+      // 'update_presence' is a real DB function (see supabase/migrations/20260529_final_audit_fixes.sql)
+      // that is not present in the generated RPC name union, so it needs an explicit cast here.
+      await supabase.rpc('update_presence' as any, { p_page: location.pathname });
     } catch {
       // Silently fail
     }

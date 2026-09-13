@@ -128,7 +128,6 @@ function PostGridItem({ post, onClick }: { post: OwnPost; onClick: () => void })
 
   // Detect AI auto-posts (same logic as StatusCard)
   const isAutoPost =
-    post.metadata?.source === 'ai_coach' ||
     /^(🏋️|💪)\s*(Session|Workout)/i.test(post.content?.trim() || '') ||
     /streak.*\d/i.test(post.content?.trim() || '') ||
     /^(📋|🤖|🧠)\s*(Daily|AI Coach|Habit)/i.test(post.content?.trim() || '') ||
@@ -286,7 +285,7 @@ function PostDetailModal({
         };
 
         // Add image if available
-        const mediaUrl = post.image_url || post.media_items?.[0]?.url;
+        const mediaUrl = post.image_url || post.media_items?.[0]?.media_url;
         if (mediaUrl) {
           try {
             const resp = await fetch(mediaUrl);

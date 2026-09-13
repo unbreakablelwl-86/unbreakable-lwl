@@ -17,7 +17,7 @@ export interface UserReport {
   resolution_notes: string | null;
   reported_content_type: string | null;
   reported_content_id: string | null;
-  created_at: string;
+  created_at: string | null;
   // Joined data
   reporter_profile?: {
     display_name: string | null;
@@ -56,7 +56,7 @@ export function useAdminReports() {
       if (error) throw error;
 
       // Fetch profile data for reporters and reported users
-      const reporterIds = [...new Set((data || []).map(r => r.reporter_id).filter(Boolean))];
+      const reporterIds = [...new Set((data || []).map(r => r.reporter_id).filter((id): id is string => Boolean(id)))];
       const reportedIds = [...new Set((data || []).map(r => r.reported_user_id))];
       const allUserIds = [...new Set([...reporterIds, ...reportedIds])];
 

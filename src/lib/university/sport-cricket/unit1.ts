@@ -3,6 +3,7 @@ import type { Unit } from '../types';
 export const sportCricketUnit1: Unit = {
   number: 1,
   title: 'Cricket — Sport-Specific Training',
+  description: 'Sport-specific demands analysis, strength and power, speed and agility, conditioning, injury prevention, nutrition, mental skills, and season planning for cricket.',
   chapters: [
     {
       number: 1,

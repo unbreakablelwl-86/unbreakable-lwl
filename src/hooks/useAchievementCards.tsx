@@ -312,9 +312,9 @@ export function useAchievementCards() {
       p_value: value,
       p_unit: unit,
       p_rank: rank,
-      p_distance_type: distanceType || null,
-      p_source_run_id: sourceRunId || null,
-      p_source_session_id: sourceSessionId || null,
+      p_distance_type: distanceType || undefined,
+      p_source_run_id: sourceRunId || undefined,
+      p_source_session_id: sourceSessionId || undefined,
     });
 
     if (error) {
@@ -327,7 +327,7 @@ export function useAchievementCards() {
       p_user_id: user.id,
       p_activity_category: activityCategory,
       p_exercise_name: exerciseName,
-      p_distance_type: distanceType || null,
+      p_distance_type: distanceType || undefined,
     });
 
     // Auto-trigger AI bio generation for the new card

@@ -120,7 +120,7 @@ export function WorkoutCommentSection({
                   <Avatar className="w-8 h-8">
                     <AvatarImage src={comment.profiles?.avatar_url || ''} />
                     <AvatarFallback className="bg-primary/10 text-primary text-xs">
-                      {getInitials(comment.profiles?.display_name)}
+                      {getInitials(comment.profiles?.display_name ?? null)}
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex-1">

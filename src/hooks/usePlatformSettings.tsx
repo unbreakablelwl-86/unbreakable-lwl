@@ -10,8 +10,8 @@ export interface PlatformSetting {
   setting_key: string;
   setting_value: unknown;
   description: string | null;
-  category: string;
-  updated_at: string;
+  category: string | null;
+  updated_at: string | null;
 }
 
 export interface PlatformSettingsMap {

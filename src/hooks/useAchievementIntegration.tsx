@@ -85,8 +85,8 @@ export function useAchievementIntegration() {
           p_value: e1rm,
           p_unit: 'kg',
           p_rank: 1,
-          p_distance_type: null,
-          p_source_run_id: null,
+          p_distance_type: undefined,
+          p_source_run_id: undefined,
           p_source_session_id: lift.sessionId,
         });
 
@@ -112,7 +112,7 @@ export function useAchievementIntegration() {
               p_user_id: user.id,
               p_activity_category: 'lift',
               p_exercise_name: exerciseName,
-              p_distance_type: null,
+              p_distance_type: undefined,
             });
           } catch { /* non-critical */ }
         }
@@ -142,7 +142,7 @@ export function useAchievementIntegration() {
         p_rank: 1,
         p_distance_type: run.distanceType,
         p_source_run_id: run.runId,
-        p_source_session_id: null,
+        p_source_session_id: undefined,
       });
 
       if (cardId) {
@@ -166,7 +166,7 @@ export function useAchievementIntegration() {
           await supabase.rpc('check_global_pb_ranking', {
             p_user_id: user.id,
             p_activity_category: run.activityType,
-            p_exercise_name: null,
+            p_exercise_name: undefined,
             p_distance_type: run.distanceType,
           });
         } catch { /* non-critical */ }

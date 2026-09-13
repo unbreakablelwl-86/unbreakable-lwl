@@ -43,10 +43,10 @@ export function MyFuel() {
   useEffect(() => {
     if (showGoalsModal && goals) {
       setEditedGoals({
-        daily_calories: goals.daily_calories,
-        daily_protein_g: goals.daily_protein_g,
-        daily_carbs_g: goals.daily_carbs_g,
-        daily_fat_g: goals.daily_fat_g,
+        daily_calories: goals.daily_calories ?? 2000,
+        daily_protein_g: goals.daily_protein_g ?? 150,
+        daily_carbs_g: goals.daily_carbs_g ?? 200,
+        daily_fat_g: goals.daily_fat_g ?? 70,
       });
     }
   }, [showGoalsModal, goals]);

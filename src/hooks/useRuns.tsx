@@ -20,12 +20,12 @@ export interface Run {
   calories_burned: number | null;
   route_polyline: string | null;
   map_snapshot_url: string | null;
-  is_gps_tracked: boolean;
+  is_gps_tracked: boolean | null;
   weather_conditions: string | null;
   temperature_celsius: number | null;
   notes: string | null;
   activity_type: CardioActivityType;
-  is_public: boolean;
+  is_public: boolean | null;
   visibility: 'public' | 'friends' | 'private';
   comments_enabled: boolean;
   created_at: string;

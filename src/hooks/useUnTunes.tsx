@@ -113,6 +113,13 @@ const defaultPlayerState: PlayerState = {
 
 interface PlayerContextType {
   state: PlayerState;
+  // Flattened read-through convenience accessors mirroring `state` — several
+  // consumers (AchievementUnlockOverlay, TrackRow, the UnTunes page) read
+  // these straight off the context instead of through `state`, so they're
+  // kept in sync with `state` below rather than duplicated as separate values.
+  currentTrack: Track | null;
+  queue: Track[];
+  isPlaying: boolean;
   playTrack: (track: Track, queue?: Track[]) => void;
   togglePlay: () => void;
   nextTrack: () => void;
@@ -141,6 +148,9 @@ interface PlayerContextType {
 
 export const PlayerContext = createContext<PlayerContextType>({
   state: defaultPlayerState,
+  currentTrack: defaultPlayerState.currentTrack,
+  queue: defaultPlayerState.queue,
+  isPlaying: defaultPlayerState.isPlaying,
   playTrack: () => {},
   togglePlay: () => {},
   nextTrack: () => {},
@@ -523,6 +533,9 @@ export function usePlayerProvider() {
 
   return {
     state,
+    currentTrack: state.currentTrack,
+    queue: state.queue,
+    isPlaying: state.isPlaying,
     playTrack,
     togglePlay,
     nextTrack,
@@ -638,13 +651,41 @@ export function useArtists() {
 
   useEffect(() => {
     (async () => {
+      // `un_tunes_artists` has no `subscription_status` column (that filter
+      // previously named a column that doesn't exist, which Postgrest would
+      // reject at runtime — every call silently returned no rows). The real
+      // "is this artist live" flag is `is_active`.
       const { data } = await supabase
         .from('un_tunes_artists')
         .select('*')
-        .eq('subscription_status', 'active')
+        .eq('is_active', true)
         .order('follower_count', { ascending: false });
 
-      if (data) setArtists(data as Artist[]);
+      // The real row shape doesn't carry `genre_tags` / `social_links` /
+      // `subscription_status` the way `Artist` declares them — map the actual
+      // columns (`genre`, `social_instagram`/`social_twitter`/`social_website`,
+      // `is_active`) into that shape instead of casting past the mismatch.
+      if (data) {
+        setArtists(data.map((a): Artist => ({
+          id: a.id,
+          user_id: a.user_id ?? '',
+          artist_name: a.artist_name,
+          bio: a.bio ?? '',
+          genre_tags: a.genre ? [a.genre] : [],
+          avatar_url: a.avatar_url,
+          banner_url: a.banner_url,
+          social_links: {
+            ...(a.social_instagram ? { instagram: a.social_instagram } : {}),
+            ...(a.social_twitter ? { twitter: a.social_twitter } : {}),
+            ...(a.social_website ? { website: a.social_website } : {}),
+          },
+          is_verified: a.is_verified ?? false,
+          follower_count: a.follower_count ?? 0,
+          total_plays: a.total_plays ?? 0,
+          created_at: a.created_at ?? '',
+          subscription_status: a.is_active ? 'active' : 'expired',
+        })));
+      }
       setLoading(false);
     })();
   }, []);

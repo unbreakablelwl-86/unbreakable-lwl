@@ -27,6 +27,11 @@ function formatTime(t: string) {
 
 type Step = 'service' | 'schedule' | 'confirm';
 
+interface CreateBookingResponse {
+  error?: string;
+  checkout_url?: string;
+}
+
 export function CoachBookingFlow({ coach, isUnlocked, onUnlock, availableSlots }: Props) {
   const { user } = useAuth();
   const [step, setStep] = useState<Step>('service');
@@ -136,14 +141,16 @@ export function CoachBookingFlow({ coach, isUnlocked, onUnlock, availableSlots }
       });
 
       if (error) throw error;
-      if (data?.error) {
-        toast.error(data.error);
+
+      const bookingResult = data as CreateBookingResponse | null;
+      if (bookingResult?.error) {
+        toast.error(bookingResult.error);
         return;
       }
 
       // If coach has Stripe Connect, redirect to checkout
-      if (data?.checkout_url) {
-        window.location.href = data.checkout_url;
+      if (bookingResult?.checkout_url) {
+        window.location.href = bookingResult.checkout_url;
         return;
       }
 

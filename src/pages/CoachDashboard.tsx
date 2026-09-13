@@ -92,8 +92,9 @@ const CoachDashboard = ({ embedded = false }: { embedded?: boolean }) => {
         _coach_id: user.id, _start: start, _end: end
       });
       if (data && !error) {
-        setCalBookings(data.bookings || []);
-        setCalHabits(data.habits || []);
+        const calendarData = data as unknown as { bookings?: any[]; habits?: any[] };
+        setCalBookings(calendarData.bookings || []);
+        setCalHabits(calendarData.habits || []);
       }
     } catch (e) { console.error('Calendar fetch error:', e); }
     setCalLoading(false);
@@ -111,11 +112,12 @@ const CoachDashboard = ({ embedded = false }: { embedded?: boolean }) => {
     setAutoFilling(true);
     try {
       const { data, error } = await supabase.rpc('auto_fill_daily_habits', { _user_id: user.id });
-      if (data?.success) {
+      const result = data as unknown as { success?: boolean; reason?: string } | null;
+      if (result?.success) {
         (await import('sonner')).toast.success('Daily habits auto-filled ✓');
         fetchCalendar();
       } else {
-        (await import('sonner')).toast.error(data?.reason || 'Could not auto-fill');
+        (await import('sonner')).toast.error(result?.reason || 'Could not auto-fill');
       }
     } catch (e) { (await import('sonner')).toast.error('Auto-fill failed'); }
     setAutoFilling(false);

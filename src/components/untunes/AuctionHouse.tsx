@@ -194,12 +194,13 @@ function SellCardModal({ cards, onClose, onListCreated }: {
         p_card_id: selectedCard.id,
         p_listing_type: listingType,
         p_starting_price: parseFloat(startingPrice) || 1,
-        p_buy_now_price: buyNowPrice ? parseFloat(buyNowPrice) : null,
+        p_buy_now_price: buyNowPrice ? parseFloat(buyNowPrice) : undefined,
         p_duration_hours: parseInt(duration) || 24,
       });
       if (error) throw error;
-      if (data?.error) {
-        toast.error(data.error);
+      const result = data as { error?: string } | null;
+      if (result?.error) {
+        toast.error(result.error);
         return;
       }
       toast.success('Card listed!');
@@ -508,21 +509,22 @@ export function AuctionHouse({ onBack }: AuctionHouseProps) {
         p_amount: amount,
       });
       if (error) throw error;
-      if (data?.error) {
-        toast.error(data.error);
+      const result = data as { error?: string; anti_snipe_extended?: boolean; new_ends_at?: string } | null;
+      if (result?.error) {
+        toast.error(result.error);
         return;
       }
       toast.success(`Bid placed: ${amount} tokens`);
       // Anti-snipe: if bid placed in last 2 minutes, extend auction by 2 minutes
-      if (data?.anti_snipe_extended) {
+      if (result?.anti_snipe_extended) {
         toast.success('Anti-snipe: auction extended by 2 minutes');
       }
       setListings(prev => prev.map(l =>
-        l.id === bidModal.id ? { 
-          ...l, 
-          current_bid: amount, 
+        l.id === bidModal.id ? {
+          ...l,
+          current_bid: amount,
           current_bidder_id: user.id,
-          ...(data?.new_ends_at ? { ends_at: data.new_ends_at } : {}),
+          ...(result?.new_ends_at ? { ends_at: result.new_ends_at } : {}),
         } : l
       ));
     } catch (err) {
@@ -541,11 +543,12 @@ export function AuctionHouse({ onBack }: AuctionHouseProps) {
         p_listing_id: listing.id,
       });
       if (error) throw error;
-      if (data?.error) {
-        toast.error(data.error);
+      const result = data as { error?: string; price?: number } | null;
+      if (result?.error) {
+        toast.error(result.error);
         return;
       }
-      toast.success(`Purchased for ${data.price} tokens!`);
+      toast.success(`Purchased for ${result?.price ?? price} tokens!`);
       refreshBalance();
       fetchListings();
     } catch (err) {

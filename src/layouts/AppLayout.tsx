@@ -46,7 +46,11 @@ import CasioZoneIcon from '@/components/icons/CasioZoneIcon';
 /* ─── All available nav items ─── */
 interface NavItemDef {
   id: string;
-  icon?: React.ComponentType<React.SVGProps<SVGSVGElement> & { strokeWidth?: number }>;
+  // Widened to match lucide-react's actual icon component shape (LucideProps
+  // types `size`/`strokeWidth` as `string | number`, not plain `number`) plus
+  // CasioZoneIcon, a plain custom SVG component — both get assigned to this
+  // field below, and nav items are rendered with `<Icon size={...} />`.
+  icon?: React.ComponentType<React.SVGProps<SVGSVGElement> & { size?: number | string; strokeWidth?: number | string }>;
   label: string;
   path: string;
   isShield?: boolean;

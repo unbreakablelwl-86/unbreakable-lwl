@@ -86,16 +86,17 @@ interface UserCard {
   opened_at: string | null;
   created_at: string;
   card_type: string | null;
-  purchased: boolean;
+  purchased: boolean | null;
   date_stamped: string | null;
-  // joined data
+  // joined data — cover/artwork URLs come straight off the tracks/albums/
+  // brand_cards tables, which store them as nullable columns.
   track_title?: string;
-  track_cover?: string;
+  track_cover?: string | null;
   track_artist?: string;
   album_title?: string;
-  album_cover?: string;
+  album_cover?: string | null;
   brand_title?: string;
-  brand_artwork?: string;
+  brand_artwork?: string | null;
 }
 
 const RARITY_ORDER = ['platinum', 'diamond', 'gold', 'silver', 'bronze', 'standard'];
@@ -556,7 +557,6 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
       trackOnly.sort(sortByRarity);
       // Use the first track's cover art as group icon (matches album style)
       const trackCover = trackOnly.find(c => c.track_cover)?.track_cover
-        || trackOnly.find(c => c.image_url)?.image_url
         || null;
       groups.push({ id: '_tracks', name: 'Singles & Tracks', cover: trackCover, cards: trackOnly });
     }
@@ -567,7 +567,6 @@ export function CollectionGallery({ onBack }: CollectionGalleryProps) {
         c.brand_artwork && (c.brand_title || '').toUpperCase().includes('UNBREAKABLE')
       )?.brand_artwork
         || brandCards.find(c => c.brand_artwork)?.brand_artwork
-        || brandCards.find(c => c.image_url)?.image_url
         || null;
       groups.push({ id: '_brand', name: 'Brand Cards', cover: brandCover, cards: brandCards });
     }

@@ -22,7 +22,6 @@ export interface Profile {
   social_facebook: string | null;
   social_youtube: string | null;
   social_snapchat: string | null;
-  gender: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -63,8 +62,15 @@ export function useProfile() {
 
     if (error) {
       console.error('Error fetching profile:', error);
+    } else if (data) {
+      setProfile({
+        ...data,
+        total_distance_km: data.total_distance_km ?? 0,
+        total_runs: data.total_runs ?? 0,
+        total_time_seconds: data.total_time_seconds ?? 0,
+      });
     } else {
-      setProfile(data);
+      setProfile(null);
     }
     setLoading(false);
   };

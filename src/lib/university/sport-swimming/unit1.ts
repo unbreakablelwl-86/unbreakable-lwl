@@ -3,6 +3,7 @@ import type { Unit } from '../types';
 export const sportSwimmingUnit1: Unit = {
   number: 1,
   title: 'Swimming — Sport-Specific Training',
+  description: 'Sport-specific demands analysis, strength and power, speed and technique, conditioning, injury prevention, nutrition, mental performance, and season planning for swimming.',
   chapters: [
     {
       number: 1,

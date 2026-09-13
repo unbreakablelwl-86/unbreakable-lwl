@@ -3,6 +3,7 @@ import type { Unit } from '../types';
 export const sportRunningUnit1: Unit = {
   number: 1,
   title: 'Running — Sport-Specific Training',
+  description: 'Sport-specific demands analysis, strength training, speed development, race conditioning, injury prevention, nutrition, mental skills, and training periodisation for running.',
   chapters: [
     {
       number: 1,

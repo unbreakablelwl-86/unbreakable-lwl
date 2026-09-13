@@ -12,7 +12,7 @@ import {
   Trophy, Zap, Activity, Crown, Diamond, Sparkles,
   Shield, Medal, Award, Globe, TrendingUp, X, Share2,
   Download, Trash2, Loader2, ChevronLeft, ChevronRight,
-  ChevronDown, AlertCircle, Camera, Coins, Lock, Image, Video, ShoppingCart,
+  ChevronDown, AlertCircle, Camera, Coins, Lock, Image as ImageIcon, Video, ShoppingCart,
 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { CardShareSheet, generateShareImage } from '@/components/achievements/CardShareSheet';
@@ -430,7 +430,7 @@ function CardPurchaseModal({
                 : "border-border hover:border-border/60 bg-card"
             )}
           >
-            <Image className="w-5 h-5 mx-auto mb-1.5 text-white" />
+            <ImageIcon className="w-5 h-5 mx-auto mb-1.5 text-white" />
             <p className="text-[10px] font-display tracking-wider text-white">IMAGE</p>
             <div className="flex items-center justify-center gap-1 mt-1">
               <Coins className="w-3 h-3 text-yellow-400" />
@@ -1028,7 +1028,7 @@ export function AchievementCollection() {
             </div>
             <div className="grid grid-cols-2 gap-2">
               <div className="rounded-lg bg-zinc-800/50 border border-zinc-700/50 p-2.5 text-center">
-                <Image className="w-4 h-4 mx-auto mb-1 text-white/70" />
+                <ImageIcon className="w-4 h-4 mx-auto mb-1 text-white/70" />
                 <p className="text-[9px] font-display tracking-wider text-white/80">IMAGE CARD</p>
                 <div className="flex items-center justify-center gap-1 mt-0.5">
                   <Coins className="w-2.5 h-2.5 text-yellow-400" />
@@ -1304,11 +1304,11 @@ function NewestDropdownView({
 
     // Sort newest first
     const sorted = [...cards].sort((a, b) =>
-      new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      new Date(b.earned_at).getTime() - new Date(a.earned_at).getTime()
     );
 
     sorted.forEach(card => {
-      const d = new Date(card.created_at);
+      const d = new Date(card.earned_at);
       if (d >= today) groups[0].cards.push(card);
       else if (d >= weekAgo) groups[1].cards.push(card);
       else if (d >= monthAgo) groups[2].cards.push(card);

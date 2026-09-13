@@ -3,6 +3,7 @@ import type { Unit } from '../types';
 export const sportMMAUnit1: Unit = {
   number: 1,
   title: 'MMA — Sport-Specific Training',
+  description: 'Sport-specific demands analysis, strength and power, conditioning, flexibility and mobility, injury prevention, weight management, mental preparation, and fight camp periodisation for MMA.',
   chapters: [
     {
       number: 1,

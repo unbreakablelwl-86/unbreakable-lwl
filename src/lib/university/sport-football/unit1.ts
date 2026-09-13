@@ -3,6 +3,7 @@ import type { Unit } from '../types';
 export const sportFootballUnit1: Unit = {
   number: 1,
   title: 'Football — Sport-Specific Training',
+  description: 'Sport-specific demands analysis, strength and power, speed and movement, conditioning, injury prevention, nutrition, mental performance, and season planning for football.',
   chapters: [
     {
       number: 1,

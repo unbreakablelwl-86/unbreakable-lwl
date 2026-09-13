@@ -156,7 +156,6 @@ function PostGridItem({ post, onClick }: { post: UserPost; onClick: () => void }
 
   // Detect AI auto-posts
   const isAutoPost =
-    post.metadata?.source === 'ai_coach' ||
     /^(🏋️|💪)\s*(Session|Workout)/i.test(post.content?.trim() || '') ||
     /streak.*\d/i.test(post.content?.trim() || '') ||
     /^(📋|🤖|🧠)\s*(Daily|AI Coach|Habit)/i.test(post.content?.trim() || '') ||

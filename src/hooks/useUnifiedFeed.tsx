@@ -247,6 +247,7 @@ export function useUnifiedFeed() {
 
         return {
           ...milestone,
+          is_shared: milestone.is_shared ?? false,
           visibility: (milestone.visibility || 'public') as 'public' | 'friends' | 'private',
           timestamp: new Date(milestone.achieved_at),
           profiles: profileData || undefined,
