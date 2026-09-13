@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import { CalendarIcon, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -34,6 +34,26 @@ export function StartDatePickerDialog({
   programName,
 }: StartDatePickerDialogProps) {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  // The calendar popover renders on top of this dialog's own footer (Cancel /
+  // START PROGRAMME) rather than pushing it down, since Popover content is
+  // portaled and positioned over the page instead of reserving layout space.
+  // Left uncontrolled, the popover stayed open after a date was picked and
+  // permanently covered those buttons -- on narrower/mobile widths especially,
+  // there was no visible way to actually confirm the new date. Controlling
+  // `open` and closing it the moment a date is selected keeps the footer
+  // reachable immediately after picking a date.
+  const [calendarOpen, setCalendarOpen] = useState(false);
+
+  // This dialog stays mounted between programmes (only `open` toggles), so
+  // without this the date picker would carry over whatever was last picked
+  // (or left mid-pick) from a previous programme instead of defaulting back
+  // to today each time it's freshly opened.
+  useEffect(() => {
+    if (open) {
+      setSelectedDate(new Date());
+      setCalendarOpen(false);
+    }
+  }, [open]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -47,7 +67,7 @@ export function StartDatePickerDialog({
         </DialogHeader>
 
         <div className="flex justify-center py-4">
-          <Popover>
+          <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
             <PopoverTrigger asChild>
               <Button
                 variant="outline"
@@ -64,7 +84,11 @@ export function StartDatePickerDialog({
               <Calendar
                 mode="single"
                 selected={selectedDate}
-                onSelect={(d) => d && setSelectedDate(d)}
+                onSelect={(d) => {
+                  if (!d) return;
+                  setSelectedDate(d);
+                  setCalendarOpen(false);
+                }}
                 initialFocus
                 className={cn('p-3 pointer-events-auto')}
               />
