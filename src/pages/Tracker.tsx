@@ -10,6 +10,7 @@ import { usePersonalRecords, PersonalRecord } from '@/hooks/usePersonalRecords';
 import { useSegments, Segment } from '@/hooks/useSegments';
 import { CardioTrackerModal } from '@/components/tracker/CardioTrackerModal';
 import { AuthModal } from '@/components/tracker/AuthModal';
+import { ActivityRow } from '@/components/tracker/ActivityRow';
 import { format, startOfWeek, endOfWeek, isWithinInterval, subWeeks } from 'date-fns';
 import {
   Footprints, Bike, Play, Crown,
@@ -384,46 +385,14 @@ export default function Tracker() {
                   </Button>
                 </div>
               ) : (
-                filteredRuns.map((run) => {
-                  const Icon = ACTIVITY_ICONS[run.activity_type] || Activity;
-                  return (
-                    <div key={run.id} className="w-full flex items-start gap-3 p-3.5 rounded-xl border border-border bg-card hover:border-primary/30 transition-all">
-                      <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 border"
-                       >
-                        <Icon className="w-5 h-5 text-primary" style={{ filter: 'drop-shadow(0 0 4px hsl(var(--primary) / 0.4))' }} />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between mb-1">
-                          <h4 className="font-display text-sm text-foreground tracking-wide truncate">
-                            {run.title || `${ACTIVITY_LABELS[run.activity_type]} Session`}
-                          </h4>
-                          <span className="text-[10px] text-muted-foreground shrink-0 ml-2">
-                            {format(new Date(run.started_at), 'MMM d')}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                          <span className="flex items-center gap-1">
-                            <MapPin className="w-3 h-3 text-primary/60" />
-                            {run.distance_km.toFixed(2)} km
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <Clock className="w-3 h-3 text-primary/60" />
-                            {formatDuration(run.duration_seconds)}
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <Timer className="w-3 h-3 text-primary/60" />
-                            {formatPace(run.pace_per_km_seconds)}/km
-                          </span>
-                        </div>
-                        {run.elevation_gain_m ? (
-                          <div className="flex items-center gap-1 mt-1 text-[10px] text-muted-foreground">
-                            <TrendingUp className="w-3 h-3" /> {run.elevation_gain_m}m elevation
-                          </div>
-                        ) : null}
-                      </div>
-                    </div>
-                  );
-                })
+                filteredRuns.map((run) => (
+                  <ActivityRow
+                    key={run.id}
+                    run={run}
+                    icon={ACTIVITY_ICONS[run.activity_type] || Activity}
+                    label={ACTIVITY_LABELS[run.activity_type]}
+                  />
+                ))
               )}
             </motion.div>
           )}
