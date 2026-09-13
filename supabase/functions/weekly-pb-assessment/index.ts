@@ -98,12 +98,14 @@ serve(async (req) => {
         }
       }
 
-      // 3. Get existing PB cards for this user
+      // 3. Get existing PB cards for this user (real, manually-logged PBs only —
+      // auto-tracked PBs live as separate rows and shouldn't be compared here)
       const { data: existingCards } = await supabase
         .from("achievement_cards")
         .select("exercise_name, pb_value, record_value, id")
         .eq("user_id", userId)
-        .eq("card_type", "pb_personal");
+        .eq("card_type", "pb_personal")
+        .eq("is_auto", false);
 
       const currentPBs: Record<string, { value: number; id: string }> = {};
       for (const card of existingCards || []) {
@@ -122,26 +124,36 @@ serve(async (req) => {
 
         if (!current) {
           // First time logging this exercise — award bronze card
-          improved.push(exercise);
-          pbsBroken.push(exercise);
-          await supabase.rpc("award_pb_card", {
+          const { error: awardErr } = await supabase.rpc("award_pb_card", {
             p_user_id: userId,
             p_activity_category: "lift",
             p_exercise_name: exercise,
             p_value: bestWeight,
             p_unit: "kg",
+            p_is_auto: false,
           });
+          if (awardErr) {
+            console.error(`award_pb_card failed for ${userId}/${exercise}:`, awardErr);
+          } else {
+            improved.push(exercise);
+            pbsBroken.push(exercise);
+          }
         } else if (bestWeight > current.value) {
           // New PB — update card
-          improved.push(exercise);
-          pbsBroken.push(exercise);
-          await supabase.rpc("award_pb_card", {
+          const { error: awardErr } = await supabase.rpc("award_pb_card", {
             p_user_id: userId,
             p_activity_category: "lift",
             p_exercise_name: exercise,
             p_value: bestWeight,
             p_unit: "kg",
+            p_is_auto: false,
           });
+          if (awardErr) {
+            console.error(`award_pb_card failed for ${userId}/${exercise}:`, awardErr);
+          } else {
+            improved.push(exercise);
+            pbsBroken.push(exercise);
+          }
         }
       }
 
