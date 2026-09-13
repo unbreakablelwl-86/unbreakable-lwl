@@ -125,6 +125,11 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
     (userSettings as any)?.cardio_voice_enabled ?? true
   );
   const pauseStartRef = useRef<number | null>(null);
+  // True when opening the "End Workout?" confirmation is what paused tracking
+  // (as opposed to the user already having tapped Pause beforehand) — lets
+  // "CONTINUE SESSION" know whether it should resume tracking or leave an
+  // existing manual pause alone.
+  const endConfirmAutoPausedRef = useRef(false);
   const watchIdRef = useRef<number | null>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const sessionStartRef = useRef<Date | null>(null);
@@ -912,6 +917,14 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
 
   const handleClose = () => {
     if (phase === 'tracking') {
+      // If the end-confirmation auto-paused tracking and the user backs out
+      // by closing the whole modal (rather than tapping Continue/Save/Discard),
+      // don't leave a stale flag around — resuming from background reopen
+      // should behave like any other paused session, not silently auto-resume.
+      if (showEndConfirm) {
+        setShowEndConfirm(false);
+        endConfirmAutoPausedRef.current = false;
+      }
       // Don't discard - just close and let session persist in background
       toast.info('Session continues in background. Reopen to resume or end.');
       onClose();
@@ -921,16 +934,29 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
   };
 
   const handleEndSession = () => {
+    // Stop the clock the instant "End Workout" is tapped, rather than letting
+    // it keep ticking (and GPS keep tracking distance) for however long the
+    // confirmation dialog stays open. If the session was already manually
+    // paused, leave that alone — only remember we did the pausing if this is
+    // the thing that changed the state.
+    if (!isPaused) {
+      pauseTracking();
+      endConfirmAutoPausedRef.current = true;
+    } else {
+      endConfirmAutoPausedRef.current = false;
+    }
     setShowEndConfirm(true);
   };
 
   const confirmEndSession = () => {
     setShowEndConfirm(false);
+    endConfirmAutoPausedRef.current = false;
     stopTracking();
   };
 
   const discardSession = () => {
     setShowEndConfirm(false);
+    endConfirmAutoPausedRef.current = false;
     localStorage.removeItem(STORAGE_KEY);
     resetAndClose();
   };
@@ -1345,7 +1371,20 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
                           <Trash2 className="w-4 h-4 mr-2" />
                           DISCARD
                         </Button>
-                        <Button variant="ghost" onClick={() => setShowEndConfirm(false)} className="font-display tracking-wide text-muted-foreground w-full">
+                        <Button
+                          variant="ghost"
+                          onClick={() => {
+                            setShowEndConfirm(false);
+                            // Only resume if opening this dialog was what paused
+                            // tracking — if the user had already manually paused
+                            // beforehand, leave it paused rather than restarting it.
+                            if (endConfirmAutoPausedRef.current) {
+                              endConfirmAutoPausedRef.current = false;
+                              resumeTracking();
+                            }
+                          }}
+                          className="font-display tracking-wide text-muted-foreground w-full"
+                        >
                           CONTINUE SESSION
                         </Button>
                       </div>
