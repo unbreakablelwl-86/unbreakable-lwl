@@ -162,8 +162,8 @@ export default function AITokens() {
               PLANS & TOKENS
             </h1>
             <p className="text-muted-foreground max-w-lg mx-auto text-sm">
-              Choose your level. Free gets you the hub, socials &amp; manual tools.
-              Upgrade to unlock AI coaching, programmes, and the full platform.
+              Choose your level. Free gets you your profile, timeline &amp; Un-Tunes previews.
+              Upgrade to unlock AI coaching, every pillar, and the full platform.
             </p>
 
             {/* ─── New Beginning offer code ─── */}
@@ -349,7 +349,7 @@ export default function AITokens() {
                     {tier.monthlyTokens > 0 ? (
                       <><span className="text-foreground font-semibold">{tier.monthlyTokens}</span> tokens/month</>
                     ) : (
-                      <span>No tokens — manual tools only</span>
+                      <span>No tokens on the free tier</span>
                     )}
                   </div>
 
@@ -424,28 +424,23 @@ export default function AITokens() {
           <section className="max-w-4xl mx-auto mb-16">
             <h2 className="text-xl font-display tracking-wider text-center mb-2">WHAT COSTS TOKENS?</h2>
             <p className="text-sm text-muted-foreground text-center mb-8">
-              Everything you need to know about token usage. Manual tools and social features are always free.
+              Everything you need to know about token usage. Free membership covers your profile,
+              timeline and Un-Tunes previews, plus one free University chapter — everything else
+              below is part of Unbreakable membership.
             </p>
 
             {/* ─── Always Free ─── */}
             <div className="rounded-2xl border border-green-500/30 bg-green-500/5 p-5 mb-4">
               <div className="flex items-center gap-2 mb-4">
                 <div className="bg-green-500/10 rounded-full px-3 py-1">
-                  <span className="text-xs font-display tracking-wider text-green-500">ALWAYS FREE — 0 TOKENS</span>
+                  <span className="text-xs font-display tracking-wider text-green-500">FREE MEMBERSHIP</span>
                 </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2">
                 {[
-                  { icon: User, label: 'Sign up, profile & timeline' },
-                  { icon: Activity, label: 'Manual workout tracking' },
-                  { icon: Apple, label: 'Manual food & water logging' },
-                  { icon: Flame, label: 'Daily habits & streaks' },
-                  { icon: Dumbbell, label: 'Calculators (BMI, TDEE, 1RM, macros)' },
-                  { icon: MessageCircle, label: 'Social feed, posts, kudos, comments' },
-                  { icon: Bell, label: 'Notifications & messaging' },
-                  { icon: Search, label: 'Browse exercise library' },
-                  { icon: GraduationCap, label: 'University Level 2 courses' },
-                  { icon: Music, label: '30-second UnTunes previews' },
+                  { icon: User, label: 'Home hub, profile & timeline' },
+                  { icon: Music, label: 'Un-Tunes — 30-second previews' },
+                  { icon: GraduationCap, label: 'University preview — 1 free chapter (Power L2)' },
                 ].map((item, i) => (
                   <div key={i} className="flex items-center gap-2 py-1.5">
                     <item.icon className="w-4 h-4 text-green-500 shrink-0" />
@@ -527,8 +522,8 @@ export default function AITokens() {
               <div>
                 <p className="text-sm text-foreground font-medium mb-1">What doesn't cost tokens?</p>
                 <p className="text-xs text-muted-foreground leading-relaxed">
-                  <span className="text-foreground">Notifications, messaging, social interactions, manual tracking, habit logging, calculators, streaks,
-                  profile updates, and timeline browsing</span> are all free — no tokens used.
+                  Once you're an Unbreakable member, <span className="text-foreground">notifications, messaging, social interactions, manual tracking, habit logging, calculators, streaks,
+                  profile updates, and timeline browsing</span> are all included — no tokens used.
                   Tokens are only consumed when the AI generates something for you (coaching replies, programmes, analysis).
                   The AI Coach works with text and data only — it does not accept or track videos or images.
                 </p>

@@ -88,6 +88,11 @@ export default function UniversityLevel() {
     return count;
   };
 
+  // Free tier gets exactly one chapter for free: Power Level 2, Unit 1, Chapter 1.
+  // Everything else — including the rest of Unit 1 — requires membership.
+  const isFreeChapter = (unitNumber: number, chapterNumber: number): boolean =>
+    levelNum === 2 && unitNumber === 1 && chapterNumber === 1;
+
   return (
     <div className="min-h-screen bg-background">
 {/* Level Header */}
@@ -124,7 +129,9 @@ export default function UniversityLevel() {
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-3xl mx-auto space-y-5">
           {levelData.units.map((unit, idx) => {
-            // Free users: L2 Unit 1 is free preview, everything else locked
+            // Free users: only L2 Unit 1 Chapter 1 is a free preview — the rest of
+            // Unit 1 is still locked for free accounts (previously the whole unit
+            // was free, which was wrong).
             const isUnitPreviewable = !hasAccess && levelNum === 2 && unit.number === 1;
             const isUnitLocked = !hasAccess && (levelNum > 2 || (levelNum === 2 && unit.number > 1));
             const hasChapters = unit.chapters.length > 0;
@@ -153,11 +160,11 @@ export default function UniversityLevel() {
                       </p>
                     </div>
                   )}
-                  {/* Preview badge on Unit 1 for free users */}
+                  {/* Preview badge on Unit 1 for free users — only Chapter 1 is actually free */}
                   {isUnitPreviewable && (
                     <div className="bg-primary/10 border-b border-primary/20 px-5 py-2 flex items-center gap-2">
                       <BookOpen className="w-3.5 h-3.5 text-primary" />
-                      <span className="text-xs font-display tracking-wider text-primary">FREE PREVIEW</span>
+                      <span className="text-xs font-display tracking-wider text-primary">CHAPTER 1 FREE PREVIEW</span>
                     </div>
                   )}
                   {/* Unit header */}
@@ -204,13 +211,17 @@ export default function UniversityLevel() {
                       {unit.chapters.map((ch, chIdx) => {
                         const done = isChapterComplete(levelNum, unit.number, ch.number, ct);
                         const qPassed = hasPassedChapterQuiz(levelNum, unit.number, ch.number, ct);
-                        const accessible = isChapterAccessible(unit.number, ch.number);
+                        const progressAccessible = isChapterAccessible(unit.number, ch.number);
+                        // Free accounts only ever get the one free chapter — every
+                        // other chapter (including the rest of Unit 1) needs membership.
+                        const tierAccessible = hasAccess || isFreeChapter(unit.number, ch.number);
+                        const accessible = progressAccessible && tierAccessible;
                         const isLast = chIdx === unit.chapters.length - 1;
 
                         return (
                           <motion.button
                             key={ch.number}
-                            onClick={() => (accessible && (hasAccess || isUnitPreviewable)) ? navigate(`/university/${ct}/level-${levelNum}/unit-${unit.number}/chapter-${ch.number}`) : undefined}
+                            onClick={() => accessible ? navigate(`/university/${ct}/level-${levelNum}/unit-${unit.number}/chapter-${ch.number}`) : undefined}
                             disabled={!accessible || isUnitLocked}
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}

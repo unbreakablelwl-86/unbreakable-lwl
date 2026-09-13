@@ -14,14 +14,6 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-// `programme_threads` / `programme_thread_messages` are genuine tables this
-// feature depends on (see the 20260529_coach_hub_bookings.sql migration) but
-// they were never actually created against this database despite that
-// migration being recorded as applied — so they're absent from the generated
-// types too. The `as any` casts on `.from(...)` below just keep this
-// compiling; the try/catch blocks already treat a missing table as an empty
-// state, so this component degrades gracefully until the tables exist.
-
 interface Thread {
   id: string;
   title: string;
@@ -75,17 +67,13 @@ export function CoachProgrammeThreads() {
     setLoading(true);
     try {
       const { data, error } = await supabase
-        .from('programme_threads' as any)
+        .from('programme_threads')
         .select('*')
         .or(`coach_id.eq.${user.id},assigned_users.cs.{${user.id}}`)
         .order('updated_at', { ascending: false });
 
       if (error) throw error;
-      // `as any` on `.from()` above (the table isn't in the generated types
-      // yet) makes Supabase unable to infer a real result type for `.select()`
-      // — it falls back to a `SelectQueryError` placeholder type rather than
-      // `any`, so a plain cast is needed here to recover the actual shape.
-      setThreads((data as unknown as Thread[]) || []);
+      setThreads(data || []);
     } catch (err) {
       console.error('Failed to fetch threads:', err);
       // Table might not exist yet, show empty state
@@ -102,7 +90,7 @@ export function CoachProgrammeThreads() {
     setCreating(true);
     try {
       const { data, error } = await supabase
-        .from('programme_threads' as any)
+        .from('programme_threads')
         .insert({
           coach_id: user.id,
           title: newTitle.trim(),
@@ -119,7 +107,7 @@ export function CoachProgrammeThreads() {
       const newThread = data as unknown as Thread;
 
       // Add initial AI message
-      await supabase.from('programme_thread_messages' as any).insert({
+      await supabase.from('programme_thread_messages').insert({
         thread_id: newThread.id,
         sender_id: 'ai',
         sender_name: 'Unbreakable AI',
@@ -153,7 +141,7 @@ export function CoachProgrammeThreads() {
       const senderName = profile?.display_name || profile?.username || 'Coach';
 
       const { data, error } = await supabase
-        .from('programme_thread_messages' as any)
+        .from('programme_thread_messages')
         .insert({
           thread_id: activeThread.id,
           sender_id: user.id,
@@ -176,7 +164,7 @@ export function CoachProgrammeThreads() {
 
       // Update thread's updated_at
       await supabase
-        .from('programme_threads' as any)
+        .from('programme_threads')
         .update({ updated_at: new Date().toISOString() })
         .eq('id', activeThread.id);
 
@@ -190,7 +178,7 @@ export function CoachProgrammeThreads() {
   const loadMessages = async (thread: Thread) => {
     try {
       const { data } = await supabase
-        .from('programme_thread_messages' as any)
+        .from('programme_thread_messages')
         .select('*')
         .eq('thread_id', thread.id)
         .order('created_at', { ascending: true });

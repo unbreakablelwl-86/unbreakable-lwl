@@ -12,16 +12,22 @@ import { useTokenBalance } from '@/hooks/useTokenBalance';
 import {
   Coins, Zap, MessageCircle, Dumbbell, Brain, GraduationCap,
   Music, Crown, Flame, Rocket,
-  Check, Users, Calculator, BookOpen, BarChart3,
+  Check, Users, Calculator, BookOpen, BarChart3, Home,
 } from 'lucide-react';
 
 const FREE_FEATURES = [
+  { feature: 'Home hub, profile & timeline', icon: Home },
+  { feature: 'Un-Tunes — 30-second previews', icon: Music },
+  { feature: 'University preview — 1 free chapter (Power L2)', icon: BookOpen },
+];
+
+const MEMBERSHIP_FEATURES = [
   { feature: 'Social feed, stories & messaging', icon: Users },
   { feature: 'Manual trackers & daily habits', icon: Check },
   { feature: 'Calculators & tools', icon: Calculator },
-  { feature: 'University L2 Unit 1 (preview)', icon: BookOpen },
-  { feature: 'Exercise library', icon: Dumbbell },
-  { feature: 'Daily motivation', icon: Flame },
+  { feature: 'Full exercise library', icon: Dumbbell },
+  { feature: 'Full Un-Tunes streaming', icon: Music },
+  { feature: 'University L2, L3 & L4 courses', icon: GraduationCap },
   { feature: 'Focus games & leaderboards', icon: Brain },
 ];
 
@@ -31,8 +37,6 @@ const TOKEN_FEATURES = [
   { feature: 'UNBREAKABLE 86 personalised plans', icon: Rocket },
   { feature: 'Workout & nutrition analysis', icon: BarChart3 },
   { feature: 'Progress reports', icon: BarChart3 },
-  { feature: 'University L2, L3 & L4 courses', icon: GraduationCap },
-  { feature: 'Un-Tunes music & card packs', icon: Music },
 ];
 
 const TOP_UPS = [
@@ -96,6 +100,28 @@ export default function TokenPricing() {
                   <Icon className="w-4 h-4 text-emerald-400 shrink-0" />
                   <span className="text-sm text-foreground flex-1">{item.feature}</span>
                   <span className="text-[10px] font-bold text-emerald-400 tracking-wider">FREE</span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Membership features — included, no tokens */}
+        <div>
+          <h2 className="font-display text-xs tracking-wider text-primary mb-3 flex items-center gap-2">
+            <Crown className="w-3.5 h-3.5" /> INCLUDED WITH MEMBERSHIP
+          </h2>
+          <div className="bg-card border border-border rounded-xl overflow-hidden">
+            {MEMBERSHIP_FEATURES.map((item, i) => {
+              const Icon = item.icon;
+              return (
+                <div
+                  key={item.feature}
+                  className={`flex items-center gap-3 px-4 py-3 ${i < MEMBERSHIP_FEATURES.length - 1 ? 'border-b border-border' : ''}`}
+                >
+                  <Icon className="w-4 h-4 text-primary shrink-0" />
+                  <span className="text-sm text-foreground flex-1">{item.feature}</span>
+                  <span className="text-[10px] font-bold text-primary tracking-wider">NO TOKENS</span>
                 </div>
               );
             })}

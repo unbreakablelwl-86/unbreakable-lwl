@@ -92,10 +92,11 @@ export default function Terms() {
                 Unbreakable offers one free plan and one paid plan:
               </p>
               <ul className="list-disc list-inside space-y-2 text-foreground/80">
-                <li><strong>Free</strong> — the hub, your profile, the community feed, manual trackers, calculators and habits</li>
+                <li><strong>Free</strong> — the home hub, your profile & timeline, Un-Tunes previews, and 1 free University chapter</li>
                 <li><strong>Unbreakable (£50 per month)</strong> — everything on Free, plus 1,000 tokens each month, the
-                    Unbreakable Coach, AI programmes and nutrition plans, UNBREAKABLE 86, the full exercise library,
-                    Unbreakable University and UnTunes streaming</li>
+                    community feed, manual trackers, calculators, habits, the Unbreakable Coach, AI programmes and
+                    nutrition plans, UNBREAKABLE 86, the full exercise library, full Unbreakable University access
+                    and UnTunes streaming</li>
               </ul>
               <p className="leading-relaxed mt-3">
                 Paid subscriptions are billed via <strong>Stripe</strong> on a recurring basis (as shown

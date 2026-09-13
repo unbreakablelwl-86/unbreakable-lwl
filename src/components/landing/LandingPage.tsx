@@ -131,7 +131,7 @@ const membershipFeatures = [
 
 /* ─── Token tiers ─── */
 const tokenTiers = [
-  { name: 'FREE', tokens: 0, price: '£0', desc: 'Your profile, the community and Un-Tunes', highlight: false, features: ['Profile, timeline & social feed', 'Calculators, habits & Un-Tunes', 'University preview'] },
+  { name: 'FREE', tokens: 0, price: '£0', desc: 'Your profile, timeline and Un-Tunes previews', highlight: false, features: ['Home hub, profile & timeline', 'Un-Tunes — 30-second previews', 'University preview — 1 free chapter'] },
   { name: 'UNBREAKABLE', tokens: 1000, price: '£50', period: '/mo', desc: 'Full AI coaching, all features unlocked', highlight: true, features: ['1,000 tokens/month', 'Unbreakable Coach', 'All features'], originalPrice: '£75' },
 ];
 
@@ -283,7 +283,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
                 FREE SIGN UP
               </button>
               <p className="text-[#777] text-xs sm:text-sm leading-snug">
-                Profile, timeline, UnTunes &amp; community. Free forever, no card needed.
+                Profile, timeline &amp; Un-Tunes previews. Free forever, no card needed.
               </p>
             </div>
           </motion.div>

@@ -1,9 +1,12 @@
 /**
  * Feature Gating — defines which features are available at each tier
  *
- * Free: Home hub, socials, manual tools (trackers, builders, calculators, habits)
- * Foundation (the paid "Unbreakable" membership): everything — AI Coach,
- * UNBREAKABLE 86, pillar tabs, exercise library, programme generator, PT Hub.
+ * Free: Home hub, profile & timeline, Un-Tunes previews, and 1 free
+ * University chapter (Power L2 Unit 1 Chapter 1) — that's it.
+ * Foundation (the paid "Unbreakable" membership): everything else — AI Coach,
+ * UNBREAKABLE 86, all pillar tabs and their tools, manual trackers,
+ * calculators, habits, inbox, social feed, exercise library, programme
+ * generator, PT Hub, full University access.
  * Absolute Base: hidden retention-only tier, subset of Foundation.
  *
  * AI Coach does NOT accept or track videos or images for assessment.
@@ -15,15 +18,16 @@ import { tierAtLeast } from './subscriptionTiers';
 export type FeatureId =
   // Free features
   | 'home_hub'
+  | 'profile'
+  | 'university_l1'       // Free preview: Power L2 Unit 1 Chapter 1 only
+  // Paid features (previously free)
   | 'social_feed'
   | 'manual_tracker'
   | 'manual_food_log'
   | 'water_tracker'
   | 'habit_tracker'
   | 'calculators'
-  | 'exercise_browse'     // Browse exercises (viewing is free)
-  | 'university_l1'       // Level 1 courses
-  | 'profile'
+  | 'exercise_browse'     // Browse exercises
   | 'inbox'
   // Pillar tab access (whole section locked for free accounts)
   | 'power_pillar'      // Power tab (workout builder, programmes)
@@ -55,6 +59,11 @@ interface FeatureGate {
   requiredTier: TierKey;
   /** If true, feature is available on absolute_base too */
   availableOnAbsoluteBase?: boolean;
+  /**
+   * Short benefit bullets shown on the full-page paywall lock screen — real
+   * "what you get" copy for that specific tool, not a generic upgrade nudge.
+   */
+  benefits?: string[];
 }
 
 const FEATURE_GATES: Record<FeatureId, FeatureGate> = {
@@ -65,95 +74,161 @@ const FEATURE_GATES: Record<FeatureId, FeatureGate> = {
     description: 'Your dashboard, quick stats, pillars overview',
     requiredTier: 'free',
   },
+  profile: {
+    id: 'profile',
+    name: 'Profile',
+    description: 'User profile, timeline and settings',
+    requiredTier: 'free',
+  },
+  university_l1: {
+    id: 'university_l1',
+    name: 'University Preview',
+    description: 'Free preview: Power Level 2, Unit 1, Chapter 1',
+    requiredTier: 'free',
+  },
+
+  // ─── PAID FEATURES (previously free) ───
   social_feed: {
     id: 'social_feed',
     name: 'Social Feed',
-    description: 'Community posts, likes, comments',
-    requiredTier: 'free',
+    description: 'Post, comment and connect with the Unbreakable community',
+    requiredTier: 'foundation',
+    benefits: [
+      'Post progress updates and photos to the community feed',
+      'Like, comment on and share other members’ posts',
+      'Follow athletes and coaches, build your own following',
+      'Kudos and celebrate wins together',
+    ],
   },
   manual_tracker: {
     id: 'manual_tracker',
     name: 'Manual Tracker',
     description: 'Log workouts, cardio, reps manually',
-    requiredTier: 'free',
+    requiredTier: 'foundation',
+    benefits: [
+      'Log any workout, set, rep or cardio session manually',
+      'Keep a full training history in one place',
+      'Track personal records as you hit them',
+      'Works alongside AI-built programmes or fully standalone',
+    ],
   },
   manual_food_log: {
     id: 'manual_food_log',
     name: 'Food Log',
     description: 'Manual food and calorie tracking',
-    requiredTier: 'free',
+    requiredTier: 'foundation',
+    benefits: [
+      'Log meals and snacks manually, or snap a photo for AI tracking',
+      'See calories, macros and trends over time',
+      'Set and track your own nutrition goals',
+    ],
   },
   water_tracker: {
     id: 'water_tracker',
     name: 'Water Tracker',
     description: '8 glasses/day gamified water tracker',
-    requiredTier: 'free',
+    requiredTier: 'foundation',
+    benefits: [
+      'Simple daily hydration tracking',
+      'Streaks and reminders to keep you consistent',
+    ],
   },
   habit_tracker: {
     id: 'habit_tracker',
     name: 'Habit Tracker',
     description: 'Daily 7 habits and streak tracking',
-    requiredTier: 'free',
+    requiredTier: 'foundation',
+    benefits: [
+      'Track your Daily 7 habits every day',
+      'Build and protect your streak',
+      'A simple daily checklist that keeps you showing up',
+    ],
   },
   calculators: {
     id: 'calculators',
     name: 'Calculators',
     description: 'BMI, TDEE, 1RM, macro calculators',
-    requiredTier: 'free',
+    requiredTier: 'foundation',
+    benefits: [
+      'BMI, TDEE, 1RM and macro calculators in one place',
+      'Numbers tailored to your own stats',
+      'Useful whether you’re training solo or on a programme',
+    ],
   },
   exercise_browse: {
     id: 'exercise_browse',
     name: 'Exercise Browser',
     description: 'View and search the exercise library',
-    requiredTier: 'free',
-  },
-  university_l1: {
-    id: 'university_l1',
-    name: 'University Level 1',
-    description: 'Free introductory courses for all pillars',
-    requiredTier: 'free',
-  },
-  profile: {
-    id: 'profile',
-    name: 'Profile',
-    description: 'User profile and settings',
-    requiredTier: 'free',
+    requiredTier: 'foundation',
+    benefits: [
+      'Browse the full, categorised exercise library',
+      'See form breakdowns and coaching cues for every movement',
+      'Search by body part, equipment or goal',
+    ],
   },
   inbox: {
     id: 'inbox',
     name: 'Inbox',
     description: 'Messages and notifications',
-    requiredTier: 'free',
+    requiredTier: 'foundation',
+    benefits: [
+      'Direct messages with coaches and other members',
+      'All your notifications in one place',
+    ],
   },
 
   // ─── PILLAR TAB ACCESS ───
   // Whole-section locks for Power/Movement/Fuel/Mindset — free accounts see a
   // locked description + upgrade CTA instead of the tab's content. Distinct from
-  // the finer-grained gates below (ai_programme, manual_tracker, etc.), which
-  // still apply once a user has unlocked the tab itself.
+  // the finer-grained gates above (manual_tracker, calculators, etc.), which are
+  // gated separately since they're used outside a specific pillar too.
   power_pillar: {
     id: 'power_pillar',
     name: 'Power',
     description: 'AI & manual strength programmes, exercise library and session logs',
     requiredTier: 'foundation',
+    benefits: [
+      'AI-built strength programmes tailored to your goals and equipment',
+      'A fully categorised exercise library with coaching breakdowns',
+      'Manual programme builder if you’d rather write your own',
+      'Session logs and progress tracking as you train',
+    ],
   },
   movement_pillar: {
     id: 'movement_pillar',
     name: 'Movement',
     description: 'Cardio & movement programmes, activity tracking and personal records',
     requiredTier: 'foundation',
+    benefits: [
+      'AI-built cardio programmes — running, cycling and more',
+      'GPS or manual session tracking with live stats',
+      'Personal records and progress over time',
+      'Manual programme builder for full control',
+    ],
   },
   fuel_pillar: {
     id: 'fuel_pillar',
     name: 'Fuel',
     description: 'Nutrition tracking, meal planning and recipes',
     requiredTier: 'foundation',
+    benefits: [
+      'AI-built meal plans matched to your goals',
+      'Snap-a-photo food tracking',
+      'A full recipe library to plan meals around',
+      'Nutrition goals and history in one place',
+    ],
   },
   mindset_pillar: {
     id: 'mindset_pillar',
     name: 'Mindset',
     description: 'Breathwork, exposure training, focus games and mindset programmes',
     requiredTier: 'foundation',
+    benefits: [
+      'Guided breathwork and cold/heat exposure training',
+      'AI-built mindset programmes',
+      'Focus games and mental-fitness training',
+      'Track your mindset progress alongside training',
+    ],
   },
 
   // ─── BASE FEATURES ───
@@ -163,12 +238,23 @@ const FEATURE_GATES: Record<FeatureId, FeatureGate> = {
     description: 'Chat with Unbreakable Coach — text-only, no video/image assessment',
     requiredTier: 'foundation',
     availableOnAbsoluteBase: true, // Limited version available on £7 plan
+    benefits: [
+      'Chat with your AI coach any time, about anything training-related',
+      'Get quick form, recovery and progression advice',
+      'Ask it to build programmes, meal plans and more',
+    ],
   },
   unbreakable_86: {
     id: 'unbreakable_86',
     name: 'UNBREAKABLE 86',
     description: '86-day challenge across all 5 pillars',
     requiredTier: 'foundation',
+    benefits: [
+      'A structured 86-day challenge across every pillar',
+      'Personalised AI-built training and movement programmes',
+      'Daily habit tracking built around the challenge',
+      'A community of people doing it alongside you',
+    ],
   },
   manual_programme: {
     id: 'manual_programme',
@@ -239,8 +325,13 @@ const FEATURE_GATES: Record<FeatureId, FeatureGate> = {
   university_paid: {
     id: 'university_paid',
     name: 'University Courses',
-    description: 'Paid uni courses (L2+) — purchased with tokens',
-    requiredTier: 'foundation', // Need at least Base to purchase
+    description: 'Full University access — every level and course',
+    requiredTier: 'foundation',
+    benefits: [
+      'Every course, every level — Power, Fuel, Mindset and every sport',
+      'Chapter content, quizzes and certificates',
+      'No course fees, no upsells — all included with membership',
+    ],
   },
 };
 

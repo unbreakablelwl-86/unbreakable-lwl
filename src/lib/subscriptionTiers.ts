@@ -2,7 +2,7 @@
  * UNBREAKABLE Coaching Subscription & Top-Up Configuration
  *
  * Coaching:
- *   Free (£0)       — Home hub, socials, manual tools, 30s UnTunes previews
+ *   Free (£0)       — Profile & timeline, Un-Tunes previews, 1 free University chapter
  *   Unbreakable (£50/mo) — LAUNCH OFFER (normally £75/mo). Full AI coaching, all features.
  *
  * Optional one-time top-ups:
@@ -47,13 +47,9 @@ export const TIERS: Record<TierKey, TierConfig> = {
     stripeProductId: null,
     rank: 0,
     features: [
-      'Home hub & dashboard',
-      'Social feed & community',
-      'Profile & timeline',
-      'Manual trackers & builders',
-      'Calculators & habits',
-      '30-second UnTunes previews',
-      'University preview (L2 Unit 1 free)',
+      'Home hub, profile & timeline',
+      'Un-Tunes — 30-second previews',
+      'University preview — 1 free chapter (Power L2)',
     ],
   },
   absolute_base: {

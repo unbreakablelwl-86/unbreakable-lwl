@@ -39,14 +39,7 @@ async function flushErrors() {
 
   try {
     const { supabase } = await import('@/integrations/supabase/client');
-    // `error_logs` is a genuine table this feature depends on (see the
-    // 20260529_final_audit_fixes.sql migration) but it was never actually
-    // created against this database despite that migration being recorded
-    // as applied — so it's absent from the generated types too, and every
-    // flush currently fails (caught below, so it's harmless, just silently
-    // never logs anything). The `as any` just keeps this compiling until the
-    // table exists.
-    await supabase.from('error_logs' as any).insert(
+    await supabase.from('error_logs').insert(
       batch.map(e => ({
         message: e.message,
         stack: e.stack?.substring(0, 2000),

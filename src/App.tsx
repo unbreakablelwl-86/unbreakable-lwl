@@ -158,7 +158,7 @@ const App = () => {
                 {/* Index handles both logged-in hub and logged-out landing */}
                 <Route path="/" element={<RouteErrorBoundary section="Home"><Index /></RouteErrorBoundary>} />
                 <Route path="/social" element={
-                  <ProtectedRoute><RouteErrorBoundary section="Social"><Social /></RouteErrorBoundary></ProtectedRoute>
+                  <ProtectedRoute><RouteErrorBoundary section="Social"><PaywallGate feature="social_feed"><Social /></PaywallGate></RouteErrorBoundary></ProtectedRoute>
                 } />
                 
                 {/* Founder page - pre-sign-in */}
@@ -188,86 +188,91 @@ const App = () => {
                 {/* Plans — legacy URL redirect */}
                 <Route path="/plans" element={<Navigate to="/ai-tokens" replace />} />
                 
-                {/* Inbox - free (hub feature) */}
+                {/* Inbox - paid feature */}
                 <Route path="/inbox" element={
-                  <ProtectedRoute><RouteErrorBoundary section="Inbox"><Inbox /></RouteErrorBoundary></ProtectedRoute>
+                  <ProtectedRoute><RouteErrorBoundary section="Inbox"><PaywallGate feature="inbox"><Inbox /></PaywallGate></RouteErrorBoundary></ProtectedRoute>
                 } />
                 
                 {/* User Profile - Public profile viewing */}
                 <Route path="/user/:userId" element={<UserProfile />} />
                 
                 {/* ============ FREE TIER (logged in, no subscription) ============ */}
-                
-                {/* Calculators - free to drive engagement */}
+                {/* Free tier = home hub, profile & timeline, Un-Tunes previews, and
+                    1 free University chapter. Everything below this line requires
+                    Unbreakable membership. */}
+
+                {/* Calculators - paid feature */}
                 <Route path="/calculators" element={
-                  <ProtectedRoute><RouteErrorBoundary section="Calculators"><Calculators /></RouteErrorBoundary></ProtectedRoute>
+                  <ProtectedRoute><RouteErrorBoundary section="Calculators"><PaywallGate feature="calculators"><Calculators /></PaywallGate></RouteErrorBoundary></ProtectedRoute>
                 } />
-                
+
                 {/* ============ SUBSCRIBED ROUTES (paid tier) ============ */}
-                
+
                 {/* Programming (Power) routes */}
                 <Route path="/programming" element={
                   <ProtectedRoute><RouteErrorBoundary section="Power"><PaywallGate feature="power_pillar"><Programming /></PaywallGate></RouteErrorBoundary></ProtectedRoute>
                 } />
                 <Route path="/programming/create" element={
-                  <ProtectedRoute><RouteErrorBoundary section="Power"><ProgrammingCreate /></RouteErrorBoundary></ProtectedRoute>
+                  <ProtectedRoute><RouteErrorBoundary section="Power"><PaywallGate feature="power_pillar"><ProgrammingCreate /></PaywallGate></RouteErrorBoundary></ProtectedRoute>
                 } />
                 <Route path="/programming/my-programmes" element={
-                  <ProtectedRoute><RouteErrorBoundary section="Power"><ProgrammingMyProgrammes /></RouteErrorBoundary></ProtectedRoute>
+                  <ProtectedRoute><RouteErrorBoundary section="Power"><PaywallGate feature="power_pillar"><ProgrammingMyProgrammes /></PaywallGate></RouteErrorBoundary></ProtectedRoute>
                 } />
                 <Route path="/programming/logs" element={
-                  <ProtectedRoute><RouteErrorBoundary section="Power"><ProgrammingLogs /></RouteErrorBoundary></ProtectedRoute>
+                  <ProtectedRoute><RouteErrorBoundary section="Power"><PaywallGate feature="power_pillar"><ProgrammingLogs /></PaywallGate></RouteErrorBoundary></ProtectedRoute>
                 } />
-                <Route path="/programming/exercises" element={<RouteErrorBoundary section="Power"><ExerciseLibrary /></RouteErrorBoundary>} />
-                
+                <Route path="/programming/exercises" element={
+                  <ProtectedRoute><RouteErrorBoundary section="Power"><PaywallGate feature="exercise_browse"><ExerciseLibrary /></PaywallGate></RouteErrorBoundary></ProtectedRoute>
+                } />
+
                 {/* Tracker (Movement) routes */}
                 <Route path="/tracker" element={
                   <ProtectedRoute><RouteErrorBoundary section="Movement"><PaywallGate feature="movement_pillar"><Tracker /></PaywallGate></RouteErrorBoundary></ProtectedRoute>
                 } />
                 <Route path="/tracker/create" element={
-                  <ProtectedRoute><RouteErrorBoundary section="Movement"><TrackerCreate /></RouteErrorBoundary></ProtectedRoute>
+                  <ProtectedRoute><RouteErrorBoundary section="Movement"><PaywallGate feature="movement_pillar"><TrackerCreate /></PaywallGate></RouteErrorBoundary></ProtectedRoute>
                 } />
                 <Route path="/tracker/my-programmes" element={
-                  <ProtectedRoute><RouteErrorBoundary section="Movement"><TrackerMyProgrammes /></RouteErrorBoundary></ProtectedRoute>
+                  <ProtectedRoute><RouteErrorBoundary section="Movement"><PaywallGate feature="movement_pillar"><TrackerMyProgrammes /></PaywallGate></RouteErrorBoundary></ProtectedRoute>
                 } />
-                
+
                 {/* Fuel routes */}
                 <Route path="/fuel" element={
                   <ProtectedRoute><RouteErrorBoundary section="Fuel"><PaywallGate feature="fuel_pillar"><Fuel /></PaywallGate></RouteErrorBoundary></ProtectedRoute>
                 } />
                 <Route path="/fuel/history" element={
-                  <ProtectedRoute><RouteErrorBoundary section="Fuel"><FuelHistory /></RouteErrorBoundary></ProtectedRoute>
+                  <ProtectedRoute><RouteErrorBoundary section="Fuel"><PaywallGate feature="fuel_pillar"><FuelHistory /></PaywallGate></RouteErrorBoundary></ProtectedRoute>
                 } />
                 <Route path="/fuel/recipes" element={
-                  <ProtectedRoute><RouteErrorBoundary section="Fuel"><FuelRecipes /></RouteErrorBoundary></ProtectedRoute>
+                  <ProtectedRoute><RouteErrorBoundary section="Fuel"><PaywallGate feature="fuel_pillar"><FuelRecipes /></PaywallGate></RouteErrorBoundary></ProtectedRoute>
                 } />
                 <Route path="/fuel/planning" element={
-                  <ProtectedRoute><RouteErrorBoundary section="Fuel"><FuelPlanning /></RouteErrorBoundary></ProtectedRoute>
+                  <ProtectedRoute><RouteErrorBoundary section="Fuel"><PaywallGate feature="fuel_pillar"><FuelPlanning /></PaywallGate></RouteErrorBoundary></ProtectedRoute>
                 } />
                 <Route path="/fuel/foods" element={
-                  <ProtectedRoute><RouteErrorBoundary section="Fuel"><FuelFoods /></RouteErrorBoundary></ProtectedRoute>
+                  <ProtectedRoute><RouteErrorBoundary section="Fuel"><PaywallGate feature="fuel_pillar"><FuelFoods /></PaywallGate></RouteErrorBoundary></ProtectedRoute>
                 } />
                 <Route path="/fuel/my-fuel" element={
-                  <ProtectedRoute><RouteErrorBoundary section="Fuel"><FuelMyFuel /></RouteErrorBoundary></ProtectedRoute>
+                  <ProtectedRoute><RouteErrorBoundary section="Fuel"><PaywallGate feature="fuel_pillar"><FuelMyFuel /></PaywallGate></RouteErrorBoundary></ProtectedRoute>
                 } />
-                
+
                 {/* Mindset routes */}
                 <Route path="/mindset" element={
                   <ProtectedRoute><RouteErrorBoundary section="Mindset"><PaywallGate feature="mindset_pillar"><Mindset /></PaywallGate></RouteErrorBoundary></ProtectedRoute>
                 } />
                 <Route path="/mindset/breathing" element={
-                  <ProtectedRoute><RouteErrorBoundary section="Mindset"><MindsetBreathing /></RouteErrorBoundary></ProtectedRoute>
+                  <ProtectedRoute><RouteErrorBoundary section="Mindset"><PaywallGate feature="mindset_pillar"><MindsetBreathing /></PaywallGate></RouteErrorBoundary></ProtectedRoute>
                 } />
                 <Route path="/mindset/games" element={
-                  <ProtectedRoute><RouteErrorBoundary section="Mindset"><MindsetGames /></RouteErrorBoundary></ProtectedRoute>
+                  <ProtectedRoute><RouteErrorBoundary section="Mindset"><PaywallGate feature="mindset_pillar"><MindsetGames /></PaywallGate></RouteErrorBoundary></ProtectedRoute>
                 } />
                 <Route path="/zone" element={
-                  <ProtectedRoute><RouteErrorBoundary section="Mindset"><Zone /></RouteErrorBoundary></ProtectedRoute>
+                  <ProtectedRoute><RouteErrorBoundary section="Mindset"><PaywallGate feature="mindset_pillar"><Zone /></PaywallGate></RouteErrorBoundary></ProtectedRoute>
                 } />
-                
-                {/* Coaching (Help) — uses Unbreakable token system, not subscription */}
+
+                {/* Coaching (Help) — Unbreakable Coach chat, paid feature */}
                 <Route path="/help" element={
-                  <ProtectedRoute><RouteErrorBoundary section="Coach"><Help /></RouteErrorBoundary></ProtectedRoute>
+                  <ProtectedRoute><RouteErrorBoundary section="Coach"><PaywallGate feature="ai_coach_basic"><Help /></PaywallGate></RouteErrorBoundary></ProtectedRoute>
                 } />
                 
                 {/* University */}
@@ -290,13 +295,13 @@ const App = () => {
                   <ProtectedRoute><RouteErrorBoundary section="University"><UniversityCertificate /></RouteErrorBoundary></ProtectedRoute>
                 } />
                 
-                {/* Habits - free to build daily engagement */}
+                {/* Habits - paid feature */}
                 <Route path="/habits" element={
-                  <ProtectedRoute><RouteErrorBoundary section="Habits"><Habits /></RouteErrorBoundary></ProtectedRoute>
+                  <ProtectedRoute><RouteErrorBoundary section="Habits"><PaywallGate feature="habit_tracker"><Habits /></PaywallGate></RouteErrorBoundary></ProtectedRoute>
                 } />
 
                 <Route path="/unbreakable-86" element={
-                  <ProtectedRoute><Unbreakable86 /></ProtectedRoute>
+                  <ProtectedRoute><PaywallGate feature="unbreakable_86"><Unbreakable86 /></PaywallGate></ProtectedRoute>
                 } />
 
                 {/* Un-Tunes — Music & Podcasts */}

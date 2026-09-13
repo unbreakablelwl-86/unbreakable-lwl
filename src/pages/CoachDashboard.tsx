@@ -698,8 +698,8 @@ const CoachDashboard = ({ embedded = false }: { embedded?: boolean }) => {
       <div className="px-4 space-y-4">
         {/* Stripe Connect for coaches */}
         <CoachStripeConnect
-          stripeAccountId={(profile as any)?.stripe_connect_id}
-          stripeOnboarded={(profile as any)?.stripe_onboarded}
+          stripeAccountId={profile?.stripe_connect_id}
+          stripeOnboarded={profile?.stripe_onboarded}
         />
         {content}
         {/* Programme Threads */}

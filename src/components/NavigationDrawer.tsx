@@ -24,8 +24,7 @@ interface NavigationDrawerProps {
 }
 
 const freeHubLinks = [
-  { to: '/calculators', label: 'CALCULATORS', icon: Calculator, paid: false, feature: null as FeatureId | null },
-  { to: '/habits', label: 'HABITS', icon: Calendar, paid: false, feature: null as FeatureId | null },
+  { to: '/untunes', label: 'UN-TUNES', icon: Music, paid: false, feature: null as FeatureId | null },
 ];
 
 const paidHubLinks = [
@@ -34,7 +33,8 @@ const paidHubLinks = [
   { to: '/tracker', label: 'MOVEMENT', icon: Footprints, paid: true, feature: 'movement_pillar' as FeatureId | null },
   { to: '/fuel', label: 'FUEL', icon: Apple, paid: true, feature: 'fuel_pillar' as FeatureId | null },
   { to: '/mindset', label: 'MINDSET', icon: Brain, paid: true, feature: 'mindset_pillar' as FeatureId | null },
-  { to: '/untunes', label: 'UN-TUNES', icon: Music, paid: false, feature: null as FeatureId | null },
+  { to: '/calculators', label: 'CALCULATORS', icon: Calculator, paid: true, feature: 'calculators' as FeatureId | null },
+  { to: '/habits', label: 'HABITS', icon: Calendar, paid: true, feature: 'habit_tracker' as FeatureId | null },
 ];
 
 const hubLinks = [...freeHubLinks, ...paidHubLinks];
@@ -203,10 +203,16 @@ export function NavigationDrawer({ variant = 'default' }: NavigationDrawerProps)
                 </CollapsibleContent>
               </Collapsible>
 
-              {/* UNBREAKABLE COACH — uses Unbreakable token system */}
-              <Link to="/help" onClick={handleNavClick} className={linkClass('/help')}>
+              {/* UNBREAKABLE COACH — paid feature */}
+              <Link to={hasHubAccess('ai_coach_basic') ? '/help' : '/plans'} onClick={handleNavClick} className={linkClass('/help')}>
                 <Flame className={`w-5 h-5 ${isActive('/help') ? '' : 'text-primary'}`} />
                 <span className="flex-1">UNBREAKABLE COACH</span>
+                {!hasHubAccess('ai_coach_basic') && (
+                  <Badge variant="outline" className="text-[9px] font-display border-primary/30 text-primary px-1.5 py-0">
+                    <Lock className="w-2.5 h-2.5 mr-0.5" />
+                    PRO
+                  </Badge>
+                )}
               </Link>
 
               {/* 121 COACHING — hidden from users; coaches/devs only (may onboard later) */}

@@ -48,7 +48,7 @@ const FAQ_SECTIONS: { title: string; icon: typeof Shield; items: FAQItem[] }[] =
       },
       {
         q: 'Is UNBREAKABLE free to use?',
-        a: 'Yes! The free tier gives you your profile, timeline, the community feed, habit tracking, calculators and Un-Tunes (30-second previews). Power, Movement, Fuel, Mindset and the Unbreakable Coach are part of the paid Unbreakable membership.',
+        a: 'Yes! The free tier gives you your profile, timeline, Un-Tunes (30-second previews) and 1 free University chapter. Everything else — the community feed, manual trackers, calculators, habits, Power, Movement, Fuel, Mindset and the Unbreakable Coach — is part of the paid Unbreakable membership.',
       },
       {
         q: 'How do I set up my profile?',
@@ -64,7 +64,7 @@ const FAQ_SECTIONS: { title: string; icon: typeof Shield; items: FAQItem[] }[] =
       },
       {
         q: 'Do I need to create an account?',
-        a: 'You can browse as a guest, but you\'ll need a free account for your profile, the community feed and habit tracking. Tracking, programmes and the Unbreakable Coach are part of the paid Unbreakable membership. Sign up takes 30 seconds.',
+        a: 'You can browse as a guest, but you\'ll need a free account for your profile, timeline and Un-Tunes previews. The community feed, tracking, programmes and the Unbreakable Coach are part of the paid Unbreakable membership. Sign up takes 30 seconds.',
       },
     ],
   },

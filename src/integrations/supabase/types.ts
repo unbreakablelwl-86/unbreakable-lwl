@@ -519,6 +519,8 @@ export type Database = {
           session_rate_60min: number | null
           session_types: string[] | null
           specializations: string[] | null
+          stripe_connect_id: string | null
+          stripe_onboarded: boolean | null
           updated_at: string
           user_id: string
           video_assessment_enabled: boolean | null
@@ -562,6 +564,8 @@ export type Database = {
           session_rate_60min?: number | null
           session_types?: string[] | null
           specializations?: string[] | null
+          stripe_connect_id?: string | null
+          stripe_onboarded?: boolean | null
           updated_at?: string
           user_id: string
           video_assessment_enabled?: boolean | null
@@ -605,11 +609,37 @@ export type Database = {
           session_rate_60min?: number | null
           session_types?: string[] | null
           specializations?: string[] | null
+          stripe_connect_id?: string | null
+          stripe_onboarded?: boolean | null
           updated_at?: string
           user_id?: string
           video_assessment_enabled?: boolean | null
           website_url?: string | null
           years_experience?: number | null
+        }
+        Relationships: []
+      }
+      coach_unlocks: {
+        Row: {
+          coach_id: string
+          created_at: string
+          id: string
+          tokens_spent: number
+          user_id: string
+        }
+        Insert: {
+          coach_id: string
+          created_at?: string
+          id?: string
+          tokens_spent?: number
+          user_id: string
+        }
+        Update: {
+          coach_id?: string
+          created_at?: string
+          id?: string
+          tokens_spent?: number
+          user_id?: string
         }
         Relationships: []
       }
@@ -643,6 +673,66 @@ export type Database = {
           notes?: string | null
           status?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      coaching_bookings: {
+        Row: {
+          block_type: string
+          cancellation_reason: string | null
+          coach_id: string
+          created_at: string
+          id: string
+          notes: string | null
+          payment_status: string
+          price_gbp: number
+          service_type: string
+          session_date: string
+          session_time: string
+          sessions_remaining: number | null
+          status: string
+          stripe_payment_intent: string | null
+          stripe_session_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          block_type?: string
+          cancellation_reason?: string | null
+          coach_id: string
+          created_at?: string
+          id?: string
+          notes?: string | null
+          payment_status?: string
+          price_gbp?: number
+          service_type: string
+          session_date: string
+          session_time: string
+          sessions_remaining?: number | null
+          status?: string
+          stripe_payment_intent?: string | null
+          stripe_session_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          block_type?: string
+          cancellation_reason?: string | null
+          coach_id?: string
+          created_at?: string
+          id?: string
+          notes?: string | null
+          payment_status?: string
+          price_gbp?: number
+          service_type?: string
+          session_date?: string
+          session_time?: string
+          sessions_remaining?: number | null
+          status?: string
+          stripe_payment_intent?: string | null
+          stripe_session_id?: string | null
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -852,6 +942,8 @@ export type Database = {
           sport_preference: string | null
           squat_max_kg: number | null
           stress_level: string | null
+          stripe_connect_id: string | null
+          stripe_onboarded: boolean | null
           training_goal: string | null
           updated_at: string
           user_id: string
@@ -893,6 +985,8 @@ export type Database = {
           sport_preference?: string | null
           squat_max_kg?: number | null
           stress_level?: string | null
+          stripe_connect_id?: string | null
+          stripe_onboarded?: boolean | null
           training_goal?: string | null
           updated_at?: string
           user_id: string
@@ -934,6 +1028,8 @@ export type Database = {
           sport_preference?: string | null
           squat_max_kg?: number | null
           stress_level?: string | null
+          stripe_connect_id?: string | null
+          stripe_onboarded?: boolean | null
           training_goal?: string | null
           updated_at?: string
           user_id?: string
@@ -1210,6 +1306,39 @@ export type Database = {
           status?: string
           subject?: string | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      error_logs: {
+        Row: {
+          created_at: string
+          id: string
+          message: string
+          source: string | null
+          stack: string | null
+          url: string | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message: string
+          source?: string | null
+          stack?: string | null
+          url?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message?: string
+          source?: string | null
+          stack?: string | null
+          url?: string | null
+          user_agent?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -2265,33 +2394,39 @@ export type Database = {
           body: string | null
           created_at: string
           data: Json | null
+          icon: string | null
           id: string
           read: boolean
           scheduled_for: string | null
           title: string
           type: string
+          url: string | null
           user_id: string
         }
         Insert: {
           body?: string | null
           created_at?: string
           data?: Json | null
+          icon?: string | null
           id?: string
           read?: boolean
           scheduled_for?: string | null
           title: string
           type: string
+          url?: string | null
           user_id: string
         }
         Update: {
           body?: string | null
           created_at?: string
           data?: Json | null
+          icon?: string | null
           id?: string
           read?: boolean
           scheduled_for?: string | null
           title?: string
           type?: string
+          url?: string | null
           user_id?: string
         }
         Relationships: []
@@ -2822,6 +2957,86 @@ export type Database = {
         }
         Relationships: []
       }
+      programme_thread_messages: {
+        Row: {
+          content: string
+          created_at: string
+          data: Json | null
+          id: string
+          message_type: string
+          sender_id: string
+          sender_name: string
+          thread_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          data?: Json | null
+          id?: string
+          message_type?: string
+          sender_id: string
+          sender_name: string
+          thread_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          data?: Json | null
+          id?: string
+          message_type?: string
+          sender_id?: string
+          sender_name?: string
+          thread_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "programme_thread_messages_thread_id_fkey"
+            columns: ["thread_id"]
+            isOneToOne: false
+            referencedRelation: "programme_threads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      programme_threads: {
+        Row: {
+          assigned_users: string[] | null
+          coach_id: string
+          created_at: string
+          description: string | null
+          id: string
+          programme_type: string
+          status: string
+          title: string
+          updated_at: string
+          weeks: number
+        }
+        Insert: {
+          assigned_users?: string[] | null
+          coach_id: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          programme_type?: string
+          status?: string
+          title: string
+          updated_at?: string
+          weeks?: number
+        }
+        Update: {
+          assigned_users?: string[] | null
+          coach_id?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          programme_type?: string
+          status?: string
+          title?: string
+          updated_at?: string
+          weeks?: number
+        }
+        Relationships: []
+      }
       progression_history: {
         Row: {
           adjustment_reason: string | null
@@ -2934,6 +3149,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      push_subscriptions: {
+        Row: {
+          auth_key: string
+          created_at: string
+          device_label: string | null
+          endpoint: string
+          id: string
+          p256dh: string
+          user_id: string
+        }
+        Insert: {
+          auth_key: string
+          created_at?: string
+          device_label?: string | null
+          endpoint: string
+          id?: string
+          p256dh: string
+          user_id: string
+        }
+        Update: {
+          auth_key?: string
+          created_at?: string
+          device_label?: string | null
+          endpoint?: string
+          id?: string
+          p256dh?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       reaction_scores: {
         Row: {
@@ -5466,6 +5711,10 @@ export type Database = {
         Returns: boolean
       }
       cancel_listing: { Args: { p_listing_id: string }; Returns: Json }
+      check_booking_limit: {
+        Args: { p_coach_id: string; p_date: string; p_user_id: string }
+        Returns: boolean
+      }
       check_global_pb_ranking: {
         Args: {
           p_activity_category?: string
@@ -5676,6 +5925,17 @@ export type Database = {
         }
         Returns: Json
       }
+      mark_stale_users_offline: { Args: never; Returns: undefined }
+      notify_user: {
+        Args: {
+          p_body: string
+          p_icon?: string
+          p_title: string
+          p_url?: string
+          p_user_id: string
+        }
+        Returns: undefined
+      }
       place_bid:
         | {
             Args: { _amount: number; _listing_id: string; _uid: string }
@@ -5726,6 +5986,7 @@ export type Database = {
         Args: { p_amount: number; p_recipient_id: string }
         Returns: Json
       }
+      update_presence: { Args: { p_page?: string }; Returns: undefined }
     }
     Enums: {
       app_role: "dev" | "coach" | "user"

@@ -84,15 +84,8 @@ export function usePushNotifications() {
 
       const subJson = sub.toJSON();
 
-      // `push_subscriptions` is a genuine table this feature depends on (see
-      // the 20260529_final_audit_fixes.sql migration) but it was never
-      // actually created against this database despite that migration being
-      // recorded as applied — so it's absent from the generated types too,
-      // and this upsert (and the delete in unsubscribe below) currently
-      // fails every time, meaning a subscription never actually persists.
-      // The `as any` just keeps this compiling until the table exists.
       // Store in Supabase
-      await supabase.from('push_subscriptions' as any).upsert({
+      await supabase.from('push_subscriptions').upsert({
         user_id: user.id,
         endpoint: subJson.endpoint!,
         p256dh: subJson.keys!.p256dh,
@@ -121,9 +114,9 @@ export function usePushNotifications() {
       if (sub) {
         await sub.unsubscribe();
 
-        // Remove from Supabase (see the `push_subscriptions` note above)
+        // Remove from Supabase
         await supabase
-          .from('push_subscriptions' as any)
+          .from('push_subscriptions')
           .delete()
           .eq('user_id', user.id)
           .eq('endpoint', sub.endpoint);

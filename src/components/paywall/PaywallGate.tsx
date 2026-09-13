@@ -12,7 +12,7 @@
 import { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Lock, Zap, ChevronRight } from 'lucide-react';
+import { Lock, Zap, ChevronRight, Check } from 'lucide-react';
 import { useTokenBalance } from '@/hooks/useTokenBalance';
 import { useUserRole } from '@/hooks/useUserRole';
 import { hasFeatureAccess, getRequiredTier, FEATURE_GATES } from '@/lib/featureGating';
@@ -75,13 +75,17 @@ export function PaywallGate({ feature, children, inline, fallback }: PaywallGate
     );
   }
 
-  // Full-page lock screen
+  // Full-page hero lock screen — real "what this tool does / what you get"
+  // content for the specific feature, not a generic lock popup.
+  const benefits = featureInfo?.benefits;
+
   return (
-    <div className="min-h-[60vh] flex flex-col items-center justify-center px-6 text-center">
+    <div className="min-h-[60vh] flex flex-col items-center justify-center px-6 py-10 text-center">
       <motion.div
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ type: 'spring', stiffness: 200 }}
+        className="w-full max-w-md"
       >
         <div className="w-20 h-20 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto mb-6"
           style={{ boxShadow: '0 0 30px rgba(255,85,0,0.15)' }}>
@@ -91,9 +95,25 @@ export function PaywallGate({ feature, children, inline, fallback }: PaywallGate
         <h2 className="font-display text-xl tracking-wider mb-2">
           {featureInfo?.name?.toUpperCase() ?? 'FEATURE LOCKED'}
         </h2>
-        <p className="text-muted-foreground text-sm mb-6 max-w-sm">
+        <p className="text-muted-foreground text-sm mb-6 max-w-sm mx-auto">
           {featureInfo?.description ?? 'This feature requires a higher tier.'}
         </p>
+
+        {benefits && benefits.length > 0 && (
+          <div className="bg-card border border-border rounded-xl p-4 mb-6 text-left">
+            <p className="text-xs text-muted-foreground mb-3 font-display tracking-wider text-center">
+              WHAT YOU GET
+            </p>
+            <ul className="space-y-2.5">
+              {benefits.map((benefit, i) => (
+                <li key={i} className="flex items-start gap-2.5">
+                  <Check className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+                  <span className="text-sm text-foreground/90">{benefit}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
 
         <div className="bg-card border border-border rounded-xl p-4 mb-6 max-w-xs mx-auto">
           <p className="text-xs text-muted-foreground mb-1 font-display tracking-wider">UNLOCK WITH</p>

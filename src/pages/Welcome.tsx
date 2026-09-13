@@ -47,7 +47,7 @@ const TOUR_SLIDES = [
   {
     icon: GraduationCap,
     title: 'UNIVERSITY',
-    description: 'Unit 1 of Level 2 is free — real fitness, nutrition & mindset education, included with membership.',
+    description: 'Chapter 1 of Level 2 is free to try — real fitness, nutrition & mindset education, with full access included on membership.',
     color: '#3B82F6',
   },
 ];
