@@ -36,8 +36,6 @@ import { CardioProgramDisplay } from './CardioProgramDisplay';
 import { CardioNextSessionPreview } from './CardioNextSessionPreview';
 import { MovementExecutionView } from './MovementExecutionView';
 import { StartDatePickerDialog } from './StartDatePickerDialog';
-import { CalendarSyncSection } from '@/components/programming/CalendarSyncSection';
-import { AutoCalendarPrompt } from '@/components/programming/AutoCalendarPrompt';
 
 interface SavedCardioProgramsProps {
   onViewProgram: (program: GeneratedCardioProgram) => void;
@@ -79,7 +77,6 @@ export function SavedCardioPrograms({ onViewProgram }: SavedCardioProgramsProps)
   const [executingProgramId, setExecutingProgramId] = useState<string | null>(null);
   const [startDateProgram, setStartDateProgram] = useState<CardioProgram | null>(null);
   const [deletingProgramId, setDeletingProgramId] = useState<string | null>(null);
-  const [justStartedProgramId, setJustStartedProgramId] = useState<string | null>(null);
 
   const executingProgram = programs?.find(p => p.id === executingProgramId);
 
@@ -126,19 +123,10 @@ export function SavedCardioPrograms({ onViewProgram }: SavedCardioProgramsProps)
   // Show execution view if tracking
   if (executingProgram) {
     return (
-      <>
-        <MovementExecutionView
-          program={executingProgram}
-          onClose={() => setExecutingProgramId(null)}
-        />
-        <AutoCalendarPrompt
-          programType="cardio"
-          programId={executingProgram.id}
-          programName={executingProgram.name}
-          trigger={justStartedProgramId}
-          onDismiss={() => setJustStartedProgramId(null)}
-        />
-      </>
+      <MovementExecutionView
+        program={executingProgram}
+        onClose={() => setExecutingProgramId(null)}
+      />
     );
   }
 
@@ -154,7 +142,6 @@ export function SavedCardioPrograms({ onViewProgram }: SavedCardioProgramsProps)
         programId: startDateProgram.id,
         startDate: date,
       });
-      setJustStartedProgramId(startDateProgram.id);
       setExecutingProgramId(startDateProgram.id);
       setStartDateProgram(null);
       setExpandedId(null);
@@ -399,12 +386,6 @@ export function SavedCardioPrograms({ onViewProgram }: SavedCardioProgramsProps)
                         programId={program.id}
                         currentWeek={program.current_week}
                         currentDay={program.current_day}
-                      />
-                      <CalendarSyncSection
-                        programType="cardio"
-                        programId={program.id}
-                        programName={program.name}
-                        currentWeek={program.current_week}
                       />
                     </>
                   )}

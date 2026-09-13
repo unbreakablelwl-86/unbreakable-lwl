@@ -30,8 +30,6 @@ import {
   Eye,
 } from 'lucide-react';
 import { InlineProgramEditor } from './InlineProgramEditor';
-import { CalendarSyncSection } from './CalendarSyncSection';
-import { AutoCalendarPrompt } from './AutoCalendarPrompt';
 import { StartDatePickerDialog } from '@/components/cardio/StartDatePickerDialog';
 import { motion, AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns';
@@ -61,7 +59,6 @@ export function MyProgramsSection() {
   const [startDateProgramId, setStartDateProgramId] = useState<string | null>(null);
   const [editingProgramId, setEditingProgramId] = useState<string | null>(null);
   const [deletingProgramId, setDeletingProgramId] = useState<string | null>(null);
-  const [justStartedProgramId, setJustStartedProgramId] = useState<string | null>(null);
   const startDateProgram = programs?.find(p => p.id === startDateProgramId);
 
   // Find the program being executed
@@ -120,7 +117,6 @@ export function MyProgramsSection() {
       // so the calendar always fell back to "today" (or, on a re-start,
       // didn't move at all) regardless of what the user chose here.
       await startProgrammeExecution.mutateAsync({ programId: startDateProgramId, startDate: date });
-      setJustStartedProgramId(startDateProgramId);
       setStartDateProgramId(null);
       setExecutingProgramId(startDateProgramId);
       setExpandedProgramId(null);
@@ -176,19 +172,10 @@ export function MyProgramsSection() {
   // Show execution view if a program is being executed
   if (executingProgram) {
     return (
-      <>
-        <ProgrammeExecutionView
-          program={executingProgram}
-          onClose={() => setExecutingProgramId(null)}
-        />
-        <AutoCalendarPrompt
-          programType="training"
-          programId={executingProgram.id}
-          programName={executingProgram.name}
-          trigger={justStartedProgramId}
-          onDismiss={() => setJustStartedProgramId(null)}
-        />
-      </>
+      <ProgrammeExecutionView
+        program={executingProgram}
+        onClose={() => setExecutingProgramId(null)}
+      />
     );
   }
 
@@ -395,12 +382,6 @@ export function MyProgramsSection() {
                         programId={program.id}
                         currentWeek={program.current_week}
                         currentDay={program.current_day}
-                      />
-                      <CalendarSyncSection
-                        programType="training"
-                        programId={program.id}
-                        programName={program.name}
-                        currentWeek={program.current_week}
                       />
                     </>
                   )}
