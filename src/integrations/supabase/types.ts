@@ -2912,6 +2912,33 @@ export type Database = {
         }
         Relationships: []
       }
+      programme_calendar_syncs: {
+        Row: {
+          block_number: number
+          id: string
+          program_id: string
+          program_type: string
+          synced_at: string
+          user_id: string
+        }
+        Insert: {
+          block_number: number
+          id?: string
+          program_id: string
+          program_type: string
+          synced_at?: string
+          user_id: string
+        }
+        Update: {
+          block_number?: number
+          id?: string
+          program_id?: string
+          program_type?: string
+          synced_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       programme_templates: {
         Row: {
           created_at: string

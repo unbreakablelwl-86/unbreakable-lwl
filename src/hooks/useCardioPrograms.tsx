@@ -5,6 +5,7 @@ import { useAuth } from './useAuth';
 import { useToast } from './use-toast';
 import { useUserRole } from './useUserRole';
 import { GeneratedCardioProgram } from '@/lib/cardioTypes';
+import { dateForSession, dateForWeekday } from '@/lib/scheduleDates';
 
 export type CardioProgramStatus = 'not_started' | 'active' | 'completed' | 'paused';
 
@@ -172,7 +173,7 @@ export function useCardioPrograms() {
       // Check if planners already exist
       const { data: existingPlanners } = await supabase
         .from('cardio_session_planners')
-        .select('id, week_number, day_number, status')
+        .select('id, week_number, day_number, status, scheduled_date')
         .eq('program_id', programId);
 
       // Activate the program with user-chosen start date. This used to only
@@ -204,9 +205,12 @@ export function useCardioPrograms() {
 
           weeks.forEach((week: any, weekIndex: number) => {
             const sessions = week.sessions || [];
+            const weekNumber = week.weekNumber || weekIndex + 1;
             sessions.forEach((session: any, sessionIndex: number) => {
-              const scheduledDate = new Date(startDate);
-              scheduledDate.setDate(scheduledDate.getDate() + (weekIndex * 7) + sessionIndex);
+              // Match each session to its actual named weekday rather than
+              // assuming sessions fall on consecutive days from week start —
+              // see the same fix in useTrainingPrograms.tsx for why.
+              const scheduledDate = dateForSession(startDate, weekNumber, session.day, sessionIndex);
 
               plannerEntries.push({
                 user_id: user.id,
@@ -238,8 +242,12 @@ export function useCardioPrograms() {
         // completed/skipped-and-logged sessions alone so history isn't rewritten.
         const updates = existingPlanners.filter(p => p.status === 'pending' || p.status === 'skipped');
         for (const planner of updates) {
-          const scheduledDate = new Date(startDate);
-          scheduledDate.setDate(scheduledDate.getDate() + ((planner.week_number - 1) * 7) + (planner.day_number - 1));
+          // Preserve this session's original weekday rather than re-deriving
+          // it from index — see the matching fix in useTrainingPrograms.tsx.
+          const previousDow = planner.scheduled_date
+            ? new Date(`${planner.scheduled_date}T00:00:00`).getDay()
+            : startDate.getDay();
+          const scheduledDate = dateForWeekday(startDate, planner.week_number, previousDow);
           const { error: rescheduleError } = await supabase
             .from('cardio_session_planners')
             .update({ scheduled_date: scheduledDate.toISOString().split('T')[0], status: 'pending' })

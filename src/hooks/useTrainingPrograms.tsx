@@ -5,6 +5,7 @@ import { useToast } from './use-toast';
 import { useUserRole } from './useUserRole';
 import { GeneratedProgram } from '@/lib/programTypes';
 import { Json } from '@/integrations/supabase/types';
+import { dateForSession, dateForWeekday } from '@/lib/scheduleDates';
 
 export type ProgramStatus = 'not_started' | 'active' | 'completed' | 'paused';
 
@@ -192,7 +193,7 @@ export function useTrainingPrograms() {
       // 3. Check if session planners already exist for this program
       const { data: existingPlanners } = await supabase
         .from('session_planners')
-        .select('id, week_number, day_number, status')
+        .select('id, week_number, day_number, status, scheduled_date')
         .eq('program_id', programId);
 
       // 4. Activate the program — always honour the chosen start date, even on
@@ -224,8 +225,11 @@ export function useTrainingPrograms() {
           // Generate 12 weeks of planners
           for (let week = 1; week <= 12; week++) {
             templateDays.forEach((day: any, dayIndex: number) => {
-              const scheduledDate = new Date(startDate);
-              scheduledDate.setDate(scheduledDate.getDate() + ((week - 1) * 7) + dayIndex);
+              // Match each session to its actual named weekday (e.g. "Thursday")
+              // relative to the chosen start date, rather than assuming sessions
+              // fall on consecutive days starting from day 0 — a 4-day Mon/Tue/
+              // Thu/Fri split was previously landing on Mon/Tue/Wed/Thu instead.
+              const scheduledDate = dateForSession(startDate, week, day.day, dayIndex);
 
               plannerEntries.push({
                 user_id: user.id,
@@ -265,8 +269,13 @@ export function useTrainingPrograms() {
         // never gets rewritten.
         const updates = existingPlanners.filter(p => p.status === 'pending' || p.status === 'skipped');
         for (const planner of updates) {
-          const scheduledDate = new Date(startDate);
-          scheduledDate.setDate(scheduledDate.getDate() + ((planner.week_number - 1) * 7) + (planner.day_number - 1));
+          // Preserve this session's original weekday (e.g. a Thursday leg day
+          // stays a Thursday leg day) rather than re-deriving it from index,
+          // which is what produced the wrong weekdays in the first place.
+          const previousDow = planner.scheduled_date
+            ? new Date(`${planner.scheduled_date}T00:00:00`).getDay()
+            : startDate.getDay();
+          const scheduledDate = dateForWeekday(startDate, planner.week_number, previousDow);
           const { error: rescheduleError } = await supabase
             .from('session_planners')
             .update({ scheduled_date: scheduledDate.toISOString().split('T')[0], status: 'pending' })
