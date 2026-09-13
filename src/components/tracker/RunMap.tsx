@@ -75,16 +75,35 @@ function LeafletMap({
         attributionControl: false,
       });
 
-      // Dark tile layer (CartoDB Dark Matter — free, no API key)
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-        maxZoom: 20,
-        subdomains: 'abcd',
-      }).addTo(map);
+      // Dark tile layer. CARTO now requires a free API key on
+      // basemaps.cartocdn.com (request one at https://carto.com/basemaps/apikey/) —
+      // without VITE_CARTO_API_KEY set, fall back to Esri's keyless dark basemap
+      // so the map still renders instead of showing CARTO's "API key required" watermark.
+      const cartoKey = import.meta.env.VITE_CARTO_API_KEY as string | undefined;
+      if (cartoKey) {
+        L.tileLayer(
+          `https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}.png?key=${cartoKey}`,
+          { maxZoom: 20, subdomains: 'abcd' }
+        ).addTo(map);
 
-      // Small attribution in corner
-      L.control.attribution({ position: 'bottomright', prefix: false })
-        .addAttribution('© <a href="https://www.openstreetmap.org/copyright">OSM</a> © <a href="https://carto.com/">CARTO</a>')
-        .addTo(map);
+        L.control.attribution({ position: 'bottomright', prefix: false })
+          .addAttribution('© <a href="https://www.openstreetmap.org/copyright">OSM</a> © <a href="https://carto.com/attributions">CARTO</a>')
+          .addTo(map);
+      } else {
+        L.tileLayer(
+          'https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}.png',
+          { maxZoom: 20, subdomains: 'abcd' }
+        ).on('tileerror', function fallbackToEsri(this: any) {
+          this.off('tileerror', fallbackToEsri);
+          this.setUrl(
+            'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}'
+          );
+        }).addTo(map);
+
+        L.control.attribution({ position: 'bottomright', prefix: false })
+          .addAttribution('© <a href="https://www.openstreetmap.org/copyright">OSM</a> © <a href="https://carto.com/attributions">CARTO</a> © <a href="https://www.esri.com/">Esri</a>')
+          .addTo(map);
+      }
 
       mapInstanceRef.current = map;
 
