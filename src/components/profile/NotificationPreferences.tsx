@@ -9,7 +9,7 @@ import { toast } from 'sonner';
 function getPrefSections(isDev: boolean) {
   return [
     {
-      label: 'AI Coach',
+      label: 'Unbreakable Coach',
       items: [
         // Dev-only: ties to the daily-autofill cron, which only ever runs for dev-role accounts.
         ...(isDev ? [{ key: 'ai_daily_fill', label: 'Daily auto-fill completed', icon: Bot }] : []),

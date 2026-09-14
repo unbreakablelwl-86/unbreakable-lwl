@@ -525,7 +525,7 @@ export default function AITokens() {
                   Once you're an Unbreakable member, <span className="text-foreground">notifications, messaging, social interactions, manual tracking, habit logging, calculators, streaks,
                   profile updates, and timeline browsing</span> are all included — no tokens used.
                   Tokens are only consumed when the AI generates something for you (coaching replies, programmes, analysis).
-                  The AI Coach works with text and data only — it does not accept or track videos or images.
+                  The Unbreakable Coach works with text and data only — it does not accept or track videos or images.
                 </p>
               </div>
             </div>

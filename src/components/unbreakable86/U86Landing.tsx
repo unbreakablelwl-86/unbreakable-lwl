@@ -111,7 +111,7 @@ export function U86Landing({ onStart, resetCount = 0 }: U86LandingProps) {
             <h2 className="font-display text-sm tracking-wider text-foreground">WHAT IS UNBREAKABLE 86?</h2>
           </div>
           <p className="text-muted-foreground text-sm leading-relaxed">
-            The ultimate <span className="text-primary">86-day transformation challenge</span>. Coached by AI,
+            The ultimate <span className="text-primary">86-day transformation challenge</span>. Coached by your Unbreakable Coach,
             personalised to your level, covering every pillar of your life. This isn't just training —
             it's a complete system for becoming <span className="text-primary">unbreakable</span>.
           </p>

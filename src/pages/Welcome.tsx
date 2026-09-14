@@ -17,7 +17,7 @@ const TOUR_SLIDES = [
   {
     icon: MessageCircle,
     title: 'YOUR UNBREAKABLE COACH',
-    description: 'Ask your coach anything. Build programmes, meal plans, get form tips — all from your personal AI coach.',
+    description: 'Ask your coach anything. Build programmes, meal plans, get form tips — all from your personal Unbreakable Coach.',
     color: '#FF5500',
   },
   {

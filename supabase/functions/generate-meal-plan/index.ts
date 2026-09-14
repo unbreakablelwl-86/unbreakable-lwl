@@ -75,7 +75,7 @@ serve(async (req) => {
 
     const token = authHeader.replace('Bearer ', '');
     const { data: claimsData, error: authError } = await authClient.auth.getClaims(token);
-    
+
     if (authError || !claimsData?.claims) {
       return new Response(
         JSON.stringify({ error: 'Unauthorized - Invalid session' }),
@@ -172,7 +172,7 @@ serve(async (req) => {
     }
 
     // Compact recipe catalogue, name,category,macros,ID only to minimize tokens
-    const recipeCatalogue = (libraryRecipes || []).map(r => 
+    const recipeCatalogue = (libraryRecipes || []).map(r =>
       `${r.name}|${r.category}|${r.calories_per_serving}kcal|P${r.protein_g}C${r.carbs_g}F${r.fat_g}|${r.id}`
     ).join('\n');
 
@@ -188,6 +188,7 @@ CRITICAL RULES:
 - When the athlete has a STORE CUPBOARD, STRONGLY PREFER recipes whose ingredients overlap with what they already own. This reduces waste and shopping.
 - Adjust calories for training vs rest days. Higher carbs on training days.
 - Vary meals across the week, avoid repeating the same recipe on consecutive days.
+- Keep every "prepNotes" and "coachNotes" value SHORT (max ~12 words) and every "name" field concise. Do not pad the response with unnecessary text — the output must fit well within the token budget for a full 7-day plan.
 
 Return ONLY JSON matching this EXACT structure with 7 day objects:
 {"planName":"string","overview":"string","weeklyCalories":0,"weeklyProtein":0,"days":[{"dayNumber":1,"dayName":"Monday","isTrainingDay":true,"totalCalories":0,"totalProtein":0,"totalCarbs":0,"totalFat":0,"meals":{"breakfast":{"name":"string","recipeId":"uuid","calories":0,"protein":0,"carbs":0,"fat":0,"prepNotes":"string"},"lunch":{"name":"string","recipeId":"uuid","calories":0,"protein":0,"carbs":0,"fat":0,"prepNotes":"string"},"dinner":{"name":"string","recipeId":"uuid","calories":0,"protein":0,"carbs":0,"fat":0,"prepNotes":"string"},"snacks":[{"name":"string","recipeId":"uuid","calories":0,"protein":0,"carbs":0,"fat":0}]}}],"shoppingList":["string"],"mealPrepTips":["string"],"coachNotes":"string"}
@@ -196,19 +197,19 @@ The "days" array MUST contain exactly 7 objects, dayNumber 1-7, Monday through S
 
     // Build context
     let contextMessage = `ATHLETE CONTEXT:\n`;
-    
+
     if (userContext.goals) {
       contextMessage += `- Daily Targets: ${userContext.goals.dailyCalories || 2000} kcal, ${userContext.goals.dailyProtein || 150}g protein\n`;
     }
-    
+
     if (userContext.dietaryPreferences?.length) {
       contextMessage += `- Dietary Preferences: ${userContext.dietaryPreferences.join(', ')}\n`;
     }
-    
+
     if (userContext.restrictions?.length) {
       contextMessage += `- Restrictions: ${userContext.restrictions.join(', ')}\n`;
     }
-    
+
     if (userContext.trainingLoad) {
       contextMessage += `- Training: ${userContext.trainingLoad.weeklyWorkouts || 4} sessions/week\n`;
       if (userContext.trainingLoad.nextWorkoutType) {
@@ -222,7 +223,7 @@ The "days" array MUST contain exactly 7 objects, dayNumber 1-7, Monday through S
 
     contextMessage += `\nREQUEST: ${prompt}`;
 
-    const outputInstruction = requestType === 'suggestions' 
+    const outputInstruction = requestType === 'suggestions'
       ? 'Provide helpful meal suggestions in a conversational format. Reference specific recipes from the library by name. Be specific and practical.'
       : 'Generate a complete meal plan in the JSON format specified above. Use library recipes where possible. Respond ONLY with valid JSON.';
 
@@ -235,7 +236,7 @@ The "days" array MUST contain exactly 7 objects, dayNumber 1-7, Monday through S
       },
       body: JSON.stringify({
         model: "claude-sonnet-4-6",
-        max_tokens: 4096,
+        max_tokens: requestType === 'suggestions' ? 2048 : 8192,
         system: systemPrompt,
         messages: [
           { role: "user", content: `${contextMessage}\n\n${outputInstruction}` },
@@ -261,6 +262,10 @@ The "days" array MUST contain exactly 7 objects, dayNumber 1-7, Monday through S
 
     const aiResponse = await response.json();
     const content = aiResponse.content?.[0]?.text;
+    // A response cut off by the token cap (rather than a natural stop) will
+    // almost always fail JSON parsing below — flag it explicitly so the
+    // error message tells the real story instead of a generic parse failure.
+    const wasTruncated = aiResponse.stop_reason === 'max_tokens';
 
     if (!content) {
       throw new Error("No response from AI");
@@ -268,9 +273,9 @@ The "days" array MUST contain exactly 7 objects, dayNumber 1-7, Monday through S
 
     // For suggestions, return text directly
     if (requestType === 'suggestions') {
-      return new Response(JSON.stringify({ 
+      return new Response(JSON.stringify({
         type: 'suggestions',
-        content 
+        content
       }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
@@ -281,12 +286,16 @@ The "days" array MUST contain exactly 7 objects, dayNumber 1-7, Monday through S
     try {
       mealPlan = extractJsonFromResponse(content);
     } catch (parseError) {
-      console.error("JSON parse error:", parseError);
-      return new Response(JSON.stringify({ 
-        type: 'suggestions',
-        content,
-        parseError: true 
+      console.error("JSON parse error:", parseError, "truncated:", wasTruncated);
+      // Surface this as a real error (not a silent 'suggestions' fallback) so
+      // the client can tell the user the build failed and let them retry,
+      // instead of the request quietly vanishing with no plan and no toast.
+      return new Response(JSON.stringify({
+        error: wasTruncated
+          ? "The meal plan was too long to generate in one go. Please try again — it usually works on a retry."
+          : "Couldn't build a valid meal plan from the coach's response. Please try again.",
       }), {
+        status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
@@ -303,8 +312,8 @@ The "days" array MUST contain exactly 7 objects, dayNumber 1-7, Monday through S
 
   } catch (e) {
     console.error("generate-meal-plan error:", e);
-    return new Response(JSON.stringify({ 
-      error: e instanceof Error ? e.message : "Failed to generate meal plan" 
+    return new Response(JSON.stringify({
+      error: e instanceof Error ? e.message : "Failed to generate meal plan"
     }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },

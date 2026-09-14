@@ -242,7 +242,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
             transition={{ duration: 0.6 }}
             className="text-[#888] text-base sm:text-lg md:text-xl leading-relaxed max-w-2xl mx-auto mb-8"
           >
-            Training, nutrition, mindset and education — one platform, one AI coach
+            Training, nutrition, mindset and education — one platform, one Unbreakable Coach
             built around you. Tell it what you need, it builds the plan. No more juggling
             five different apps for one goal. A community that keeps you showing up,
             even on the days you don't want to.
@@ -319,7 +319,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
               { val: '2,500+', label: 'Quiz Questions' },
               { val: '42', label: 'Original Tracks' },
               { val: '4', label: 'Focus Games' },
-              { val: '24/7', label: 'AI Coach' },
+              { val: '24/7', label: 'Unbreakable Coach' },
             ].map(s => (
               <div key={s.label}>
                 <p className="font-heading font-black text-xl sm:text-2xl md:text-3xl text-[hsl(var(--primary))]"

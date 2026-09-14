@@ -234,12 +234,12 @@ const FEATURE_GATES: Record<FeatureId, FeatureGate> = {
   // ─── BASE FEATURES ───
   ai_coach_basic: {
     id: 'ai_coach_basic',
-    name: 'AI Coach (Basic)',
+    name: 'Unbreakable Coach (Basic)',
     description: 'Chat with Unbreakable Coach — text-only, no video/image assessment',
     requiredTier: 'foundation',
     availableOnAbsoluteBase: true, // Limited version available on £7 plan
     benefits: [
-      'Chat with your AI coach any time, about anything training-related',
+      'Chat with your Unbreakable Coach any time, about anything training-related',
       'Get quick form, recovery and progression advice',
       'Ask it to build programmes, meal plans and more',
     ],

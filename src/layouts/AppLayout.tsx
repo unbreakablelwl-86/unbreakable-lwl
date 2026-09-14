@@ -173,7 +173,7 @@ const ALL_NAV_ITEMS: NavItemDef[] = [
   {
     id: 'ai-coach',
     icon: Bot,
-    label: 'AI Coach',
+    label: 'Unbreakable Coach',
     path: '/help',
     activeMatch: ['/help'],
     color: '#FF5500',
