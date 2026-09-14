@@ -3,6 +3,10 @@ import react from "@vitejs/plugin-react-swc";
 import path from "path";
 
 export default defineConfig(({ mode }) => ({
+  // Default is 'VITE_' only. CARTO_API_KEY is saved in Vercel without a VITE_
+  // prefix, so it needs to be explicitly allowed through to the client bundle
+  // as well (see RunMap.tsx's cartoKey lookup).
+  envPrefix: ["VITE_", "CARTO_"],
   server: {
     host: "::",
     port: 8080,

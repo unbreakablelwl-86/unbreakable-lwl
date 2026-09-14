@@ -77,9 +77,12 @@ function LeafletMap({
 
       // Dark tile layer. CARTO now requires a free API key on
       // basemaps.cartocdn.com (request one at https://carto.com/basemaps/apikey/) —
-      // without VITE_CARTO_API_KEY set, fall back to Esri's keyless dark basemap
-      // so the map still renders instead of showing CARTO's "API key required" watermark.
-      const cartoKey = import.meta.env.VITE_CARTO_API_KEY as string | undefined;
+      // without a key set, fall back to Esri's keyless dark basemap so the map
+      // still renders instead of showing CARTO's "API key required" watermark.
+      // Saved in Vercel as CARTO_API_KEY (no VITE_ prefix) — vite.config.ts's
+      // envPrefix is extended to allow that through to the client bundle too.
+      // VITE_CARTO_API_KEY is also checked so a properly-prefixed var works too.
+      const cartoKey = (import.meta.env.CARTO_API_KEY ?? import.meta.env.VITE_CARTO_API_KEY) as string | undefined;
       if (cartoKey) {
         L.tileLayer(
           `https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}.png?key=${cartoKey}`,
