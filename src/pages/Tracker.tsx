@@ -241,6 +241,7 @@ export default function Tracker() {
                   { path: '', icon: Play, title: 'START SESSION', desc: 'GPS-tracked or manual cardio session logging', onClick: handleStartSession },
                   { path: '/tracker/create', icon: Wrench, title: 'CREATE PROGRAMME', desc: 'Unbreakable Coach or Manual Builder — build cardio training plans', onClick: handleCreate },
                   { path: '/tracker/my-programmes', icon: BookOpen, title: 'MY PROGRAMMES', desc: 'View saved programmes, track progress & execute sessions' },
+                  { path: '/tracker/logs', icon: BarChart3, title: 'SESSION LOGS', desc: 'Review completed cardio sessions and training history' },
                 ].map(card => {
                   const Icon = card.icon;
                   const content = (

@@ -115,6 +115,36 @@ export function MindsetProgrammeDetail({ programme, onBack }: Props) {
       toast.error('Could not save progress — check your connection');
     }
 
+    // Mirror the toggle into a timestamped log (separate from the flat
+    // completed_activities array above, which has no dates) so /mindset/logs
+    // can show a real chronological history — same idea as Power's workout
+    // sessions and Movement's cardio session planners.
+    try {
+      if (wasIncomplete) {
+        await supabase.from('mindset_activity_completions').upsert({
+          user_id: user?.id,
+          programme_id: programme.id,
+          activity_key: key,
+          activity_type: activity.type,
+          activity_name: activity.name || activityLabels[activity.type] || activity.type,
+          week_number: wi + 1,
+          day_number: di + 1,
+          duration_minutes: activity.durationMinutes ?? null,
+          completed_at: new Date().toISOString(),
+        }, { onConflict: 'user_id,programme_id,activity_key' });
+      } else {
+        await supabase
+          .from('mindset_activity_completions')
+          .delete()
+          .eq('programme_id', programme.id)
+          .eq('activity_key', key);
+      }
+    } catch (err) {
+      // Non-fatal — the checkbox state above already saved successfully,
+      // this only affects the logs page's history.
+      console.error('Failed to update mindset activity log:', err);
+    }
+
     if (wasIncomplete) {
       // Notify coach of completion
       if (user) {

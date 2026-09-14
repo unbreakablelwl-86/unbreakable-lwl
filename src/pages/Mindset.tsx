@@ -16,7 +16,7 @@ import { format, subDays } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
 
 /* ─── Types ─── */
-type MindsetTab = 'overview' | 'breathwork' | 'exposure' | 'games' | 'programmes';
+type MindsetTab = 'overview' | 'breathwork' | 'exposure' | 'games' | 'programmes' | 'logs';
 import { ExposureTimer, EXPOSURE_PROTOCOLS, type ExposureProtocol } from '@/components/mindset/ExposureTimer';
 
 const Mindset = () => {
@@ -139,11 +139,13 @@ const Mindset = () => {
                   { tab: 'exposure' as MindsetTab, icon: Snowflake, title: 'COLD & HEAT', desc: 'Cold showers, ice baths, sauna protocols — guided timers', colour: 'var(--pillar-accent)' },
                   { tab: 'games' as MindsetTab, icon: Gamepad2, title: 'FOCUS GAMES', desc: 'Reaction training, hand-eye coordination, global leaderboards', colour: 'var(--pillar-accent)' },
                   { tab: 'programmes' as MindsetTab, icon: Sparkles, title: 'PROGRAMMES', desc: 'Unbreakable Coach or manual mindset programmes — breathwork, cold exposure, focus plans', colour: 'var(--pillar-accent)' },
+                  { tab: 'logs' as MindsetTab, icon: BarChart3, title: 'LOGS', desc: 'Review completed activities and mindset training history', colour: 'var(--pillar-accent)' },
                 ].map(card => (
                   <button
                     key={card.tab}
                     onClick={() => {
                       if (card.tab === 'breathwork') { navigate('/mindset/breathing'); return; }
+                      if (card.tab === 'logs') { navigate('/mindset/logs'); return; }
                       setActiveTab(card.tab);
                     }}
                     className="w-full flex items-center gap-3 p-3.5 rounded-xl border border-border bg-card hover:border-border hover:bg-card transition-all text-left"

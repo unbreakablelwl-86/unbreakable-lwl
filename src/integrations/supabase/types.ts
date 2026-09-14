@@ -2338,6 +2338,53 @@ export type Database = {
         }
         Relationships: []
       }
+      mindset_activity_completions: {
+        Row: {
+          activity_key: string
+          activity_name: string | null
+          activity_type: string | null
+          completed_at: string
+          day_number: number | null
+          duration_minutes: number | null
+          id: string
+          programme_id: string
+          user_id: string
+          week_number: number | null
+        }
+        Insert: {
+          activity_key: string
+          activity_name?: string | null
+          activity_type?: string | null
+          completed_at?: string
+          day_number?: number | null
+          duration_minutes?: number | null
+          id?: string
+          programme_id: string
+          user_id: string
+          week_number?: number | null
+        }
+        Update: {
+          activity_key?: string
+          activity_name?: string | null
+          activity_type?: string | null
+          completed_at?: string
+          day_number?: number | null
+          duration_minutes?: number | null
+          id?: string
+          programme_id?: string
+          user_id?: string
+          week_number?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mindset_activity_completions_programme_id_fkey"
+            columns: ["programme_id"]
+            isOneToOne: false
+            referencedRelation: "mindset_programmes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       mindset_programmes: {
         Row: {
           completed_activities: Json

@@ -83,6 +83,8 @@ const FuelFoods = lazy(() => import("./pages/FuelFoods"));
 const FuelMyFuel = lazy(() => import("./pages/FuelMyFuel"));
 const TrackerMyProgrammes = lazy(() => import("./pages/TrackerMyProgrammes"));
 const TrackerCreate = lazy(() => import("./pages/TrackerCreate"));
+const TrackerLogs = lazy(() => import("./pages/TrackerLogs"));
+const MindsetLogs = lazy(() => import("./pages/MindsetLogs"));
 const UserProfile = lazy(() => import("./pages/UserProfile"));
 const Onboarding = lazy(() => import("./pages/Onboarding"));
 const Welcome = lazy(() => import("./pages/Welcome"));
@@ -235,6 +237,9 @@ const App = () => {
                 <Route path="/tracker/my-programmes" element={
                   <ProtectedRoute><RouteErrorBoundary section="Movement"><PaywallGate feature="movement_pillar"><TrackerMyProgrammes /></PaywallGate></RouteErrorBoundary></ProtectedRoute>
                 } />
+                <Route path="/tracker/logs" element={
+                  <ProtectedRoute><RouteErrorBoundary section="Movement"><PaywallGate feature="movement_pillar"><TrackerLogs /></PaywallGate></RouteErrorBoundary></ProtectedRoute>
+                } />
 
                 {/* Fuel routes */}
                 <Route path="/fuel" element={
@@ -265,6 +270,9 @@ const App = () => {
                 } />
                 <Route path="/mindset/games" element={
                   <ProtectedRoute><RouteErrorBoundary section="Mindset"><PaywallGate feature="mindset_pillar"><MindsetGames /></PaywallGate></RouteErrorBoundary></ProtectedRoute>
+                } />
+                <Route path="/mindset/logs" element={
+                  <ProtectedRoute><RouteErrorBoundary section="Mindset"><PaywallGate feature="mindset_pillar"><MindsetLogs /></PaywallGate></RouteErrorBoundary></ProtectedRoute>
                 } />
                 <Route path="/zone" element={
                   <ProtectedRoute><RouteErrorBoundary section="Mindset"><PaywallGate feature="mindset_pillar"><Zone /></PaywallGate></RouteErrorBoundary></ProtectedRoute>
