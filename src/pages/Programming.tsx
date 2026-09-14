@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, Fragment } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/hooks/useAuth';
@@ -68,18 +68,28 @@ export default function Programming() {
             const active = activeTab === tab.id;
             const Icon = tab.icon;
             return (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-display tracking-wider shrink-0 transition-all border ${
-                  active
-                    ? 'bg-primary/15 text-primary border-primary/30 shadow-[0_0_12px_hsl(var(--primary)/0.3)]'
-                    : 'text-muted-foreground border-transparent hover:text-muted-foreground'
-                }`}
-              >
-                <Icon className="w-3.5 h-3.5" />
-                {tab.label}
-              </button>
+              <Fragment key={tab.id}>
+                <button
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-display tracking-wider shrink-0 transition-all border ${
+                    active
+                      ? 'bg-primary/15 text-primary border-primary/30 shadow-[0_0_12px_hsl(var(--primary)/0.3)]'
+                      : 'text-muted-foreground border-transparent hover:text-muted-foreground'
+                  }`}
+                >
+                  <Icon className="w-3.5 h-3.5" />
+                  {tab.label}
+                </button>
+                {tab.id === 'overview' && (
+                  <Link
+                    to="/programming/my-programmes"
+                    className="flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-display tracking-wider shrink-0 transition-all border text-muted-foreground border-transparent hover:text-muted-foreground"
+                  >
+                    <BookOpen className="w-3.5 h-3.5" />
+                    Programme
+                  </Link>
+                )}
+              </Fragment>
             );
           })}
         </div>
