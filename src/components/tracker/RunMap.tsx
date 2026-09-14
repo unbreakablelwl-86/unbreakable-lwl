@@ -82,12 +82,23 @@ function LeafletMap({
       // Saved in Vercel as CARTO_API_KEY (no VITE_ prefix) — vite.config.ts's
       // envPrefix is extended to allow that through to the client bundle too.
       // VITE_CARTO_API_KEY is also checked so a properly-prefixed var works too.
+      //
+      // 'run-map-tiles' (see index.css) brightens the tiles — CARTO's dark_all
+      // style is very dark by default and street/place labels were nearly
+      // unreadable at a glance. Also falls back to Esri on tile load failure
+      // even when a key is present, so a bad/blocked/rate-limited key doesn't
+      // leave the map blank.
       const cartoKey = (import.meta.env.CARTO_API_KEY ?? import.meta.env.VITE_CARTO_API_KEY) as string | undefined;
       if (cartoKey) {
         L.tileLayer(
           `https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}.png?key=${cartoKey}`,
-          { maxZoom: 20, subdomains: 'abcd' }
-        ).addTo(map);
+          { maxZoom: 20, subdomains: 'abcd', className: 'run-map-tiles' }
+        ).on('tileerror', function fallbackToEsri(this: any) {
+          this.off('tileerror', fallbackToEsri);
+          this.setUrl(
+            'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}'
+          );
+        }).addTo(map);
 
         L.control.attribution({ position: 'bottomright', prefix: false })
           .addAttribution('© <a href="https://www.openstreetmap.org/copyright">OSM</a> © <a href="https://carto.com/attributions">CARTO</a>')
@@ -95,7 +106,7 @@ function LeafletMap({
       } else {
         L.tileLayer(
           'https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}.png',
-          { maxZoom: 20, subdomains: 'abcd' }
+          { maxZoom: 20, subdomains: 'abcd', className: 'run-map-tiles' }
         ).on('tileerror', function fallbackToEsri(this: any) {
           this.off('tileerror', fallbackToEsri);
           this.setUrl(

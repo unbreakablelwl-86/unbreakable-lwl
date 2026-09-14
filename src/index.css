@@ -628,3 +628,12 @@
 .light [class*="animate-pulse"] {
   --tw-bg-opacity: 0.08;
 }
+
+/* Run/route map (RunMap.tsx) — CARTO's dark_all basemap tiles render almost
+   black by default, making street/place labels nearly unreadable. Brighten
+   and lift contrast on the tile images themselves (not the polyline/markers,
+   which are separate SVG/canvas layers on top) so labels stay legible while
+   keeping the dark aesthetic. */
+.run-map-tiles {
+  filter: brightness(1.65) contrast(0.92);
+}
