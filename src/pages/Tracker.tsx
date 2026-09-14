@@ -138,7 +138,9 @@ export default function Tracker() {
     { id: 'overview', label: 'Overview', icon: Zap },
     { id: 'activity', label: 'Activity', icon: Activity },
     { id: 'records', label: 'Records', icon: Award },
-    { id: 'stats', label: 'Stats', icon: BarChart3 },
+    // Stats tab hidden from the top tab bar per JJ's request — content/logic
+    // left intact below in case it's re-enabled later.
+    // { id: 'stats', label: 'Stats', icon: BarChart3 },
   ];
 
   const FILTERS: { id: ActivityFilter; label: string; icon: React.ComponentType<any> }[] = [

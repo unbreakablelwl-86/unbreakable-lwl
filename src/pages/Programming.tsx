@@ -34,7 +34,9 @@ export default function Programming() {
     // pick exercises via the manual builder's own in-context picker instead.
     ...(isAdminOrOwner ? [{ id: 'exercises' as PowerTab, label: 'Exercises', icon: Dumbbell }] : []),
     { id: 'records', label: 'Records', icon: Award },
-    { id: 'logs', label: 'Session Logs', icon: BarChart3 },
+    // Session Logs tab hidden from the top tab bar per JJ's request — content/logic
+    // left intact below in case it's re-enabled later.
+    // { id: 'logs', label: 'Session Logs', icon: BarChart3 },
   ];
 
   function handleCreate() {
