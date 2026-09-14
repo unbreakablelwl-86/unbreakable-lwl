@@ -495,16 +495,37 @@ serve(async (req) => {
       }
     }
 
-    // ── 7. Occasional social post ──
-    const doPostToday = seededRand(dayNumber * 53) < (1 / 6) && (summary.daily_log?.banked || summary.training_session?.exercises);
-    if (doPostToday) {
-      let content = "";
+    // ── 7. Daily social post ──
+    // JJ wants Chester posting daily, inline with whatever actually happened
+    // that day (workout, cardio, uni chapter, or just the Daily 7 habits) —
+    // replaces the old 1-in-6 random-chance version, which meant days could
+    // go by with nothing appearing on his feed even though he was "training"
+    // every day underneath.
+    //
+    // Still fires at most once per real calendar day: gated on today's log
+    // having been freshly written THIS run (summary.daily_log has no
+    // `skipped` flag), never on a later idempotent no-op re-check of a day
+    // already done — so a manual re-fire the same day can't double-post.
+    const freshLogToday = summary.daily_log && !summary.daily_log.skipped;
+    if (freshLogToday) {
+      const highlights: string[] = [];
+      if (summary.training_session?.exercises) {
+        highlights.push(`${summary.training_session.session_type} done`);
+      }
+      if (summary.cardio_session && !summary.cardio_session.skipped) {
+        highlights.push(`${summary.cardio_session.distance_km}km run logged`);
+      }
       if (summary.university?.chapter) {
-        content = `Just finished Chapter ${summary.university.chapter} on University — "${summary.university.title}". Learning something new every week. 📚`;
-      } else if (summary.training_session?.exercises) {
-        content = `Day ${dayNumber} of UNBREAKABLE 86 in the books. ${summary.training_session.session_type} done — feeling stronger each week.`;
+        highlights.push(`finished Chapter ${summary.university.chapter} — "${summary.university.title}" on University 📚`);
+      }
+
+      let content: string;
+      if (highlights.length > 0) {
+        content = `Day ${dayNumber} of UNBREAKABLE 86: ${highlights.join(", ")}. Showing up, one day at a time.`;
+      } else if (summary.daily_log.banked) {
+        content = `Day ${dayNumber} of UNBREAKABLE 86. Rest day, but banked the Daily 7 anyway — consistency over intensity.`;
       } else {
-        content = `Day ${dayNumber} of UNBREAKABLE 86. Showing up, banking the habits, trusting the process.`;
+        content = `Day ${dayNumber} of UNBREAKABLE 86. Not a perfect day, but showed up regardless. Back at it tomorrow.`;
       }
 
       await supabase.from("posts").insert({
