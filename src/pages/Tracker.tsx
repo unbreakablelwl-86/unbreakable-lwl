@@ -10,12 +10,13 @@ import { CardioTrackerModal } from '@/components/tracker/CardioTrackerModal';
 import { AuthModal } from '@/components/tracker/AuthModal';
 import { ActivityRow } from '@/components/tracker/ActivityRow';
 import { CardioRecordsSection } from '@/components/tracker/CombinedRecordsView';
+import { CardioStatsSection } from '@/components/tracker/CardioStatsSection';
 import { format, startOfWeek, endOfWeek, isWithinInterval, subWeeks } from 'date-fns';
 import {
   Footprints, Bike, Play,
   MapPin, Clock, Flame, TrendingUp, TrendingDown, ChevronRight,
   Timer, Activity, Waves, Droplets, BarChart3,
-  Zap, Target, Award, Calendar, Edit3, Layers,
+  Zap, Award, Calendar, Edit3, Layers,
   BookOpen, Wrench, ArrowRight,
 } from 'lucide-react';
 
@@ -37,13 +38,6 @@ function formatDuration(seconds: number): string {
   const s = seconds % 60;
   if (h > 0) return `${h}h ${m}m`;
   return `${m}m ${s}s`;
-}
-
-function formatPace(paceSeconds: number | null): string {
-  if (!paceSeconds) return '--:--';
-  const m = Math.floor(paceSeconds / 60);
-  const s = Math.floor(paceSeconds % 60);
-  return `${m}:${s.toString().padStart(2, '0')}`;
 }
 
 /* ── Weekly stats helper ── */
@@ -406,41 +400,9 @@ export default function Tracker() {
           {/* ═══ STATS TAB ═══ */}
           {activeTab === 'stats' && (
             <motion.div key="stats" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-5">
-              <h3 className="text-xs font-display tracking-wider text-muted-foreground">ALL-TIME STATS</h3>
-              {(() => {
-                const allRuns = runs || [];
-                const totalDist = allRuns.reduce((s, r) => s + r.distance_km, 0);
-                const totalTime = allRuns.reduce((s, r) => s + r.duration_seconds, 0);
-                const totalCals = allRuns.reduce((s, r) => s + (r.calories_burned || 0), 0);
-                const totalElev = allRuns.reduce((s, r) => s + (r.elevation_gain_m || 0), 0);
-                const longestRun = allRuns.reduce((max, r) => r.distance_km > max ? r.distance_km : max, 0);
-                const fastestPace = allRuns.reduce((best, r) => {
-                  if (r.pace_per_km_seconds && (best === 0 || r.pace_per_km_seconds < best)) return r.pace_per_km_seconds;
-                  return best;
-                }, 0);
-
-                const stats = [
-                  { label: 'Total Distance', value: `${totalDist.toFixed(1)} km`, icon: MapPin },
-                  { label: 'Total Time', value: formatDuration(totalTime), icon: Clock },
-                  { label: 'Total Activities', value: `${allRuns.length}`, icon: Activity },
-                  { label: 'Calories Burned', value: `${totalCals.toLocaleString()}`, icon: Flame },
-                  { label: 'Elevation Gained', value: `${totalElev.toFixed(0)} m`, icon: TrendingUp },
-                  { label: 'Longest Run', value: `${longestRun.toFixed(2)} km`, icon: Target },
-                  { label: 'Fastest Pace', value: fastestPace > 0 ? `${formatPace(fastestPace)}/km` : '--', icon: Zap },
-                ];
-
-                return (
-                  <div className="grid grid-cols-2 gap-3">
-                    {stats.map(s => (
-                      <div key={s.label} className="p-4 rounded-xl border border-border bg-card">
-                        <s.icon className="w-5 h-5 text-primary mb-2" style={{ filter: 'drop-shadow(0 0 4px hsl(var(--primary) / 0.5))' }} />
-                        <p className="text-xl font-bold text-foreground">{s.value}</p>
-                        <p className="text-[10px] text-muted-foreground mt-0.5">{s.label}</p>
-                      </div>
-                    ))}
-                  </div>
-                );
-              })()}
+              {/* Combined totals hub + per-activity-type drill-down (fixes
+                  cross-activity stats like a walk showing up as "Longest Run") */}
+              <CardioStatsSection />
 
               {/* Build Programme CTA */}
               <Link to="/tracker/create" className="block">
