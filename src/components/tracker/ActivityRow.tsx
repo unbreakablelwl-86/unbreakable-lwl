@@ -130,7 +130,7 @@ export function ActivityRow({ run, icon: Icon, label }: ActivityRowProps) {
 
               {hasRoute ? (
                 mapPositions.length > 1 ? (
-                  <RunMap positions={mapPositions} showElevation showExport />
+                  <RunMap positions={mapPositions} showElevation />
                 ) : (
                   <p className="text-xs text-muted-foreground">Route data for this session couldn't be loaded.</p>
                 )

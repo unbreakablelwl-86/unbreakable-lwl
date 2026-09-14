@@ -7,7 +7,6 @@ import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/hooks/useAuth';
 import { useRuns, Run, CardioActivityType } from '@/hooks/useRuns';
 import { usePersonalRecords, PersonalRecord } from '@/hooks/usePersonalRecords';
-import { useSegments, Segment } from '@/hooks/useSegments';
 import { CardioTrackerModal } from '@/components/tracker/CardioTrackerModal';
 import { AuthModal } from '@/components/tracker/AuthModal';
 import { ActivityRow } from '@/components/tracker/ActivityRow';
@@ -15,7 +14,7 @@ import { format, startOfWeek, endOfWeek, isWithinInterval, subWeeks } from 'date
 import {
   Footprints, Bike, Play, Crown,
   MapPin, Clock, Flame, TrendingUp, TrendingDown, ChevronRight,
-  Timer, Activity, Waves, Droplets, BarChart3, Route,
+  Timer, Activity, Waves, Droplets, BarChart3,
   Zap, Target, Star, Award, Calendar, Edit3, Layers,
   BookOpen, Wrench, ArrowRight,
 } from 'lucide-react';
@@ -90,7 +89,6 @@ export default function Tracker() {
   const { user } = useAuth();
   const { runs, loading: runsLoading } = useRuns();
   const { records, loading: recordsLoading } = usePersonalRecords();
-  const { segments, loading: segmentsLoading } = useSegments();
   const [activeTab, setActiveTab] = useState<TabId>('overview');
   const [activityFilter, setActivityFilter] = useState<ActivityFilter>('all');
   const [showTracker, setShowTracker] = useState(false);
@@ -475,42 +473,6 @@ export default function Tracker() {
                   </div>
                 );
               })()}
-
-              {/* Segments */}
-              <div>
-                <h3 className="text-xs font-display tracking-wider text-muted-foreground mb-3">SEGMENTS</h3>
-                {segmentsLoading ? (
-                  <div className="flex justify-center py-8">
-                    <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                  </div>
-                ) : !segments || segments.length === 0 ? (
-                  <div className="p-6 text-center rounded-xl border border-border bg-card">
-                    <Route className="w-10 h-10 text-primary mx-auto mb-3" style={{ filter: 'drop-shadow(0 0 8px hsl(var(--primary) / 0.4))' }} />
-                    <h3 className="font-display text-sm text-foreground mb-1">NO SEGMENTS YET</h3>
-                    <p className="text-muted-foreground text-xs">Segments auto-create when you complete GPS-tracked activities</p>
-                  </div>
-                ) : (
-                  <div className="space-y-2">
-                    {segments.map((seg: Segment) => (
-                      <div key={seg.id} className="p-3.5 rounded-xl border border-border bg-card hover:border-primary/30 transition-all">
-                        <div className="flex items-start justify-between mb-2">
-                          <div className="flex-1 min-w-0">
-                            <h4 className="font-display text-sm text-foreground tracking-wide truncate">{seg.name || 'Unnamed Segment'}</h4>
-                            <p className="text-[11px] text-muted-foreground">{(seg.distance_m / 1000).toFixed(2)} km</p>
-                          </div>
-                          <span className="text-[10px] text-primary border border-primary/30 bg-primary/10 px-2 py-0.5 rounded font-display">
-                            {seg.total_efforts} effort{seg.total_efforts !== 1 ? 's' : ''}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                          {seg.elevation_gain_m ? <span className="flex items-center gap-1"><TrendingUp className="w-3 h-3" /> {seg.elevation_gain_m}m</span> : null}
-                          <span className="text-muted-foreground">{format(new Date(seg.created_at), 'MMM d, yyyy')}</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
 
               {/* Build Programme CTA */}
               <Link to="/tracker/create" className="block">
