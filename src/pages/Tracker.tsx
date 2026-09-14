@@ -6,16 +6,16 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/hooks/useAuth';
 import { useRuns, Run, CardioActivityType } from '@/hooks/useRuns';
-import { usePersonalRecords, PersonalRecord } from '@/hooks/usePersonalRecords';
 import { CardioTrackerModal } from '@/components/tracker/CardioTrackerModal';
 import { AuthModal } from '@/components/tracker/AuthModal';
 import { ActivityRow } from '@/components/tracker/ActivityRow';
+import { CardioRecordsSection } from '@/components/tracker/CombinedRecordsView';
 import { format, startOfWeek, endOfWeek, isWithinInterval, subWeeks } from 'date-fns';
 import {
-  Footprints, Bike, Play, Crown,
+  Footprints, Bike, Play,
   MapPin, Clock, Flame, TrendingUp, TrendingDown, ChevronRight,
   Timer, Activity, Waves, Droplets, BarChart3,
-  Zap, Target, Star, Award, Calendar, Edit3, Layers,
+  Zap, Target, Award, Calendar, Edit3, Layers,
   BookOpen, Wrench, ArrowRight,
 } from 'lucide-react';
 
@@ -88,7 +88,6 @@ function useWeeklyStats(runs: Run[]) {
 export default function Tracker() {
   const { user } = useAuth();
   const { runs, loading: runsLoading } = useRuns();
-  const { records, loading: recordsLoading } = usePersonalRecords();
   const [activeTab, setActiveTab] = useState<TabId>('overview');
   const [activityFilter, setActivityFilter] = useState<ActivityFilter>('all');
   const [showTracker, setShowTracker] = useState(false);
@@ -399,39 +398,8 @@ export default function Tracker() {
           {/* ═══ RECORDS TAB ═══ */}
           {activeTab === 'records' && (
             <motion.div key="records" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
-              {/* Personal Records */}
-              <div>
-                <h3 className="text-xs font-display tracking-wider text-muted-foreground mb-3">PERSONAL RECORDS</h3>
-                {recordsLoading ? (
-                  <div className="flex justify-center py-8">
-                    <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                  </div>
-                ) : records.length === 0 ? (
-                  <div className="p-6 text-center rounded-xl border border-border bg-card">
-                    <Star className="w-8 h-8 text-primary mx-auto mb-3" style={{ filter: 'drop-shadow(0 0 8px hsl(var(--primary) / 0.4))' }} />
-                    <p className="text-sm text-muted-foreground">Complete runs to set personal records</p>
-                  </div>
-                ) : (
-                  <div className="space-y-2">
-                    {records.map((pr: PersonalRecord) => (
-                      <div key={pr.id} className="flex items-center gap-3 p-3.5 rounded-xl border border-border bg-card">
-                        <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 border"
-                         >
-                          <Award className="w-5 h-5 text-primary" style={{ filter: 'drop-shadow(0 0 4px hsl(var(--primary) / 0.4))' }} />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <h4 className="font-display text-sm text-foreground tracking-wide">{pr.distance_type}</h4>
-                          <p className="text-[10px] text-muted-foreground">
-                            {pr.time_seconds ? formatDuration(pr.time_seconds) : '--'}
-                            {pr.pace_per_km_seconds ? ` · ${formatPace(pr.pace_per_km_seconds)}/km` : ''}
-                          </p>
-                        </div>
-                        <Crown className="w-4 h-4 text-primary" />
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
+              {/* Personal Records — split by activity type (run/walk/cycle/row/swim) */}
+              <CardioRecordsSection />
             </motion.div>
           )}
 

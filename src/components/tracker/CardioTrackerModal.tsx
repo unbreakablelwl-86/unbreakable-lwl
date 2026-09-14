@@ -522,15 +522,30 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
         lastVoiceKmRef.current = session.lastVoiceKm || 0;
         setCurrentSpeed(session.currentSpeed ?? null);
 
-        // Recalculate elapsed
-        const now = Date.now();
-        const totalElapsed = Math.floor((now - sessionStart.getTime()) / 1000);
-        setElapsedSeconds(Math.max(0, totalElapsed - pausedDurationRef.current));
-
-        // Restart timer
-        restartElapsedTimer();
-
-        if (!session.isPaused) {
+        if (session.isPaused) {
+          // The session was paused (manually, or auto-paused behind an "End
+          // Workout?" confirm) when it was last persisted, and the app/tab has
+          // since reloaded or been reopened. Freeze the timer exactly where it
+          // was left instead of recomputing from Date.now() against a stale
+          // pausedDuration — that recompute silently counted all the time the
+          // app was closed/backgrounded as active session time, so the timer
+          // kept climbing in the background even while the UI still showed
+          // "Paused" or the end-session confirm overlay. Do NOT restart the
+          // timer interval here. Mark the pause as starting now so that if the
+          // user later taps Resume, this reload gap is folded into paused
+          // time rather than active time.
+          // (Fallback only matters for a session that was already sitting
+          // paused in localStorage from before this fix shipped, so it lacks
+          // the new `elapsedSeconds` field — a one-time migration edge case.)
+          setElapsedSeconds(session.elapsedSeconds ?? 0);
+          pauseStartRef.current = Date.now();
+        } else {
+          // Recalculate elapsed from wall-clock time — safe here because the
+          // session was actively tracking right up until it was persisted.
+          const now = Date.now();
+          const totalElapsed = Math.floor((now - sessionStart.getTime()) / 1000);
+          setElapsedSeconds(Math.max(0, totalElapsed - pausedDurationRef.current));
+          restartElapsedTimer();
           startGpsTracking();
           requestCurrentPosition();
         }
@@ -551,13 +566,17 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
         distance,
         pausedDuration,
         isPaused,
+        // Frozen snapshot of the on-screen timer at the moment of persisting.
+        // Used on restore so a paused session shows exactly where it was left
+        // instead of being recomputed from wall-clock time (see restore effect).
+        elapsedSeconds,
         positions: getPersistedTrackerPositions(positions),
         lastVoiceKm: lastVoiceKmRef.current,
         currentSpeed,
       };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(sessionData));
     }
-  }, [phase, startTime, distance, pausedDuration, isPaused, positions, activity, currentSpeed]);
+  }, [phase, startTime, distance, pausedDuration, isPaused, positions, activity, currentSpeed, elapsedSeconds]);
 
   useEffect(() => {
     const handleVisibilityRecovery = () => {

@@ -7,12 +7,13 @@ import { useTrainingPrograms } from '@/hooks/useTrainingPrograms';
 import { useWorkoutSessions } from '@/hooks/useWorkoutSessions';
 import {
   Dumbbell, Wrench, BookOpen, Flame, ChevronRight,
-  BarChart3, Play, Target, Activity, Zap, Calendar, Sparkles, ArrowRight,
+  BarChart3, Play, Target, Activity, Zap, Calendar, Sparkles, ArrowRight, Award,
 } from 'lucide-react';
 import { AuthModal } from '@/components/tracker/AuthModal';
 import { BODY_PART_ICONS } from '@/components/programming/BodyPartIcon';
+import { StrengthRecordsSection } from '@/components/tracker/CombinedRecordsView';
 
-type PowerTab = 'overview' | 'exercises' | 'logs';
+type PowerTab = 'overview' | 'exercises' | 'records' | 'logs';
 
 export default function Programming() {
   const { user } = useAuth();
@@ -32,6 +33,7 @@ export default function Programming() {
     // Full exercise library browsing is a staff tool (coaches/dev) - clients
     // pick exercises via the manual builder's own in-context picker instead.
     ...(isAdminOrOwner ? [{ id: 'exercises' as PowerTab, label: 'Exercises', icon: Dumbbell }] : []),
+    { id: 'records', label: 'Records', icon: Award },
     { id: 'logs', label: 'Session Logs', icon: BarChart3 },
   ];
 
@@ -233,6 +235,19 @@ export default function Programming() {
           )}
 
           {/* ═══ SESSION LOGS TAB ═══ */}
+          {/* ═══ RECORDS TAB ═══ */}
+          {activeTab === 'records' && (
+            <motion.div key="records" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-3">
+              <div className="p-4 rounded-xl border border-primary/15 bg-card">
+                <h3 className="font-display text-sm text-primary mb-1">STRENGTH RECORDS</h3>
+                <p className="text-muted-foreground text-sm leading-relaxed">
+                  Search your exercises and choose which ones to track — see your <span className="text-primary">top lifts</span> for each.
+                </p>
+              </div>
+              <StrengthRecordsSection />
+            </motion.div>
+          )}
+
           {activeTab === 'logs' && (
             <motion.div key="logs" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-3">
               <div className="p-4 rounded-xl border border-primary/15 bg-card">

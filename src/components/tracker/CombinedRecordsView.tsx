@@ -10,7 +10,7 @@ import { DeleteConfirmModal } from '@/components/tracker/DeleteConfirmModal';
 import { EXERCISE_LIBRARY } from '@/lib/exerciseLibrary';
 import { format, parseISO } from 'date-fns';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Clock, TrendingUp, Zap, Timer, Dumbbell, Footprints, Bike, Crosshair, Waves, Droplets, Trash2, Search, Plus, X } from 'lucide-react';
+import { Timer, Dumbbell, Footprints, Bike, Crosshair, Waves, Droplets, Trash2, Search, Plus, X } from 'lucide-react';
 import { CardioActivityType } from '@/hooks/useRuns';
 import { toast } from 'sonner';
 
@@ -54,16 +54,18 @@ function saveTrackedExercises(exercises: string[]) {
   localStorage.setItem(TRACKED_EXERCISES_KEY, JSON.stringify(exercises));
 }
 
-export function CombinedRecordsView() {
+/**
+ * Cardio PB records, split out by activity type (run/walk/cycle/row/swim) via
+ * the pill selector below — each type has its own record list rather than one
+ * flat merged list. Used standalone on the Movement tracker's Records tab,
+ * and inside CombinedRecordsView on the profile page.
+ */
+export function CardioRecordsSection() {
   const { getAllPRsWithLabels, records, resetPR, resetAllPRsForActivity, loading: prsLoading } = usePersonalRecords();
-  const { sessions, isLoading: workoutsLoading } = useWorkoutSessions();
   const [cardioSub, setCardioSub] = useState<CardioActivityType>('run');
   const [deleteTarget, setDeleteTarget] = useState<{ id: string; label: string } | null>(null);
   const [deleteAllTarget, setDeleteAllTarget] = useState<CardioActivityType | null>(null);
   const [deleting, setDeleting] = useState(false);
-  const [trackedExercises, setTrackedExercises] = useState<string[]>(getTrackedExercises);
-  const [showExercisePicker, setShowExercisePicker] = useState(false);
-  const [exerciseSearch, setExerciseSearch] = useState('');
 
   const prs = getAllPRsWithLabels(cardioSub);
 
@@ -71,6 +73,195 @@ export function CombinedRecordsView() {
   const hasRecordsForActivity = useMemo(() => {
     return records.some(r => r.activity_type === cardioSub);
   }, [records, cardioSub]);
+
+  const formatTime = (seconds: number) => {
+    const hours = Math.floor(seconds / 3600);
+    const mins = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    if (hours > 0) return `${hours}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  const formatPace = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}/km`;
+  };
+
+  const handleDeletePR = async () => {
+    if (!deleteTarget) return;
+    setDeleting(true);
+    try {
+      await resetPR(deleteTarget.id);
+      toast.success(`${deleteTarget.label} PR reset`);
+    } catch {
+      toast.error('Failed to reset PR');
+    }
+    setDeleting(false);
+    setDeleteTarget(null);
+  };
+
+  const handleDeleteAllPRs = async () => {
+    if (!deleteAllTarget) return;
+    setDeleting(true);
+    try {
+      await resetAllPRsForActivity(deleteAllTarget);
+      toast.success(`All ${CARDIO_ACTIVITY_CONFIG[deleteAllTarget].label} PRs reset`);
+    } catch {
+      toast.error('Failed to reset PRs');
+    }
+    setDeleting(false);
+    setDeleteAllTarget(null);
+  };
+
+  if (prsLoading) {
+    return (
+      <div className="flex items-center justify-center py-16">
+        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      {/* Activity sub-selector - all 5 types */}
+      <div className="flex flex-wrap gap-2">
+        {(Object.keys(CARDIO_ACTIVITY_CONFIG) as CardioActivityType[]).map(type => {
+          const config = CARDIO_ACTIVITY_CONFIG[type];
+          return (
+            <button
+              key={type}
+              onClick={() => setCardioSub(type)}
+              className={`flex-1 min-w-[60px] flex flex-col items-center gap-1 p-3 rounded-lg border-2 transition-all font-display tracking-wide text-xs ${
+                cardioSub === type
+                  ? 'border-primary bg-primary/10 text-primary shadow-[0_0_15px_hsl(var(--primary)/0.3)]'
+                  : 'border-border bg-card text-muted-foreground hover:border-primary/40'
+              }`}
+            >
+              <config.icon className="w-5 h-5" />
+              <span>{config.label}</span>
+            </button>
+          );
+        })}
+      </div>
+
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} key={cardioSub}>
+        <h3 className="font-display text-lg text-foreground mb-3 tracking-wide">
+          {CARDIO_ACTIVITY_CONFIG[cardioSub].label} <span className="text-primary">RECORDS</span>
+        </h3>
+        <div className="grid gap-3">
+          {prs.map((pr, index) => (
+            <motion.div
+              key={pr.type}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: index * 0.05 }}
+            >
+              <Card
+                className={`p-4 border-l-4 ${
+                  pr.record
+                    ? 'bg-card border-primary/20 border-l-primary'
+                    : 'bg-background border-border border-l-muted opacity-60'
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    {pr.record ? (
+                      <NeonTarget />
+                    ) : (
+                      <div className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center">
+                        <Crosshair className="w-6 h-6 text-muted-foreground" />
+                      </div>
+                    )}
+                    <div>
+                      <p className="font-display text-lg text-foreground tracking-wide">{pr.label}</p>
+                      {pr.record ? (
+                        <p className="text-sm text-muted-foreground">
+                          {format(parseISO(pr.record.achieved_at), 'MMM d, yyyy')}
+                        </p>
+                      ) : (
+                        <p className="text-sm text-muted-foreground">Not set yet</p>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {pr.record && pr.record.time_seconds && (
+                      <div className="text-right">
+                        <p className="font-display text-xl text-primary">{formatTime(pr.record.time_seconds)}</p>
+                        {pr.record.pace_per_km_seconds && (
+                          <p className="text-sm text-muted-foreground">{formatPace(pr.record.pace_per_km_seconds)}</p>
+                        )}
+                      </div>
+                    )}
+                    {pr.record && (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                        onClick={() => setDeleteTarget({ id: pr.record!.id, label: pr.label })}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              </Card>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Reset All button */}
+        {hasRecordsForActivity && (
+          <div className="mt-4 flex justify-center">
+            <Button
+              variant="outline"
+              size="sm"
+              className="text-destructive border-destructive/30 hover:bg-destructive/10 font-display tracking-wide"
+              onClick={() => setDeleteAllTarget(cardioSub)}
+            >
+              <Trash2 className="w-4 h-4 mr-2" />
+              RESET ALL {CARDIO_ACTIVITY_CONFIG[cardioSub].label} PRS
+            </Button>
+          </div>
+        )}
+      </motion.div>
+
+      {/* Delete single PR confirmation */}
+      <DeleteConfirmModal
+        isOpen={!!deleteTarget}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={handleDeletePR}
+        title="Reset Personal Record"
+        description={`Reset your ${deleteTarget?.label} PR? This cannot be undone.`}
+        confirmText="Reset PR"
+        loading={deleting}
+      />
+
+      {/* Delete all PRs for activity confirmation */}
+      <DeleteConfirmModal
+        isOpen={!!deleteAllTarget}
+        onClose={() => setDeleteAllTarget(null)}
+        onConfirm={handleDeleteAllPRs}
+        title={`Reset All ${deleteAllTarget ? CARDIO_ACTIVITY_CONFIG[deleteAllTarget].label : ''} PRs`}
+        description={`This will reset all your ${deleteAllTarget ? CARDIO_ACTIVITY_CONFIG[deleteAllTarget].label.toLowerCase() : ''} personal records. This cannot be undone.`}
+        confirmText="Reset All"
+        loading={deleting}
+      />
+    </div>
+  );
+}
+
+/**
+ * Strength PB records: search the exercise library, choose which exercises to
+ * track, and see your top-3 lifts (or bodyweight reps) per tracked exercise.
+ * Used standalone on the Power page's Records tab, and inside
+ * CombinedRecordsView on the profile page.
+ */
+export function StrengthRecordsSection() {
+  const { sessions, isLoading: workoutsLoading } = useWorkoutSessions();
+  const [trackedExercises, setTrackedExercises] = useState<string[]>(getTrackedExercises);
+  const [showExercisePicker, setShowExercisePicker] = useState(false);
+  const [exerciseSearch, setExerciseSearch] = useState('');
 
   // Bodyweight exercise names (reps-only tracking)
   const BODYWEIGHT_NAMES = useMemo(() => new Set([
@@ -150,70 +341,9 @@ export function CombinedRecordsView() {
     });
   }, [sessions, trackedExercises]);
 
-  const formatTime = (seconds: number) => {
-    const hours = Math.floor(seconds / 3600);
-    const mins = Math.floor((seconds % 3600) / 60);
-    const secs = seconds % 60;
-    if (hours > 0) return `${hours}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
-  };
-
-  const formatPace = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, '0')}/km`;
-  };
-
   const getMedalIcon = (rank: 1 | 2 | 3) => ({ 1: '🥇', 2: '🥈', 3: '🥉' }[rank]);
 
-  const handleDeletePR = async () => {
-    if (!deleteTarget) return;
-    setDeleting(true);
-    try {
-      await resetPR(deleteTarget.id);
-      toast.success(`${deleteTarget.label} PR reset`);
-    } catch {
-      toast.error('Failed to reset PR');
-    }
-    setDeleting(false);
-    setDeleteTarget(null);
-  };
-
-  const handleDeleteAllPRs = async () => {
-    if (!deleteAllTarget) return;
-    setDeleting(true);
-    try {
-      await resetAllPRsForActivity(deleteAllTarget);
-      toast.success(`All ${CARDIO_ACTIVITY_CONFIG[deleteAllTarget].label} PRs reset`);
-    } catch {
-      toast.error('Failed to reset PRs');
-    }
-    setDeleting(false);
-    setDeleteAllTarget(null);
-  };
-
-  // Trophy system hidden for now
-  // const earnedMedals = allMedals.filter(m => m.earned);
-  // const unearnedMedals = allMedals.filter(m => !m.earned);
-
-  const categoryLabels: Record<string, string> = {
-    distance: 'Distance', streak: 'Streaks', pace: 'Speed',
-    milestone: 'Milestones', special: 'Special', strength: 'Strength', cardio: 'Cardio',
-  };
-
-  const categoryIcons: Record<string, React.ReactNode> = {
-    distance: <TrendingUp className="w-4 h-4" />,
-    streak: <Clock className="w-4 h-4" />,
-    pace: <Zap className="w-4 h-4" />,
-    milestone: <Crosshair className="w-4 h-4 text-primary" />,
-    special: <Crosshair className="w-4 h-4 text-primary" />,
-    strength: <Dumbbell className="w-4 h-4" />,
-    cardio: <Timer className="w-4 h-4" />,
-  };
-
-  const loading = prsLoading || workoutsLoading;
-
-  if (loading) {
+  if (workoutsLoading) {
     return (
       <div className="flex items-center justify-center py-16">
         <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
@@ -221,6 +351,99 @@ export function CombinedRecordsView() {
     );
   }
 
+  return (
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+      {/* Add exercise button */}
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="font-display text-lg text-foreground tracking-wide">
+          STRENGTH <span className="text-primary">RECORDS</span>
+        </h3>
+        <Button
+          variant="outline"
+          size="sm"
+          className="gap-1 font-display tracking-wide"
+          onClick={() => setShowExercisePicker(!showExercisePicker)}
+        >
+          {showExercisePicker ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+          {showExercisePicker ? 'CLOSE' : 'ADD EXERCISE'}
+        </Button>
+      </div>
+
+      {/* Exercise Picker */}
+      <AnimatePresence>
+        {showExercisePicker && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className="overflow-hidden mb-4"
+          >
+            <Card className="p-4 border-primary/30 border-border bg-card">
+              <div className="relative mb-3">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search exercises..."
+                  value={exerciseSearch}
+                  onChange={(e) => setExerciseSearch(e.target.value)}
+                  className="pl-9"
+                  autoFocus
+                />
+              </div>
+              <ScrollArea className="h-48">
+                <div className="space-y-1">
+                  {filteredLibrary.map((ex) => {
+                    const alreadyTracked = trackedExercises.includes(ex.name);
+                    return (
+                      <button
+                        key={ex.id}
+                        onClick={() => !alreadyTracked && handleAddExercise(ex.name)}
+                        disabled={alreadyTracked}
+                        className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors flex items-center justify-between ${
+                          alreadyTracked
+                            ? 'bg-primary/10 text-primary cursor-default'
+                            : 'hover:bg-muted/50 text-foreground'
+                        }`}
+                      >
+                        <div>
+                          <span className="font-medium">{ex.name}</span>
+                          <span className="text-xs text-muted-foreground ml-2 capitalize">{ex.bodyPart}</span>
+                        </div>
+                        {alreadyTracked && <span className="text-xs text-primary">Tracking</span>}
+                      </button>
+                    );
+                  })}
+                </div>
+              </ScrollArea>
+            </Card>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <div className="space-y-4">
+        {strengthRecords.map((exercise, exerciseIndex) => (
+          <ExerciseRecordCard
+            key={exercise.exerciseName}
+            exercise={exercise}
+            index={exerciseIndex}
+            getMedalIcon={getMedalIcon}
+            isBodyweight={exercise.isBodyweight}
+            onRemove={() => handleRemoveExercise(exercise.exerciseName)}
+          />
+        ))}
+      </div>
+
+      {strengthRecords.length === 0 && (
+        <Card className="p-8 text-center border-border border-border bg-card">
+          <Dumbbell className="w-12 h-12 text-muted-foreground/30 mx-auto mb-4" />
+          <p className="text-muted-foreground">Add exercises to track your strength records</p>
+        </Card>
+      )}
+    </motion.div>
+  );
+}
+
+/** Cardio + Strength records, tabbed. Used on the profile page. */
+export function CombinedRecordsView() {
   return (
     <div className="space-y-6">
       <Tabs defaultValue="cardio" className="w-full">
@@ -235,233 +458,21 @@ export function CombinedRecordsView() {
           </TabsTrigger>
         </TabsList>
 
-        {/* Cardio PRs */}
         <TabsContent value="cardio" className="space-y-4 mt-4">
-          {/* Activity sub-selector - all 5 types */}
-          <div className="flex flex-wrap gap-2">
-            {(Object.keys(CARDIO_ACTIVITY_CONFIG) as CardioActivityType[]).map(type => {
-              const config = CARDIO_ACTIVITY_CONFIG[type];
-              return (
-                <button
-                  key={type}
-                  onClick={() => setCardioSub(type)}
-                  className={`flex-1 min-w-[60px] flex flex-col items-center gap-1 p-3 rounded-lg border-2 transition-all font-display tracking-wide text-xs ${
-                    cardioSub === type
-                      ? 'border-primary bg-primary/10 text-primary shadow-[0_0_15px_hsl(var(--primary)/0.3)]'
-                      : 'border-border bg-card text-muted-foreground hover:border-primary/40'
-                  }`}
-                >
-                  <config.icon className="w-5 h-5" />
-                  <span>{config.label}</span>
-                </button>
-              );
-            })}
-          </div>
-
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} key={cardioSub}>
-            <h3 className="font-display text-lg text-foreground mb-3 tracking-wide">
-              {CARDIO_ACTIVITY_CONFIG[cardioSub].label} <span className="text-primary">RECORDS</span>
-            </h3>
-            <div className="grid gap-3">
-              {prs.map((pr, index) => (
-                <motion.div
-                  key={pr.type}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.05 }}
-                >
-                  <Card
-                    className={`p-4 border-l-4 ${
-                      pr.record
-                        ? 'bg-card border-primary/20 border-l-primary'
-                        : 'bg-background border-border border-l-muted opacity-60'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        {pr.record ? (
-                          <NeonTarget />
-                        ) : (
-                          <div className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center">
-                            <Crosshair className="w-6 h-6 text-muted-foreground" />
-                          </div>
-                        )}
-                        <div>
-                          <p className="font-display text-lg text-foreground tracking-wide">{pr.label}</p>
-                          {pr.record ? (
-                            <p className="text-sm text-muted-foreground">
-                              {format(parseISO(pr.record.achieved_at), 'MMM d, yyyy')}
-                            </p>
-                          ) : (
-                            <p className="text-sm text-muted-foreground">Not set yet</p>
-                          )}
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        {pr.record && pr.record.time_seconds && (
-                          <div className="text-right">
-                            <p className="font-display text-xl text-primary">{formatTime(pr.record.time_seconds)}</p>
-                            {pr.record.pace_per_km_seconds && (
-                              <p className="text-sm text-muted-foreground">{formatPace(pr.record.pace_per_km_seconds)}</p>
-                            )}
-                          </div>
-                        )}
-                        {pr.record && (
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 text-muted-foreground hover:text-destructive"
-                            onClick={() => setDeleteTarget({ id: pr.record!.id, label: pr.label })}
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                        )}
-                      </div>
-                    </div>
-                  </Card>
-                </motion.div>
-              ))}
-            </div>
-
-            {/* Reset All button */}
-            {hasRecordsForActivity && (
-              <div className="mt-4 flex justify-center">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="text-destructive border-destructive/30 hover:bg-destructive/10 font-display tracking-wide"
-                  onClick={() => setDeleteAllTarget(cardioSub)}
-                >
-                  <Trash2 className="w-4 h-4 mr-2" />
-                  RESET ALL {CARDIO_ACTIVITY_CONFIG[cardioSub].label} PRS
-                </Button>
-              </div>
-            )}
-          </motion.div>
+          <CardioRecordsSection />
         </TabsContent>
 
-        {/* Strength Records */}
         <TabsContent value="strength" className="space-y-4 mt-4">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-            {/* Add exercise button */}
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="font-display text-lg text-foreground tracking-wide">
-                STRENGTH <span className="text-primary">RECORDS</span>
-              </h3>
-              <Button
-                variant="outline"
-                size="sm"
-                className="gap-1 font-display tracking-wide"
-                onClick={() => setShowExercisePicker(!showExercisePicker)}
-              >
-                {showExercisePicker ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
-                {showExercisePicker ? 'CLOSE' : 'ADD EXERCISE'}
-              </Button>
-            </div>
-
-            {/* Exercise Picker */}
-            <AnimatePresence>
-              {showExercisePicker && (
-                <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: 'auto', opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  className="overflow-hidden mb-4"
-                >
-                  <Card className="p-4 border-primary/30 border-border bg-card">
-                    <div className="relative mb-3">
-                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                      <Input
-                        placeholder="Search exercises..."
-                        value={exerciseSearch}
-                        onChange={(e) => setExerciseSearch(e.target.value)}
-                        className="pl-9"
-                        autoFocus
-                      />
-                    </div>
-                    <ScrollArea className="h-48">
-                      <div className="space-y-1">
-                        {filteredLibrary.map((ex) => {
-                          const alreadyTracked = trackedExercises.includes(ex.name);
-                          return (
-                            <button
-                              key={ex.id}
-                              onClick={() => !alreadyTracked && handleAddExercise(ex.name)}
-                              disabled={alreadyTracked}
-                              className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors flex items-center justify-between ${
-                                alreadyTracked
-                                  ? 'bg-primary/10 text-primary cursor-default'
-                                  : 'hover:bg-muted/50 text-foreground'
-                              }`}
-                            >
-                              <div>
-                                <span className="font-medium">{ex.name}</span>
-                                <span className="text-xs text-muted-foreground ml-2 capitalize">{ex.bodyPart}</span>
-                              </div>
-                              {alreadyTracked && <span className="text-xs text-primary">Tracking</span>}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </ScrollArea>
-                  </Card>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            <div className="space-y-4">
-              {strengthRecords.map((exercise, exerciseIndex) => (
-                <ExerciseRecordCard
-                  key={exercise.exerciseName}
-                  exercise={exercise}
-                  index={exerciseIndex}
-                  getMedalIcon={getMedalIcon}
-                  isBodyweight={exercise.isBodyweight}
-                  onRemove={() => handleRemoveExercise(exercise.exerciseName)}
-                />
-              ))}
-            </div>
-
-            {strengthRecords.length === 0 && (
-              <Card className="p-8 text-center border-border border-border bg-card">
-                <Dumbbell className="w-12 h-12 text-muted-foreground/30 mx-auto mb-4" />
-                <p className="text-muted-foreground">Add exercises to track your strength records</p>
-              </Card>
-            )}
-          </motion.div>
+          <StrengthRecordsSection />
         </TabsContent>
-
-        {/* Trophy system hidden for now */}
       </Tabs>
-
-      {/* Delete single PR confirmation */}
-      <DeleteConfirmModal
-        isOpen={!!deleteTarget}
-        onClose={() => setDeleteTarget(null)}
-        onConfirm={handleDeletePR}
-        title="Reset Personal Record"
-        description={`Reset your ${deleteTarget?.label} PR? This cannot be undone.`}
-        confirmText="Reset PR"
-        loading={deleting}
-      />
-
-      {/* Delete all PRs for activity confirmation */}
-      <DeleteConfirmModal
-        isOpen={!!deleteAllTarget}
-        onClose={() => setDeleteAllTarget(null)}
-        onConfirm={handleDeleteAllPRs}
-        title={`Reset All ${deleteAllTarget ? CARDIO_ACTIVITY_CONFIG[deleteAllTarget].label : ''} PRs`}
-        description={`This will reset all your ${deleteAllTarget ? CARDIO_ACTIVITY_CONFIG[deleteAllTarget].label.toLowerCase() : ''} personal records. This cannot be undone.`}
-        confirmText="Reset All"
-        loading={deleting}
-      />
     </div>
   );
 }
 
-function ExerciseRecordCard({ 
-  exercise, index, getMedalIcon, isBodyweight, onRemove 
-}: { 
+function ExerciseRecordCard({
+  exercise, index, getMedalIcon, isBodyweight, onRemove
+}: {
   exercise: StrengthRecord; index: number; getMedalIcon: (r: 1|2|3) => string; isBodyweight?: boolean; onRemove?: () => void;
 }) {
   return (
@@ -486,7 +497,7 @@ function ExerciseRecordCard({
             </Button>
           )}
         </div>
-        
+
         {exercise.records.length > 0 ? (
           <div className="space-y-2">
             {exercise.records.map((record, recordIndex) => (
