@@ -77,7 +77,7 @@ describe('cardioTracking', () => {
     expect(result.incrementKm).toBe(0);
   });
 
-  it('limits persisted route history and serializes geojson', () => {
+  it('keeps a short route fully intact (no truncation under the cap)', () => {
     const points = Array.from({ length: 300 }, (_, index) => ({
       lat: 53.4 + index / 10_000,
       lng: -2.99,
@@ -89,8 +89,35 @@ describe('cardioTracking', () => {
     const persisted = getPersistedTrackerPositions(points);
     const geojson = JSON.parse(positionsToRouteGeoJSON(persisted));
 
-    expect(persisted).toHaveLength(250);
-    expect(geojson.geometry.coordinates).toHaveLength(250);
-    expect(geojson.properties.timestamps[0]).toBe(50_000);
+    expect(persisted).toHaveLength(300);
+    expect(geojson.geometry.coordinates).toHaveLength(300);
+    expect(geojson.properties.timestamps[0]).toBe(0);
+    expect(geojson.properties.timestamps.at(-1)).toBe(299_000);
+  });
+
+  it('decimates a long route evenly instead of dropping its start', () => {
+    // A long session (e.g. an hour+ walk with a GPS fix every second) can
+    // exceed the persisted cap. Regression test for a bug where truncation
+    // kept only the most recent N points: if the tab was ever reloaded or
+    // backgrounded mid-session, everything before that window was lost on
+    // restore, even though the total distance (tracked separately) stayed
+    // correct — so a real ~7km walk showed as a ~3km route on the map with
+    // a "start" marker that was actually somewhere in the middle.
+    const points = Array.from({ length: 5000 }, (_, index) => ({
+      lat: 53.4 + index / 100_000,
+      lng: -2.99,
+      timestamp: index * 1000,
+      accuracy: 10,
+      speed: 3,
+    }));
+
+    const persisted = getPersistedTrackerPositions(points, 2000);
+    const geojson = JSON.parse(positionsToRouteGeoJSON(persisted));
+
+    expect(persisted).toHaveLength(2000);
+    expect(geojson.geometry.coordinates).toHaveLength(2000);
+    // The true start and end of the session must survive decimation.
+    expect(geojson.properties.timestamps[0]).toBe(0);
+    expect(geojson.properties.timestamps.at(-1)).toBe(4_999_000);
   });
 });

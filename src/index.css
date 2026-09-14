@@ -633,7 +633,7 @@
    black by default, making street/place labels nearly unreadable. Brighten
    and lift contrast on the tile images themselves (not the polyline/markers,
    which are separate SVG/canvas layers on top) so labels stay legible while
-   keeping the dark aesthetic. */
+   keeping the dark aesthetic. First pass (1.65) still read as too dark. */
 .run-map-tiles {
-  filter: brightness(1.65) contrast(0.92);
+  filter: brightness(2.6) contrast(0.8) saturate(1.15);
 }

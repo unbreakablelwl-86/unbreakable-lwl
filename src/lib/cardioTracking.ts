@@ -143,9 +143,24 @@ export function calculateDistanceIncrement({
   };
 }
 
-export function getPersistedTrackerPositions<T>(positions: T[], maxPoints: number = 250): T[] {
+export function getPersistedTrackerPositions<T>(positions: T[], maxPoints: number = 2000): T[] {
   if (positions.length <= maxPoints) return positions;
-  return positions.slice(-maxPoints);
+
+  // Even decimation, not "keep the most recent N": always keep the true first
+  // and last points, sampled evenly across the whole session. This function's
+  // output is what gets written to localStorage on every tick of a live
+  // session, and re-read on mount if the tab was reloaded/backgrounded
+  // mid-session. Slicing to the last N points meant a long session that ever
+  // restored from localStorage permanently lost every point before that
+  // window — the total distance (tracked separately) stayed correct, but the
+  // route on the map showed only a trailing fraction of the real walk/run,
+  // with a "start" marker that was actually somewhere in the middle.
+  const step = (positions.length - 1) / (maxPoints - 1);
+  const sampled: T[] = new Array(maxPoints);
+  for (let i = 0; i < maxPoints; i++) {
+    sampled[i] = positions[Math.round(i * step)];
+  }
+  return sampled;
 }
 
 export function positionsToRouteGeoJSON(
