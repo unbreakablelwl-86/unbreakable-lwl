@@ -157,32 +157,25 @@ export function useUnbreakable86() {
   useEffect(() => { fetchEnrolment(); }, [fetchEnrolment]);
 
   /* ─── Start new enrolment (free — included with Unbreakable) ───
-   * The 86 day-count is NOT synced with the main daily login streak going
-   * forward — once 86 begins the two tracks are fully independent (86
-   * lives entirely in the 86 hub from here on). But the main streak itself
-   * doesn't reset just because 86 begins: if someone's already on a run of
-   * daily logins, 86 picks up the count where that run currently stands
-   * instead of dropping them back to Day 1. (JJ, Sept 2026)
+   * UNBREAKABLE 86 ALWAYS starts at Day 1 for every user, with no
+   * exceptions. It is fully independent from the main "overall consistency"
+   * daily login streak, which keeps counting in parallel and is never read
+   * or merged into U86's own day count (JJ, Sept 2026 — reverting an
+   * earlier "streak carry-in" feature that set current_day to the user's
+   * existing login streak on enrolment: that was a misimplementation which
+   * also broke Daily 7 logging entirely for anyone whose streak already
+   * exceeded 86, since the daily_logs table's day_number CHECK constraint
+   * capped at 86).
    */
   const startChallenge = useCallback(async (quizAnswers: U86QuizAnswers) => {
     if (!user) return null;
-
-    // Read (never write) today's main login streak — a one-time handoff at
-    // the moment of enrolment, not an ongoing sync.
-    const { data: streakRow } = await supabase
-      .from('login_streaks')
-      .select('current_streak')
-      .eq('user_id', user.id)
-      .maybeSingle();
-
-    const startingDay = Math.max(1, streakRow?.current_streak || 1);
 
     const { data, error } = await supabase
       .from('unbreakable86_enrolments')
       .insert({
         user_id: user.id,
         status: 'active',
-        current_day: startingDay,
+        current_day: 1,
         start_date: today,
         reset_count: 0,
         quiz_answers: quizAnswers as any,
@@ -191,11 +184,7 @@ export function useUnbreakable86() {
       .single();
 
     if (error) throw error;
-    toast.success(
-      startingDay > 1
-        ? `UNBREAKABLE 86 activated. Picking up from Day ${startingDay} — your streak carries in.`
-        : 'UNBREAKABLE 86 activated. Day 1 starts now.'
-    );
+    toast.success('UNBREAKABLE 86 activated. Day 1 starts now.');
     await fetchEnrolment();
     return data as U86Enrolment;
   }, [user, today, fetchEnrolment]);
@@ -215,76 +204,92 @@ export function useUnbreakable86() {
       .catch(() => {}); // Non-blocking — a failed email must never block the tracker
   }, []);
 
-  /* ─── Toggle habit ─── */
+  /* ─── Toggle habit ───
+   * Every Supabase call below is wrapped in try/catch with a toast.error on
+   * failure. Previously these calls could throw as an unhandled promise
+   * rejection with no user-visible feedback — the box just silently failed
+   * to light up, with no way to tell a real error (e.g. a DB constraint
+   * rejecting the write) from nothing happening. That masked a live bug
+   * where a CHECK constraint on day_number rejected every insert for any
+   * user whose current_day exceeded 86 (fixed separately via migration),
+   * but the failure mode itself — silent no-op taps — must not recur even
+   * if some other write error shows up in future. */
   const toggleHabit = useCallback(async (habit: keyof U86DailyLog) => {
     if (!user || !state.enrolment) return;
 
     const enrolmentId = state.enrolment.id;
     const currentDay = state.enrolment.current_day;
 
-    // Upsert today's log
-    if (!state.todayLog) {
-      const newLog: any = {
-        enrolment_id: enrolmentId,
-        user_id: user.id,
-        day_number: currentDay,
-        log_date: today,
-        [habit]: true,
-      };
+    try {
+      // Upsert today's log
+      if (!state.todayLog) {
+        const newLog: any = {
+          enrolment_id: enrolmentId,
+          user_id: user.id,
+          day_number: currentDay,
+          log_date: today,
+          [habit]: true,
+        };
 
-      const { data, error } = await supabase
-        .from('unbreakable86_daily_logs')
-        .insert(newLog)
-        .select()
-        .single();
+        const { data, error } = await supabase
+          .from('unbreakable86_daily_logs')
+          .insert(newLog)
+          .select()
+          .single();
 
-      if (error) throw error;
-      setState(s => ({ ...s, todayLog: data as U86DailyLog }));
-    } else {
-      const currentVal = (state.todayLog as any)[habit];
-      const wasBanked = Boolean((state.todayLog as any).all_habits_done);
-      const updates: any = { [habit]: !currentVal, updated_at: new Date().toISOString() };
+        if (error) throw error;
+        setState(s => ({ ...s, todayLog: data as U86DailyLog }));
+      } else {
+        const currentVal = (state.todayLog as any)[habit];
+        const wasBanked = Boolean((state.todayLog as any).all_habits_done);
+        const updates: any = { [habit]: !currentVal, updated_at: new Date().toISOString() };
 
-      // Sauna and cold shower are ONE habit — the user's locked choice is the only one that counts.
-      // A minimum of 3 of the Daily 7 banks the day (journal counts as the 7th).
-      // Banking is a one-way ratchet for the day: once banked, unticking a habit
-      // afterwards must NOT un-bank it — otherwise re-ticking later the same day
-      // flips all_habits_done false→true again and double-advances current_day
-      // for a single calendar day.
-      const projected: any = { ...(state.todayLog as any), [habit]: !currentVal };
-      updates.all_habits_done = wasBanked || u86DayBanked(projected, therapyChoice);
+        // Sauna and cold shower are ONE habit — the user's locked choice is the only one that counts.
+        // A minimum of 3 of the Daily 7 banks the day (journal counts as the 7th).
+        // Banking is a one-way ratchet for the day: once banked, unticking a habit
+        // afterwards must NOT un-bank it — otherwise re-ticking later the same day
+        // flips all_habits_done false→true again and double-advances current_day
+        // for a single calendar day.
+        const projected: any = { ...(state.todayLog as any), [habit]: !currentVal };
+        updates.all_habits_done = wasBanked || u86DayBanked(projected, therapyChoice);
 
-      const { data, error } = await supabase
-        .from('unbreakable86_daily_logs')
-        .update(updates)
-        .eq('id', state.todayLog.id)
-        .select()
-        .single();
+        const { data, error } = await supabase
+          .from('unbreakable86_daily_logs')
+          .update(updates)
+          .eq('id', state.todayLog.id)
+          .select()
+          .single();
 
-      if (error) throw error;
+        if (error) throw error;
 
-      const updatedLog = data as U86DailyLog;
-      setState(s => ({ ...s, todayLog: updatedLog }));
+        const updatedLog = data as U86DailyLog;
+        setState(s => ({ ...s, todayLog: updatedLog }));
 
-      // Day banked for the first time (>= 3 of the Daily 7) — advance the day.
-      // wasBanked guards this from ever firing twice for the same log.
-      if (updatedLog.all_habits_done && !wasBanked) {
-        // completed_at is a one-way flag too — only set (and only email) the
-        // very first time the user crosses day 86. Every day after that keeps
-        // advancing current_day without re-stamping completed_at.
-        const firstCompletion = currentDay + 1 > 86 && !state.enrolment.completed_at;
-        await supabase
-          .from('unbreakable86_enrolments')
-          .update({
-            current_day: currentDay + 1,
-            updated_at: new Date().toISOString(),
-            ...(firstCompletion ? { status: 'completed', completed_at: new Date().toISOString() } : {}),
-          })
-          .eq('id', enrolmentId);
+        // Day banked for the first time (>= 3 of the Daily 7) — advance the day.
+        // wasBanked guards this from ever firing twice for the same log.
+        if (updatedLog.all_habits_done && !wasBanked) {
+          // completed_at is a one-way flag too — only set (and only email) the
+          // very first time the user crosses day 86. Every day after that keeps
+          // advancing current_day without re-stamping completed_at.
+          const firstCompletion = currentDay + 1 > 86 && !state.enrolment.completed_at;
+          const { error: enrolError } = await supabase
+            .from('unbreakable86_enrolments')
+            .update({
+              current_day: currentDay + 1,
+              updated_at: new Date().toISOString(),
+              ...(firstCompletion ? { status: 'completed', completed_at: new Date().toISOString() } : {}),
+            })
+            .eq('id', enrolmentId);
 
-        if (firstCompletion) maybeFireCertificateEmail(enrolmentId);
-        await fetchEnrolment();
+          if (enrolError) throw enrolError;
+
+          if (firstCompletion) maybeFireCertificateEmail(enrolmentId);
+          await fetchEnrolment();
+        }
       }
+    } catch (err: any) {
+      console.error('toggleHabit failed:', err);
+      toast.error(err?.message || "Couldn't save that — please try again.");
     }
   }, [user, state.enrolment, state.todayLog, today, fetchEnrolment, therapyChoice, maybeFireCertificateEmail]);
 
@@ -292,43 +297,51 @@ export function useUnbreakable86() {
   const updateJournal = useCallback(async (journal: string) => {
     if (!state.todayLog) return;
 
-    const wasBanked = Boolean((state.todayLog as any).all_habits_done);
-    const projected: any = { ...(state.todayLog as any), journal };
-    // Same one-way ratchet as toggleHabit — once the day is banked it stays
-    // banked, so clearing the journal text afterwards can't un-bank it and
-    // let a later edit re-fire the "bank the day" advance below.
-    const banked = wasBanked || u86DayBanked(projected, therapyChoice);
+    try {
+      const wasBanked = Boolean((state.todayLog as any).all_habits_done);
+      const projected: any = { ...(state.todayLog as any), journal };
+      // Same one-way ratchet as toggleHabit — once the day is banked it stays
+      // banked, so clearing the journal text afterwards can't un-bank it and
+      // let a later edit re-fire the "bank the day" advance below.
+      const banked = wasBanked || u86DayBanked(projected, therapyChoice);
 
-    await supabase
-      .from('unbreakable86_daily_logs')
-      .update({ journal, all_habits_done: banked, updated_at: new Date().toISOString() })
-      .eq('id', state.todayLog.id);
+      const { error: logError } = await supabase
+        .from('unbreakable86_daily_logs')
+        .update({ journal, all_habits_done: banked, updated_at: new Date().toISOString() })
+        .eq('id', state.todayLog.id);
 
-    setState(s => s.todayLog
-      ? ({ ...s, todayLog: { ...s.todayLog, journal, all_habits_done: banked } })
-      : s);
+      if (logError) throw logError;
 
-    // Writing the journal can be the 3rd habit — bank and advance the day
-    if (banked && !wasBanked && state.enrolment) {
-      const nextDay = state.enrolment.current_day + 1;
-      const firstCompletion = nextDay > 86 && !state.enrolment.completed_at;
-      await supabase
-        .from('unbreakable86_enrolments')
-        .update({
-          current_day: nextDay,
-          updated_at: new Date().toISOString(),
-          ...(firstCompletion ? { status: 'completed', completed_at: new Date().toISOString() } : {}),
-        })
-        .eq('id', state.enrolment.id);
-      if (firstCompletion) maybeFireCertificateEmail(state.enrolment.id);
-      await fetchEnrolment();
-    }
+      setState(s => s.todayLog
+        ? ({ ...s, todayLog: { ...s.todayLog, journal, all_habits_done: banked } })
+        : s);
 
-    // Fire-and-forget: AI consistency table update
-    if (state.enrolment && journal.trim()) {
-      supabase.functions.invoke('u86-consistency', {
-        body: { enrolment_id: state.enrolment.id, day_number: state.todayLog.day_number },
-      }).catch(() => {}); // Non-blocking
+      // Writing the journal can be the 3rd habit — bank and advance the day
+      if (banked && !wasBanked && state.enrolment) {
+        const nextDay = state.enrolment.current_day + 1;
+        const firstCompletion = nextDay > 86 && !state.enrolment.completed_at;
+        const { error: enrolError } = await supabase
+          .from('unbreakable86_enrolments')
+          .update({
+            current_day: nextDay,
+            updated_at: new Date().toISOString(),
+            ...(firstCompletion ? { status: 'completed', completed_at: new Date().toISOString() } : {}),
+          })
+          .eq('id', state.enrolment.id);
+        if (enrolError) throw enrolError;
+        if (firstCompletion) maybeFireCertificateEmail(state.enrolment.id);
+        await fetchEnrolment();
+      }
+
+      // Fire-and-forget: AI consistency table update
+      if (state.enrolment && journal.trim()) {
+        supabase.functions.invoke('u86-consistency', {
+          body: { enrolment_id: state.enrolment.id, day_number: state.todayLog.day_number },
+        }).catch(() => {}); // Non-blocking
+      }
+    } catch (err: any) {
+      console.error('updateJournal failed:', err);
+      toast.error(err?.message || "Couldn't save your journal — please try again.");
     }
   }, [state.todayLog, state.enrolment, therapyChoice, fetchEnrolment, maybeFireCertificateEmail]);
 
