@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { useRuns, CardioActivityType } from '@/hooks/useRuns';
+import { useUserRuns, CardioActivityType } from '@/hooks/useRuns';
+import { useAuth } from '@/hooks/useAuth';
 import {
   MapPin, Clock, Flame, TrendingUp, Target, Zap, Activity,
   Footprints, Bike, Waves, Droplets, Timer,
@@ -64,7 +65,12 @@ function computeStats(runs: RunLike[]) {
  *     block never filtered by activity_type.
  */
 export function CardioStatsSection() {
-  const { runs, loading } = useRuns();
+  const { user } = useAuth();
+  // Personal stats — must be scoped to this athlete's own sessions only.
+  // useRuns() is the global/public feed (every user's runs); using it here
+  // was the bug that let other accounts' activity (e.g. the Chester QA bot)
+  // surface inside a real athlete's own Movement stats.
+  const { runs, loading } = useUserRuns(user?.id);
   const [activeType, setActiveType] = useState<CardioActivityType>('run');
 
   const allRuns = useMemo(() => runs || [], [runs]);

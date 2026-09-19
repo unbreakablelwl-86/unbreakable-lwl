@@ -5,7 +5,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/hooks/useAuth';
-import { useRuns, Run, CardioActivityType } from '@/hooks/useRuns';
+import { useUserRuns, Run, CardioActivityType } from '@/hooks/useRuns';
 import { CardioTrackerModal } from '@/components/tracker/CardioTrackerModal';
 import { AuthModal } from '@/components/tracker/AuthModal';
 import { ActivityRow } from '@/components/tracker/ActivityRow';
@@ -81,7 +81,12 @@ function useWeeklyStats(runs: Run[]) {
 
 export default function Tracker() {
   const { user } = useAuth();
-  const { runs, loading: runsLoading } = useRuns();
+  // Personal Movement hub — must show only this athlete's own sessions.
+  // useRuns() is the global/public feed (every user's runs, no filter);
+  // using it here was why other accounts' activity (e.g. the Chester QA
+  // bot's daily auto-tracked runs) could show up at the top of a real
+  // athlete's own Activity tab.
+  const { runs, loading: runsLoading } = useUserRuns(user?.id);
   const [activeTab, setActiveTab] = useState<TabId>('overview');
   const [activityFilter, setActivityFilter] = useState<ActivityFilter>('all');
   const [showTracker, setShowTracker] = useState(false);

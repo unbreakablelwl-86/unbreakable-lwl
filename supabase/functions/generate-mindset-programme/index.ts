@@ -67,7 +67,7 @@ serve(async (req) => {
     }
 
 
-    const tokenGuard = await requireToken(svcClient, tokenUserId, 'generate-mindset-programme');
+    const tokenGuard = await requireToken(svcClient, tokenUserId, 'generate-mindset-programme', 'programme_build');
     if (tokenGuard.error) {
       return new Response(JSON.stringify(tokenGuard.error), {
         status: 402,
@@ -118,6 +118,12 @@ CRITICAL RULES:
 - Include a clear weekly theme or focus area
 - Be specific with durations and instructions
 
+LENGTH IS CRITICAL — this whole programme is returned in a single response with a hard size and time limit:
+- Every "instructions" field: ONE short sentence, 20 words max. No multi-step walkthroughs, no bullet lists inside the string.
+- "description", "goal", "coachNotes", and each week's "overview": ONE short sentence each.
+- Do NOT repeat information already implied by the activity "name" and "type" inside "instructions" — keep it to the one actionable detail (e.g. a count, a focus cue) that isn't obvious from the name.
+- Completing ALL weeks and ALL days is more important than depth of detail on any single one — if you're running long, shorten remaining text, never drop days or weeks.
+
 Return ONLY valid JSON matching this structure:
 {
   "name": "string",
@@ -163,37 +169,85 @@ Return ONLY valid JSON matching this structure:
     }
     contextMessage += `REQUEST: ${prompt}`;
 
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {
-        "x-api-key": ANTHROPIC_API_KEY,
-        "anthropic-version": "2023-06-01",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "claude-sonnet-4-6",
-        max_tokens: 4096,
-        system: systemPrompt,
-        messages: [
-          { role: "user", content: contextMessage },
-        ],
-      }),
-    });
+    // Retry logic with exponential backoff, matching the other AI programme
+    // builders (generate-program, generate-cardio-program) — a transient
+    // Anthropic rate limit shouldn't be a hard failure on the first try.
+    const maxRetries = 3;
+    let response: Response | null = null;
 
-    if (!response.ok) {
-      if (response.status === 429) return new Response(JSON.stringify({ error: "Rate limit, try again shortly." }), { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } });
-      if (response.status === 402) return new Response(JSON.stringify({ error: "Payment required." }), { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    for (let attempt = 0; attempt < maxRetries; attempt++) {
+      if (attempt > 0) {
+        const delayMs = Math.pow(2, attempt) * 1000;
+        await new Promise(resolve => setTimeout(resolve, delayMs));
+      }
+
+      response = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: {
+          "x-api-key": ANTHROPIC_API_KEY,
+          "anthropic-version": "2023-06-01",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-6",
+          // Supabase Edge Functions have a hard wall-clock limit (~150s) on a
+          // single invocation. 4096 was too low (truncated mid-JSON, silent
+          // fallback with no logging). 16000 was too high the other way —
+          // Claude took over 150s to generate that much and the platform cut
+          // the connection with a 504 before a response ever came back.
+          // 9000 plus the tightened LENGTH IS CRITICAL prompt rules above give
+          // enough room for a full multi-week programme while keeping actual
+          // generation time comfortably inside the platform's limit.
+          max_tokens: 9000,
+          system: systemPrompt,
+          messages: [
+            { role: "user", content: contextMessage },
+          ],
+        }),
+      });
+
+      if (response.ok) break;
+
+      const errorText = await response.text();
+      console.error(`generate-mindset-programme gateway error (attempt ${attempt + 1}):`, response.status, errorText);
+
+      if (response.status === 429) continue; // retry
+
+      if (response.status === 402) {
+        return new Response(JSON.stringify({ error: "Payment required." }), { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      }
+
       throw new Error("AI service unavailable");
+    }
+
+    if (!response || !response.ok) {
+      return new Response(JSON.stringify({ error: "The service is currently busy. Please wait a moment and try again." }), { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
     const aiResponse = await response.json();
     const content = aiResponse.content?.[0]?.text;
     if (!content) throw new Error("No response from AI");
 
+    if (aiResponse.stop_reason === "max_tokens") {
+      // Still got cut off even at the higher cap — log loudly so this is
+      // diagnosable instead of a silent no-op for the athlete.
+      console.error("generate-mindset-programme: response truncated at max_tokens", {
+        contentLength: content.length,
+        tail: content.slice(-300),
+      });
+    }
+
     let programme;
     try {
       programme = extractJsonFromResponse(content);
-    } catch {
+    } catch (parseErr) {
+      console.error("generate-mindset-programme: failed to extract JSON from AI response", {
+        stopReason: aiResponse.stop_reason,
+        contentLength: content.length,
+        head: content.slice(0, 300),
+        tail: content.slice(-300),
+        parseError: parseErr instanceof Error ? parseErr.message : String(parseErr),
+      });
       return new Response(JSON.stringify({ type: 'text', content }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });

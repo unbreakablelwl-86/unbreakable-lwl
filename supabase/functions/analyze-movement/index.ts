@@ -55,7 +55,7 @@ serve(async (req) => {
     }
 
 
-    const tokenGuard = await requireToken(svcClient, tokenUserId, 'analyze-movement');
+    const tokenGuard = await requireToken(svcClient, tokenUserId, 'analyze-movement', 'workout_feedback');
     if (tokenGuard.error) {
       return new Response(JSON.stringify(tokenGuard.error), {
         status: 402,

@@ -83,7 +83,7 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );    // --- Rate limit check ---
-    const rateLimited = await checkRateLimit(svcClient, tokenUserId, 'snap-track');
+    const rateLimited = await checkRateLimit(svcClient, userId, 'snap-track');
     if (rateLimited) {
       return new Response(JSON.stringify({ error: 'rate_limited', message: 'Too many requests. Please wait a moment.' }), {
         status: 429,
@@ -92,7 +92,7 @@ serve(async (req) => {
     }
 
 
-    const tokenGuard = await requireToken(svcClient, userId, "snap-track");
+    const tokenGuard = await requireToken(svcClient, userId, "snap-track", "nutrition_analysis");
     if (tokenGuard.error) {
       return new Response(JSON.stringify(tokenGuard.error), {
         status: 402,

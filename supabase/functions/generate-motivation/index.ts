@@ -35,7 +35,7 @@ serve(async (req) => {
     }
 
 
-      const guard = await requireToken(serviceClient, userId, 'generate-motivation');
+      const guard = await requireToken(serviceClient, userId, 'generate-motivation', 'motivation_quote');
       if (guard.error) {
         return new Response(JSON.stringify(guard.error), {
           status: 402,

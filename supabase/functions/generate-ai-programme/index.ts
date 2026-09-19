@@ -267,7 +267,7 @@ serve(async (req) => {
     }
 
 
-    const guard = await requireToken(serviceClient, userId, 'generate-ai-programme');
+    const guard = await requireToken(serviceClient, userId, 'generate-ai-programme', 'programme_build');
     if (guard.error) {
       return new Response(JSON.stringify(guard.error), {
         status: 402,

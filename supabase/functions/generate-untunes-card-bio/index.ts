@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.57.2";
+import { requireToken } from "../_shared/token-guard.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -40,6 +41,21 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
+
+    // This is a distinct AI action from purchase_untunes (which spends
+    // tokens buying the card itself, priced separately and left untouched
+    // here) — this generates flavour-text for a card the user already
+    // owns, and was calling Anthropic for free with no charge at all.
+    // No dedicated "card bio" action exists in TOKEN_ACTIONS, so this is
+    // mapped to the closest existing lightweight-text tier, 'progression_tip'
+    // (5 tokens), same as generate-pb-bio.
+    const tokenGuard = await requireToken(serviceClient, user.id, "generate-untunes-card-bio", "progression_tip");
+    if (tokenGuard.error) {
+      return new Response(JSON.stringify(tokenGuard.error), {
+        status: 402,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
     // Fetch the Un-Tunes card with track/album/brand data
     const { data: card, error: cardErr } = await serviceClient

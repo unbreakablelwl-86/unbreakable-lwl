@@ -89,7 +89,7 @@ serve(async (req) => {
     }
 
 
-    const tokenGuard = await requireToken(svcClient, tokenUserId, 'generate-program');
+    const tokenGuard = await requireToken(svcClient, tokenUserId, 'generate-program', 'programme_build');
     if (tokenGuard.error) {
       return new Response(JSON.stringify(tokenGuard.error), {
         status: 402,

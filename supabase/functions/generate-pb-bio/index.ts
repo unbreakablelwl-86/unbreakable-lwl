@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.57.2";
+import { requireToken } from "../_shared/token-guard.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -40,6 +41,19 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
+
+    // This function was calling Anthropic for free — no requireToken call
+    // existed here before. Closed as part of wiring TOKEN_ACTIONS in as the
+    // real charging source: closest existing category to a short one-line
+    // AI text generation is the lightweight 'progression_tip' chat tier (5
+    // tokens) — there's no dedicated "card bio" action in TOKEN_ACTIONS yet.
+    const tokenGuard = await requireToken(serviceClient, user.id, "generate-pb-bio", "progression_tip");
+    if (tokenGuard.error) {
+      return new Response(JSON.stringify(tokenGuard.error), {
+        status: 402,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
     // Fetch the card + user profile
     const [cardResult, profileResult] = await Promise.all([

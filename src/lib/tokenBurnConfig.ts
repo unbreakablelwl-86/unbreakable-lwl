@@ -1,8 +1,15 @@
 /**
  * Token Burn Configuration
  *
- * Defines how many tokens each action costs.
- * AI Coach does NOT accept or track videos/images for assessment.
+ * Defines how many tokens each action costs. THIS IS THE LIVE, CHARGED
+ * PRICING — every requireToken() call in the AI edge functions
+ * (supabase/functions/*\/index.ts) charges the baseCost defined here,
+ * via the server-side mirror in supabase/functions/_shared/token-actions.ts.
+ * (Edge functions deploy as isolated bundles and can't import this file
+ * directly, so that mirror must be kept numerically identical to the
+ * baseCost values below — see that file's header comment.) Changing a
+ * baseCost here does nothing in production until the mirror is updated
+ * to match.
  *
  * Philosophy:
  *   - Chat is cheap (encourage engagement)
@@ -104,7 +111,7 @@ export const TOKEN_ACTIONS: Record<string, TokenAction> = {
     name: 'Coach chat message',
     description: 'Ask your Unbreakable Coach anything (text only — no video/image)',
     category: 'chat',
-    baseCost: 10,
+    baseCost: 5,
   },
   motivation_quote: {
     id: 'motivation_quote',

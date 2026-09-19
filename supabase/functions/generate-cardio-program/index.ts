@@ -48,7 +48,7 @@ serve(async (req) => {
 
     const token = authHeader.replace('Bearer ', '');
     const { data: claimsData, error: authError } = await supabaseClient.auth.getClaims(token);
-    
+
     if (authError || !claimsData?.claims) {
       return new Response(
         JSON.stringify({ error: 'Unauthorized - Invalid session' }),
@@ -72,7 +72,7 @@ serve(async (req) => {
     }
 
 
-    const tokenGuard = await requireToken(svcClient, tokenUserId, 'generate-cardio-program');
+    const tokenGuard = await requireToken(svcClient, tokenUserId, 'generate-cardio-program', 'programme_build');
     if (tokenGuard.error) {
       return new Response(JSON.stringify(tokenGuard.error), {
         status: 402,
@@ -105,14 +105,14 @@ serve(async (req) => {
     }
 
     const ANTHROPIC_API_KEY = Deno.env.get("ANTHROPIC_API_KEY");
-    
+
     if (!ANTHROPIC_API_KEY) {
       throw new Error("ANTHROPIC_API_KEY is not configured");
     }
 
-    const { 
+    const {
       activityType,
-      goal, 
+      goal,
       currentLevel,
       sessionsPerWeek,
       sessionLength,
@@ -141,13 +141,19 @@ Programme Structure:
 - Phase 3 (Weeks 9-11): Peak Performance - optimize speed and endurance
 - Phase 4 (Week 12): Taper/Race Prep - reduce volume, maintain intensity
 
+LENGTH IS CRITICAL — your response must fit a strict token budget. This programme has ${sessionsPerWeek} sessions/week across 12 weeks (up to ${sessionsPerWeek * 12} session entries total), so every field must be kept short or the response will be cut off and FAIL to save. Rules:
+- Every field is a SHORT PHRASE, never a paragraph. "warmup", "cooldown", and "notes" are max ~8 words each — omit "notes" entirely for routine sessions.
+- "mainSession" has AT MOST 2 segments per session (never more), each with a short "notes" (max ~6 words).
+- Do not repeat the same boilerplate phrasing across weeks — vary distance/duration/intensity numbers to show progression, but keep the TEXT itself terse.
+- Completing ALL 12 weeks with every session's "day", "sessionType", and "duration" filled in is more important than depth of detail on any single session. Never stop early or truncate — if space is tight, shorten remaining fields further rather than omitting weeks or sessions.
+
 Return ONLY this JSON structure (no markdown):
 {
   "programName": "string",
-  "overview": "2-3 sentences about the programme",
+  "overview": "1-2 sentences about the programme",
   "activityType": "${activityType}",
   "weeklySchedule": [{"day": "Monday", "focus": "Easy ${activityName}", "type": "${activityType}|cross_training|rest|active_recovery"}],
-  "phases": [{"name": "Base Building", "weeks": "1-4", "focus": "string", "notes": "string"}],
+  "phases": [{"name": "Base Building", "weeks": "1-4", "focus": "string", "notes": "short string"}],
   "weeks": [
     {
       "weekNumber": 1,
@@ -159,13 +165,12 @@ Return ONLY this JSON structure (no markdown):
           "sessionType": "Easy ${activityName}",
           "duration": "30 mins",
           "distance": "3-4km",
-          "intensity": "Zone 2 - conversational pace",
+          "intensity": "Zone 2",
           "warmup": "5 min easy walk",
           "mainSession": [
-            {"segment": "Easy ${activityType}", "duration": "25 min", "notes": "Stay in Zone 2"}
+            {"segment": "Easy ${activityType}", "duration": "25 min", "notes": "Zone 2 pace"}
           ],
-          "cooldown": "5 min walk + stretching",
-          "notes": "Focus on form and breathing"
+          "cooldown": "5 min walk + stretch"
         }
       ]
     }
@@ -184,7 +189,7 @@ SESSIONS/WEEK: ${sessionsPerWeek}
 SESSION LENGTH: ${sessionLength} minutes
 ${context}
 
-Create a progressive 12-week programme with ${sessionsPerWeek} sessions per week, each around ${sessionLength} minutes.${preferredDays && preferredDays.length > 0 ? ` Every session's "day" field MUST be one of: ${preferredDays.join(', ')} — do not use any other day.` : ''} Include variety: easy sessions, tempo work, intervals (if appropriate for level), and recovery. Be specific with distances, paces, and intensity zones. Generate ALL 12 weeks with proper periodization.`;
+Create a progressive 12-week programme with ${sessionsPerWeek} sessions per week, each around ${sessionLength} minutes.${preferredDays && preferredDays.length > 0 ? ` Every session's "day" field MUST be one of: ${preferredDays.join(', ')} — do not use any other day.` : ''} Include variety: easy sessions, tempo work, intervals (if appropriate for level), and recovery. Be specific with distances, paces, and intensity zones, but keep every field terse per the length rules in the system prompt — completeness of all 12 weeks matters far more than verbosity. Generate ALL 12 weeks with proper periodization.`;
 
     // Retry logic with exponential backoff
     const maxRetries = 3;
@@ -210,7 +215,7 @@ Create a progressive 12-week programme with ${sessionsPerWeek} sessions per week
             { role: "user", content: userPrompt },
           ],
           temperature: 0.7,
-          max_tokens: 16000,
+          max_tokens: 9000,
         }),
       });
 
@@ -220,14 +225,14 @@ Create a progressive 12-week programme with ${sessionsPerWeek} sessions per week
       console.error(`Gateway error (attempt ${attempt + 1}):`, response.status, errorText);
 
       if (response.status === 429) continue;
-      
+
       if (response.status === 402) {
         return new Response(
           JSON.stringify({ error: "Service temporarily unavailable. Please try again later." }),
           { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
-      
+
       throw new Error(`Gateway error: ${response.status}`);
     }
 
@@ -240,14 +245,18 @@ Create a progressive 12-week programme with ${sessionsPerWeek} sessions per week
 
     const data = await response.json();
     const content = data.content?.[0]?.text;
-    
+
+    if (data.stop_reason === 'max_tokens') {
+      console.error("generate-cardio-program hit max_tokens — response likely truncated", { contentLength: content?.length });
+    }
+
     if (!content) {
       throw new Error("No content in response");
     }
 
     // Clean and parse JSON
     let cleanedContent = content.trim();
-    
+
     if (cleanedContent.includes("```json")) {
       cleanedContent = cleanedContent.substring(cleanedContent.indexOf("```json") + 7);
     } else if (cleanedContent.includes("```")) {
@@ -257,15 +266,15 @@ Create a progressive 12-week programme with ${sessionsPerWeek} sessions per week
       cleanedContent = cleanedContent.substring(0, cleanedContent.lastIndexOf("```"));
     }
     cleanedContent = cleanedContent.trim();
-    
+
     const jsonStart = cleanedContent.indexOf("{");
     const jsonEnd = cleanedContent.lastIndexOf("}");
-    
+
     if (jsonStart === -1 || jsonEnd === -1 || jsonEnd <= jsonStart) {
       console.error("No valid JSON found in response:", cleanedContent.substring(0, 500));
       throw new Error("Failed to parse programme data - no JSON found");
     }
-    
+
     cleanedContent = cleanedContent.substring(jsonStart, jsonEnd + 1);
 
     let program;

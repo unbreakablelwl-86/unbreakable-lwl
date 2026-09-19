@@ -296,7 +296,7 @@ serve(async (req) => {
       });
     }
 
-    const tokenGuard = await requireToken(svcClient, tokenUserId, 'help-chat');
+    const tokenGuard = await requireToken(svcClient, tokenUserId, 'help-chat', 'coach_chat');
     if (tokenGuard.error) {
       return new Response(JSON.stringify(tokenGuard.error), {
         status: 402,

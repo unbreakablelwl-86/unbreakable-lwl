@@ -108,7 +108,7 @@ serve(async (req) => {
     }
 
 
-    const tokenGuard = await requireToken(svcClient, tokenUserId, 'analyze-nutrition');
+    const tokenGuard = await requireToken(svcClient, tokenUserId, 'analyze-nutrition', 'nutrition_analysis');
     if (tokenGuard.error) {
       return new Response(JSON.stringify(tokenGuard.error), {
         status: 402,
