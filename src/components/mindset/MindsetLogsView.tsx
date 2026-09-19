@@ -20,6 +20,7 @@ import {
   Loader2,
   FolderOpen,
   History,
+  NotebookText,
 } from 'lucide-react';
 import { format, startOfWeek, endOfWeek, isWithinInterval, subWeeks } from 'date-fns';
 
@@ -61,6 +62,14 @@ export function MindsetLogsView() {
       weeklyGoal: 7, // one mindset activity a day, adjustable later
     };
   }, [completions]);
+
+  // Diary — every journaling activity that actually has written text saved
+  // against it (JJ, Sept 2026: journal entries need to be saved somewhere
+  // users can look back through). completions is already newest-first.
+  const diaryEntries = useMemo(
+    () => completions.filter(c => c.activity_type === 'journaling' && !!c.entry_text?.trim()),
+    [completions]
+  );
 
   // Breakdown by activity type
   const typeBreakdown = useMemo(() => {
@@ -185,6 +194,41 @@ export function MindsetLogsView() {
             ))}
           </div>
         </Card>
+      )}
+
+      {/* Journal diary */}
+      {diaryEntries.length > 0 && (
+        <div className="space-y-2">
+          <div className="flex items-center gap-2">
+            <NotebookText className="w-4 h-4 text-primary" />
+            <h3 className="text-xs font-display tracking-wider text-muted-foreground">
+              JOURNAL — {diaryEntries.length} ENTR{diaryEntries.length === 1 ? 'Y' : 'IES'}
+            </h3>
+          </div>
+          <div className="space-y-3">
+            {diaryEntries.map((c) => (
+              <Card key={c.id} className="border border-border p-4 bg-card">
+                <div className="flex items-center justify-between gap-3 mb-2">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <span className="text-sm text-foreground truncate">{c.programme_name}</span>
+                    {c.week_number && c.day_number && (
+                      <Badge variant="outline" className="text-xs shrink-0">
+                        W{c.week_number} D{c.day_number}
+                      </Badge>
+                    )}
+                  </div>
+                  <span className="flex items-center gap-1 text-xs text-muted-foreground shrink-0">
+                    <Calendar className="w-3 h-3" />
+                    {format(new Date(c.completed_at), 'MMM d, yyyy')}
+                  </span>
+                </div>
+                <p className="text-foreground/90 text-sm leading-relaxed whitespace-pre-wrap italic">
+                  "{c.entry_text}"
+                </p>
+              </Card>
+            ))}
+          </div>
+        </div>
       )}
 
       {/* History */}

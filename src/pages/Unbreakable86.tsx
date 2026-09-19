@@ -103,6 +103,7 @@ export default function Unbreakable86() {
           therapyChoice={u86.therapyChoice}
           onViewProgress={() => {}}
           fetchPastRuns={u86.fetchPastRuns}
+          fetchAllLogs={u86.fetchAllLogs}
           onViewCertificate={u86.enrolment.completed_at ? () => setView('certificate') : undefined}
         />
         </PaywallGate>

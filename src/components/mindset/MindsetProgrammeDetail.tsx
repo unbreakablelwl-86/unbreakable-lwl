@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Textarea } from '@/components/ui/textarea';
 import { MindsetProgramme } from '@/hooks/useMindsetProgrammes';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -71,11 +72,38 @@ export function MindsetProgrammeDetail({ programme, onBack }: Props) {
   const [completedActivities, setCompletedActivities] = useState<Set<string>>(
     () => new Set(programme.completed_activities || [])
   );
+  // Journaling activities' written text, keyed by activity key — both the
+  // in-progress draft (while not yet completed) and the saved entry (once
+  // completed) live here (JJ, Sept 2026: journal entries need to be saved
+  // somewhere users can look back through, same as UNBREAKABLE 86's daily
+  // journal — previously a "journaling" activity was just a bare checkbox
+  // next to some static prompts, with nothing the user actually wrote ever
+  // saved anywhere).
+  const [journalEntries, setJournalEntries] = useState<Record<string, string>>({});
 
   const data = programme.programme_data as any;
   const weeks = data?.weeks || [];
 
   const getActivityKey = (wi: number, di: number, ai: number) => `${wi}-${di}-${ai}`;
+
+  // Seed journalEntries with whatever's already been saved for this programme.
+  useEffect(() => {
+    if (!user) return;
+    supabase
+      .from('mindset_activity_completions')
+      .select('activity_key, entry_text')
+      .eq('programme_id', programme.id)
+      .eq('user_id', user.id)
+      .eq('activity_type', 'journaling')
+      .then(({ data: rows, error }) => {
+        if (error || !rows) return;
+        const seeded: Record<string, string> = {};
+        for (const row of rows) {
+          if (row.entry_text) seeded[row.activity_key] = row.entry_text;
+        }
+        setJournalEntries(prev => ({ ...seeded, ...prev }));
+      });
+  }, [programme.id, user?.id]);
 
   const handleActivityLaunch = (activity: any) => {
     if (activity.type === 'breathing' || activity.type === 'retention') {
@@ -87,13 +115,20 @@ export function MindsetProgrammeDetail({ programme, onBack }: Props) {
     }
   };
 
-  const handleActivityComplete = async (wi: number, di: number, ai: number, activity: any) => {
+  const handleActivityComplete = async (wi: number, di: number, ai: number, activity: any, entryText?: string) => {
     const key = getActivityKey(wi, di, ai);
     const newCompleted = new Set(completedActivities);
     const wasIncomplete = !newCompleted.has(key);
 
     if (newCompleted.has(key)) {
       newCompleted.delete(key);
+      if (activity.type === 'journaling') {
+        setJournalEntries(prev => {
+          const next = { ...prev };
+          delete next[key];
+          return next;
+        });
+      }
     } else {
       newCompleted.add(key);
     }
@@ -130,8 +165,12 @@ export function MindsetProgrammeDetail({ programme, onBack }: Props) {
           week_number: wi + 1,
           day_number: di + 1,
           duration_minutes: activity.durationMinutes ?? null,
+          entry_text: activity.type === 'journaling' ? (entryText?.trim() || null) : null,
           completed_at: new Date().toISOString(),
         }, { onConflict: 'user_id,programme_id,activity_key' });
+        if (activity.type === 'journaling' && entryText?.trim()) {
+          setJournalEntries(prev => ({ ...prev, [key]: entryText.trim() }));
+        }
       } else {
         await supabase
           .from('mindset_activity_completions')
@@ -324,7 +363,14 @@ export function MindsetProgrammeDetail({ programme, onBack }: Props) {
                                           <div className="flex items-center gap-2 mb-2">
                                             <Checkbox
                                               checked={isCompleted}
-                                              onCheckedChange={() => handleActivityComplete(wi, di, ai, activity)}
+                                              onCheckedChange={() => {
+                                                // Journaling completes via the Save button below (needs
+                                                // actual written text) — the checkbox here still lets you
+                                                // uncheck/undo a completed entry, same as every other type.
+                                                if (activity.type === 'journaling' && !isCompleted) return;
+                                                handleActivityComplete(wi, di, ai, activity);
+                                              }}
+                                              disabled={activity.type === 'journaling' && !isCompleted}
                                               className="data-[state=checked]:bg-primary data-[state=checked]:border-primary"
                                             />
                                             <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center text-primary">
@@ -370,6 +416,37 @@ export function MindsetProgrammeDetail({ programme, onBack }: Props) {
                                                   {prompt}
                                                 </p>
                                               ))}
+                                            </div>
+                                          )}
+
+                                          {/* Journal entry — write it, save it, and it's kept here so it
+                                              can be read back on /mindset/logs later. */}
+                                          {activity.type === 'journaling' && (
+                                            <div className="mt-2 ml-9 space-y-2">
+                                              {isCompleted ? (
+                                                <div className="rounded-lg bg-muted/30 border border-border/60 p-3">
+                                                  <p className="text-xs text-foreground/90 italic leading-relaxed whitespace-pre-wrap">
+                                                    "{journalEntries[actKey] || 'Entry saved before this could be recorded — nothing to show.'}"
+                                                  </p>
+                                                </div>
+                                              ) : (
+                                                <>
+                                                  <Textarea
+                                                    value={journalEntries[actKey] || ''}
+                                                    onChange={(e) => setJournalEntries(prev => ({ ...prev, [actKey]: e.target.value }))}
+                                                    placeholder="Write your journal entry here..."
+                                                    className="min-h-[90px] text-xs bg-background resize-none"
+                                                  />
+                                                  <Button
+                                                    size="sm"
+                                                    className="h-8 text-xs"
+                                                    disabled={!(journalEntries[actKey] || '').trim()}
+                                                    onClick={() => handleActivityComplete(wi, di, ai, activity, journalEntries[actKey])}
+                                                  >
+                                                    Save Journal Entry
+                                                  </Button>
+                                                </>
+                                              )}
                                             </div>
                                           )}
 

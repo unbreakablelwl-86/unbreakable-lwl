@@ -2346,6 +2346,7 @@ export type Database = {
           completed_at: string
           day_number: number | null
           duration_minutes: number | null
+          entry_text: string | null
           id: string
           programme_id: string
           user_id: string
@@ -2358,6 +2359,7 @@ export type Database = {
           completed_at?: string
           day_number?: number | null
           duration_minutes?: number | null
+          entry_text?: string | null
           id?: string
           programme_id: string
           user_id: string
@@ -2370,6 +2372,7 @@ export type Database = {
           completed_at?: string
           day_number?: number | null
           duration_minutes?: number | null
+          entry_text?: string | null
           id?: string
           programme_id?: string
           user_id?: string

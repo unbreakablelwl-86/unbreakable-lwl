@@ -14,6 +14,10 @@ export interface MindsetActivityCompletion {
   duration_minutes: number | null;
   completed_at: string;
   programme_name: string;
+  /** The actual written entry for a 'journaling' activity — null for every
+   * other activity type, and for journaling completions saved before this
+   * column existed (JJ, Sept 2026). */
+  entry_text: string | null;
 }
 
 /**

@@ -19,7 +19,9 @@ import {
   AlertDialogAction,
 } from '@/components/ui/alert-dialog';
 import { WorkoutSession } from '@/hooks/useWorkoutSessions';
+import { supabase } from '@/integrations/supabase/client';
 import { SessionActionTiles } from './SessionActionTiles';
+import { WorkoutExerciseListItem } from './WorkoutExerciseListItem';
 import { SessionLoggingView } from './SessionLoggingView';
 import { SessionNotesView, SessionMedia } from './SessionNotesView';
 import { SessionResultsView } from './SessionResultsView';
@@ -57,6 +59,7 @@ import { findCoachingDataByName } from '@/lib/exerciseCoachingData';
 import type { Exercise } from '@/lib/exercise-types';
 import { getExerciseGifUrl } from '@/lib/exercise-images';
 import { EXERCISE_GIF_IDS } from '@/lib/exercise-library-gifs';
+import { parseWorkoutTextItems, exerciseNameForLookup } from '@/lib/parseWorkoutText';
 
 interface ActiveWorkoutModalProps {
   session: WorkoutSession;
@@ -113,6 +116,18 @@ export function ActiveWorkoutModal({
   });
   const [expandedExercise, setExpandedExercise] = useState<string | null>(null);
   const [swappingExercise, setSwappingExercise] = useState<string | null>(null);
+
+  // Warm up / cool down — their own dropdowns, laid out like the main
+  // EXERCISES list (JJ, Sept 2026). These were previously only ever shown as
+  // a single paragraph of free text on the program preview page and didn't
+  // appear in the live tracker at all.
+  const [showWarmup, setShowWarmup] = useState(false);
+  const [showCooldown, setShowCooldown] = useState(false);
+  const [expandedWarmupItem, setExpandedWarmupItem] = useState<string | null>(null);
+  const [expandedCooldownItem, setExpandedCooldownItem] = useState<string | null>(null);
+  const [warmupChecked, setWarmupChecked] = useState<Set<string>>(new Set());
+  const [cooldownChecked, setCooldownChecked] = useState<Set<string>>(new Set());
+  const [programDay, setProgramDay] = useState<{ warmup?: string; cooldown?: string } | null>(null);
   const [showAddExercise, setShowAddExercise] = useState(false);
   const [manualHours, setManualHours] = useState('');
   const [manualMinutes, setManualMinutes] = useState('');
@@ -140,6 +155,66 @@ export function ActiveWorkoutModal({
     }
     return map;
   }, [exerciseDb]);
+
+  // Warmup/cooldown text lives on the source programme's day, not on the
+  // session itself (workout_sessions has no warmup/cooldown columns — only
+  // session_planners does, populated straight from templateWeek.days when
+  // planners are generated). Look the day up the same way useTrainingPrograms
+  // already does when building planners: by program_id, matching the day
+  // whose "day" field equals this session's day_name.
+  useEffect(() => {
+    if (!open || !session.program_id) { setProgramDay(null); return; }
+    let cancelled = false;
+    supabase
+      .from('training_programs')
+      .select('program_data')
+      .eq('id', session.program_id)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (cancelled || !data) return;
+        const programData = data.program_data as any;
+        const templateDays = programData?.templateWeek?.days || programData?.weeks?.[0]?.days || [];
+        const day = templateDays.find((d: any) => d.day === session.day_name);
+        setProgramDay(day ? { warmup: day.warmup, cooldown: day.cooldown } : null);
+      })
+      .catch(() => setProgramDay(null));
+    return () => { cancelled = true; };
+  }, [open, session.program_id, session.day_name]);
+
+  const warmupItems = useMemo(() => parseWorkoutTextItems(programDay?.warmup), [programDay]);
+  const cooldownItems = useMemo(() => parseWorkoutTextItems(programDay?.cooldown), [programDay]);
+
+  /** Shared GIF/coaching-detail lookup — same fuzzy-match chain the main
+   * exercise list already used, now reused for warmup/cooldown steps too so
+   * all three lists look and behave identically. */
+  const resolveExerciseVisuals = (name: string) => {
+    const lookupName = exerciseNameForLookup(name);
+    const details = getExerciseDetails(lookupName);
+    const coachingData = findCoachingDataByName(lookupName);
+    const dbExercise = exerciseDbMap.get(lookupName.toLowerCase());
+    const curatedGifId = details.exercise?.id ? EXERCISE_GIF_IDS[details.exercise.id] : undefined;
+    const gifUrl = curatedGifId
+      ? getExerciseGifUrl({ exerciseDbId: curatedGifId })
+      : (dbExercise ? getExerciseGifUrl(dbExercise) : '');
+    const hasDetails = Boolean(details.exercise || coachingData || dbExercise);
+    return { details, coachingData, dbExercise, gifUrl, hasDetails };
+  };
+
+  const toggleWarmupChecked = (item: string) => {
+    setWarmupChecked(prev => {
+      const next = new Set(prev);
+      next.has(item) ? next.delete(item) : next.add(item);
+      return next;
+    });
+  };
+
+  const toggleCooldownChecked = (item: string) => {
+    setCooldownChecked(prev => {
+      const next = new Set(prev);
+      next.has(item) ? next.delete(item) : next.add(item);
+      return next;
+    });
+  };
 
   // Live elapsed timer
   const [elapsed, setElapsed] = useState(0);
@@ -202,6 +277,149 @@ export function ActiveWorkoutModal({
 
   const toggleExerciseDetails = (exerciseName: string) => {
     setExpandedExercise(expandedExercise === exerciseName ? null : exerciseName);
+  };
+
+  /** The expanded "tips/alternatives" panel body — same content the main
+   * exercise list always rendered, now shared with warmup/cooldown items. */
+  const renderExerciseDetailsContent = (
+    name: string,
+    { details, coachingData, dbExercise, gifUrl }: ReturnType<typeof resolveExerciseVisuals>,
+  ) => {
+    if (coachingData) {
+      return (
+        <ExerciseCoachingPanel
+          coachingData={coachingData}
+          exerciseName={name}
+          gifUrl={gifUrl}
+        />
+      );
+    }
+
+    if (!dbExercise && !details.exercise) return null;
+
+    return (
+      <div className="space-y-4">
+        {/* GIF Preview */}
+        {gifUrl && (
+          <div className="flex justify-center">
+            <div className="w-full max-w-[200px] aspect-square rounded-xl overflow-hidden bg-muted border border-border/50">
+              <img src={gifUrl} alt={name} className="w-full h-full object-cover" loading="lazy" />
+            </div>
+          </div>
+        )}
+
+        {/* Description */}
+        {details.exercise?.description && (
+          <p className="text-xs text-foreground/80 leading-relaxed">{details.exercise.description}</p>
+        )}
+
+        {/* Muscles Targeted */}
+        {(dbExercise?.primaryMuscles?.length || dbExercise?.secondaryMuscles?.length) && (
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <Dumbbell className="w-4 h-4 text-primary" />
+              <span className="text-sm font-display text-primary tracking-wide">MUSCLES TARGETED</span>
+            </div>
+            <div className="space-y-2">
+              {dbExercise?.primaryMuscles && dbExercise.primaryMuscles.length > 0 && (
+                <div>
+                  <span className="text-xs text-muted-foreground block mb-1">Primary</span>
+                  <div className="flex flex-wrap gap-1">
+                    {dbExercise.primaryMuscles.map((m, idx) => (
+                      <Badge key={idx} className="bg-primary/20 text-primary border-primary/30 text-xs">{m}</Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {dbExercise?.secondaryMuscles && dbExercise.secondaryMuscles.length > 0 && (
+                <div>
+                  <span className="text-xs text-muted-foreground block mb-1">Secondary</span>
+                  <div className="flex flex-wrap gap-1">
+                    {dbExercise.secondaryMuscles.map((m, idx) => (
+                      <Badge key={idx} variant="outline" className="text-xs">{m}</Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Equipment & Level */}
+        {(dbExercise?.equipment || dbExercise?.level || dbExercise?.mechanic) && (
+          <div className="flex flex-wrap items-center gap-1.5">
+            {dbExercise?.equipment && (
+              <Badge variant="secondary" className="text-xs">{dbExercise.equipment}</Badge>
+            )}
+            {dbExercise?.level && (
+              <Badge variant="secondary" className="text-xs">{dbExercise.level}</Badge>
+            )}
+            {dbExercise?.mechanic && (
+              <Badge variant="secondary" className="text-xs">{dbExercise.mechanic}</Badge>
+            )}
+            {dbExercise?.category && (
+              <Badge variant="secondary" className="text-xs">{dbExercise.category}</Badge>
+            )}
+          </div>
+        )}
+
+        {/* Instructions / How To (from exercises.json) */}
+        {dbExercise?.instructions && dbExercise.instructions.length > 0 && (
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <Target className="w-4 h-4 text-primary" />
+              <span className="text-sm font-display text-primary tracking-wide">HOW TO PERFORM</span>
+            </div>
+            <div className="space-y-2">
+              {dbExercise.instructions.map((step, idx) => (
+                <div key={idx} className="rounded-lg bg-muted/40 p-3 border border-border/50">
+                  <div className="flex items-start gap-2">
+                    <span className="flex items-center justify-center w-5 h-5 rounded-full bg-primary/20 text-primary text-xs font-bold shrink-0">
+                      {idx + 1}
+                    </span>
+                    <p className="text-xs text-foreground/80 leading-relaxed">{step}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Tips from old library */}
+        {details.exercise?.tips && details.exercise.tips.length > 0 && (
+          <div className="rounded-lg bg-primary/10 border border-primary/30 p-3">
+            <div className="flex items-center gap-2 mb-2">
+              <Lightbulb className="w-4 h-4 text-primary" />
+              <span className="text-sm font-display text-primary tracking-wide">COACHING TIPS</span>
+            </div>
+            <ul className="space-y-1.5">
+              {details.exercise.tips.map((tip, idx) => (
+                <li key={idx} className="text-xs text-foreground/80 flex items-start gap-2">
+                  <span className="text-primary mt-0.5">•</span>
+                  <span>{tip}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {/* Alternatives */}
+        {details.exercise?.alternatives && details.exercise.alternatives.length > 0 && (
+          <div>
+            <span className="text-xs font-display text-muted-foreground tracking-wide">
+              ALTERNATIVES:
+            </span>
+            <div className="flex flex-wrap gap-1 mt-1">
+              {details.exercise.alternatives.map((alt, idx) => (
+                <Badge key={idx} variant="outline" className="text-xs">
+                  {alt}
+                </Badge>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    );
   };
 
   // Render full-screen tool views
@@ -335,6 +553,59 @@ export function ActiveWorkoutModal({
             <Progress value={progressPercent} className="h-2" />
           </Card>
 
+          {/* Warm Up — own dropdown, laid out like the main exercise list
+              (JJ, Sept 2026), parsed from the programme day's free-text
+              warmup field. Hidden entirely when there's nothing to parse
+              (manually-built programmes, or older programmes with no
+              warmup text at all). */}
+          {warmupItems.length > 0 && (
+            <Card className="border-border bg-card">
+              <button
+                onClick={() => setShowWarmup(!showWarmup)}
+                className="w-full p-4 flex items-center justify-between"
+              >
+                <span className="font-display text-foreground tracking-wide">
+                  WARM UP ({warmupItems.length})
+                </span>
+                {showWarmup ? (
+                  <ChevronUp className="w-5 h-5 text-primary" />
+                ) : (
+                  <ChevronDown className="w-5 h-5 text-primary" />
+                )}
+              </button>
+              <AnimatePresence>
+                {showWarmup && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="px-4 pb-4 space-y-2">
+                      {warmupItems.map((item) => {
+                        const visuals = resolveExerciseVisuals(item);
+                        return (
+                          <WorkoutExerciseListItem
+                            key={item}
+                            name={item}
+                            gifUrl={visuals.gifUrl}
+                            isExpanded={expandedWarmupItem === item}
+                            onToggleExpand={() => setExpandedWarmupItem(expandedWarmupItem === item ? null : item)}
+                            hasDetails={visuals.hasDetails}
+                            detailsContent={renderExerciseDetailsContent(item, visuals)}
+                            checked={warmupChecked.has(item)}
+                            onToggleChecked={() => toggleWarmupChecked(item)}
+                          />
+                        );
+                      })}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </Card>
+          )}
+
           {/* Exercise List with Tips/Alternatives Dropdown */}
           <Card className="border-border border-border bg-card">
             <button
@@ -350,7 +621,7 @@ export function ActiveWorkoutModal({
                 <ChevronDown className="w-5 h-5 text-primary" />
               )}
             </button>
-            
+
             <AnimatePresence>
               {showExercises && (
                 <motion.div
@@ -362,220 +633,34 @@ export function ActiveWorkoutModal({
                 >
                   <div className="px-4 pb-4 space-y-2">
                     {Object.values(exerciseGroups).map((exercise) => {
-                      const details = getExerciseDetails(exercise.name);
-                      const coachingData = findCoachingDataByName(exercise.name);
                       // exercises.json is the raw 1500-exercise ExerciseDB dump — its names
                       // rarely match the coach's exercise names exactly (e.g. "Back Squat" vs
                       // whatever exercises.json happens to call it), so an exact lookup misses
                       // the vast majority of exercises the coach actually programmes, even
                       // though every one of them was picked from a list guaranteed to have a
-                      // gif. Prefer the curated exerciseLibrary.ts match (which uses fuzzy
-                      // name matching) mapped through EXERCISE_GIF_IDS to the real gif id;
-                      // only fall back to the brittle exact match against exercises.json.
-                      const dbExercise = exerciseDbMap.get(exercise.name.toLowerCase());
-                      const curatedGifId = details.exercise?.id ? EXERCISE_GIF_IDS[details.exercise.id] : undefined;
-                      const gifUrl = curatedGifId
-                        ? getExerciseGifUrl({ exerciseDbId: curatedGifId })
-                        : (dbExercise ? getExerciseGifUrl(dbExercise) : '');
+                      // gif. resolveExerciseVisuals prefers the curated exerciseLibrary.ts
+                      // match (fuzzy name matching) mapped through EXERCISE_GIF_IDS to the
+                      // real gif id, only falling back to the brittle exact match.
+                      const visuals = resolveExerciseVisuals(exercise.name);
                       const isExpanded = expandedExercise === exercise.name;
-                      const hasDetails = details.exercise || coachingData || dbExercise;
 
                       return (
-                        <div key={exercise.name} className="rounded-lg border border-border bg-surface overflow-hidden">
-                          {/* Exercise Header - Clickable */}
-                          <button
-                            onClick={() => toggleExerciseDetails(exercise.name)}
-                            className="w-full p-3 flex items-center justify-between hover:bg-muted/30 transition-colors"
-                          >
-                            <div className="flex items-center gap-2">
-                              {exercise.completed === exercise.sets && (
-                                <Check className="w-4 h-4 text-primary" />
-                              )}
-                              {gifUrl ? (
-                                <div className="w-10 h-10 rounded-lg overflow-hidden bg-muted shrink-0">
-                                  <img src={gifUrl} alt={exercise.name} className="w-full h-full object-cover" loading="lazy" />
-                                </div>
-                              ) : null}
-                              <span className="text-sm text-foreground">{exercise.name}</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <Badge variant="outline" className="text-xs">
-                                {exercise.completed}/{exercise.sets}
-                              </Badge>
-                              {onSwapExercise && (
-                                <button
-                                  onClick={(e) => { e.stopPropagation(); setSwappingExercise(exercise.name); }}
-                                  className="p-1 rounded hover:bg-primary/10 transition-colors"
-                                  title="Swap exercise"
-                                >
-                                  <Shuffle className="w-4 h-4 text-primary" />
-                                </button>
-                              )}
-                              {hasDetails && (
-                                <BookOpen className="w-4 h-4 text-primary" />
-                              )}
-                              {isExpanded ? (
-                                <ChevronUp className="w-4 h-4 text-muted-foreground" />
-                              ) : (
-                                <ChevronDown className="w-4 h-4 text-muted-foreground" />
-                              )}
-                            </div>
-                          </button>
-
-                          {/* Expanded Details: Coaching > Old Library Tips > exercises.json instructions */}
-                          <AnimatePresence>
-                            {isExpanded && hasDetails && (
-                              <motion.div
-                                initial={{ height: 0, opacity: 0 }}
-                                animate={{ height: 'auto', opacity: 1 }}
-                                exit={{ height: 0, opacity: 0 }}
-                                transition={{ duration: 0.2 }}
-                                className="overflow-hidden border-t border-border"
-                              >
-                                <div className="p-4 bg-muted/20">
-                                  {/* Premium coaching data takes priority — now with GIF */}
-                                  {coachingData ? (
-                                    <ExerciseCoachingPanel 
-                                      coachingData={coachingData}
-                                      exerciseName={exercise.name}
-                                      gifUrl={gifUrl}
-                                    />
-                                  ) : (dbExercise || details.exercise) ? (
-                                    /* Coaching-style panel built from exercises.json + old library */
-                                    <div className="space-y-4">
-                                      {/* GIF Preview */}
-                                      {gifUrl && (
-                                        <div className="flex justify-center">
-                                          <div className="w-full max-w-[200px] aspect-square rounded-xl overflow-hidden bg-muted border border-border/50">
-                                            <img src={gifUrl} alt={exercise.name} className="w-full h-full object-cover" loading="lazy" />
-                                          </div>
-                                        </div>
-                                      )}
-
-                                      {/* Description */}
-                                      {details.exercise?.description && (
-                                        <p className="text-xs text-foreground/80 leading-relaxed">{details.exercise.description}</p>
-                                      )}
-
-                                      {/* Muscles Targeted */}
-                                      {(dbExercise?.primaryMuscles?.length || dbExercise?.secondaryMuscles?.length) && (
-                                        <div className="space-y-2">
-                                          <div className="flex items-center gap-2">
-                                            <Dumbbell className="w-4 h-4 text-primary" />
-                                            <span className="text-sm font-display text-primary tracking-wide">MUSCLES TARGETED</span>
-                                          </div>
-                                          <div className="space-y-2">
-                                            {dbExercise?.primaryMuscles && dbExercise.primaryMuscles.length > 0 && (
-                                              <div>
-                                                <span className="text-xs text-muted-foreground block mb-1">Primary</span>
-                                                <div className="flex flex-wrap gap-1">
-                                                  {dbExercise.primaryMuscles.map((m, idx) => (
-                                                    <Badge key={idx} className="bg-primary/20 text-primary border-primary/30 text-xs">{m}</Badge>
-                                                  ))}
-                                                </div>
-                                              </div>
-                                            )}
-                                            {dbExercise?.secondaryMuscles && dbExercise.secondaryMuscles.length > 0 && (
-                                              <div>
-                                                <span className="text-xs text-muted-foreground block mb-1">Secondary</span>
-                                                <div className="flex flex-wrap gap-1">
-                                                  {dbExercise.secondaryMuscles.map((m, idx) => (
-                                                    <Badge key={idx} variant="outline" className="text-xs">{m}</Badge>
-                                                  ))}
-                                                </div>
-                                              </div>
-                                            )}
-                                          </div>
-                                        </div>
-                                      )}
-
-                                      {/* Equipment & Level */}
-                                      {(dbExercise?.equipment || dbExercise?.level || dbExercise?.mechanic) && (
-                                        <div className="flex flex-wrap items-center gap-1.5">
-                                          {dbExercise?.equipment && (
-                                            <Badge variant="secondary" className="text-xs">{dbExercise.equipment}</Badge>
-                                          )}
-                                          {dbExercise?.level && (
-                                            <Badge variant="secondary" className="text-xs">{dbExercise.level}</Badge>
-                                          )}
-                                          {dbExercise?.mechanic && (
-                                            <Badge variant="secondary" className="text-xs">{dbExercise.mechanic}</Badge>
-                                          )}
-                                          {dbExercise?.category && (
-                                            <Badge variant="secondary" className="text-xs">{dbExercise.category}</Badge>
-                                          )}
-                                        </div>
-                                      )}
-
-                                      {/* Instructions / How To (from exercises.json) */}
-                                      {dbExercise?.instructions && dbExercise.instructions.length > 0 && (
-                                        <div className="space-y-3">
-                                          <div className="flex items-center gap-2">
-                                            <Target className="w-4 h-4 text-primary" />
-                                            <span className="text-sm font-display text-primary tracking-wide">HOW TO PERFORM</span>
-                                          </div>
-                                          <div className="space-y-2">
-                                            {dbExercise.instructions.map((step, idx) => (
-                                              <div key={idx} className="rounded-lg bg-muted/40 p-3 border border-border/50">
-                                                <div className="flex items-start gap-2">
-                                                  <span className="flex items-center justify-center w-5 h-5 rounded-full bg-primary/20 text-primary text-xs font-bold shrink-0">
-                                                    {idx + 1}
-                                                  </span>
-                                                  <p className="text-xs text-foreground/80 leading-relaxed">{step}</p>
-                                                </div>
-                                              </div>
-                                            ))}
-                                          </div>
-                                        </div>
-                                      )}
-
-                                      {/* Tips from old library */}
-                                      {details.exercise?.tips && details.exercise.tips.length > 0 && (
-                                        <div className="rounded-lg bg-primary/10 border border-primary/30 p-3">
-                                          <div className="flex items-center gap-2 mb-2">
-                                            <Lightbulb className="w-4 h-4 text-primary" />
-                                            <span className="text-sm font-display text-primary tracking-wide">COACHING TIPS</span>
-                                          </div>
-                                          <ul className="space-y-1.5">
-                                            {details.exercise.tips.map((tip, idx) => (
-                                              <li key={idx} className="text-xs text-foreground/80 flex items-start gap-2">
-                                                <span className="text-primary mt-0.5">•</span>
-                                                <span>{tip}</span>
-                                              </li>
-                                            ))}
-                                          </ul>
-                                        </div>
-                                      )}
-
-                                      {/* Alternatives */}
-                                      {details.exercise?.alternatives && details.exercise.alternatives.length > 0 && (
-                                        <div>
-                                          <span className="text-xs font-display text-muted-foreground tracking-wide">
-                                            ALTERNATIVES:
-                                          </span>
-                                          <div className="flex flex-wrap gap-1 mt-1">
-                                            {details.exercise.alternatives.map((alt, idx) => (
-                                              <Badge key={idx} variant="outline" className="text-xs">
-                                                {alt}
-                                              </Badge>
-                                            ))}
-                                          </div>
-                                        </div>
-                                      )}
-                                    </div>
-                                  ) : null}
-                                </div>
-                              </motion.div>
-                            )}
-                          </AnimatePresence>
-
-                          {/* No details available message */}
-                          {isExpanded && !hasDetails && (
-                            <div className="p-3 text-xs text-muted-foreground border-t border-border bg-muted/20">
-                              No additional details available for this exercise.
-                            </div>
-                          )}
-                        </div>
+                        <WorkoutExerciseListItem
+                          key={exercise.name}
+                          name={exercise.name}
+                          gifUrl={visuals.gifUrl}
+                          isExpanded={isExpanded}
+                          onToggleExpand={() => toggleExerciseDetails(exercise.name)}
+                          hasDetails={visuals.hasDetails}
+                          detailsContent={renderExerciseDetailsContent(exercise.name, visuals)}
+                          isDone={exercise.completed === exercise.sets}
+                          rightContent={
+                            <Badge variant="outline" className="text-xs">
+                              {exercise.completed}/{exercise.sets}
+                            </Badge>
+                          }
+                          onSwap={onSwapExercise ? () => setSwappingExercise(exercise.name) : undefined}
+                        />
                       );
                     })}
                   </div>
@@ -583,6 +668,55 @@ export function ActiveWorkoutModal({
               )}
             </AnimatePresence>
           </Card>
+
+          {/* Cool Down — own dropdown, same layout as Warm Up / Exercises. */}
+          {cooldownItems.length > 0 && (
+            <Card className="border-border bg-card">
+              <button
+                onClick={() => setShowCooldown(!showCooldown)}
+                className="w-full p-4 flex items-center justify-between"
+              >
+                <span className="font-display text-foreground tracking-wide">
+                  COOL DOWN ({cooldownItems.length})
+                </span>
+                {showCooldown ? (
+                  <ChevronUp className="w-5 h-5 text-primary" />
+                ) : (
+                  <ChevronDown className="w-5 h-5 text-primary" />
+                )}
+              </button>
+              <AnimatePresence>
+                {showCooldown && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="px-4 pb-4 space-y-2">
+                      {cooldownItems.map((item) => {
+                        const visuals = resolveExerciseVisuals(item);
+                        return (
+                          <WorkoutExerciseListItem
+                            key={item}
+                            name={item}
+                            gifUrl={visuals.gifUrl}
+                            isExpanded={expandedCooldownItem === item}
+                            onToggleExpand={() => setExpandedCooldownItem(expandedCooldownItem === item ? null : item)}
+                            hasDetails={visuals.hasDetails}
+                            detailsContent={renderExerciseDetailsContent(item, visuals)}
+                            checked={cooldownChecked.has(item)}
+                            onToggleChecked={() => toggleCooldownChecked(item)}
+                          />
+                        );
+                      })}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </Card>
+          )}
 
           {/* Inline Rest Timer + Un-Tunes Player */}
           <InlineRestTimer

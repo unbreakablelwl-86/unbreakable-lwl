@@ -9,6 +9,7 @@ import {
   Flame, Dumbbell, BookOpen, Droplets, Target, Wind, ThermometerSun, Snowflake,
   PenLine, ChevronDown, Check, BarChart3,
   Trophy, RotateCcw, Zap, Star, Shield, ArrowRight, Lock, Award, History,
+  Loader2, NotebookText,
 } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
@@ -29,6 +30,11 @@ interface U86DashboardProps {
   therapyChoice: 'sauna' | 'cold_shower';
   /** Past runs (reset or completed) — kept even after a reset so completed days are never lost. */
   fetchPastRuns?: () => Promise<U86Enrolment[]>;
+  /** Every daily log for the current run, in day order — backs the JOURNAL
+   * tab's diary view (JJ, Sept 2026: journal entries need to be saved
+   * somewhere users can look back through, not just written once and lost
+   * to the next day's log). */
+  fetchAllLogs?: () => Promise<U86DailyLog[]>;
   /** Set once the certificate has unlocked (completed_at is stamped) — the tracker keeps running past it. */
   onViewCertificate?: () => void;
 }
@@ -55,6 +61,7 @@ function dailyHabits(therapyChoice: 'sauna' | 'cold_shower') {
 const TABS: { id: U86Tab; icon: typeof Flame; label: string; color: string }[] = [
   { id: 'dashboard', icon: Flame, label: 'TODAY', color: '#FF5500' },
   { id: 'progress', icon: BarChart3, label: 'PROGRESS', color: '#10B981' },
+  { id: 'journal', icon: NotebookText, label: 'JOURNAL', color: '#8B5CF6' },
 ];
 
 export function U86Dashboard({
@@ -68,6 +75,7 @@ export function U86Dashboard({
   onViewProgress,
   therapyChoice,
   fetchPastRuns,
+  fetchAllLogs,
   onViewCertificate,
 }: U86DashboardProps) {
   const DAILY_7 = dailyHabits(therapyChoice);
@@ -76,6 +84,8 @@ export function U86Dashboard({
   const [journalSaving, setJournalSaving] = useState(false);
   const [expandedSection, setExpandedSection] = useState<string | null>('habits');
   const [pastRuns, setPastRuns] = useState<U86Enrolment[]>([]);
+  const [journalLogs, setJournalLogs] = useState<U86DailyLog[]>([]);
+  const [journalLoading, setJournalLoading] = useState(false);
   const beyondCore = enrolment.current_day > 86;
 
   useEffect(() => {
@@ -83,6 +93,23 @@ export function U86Dashboard({
       fetchPastRuns().then(setPastRuns).catch(() => {});
     }
   }, [activeTab, fetchPastRuns]);
+
+  useEffect(() => {
+    if (activeTab === 'journal' && fetchAllLogs) {
+      setJournalLoading(true);
+      fetchAllLogs()
+        .then(setJournalLogs)
+        .catch(() => {})
+        .finally(() => setJournalLoading(false));
+    }
+  }, [activeTab, fetchAllLogs]);
+
+  // Diary reads newest-first, and only shows days that actually have
+  // something written — a banked day with all boxes ticked but no journal
+  // text isn't a diary entry.
+  const diaryEntries = [...journalLogs]
+    .filter(l => typeof l.journal === 'string' && l.journal.trim().length > 0)
+    .sort((a, b) => b.day_number - a.day_number);
 
   const habitsCompleted = u86CountDone(todayLog as any, therapyChoice);
   const allDone = habitsCompleted >= U86_TOTAL_HABITS;
@@ -513,6 +540,56 @@ export function U86Dashboard({
                     );
                   })}
                 </div>
+              </div>
+            )}
+          </>
+        )}
+
+        {/* ─── JOURNAL Tab — a diary of every day's written entry ─── */}
+        {activeTab === 'journal' && (
+          <>
+            {journalLoading ? (
+              <div className="flex items-center justify-center py-16">
+                <Loader2 className="w-6 h-6 text-primary animate-spin" />
+              </div>
+            ) : diaryEntries.length === 0 ? (
+              <div className="rounded-xl border border-border bg-card p-6 text-center">
+                <NotebookText className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
+                <h3 className="font-display text-sm tracking-wider text-foreground mb-1">NO ENTRIES YET</h3>
+                <p className="text-muted-foreground text-xs leading-relaxed">
+                  Every journal entry you save on the TODAY tab lands here, so you can look back
+                  over how the last 86 days actually went.
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                <p className="text-[10px] text-muted-foreground tracking-wider font-display px-1">
+                  {diaryEntries.length} ENTR{diaryEntries.length === 1 ? 'Y' : 'IES'}
+                </p>
+                {diaryEntries.map(log => {
+                  const dateLabel = new Date(`${log.log_date}T00:00:00Z`).toLocaleDateString('en-GB', {
+                    weekday: 'short', day: '2-digit', month: 'short', year: 'numeric',
+                  });
+                  const banked = Boolean((log as any).all_habits_done);
+                  return (
+                    <div key={log.id} className="rounded-xl border border-border bg-card p-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-2">
+                          <span className="font-display text-sm text-primary tracking-wide">DAY {log.day_number}</span>
+                          <span className="text-muted-foreground text-[10px]">{dateLabel}</span>
+                        </div>
+                        {banked && (
+                          <span className="flex items-center gap-1 text-primary text-[10px] font-display tracking-wider">
+                            <Trophy className="w-3 h-3" /> BANKED
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-foreground/90 text-sm leading-relaxed whitespace-pre-wrap italic">
+                        "{log.journal}"
+                      </p>
+                    </div>
+                  );
+                })}
               </div>
             )}
           </>
