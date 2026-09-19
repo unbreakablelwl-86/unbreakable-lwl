@@ -418,7 +418,12 @@ Keep it conversational, like a real coach talking after a session. Use their nam
       data: {
         session_id: sessionId,
         conversation_id: conversationId,
-        link: "/coach",
+        // Was "/coach" — that route is coach/dev-only (CoachRoute-gated),
+        // so a regular athlete clicking "view" got silently redirected away
+        // instead of landing on their own feedback. The AI coach feedback
+        // above was already written into their own AI chat conversation
+        // (step 8) — link there directly.
+        link: conversationId ? `/help?conversation=${conversationId}` : "/help",
       },
     });
 

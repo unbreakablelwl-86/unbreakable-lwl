@@ -482,6 +482,18 @@ export default function Help() {
     }
   }, [generateProgramme, generateMealPlan, generateMindsetProgramme, generateCardioProgramme, addAssistantMessage]);
 
+  // Deep-link straight into a specific conversation — used by notifications
+  // (e.g. AI session feedback, coach feedback) whose "click to view" link
+  // now points at the exact conversation it created, e.g. /help?conversation=<id>,
+  // instead of just landing on a fresh/empty chat.
+  useEffect(() => {
+    const conversationParam = searchParams.get('conversation');
+    if (conversationParam) {
+      loadConversation(conversationParam);
+      setSearchParams({});
+    }
+  }, [searchParams, setSearchParams, loadConversation]);
+
   // Context from URL params or sessionStorage
   useEffect(() => {
     const modeParam = searchParams.get('mode');

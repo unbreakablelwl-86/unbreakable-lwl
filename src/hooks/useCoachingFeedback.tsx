@@ -88,6 +88,20 @@ export function useCoachingFeedback() {
       console.error('Auto-message failed:', e);
     }
 
+    // Also relay this feedback into the athlete's AI Coach chat, and raise
+    // a notification that deep-links straight to it — added alongside the
+    // inbox message above, not replacing it. help_conversations/help_messages
+    // RLS only allows auth.uid() = user_id, so a coach's own client can't
+    // write into an athlete's chat directly; this runs server-side with the
+    // service role after re-verifying the caller authored this feedback.
+    try {
+      await supabase.functions.invoke('deliver-coach-feedback', {
+        body: { feedbackId: feedback.id },
+      });
+    } catch (e) {
+      console.error('AI chat delivery failed:', e);
+    }
+
     setLoading(false);
     return { data: feedback as unknown as CoachingFeedback, error: null };
   }, [user]);

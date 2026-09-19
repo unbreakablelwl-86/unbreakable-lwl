@@ -37,15 +37,24 @@ function getNotificationLink(notification: Notification): string | null {
   const t = notification.type;
   const d = notification.data || {};
 
-  // AI session feedback → AI coach inbox
-  if (t === 'ai_session_feedback') return '/coach';
+  // AI session feedback → the actual AI Coach chat conversation it was
+  // written into. Was hardcoded to '/coach', which is coach/dev-only
+  // (CoachRoute-gated) — a regular athlete clicking "view" landed nowhere
+  // near their feedback. d.link now carries the specific conversation.
+  if (t === 'ai_session_feedback') return d.link ? String(d.link) : '/help';
   if (t === 'session_complete_self') return '/programming/my-programmes';
 
   // New user signup (dev notification)
   if (t === 'new_user_signup' && d.new_user_id) return `/user/${d.new_user_id}`;
 
-  // Coaching & feedback
-  if (t === 'coaching_feedback' || t === 'feedback_response' || t === 'programme_updated') return '/my-coaching';
+  // Coaching & feedback — the call sites (useCheckIns, InlineProgramEditor,
+  // and the deliver-coach-feedback edge function) already stamp data.link
+  // with the exact destination (a specific programme, AI chat conversation,
+  // or check-ins tab). Trust it instead of forcing everyone to the generic
+  // /my-coaching hub page regardless of what the update was actually about.
+  if (t === 'coaching_feedback' || t === 'feedback_response' || t === 'programme_updated') {
+    return d.link ? String(d.link) : '/my-coaching';
+  }
   if (t === 'coaching_request' || t === 'tier2_signup') return '/coach';
 
   // Session / workout completions — coaches see athlete data on their dashboard
