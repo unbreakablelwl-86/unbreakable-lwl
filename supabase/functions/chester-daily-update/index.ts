@@ -312,7 +312,9 @@ serve(async (req) => {
             duration_seconds: 65 * 60,
             status: "completed",
             notes: `Day ${dayNumber} — ${phase} phase.`,
-            visibility: "public",
+            // Chester is an internal QA/demo bot — its activity must never surface
+            // in any real user's shared feed or leaderboard. Private = author-only.
+            visibility: "private",
             comments_enabled: true,
             is_auto_tracked: false,
           })
@@ -429,8 +431,10 @@ serve(async (req) => {
           pace_per_km_seconds: paceSecondsPerKm,
           average_speed_kph: Math.round((3600 / paceSecondsPerKm) * 100) / 100,
           is_gps_tracked: false,
-          is_public: true,
-          visibility: "public",
+          // Chester is an internal QA/demo bot — never public, so it can't
+          // leak into another user's Movement hub or the cardio leaderboard.
+          is_public: false,
+          visibility: "private",
           comments_enabled: true,
           activity_type: "run",
         });
@@ -531,7 +535,9 @@ serve(async (req) => {
       await supabase.from("posts").insert({
         user_id: CHESTER_USER_ID,
         content,
-        visibility: "public",
+        // Chester is an internal QA/demo bot — its daily post must never
+        // appear in a real user's Social feed. Private = author-only.
+        visibility: "private",
         comments_enabled: true,
       });
 
