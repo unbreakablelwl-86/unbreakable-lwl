@@ -111,6 +111,105 @@ export interface CoachUserContext {
     dailyFatG: number | null;
     goalsMode: string | null;
   } | null;
+  mindsetProgrammes: {
+    name: string;
+    goal: string | null;
+    isActive: boolean;
+    status: string;
+    durationWeeks: number;
+    dailyMinutes: number;
+    focusAreas: string[] | null;
+  }[];
+  mindsetActivity: {
+    activityName: string | null;
+    activityType: string | null;
+    completedAt: string;
+    durationMinutes: number | null;
+  }[];
+  mindsetGameStats: {
+    game: string;
+    bestScore: number;
+    playsLast30Days: number;
+  }[];
+}
+
+/**
+ * Mindset is the one pillar the coach previously had zero visibility into —
+ * everything else (Power/Fuel/Movement) feeds live session/log data into
+ * this context, but mindset programme progress, activity completions and
+ * focus-game performance never reached the coach. This fills that gap using
+ * the same tables the Mindset hub's own UI reads from (useMindsetProgrammes,
+ * useMindsetActivityLog) plus the 4 live focus games' score tables.
+ */
+const MINDSET_GAME_TABLES = [
+  { table: 'snake_scores', label: 'Hunt (Snake)' },
+  { table: 'tetris_scores', label: 'Stack (Tetris)' },
+  { table: 'alleyway_scores', label: 'Shatter (Alleyway)' },
+  { table: 'pattern_breaker_scores', label: 'Lock In (Pattern Breaker)' },
+] as const;
+
+interface MindsetContextData {
+  programmes: CoachUserContext['mindsetProgrammes'];
+  recentActivity: CoachUserContext['mindsetActivity'];
+  gameStats: CoachUserContext['mindsetGameStats'];
+}
+
+async function fetchMindsetData(userId: string): Promise<MindsetContextData> {
+  const thirtyDaysAgo = subDays(new Date(), 30).toISOString();
+  const fourteenDaysAgo = subDays(new Date(), 14).toISOString();
+
+  const [programmesRes, activityRes, ...gameResults] = await Promise.all([
+    supabase
+      .from('mindset_programmes')
+      .select('name, goal, status, is_active, duration_weeks, daily_minutes, focus_areas')
+      .eq('user_id', userId)
+      .order('updated_at', { ascending: false })
+      .limit(3),
+    supabase
+      .from('mindset_activity_completions')
+      .select('activity_name, activity_type, completed_at, duration_minutes')
+      .eq('user_id', userId)
+      .gte('completed_at', fourteenDaysAgo)
+      .order('completed_at', { ascending: false })
+      .limit(20),
+    ...MINDSET_GAME_TABLES.map(({ table }) =>
+      supabase
+        .from(table)
+        .select('score, created_at')
+        .eq('user_id', userId)
+        .gte('created_at', thirtyDaysAgo)
+    ),
+  ]);
+
+  const gameStats = MINDSET_GAME_TABLES
+    .map(({ table, label }, i) => {
+      const rows = (gameResults[i]?.data as { score: number }[] | null) || [];
+      return {
+        game: label,
+        bestScore: rows.length ? Math.max(...rows.map(r => r.score)) : 0,
+        playsLast30Days: rows.length,
+      };
+    })
+    .filter(g => g.playsLast30Days > 0);
+
+  return {
+    programmes: (programmesRes.data || []).map((p: any) => ({
+      name: p.name,
+      goal: p.goal,
+      isActive: p.is_active,
+      status: p.status,
+      durationWeeks: p.duration_weeks,
+      dailyMinutes: p.daily_minutes,
+      focusAreas: p.focus_areas,
+    })),
+    recentActivity: (activityRes.data || []).map((a: any) => ({
+      activityName: a.activity_name,
+      activityType: a.activity_type,
+      completedAt: a.completed_at,
+      durationMinutes: a.duration_minutes,
+    })),
+    gameStats,
+  };
 }
 
 export function useCoachContext() {
@@ -130,11 +229,17 @@ export function useCoachContext() {
         progressionHistory: [],
         personalRecords: [],
         nutritionTargets: null,
+        mindsetProgrammes: [],
+        mindsetActivity: [],
+        mindsetGameStats: [],
       };
     }
 
     const fourteenDaysAgo = subDays(new Date(), 14).toISOString();
     const thirtyDaysAgo = subDays(new Date(), 30).toISOString();
+
+    // Kicked off alongside everything else below so it doesn't add latency
+    const mindsetDataPromise = fetchMindsetData(user.id);
 
     // Fetch all data in parallel
     const [workoutRes, foodRes, programRes, mealPlanRes, mealPlanItemsRes, progressionRes, prRes, nutritionGoalsRes] = await Promise.all([
@@ -197,6 +302,8 @@ export function useCoachContext() {
         .order('day_of_week', { ascending: true });
       mealPlanItems = data || [];
     }
+
+    const mindsetData = await mindsetDataPromise;
 
     // Process workouts with granular per-set data
     const recentWorkouts = (workoutRes.data || []).map((session: any) => {
@@ -343,6 +450,9 @@ export function useCoachContext() {
         dailyFatG: (nutritionGoalsRes.data as any).daily_fat_g,
         goalsMode: (nutritionGoalsRes.data as any).goals_mode,
       } : null,
+      mindsetProgrammes: mindsetData.programmes,
+      mindsetActivity: mindsetData.recentActivity,
+      mindsetGameStats: mindsetData.gameStats,
     };
   };
 
@@ -513,6 +623,36 @@ export function useCoachContext() {
       parts.push(`PERSONAL RECORDS: ${prParts}`);
     }
 
+    // Mindset — programme progress, activity completions, focus-game performance.
+    // (Previously the coach only ever saw the static onboarding MINDSET PROFILE
+    // above; this is the user's actual tracked mindset training.)
+    if (context.mindsetProgrammes.length > 0) {
+      const mindsetProgParts = context.mindsetProgrammes.map(p => {
+        let detail = `"${p.name}" (${p.isActive ? 'ACTIVE' : p.status.toUpperCase()}`;
+        if (p.goal) detail += `, goal: ${p.goal}`;
+        detail += `, ${p.durationWeeks}wk @ ${p.dailyMinutes}min/day`;
+        if (p.focusAreas?.length) detail += `, focus: ${p.focusAreas.join('/')}`;
+        detail += ')';
+        return detail;
+      });
+      parts.push(`MINDSET PROGRAMMES: ${mindsetProgParts.join('; ')}`);
+    }
+
+    if (context.mindsetActivity.length > 0) {
+      const activitySummary = context.mindsetActivity.slice(0, 10).map(a => {
+        const date = format(new Date(a.completedAt), 'yyyy-MM-dd');
+        return `${date} ${a.activityName || a.activityType || 'activity'}${a.durationMinutes ? ` (${a.durationMinutes}min)` : ''}`;
+      }).join('; ');
+      parts.push(`MINDSET ACTIVITY (last 14 days, ${context.mindsetActivity.length} sessions): ${activitySummary}`);
+    }
+
+    if (context.mindsetGameStats.length > 0) {
+      const gameSummary = context.mindsetGameStats
+        .map(g => `${g.game}: best ${g.bestScore} (${g.playsLast30Days} plays/30d)`)
+        .join('; ');
+      parts.push(`FOCUS GAMES (last 30 days): ${gameSummary}`);
+    }
+
     return parts.length > 0 ? `\n\n[USER CONTEXT]\n${parts.join('\n')}` : '';
   };
 
@@ -523,6 +663,8 @@ export function useCoachContext() {
   const gatherContextForUser = async (targetUserId: string): Promise<CoachUserContext> => {
     const fourteenDaysAgo = subDays(new Date(), 14).toISOString();
     const thirtyDaysAgo = subDays(new Date(), 30).toISOString();
+
+    const mindsetDataPromise = fetchMindsetData(targetUserId);
 
     // Fetch profile + coaching profile + all data in parallel
     const [profileRes, coachProfileRes, workoutRes, foodRes, programRes, mealPlanRes, progressionRes, prRes, nutritionGoalsRes] = await Promise.all([
@@ -547,6 +689,8 @@ export function useCoachContext() {
       const { data } = await supabase.from('meal_plan_items').select('*').in('meal_plan_id', activePlanIds).order('day_of_week', { ascending: true });
       mealPlanItems = data || [];
     }
+
+    const mindsetData = await mindsetDataPromise;
 
     // Process workouts (same logic as gatherContext)
     const recentWorkouts = (workoutRes.data || []).map((session: any) => {
@@ -627,6 +771,9 @@ export function useCoachContext() {
         dailyFatG: (nutritionGoalsRes.data as any).daily_fat_g,
         goalsMode: (nutritionGoalsRes.data as any).goals_mode,
       } : null,
+      mindsetProgrammes: mindsetData.programmes,
+      mindsetActivity: mindsetData.recentActivity,
+      mindsetGameStats: mindsetData.gameStats,
     };
   };
 

@@ -382,3 +382,27 @@ export function shouldShowUpgradeNudge(used: number, total: number): boolean {
   if (total <= 0) return false;
   return (used / total) >= 0.9;
 }
+
+export type CostTier = 'FREE' | 'LIGHT' | 'MEDIUM' | 'HEAVY';
+
+/**
+ * Derives the qualitative cost-tier label shown in the "What Costs Tokens?"
+ * breakdown (src/pages/AITokens.tsx) directly from an action's real
+ * baseCost above, instead of a hand-typed label kept next to each row.
+ * Members never see a raw token number (see the fuel gauge in AITokens.tsx),
+ * so this breakdown is their only visibility into relative cost — it must
+ * track baseCost automatically so a future repricing here can't silently
+ * leave the displayed tier wrong.
+ */
+export function getCostTierLabel(actionId: string): CostTier {
+  const action = TOKEN_ACTIONS[actionId];
+  if (!action) {
+    console.error(`getCostTierLabel: unknown TOKEN_ACTIONS id "${actionId}"`);
+    return 'MEDIUM';
+  }
+  const cost = action.baseCost;
+  if (cost === 0) return 'FREE';
+  if (cost <= 10) return 'LIGHT';
+  if (cost <= 30) return 'MEDIUM';
+  return 'HEAVY';
+}

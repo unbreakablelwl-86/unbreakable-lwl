@@ -18,7 +18,7 @@ import { cn } from '@/lib/utils';
 import { VISIBLE_TIERS, type TierConfig, type TierKey } from '@/lib/subscriptionTiers';
 import {
   TOKEN_TOPUPS, COURSE_BUNDLES,
-  TOKEN_ACTIONS, getFreeActions, getTokenUsagePercent,
+  TOKEN_ACTIONS, getFreeActions, getTokenUsagePercent, getCostTierLabel,
 } from '@/lib/tokenBurnConfig';
 import { TokenTopUp } from '@/components/paywall/TokenTopUp';
 import { CancelRetention } from '@/components/paywall/CancelRetention';
@@ -461,23 +461,26 @@ export default function AITokens() {
                 </div>
                 <div className="space-y-3">
                   {[
-                    { label: 'Coach chat message', cost: 'LIGHT', desc: 'Text-only AI coaching — ask anything' },
-                    { label: 'Progression tip', cost: 'LIGHT', desc: 'Quick form & recovery suggestions' },
-                    { label: 'Motivation & mindset', cost: 'FREE', desc: 'Daily quotes & affirmations' },
-                  ].map((item, i) => (
-                    <div key={i} className="flex items-start justify-between gap-2">
-                      <div className="flex-1">
-                        <p className="text-sm text-foreground font-medium">{item.label}</p>
-                        <p className="text-xs text-muted-foreground">{item.desc}</p>
+                    { actionId: 'coach_chat', label: 'Coach chat message', desc: 'Text-only AI coaching — ask anything' },
+                    { actionId: 'progression_tip', label: 'Progression tip', desc: 'Quick form & recovery suggestions' },
+                    { actionId: 'motivation_quote', label: 'Motivation & mindset', desc: 'Daily quotes & affirmations' },
+                  ].map((item, i) => {
+                    const tier = getCostTierLabel(item.actionId);
+                    return (
+                      <div key={i} className="flex items-start justify-between gap-2">
+                        <div className="flex-1">
+                          <p className="text-sm text-foreground font-medium">{item.label}</p>
+                          <p className="text-xs text-muted-foreground">{item.desc}</p>
+                        </div>
+                        <span className={cn(
+                          'text-sm font-display tracking-wider shrink-0 mt-0.5',
+                          tier === 'FREE' ? 'text-green-500' : 'text-primary'
+                        )}>
+                          {tier}
+                        </span>
                       </div>
-                      <span className={cn(
-                        'text-sm font-display tracking-wider shrink-0 mt-0.5',
-                        item.cost === 'FREE' ? 'text-green-500' : 'text-primary'
-                      )}>
-                        {item.cost}
-                      </span>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
                 <div className="mt-4 pt-3 border-t border-primary/10">
                   <p className="text-[11px] text-primary/70">
@@ -494,13 +497,13 @@ export default function AITokens() {
                 </div>
                 <div className="space-y-3">
                   {[
-                    { label: 'AI programme build', cost: 'HEAVY', desc: 'Full personalised workout programme' },
-                    { label: 'AI meal plan', cost: 'HEAVY', desc: 'Personalised nutrition plan' },
-                    { label: 'UNBREAKABLE 86 plan', cost: 'HEAVY', desc: 'Your full 86-day AI programme' },
-                    { label: 'Workout review', cost: 'MEDIUM', desc: 'AI feedback on your logged session' },
-                    { label: 'Nutrition analysis', cost: 'MEDIUM', desc: 'AI analysis of your food log' },
-                    { label: 'Progress report', cost: 'MEDIUM', desc: 'Weekly & monthly AI summary' },
-                    { label: 'AI exercise search', cost: 'LIGHT', desc: 'Smart exercise recommendations' },
+                    { actionId: 'programme_build', label: 'AI programme build', desc: 'Full personalised workout programme' },
+                    { actionId: 'meal_plan', label: 'AI meal plan', desc: 'Personalised nutrition plan' },
+                    { actionId: 'u86_programme', label: 'UNBREAKABLE 86 plan', desc: 'Your full 86-day AI programme' },
+                    { actionId: 'workout_feedback', label: 'Workout review', desc: 'AI feedback on your logged session' },
+                    { actionId: 'nutrition_analysis', label: 'Nutrition analysis', desc: 'AI analysis of your food log' },
+                    { actionId: 'progress_report', label: 'Progress report', desc: 'Weekly & monthly AI summary' },
+                    { actionId: 'ai_exercise_search', label: 'AI exercise search', desc: 'Smart exercise recommendations' },
                   ].map((item, i) => (
                     <div key={i} className="flex items-start justify-between gap-2">
                       <div className="flex-1">
@@ -508,7 +511,7 @@ export default function AITokens() {
                         <p className="text-xs text-muted-foreground">{item.desc}</p>
                       </div>
                       <span className="text-sm font-display tracking-wider text-primary shrink-0 mt-0.5">
-                        {item.cost}
+                        {getCostTierLabel(item.actionId)}
                       </span>
                     </div>
                   ))}
