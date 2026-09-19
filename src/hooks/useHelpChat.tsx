@@ -144,6 +144,9 @@ export function useHelpChat() {
       targetAthleteId?: string;
       targetAthleteName?: string;
       callerRole?: 'dev' | 'coach' | 'user';
+      /** Activates the UNBREAKABLE 86 enrolment protocol server-side — see
+       *  Help.tsx's u86Mode handling and help-chat/index.ts. */
+      u86Mode?: boolean;
     }
   ) => {
     if (!user || !input.trim()) return;
@@ -212,6 +215,7 @@ export function useHelpChat() {
           coachMode,
           callerRole: options?.callerRole || 'user',
           targetAthleteName: options?.targetAthleteName || undefined,
+          u86Mode: options?.u86Mode || false,
         }),
       });
       

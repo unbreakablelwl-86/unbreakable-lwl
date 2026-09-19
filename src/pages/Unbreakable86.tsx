@@ -1,38 +1,47 @@
 /**
  * UNBREAKABLE 86 — Main Page
- * Routes between Landing → Onboarding → Dashboard → Certificate
+ * Routes between Landing → (handoff to AI coach chat) → Dashboard → Certificate
+ *
+ * Onboarding used to be an 8-step quiz that auto-built a Power programme and
+ * a Movement programme straight from the answers. Removed (JJ, Sept 2026):
+ * that data duplicated the user's site profile, and it silently skipped Fuel
+ * and Mindset entirely. Starting U86 now hands the user straight to the
+ * Unbreakable Coach chat (/help?u86=1) — the coach locks in the therapy
+ * choice, asks which of Power/Fuel/Movement/Mindset they want built for the
+ * 86 days, and builds each one in turn, saving to its hub, before the last
+ * message enrols them (see Help.tsx's u86Mode + [U86_ENROLL] handling and
+ * supabase/functions/help-chat's "UNBREAKABLE 86 ENROLMENT MODE" prompt).
  */
-import { useCallback, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useUnbreakable86 } from '@/hooks/useUnbreakable86';
 import { useAuth } from '@/hooks/useAuth';
 import { U86Landing } from '@/components/unbreakable86/U86Landing';
-import { U86Onboarding } from '@/components/unbreakable86/U86Onboarding';
 import { U86Dashboard } from '@/components/unbreakable86/U86Dashboard';
 import { U86Certificate } from '@/components/unbreakable86/U86Certificate';
-import type { U86QuizAnswers } from '@/lib/unbreakable86Types';
 import { Loader2 } from 'lucide-react';
 import { PaywallGate } from '@/components/paywall';
-import { ControlledAIBuildFlow } from '@/components/ai/ControlledAIBuildFlow';
-import { useCardioPrograms } from '@/hooks/useCardioPrograms';
-import { supabase } from '@/integrations/supabase/client';
 
-type U86View = 'landing' | 'onboarding' | 'building' | 'dashboard' | 'certificate';
+type U86View = 'landing' | 'handoff' | 'dashboard' | 'certificate';
 
-/** Turn the U86 onboarding answers into a standard programme-builder brief. */
-function buildU86Prompt(a: U86QuizAnswers): string {
-  const therapy = a.therapy_choice === 'sauna' ? 'sauna (heat)' : 'cold shower (cold)';
-  return [
-    'Build a full UNBREAKABLE 86 training programme: 86 consecutive days, structured in three phases —',
-    'Foundation (days 1-28), Build (days 29-56), Peak (days 57-86).',
-    `Training days per week: ${a.training_days}. Experience level: ${a.experience}. Equipment available: ${a.equipment}.`,
-    `Goals: ${(a.goals || []).join(', ') || 'general fitness'}.`,
-    a.injuries ? `Injuries / limitations to work around: ${a.injuries}.` : '',
-    `Dietary preference: ${a.dietary_preference}.`,
-    `Daily recovery therapy locked for the 86 days: ${therapy}.`,
-    'It must sit alongside the Daily 7 habits (train, learn, hydrate, track numbers, breathwork, chosen therapy, journal)',
-    'where a minimum of 3 habits banks the day and the athlete builds up to all 7. Progressive overload across the phases,',
-    'with deload/lighter sessions where sensible so 86 straight days is sustainable.',
-  ].filter(Boolean).join(' ');
+/**
+ * Redirects to the coach chat on mount. Kept as its own component (rather
+ * than an effect on Unbreakable86 itself) so the redirect only ever fires
+ * once this actually mounts *inside* PaywallGate below — a user without the
+ * unbreakable_86 entitlement sees PaywallGate's own upsell instead, and this
+ * component (and its navigate call) never mounts at all.
+ */
+function U86ChatHandoff() {
+  const navigate = useNavigate();
+  useEffect(() => { navigate('/help?u86=1'); }, [navigate]);
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="text-center">
+        <Loader2 className="w-8 h-8 text-primary mx-auto animate-spin" />
+        <p className="text-muted-foreground text-xs font-display tracking-wider mt-3">TAKING YOU TO YOUR COACH...</p>
+      </div>
+    </div>
+  );
 }
 
 export default function Unbreakable86() {
@@ -51,54 +60,7 @@ export default function Unbreakable86() {
     : 'landing'
   );
 
-  const [pendingAnswers, setPendingAnswers] = useState<U86QuizAnswers | null>(null);
-  const { saveProgram } = useCardioPrograms();
-  const [cardioState, setCardioState] = useState<'idle' | 'building' | 'done' | 'failed'>('idle');
-
-  /**
-   * UNBREAKABLE 86 is a multi-pillar challenge, so enrolment has to deliver the
-   * Movement (cardio) plan as well as the strength programme. Runs once, right
-   * after the strength build is published, and never blocks the dashboard.
-   */
-  const buildU86Cardio = useCallback(async (a: U86QuizAnswers) => {
-    setCardioState('building');
-    try {
-      const sessionsPerWeek = Math.max(2, Math.min(4, 7 - (a.training_days ?? 4)));
-      const { data, error } = await supabase.functions.invoke('generate-cardio-program', {
-        body: {
-          activityType: 'run',
-          goal: (a.goals || []).some(g => /weight|fat|lean/i.test(g)) ? 'weight_loss' : 'fitness',
-          currentLevel: a.experience ?? 'beginner',
-          sessionsPerWeek,
-          sessionLength: a.experience === 'advanced' ? 45 : a.experience === 'intermediate' ? 35 : 25,
-        },
-      });
-      if (error) throw error;
-      if (data?.error) throw new Error(data.error);
-      if (!data?.program) throw new Error('No programme returned');
-      const program = {
-        ...data.program,
-        programName: data.program.programName?.includes('86')
-          ? data.program.programName
-          : `UNBREAKABLE 86 — Movement`,
-      };
-      await saveProgram.mutateAsync({ program });
-      setCardioState('done');
-    } catch (e) {
-      console.error('U86 cardio build failed', e);
-      setCardioState('failed');
-    }
-  }, [saveProgram]);
-
-  const handleStartOnboarding = () => setView('onboarding');
-
-  const handleOnboardingComplete = async (answers: U86QuizAnswers) => {
-    await u86.startChallenge(answers);
-    setPendingAnswers(answers);
-    setView('building');
-  };
-
-  const handleBackToLanding = () => setView('landing');
+  const handleStartOnboarding = () => setView('handoff');
 
   if (u86.loading || !activeView) {
     return (
@@ -120,51 +82,12 @@ export default function Unbreakable86() {
         />
       );
 
-    case 'onboarding':
+    case 'handoff':
       return (
         <PaywallGate feature="unbreakable_86">
-        <U86Onboarding
-          onComplete={handleOnboardingComplete}
-          onBack={handleBackToLanding}
-        />
+          <U86ChatHandoff />
         </PaywallGate>
       );
-
-    case 'building':
-      return pendingAnswers ? (
-        <PaywallGate feature="unbreakable_86">
-          <div className="min-h-screen bg-background px-4 py-10">
-            <div className="max-w-2xl mx-auto space-y-6">
-              <div className="text-center space-y-2">
-                <h1 className="font-display text-2xl tracking-wide">
-                  <span className="text-primary">YOUR 86-DAY </span>PLAN
-                </h1>
-                <p className="text-muted-foreground text-sm">
-                  Your coach is building the full programme from your answers. Review it, edit anything you want,
-                  then publish it — it lands in My Programmes and drives your trackers. Your Movement (cardio) plan is built straight after and saved to your Movement programmes.
-                </p>
-              </div>
-              <ControlledAIBuildFlow
-                type="programme"
-                prompt={buildU86Prompt(pendingAnswers)}
-                additionalContext={{
-                  goals: (pendingAnswers.goals || []).join(', '),
-                  experience: pendingAnswers.experience,
-                  injuries: pendingAnswers.injuries,
-                  equipment: [pendingAnswers.equipment].filter(Boolean) as string[],
-                  daysPerWeek: pendingAnswers.training_days,
-                  chatContext: 'UNBREAKABLE 86 challenge enrolment',
-                }}
-                onComplete={() => {
-                  if (pendingAnswers && cardioState === 'idle') void buildU86Cardio(pendingAnswers);
-                  setView('dashboard');
-                }}
-                onCancel={() => setView('dashboard')}
-              />
-            </div>
-          </div>
-        </PaywallGate>
-      ) : null;
 
     case 'dashboard':
       return u86.enrolment ? (

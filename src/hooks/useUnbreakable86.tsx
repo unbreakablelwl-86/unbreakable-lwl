@@ -15,7 +15,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { format, differenceInCalendarDays, parseISO, addDays } from 'date-fns';
 import { toast } from 'sonner';
-import type { U86Enrolment, U86DailyLog, U86QuizAnswers } from '@/lib/unbreakable86Types';
+import type { U86Enrolment, U86DailyLog } from '@/lib/unbreakable86Types';
 import { u86DayBanked, U86_MIN_HABITS } from '@/lib/unbreakable86Types';
 
 
@@ -166,8 +166,19 @@ export function useUnbreakable86() {
    * also broke Daily 7 logging entirely for anyone whose streak already
    * exceeded 86, since the daily_logs table's day_number CHECK constraint
    * capped at 86).
+   *
+   * The old 8-step onboarding quiz (experience/equipment/goals/diet/habits/
+   * injuries) is gone (JJ, Sept 2026) — that data already lives on the
+   * user's site profile and re-asking it was redundant. Enrolment now only
+   * needs the one thing that's genuinely U86-specific and not in the
+   * profile: the heat/cold recovery therapy locked for all 86 days. That
+   * choice is captured conversationally by the coach in chat (see
+   * Unbreakable86.tsx + Help.tsx's u86Mode / [U86_ENROLL] handling) rather
+   * than a form. `quiz_answers` is kept as the storage column purely for
+   * backwards compatibility with `therapyChoice` below and old enrolment
+   * rows — it now only ever holds `{ therapy_choice }`.
    */
-  const startChallenge = useCallback(async (quizAnswers: U86QuizAnswers) => {
+  const startChallenge = useCallback(async (therapyChoice: 'sauna' | 'cold_shower') => {
     if (!user) return null;
 
     const { data, error } = await supabase
@@ -178,7 +189,7 @@ export function useUnbreakable86() {
         current_day: 1,
         start_date: today,
         reset_count: 0,
-        quiz_answers: quizAnswers as any,
+        quiz_answers: { therapy_choice: therapyChoice } as any,
       })
       .select()
       .single();

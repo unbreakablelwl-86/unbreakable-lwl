@@ -51,20 +51,15 @@ export interface U86Programme {
   updated_at: string;
 }
 
-/* ─── Quiz ─── */
-
+/* ─── Enrolment choices ───
+ * Previously an 8-step onboarding quiz (experience/equipment/training days/
+ * goals/diet/habits/injuries/therapy) collected here duplicated data already
+ * captured on the user's site profile. Removed (JJ, Sept 2026) — enrolment
+ * now only needs the therapy choice, gathered conversationally by the coach
+ * in chat rather than a form. Kept as a named type (rather than inlining
+ * `{ therapy_choice }`) since `U86Enrolment.quiz_answers` below still
+ * references it and old enrolment rows may carry the legacy fields too. */
 export interface U86QuizAnswers {
-  experience: 'beginner' | 'intermediate' | 'advanced';
-  equipment: 'gym' | 'home' | 'minimal';
-  training_days: number; // 3-6
-  dietary_preference: string;
-  goals: string[];
-  current_habits: {
-    sleep_quality: number; // 1-10
-    water_intake: number;  // 1-10
-    stress_level: number;  // 1-10
-  };
-  injuries: string;
   /** Locked for the full 86 days: heat OR cold exposure counts as the 7th daily habit. */
   therapy_choice: 'sauna' | 'cold_shower';
 }

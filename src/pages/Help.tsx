@@ -35,6 +35,7 @@ import { GeneratedProgram } from '@/lib/programTypes';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { supabase } from '@/integrations/supabase/client';
 import { useQueryClient } from '@tanstack/react-query';
+import { useUnbreakable86 } from '@/hooks/useUnbreakable86';
 
 type MessageWithMedia = Message;
 
@@ -295,6 +296,20 @@ export default function Help() {
   // Build confirmation
   const [pendingBuild, setPendingBuild] = useState<{ type: 'programme' | 'meal_plan' | 'mindset' | 'cardio'; chatContext: string; cardioParams?: any } | null>(null);
 
+  /* ── UNBREAKABLE 86 enrolment mode ──
+   * Set when the user arrives via /help?u86=1 (from the U86 landing page's
+   * "Start" button — see Unbreakable86.tsx's U86ChatHandoff). Stays true for
+   * the rest of this chat session so every message keeps the server-side
+   * "UNBREAKABLE 86 ENROLMENT MODE" prompt active while the coach works
+   * through therapy choice → pillar selection → one build per pillar. The
+   * coach signals it's done with a hidden [U86_ENROLL]{"therapy_choice":...}
+   * tag, watched for in the same effect as the other BUILD_ tags below. */
+  const [u86Mode, setU86Mode] = useState(false);
+  const [u86Enrolling, setU86Enrolling] = useState(false);
+  const [pendingU86TherapyChoice, setPendingU86TherapyChoice] = useState<'sauna' | 'cold_shower' | null>(null);
+  const u86 = useUnbreakable86();
+  const u86InitSentRef = useRef(false);
+
   const chatEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -362,7 +377,26 @@ export default function Help() {
         setPendingBuild({ type: 'cardio', chatContext, cardioParams });
       }
     }
-  }, [messages, isLoading]);
+
+    // U86 enrolment tag — independent of the BUILD_ tags above (it can ride
+    // alongside a BUILD tag in the same message, on the last pillar the user
+    // asked for). Just record the therapy choice here; the effect below
+    // waits until any pending/in-flight build has actually finished saving
+    // before it actually enrols, so U86 never activates mid-build.
+    if (u86Mode) {
+      const enrolMatch = content.match(/\[U86_ENROLL\](\{.*\})?/);
+      if (enrolMatch) {
+        let therapyChoice: 'sauna' | 'cold_shower' = 'cold_shower';
+        if (enrolMatch[1]) {
+          try {
+            const parsed = JSON.parse(enrolMatch[1]);
+            if (parsed.therapy_choice === 'sauna') therapyChoice = 'sauna';
+          } catch { /* default to cold_shower */ }
+        }
+        setPendingU86TherapyChoice(therapyChoice);
+      }
+    }
+  }, [messages, isLoading, u86Mode]);
 
   // Execute confirmed build
   const executeBuild = useCallback(async (type: 'programme' | 'meal_plan' | 'mindset' | 'cardio', chatContext: string, cardioParams?: any) => {
@@ -482,6 +516,32 @@ export default function Help() {
     }
   }, [generateProgramme, generateMealPlan, generateMindsetProgramme, generateCardioProgramme, addAssistantMessage]);
 
+  // Actually enrol in UNBREAKABLE 86 once the coach has signalled it's done
+  // (see [U86_ENROLL] detection above). Waits for pendingBuild to be clear
+  // AND every generation flag to be false, so a pillar the user just
+  // confirmed genuinely finishes building (and its review card lands in
+  // chat) before the calendar activates — the tag can arrive in the same
+  // message as the last pillar's BUILD_ tag, well before that build itself
+  // has run.
+  const isU86Blocked = !!pendingBuild || isGenerating || isMealPlanGenerating || mindsetGenerating || cardioGenerating;
+  useEffect(() => {
+    if (!pendingU86TherapyChoice || isU86Blocked || u86Enrolling) return;
+    const therapy = pendingU86TherapyChoice;
+    setPendingU86TherapyChoice(null);
+    setU86Enrolling(true);
+    (async () => {
+      try {
+        await u86.startChallenge(therapy);
+        addAssistantMessage("You're locked in — Day 1 of Unbreakable 86 starts now. Taking you to your calendar.");
+        setTimeout(() => navigate('/unbreakable86'), 1200);
+      } catch (err) {
+        console.error('U86 enrolment failed:', err);
+        toast({ title: 'Error', description: 'Could not activate Unbreakable 86 — please try again.', variant: 'destructive' });
+        setU86Enrolling(false);
+      }
+    })();
+  }, [pendingU86TherapyChoice, isU86Blocked, u86Enrolling, u86, addAssistantMessage, navigate]);
+
   // Deep-link straight into a specific conversation — used by notifications
   // (e.g. AI session feedback, coach feedback) whose "click to view" link
   // now points at the exact conversation it created, e.g. /help?conversation=<id>,
@@ -493,6 +553,22 @@ export default function Help() {
       setSearchParams({});
     }
   }, [searchParams, setSearchParams, loadConversation]);
+
+  // Arrived from the U86 landing page's "Start" button (Unbreakable86.tsx's
+  // U86ChatHandoff → /help?u86=1). Drop straight into a fresh conversation
+  // and open with the coach rather than making the user type the first
+  // message — u86Mode stays true for the rest of this chat so every
+  // follow-up message keeps the server-side enrolment protocol active.
+  useEffect(() => {
+    if (searchParams.get('u86') === '1' && user && !u86InitSentRef.current) {
+      u86InitSentRef.current = true;
+      setU86Mode(true);
+      setSearchParams({});
+      startNewConversation();
+      setGeneratedPlans([]);
+      sendMessage("I'm ready to start Unbreakable 86.", { callerRole, u86Mode: true });
+    }
+  }, [searchParams, setSearchParams, user, callerRole, startNewConversation, sendMessage]);
 
   // Context from URL params or sessionStorage
   useEffect(() => {
@@ -555,7 +631,7 @@ export default function Help() {
     // plays later, after the streamed response finishes, and by then it's
     // too late on iOS/mobile browsers to count as a user-initiated gesture.
     jjVoice.unlockAudio();
-    sendMessage(input, { callerRole });
+    sendMessage(input, { callerRole, u86Mode });
     setInput('');
   };
 
@@ -776,6 +852,7 @@ export default function Help() {
         .replace(/\[BUILD_MOVEMENT\](\{.*\})?/g, '')
         .replace(/\[BUILD_MINDSET\](\{.*\})?/g, '')
         .replace(/\[BUILD_MINDSET_PROGRAMME\](\{.*\})?/g, '')
+        .replace(/\[U86_ENROLL\](\{.*\})?/g, '')
         .trim();
       return { ...msg, content: cleanContent };
     }
