@@ -4,6 +4,14 @@ import { useAuth } from './useAuth';
 import { useBlockedUsers } from './useBlockedUsers';
 import { useFriends } from './useFriends';
 import type { PostMediaItem } from './usePosts';
+
+// Chester ("UNBREAKABLE 86") is an internal QA/demo bot — his activity is
+// meant to be visible on his OWN profile/timeline (a proof-of-concept for
+// users who visit it directly), never injected into this shared/global feed
+// that every user sees mixed in with their own activity. Excluded both at
+// the query level (below) and again in isVisible() for defense-in-depth.
+const CHESTER_USER_ID = '64a750d2-225c-4bb2-ba80-4a39527c374a';
+
 export interface FeedRun {
   id: string;
   user_id: string;
@@ -105,6 +113,7 @@ export function useUnifiedFeed() {
     const { data, error } = await supabase
       .from('runs')
       .select('*')
+      .neq('user_id', CHESTER_USER_ID)
       .order('started_at', { ascending: false })
       .range(offset, offset + ITEMS_PER_PAGE - 1);
 
@@ -140,6 +149,7 @@ export function useUnifiedFeed() {
     const { data, error } = await supabase
       .from('posts')
       .select('*')
+      .neq('user_id', CHESTER_USER_ID)
       .order('created_at', { ascending: false })
       .range(offset, offset + ITEMS_PER_PAGE - 1);
 
@@ -182,6 +192,7 @@ export function useUnifiedFeed() {
       .from('workout_sessions')
       .select('*, exercise_logs(id, completed)')
       .eq('status', 'completed')
+      .neq('user_id', CHESTER_USER_ID)
       .order('started_at', { ascending: false })
       .range(offset, offset + ITEMS_PER_PAGE - 1);
 
@@ -232,6 +243,7 @@ export function useUnifiedFeed() {
       .from('milestones')
       .select('*')
       .eq('is_shared', true)
+      .neq('user_id', CHESTER_USER_ID)
       .order('achieved_at', { ascending: false })
       .range(offset, offset + ITEMS_PER_PAGE - 1);
 
@@ -343,6 +355,7 @@ export function useUnifiedFeed() {
 
     // Client-side visibility filter (defense-in-depth on top of RLS)
     const isVisible = (item: { user_id: string; visibility: string }) => {
+      if (item.user_id === CHESTER_USER_ID) return false; // QA/demo bot — never in the shared feed (defense-in-depth; already excluded at the query level above)
       if (item.user_id === user?.id) return true; // Own content always visible
       if (item.visibility === 'private') return false; // Private = author only
       if (item.visibility === 'friends' && !friendIds.has(item.user_id)) return false; // Friends-only requires friendship
