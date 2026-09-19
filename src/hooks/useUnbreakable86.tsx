@@ -331,6 +331,13 @@ export function useUnbreakable86() {
         // the certificate immediately, since that's a one-off milestone, not
         // the day count advancing.
         if (updatedLog.all_habits_done && !wasBanked) {
+          // Reflect the newly-banked day in the COMPLETED stat immediately
+          // (JJ, Sept 2026) — this used to only update on the next
+          // fetchEnrolment (e.g. a page reload), so banking Day 2 in the
+          // same session still showed "1" as COMPLETED until you refreshed,
+          // even though the Day 2 dial/banner were already correct.
+          setState(s => ({ ...s, completedDays: s.completedDays + 1 }));
+
           const firstCompletion = currentDay >= 86 && !state.enrolment.completed_at;
           if (firstCompletion) {
             const { error: enrolError } = await supabase
@@ -390,6 +397,9 @@ export function useUnbreakable86() {
       // at UTC midnight via fetchEnrolment. Completing day 86 itself still
       // unlocks the certificate right away.
       if (banked && !wasBanked && state.enrolment) {
+        // Same immediate COMPLETED-stat bump as toggleHabit — see its comment.
+        setState(s => ({ ...s, completedDays: s.completedDays + 1 }));
+
         const dayNumber = state.todayLog.day_number;
         const firstCompletion = dayNumber >= 86 && !state.enrolment.completed_at;
         if (firstCompletion) {
