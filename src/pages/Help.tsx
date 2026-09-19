@@ -1,13 +1,17 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import {
-  Send, MessageSquarePlus, Trash2, Loader2, Flame, Sparkles, UtensilsCrossed,
+  Send, MessageSquarePlus, Trash2, MoreVertical, Loader2, Flame, Sparkles, UtensilsCrossed,
   PanelLeftClose, PanelLeftOpen, Dumbbell, TrendingUp, Brain, Zap, MessageCircle,
   ArrowRight, Check, X, Eye, BookOpen, Target, Activity, Mic, MicOff
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import {
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { DeleteConfirmModal } from '@/components/tracker/DeleteConfirmModal';
 
 import { PageNavigation, SwipeNavigationWrapper } from '@/components/PageNavigation';
 import { AuthModal } from '@/components/tracker/AuthModal';
@@ -200,6 +204,11 @@ function ConversationSidebar({
   onToggle: () => void;
 }) {
   const isMobile = useIsMobile();
+  // Conversation pending delete confirmation (JJ, Sept 2026: titles were
+  // getting cut off with no room for a visible delete action — replaced the
+  // per-row hover trash icon with a proper kebab menu + confirm dialog, and
+  // let titles wrap in full instead of truncating to one line).
+  const [pendingDelete, setPendingDelete] = useState<{ id: string; title: string } | null>(null);
 
   return (
     <>
@@ -240,7 +249,7 @@ function ConversationSidebar({
               {conversations.map((conv) => (
                 <div
                   key={conv.id}
-                  className={`group flex items-center gap-2 p-3 rounded-xl cursor-pointer transition-all border ${
+                  className={`group flex items-start gap-2 p-3 rounded-xl cursor-pointer transition-all border ${
                     currentConversationId === conv.id
                       ? 'bg-primary/10 border-primary/25'
                       : 'border-transparent hover:border-border hover:bg-card'
@@ -248,23 +257,51 @@ function ConversationSidebar({
                   onClick={() => onSelect(conv.id)}
                 >
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm text-foreground truncate">{conv.title || 'Untitled'}</p>
+                    {/* No truncate here on purpose — conversation titles are
+                        already capped at ~50 chars server-side, so wrapping
+                        in full always shows the whole title. */}
+                    <p className="text-sm text-foreground break-words">{conv.title || 'Untitled'}</p>
                     <p className="text-[10px] text-muted-foreground mt-0.5">
                       {new Date(conv.updated_at).toLocaleDateString()}
                     </p>
                   </div>
-                  <button
-                    className="h-7 w-7 rounded-lg flex items-center justify-center text-primary/50 hover:text-primary hover:bg-primary/10 transition-all flex-shrink-0 opacity-100 sm:opacity-0 sm:group-hover:opacity-100"
-                    onClick={(e) => { e.stopPropagation(); if (window.confirm('Delete this conversation?')) onDelete(conv.id); }}
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <button
+                        className="h-7 w-7 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-primary/10 transition-all flex-shrink-0"
+                        onClick={(e) => e.stopPropagation()}
+                        aria-label="Conversation options"
+                      >
+                        <MoreVertical className="w-3.5 h-3.5" />
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
+                      <DropdownMenuItem
+                        className="text-destructive focus:text-destructive"
+                        onClick={() => setPendingDelete({ id: conv.id, title: conv.title || 'Untitled' })}
+                      >
+                        <Trash2 className="w-3.5 h-3.5 mr-2" />
+                        Delete conversation
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
               ))}
             </div>
           )}
         </ScrollArea>
       </aside>
+
+      <DeleteConfirmModal
+        isOpen={!!pendingDelete}
+        onClose={() => setPendingDelete(null)}
+        onConfirm={() => {
+          if (pendingDelete) onDelete(pendingDelete.id);
+          setPendingDelete(null);
+        }}
+        title="Delete conversation"
+        description={`Are you sure you want to delete "${pendingDelete?.title}"? This can't be undone.`}
+      />
     </>
   );
 }
