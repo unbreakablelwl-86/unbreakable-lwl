@@ -312,9 +312,12 @@ serve(async (req) => {
             duration_seconds: 65 * 60,
             status: "completed",
             notes: `Day ${dayNumber} — ${phase} phase.`,
-            // Chester is an internal QA/demo bot — its activity must never surface
-            // in any real user's shared feed or leaderboard. Private = author-only.
-            visibility: "private",
+            // Chester is an internal QA/demo bot — his training sessions post
+            // publicly to his own timeline as a live proof-of-concept for
+            // users. (He's still kept out of the cardio leaderboard/"global
+            // stats" separately, via is_public: false on the runs insert below —
+            // that's an independent flag from this one.)
+            visibility: "public",
             comments_enabled: true,
             is_auto_tracked: false,
           })
@@ -431,10 +434,14 @@ serve(async (req) => {
           pace_per_km_seconds: paceSecondsPerKm,
           average_speed_kph: Math.round((3600 / paceSecondsPerKm) * 100) / 100,
           is_gps_tracked: false,
-          // Chester is an internal QA/demo bot — never public, so it can't
-          // leak into another user's Movement hub or the cardio leaderboard.
+          // Chester is an internal QA/demo bot. Keep him out of the cardio
+          // leaderboard/"global stats" (is_public gates that query only —
+          // see useTrophies.getLeaderboard) while still showing this run on
+          // his own timeline/social feed as a proof-of-concept for users
+          // (visibility gates the feed/timeline only — see useUnifiedFeed).
+          // These two flags are independent; both instructions hold at once.
           is_public: false,
-          visibility: "private",
+          visibility: "public",
           comments_enabled: true,
           activity_type: "run",
         });
@@ -535,9 +542,10 @@ serve(async (req) => {
       await supabase.from("posts").insert({
         user_id: CHESTER_USER_ID,
         content,
-        // Chester is an internal QA/demo bot — its daily post must never
-        // appear in a real user's Social feed. Private = author-only.
-        visibility: "private",
+        // Chester is an internal QA/demo bot — his daily post appears
+        // publicly on his timeline/Social feed as a proof-of-concept,
+        // showing users an account actively posting and training.
+        visibility: "public",
         comments_enabled: true,
       });
 
