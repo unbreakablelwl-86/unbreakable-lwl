@@ -1,4 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2.57.2";
+import { sendPushToUser } from "../_shared/web-push.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -242,10 +243,73 @@ Deno.serve(async (req) => {
       }
     }
 
+    // ─── Real device push, one per user (JJ, Sept 2026) ───
+    // Everything above only ever wrote a row into the in-app notification
+    // bell — nothing actually pushed to the phone/browser. usePushNotifications.tsx
+    // already subscribes devices and public/sw.js already shows the native
+    // notification on arrival; this is the missing "actually send it" half.
+    //
+    // A user can land in several of the reminder_type buckets above at once
+    // (workout + cardio + meal_plan + habits + coach_accountability all on
+    // the same morning) — pushing one alert per bucket would spam their lock
+    // screen with 5 notifications every day. Instead, collapse to exactly
+    // ONE push per user, prioritising whatever's most actionable: today's
+    // planned session(s) first (that's specifically what was asked for),
+    // then meal plan, then habits, then the general coach accountability
+    // message as the fallback for everyone else.
+    const byUser = new Map<string, typeof uniqueNotifications>();
+    for (const n of uniqueNotifications) {
+      const list = byUser.get(n.user_id) ?? [];
+      list.push(n);
+      byUser.set(n.user_id, list);
+    }
+
+    let pushSent = 0;
+    let pushPruned = 0;
+
+    await Promise.all(
+      Array.from(byUser.entries()).map(async ([userId, userNotifications]) => {
+        const byType = (t: string) => userNotifications.find(n => (n.data as any).reminder_type === t);
+        const workout = byType("workout");
+        const cardio = byType("cardio");
+        const mealPlan = byType("meal_plan");
+        const habits = byType("habits");
+        const coachOnly = byType("coach_accountability");
+
+        let pushPayload: { title: string; body: string };
+
+        if (workout && cardio) {
+          pushPayload = { title: "Today's Sessions 💪🏃", body: `${workout.body} Plus your cardio session today.` };
+        } else if (workout) {
+          pushPayload = { title: workout.title, body: workout.body };
+        } else if (cardio) {
+          pushPayload = { title: cardio.title, body: cardio.body };
+        } else if (mealPlan) {
+          pushPayload = { title: mealPlan.title, body: mealPlan.body };
+        } else if (habits) {
+          pushPayload = { title: habits.title, body: habits.body };
+        } else if (coachOnly) {
+          pushPayload = { title: coachOnly.title, body: coachOnly.body };
+        } else {
+          return;
+        }
+
+        const result = await sendPushToUser(supabase, userId, {
+          ...pushPayload,
+          url: "/",
+          icon: "/icons/icon-192x192.png",
+        });
+        pushSent += result.sent;
+        pushPruned += result.pruned;
+      })
+    );
+
     return new Response(
       JSON.stringify({
         success: true,
         notifications_sent: uniqueNotifications.length,
+        push_sent: pushSent,
+        push_subscriptions_pruned: pushPruned,
         breakdown: {
           coach_accountability: uniqueNotifications.filter(n => (n.data as any).reminder_type === "coach_accountability").length,
           workout: uniqueNotifications.filter(n => (n.data as any).reminder_type === "workout").length,
