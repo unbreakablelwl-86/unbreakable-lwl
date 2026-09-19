@@ -13,11 +13,30 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { format, differenceInCalendarDays, parseISO, addDays } from 'date-fns';
 import { toast } from 'sonner';
 import type { U86Enrolment, U86DailyLog } from '@/lib/unbreakable86Types';
 import { u86DayBanked, U86_MIN_HABITS } from '@/lib/unbreakable86Types';
 
+/* ─── UTC day-boundary helpers (JJ, Sept 2026) ───
+ * The 86-day count must roll over at UTC midnight, not the viewer's local
+ * midnight — otherwise the same moment can read as "still today" for one
+ * user and "already tomorrow" for another, and the day count drifts by
+ * ±1 depending on timezone. Plain date-only arithmetic on "yyyy-MM-dd"
+ * strings (via Date.UTC) sidesteps that entirely — no date-fns local-calendar
+ * functions (differenceInCalendarDays/addDays/parseISO all resolve against
+ * the browser's local timezone, which is exactly what we don't want here). */
+function utcToday(): string {
+  return new Date().toISOString().slice(0, 10);
+}
+function addUtcDays(dateStr: string, days: number): string {
+  const [y, m, d] = dateStr.split('-').map(Number);
+  return new Date(Date.UTC(y, m - 1, d + days)).toISOString().slice(0, 10);
+}
+function utcDaysBetween(fromDateStr: string, toDateStr: string): number {
+  const [fy, fm, fd] = fromDateStr.split('-').map(Number);
+  const [ty, tm, td] = toDateStr.split('-').map(Number);
+  return Math.round((Date.UTC(ty, tm - 1, td) - Date.UTC(fy, fm - 1, fd)) / 86400000);
+}
 
 interface U86State {
   enrolment: U86Enrolment | null;
@@ -37,7 +56,7 @@ export function useUnbreakable86() {
     error: null,
   });
 
-  const today = format(new Date(), 'yyyy-MM-dd');
+  const today = utcToday();
 
   /* ─── Reset the calendar back to Day 1 (keeps the user's plan choices) ─── */
   const performReset = useCallback(async (
@@ -57,7 +76,7 @@ export function useUnbreakable86() {
         user_id: user.id,
         status: 'active',
         current_day: 1,
-        start_date: format(new Date(), 'yyyy-MM-dd'),
+        start_date: utcToday(),
         reset_count: (currentResets || 0) + 1,
         quiz_answers: quizAnswers ?? null,
       });
@@ -109,8 +128,8 @@ export function useUnbreakable86() {
         // the tracker keeps running day 87, 88, 89... and only breaks on an actual miss,
         // it doesn't stop just because the formal challenge is done.
         if ((enrolment as any).status === 'active' || (enrolment as any).status === 'completed') {
-          const startDate = parseISO((enrolment as any).start_date);
-          const daysSinceStart = differenceInCalendarDays(new Date(), startDate);
+          const startDateStr: string = (enrolment as any).start_date;
+          const daysSinceStart = utcDaysBetween(startDateStr, today);
 
           // Which past dates were completed in full?
           const { data: allLogs } = await supabase
@@ -125,7 +144,7 @@ export function useUnbreakable86() {
           // Any past day (not today) without a fully completed log breaks the streak
           let brokenOn: string | null = null;
           for (let d = 0; d < daysSinceStart; d++) {
-            const checkDate = format(addDays(startDate, d), 'yyyy-MM-dd');
+            const checkDate = addUtcDays(startDateStr, d);
             if (!completedDates.has(checkDate)) { brokenOn = checkDate; break; }
           }
 
@@ -138,6 +157,25 @@ export function useUnbreakable86() {
             toast.error(`Day missed — fewer than ${U86_MIN_HABITS} of the Daily 7 logged. Back to Day 1. Keep showing up.`);
             setState(s => ({ ...s, loading: true }));
             return fetchEnrolment();
+          }
+
+          /* ─── Day count only advances at UTC midnight (JJ, Sept 2026) ───
+           * No day was missed above, so the day the user should be on today
+           * is purely a function of the calendar — how many whole UTC days
+           * have passed since start_date — never how quickly they logged
+           * today's habits. This replaces the old behaviour where banking a
+           * day (toggleHabit/updateJournal) bumped current_day the instant
+           * the 3rd habit was ticked, which made Day 1 flip to Day 2 the
+           * moment the user finished logging rather than the next calendar
+           * day. Only ever advances forward — it can never move current_day
+           * backwards. */
+          const effectiveDay = daysSinceStart + 1;
+          if (effectiveDay > (enrolment as any).current_day) {
+            await supabase
+              .from('unbreakable86_enrolments')
+              .update({ current_day: effectiveDay, updated_at: new Date().toISOString() })
+              .eq('id', (enrolment as any).id);
+            (enrolment as any).current_day = effectiveDay;
           }
         }
       }
@@ -228,6 +266,15 @@ export function useUnbreakable86() {
   const toggleHabit = useCallback(async (habit: keyof U86DailyLog) => {
     if (!user || !state.enrolment) return;
 
+    // Once today's log is banked it's locked for the rest of the day (JJ,
+    // Sept 2026) — no more unticking/re-ticking habits. This is a hard stop
+    // here, not just a disabled button in the UI, so it holds regardless of
+    // how the click got through.
+    if ((state.todayLog as any)?.all_habits_done) {
+      toast.error("Today's log is locked in — come back tomorrow to keep going.");
+      return;
+    }
+
     const enrolmentId = state.enrolment.id;
     const currentDay = state.enrolment.current_day;
 
@@ -276,26 +323,30 @@ export function useUnbreakable86() {
         const updatedLog = data as U86DailyLog;
         setState(s => ({ ...s, todayLog: updatedLog }));
 
-        // Day banked for the first time (>= 3 of the Daily 7) — advance the day.
-        // wasBanked guards this from ever firing twice for the same log.
+        // Day banked for the first time (>= 3 of the Daily 7). wasBanked guards
+        // this from ever firing twice for the same log. Note: this no longer
+        // advances current_day — the day count only rolls over at UTC
+        // midnight (see fetchEnrolment's effectiveDay sync above), never the
+        // instant a day gets banked. Completing day 86 itself still unlocks
+        // the certificate immediately, since that's a one-off milestone, not
+        // the day count advancing.
         if (updatedLog.all_habits_done && !wasBanked) {
-          // completed_at is a one-way flag too — only set (and only email) the
-          // very first time the user crosses day 86. Every day after that keeps
-          // advancing current_day without re-stamping completed_at.
-          const firstCompletion = currentDay + 1 > 86 && !state.enrolment.completed_at;
-          const { error: enrolError } = await supabase
-            .from('unbreakable86_enrolments')
-            .update({
-              current_day: currentDay + 1,
-              updated_at: new Date().toISOString(),
-              ...(firstCompletion ? { status: 'completed', completed_at: new Date().toISOString() } : {}),
-            })
-            .eq('id', enrolmentId);
+          const firstCompletion = currentDay >= 86 && !state.enrolment.completed_at;
+          if (firstCompletion) {
+            const { error: enrolError } = await supabase
+              .from('unbreakable86_enrolments')
+              .update({
+                updated_at: new Date().toISOString(),
+                status: 'completed',
+                completed_at: new Date().toISOString(),
+              })
+              .eq('id', enrolmentId);
 
-          if (enrolError) throw enrolError;
+            if (enrolError) throw enrolError;
 
-          if (firstCompletion) maybeFireCertificateEmail(enrolmentId);
-          await fetchEnrolment();
+            maybeFireCertificateEmail(enrolmentId);
+            await fetchEnrolment();
+          }
         }
       }
     } catch (err: any) {
@@ -307,6 +358,13 @@ export function useUnbreakable86() {
   /* ─── Update journal + trigger AI consistency update ─── */
   const updateJournal = useCallback(async (journal: string) => {
     if (!state.todayLog) return;
+
+    // Same lock as toggleHabit — once today's log is banked, the journal is
+    // locked too, so a completed day can't keep being re-saved.
+    if ((state.todayLog as any).all_habits_done) {
+      toast.error("Today's log is locked in — come back tomorrow to keep going.");
+      return;
+    }
 
     try {
       const wasBanked = Boolean((state.todayLog as any).all_habits_done);
@@ -327,21 +385,26 @@ export function useUnbreakable86() {
         ? ({ ...s, todayLog: { ...s.todayLog, journal, all_habits_done: banked } })
         : s);
 
-      // Writing the journal can be the 3rd habit — bank and advance the day
+      // Writing the journal can be the 3rd habit that banks the day. As with
+      // toggleHabit, this no longer advances current_day — that only happens
+      // at UTC midnight via fetchEnrolment. Completing day 86 itself still
+      // unlocks the certificate right away.
       if (banked && !wasBanked && state.enrolment) {
-        const nextDay = state.enrolment.current_day + 1;
-        const firstCompletion = nextDay > 86 && !state.enrolment.completed_at;
-        const { error: enrolError } = await supabase
-          .from('unbreakable86_enrolments')
-          .update({
-            current_day: nextDay,
-            updated_at: new Date().toISOString(),
-            ...(firstCompletion ? { status: 'completed', completed_at: new Date().toISOString() } : {}),
-          })
-          .eq('id', state.enrolment.id);
-        if (enrolError) throw enrolError;
-        if (firstCompletion) maybeFireCertificateEmail(state.enrolment.id);
-        await fetchEnrolment();
+        const dayNumber = state.todayLog.day_number;
+        const firstCompletion = dayNumber >= 86 && !state.enrolment.completed_at;
+        if (firstCompletion) {
+          const { error: enrolError } = await supabase
+            .from('unbreakable86_enrolments')
+            .update({
+              updated_at: new Date().toISOString(),
+              status: 'completed',
+              completed_at: new Date().toISOString(),
+            })
+            .eq('id', state.enrolment.id);
+          if (enrolError) throw enrolError;
+          maybeFireCertificateEmail(state.enrolment.id);
+          await fetchEnrolment();
+        }
       }
 
       // Fire-and-forget: AI consistency table update

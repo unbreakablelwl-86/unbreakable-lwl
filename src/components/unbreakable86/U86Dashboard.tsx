@@ -87,6 +87,12 @@ export function U86Dashboard({
   const habitsCompleted = u86CountDone(todayLog as any, therapyChoice);
   const allDone = habitsCompleted >= U86_TOTAL_HABITS;
   const dayBanked = habitsCompleted >= U86_MIN_HABITS;
+  /* Once today's log is banked, habits + journal lock for the rest of the day
+   * (JJ, Sept 2026) — no more unticking/re-ticking or re-saving the journal.
+   * Read from the DB's one-way ratchet flag (todayLog.all_habits_done) rather
+   * than the live habitsCompleted count, since the hook itself also enforces
+   * this lock server-side; this just keeps the UI in lockstep with it. */
+  const dayLocked = Boolean((todayLog as any)?.all_habits_done);
 
   // Current phase info
   const phaseInfo = U86_PHASES.find(p =>
@@ -253,16 +259,31 @@ export function U86Dashboard({
                   </motion.div>
                 )}
               </div>
-              <div className="mb-2.5 rounded-xl border border-primary/40 bg-primary/5 p-3 ub-glow">
-                <p className="font-display text-[11px] tracking-wider text-primary">
-                  TICK EACH ONE OFF AS YOU DO IT
-                </p>
-                <p className="text-[11px] text-muted-foreground leading-relaxed mt-1">
-                  Tap a habit below the moment you complete it — it saves instantly and the box lights up.
-                  Come back through the day and tick the rest. Everything must be logged before midnight:
-                  anything left unticked doesn't count towards today.
-                </p>
-              </div>
+              {dayLocked ? (
+                <div className="mb-2.5 rounded-xl border border-primary/40 bg-primary/5 p-3 ub-glow flex items-start gap-2.5">
+                  <Lock className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-display text-[11px] tracking-wider text-primary">
+                      TODAY'S LOG IS LOCKED IN
+                    </p>
+                    <p className="text-[11px] text-muted-foreground leading-relaxed mt-1">
+                      You've banked today's Daily 7 — habits and journal are locked until the next day opens up.
+                      Come back tomorrow to keep the streak going.
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <div className="mb-2.5 rounded-xl border border-primary/40 bg-primary/5 p-3 ub-glow">
+                  <p className="font-display text-[11px] tracking-wider text-primary">
+                    TICK EACH ONE OFF AS YOU DO IT
+                  </p>
+                  <p className="text-[11px] text-muted-foreground leading-relaxed mt-1">
+                    Tap a habit below the moment you complete it — it saves instantly and the box lights up.
+                    Come back through the day and tick the rest. Everything must be logged before midnight:
+                    anything left unticked doesn't count towards today.
+                  </p>
+                </div>
+              )}
 
               <div className="space-y-1.5">
                 {DAILY_7.map(habit => {
@@ -271,13 +292,14 @@ export function U86Dashboard({
                   return (
                     <motion.button
                       key={habit.key}
-                      onClick={() => onToggleHabit(habit.key)}
-                      whileTap={{ scale: 0.98 }}
+                      onClick={() => { if (!dayLocked) onToggleHabit(habit.key); }}
+                      disabled={dayLocked}
+                      whileTap={dayLocked ? undefined : { scale: 0.98 }}
                       className={`w-full rounded-xl border p-3 flex items-center gap-3 transition-all ${
                         done
                           ? 'border-opacity-30'
                           : 'border-border bg-card hover:border-border/80'
-                      }`}
+                      } ${dayLocked ? 'opacity-60 cursor-not-allowed' : ''}`}
                       style={done
                         ? { borderColor: `${habit.color}80`, background: `${habit.color}12`, boxShadow: `0 0 14px ${habit.color}40` }
                         : undefined}
@@ -324,17 +346,24 @@ export function U86Dashboard({
               </div>
               <Textarea
                 value={journalText}
-                onChange={e => setJournalText(e.target.value)}
+                onChange={e => { if (!dayLocked) setJournalText(e.target.value); }}
+                readOnly={dayLocked}
                 placeholder="How are you feeling? What did you learn today? What will you do better tomorrow?"
-                className="min-h-[80px] bg-background border-border text-foreground text-sm placeholder:text-muted-foreground"
+                className={`min-h-[80px] bg-background border-border text-foreground text-sm placeholder:text-muted-foreground ${dayLocked ? 'opacity-60 cursor-not-allowed' : ''}`}
               />
-              <Button
-                onClick={saveJournal}
-                disabled={journalSaving}
-                className="mt-2 w-full h-9 rounded-lg text-xs font-display tracking-wider bg-primary/10 text-primary hover:bg-primary/20 border border-primary/20"
-              >
-                {journalSaving ? 'SAVING...' : 'SAVE JOURNAL'}
-              </Button>
+              {dayLocked ? (
+                <div className="mt-2 w-full h-9 rounded-lg text-xs font-display tracking-wider bg-card text-muted-foreground border border-border flex items-center justify-center gap-1.5">
+                  <Lock className="w-3.5 h-3.5" /> LOCKED UNTIL TOMORROW
+                </div>
+              ) : (
+                <Button
+                  onClick={saveJournal}
+                  disabled={journalSaving}
+                  className="mt-2 w-full h-9 rounded-lg text-xs font-display tracking-wider bg-primary/10 text-primary hover:bg-primary/20 border border-primary/20"
+                >
+                  {journalSaving ? 'SAVING...' : 'SAVE JOURNAL'}
+                </Button>
+              )}
             </div>
 
             {/* Day Complete Animation */}

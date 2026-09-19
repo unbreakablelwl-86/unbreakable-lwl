@@ -208,6 +208,19 @@ serve(async (req) => {
       if (resetErr) throw resetErr;
       enrolment = newEnrolment;
       summary.streak_reset = { reason: `Day ${brokenOn} was never logged (fewer than 3 of the Daily 7)`, new_current_day: 1 };
+    } else {
+      // Mirrors useUnbreakable86.tsx's fetchEnrolment fix (JJ, Sept 2026): the
+      // day count only advances at UTC midnight — how many whole UTC days
+      // have passed since start_date — never the instant a day gets banked.
+      // No day was missed above, so sync current_day to that if it's behind.
+      const effectiveDay = daysSinceStart + 1;
+      if (effectiveDay > enrolment.current_day) {
+        await supabase
+          .from("unbreakable86_enrolments")
+          .update({ current_day: effectiveDay, updated_at: new Date().toISOString() })
+          .eq("id", enrolment.id);
+        enrolment.current_day = effectiveDay;
+      }
     }
 
     const dayNumber: number = enrolment.current_day;
@@ -266,17 +279,21 @@ serve(async (req) => {
       summary.daily_log = { banked: bankedNow, habits_done: countDone, is_training_day: isTrainingDay, education_today: educationToday };
 
       if (bankedNow) {
-        const nextDay = dayNumber + 1;
-        const firstCompletion = nextDay > 86 && !enrolment.completed_at;
-        await supabase
-          .from("unbreakable86_enrolments")
-          .update({
-            current_day: nextDay,
-            updated_at: new Date().toISOString(),
-            ...(firstCompletion ? { status: "completed", completed_at: new Date().toISOString() } : {}),
-          })
-          .eq("id", enrolmentId);
-        summary.daily_log.current_day_now = nextDay;
+        // Day count itself only advances at UTC rollover (handled above),
+        // never the instant a day banks — completing day 86 still unlocks
+        // the certificate right away since that's a one-off milestone.
+        const firstCompletion = dayNumber >= 86 && !enrolment.completed_at;
+        if (firstCompletion) {
+          await supabase
+            .from("unbreakable86_enrolments")
+            .update({
+              updated_at: new Date().toISOString(),
+              status: "completed",
+              completed_at: new Date().toISOString(),
+            })
+            .eq("id", enrolmentId);
+        }
+        summary.daily_log.current_day_now = dayNumber;
       } else {
         summary.daily_log.current_day_now = dayNumber;
       }
