@@ -533,7 +533,7 @@ export function LandingPage({ onSignIn, onSignUp }: LandingPageProps) {
                     <Quote size={28} className="text-[hsl(var(--primary))]/30 mb-2" />
                     <p className="text-[#ccc] text-sm sm:text-base leading-relaxed mb-4">
                       I didn't build UNBREAKABLE because I had it figured out. I built it because I didn't.
-                      I've trained through addiction recovery, mental health crises and years of starting over.
+                      I've trained through mental health crises and years of starting over.
                       Every feature in this app exists because I needed it myself.
                     </p>
                     <p className="text-[#888] text-sm leading-relaxed mb-4">
