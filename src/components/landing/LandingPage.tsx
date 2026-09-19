@@ -145,7 +145,7 @@ const differentiators = [
   {
     icon: Users,
     title: 'BUILT BY SOMEONE WHO GETS IT',
-    desc: 'Founded by someone who trained through addiction recovery, mental health battles and every restart in between. This isn\'t theory.',
+    desc: 'Founded by someone who understands mental health battles and every restart in between, first-hand. This isn\'t theory.',
   },
   {
     icon: Zap,
