@@ -5,11 +5,14 @@ import { useBlockedUsers } from './useBlockedUsers';
 import { useFriends } from './useFriends';
 import type { PostMediaItem } from './usePosts';
 
-// Chester ("UNBREAKABLE 86") is an internal QA/demo bot — his activity is
-// meant to be visible on his OWN profile/timeline (a proof-of-concept for
-// users who visit it directly), never injected into this shared/global feed
-// that every user sees mixed in with their own activity. Excluded both at
-// the query level (below) and again in isVisible() for defense-in-depth.
+// Chester ("UNBREAKABLE 86") is an internal QA/demo bot. His activity is
+// hidden from this shared/global feed for everyone who doesn't follow him —
+// nobody wants a bot's content mixed into the feed they never opted into.
+// But JJ reported (Sept 2026) that following Chester from his profile still
+// didn't surface his posts here, which defeats the point of following him:
+// once a real user explicitly follows Chester, his content behaves like any
+// other followed user's and shows up. followsChester (below) drives both the
+// query-level exclusion and the isVisible() defense-in-depth check.
 const CHESTER_USER_ID = '64a750d2-225c-4bb2-ba80-4a39527c374a';
 
 export interface FeedRun {
@@ -99,6 +102,10 @@ export function useUnifiedFeed() {
   const { user } = useAuth();
   const { blockedUsers } = useBlockedUsers();
   const { friends } = useFriends();
+  // Whether the current viewer follows Chester specifically — lets his
+  // content back into the feed for people who followed him on purpose,
+  // while everyone else still never sees him (see comment on CHESTER_USER_ID).
+  const [followsChester, setFollowsChester] = useState(false);
   const [runs, setRuns] = useState<(FeedRun & FeedItemBase)[]>([]);
   const [posts, setPosts] = useState<(FeedPost & FeedItemBase)[]>([]);
   const [workouts, setWorkouts] = useState<(FeedWorkout & FeedItemBase)[]>([]);
@@ -109,11 +116,30 @@ export function useUnifiedFeed() {
   const [page, setPage] = useState(0);
   const observerRef = useRef<IntersectionObserver | null>(null);
 
+  useEffect(() => {
+    let cancelled = false;
+    if (!user) {
+      setFollowsChester(false);
+      return;
+    }
+    supabase
+      .from('follows')
+      .select('id')
+      .eq('follower_id', user.id)
+      .eq('following_id', CHESTER_USER_ID)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (!cancelled) setFollowsChester(!!data);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [user]);
+
   const fetchRuns = useCallback(async (offset: number = 0) => {
-    const { data, error } = await supabase
-      .from('runs')
-      .select('*')
-      .neq('user_id', CHESTER_USER_ID)
+    let query = supabase.from('runs').select('*');
+    if (!followsChester) query = query.neq('user_id', CHESTER_USER_ID);
+    const { data, error } = await query
       .order('started_at', { ascending: false })
       .range(offset, offset + ITEMS_PER_PAGE - 1);
 
@@ -143,13 +169,12 @@ export function useUnifiedFeed() {
     );
 
     return enriched;
-  }, [user]);
+  }, [user, followsChester]);
 
   const fetchPosts = useCallback(async (offset: number = 0) => {
-    const { data, error } = await supabase
-      .from('posts')
-      .select('*')
-      .neq('user_id', CHESTER_USER_ID)
+    let query = supabase.from('posts').select('*');
+    if (!followsChester) query = query.neq('user_id', CHESTER_USER_ID);
+    const { data, error } = await query
       .order('created_at', { ascending: false })
       .range(offset, offset + ITEMS_PER_PAGE - 1);
 
@@ -185,14 +210,15 @@ export function useUnifiedFeed() {
     );
 
     return enriched;
-  }, [user]);
+  }, [user, followsChester]);
 
   const fetchWorkouts = useCallback(async (offset: number = 0) => {
-    const { data, error } = await supabase
+    let query = supabase
       .from('workout_sessions')
       .select('*, exercise_logs(id, completed)')
-      .eq('status', 'completed')
-      .neq('user_id', CHESTER_USER_ID)
+      .eq('status', 'completed');
+    if (!followsChester) query = query.neq('user_id', CHESTER_USER_ID);
+    const { data, error } = await query
       .order('started_at', { ascending: false })
       .range(offset, offset + ITEMS_PER_PAGE - 1);
 
@@ -236,14 +262,15 @@ export function useUnifiedFeed() {
     );
 
     return enriched;
-  }, [user]);
+  }, [user, followsChester]);
 
   const fetchMilestones = useCallback(async (offset: number = 0) => {
-    const { data, error } = await supabase
+    let query = supabase
       .from('milestones')
       .select('*')
-      .eq('is_shared', true)
-      .neq('user_id', CHESTER_USER_ID)
+      .eq('is_shared', true);
+    if (!followsChester) query = query.neq('user_id', CHESTER_USER_ID);
+    const { data, error } = await query
       .order('achieved_at', { ascending: false })
       .range(offset, offset + ITEMS_PER_PAGE - 1);
 
@@ -268,7 +295,7 @@ export function useUnifiedFeed() {
     );
 
     return enriched;
-  }, []);
+  }, [followsChester]);
 
   const fetchAll = useCallback(async (reset: boolean = true) => {
     if (reset) {
@@ -316,10 +343,11 @@ export function useUnifiedFeed() {
     }
   }, [loadingMore, hasMore]);
 
-  // Initial fetch
+  // Initial fetch — also re-runs once followsChester resolves, so Chester's
+  // content is included from the start for someone who already follows him.
   useEffect(() => {
     fetchAll(true);
-  }, [user]);
+  }, [user, followsChester]);
 
   // Load more when page changes
   useEffect(() => {
@@ -355,7 +383,7 @@ export function useUnifiedFeed() {
 
     // Client-side visibility filter (defense-in-depth on top of RLS)
     const isVisible = (item: { user_id: string; visibility: string }) => {
-      if (item.user_id === CHESTER_USER_ID) return false; // QA/demo bot — never in the shared feed (defense-in-depth; already excluded at the query level above)
+      if (item.user_id === CHESTER_USER_ID && !followsChester) return false; // QA/demo bot — hidden unless you follow him (defense-in-depth; already excluded at the query level above)
       if (item.user_id === user?.id) return true; // Own content always visible
       if (item.visibility === 'private') return false; // Private = author only
       if (item.visibility === 'friends' && !friendIds.has(item.user_id)) return false; // Friends-only requires friendship
@@ -369,7 +397,7 @@ export function useUnifiedFeed() {
       ...milestones.filter(milestone => !blockedIds.has(milestone.user_id) && isVisible(milestone)).map((milestone) => ({ type: 'milestone' as const, data: milestone })),
     ];
     return items.sort((a, b) => b.data.timestamp.getTime() - a.data.timestamp.getTime());
-  }, [runs, posts, workouts, milestones, blockedUsers, friends, user]);
+  }, [runs, posts, workouts, milestones, blockedUsers, friends, user, followsChester]);
 
   // Kudos toggles with optimistic updates
   const toggleRunKudos = async (runId: string) => {
