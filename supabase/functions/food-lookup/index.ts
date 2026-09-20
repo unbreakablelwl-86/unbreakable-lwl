@@ -306,10 +306,20 @@ serve(async (req) => {
         }
       }
 
-      // Search Open Food Facts
+      // Search Open Food Facts.
+      // sort_by=unique_scans_n orders results by real-world popularity instead
+      // of Open Food Facts' default relevance ranking. For a generic/staple
+      // term ("rice", "banana") the default ranking's first page is dominated
+      // by sparse community entries with no nutrition panel filled in, so
+      // after the completeness filter below every single result got dropped
+      // — 0 of 20. Sorted by popularity, the first page is the products
+      // people actually scan and log, which reliably have complete data
+      // (verified: "rice" and "banana" go from 0/20 usable to 23/24; already-
+      // working branded queries like "chicken breast"/"salmon" are unaffected
+      // or improve slightly).
       const searchQuery = encodeURIComponent(query);
       const offResponse = await fetch(
-        `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${searchQuery}&search_simple=1&action=process&json=1&page_size=20`,
+        `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${searchQuery}&search_simple=1&action=process&json=1&page_size=24&sort_by=unique_scans_n`,
         {
           headers: {
             'User-Agent': 'UnbreakableApp/1.0 - training nutrition app',

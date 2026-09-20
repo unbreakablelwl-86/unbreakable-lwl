@@ -13,9 +13,13 @@ import { useLocation } from 'react-router-dom';
 const HEARTBEAT_INTERVAL = 60_000; // 60 seconds
 
 export function usePresenceHeartbeat() {
-  const { user } = useAuth();
+  const { user, session } = useAuth();
   const location = useLocation();
   const intervalRef = useRef<ReturnType<typeof setInterval>>();
+  // Read synchronously from the unload handler without re-binding it on every
+  // token refresh (see below).
+  const sessionRef = useRef(session);
+  sessionRef.current = session;
 
   const sendHeartbeat = useCallback(async () => {
     if (!user) return;
@@ -37,14 +41,30 @@ export function usePresenceHeartbeat() {
     // Set up interval
     intervalRef.current = setInterval(sendHeartbeat, HEARTBEAT_INTERVAL);
 
-    // Mark offline on page unload
+    // Mark offline on page unload.
+    // navigator.sendBeacon can't attach custom headers, so it could never
+    // carry the apikey/Authorization Supabase's REST gateway requires — this
+    // call was guaranteed to 401 before it ever reached the database, no
+    // matter what else was fixed. fetch(..., { keepalive: true }) can set
+    // headers and, unlike a plain fetch, is allowed to outlive the page
+    // unload in every browser this app targets, so this now actually clears
+    // the user's online status when they close the tab.
     const handleUnload = () => {
-      if (user) {
-        navigator.sendBeacon?.(
-          `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/rpc/update_presence`,
-          JSON.stringify({ p_page: null })
-        );
-      }
+      const token = sessionRef.current?.access_token;
+      const apiKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+      if (!user || !token || !apiKey) return;
+      fetch(`${import.meta.env.VITE_SUPABASE_URL}/rest/v1/rpc/update_presence`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          apikey: apiKey,
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ p_page: null }),
+        keepalive: true,
+      }).catch(() => {
+        // Silently fail — best-effort, the page is already closing.
+      });
     };
     window.addEventListener('beforeunload', handleUnload);
 
