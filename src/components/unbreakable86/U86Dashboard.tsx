@@ -114,12 +114,17 @@ export function U86Dashboard({
   const habitsCompleted = u86CountDone(todayLog as any, therapyChoice);
   const allDone = habitsCompleted >= U86_TOTAL_HABITS;
   const dayBanked = habitsCompleted >= U86_MIN_HABITS;
-  /* Once today's log is banked, habits + journal lock for the rest of the day
-   * (JJ, Sept 2026) — no more unticking/re-ticking or re-saving the journal.
-   * Read from the DB's one-way ratchet flag (todayLog.all_habits_done) rather
-   * than the live habitsCompleted count, since the hook itself also enforces
-   * this lock server-side; this just keeps the UI in lockstep with it. */
-  const dayLocked = Boolean((todayLog as any)?.all_habits_done);
+  /* Once today's log has ALL 7 done, habits + journal lock for the rest of
+   * the day (JJ, Sept 2026) — no more unticking/re-ticking or re-saving the
+   * journal. This must be the live habitsCompleted count against
+   * U86_TOTAL_HABITS (allDone), NOT the DB's `all_habits_done` "banked" flag
+   * — that flag flips true at the 3-habit minimum, which banks the day for
+   * streak purposes but is only a floor, not a ceiling. Locking on it here
+   * made habits 4–7 permanently untickable the moment a user hit 3 of 7,
+   * the opposite of the "build up to the full 7" design. The hook enforces
+   * the matching all-7 check server-side (useUnbreakable86's toggleHabit/
+   * updateJournal); this just keeps the UI in lockstep with it. */
+  const dayLocked = allDone;
 
   // Current phase info
   const phaseInfo = U86_PHASES.find(p =>
@@ -294,7 +299,7 @@ export function U86Dashboard({
                       TODAY'S LOG IS LOCKED IN
                     </p>
                     <p className="text-[11px] text-muted-foreground leading-relaxed mt-1">
-                      You've banked today's Daily 7 — habits and journal are locked until the next day opens up.
+                      All 7 done — habits and journal are locked until the next day opens up.
                       Come back tomorrow to keep the streak going.
                     </p>
                   </div>

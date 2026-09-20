@@ -15,7 +15,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
 import type { U86Enrolment, U86DailyLog } from '@/lib/unbreakable86Types';
-import { u86DayBanked, U86_MIN_HABITS } from '@/lib/unbreakable86Types';
+import { u86DayBanked, u86CountDone, U86_MIN_HABITS, U86_TOTAL_HABITS } from '@/lib/unbreakable86Types';
 
 /* ─── UTC day-boundary helpers (JJ, Sept 2026) ───
  * The 86-day count must roll over at UTC midnight, not the viewer's local
@@ -266,11 +266,19 @@ export function useUnbreakable86() {
   const toggleHabit = useCallback(async (habit: keyof U86DailyLog) => {
     if (!user || !state.enrolment) return;
 
-    // Once today's log is banked it's locked for the rest of the day (JJ,
-    // Sept 2026) — no more unticking/re-ticking habits. This is a hard stop
-    // here, not just a disabled button in the UI, so it holds regardless of
-    // how the click got through.
-    if ((state.todayLog as any)?.all_habits_done) {
+    // Once today's log has all 7 of the Daily 7 ticked (journal included),
+    // it's locked for the rest of the day (JJ, Sept 2026) — no more
+    // unticking/re-ticking habits. This is a hard stop here, not just a
+    // disabled button in the UI, so it holds regardless of how the click got
+    // through.
+    //
+    // This must check for all 7 (u86CountDone >= U86_TOTAL_HABITS), NOT the
+    // "banked" minimum of 3 (all_habits_done / u86DayBanked). Banking at 3 is
+    // a floor that keeps the streak alive, not a ceiling on the day — the
+    // whole point of the Daily 7 is to build up to all 7 (see file header).
+    // This used to read all_habits_done here, which made habits 4–7
+    // permanently untickable the instant a user hit 3 of 7. Fixed Sept 2026.
+    if (state.todayLog && u86CountDone(state.todayLog as any, therapyChoice) >= U86_TOTAL_HABITS) {
       toast.error("Today's log is locked in — come back tomorrow to keep going.");
       return;
     }
@@ -366,9 +374,11 @@ export function useUnbreakable86() {
   const updateJournal = useCallback(async (journal: string) => {
     if (!state.todayLog) return;
 
-    // Same lock as toggleHabit — once today's log is banked, the journal is
-    // locked too, so a completed day can't keep being re-saved.
-    if ((state.todayLog as any).all_habits_done) {
+    // Same lock as toggleHabit — once all 7 of today's Daily 7 are complete,
+    // the journal is locked too, so a completed day can't keep being
+    // re-saved. Checked against full completion (all 7), not the banked
+    // minimum of 3 — see the comment in toggleHabit.
+    if (u86CountDone(state.todayLog as any, therapyChoice) >= U86_TOTAL_HABITS) {
       toast.error("Today's log is locked in — come back tomorrow to keep going.");
       return;
     }
