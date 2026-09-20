@@ -56,27 +56,95 @@ export function useCardioSessionPlanners(programId?: string) {
       if (actualDuration !== undefined) updates.actual_duration_minutes = actualDuration;
       if (actualDistance !== undefined) updates.actual_distance_km = actualDistance;
 
-      const { error } = await supabase
+      const { data: completedPlanner, error } = await supabase
         .from('cardio_session_planners')
         .update(updates)
-        .eq('id', plannerId);
+        .eq('id', plannerId)
+        .select('program_id, week_number, day_number')
+        .single();
       if (error) throw error;
+
+      // Advance the parent programme's "current" position (JJ, Sept 2026 —
+      // reported as "programme isn't updated, the same run still shows as
+      // next run"). The overview header badge, the My Programmes list card,
+      // and its "Resume" button all read cardio_programs.current_week/
+      // current_day directly — none of them derive it from the live planner
+      // list the way the "Next Session" card does — and nothing ever wrote
+      // to those two columns after a session completed, live-tracked or
+      // manual, so they stayed frozen at whatever the programme started on
+      // (usually Week 1, Day 1) no matter how much real progress the
+      // planners showed underneath. Point them at the next still-pending
+      // session in week/day order, or — if that was the last one — leave
+      // them on the session just completed. Best-effort: this is display
+      // bookkeeping on the parent row, not the completion itself, which is
+      // already durably recorded on the planner above regardless of what
+      // happens here.
+      if (completedPlanner?.program_id) {
+        try {
+          const { data: nextPending } = await supabase
+            .from('cardio_session_planners')
+            .select('week_number, day_number')
+            .eq('program_id', completedPlanner.program_id)
+            .eq('status', 'pending')
+            .order('week_number', { ascending: true })
+            .order('day_number', { ascending: true })
+            .limit(1)
+            .maybeSingle();
+
+          const target = nextPending || completedPlanner;
+          await supabase
+            .from('cardio_programs')
+            .update({ current_week: target.week_number, current_day: target.day_number })
+            .eq('id', completedPlanner.program_id);
+        } catch (advanceErr) {
+          console.error('Failed to advance programme current_week/current_day (non-blocking):', advanceErr);
+        }
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['cardio-session-planners'] });
+      queryClient.invalidateQueries({ queryKey: ['cardio-programs'] });
     },
   });
 
   const markSkipped = useMutation({
     mutationFn: async (plannerId: string) => {
-      const { error } = await supabase
+      const { data: skippedPlanner, error } = await supabase
         .from('cardio_session_planners')
         .update({ status: 'skipped' })
-        .eq('id', plannerId);
+        .eq('id', plannerId)
+        .select('program_id, week_number, day_number')
+        .single();
       if (error) throw error;
+
+      // Same "current" position advance as markComplete above, and for the
+      // same reason: a skip is still a resolved session, so the programme's
+      // frozen current_week/current_day shouldn't stay parked on it either.
+      if (skippedPlanner?.program_id) {
+        try {
+          const { data: nextPending } = await supabase
+            .from('cardio_session_planners')
+            .select('week_number, day_number')
+            .eq('program_id', skippedPlanner.program_id)
+            .eq('status', 'pending')
+            .order('week_number', { ascending: true })
+            .order('day_number', { ascending: true })
+            .limit(1)
+            .maybeSingle();
+
+          const target = nextPending || skippedPlanner;
+          await supabase
+            .from('cardio_programs')
+            .update({ current_week: target.week_number, current_day: target.day_number })
+            .eq('id', skippedPlanner.program_id);
+        } catch (advanceErr) {
+          console.error('Failed to advance programme current_week/current_day (non-blocking):', advanceErr);
+        }
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['cardio-session-planners'] });
+      queryClient.invalidateQueries({ queryKey: ['cardio-programs'] });
     },
   });
 
