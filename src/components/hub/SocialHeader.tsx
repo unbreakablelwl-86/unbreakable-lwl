@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { NotificationsPanel } from '@/components/hub/NotificationsPanel';
 import { useConversations } from '@/hooks/useConversations';
 import { useFriends } from '@/hooks/useFriends';
@@ -34,8 +34,22 @@ export function SocialHeader({
   const { unreadCount: notifCount } = useNotifications();
   const [showNotifications, setShowNotifications] = useState(false);
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const incomingRequestCount = pendingRequests.filter(r => r.type === 'received').length;
+
+  // Deep-link support: the "Alerts" tile in the More menu links to
+  // /social?tab=notifications — open the panel directly when that's present,
+  // then clear the param so it doesn't reopen on a later visit to /social.
+  useEffect(() => {
+    if (searchParams.get('tab') === 'notifications') {
+      setShowNotifications(true);
+      const next = new URLSearchParams(searchParams);
+      next.delete('tab');
+      setSearchParams(next, { replace: true });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
 
   return (
     <>

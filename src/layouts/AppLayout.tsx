@@ -39,6 +39,7 @@ import { useConversations } from '@/hooks/useConversations';
 import { useNotifications } from '@/hooks/useNotifications';
 import { useTokenBalance } from '@/hooks/useTokenBalance';
 import { useUserRole } from '@/hooks/useUserRole';
+import { useUnbreakable86 } from '@/hooks/useUnbreakable86';
 import { FEATURES } from '@/config/features';
 const shieldLogo = 'https://vlwcoqilwyfcrsxodtdx.supabase.co/storage/v1/object/public/site-assets/misc/unbreakable-shield.webp';
 import CasioZoneIcon from '@/components/icons/CasioZoneIcon';
@@ -383,14 +384,21 @@ export default function AppLayout() {
   const { currentTier, loading: tierLoading } = useTokenBalance();
   const { isAdminOrOwner, isOwner, role } = useUserRole();
   const isStaff = isOwner || isAdminOrOwner || role === 'dev' || role === 'coach';
+  // U86-active/completed members have their own Daily 7 tracker inside Unbreakable 86 —
+  // the generic Habit Tracker is a separate, out-of-sync tool for them, so it's hidden
+  // here the same way it's already hidden from HomeDashboard's quick actions and
+  // NavigationDrawer's hub-links menu.
+  const { enrolment: u86Enrolment } = useUnbreakable86();
+  const u86Active = !!u86Enrolment && (u86Enrolment.status === 'active' || u86Enrolment.status === 'completed');
   // Staff-only surfaces (Devs tools, admin/content studio, 1-2-1 coaching) are hidden from clients pre-launch.
   const NAV_ITEMS = useMemo(
     () => ALL_NAV_ITEMS.filter(n => {
       if (n.staffOnly && !isStaff) return false;
       if (n.flag && !FEATURES[n.flag] && !isStaff) return false;
+      if (n.id === 'habits' && u86Active) return false;
       return true;
     }),
-    [isStaff],
+    [isStaff, u86Active],
   );
   const isFreeUser = !tierLoading && (!currentTier || currentTier === 'free');
   // pillar theme removed — all neon orange
