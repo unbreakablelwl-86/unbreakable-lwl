@@ -207,6 +207,7 @@ export function FloatingZoneTimer() {
               {/* Play/Pause */}
               <button
                 onClick={(e) => { e.stopPropagation(); isRunning ? setIsRunning(false) : handleStart(); }}
+                aria-label={isRunning ? 'Pause zone timer' : 'Start zone timer'}
                 className="w-7 h-7 flex items-center justify-center rounded-full"
                 style={{ background: `${NEON_ORANGE}22`, border: `1px solid ${NEON_ORANGE}44` }}
               >
@@ -216,6 +217,7 @@ export function FloatingZoneTimer() {
               {/* Expand */}
               <button
                 onClick={(e) => { e.stopPropagation(); setExpanded(true); }}
+                aria-label="Expand zone timer"
                 className="w-6 h-6 flex items-center justify-center text-muted-foreground hover:text-white"
               >
                 <Maximize2 className="w-3.5 h-3.5" />
@@ -224,6 +226,7 @@ export function FloatingZoneTimer() {
               {/* Close */}
               <button
                 onClick={(e) => { e.stopPropagation(); handleClose(); }}
+                aria-label="Close zone timer"
                 className="w-6 h-6 flex items-center justify-center text-muted-foreground hover:text-red-400"
               >
                 <X className="w-3.5 h-3.5" />
@@ -250,12 +253,14 @@ export function FloatingZoneTimer() {
                 <div className="flex gap-1">
                   <button
                     onClick={() => setExpanded(false)}
+                    aria-label="Minimize zone timer"
                     className="w-6 h-6 flex items-center justify-center text-muted-foreground hover:text-white"
                   >
                     <ChevronDown className="w-4 h-4" />
                   </button>
                   <button
                     onClick={handleClose}
+                    aria-label="Close zone timer"
                     className="w-6 h-6 flex items-center justify-center text-muted-foreground hover:text-red-400"
                   >
                     <X className="w-4 h-4" />
@@ -283,7 +288,7 @@ export function FloatingZoneTimer() {
                 </svg>
                 <div className="flex flex-col items-center z-10">
                   {!isRunning && !isDone && (
-                    <button onClick={() => adjustTime(15)} className="text-muted-foreground hover:text-primary">
+                    <button onClick={() => adjustTime(15)} aria-label="Add 15 seconds" className="text-muted-foreground hover:text-primary">
                       <ChevronUp className="w-4 h-4" />
                     </button>
                   )}
@@ -300,7 +305,7 @@ export function FloatingZoneTimer() {
                     <span className="text-green-400 text-[9px] font-display tracking-widest">DONE</span>
                   )}
                   {!isRunning && !isDone && (
-                    <button onClick={() => adjustTime(-15)} className="text-muted-foreground hover:text-primary">
+                    <button onClick={() => adjustTime(-15)} aria-label="Subtract 15 seconds" className="text-muted-foreground hover:text-primary">
                       <ChevronDown className="w-4 h-4" />
                     </button>
                   )}
@@ -311,12 +316,14 @@ export function FloatingZoneTimer() {
               <div className="flex items-center justify-center gap-3 mb-3">
                 <button
                   onClick={handleReset}
+                  aria-label="Reset zone timer"
                   className="w-8 h-8 rounded-full flex items-center justify-center border border-border/30 text-muted-foreground hover:text-white"
                 >
                   <RotateCcw className="w-4 h-4" />
                 </button>
                 <button
                   onClick={isRunning ? () => setIsRunning(false) : handleStart}
+                  aria-label={isRunning ? 'Pause zone timer' : 'Start zone timer'}
                   className="w-11 h-11 rounded-full flex items-center justify-center"
                   style={{
                     background: isRunning ? 'hsl(var(--primary)/0.15)' : `linear-gradient(135deg, ${NEON_ORANGE}, #cc4400)`,

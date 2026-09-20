@@ -143,6 +143,7 @@ export function InlineRestTimer({
           {/* Timer section */}
           <button
             onClick={() => setIsExpanded(true)}
+            aria-label="Expand rest timer"
             className="flex items-center gap-1.5"
           >
             <Timer className="w-4 h-4" style={{ color: isDone ? '#22C55E' : isRunning ? NEON_ORANGE : '#888' }} />
@@ -173,7 +174,11 @@ export function InlineRestTimer({
             </div>
           ) : (
             <div className="flex items-center gap-1.5 ml-auto">
-              <button onClick={handleToggle} className="p-1 rounded hover:bg-muted/30 transition-colors">
+              <button
+                onClick={handleToggle}
+                aria-label={isDone ? 'Restart rest timer' : isRunning ? 'Pause rest timer' : 'Resume rest timer'}
+                className="p-1 rounded hover:bg-muted/30 transition-colors"
+              >
                 {isDone ? (
                   <RotateCcw className="w-3.5 h-3.5 text-green-400" />
                 ) : isRunning ? (
@@ -182,7 +187,7 @@ export function InlineRestTimer({
                   <Play className="w-3.5 h-3.5 text-primary" />
                 )}
               </button>
-              <button onClick={handleDismiss} className="p-1 rounded hover:bg-muted/30 transition-colors">
+              <button onClick={handleDismiss} aria-label="Dismiss rest timer" className="p-1 rounded hover:bg-muted/30 transition-colors">
                 <X className="w-3 h-3 text-muted-foreground" />
               </button>
             </div>
@@ -191,6 +196,7 @@ export function InlineRestTimer({
           {/* Expand arrow */}
           <button
             onClick={() => setIsExpanded(true)}
+            aria-label="Expand rest timer"
             className="p-1 hover:bg-muted/30 rounded transition-colors"
           >
             <ChevronUp className="w-3.5 h-3.5 text-muted-foreground" />
@@ -218,7 +224,7 @@ export function InlineRestTimer({
               {currentArtist && <p className="text-[9px] text-muted-foreground truncate">{currentArtist}</p>}
             </div>
             {onMusicToggle && (
-              <button onClick={onMusicToggle} className="p-1 rounded hover:bg-muted/30 transition-colors">
+              <button onClick={onMusicToggle} aria-label={isMusicPlaying ? 'Pause music' : 'Play music'} className="p-1 rounded hover:bg-muted/30 transition-colors">
                 {isMusicPlaying ? (
                   <Pause className="w-3 h-3 text-primary" />
                 ) : (
@@ -249,6 +255,7 @@ export function InlineRestTimer({
           </div>
           <button
             onClick={() => setIsExpanded(false)}
+            aria-label="Minimize rest timer"
             className="p-1 hover:bg-muted/30 rounded transition-colors"
           >
             <ChevronDown className="w-4 h-4 text-muted-foreground" />
@@ -343,7 +350,7 @@ export function InlineRestTimer({
               {currentArtist && <p className="text-[10px] text-muted-foreground truncate">{currentArtist}</p>}
             </div>
             {onMusicToggle && (
-              <button onClick={onMusicToggle} className="p-1.5 rounded-full hover:bg-muted/30 transition-colors border border-border/30">
+              <button onClick={onMusicToggle} aria-label={isMusicPlaying ? 'Pause music' : 'Play music'} className="p-1.5 rounded-full hover:bg-muted/30 transition-colors border border-border/30">
                 {isMusicPlaying ? (
                   <Pause className="w-4 h-4 text-primary" />
                 ) : (

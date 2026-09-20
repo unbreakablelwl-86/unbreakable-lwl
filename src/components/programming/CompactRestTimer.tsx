@@ -168,6 +168,7 @@ export function CompactRestTimer({ exerciseType = 'strength', onComplete, minimi
     return (
       <button
         onClick={onToggleMinimize}
+        aria-label="Expand rest timer"
         className={`w-full flex items-center justify-between gap-3 px-4 py-2.5 rounded-lg border-2 transition-all ${
           isRunning
             ? 'border-primary bg-primary/10'
@@ -205,6 +206,7 @@ export function CompactRestTimer({ exerciseType = 'strength', onComplete, minimi
       {/* Minimize handle */}
       <button
         onClick={onToggleMinimize}
+        aria-label="Minimize rest timer"
         className="w-full flex items-center justify-center py-1.5 text-muted-foreground hover:text-foreground transition-colors"
       >
         <ChevronDown className="w-4 h-4" />

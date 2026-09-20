@@ -68,9 +68,9 @@ export function MyFuel() {
     enabled: !!user,
   });
 
-  const { streak, goalsHitThisWeek } = useMemo(() => {
-    if (!recentLogs?.length || !goals?.daily_calories) {
-      return { streak: 0, goalsHitThisWeek: 0 };
+  const { streak, goalsHitThisWeek, loggedDateSet } = useMemo(() => {
+    if (!recentLogs?.length) {
+      return { streak: 0, goalsHitThisWeek: 0, loggedDateSet: new Set<string>() };
     }
     const logsByDate = new Map<string, number>();
     recentLogs.forEach(log => {
@@ -97,8 +97,8 @@ export function MyFuel() {
     weekDays.forEach(day => {
       if (logsByDate.has(format(day, 'yyyy-MM-dd'))) goalsHit++;
     });
-    return { streak: currentStreak, goalsHitThisWeek: goalsHit };
-  }, [recentLogs, goals]);
+    return { streak: currentStreak, goalsHitThisWeek: goalsHit, loggedDateSet: new Set(logsByDate.keys()) };
+  }, [recentLogs]);
 
   const handleSaveGoals = async () => {
     // Manually-set goals must actually stick as manual — otherwise the auto
@@ -286,14 +286,26 @@ export function MyFuel() {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-7 gap-2">
-                {eachDayOfInterval({ start: subDays(new Date(), 6), end: new Date() }).map((day) => (
-                  <div key={day.toISOString()} className="text-center">
-                    <p className="text-xs text-muted-foreground mb-1">{format(day, 'EEE')}</p>
-                    <div className="w-8 h-8 rounded-full bg-muted/30 flex items-center justify-center mx-auto">
-                      <span className="text-xs text-muted-foreground">{format(day, 'd')}</span>
+                {eachDayOfInterval({ start: subDays(new Date(), 6), end: new Date() }).map((day) => {
+                  // Was food actually logged on this day? This used to render
+                  // identical grey circles for every day regardless of real
+                  // data — loggedDateSet (built above from the same food-logs
+                  // query that already powers the streak/goalsHitThisWeek
+                  // tiles) was computed but never read here (JJ, Sept 2026).
+                  const logged = loggedDateSet.has(format(day, 'yyyy-MM-dd'));
+                  return (
+                    <div key={day.toISOString()} className="text-center">
+                      <p className="text-xs text-muted-foreground mb-1">{format(day, 'EEE')}</p>
+                      <div
+                        className={`w-8 h-8 rounded-full flex items-center justify-center mx-auto ${
+                          logged ? 'bg-primary text-primary-foreground' : 'bg-muted/30 text-muted-foreground'
+                        }`}
+                      >
+                        <span className="text-xs">{format(day, 'd')}</span>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
               <p className="text-center text-sm text-muted-foreground mt-4">Log food daily to track your progress</p>
             </CardContent>

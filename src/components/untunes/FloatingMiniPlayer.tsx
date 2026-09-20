@@ -251,6 +251,7 @@ export function FloatingMiniPlayer() {
                     <>
                       <button
                         onClick={togglePlay}
+                        aria-label={state.isPlaying ? 'Pause' : 'Play'}
                         className="w-8 h-8 rounded-full bg-primary flex items-center justify-center shadow-[0_0_12px_rgba(255,85,0,0.3)] active:scale-90 transition-transform"
                       >
                         {state.isPlaying ? (
@@ -259,10 +260,10 @@ export function FloatingMiniPlayer() {
                           <Play className="w-3.5 h-3.5 text-primary-foreground ml-0.5" />
                         )}
                       </button>
-                      <button onClick={nextTrack} className="p-1 text-muted-foreground active:text-foreground">
+                      <button onClick={nextTrack} aria-label="Next track" className="p-1 text-muted-foreground active:text-foreground">
                         <SkipForward className="w-3.5 h-3.5" />
                       </button>
-                      <button onClick={handleDismiss} className="p-1 text-muted-foreground/50 active:text-foreground">
+                      <button onClick={handleDismiss} aria-label="Dismiss mini player" className="p-1 text-muted-foreground/50 active:text-foreground">
                         <X className="w-3 h-3" />
                       </button>
                     </>
@@ -288,11 +289,11 @@ export function FloatingMiniPlayer() {
           >
             {/* Header */}
             <div className="flex items-center justify-between px-4 py-3 border-b border-border/30">
-              <button onClick={() => setExpanded(false)} className="w-10 h-10 flex items-center justify-center rounded-xl bg-primary/15 border border-primary/25 active:scale-90 transition-all">
+              <button onClick={() => setExpanded(false)} aria-label="Collapse player" className="w-10 h-10 flex items-center justify-center rounded-xl bg-primary/15 border border-primary/25 active:scale-90 transition-all">
                 <ChevronDown className="w-6 h-6 text-primary drop-shadow-[0_0_6px_rgba(255,85,0,0.5)]" />
               </button>
               <p className="font-display text-xs tracking-wider text-primary drop-shadow-[0_0_4px_rgba(255,85,0,0.5)]">NOW PLAYING</p>
-              <button className="w-10 h-10 flex items-center justify-center rounded-xl bg-muted/10 border border-border/30 active:scale-90 transition-all">
+              <button aria-label="Queue" className="w-10 h-10 flex items-center justify-center rounded-xl bg-muted/10 border border-border/30 active:scale-90 transition-all">
                 <ListMusic className="w-5 h-5 text-foreground" />
               </button>
             </div>
@@ -349,11 +350,13 @@ export function FloatingMiniPlayer() {
             <div className="flex items-center justify-center gap-4 px-6 mb-4">
               <button
                 onClick={toggleShuffle}
+                aria-label={state.shuffle ? 'Disable shuffle' : 'Enable shuffle'}
+                aria-pressed={state.shuffle}
                 className={`transition-colors ${state.shuffle ? 'text-primary drop-shadow-[0_0_6px_rgba(255,85,0,0.5)]' : 'text-white hover:text-primary'}`}
               >
                 <Shuffle className="w-4 h-4" />
               </button>
-              <button onClick={prevTrack} className="text-foreground hover:text-primary transition-colors">
+              <button onClick={prevTrack} aria-label="Previous track" className="text-foreground hover:text-primary transition-colors">
                 <SkipBack className="w-6 h-6" />
               </button>
               <button
@@ -368,6 +371,7 @@ export function FloatingMiniPlayer() {
               </button>
               <button
                 onClick={togglePlay}
+                aria-label={state.isPlaying ? 'Pause' : 'Play'}
                 className="w-14 h-14 rounded-full bg-primary flex items-center justify-center shadow-[0_0_24px_rgba(255,85,0,0.4)] hover:scale-105 active:scale-95 transition-transform"
               >
                 {state.isPlaying ? (
@@ -386,11 +390,13 @@ export function FloatingMiniPlayer() {
                   <span className="absolute text-[8px] font-bold mt-0.5">10</span>
                 </span>
               </button>
-              <button onClick={nextTrack} className="text-foreground hover:text-primary transition-colors">
+              <button onClick={nextTrack} aria-label="Next track" className="text-foreground hover:text-primary transition-colors">
                 <SkipForward className="w-6 h-6" />
               </button>
               <button
                 onClick={toggleRepeat}
+                aria-label={state.repeat === 'one' ? 'Repeat one: on' : state.repeat === 'all' ? 'Repeat all: on' : 'Repeat: off'}
+                aria-pressed={state.repeat !== 'off'}
                 className={`transition-colors ${state.repeat !== 'off' ? 'text-primary drop-shadow-[0_0_6px_rgba(255,85,0,0.5)]' : 'text-white hover:text-primary'}`}
               >
                 {state.repeat === 'one' ? <Repeat1 className="w-4 h-4" /> : <Repeat className="w-4 h-4" />}
@@ -401,16 +407,18 @@ export function FloatingMiniPlayer() {
             <div className="flex items-center justify-center gap-8 px-6 pb-[calc(env(safe-area-inset-bottom,8px)+2rem)]">
               <button
                 onClick={() => track && toggleLike(track.id)}
+                aria-label={track && isLiked(track.id) ? 'Unlike track' : 'Like track'}
+                aria-pressed={!!(track && isLiked(track.id))}
                 className={`transition-colors ${
                   track && isLiked(track.id) ? 'text-primary drop-shadow-[0_0_6px_rgba(255,85,0,0.5)]' : 'text-white hover:text-primary'
                 }`}
               >
                 <Dumbbell className="w-5 h-5" />
               </button>
-              <button onClick={() => setShowShareSheet(true)} className="text-white hover:text-primary transition-colors">
+              <button onClick={() => setShowShareSheet(true)} aria-label="Share to Timeline" className="text-white hover:text-primary transition-colors">
                 <MessageSquare className="w-5 h-5" />
               </button>
-              <button onClick={handleShare} className="text-white hover:text-primary transition-colors">
+              <button onClick={handleShare} aria-label="Share track" className="text-white hover:text-primary transition-colors">
                 <Share2 className="w-5 h-5" />
               </button>
               <button
@@ -427,10 +435,11 @@ export function FloatingMiniPlayer() {
                     : 'text-white/30 hover:text-white/50'
                 }`}
                 title="Download"
+                aria-label="Download"
               >
                 <Download className="w-5 h-5" />
               </button>
-              <button onClick={() => setShowVolume(!showVolume)} className="text-white hover:text-primary transition-colors">
+              <button onClick={() => setShowVolume(!showVolume)} aria-label={state.volume === 0 ? 'Unmute' : 'Volume'} className="text-white hover:text-primary transition-colors">
                 {state.volume === 0 ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
               </button>
             </div>

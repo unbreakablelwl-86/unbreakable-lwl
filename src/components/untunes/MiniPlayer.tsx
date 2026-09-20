@@ -193,11 +193,11 @@ export function UnTunesMiniPlayer() {
           >
             {/* Header */}
             <div className="flex items-center justify-between px-4 py-3 border-b border-border/30">
-              <button onClick={() => setExpanded(false)}>
+              <button onClick={() => setExpanded(false)} aria-label="Collapse player">
                 <ChevronDown className="w-5 h-5 text-muted-foreground" />
               </button>
               <p className="font-display text-xs tracking-wider text-primary drop-shadow-[0_0_4px_rgba(255,85,0,0.5)]">NOW PLAYING</p>
-              <button>
+              <button aria-label="Queue">
                 <ListMusic className="w-5 h-5 text-muted-foreground" />
               </button>
             </div>
@@ -253,15 +253,18 @@ export function UnTunesMiniPlayer() {
             <div className="flex items-center justify-center gap-6 px-6 mb-4">
               <button
                 onClick={toggleShuffle}
+                aria-label={state.shuffle ? 'Disable shuffle' : 'Enable shuffle'}
+                aria-pressed={state.shuffle}
                 className={`transition-colors ${state.shuffle ? 'text-primary drop-shadow-[0_0_6px_rgba(255,85,0,0.5)]' : 'text-muted-foreground hover:text-foreground'}`}
               >
                 <Shuffle className="w-4 h-4" />
               </button>
-              <button onClick={prevTrack} className="text-foreground hover:text-primary transition-colors">
+              <button onClick={prevTrack} aria-label="Previous track" className="text-foreground hover:text-primary transition-colors">
                 <SkipBack className="w-6 h-6" />
               </button>
               <button
                 onClick={togglePlay}
+                aria-label={state.isPlaying ? 'Pause' : 'Play'}
                 className="w-14 h-14 rounded-full bg-primary flex items-center justify-center shadow-[0_0_24px_rgba(255,85,0,0.4)] hover:scale-105 transition-transform"
               >
                 {state.isPlaying ? (
@@ -270,11 +273,13 @@ export function UnTunesMiniPlayer() {
                   <Play className="w-6 h-6 text-primary-foreground ml-0.5" />
                 )}
               </button>
-              <button onClick={nextTrack} className="text-foreground hover:text-primary transition-colors">
+              <button onClick={nextTrack} aria-label="Next track" className="text-foreground hover:text-primary transition-colors">
                 <SkipForward className="w-6 h-6" />
               </button>
               <button
                 onClick={toggleRepeat}
+                aria-label={state.repeat === 'one' ? 'Repeat one: on' : state.repeat === 'all' ? 'Repeat all: on' : 'Repeat: off'}
+                aria-pressed={state.repeat !== 'off'}
                 className={`transition-colors ${state.repeat !== 'off' ? 'text-primary drop-shadow-[0_0_6px_rgba(255,85,0,0.5)]' : 'text-muted-foreground hover:text-foreground'}`}
               >
                 {state.repeat === 'one' ? <Repeat1 className="w-4 h-4" /> : <Repeat className="w-4 h-4" />}
@@ -285,6 +290,8 @@ export function UnTunesMiniPlayer() {
             <div className="flex items-center justify-center gap-8 px-6 pb-[calc(env(safe-area-inset-bottom,8px)+2rem)]">
               <button
                 onClick={() => track && toggleLike(track.id)}
+                aria-label={track && isLiked(track.id) ? 'Unlike track' : 'Like track'}
+                aria-pressed={!!(track && isLiked(track.id))}
                 className={`transition-colors ${
                   track && isLiked(track.id)
                     ? 'text-primary drop-shadow-[0_0_6px_rgba(255,85,0,0.5)]'
@@ -297,17 +304,19 @@ export function UnTunesMiniPlayer() {
                 onClick={() => setShowShareSheet(true)}
                 className="text-muted-foreground hover:text-primary transition-colors"
                 title="Share to Timeline"
+                aria-label="Share to Timeline"
               >
                 <MessageSquare className="w-5 h-5" />
               </button>
-              <button onClick={handleShare} className="text-muted-foreground hover:text-primary transition-colors" title="Share text">
+              <button onClick={handleShare} className="text-muted-foreground hover:text-primary transition-colors" title="Share text" aria-label="Share track">
                 <Share2 className="w-5 h-5" />
               </button>
-              <button onClick={handleShareSocial} className="text-muted-foreground hover:text-primary transition-colors" title="Share to Instagram / Social">
+              <button onClick={handleShareSocial} className="text-muted-foreground hover:text-primary transition-colors" title="Share to Instagram / Social" aria-label="Share to Instagram or Social">
                 <Download className="w-5 h-5" />
               </button>
               <button
                 onClick={() => setShowVolume(!showVolume)}
+                aria-label={state.volume === 0 ? 'Unmute' : 'Volume'}
                 className="text-muted-foreground hover:text-primary transition-colors"
               >
                 {state.volume === 0 ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
@@ -368,6 +377,8 @@ export function UnTunesMiniPlayer() {
             <div className="flex items-center gap-2 shrink-0" onClick={(e) => e.stopPropagation()}>
               <button
                 onClick={() => track && toggleLike(track.id)}
+                aria-label={track && isLiked(track.id) ? 'Unlike track' : 'Like track'}
+                aria-pressed={!!(track && isLiked(track.id))}
                 className={`transition-colors ${
                   track && isLiked(track.id)
                     ? 'text-primary drop-shadow-[0_0_6px_rgba(255,85,0,0.5)]'
@@ -376,11 +387,12 @@ export function UnTunesMiniPlayer() {
               >
                 <Dumbbell className="w-4 h-4" />
               </button>
-              <button onClick={prevTrack} className="text-muted-foreground hover:text-foreground">
+              <button onClick={prevTrack} aria-label="Previous track" className="text-muted-foreground hover:text-foreground">
                 <SkipBack className="w-4 h-4" />
               </button>
               <button
                 onClick={togglePlay}
+                aria-label={state.isPlaying ? 'Pause' : 'Play'}
                 className="w-8 h-8 rounded-full bg-primary flex items-center justify-center shadow-[0_0_12px_rgba(255,85,0,0.3)]"
               >
                 {state.isPlaying ? (
@@ -389,7 +401,7 @@ export function UnTunesMiniPlayer() {
                   <Play className="w-3.5 h-3.5 text-primary-foreground ml-0.5" />
                 )}
               </button>
-              <button onClick={nextTrack} className="text-muted-foreground hover:text-foreground">
+              <button onClick={nextTrack} aria-label="Next track" className="text-muted-foreground hover:text-foreground">
                 <SkipForward className="w-4 h-4" />
               </button>
             </div>
