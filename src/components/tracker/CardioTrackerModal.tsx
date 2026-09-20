@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -100,7 +99,7 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
   const { checkAndAwardMedals } = useMedals();
   const { segments, matchRunToSegments, saveSegmentEfforts } = useSegments();
   // const { checkAndAwardTrophies } = useTrophies(); // Trophy system hidden for now
-  const { profile, refetch: refetchProfile } = useProfile();
+  const { profile } = useProfile();
   const { user } = useAuth();
   const { settings: userSettings } = useUserSettings();
   
@@ -696,33 +695,6 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
 
     const totalRuns = (profile?.total_runs || 0) + 1;
     const totalDistanceKm = (Number(profile?.total_distance_km) || 0) + runData.distance_km;
-    const totalTimeSeconds = (Number(profile?.total_time_seconds) || 0) + runData.duration_seconds;
-
-    // Persist the running totals we just computed (JJ, Sept 2026 — same class
-    // of bug as the cardio-programme "current_week" fix: profiles.total_runs/
-    // total_distance_km/total_time_seconds are shown on the profile card and
-    // fed to the AI coach, but nothing ever wrote them — they were frozen at
-    // whatever they started at (usually 0) no matter how many runs got
-    // logged. CombinedStatsView masked this by deriving its own totals live
-    // from the runs table each render, the same way "Next Session" masked
-    // the frozen cardio_programs columns. Best-effort: this is display/coach
-    // context bookkeeping, not the run itself, which is already durably
-    // saved regardless of what happens here.
-    if (user) {
-      try {
-        await supabase
-          .from('profiles')
-          .update({
-            total_runs: totalRuns,
-            total_distance_km: totalDistanceKm,
-            total_time_seconds: totalTimeSeconds,
-          })
-          .eq('user_id', user.id);
-        await refetchProfile();
-      } catch (statsErr) {
-        console.error('Failed to update profile running totals (non-blocking):', statsErr);
-      }
-    }
 
     const stats: MedalCheckStats = {
       totalRuns,
