@@ -53,7 +53,11 @@ export function ShareTrackSheet({ open, onOpenChange, track }: ShareTrackSheetPr
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="bottom" className="rounded-t-2xl border-border bg-card">
+      <SheetContent
+        side="bottom"
+        className="z-[9997] rounded-t-2xl border-border bg-card"
+        overlayClassName="z-[9996]"
+      >
         <SheetHeader className="text-left pb-2">
           <SheetTitle className="font-display tracking-wide text-base">Share to Timeline</SheetTitle>
         </SheetHeader>
