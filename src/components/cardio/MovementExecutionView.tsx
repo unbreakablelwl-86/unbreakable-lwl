@@ -337,8 +337,16 @@ export function MovementExecutionView({ program, onClose }: MovementExecutionVie
             className="flex-1 gap-2 font-display tracking-wide"
             onClick={() => setShowLiveTracker(true)}
           >
+            {/* This opens the same CardioTrackerModal as the standalone "Start
+             * Session" entry on the Movement hub, which has always offered a
+             * LIVE TRACK / MANUAL LOG toggle on its first screen — but this
+             * button used to be labelled "START LIVE TRACKING", so anyone who
+             * couldn't GPS-track (treadmill, indoor session, no signal) read
+             * SKIP as their only other option and had no way to log what they
+             * actually did. The manual tab was always one tap further in;
+             * the label just never said so (JJ, Sept 2026). */}
             <Play className="w-5 h-5" />
-            START LIVE TRACKING
+            START SESSION
           </Button>
           <Button
             variant="outline"
