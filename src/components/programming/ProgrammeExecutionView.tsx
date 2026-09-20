@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, useEffect } from 'react';
+import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -96,7 +96,7 @@ export function ProgrammeExecutionView({ program, onClose }: ProgrammeExecutionV
     addExerciseToSession,
     addSetToExercise,
   } = useWorkoutSessions();
-  const { updateProgress, setAutoTrack } = useTrainingPrograms();
+  const { updateProgress, setAutoTrack, startProgrammeExecution } = useTrainingPrograms();
   const { isDev } = useUserRole();
   const { toast } = useToast();
   
@@ -111,6 +111,27 @@ export function ProgrammeExecutionView({ program, onClose }: ProgrammeExecutionV
     window.addEventListener('open-gym-session', handler);
     return () => window.removeEventListener('open-gym-session', handler);
   }, [activeSession]);
+
+  // Self-heal a programme stuck showing "Session planners are being
+  // generated..." forever (JJ, Sept 2026 — found on a live active programme
+  // during the full-site audit: that message described something that was
+  // never actually happening. startProgrammeExecution normally generates
+  // planners at activation time, but if that step failed after is_active was
+  // already set — or the programme was activated by some other path — the
+  // programme is left active with zero planners and no code ever retries.
+  // startProgrammeExecution is safe to call again here: it only inserts
+  // planners when none exist yet, so this is a no-op for every normal
+  // programme and just fixes the ones that got stuck. Guarded to fire once
+  // per mount so a genuine, unrelated generation failure doesn't loop.
+  const hasAttemptedPlannerRecovery = useRef(false);
+  useEffect(() => {
+    if (plannersLoading) return;
+    if (planners && planners.length > 0) return;
+    if (hasAttemptedPlannerRecovery.current) return;
+    hasAttemptedPlannerRecovery.current = true;
+    startProgrammeExecution.mutate(program.id);
+  }, [plannersLoading, planners, program.id, startProgrammeExecution]);
+
   const [viewingResultSession, setViewingResultSession] = useState<WorkoutSession | null>(null);
   const [showEditor, setShowEditor] = useState(false);
   const [isSkipping, setIsSkipping] = useState(false);
@@ -461,10 +482,18 @@ export function ProgrammeExecutionView({ program, onClose }: ProgrammeExecutionV
   if (!planners || planners.length === 0) {
     return (
       <Card className="p-8 border border-border text-center border-border bg-card">
-        <Target className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+        {startProgrammeExecution.isPending ? (
+          <Loader2 className="w-12 h-12 text-muted-foreground mx-auto mb-4 animate-spin" />
+        ) : (
+          <Target className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+        )}
         <h3 className="font-display text-lg text-foreground mb-2">No Sessions Scheduled</h3>
         <p className="text-sm text-muted-foreground">
-          Session planners are being generated for this programme...
+          {startProgrammeExecution.isPending
+            ? 'Generating your session schedule...'
+            : startProgrammeExecution.isError
+              ? 'Something went wrong generating your schedule. Try reopening this programme, or contact support if it keeps happening.'
+              : 'Session planners are being generated for this programme...'}
         </p>
       </Card>
     );
