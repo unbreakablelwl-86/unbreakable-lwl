@@ -20,17 +20,10 @@ import AppLayout from "@/layouts/AppLayout";
 import { FloatingMiniPlayer } from "@/components/untunes/FloatingMiniPlayer";
 import { FloatingSessionTracker } from "@/components/tracker/FloatingSessionTracker";
 import { FloatingZoneTimer } from "@/components/timer/FloatingZoneTimer";
-import { usePresenceHeartbeat } from "@/hooks/usePresence";
 import { usePillarTheme } from "@/hooks/usePillarTheme";
 import CookieConsent from "@/components/CookieConsent";
 import { SkipToContent } from "@/components/a11y/SkipToContent";
 import { RouteAnnouncer } from "@/components/a11y/RouteAnnouncer";
-
-/** Runs presence heartbeat inside BrowserRouter context */
-function PresenceTracker() {
-  usePresenceHeartbeat();
-  return null;
-}
 
 /** Overrides --primary per section so neons match pillar colours */
 function PillarThemeTracker() {
@@ -141,7 +134,6 @@ const App = () => {
           <CookieConsent />
           {!splashDone && <SplashScreen onComplete={handleSplashComplete} />}
           <BrowserRouter>
-            <PresenceTracker />
             <PillarThemeTracker />
               <RouteAnnouncer />
             <Suspense fallback={<LazyFallback />}>

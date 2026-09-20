@@ -8,7 +8,6 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useFriends } from '@/hooks/useFriends';
 import { useConversations } from '@/hooks/useConversations';
-import { usePresence } from '@/hooks/usePresence';
 import { useBlockedUsers } from '@/hooks/useBlockedUsers';
 import { ReportUserButton } from '@/components/ReportUserButton';
 import { toast } from 'sonner';
@@ -47,7 +46,6 @@ export function UserProfileModal({ userId, onClose, onStartConversation }: UserP
   const { user } = useAuth();
   const { sendFriendRequest, acceptFriendRequest, cancelFriendRequest, getFriendshipStatus, refetch: refetchFriends } = useFriends();
   const { startConversation } = useConversations();
-  const { isUserOnline } = usePresence();
   const { blockUser, isUserBlocked, refetch: refetchBlocked } = useBlockedUsers();
 
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -187,7 +185,6 @@ export function UserProfileModal({ userId, onClose, onStartConversation }: UserP
     return 'U';
   };
 
-  const isOnline = userId ? isUserOnline(userId) : false;
   const isOwnProfile = user?.id === userId;
 
   return (
@@ -216,9 +213,6 @@ export function UserProfileModal({ userId, onClose, onStartConversation }: UserP
                     {getInitials()}
                   </AvatarFallback>
                 </Avatar>
-                {isOnline && (
-                  <span className="absolute bottom-1 right-1 w-4 h-4 bg-primary rounded-full border-2 border-card" />
-                )}
               </div>
 
               <div className="flex-1">

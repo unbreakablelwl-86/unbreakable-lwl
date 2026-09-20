@@ -58,7 +58,7 @@ function toTrainingProgram(row: {
   };
 }
 
-const MAX_ACTIVE_PROGRAMS = 999;
+const MAX_ACTIVE_PROGRAMS = 3;
 
 export function useTrainingPrograms() {
   const { user } = useAuth();

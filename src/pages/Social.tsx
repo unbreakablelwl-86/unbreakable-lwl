@@ -9,7 +9,6 @@ import { UserSearchModal } from '@/components/tracker/UserSearchModal';
 import { FriendRequestsModal } from '@/components/tracker/FriendRequestsModal';
 import { FriendsListModal } from '@/components/tracker/FriendsListModal';
 import { SocialHeader } from '@/components/hub/SocialHeader';
-import { usePresence } from '@/hooks/usePresence';
 
 type Tab = 'feed' | 'messages' | 'notifications';
 
@@ -22,7 +21,6 @@ export default function Social() {
   const [showUserSearch, setShowUserSearch] = useState(false);
   const [showFriendRequests, setShowFriendRequests] = useState(false);
   const [showFriendsList, setShowFriendsList] = useState(false);
-  usePresence();
 
   return (
     <div className="min-h-screen" >

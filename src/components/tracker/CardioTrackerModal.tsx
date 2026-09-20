@@ -557,6 +557,28 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
     }
   }, [isOpen, requestCurrentPosition, restartElapsedTimer, startGpsTracking]);
 
+  // Re-sync the pre-selected activity icon to whatever the caller wants
+  // whenever the modal is (re)opened with nothing to resume (JJ, Sept 2026 —
+  // reported as "Cycle" pre-highlighted when opening the tracker for a Run
+  // session). This modal is kept mounted between opens — callers toggle the
+  // `isOpen` prop rather than conditionally rendering it — so React's
+  // `useState(initialActivity)` initializer above only ever runs once, on
+  // the very first mount. Reopening it later for a DIFFERENT session
+  // (a different program's activityType, or a fresh freeform session after
+  // a previous one left something selected) left the PREVIOUS activity icon
+  // still highlighted instead of the new caller's initialActivity. Skip this
+  // when the restore effect above is about to take over for a genuinely
+  // in-progress background session, and don't stomp on an active tracking
+  // phase if one somehow started without a persisted session yet.
+  useEffect(() => {
+    if (!isOpen) return;
+    if (localStorage.getItem(STORAGE_KEY)) return;
+    if (phase === 'tracking') return;
+    setPhase('select');
+    setActivity(initialActivity || null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, initialActivity]);
+
   // Save session to localStorage whenever tracking state changes
   useEffect(() => {
     if (phase === 'tracking' && startTime && activity) {
