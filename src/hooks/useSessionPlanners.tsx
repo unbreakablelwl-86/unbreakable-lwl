@@ -156,14 +156,54 @@ export function useSessionPlanners(programId?: string) {
     },
   });
 
+  // Advance the parent training_programs row's "current" position after a
+  // planner resolves (JJ, Sept 2026 — same bug as the cardio programme fix:
+  // ProgrammeExecutionView already does this itself via updateProgress after
+  // every completion/skip it drives, but that only covers callers that
+  // remember to call it. Doing it here too means any caller of markComplete/
+  // markSkipped on this hook — including SessionPlannerView, which currently
+  // doesn't call updateProgress at all — gets it for free and can't
+  // reintroduce the "programme frozen on Week 1, Day 1" bug. Best-effort:
+  // this is display bookkeeping on the parent row, not the completion
+  // itself, which is already durably recorded on the planner regardless of
+  // what happens here.
+  const advanceProgramPosition = async (programId: string | null, resolvedWeek: number, resolvedDay: number) => {
+    if (!programId) return;
+    try {
+      const { data: nextPending } = await supabase
+        .from('session_planners')
+        .select('week_number, day_number')
+        .eq('program_id', programId)
+        .eq('status', 'pending')
+        .order('week_number', { ascending: true })
+        .order('day_number', { ascending: true })
+        .limit(1)
+        .maybeSingle();
+
+      const target = nextPending || { week_number: resolvedWeek, day_number: resolvedDay };
+      await supabase
+        .from('training_programs')
+        .update({ current_week: target.week_number, current_day: target.day_number })
+        .eq('id', programId);
+      queryClient.invalidateQueries({ queryKey: ['training-programs'] });
+      queryClient.invalidateQueries({ queryKey: ['active-programs'] });
+    } catch (advanceErr) {
+      console.error('Failed to advance programme current_week/current_day (non-blocking):', advanceErr);
+    }
+  };
+
   const markComplete = useMutation({
     mutationFn: async (plannerId: string) => {
-      const { error } = await supabase
+      const { data: completedPlanner, error } = await supabase
         .from('session_planners')
         .update({ status: 'completed' })
-        .eq('id', plannerId);
-      
+        .eq('id', plannerId)
+        .select('program_id, week_number, day_number')
+        .single();
+
       if (error) throw error;
+
+      await advanceProgramPosition(completedPlanner?.program_id ?? null, completedPlanner.week_number, completedPlanner.day_number);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['session-planners'] });
@@ -172,12 +212,16 @@ export function useSessionPlanners(programId?: string) {
 
   const markSkipped = useMutation({
     mutationFn: async (plannerId: string) => {
-      const { error } = await supabase
+      const { data: skippedPlanner, error } = await supabase
         .from('session_planners')
         .update({ status: 'skipped' })
-        .eq('id', plannerId);
-      
+        .eq('id', plannerId)
+        .select('program_id, week_number, day_number')
+        .single();
+
       if (error) throw error;
+
+      await advanceProgramPosition(skippedPlanner?.program_id ?? null, skippedPlanner.week_number, skippedPlanner.day_number);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['session-planners'] });
