@@ -213,6 +213,17 @@ serve(async (req) => {
     });
     logStep("Checkout session created", { sessionId: session.id, mode, idempotencyKey });
 
+    // Analytics (Commercial event slice, see claude/ANALYTICS_ARCHITECTURE.md).
+    // Non-blocking — a failure here must never affect the checkout response below.
+    if (grantsTrial) {
+      serviceClient.from("analytics_events").insert({
+        user_id: user.id,
+        event_name: "trial_started",
+        properties: { price_id: priceId, trial_days: TRIAL_OFFER_DAYS },
+        source: "server",
+      }).then(() => {}).catch((e: unknown) => logStep("Analytics insert failed (non-fatal)", { error: String(e) }));
+    }
+
     // If Tier 2 (121 coaching), notify all dev users
     if (COACHING_121_PRICES.has(priceId)) {
       logStep("121 coaching selected, notifying devs");

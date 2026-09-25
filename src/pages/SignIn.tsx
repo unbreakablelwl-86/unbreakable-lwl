@@ -60,6 +60,17 @@ function OtpInput({ value, onChange, disabled }: { value: string; onChange: (v: 
 }
 
 
+/** Age in whole years as of today, from a "yyyy-MM-dd" date-of-birth string. */
+function calculateAge(dobStr: string): number {
+  const dob = new Date(dobStr);
+  if (isNaN(dob.getTime())) return 0;
+  const today = new Date();
+  let age = today.getFullYear() - dob.getFullYear();
+  const monthDiff = today.getMonth() - dob.getMonth();
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) age--;
+  return age;
+}
+
 export default function SignIn() {
   const { user, signIn, signUp } = useAuth();
   const navigate = useNavigate();
@@ -82,6 +93,19 @@ export default function SignIn() {
   const [loading, setLoading] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
+  // Separate, explicit consent to processing health-related data (training/nutrition/
+  // wellbeing) -- kept distinct from the general Terms/Privacy checkbox per UK GDPR
+  // Article 9's requirement that special-category data have its own explicit consent,
+  // not one bundled into general terms acceptance. See Privacy.tsx section 11.
+  const [acceptedHealthDataConsent, setAcceptedHealthDataConsent] = useState(false);
+  // "Last updated" strings from Terms.tsx / Privacy.tsx, recorded alongside consent so a
+  // later policy change doesn't silently look like an existing member already agreed to it.
+  const TERMS_VERSION = 'August 2026'; // Terms.tsx's own "Last updated" date
+  const HEALTH_CONSENT_VERSION = 'September 2026'; // Privacy.tsx's "Last updated" date, after adding the health-data section below
+  // Matches the minimum age stated in Terms.tsx section 3 ("You must be at least 16
+  // years old to create an account") -- enforced here client-side for immediate
+  // feedback, and again server-side by a DB trigger as the authoritative check.
+  const MINIMUM_AGE = 16;
 
   // OTP verification state
   const [verifyStep, setVerifyStep] = useState(false);
@@ -123,8 +147,14 @@ export default function SignIn() {
       } else {
         if (!fullName.trim()) { setFormError('Enter your full name.'); setLoading(false); return; }
         if (!dateOfBirth) { setFormError('Enter your date of birth.'); setLoading(false); return; }
+        if (calculateAge(dateOfBirth) < MINIMUM_AGE) {
+          setFormError(`You must be at least ${MINIMUM_AGE} years old to create an account.`);
+          setLoading(false);
+          return;
+        }
         if (password.length < 6) { setFormError('Password must be at least 6 characters.'); setLoading(false); return; }
         if (!acceptedTerms) { setFormError('Please accept the terms.'); setLoading(false); return; }
+        if (!acceptedHealthDataConsent) { setFormError('Please consent to health-data processing to continue.'); setLoading(false); return; }
 
         const { error } = await signUp(email, password, fullName);
         if (error) {
@@ -165,10 +195,26 @@ export default function SignIn() {
         setFormError(error.message || 'Invalid code. Please try again.');
         toast.error('Invalid code. Please try again.');
       } else if (data?.user) {
-        // Email confirmed — now save profile extras (DOB, promo code)
+        // Email confirmed — now save profile extras (DOB, consent record, promo code)
         try {
-          if (dateOfBirth) {
-            await supabase.from('profiles').update({ date_of_birth: dateOfBirth }).eq('user_id', data.user.id);
+          const profileUpdates: Record<string, unknown> = {};
+          if (dateOfBirth) profileUpdates.date_of_birth = dateOfBirth;
+          if (acceptedTerms) {
+            profileUpdates.terms_accepted_at = new Date().toISOString();
+            profileUpdates.terms_version = TERMS_VERSION;
+          }
+          if (acceptedHealthDataConsent) {
+            profileUpdates.health_data_consent_at = new Date().toISOString();
+            profileUpdates.health_data_consent_version = HEALTH_CONSENT_VERSION;
+          }
+          if (Object.keys(profileUpdates).length > 0) {
+            const { error: profileError } = await supabase.from('profiles').update(profileUpdates).eq('user_id', data.user.id);
+            if (profileError) {
+              // The age-gate trigger lives on this same update (date_of_birth) — a
+              // rejection here means the DB refused an under-16 signup that somehow
+              // got past the client-side check above. Never silently swallow that.
+              console.error('Profile update (DOB/consent) failed:', profileError);
+            }
           }
           if (promoCode.trim()) {
             try {
@@ -468,25 +514,41 @@ export default function SignIn() {
           )}
 
           {mode === 'signup' && (
-            <label className="flex items-start gap-2.5 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={acceptedTerms}
-                onChange={e => setAcceptedTerms(e.target.checked)}
-                className="mt-0.5 w-4 h-4 rounded accent-[#FF5500]"
-              />
-              <span className="text-[11px] text-muted-foreground leading-relaxed">
-                I agree to the{' '}
-                <Link to="/terms" className="text-primary hover:underline">Terms</Link>
-                {' '}and{' '}
-                <Link to="/privacy" className="text-primary hover:underline">Privacy Policy</Link>
-              </span>
-            </label>
+            <div className="space-y-2.5">
+              <label className="flex items-start gap-2.5 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={acceptedTerms}
+                  onChange={e => setAcceptedTerms(e.target.checked)}
+                  className="mt-0.5 w-4 h-4 rounded accent-[#FF5500]"
+                />
+                <span className="text-[11px] text-muted-foreground leading-relaxed">
+                  I agree to the{' '}
+                  <Link to="/terms" className="text-primary hover:underline">Terms</Link>
+                  {' '}and{' '}
+                  <Link to="/privacy" className="text-primary hover:underline">Privacy Policy</Link>,
+                  and confirm I am at least {MINIMUM_AGE} years old.
+                </span>
+              </label>
+              <label className="flex items-start gap-2.5 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={acceptedHealthDataConsent}
+                  onChange={e => setAcceptedHealthDataConsent(e.target.checked)}
+                  className="mt-0.5 w-4 h-4 rounded accent-[#FF5500]"
+                />
+                <span className="text-[11px] text-muted-foreground leading-relaxed">
+                  I consent to Unbreakable processing my health-related data (training, nutrition
+                  and wellbeing information) as described in the{' '}
+                  <Link to="/privacy" className="text-primary hover:underline">Privacy Policy</Link>.
+                </span>
+              </label>
+            </div>
           )}
 
           <button
             type="submit"
-            disabled={loading || (mode === 'signup' && !acceptedTerms)}
+            disabled={loading || (mode === 'signup' && (!acceptedTerms || !acceptedHealthDataConsent))}
             className="w-full py-3.5 rounded-xl font-heading font-bold text-base uppercase tracking-wider text-foreground transition-all disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.98]"
             style={{
               boxShadow: loading ? 'none' : '0 0 20px rgba(255,85,0,0.35), 0 0 60px rgba(255,85,0,0.12)',

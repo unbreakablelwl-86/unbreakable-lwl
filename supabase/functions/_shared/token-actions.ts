@@ -57,12 +57,8 @@ export const TOKEN_ACTION_COSTS: Record<string, number> = {
   card_image: 25,
   card_video: 40,
 
-  // ─── Un-Tunes (not used by requireToken — purchase_untunes RPC has its
-  // own separate, real pricing; listed here only for completeness/parity
-  // with TOKEN_ACTIONS) ───
-  untunes_single: 25,
-  untunes_album: 200,
-  untunes_bundle: 50,
+  // Un-Tunes per-track/album/bundle purchases were removed (JJ, Sept 2026) — see
+  // supabase/functions/purchase-untunes (now a disabled 410 stub).
 };
 
 /**

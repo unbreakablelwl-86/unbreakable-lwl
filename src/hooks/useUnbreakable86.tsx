@@ -13,6 +13,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { trackEvent } from '@/lib/analytics';
 import { toast } from 'sonner';
 import type { U86Enrolment, U86DailyLog } from '@/lib/unbreakable86Types';
 import { u86DayBanked, u86CountDone, U86_MIN_HABITS, U86_TOTAL_HABITS } from '@/lib/unbreakable86Types';
@@ -58,11 +59,16 @@ export function useUnbreakable86() {
 
   const today = utcToday();
 
-  /* ─── Reset the calendar back to Day 1 (keeps the user's plan choices) ─── */
+  /* ─── Reset the calendar back to Day 1 (keeps the user's plan choices) ───
+   * `dayReached` / `trigger` are analytics-only (see ANALYTICS_ARCHITECTURE.md) —
+   * neither affects the reset logic itself, so a bad value here can't corrupt
+   * enrolment state. */
   const performReset = useCallback(async (
     enrolmentId: string,
     currentResets: number,
     quizAnswers: any,
+    dayReached?: number,
+    trigger?: 'missed_day' | 'manual',
   ) => {
     if (!user) return;
     await supabase
@@ -80,6 +86,12 @@ export function useUnbreakable86() {
         reset_count: (currentResets || 0) + 1,
         quiz_answers: quizAnswers ?? null,
       });
+
+    trackEvent('u86_reset_triggered', {
+      day_reached: dayReached ?? null,
+      reset_count: (currentResets || 0) + 1,
+      trigger: trigger ?? 'unknown',
+    });
   }, [user]);
 
   /* ─── Fetch active enrolment ─── */
@@ -152,7 +164,9 @@ export function useUnbreakable86() {
             await performReset(
               (enrolment as any).id,
               (enrolment as any).reset_count || 0,
-              (enrolment as any).quiz_answers
+              (enrolment as any).quiz_answers,
+              (enrolment as any).current_day,
+              'missed_day'
             );
             toast.error(`Day missed — fewer than ${U86_MIN_HABITS} of the Daily 7 logged. Back to Day 1. Keep showing up.`);
             setState(s => ({ ...s, loading: true }));
@@ -234,6 +248,7 @@ export function useUnbreakable86() {
 
     if (error) throw error;
     toast.success('UNBREAKABLE 86 activated. Day 1 starts now.');
+    trackEvent('u86_programme_started', { therapy_choice: therapyChoice });
     await fetchEnrolment();
     return data as U86Enrolment;
   }, [user, today, fetchEnrolment]);
@@ -345,6 +360,7 @@ export function useUnbreakable86() {
           // same session still showed "1" as COMPLETED until you refreshed,
           // even though the Day 2 dial/banner were already correct.
           setState(s => ({ ...s, completedDays: s.completedDays + 1 }));
+          trackEvent('u86_day_banked', { day_number: currentDay });
 
           const firstCompletion = currentDay >= 86 && !state.enrolment.completed_at;
           if (firstCompletion) {
@@ -359,6 +375,7 @@ export function useUnbreakable86() {
 
             if (enrolError) throw enrolError;
 
+            trackEvent('u86_programme_completed', { day_number: currentDay });
             maybeFireCertificateEmail(enrolmentId);
             await fetchEnrolment();
           }
@@ -411,6 +428,7 @@ export function useUnbreakable86() {
         setState(s => ({ ...s, completedDays: s.completedDays + 1 }));
 
         const dayNumber = state.todayLog.day_number;
+        trackEvent('u86_day_banked', { day_number: dayNumber });
         const firstCompletion = dayNumber >= 86 && !state.enrolment.completed_at;
         if (firstCompletion) {
           const { error: enrolError } = await supabase
@@ -422,6 +440,7 @@ export function useUnbreakable86() {
             })
             .eq('id', state.enrolment.id);
           if (enrolError) throw enrolError;
+          trackEvent('u86_programme_completed', { day_number: dayNumber });
           maybeFireCertificateEmail(state.enrolment.id);
           await fetchEnrolment();
         }
@@ -441,7 +460,13 @@ export function useUnbreakable86() {
 
   /* ─── Manual reset (user-triggered restart) ─── */
   const resetEnrolment = useCallback(async (enrolmentId: string, currentResets: number) => {
-    await performReset(enrolmentId, currentResets, state.enrolment?.quiz_answers ?? null);
+    await performReset(
+      enrolmentId,
+      currentResets,
+      state.enrolment?.quiz_answers ?? null,
+      state.enrolment?.current_day,
+      'manual'
+    );
     await fetchEnrolment();
   }, [performReset, fetchEnrolment, state.enrolment]);
 

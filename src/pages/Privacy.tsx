@@ -41,7 +41,7 @@ export default function Privacy() {
               PRIVACY POLICY
             </h1>
             <p className="text-muted-foreground mb-10">
-              Last updated: May 2026
+              Last updated: September 2026
             </p>
           </motion.div>
 
@@ -130,7 +130,30 @@ export default function Privacy() {
 
             <motion.section {...fadeUp}>
               <h2 className="font-display text-xl text-primary/90 tracking-wide mb-3">
-                6. YOUR RIGHTS
+                6. SPECIAL CATEGORY (HEALTH) DATA
+              </h2>
+              <p className="leading-relaxed">
+                Some of what you tell Unbreakable counts as "special category data" under UK GDPR —
+                things like your bodyweight, training numbers, allergies and dietary needs, and anything
+                you write in Mindset journaling. We only process this because you give us your explicit,
+                separate consent to do so at signup (a distinct checkbox from agreeing to these Terms),
+                as required by Article 9 of UK GDPR — it is never bundled into general acceptance of this
+                policy.
+              </p>
+              <p className="leading-relaxed mt-3">
+                You can withdraw this consent at any time by emailing{' '}
+                <a href="mailto:unbreakable.lwl@gmail.com" className="text-primary hover:underline">
+                  unbreakable.lwl@gmail.com
+                </a>. Withdrawing consent doesn't affect the lawfulness of anything we did with this data
+                before you withdrew it, but going forward we'll stop collecting new health-related data
+                from your account and you may lose access to features that depend on it (training logs,
+                nutrition tracking, Mindset journaling) until consent is given again.
+              </p>
+            </motion.section>
+
+            <motion.section {...fadeUp}>
+              <h2 className="font-display text-xl text-primary/90 tracking-wide mb-3">
+                7. YOUR RIGHTS
               </h2>
               <p className="leading-relaxed mb-3">
                 Under UK GDPR, you have the right to:
@@ -154,7 +177,7 @@ export default function Privacy() {
 
             <motion.section {...fadeUp}>
               <h2 className="font-display text-xl text-primary/90 tracking-wide mb-3">
-                7. COOKIES
+                8. COOKIES
               </h2>
               <p className="leading-relaxed">
                 We use essential cookies to keep you signed in and remember your preferences.
@@ -165,7 +188,7 @@ export default function Privacy() {
 
             <motion.section {...fadeUp}>
               <h2 className="font-display text-xl text-primary/90 tracking-wide mb-3">
-                8. DATA RETENTION
+                9. DATA RETENTION
               </h2>
               <p className="leading-relaxed">
                 We keep your data for as long as your account is active. If you delete your account,
@@ -176,7 +199,7 @@ export default function Privacy() {
 
             <motion.section {...fadeUp}>
               <h2 className="font-display text-xl text-primary/90 tracking-wide mb-3">
-                9. CHILDREN
+                10. CHILDREN
               </h2>
               <p className="leading-relaxed">
                 Unbreakable is not intended for children under 16. We do not knowingly collect data
@@ -187,7 +210,7 @@ export default function Privacy() {
 
             <motion.section {...fadeUp}>
               <h2 className="font-display text-xl text-primary/90 tracking-wide mb-3">
-                10. CHANGES TO THIS POLICY
+                11. CHANGES TO THIS POLICY
               </h2>
               <p className="leading-relaxed">
                 We may update this policy from time to time. We will notify you of significant changes

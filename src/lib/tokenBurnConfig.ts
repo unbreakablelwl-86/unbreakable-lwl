@@ -25,7 +25,7 @@
 
 import type { TierKey } from './subscriptionTiers';
 
-export type ActionCategory = 'free' | 'chat' | 'ai_build' | 'ai_analysis' | 'course' | 'bundle' | 'music';
+export type ActionCategory = 'free' | 'chat' | 'ai_build' | 'ai_analysis' | 'course';
 
 export interface TokenAction {
   id: string;
@@ -236,30 +236,12 @@ export const TOKEN_ACTIONS: Record<string, TokenAction> = {
     category: 'course' as ActionCategory,
     baseCost: 40,
   },
-
-  // ─── Un-Tunes music store ───
-  untunes_single: {
-    id: 'untunes_single',
-    name: 'Un-Tunes single',
-    description: 'Buy a single track + collectible card',
-    category: 'music',
-    baseCost: 25,
-  },
-  untunes_album: {
-    id: 'untunes_album',
-    name: 'Un-Tunes album',
-    description: 'Buy a full album + all track cards + album card',
-    category: 'music',
-    baseCost: 200,
-  },
-  untunes_bundle: {
-    id: 'untunes_bundle',
-    name: 'Un-Tunes bundle',
-    description: 'All albums bundle — price of 2, boosted rare odds',
-    category: 'bundle',
-    baseCost: 50,
-  },
 } as const;
+
+// Un-Tunes per-track/album/bundle token purchases were removed (JJ, Sept 2026) —
+// paying members get all tracks included. See supabase/functions/purchase-untunes
+// (now a disabled 410 stub) and claude/OPEN_QUESTIONS.md / FEATURE_STATUS.md in the
+// project docs for the decision record.
 
 // ─── BUNDLE PRICING (token costs) ───
 
@@ -360,8 +342,6 @@ export function getPaidActionsByCategory(): Record<ActionCategory, TokenAction[]
     ai_build: [],
     ai_analysis: [],
     course: [],
-    bundle: [],
-    music: [],
   };
 
   for (const action of Object.values(TOKEN_ACTIONS)) {

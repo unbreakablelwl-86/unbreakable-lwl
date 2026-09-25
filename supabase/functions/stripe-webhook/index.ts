@@ -226,6 +226,27 @@ serve(async (req) => {
     }).then(() => log("Notification sent")).catch(() => log("Notification error (non-fatal)"));
   }
 
+  // ── Analytics (Commercial event slice, see claude/ANALYTICS_ARCHITECTURE.md) ──
+  // Strictly additive / non-blocking: never throws, never changes control flow, status
+  // codes, or the idempotency guard above. A failure here must never cause Stripe to
+  // retry a webhook that otherwise processed successfully.
+  async function trackServerEvent(
+    eventName: string,
+    userId: string | null,
+    properties: Record<string, unknown> = {},
+  ) {
+    try {
+      await serviceClient.from("analytics_events").insert({
+        user_id: userId,
+        event_name: eventName,
+        properties,
+        source: "server",
+      });
+    } catch (e) {
+      log("Analytics insert failed (non-fatal)", { event: eventName, error: String(e) });
+    }
+  }
+
   try {
     switch (event.type) {
       // ━━━ CHECKOUT COMPLETED ━━━
@@ -284,6 +305,7 @@ serve(async (req) => {
             }).catch(() => {});
 
             log("Top-up processed", { userId, tokensAdded: topUp.tokens, newBalance });
+            trackServerEvent("payment_succeeded", userId, { kind: "top_up", tokens: topUp.tokens, label: topUp.label });
             break;
           }
 
@@ -330,6 +352,8 @@ serve(async (req) => {
               data: { course_keys: courseKeys, link: "/university" },
             });
           } catch (e) { log("Notification error (non-fatal)", { error: String(e) }); }
+
+          trackServerEvent("payment_succeeded", userId, { kind: "course_purchase", course_keys: courseKeys });
         }
 
         // ── Subscription checkout: AI token tier ──
@@ -374,6 +398,11 @@ serve(async (req) => {
             periodEnd,
             false, // not a renewal
           );
+
+          trackServerEvent("subscription_started", userId, {
+            tier: tier.name,
+            trial: subscription.status === "trialing",
+          });
         }
 
         break;
@@ -446,6 +475,8 @@ serve(async (req) => {
           true, // is renewal
         );
 
+        trackServerEvent("payment_succeeded", userId, { kind: "subscription_renewal", tier: tier.name });
+
         break;
       }
 
@@ -487,6 +518,8 @@ serve(async (req) => {
           body: "We couldn't process your last payment. Please update your payment method to keep your membership active.",
           data: { subscription_id: subscriptionId, attempt: invoice.attempt_count, link: "/ai-tokens" },
         }).catch(() => {});
+
+        trackServerEvent("payment_failed", userId, { subscription_id: subscriptionId, attempt: invoice.attempt_count });
 
         break;
       }
@@ -709,6 +742,29 @@ serve(async (req) => {
           userId, newTier: tier.name, oldTier: balRow?.current_tier,
         });
 
+        // Best-effort upgrade/downgrade classification by comparing monthly_tokens
+        // between the old and new tier. Never blocks or throws into the main flow.
+        try {
+          const oldTierName = balRow?.current_tier ?? null;
+          if (oldTierName && oldTierName !== tier.name) {
+            const { data: oldTier } = await serviceClient
+              .from("ai_tiers")
+              .select("monthly_tokens")
+              .eq("name", oldTierName)
+              .maybeSingle();
+
+            let eventName = "subscription_tier_changed";
+            if (oldTier && typeof oldTier.monthly_tokens === "number") {
+              if (tier.monthly_tokens > oldTier.monthly_tokens) eventName = "subscription_upgraded";
+              else if (tier.monthly_tokens < oldTier.monthly_tokens) eventName = "subscription_downgraded";
+            }
+
+            trackServerEvent(eventName, userId, { old_tier: oldTierName, new_tier: tier.name });
+          }
+        } catch (e) {
+          log("Upgrade/downgrade classification failed (non-fatal)", { error: String(e) });
+        }
+
         break;
       }
 
@@ -767,6 +823,7 @@ serve(async (req) => {
         }).catch(() => {});
 
         log("Subscription cancelled, downgraded to free", { userId });
+        trackServerEvent("subscription_cancelled", userId, { subscription_id: subscription.id });
 
         break;
       }

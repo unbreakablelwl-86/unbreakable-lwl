@@ -1,5 +1,6 @@
 import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { trackEvent } from '@/lib/analytics';
 import type { User, Session } from '@supabase/supabase-js';
 
 interface AuthContextType {
@@ -70,6 +71,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, fullName }),
       }).catch(() => undefined);
+
+      trackEvent('signup_completed', { method: 'email' });
     }
 
     return { error: error as Error | null };
