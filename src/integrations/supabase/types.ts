@@ -251,6 +251,36 @@ export type Database = {
         }
         Relationships: []
       }
+      analytics_events: {
+        Row: {
+          anonymous_id: string | null
+          created_at: string
+          event_name: string
+          id: string
+          properties: Json
+          source: string
+          user_id: string | null
+        }
+        Insert: {
+          anonymous_id?: string | null
+          created_at?: string
+          event_name: string
+          id?: string
+          properties?: Json
+          source?: string
+          user_id?: string | null
+        }
+        Update: {
+          anonymous_id?: string | null
+          created_at?: string
+          event_name?: string
+          id?: string
+          properties?: Json
+          source?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       blocked_users: {
         Row: {
           blocked_id: string
@@ -746,7 +776,7 @@ export type Database = {
           challenges: string | null
           check_in_number: number | null
           chest_cm: number | null
-          coach_id: string
+          coach_id: string | null
           coach_response: string | null
           created_at: string
           due_date: string | null
@@ -782,7 +812,7 @@ export type Database = {
           challenges?: string | null
           check_in_number?: number | null
           chest_cm?: number | null
-          coach_id: string
+          coach_id?: string | null
           coach_response?: string | null
           created_at?: string
           due_date?: string | null
@@ -818,7 +848,7 @@ export type Database = {
           challenges?: string | null
           check_in_number?: number | null
           chest_cm?: number | null
-          coach_id?: string
+          coach_id?: string | null
           coach_response?: string | null
           created_at?: string
           due_date?: string | null
@@ -1041,7 +1071,7 @@ export type Database = {
       coaching_session_bookings: {
         Row: {
           athlete_id: string
-          coach_id: string
+          coach_id: string | null
           coach_notes: string | null
           created_at: string | null
           end_time: string
@@ -1057,7 +1087,7 @@ export type Database = {
         }
         Insert: {
           athlete_id: string
-          coach_id: string
+          coach_id?: string | null
           coach_notes?: string | null
           created_at?: string | null
           end_time: string
@@ -1073,7 +1103,7 @@ export type Database = {
         }
         Update: {
           athlete_id?: string
-          coach_id?: string
+          coach_id?: string | null
           coach_notes?: string | null
           created_at?: string | null
           end_time?: string
@@ -1120,6 +1150,142 @@ export type Database = {
             columns: ["run_id"]
             isOneToOne: false
             referencedRelation: "runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      content_approval_log: {
+        Row: {
+          action: string
+          actor: string | null
+          content_item_id: string
+          created_at: string
+          id: string
+          notes: string | null
+          version_at_action: number
+        }
+        Insert: {
+          action: string
+          actor?: string | null
+          content_item_id: string
+          created_at?: string
+          id?: string
+          notes?: string | null
+          version_at_action: number
+        }
+        Update: {
+          action?: string
+          actor?: string | null
+          content_item_id?: string
+          created_at?: string
+          id?: string
+          notes?: string | null
+          version_at_action?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "content_approval_log_content_item_id_fkey"
+            columns: ["content_item_id"]
+            isOneToOne: false
+            referencedRelation: "content_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      content_items: {
+        Row: {
+          ai_generated: boolean
+          approved_at: string | null
+          approved_by: string | null
+          approved_version: number | null
+          brief: Json
+          claims_to_verify: Json
+          content_pillar: string
+          created_at: string
+          created_by: string | null
+          cta: string | null
+          current_version: number
+          draft_content: string | null
+          experiment_hypothesis: string | null
+          experiment_tag: string | null
+          format: string
+          generated_by_model: string | null
+          id: string
+          objective: string | null
+          parent_content_id: string | null
+          source_material: Json
+          status: Database["public"]["Enums"]["content_item_status"]
+          supporting_educational_concept: string | null
+          supporting_product_feature: string | null
+          target_audience: string | null
+          title: string
+          topic: string | null
+          updated_at: string
+        }
+        Insert: {
+          ai_generated?: boolean
+          approved_at?: string | null
+          approved_by?: string | null
+          approved_version?: number | null
+          brief?: Json
+          claims_to_verify?: Json
+          content_pillar: string
+          created_at?: string
+          created_by?: string | null
+          cta?: string | null
+          current_version?: number
+          draft_content?: string | null
+          experiment_hypothesis?: string | null
+          experiment_tag?: string | null
+          format: string
+          generated_by_model?: string | null
+          id?: string
+          objective?: string | null
+          parent_content_id?: string | null
+          source_material?: Json
+          status?: Database["public"]["Enums"]["content_item_status"]
+          supporting_educational_concept?: string | null
+          supporting_product_feature?: string | null
+          target_audience?: string | null
+          title: string
+          topic?: string | null
+          updated_at?: string
+        }
+        Update: {
+          ai_generated?: boolean
+          approved_at?: string | null
+          approved_by?: string | null
+          approved_version?: number | null
+          brief?: Json
+          claims_to_verify?: Json
+          content_pillar?: string
+          created_at?: string
+          created_by?: string | null
+          cta?: string | null
+          current_version?: number
+          draft_content?: string | null
+          experiment_hypothesis?: string | null
+          experiment_tag?: string | null
+          format?: string
+          generated_by_model?: string | null
+          id?: string
+          objective?: string | null
+          parent_content_id?: string | null
+          source_material?: Json
+          status?: Database["public"]["Enums"]["content_item_status"]
+          supporting_educational_concept?: string | null
+          supporting_product_feature?: string | null
+          target_audience?: string | null
+          title?: string
+          topic?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "content_items_parent_content_id_fkey"
+            columns: ["parent_content_id"]
+            isOneToOne: false
+            referencedRelation: "content_items"
             referencedColumns: ["id"]
           },
         ]
@@ -2004,6 +2170,59 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      marketing_content_ai_audit_log: {
+        Row: {
+          content_item_id: string | null
+          created_at: string
+          error_message: string | null
+          human_feedback: Json | null
+          id: string
+          input: Json
+          mode: string
+          model: string | null
+          output_summary: string | null
+          requested_by: string
+          response_status: string
+          sources_used: Json
+        }
+        Insert: {
+          content_item_id?: string | null
+          created_at?: string
+          error_message?: string | null
+          human_feedback?: Json | null
+          id?: string
+          input?: Json
+          mode: string
+          model?: string | null
+          output_summary?: string | null
+          requested_by: string
+          response_status: string
+          sources_used?: Json
+        }
+        Update: {
+          content_item_id?: string | null
+          created_at?: string
+          error_message?: string | null
+          human_feedback?: Json | null
+          id?: string
+          input?: Json
+          mode?: string
+          model?: string | null
+          output_summary?: string | null
+          requested_by?: string
+          response_status?: string
+          sources_used?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "marketing_content_ai_audit_log_content_item_id_fkey"
+            columns: ["content_item_id"]
+            isOneToOne: false
+            referencedRelation: "content_items"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       math_scores: {
         Row: {
@@ -2946,6 +3165,8 @@ export type Database = {
           created_at: string
           date_of_birth: string | null
           display_name: string | null
+          health_data_consent_at: string | null
+          health_data_consent_version: string | null
           id: string
           is_public: boolean
           location: string | null
@@ -2956,6 +3177,8 @@ export type Database = {
           social_tiktok: string | null
           social_twitter: string | null
           social_youtube: string | null
+          terms_accepted_at: string | null
+          terms_version: string | null
           total_distance_km: number | null
           total_runs: number | null
           total_time_seconds: number | null
@@ -2970,6 +3193,8 @@ export type Database = {
           created_at?: string
           date_of_birth?: string | null
           display_name?: string | null
+          health_data_consent_at?: string | null
+          health_data_consent_version?: string | null
           id?: string
           is_public?: boolean
           location?: string | null
@@ -2980,6 +3205,8 @@ export type Database = {
           social_tiktok?: string | null
           social_twitter?: string | null
           social_youtube?: string | null
+          terms_accepted_at?: string | null
+          terms_version?: string | null
           total_distance_km?: number | null
           total_runs?: number | null
           total_time_seconds?: number | null
@@ -2994,6 +3221,8 @@ export type Database = {
           created_at?: string
           date_of_birth?: string | null
           display_name?: string | null
+          health_data_consent_at?: string | null
+          health_data_consent_version?: string | null
           id?: string
           is_public?: boolean
           location?: string | null
@@ -3004,6 +3233,8 @@ export type Database = {
           social_tiktok?: string | null
           social_twitter?: string | null
           social_youtube?: string | null
+          terms_accepted_at?: string | null
+          terms_version?: string | null
           total_distance_km?: number | null
           total_runs?: number | null
           total_time_seconds?: number | null
@@ -3515,6 +3746,7 @@ export type Database = {
           activity_type: string
           average_speed_kph: number | null
           calories_burned: number | null
+          cardio_session_planner_id: string | null
           comments_enabled: boolean
           created_at: string
           description: string | null
@@ -3541,6 +3773,7 @@ export type Database = {
           activity_type?: string
           average_speed_kph?: number | null
           calories_burned?: number | null
+          cardio_session_planner_id?: string | null
           comments_enabled?: boolean
           created_at?: string
           description?: string | null
@@ -3567,6 +3800,7 @@ export type Database = {
           activity_type?: string
           average_speed_kph?: number | null
           calories_burned?: number | null
+          cardio_session_planner_id?: string | null
           comments_enabled?: boolean
           created_at?: string
           description?: string | null
@@ -3589,7 +3823,15 @@ export type Database = {
           visibility?: string
           weather_conditions?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "runs_cardio_session_planner_id_fkey"
+            columns: ["cardio_session_planner_id"]
+            isOneToOne: false
+            referencedRelation: "cardio_session_planners"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       saved_foods: {
         Row: {
@@ -3885,6 +4127,7 @@ export type Database = {
           coach_name: string | null
           comments_count: number | null
           content: string
+          content_item_id: string | null
           content_type: string
           context: string | null
           created_at: string
@@ -3919,6 +4162,7 @@ export type Database = {
           coach_name?: string | null
           comments_count?: number | null
           content: string
+          content_item_id?: string | null
           content_type: string
           context?: string | null
           created_at?: string
@@ -3953,6 +4197,7 @@ export type Database = {
           coach_name?: string | null
           comments_count?: number | null
           content?: string
+          content_item_id?: string | null
           content_type?: string
           context?: string | null
           created_at?: string
@@ -3984,6 +4229,13 @@ export type Database = {
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "social_posts_content_item_id_fkey"
+            columns: ["content_item_id"]
+            isOneToOne: false
+            referencedRelation: "content_items"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "social_posts_music_track_id_fkey"
             columns: ["music_track_id"]
@@ -5953,13 +6205,13 @@ export type Database = {
         Args: { _coach_id: string; _end: string; _start: string }
         Returns: Json
       }
-      get_feed_posts: {
-        Args: { p_limit?: number; p_offset?: number; p_user_id?: string }
-        Returns: Json[]
-      }
       get_customer_success_member_context: {
         Args: { p_member_user_id: string }
         Returns: Json
+      }
+      get_feed_posts: {
+        Args: { p_limit?: number; p_offset?: number; p_user_id?: string }
+        Returns: Json[]
       }
       get_founder_dashboard_metrics: {
         Args: {
@@ -6131,6 +6383,17 @@ export type Database = {
     }
     Enums: {
       app_role: "dev" | "coach" | "user"
+      content_item_status:
+        | "idea"
+        | "researching"
+        | "briefed"
+        | "draft"
+        | "review"
+        | "changes_requested"
+        | "approved"
+        | "ready_to_publish"
+        | "published"
+        | "archived"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -6259,6 +6522,18 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["dev", "coach", "user"],
+      content_item_status: [
+        "idea",
+        "researching",
+        "briefed",
+        "draft",
+        "review",
+        "changes_requested",
+        "approved",
+        "ready_to_publish",
+        "published",
+        "archived",
+      ],
     },
   },
 } as const

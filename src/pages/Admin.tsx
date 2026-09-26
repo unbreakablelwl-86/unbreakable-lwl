@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Users, Flag, Settings, Activity, Shield, UserCheck, Megaphone, ArrowLeft, Calendar, Bot, Sparkles, LineChart, MessageSquareText } from 'lucide-react';
+import { Users, Flag, Settings, Activity, Shield, UserCheck, Megaphone, ArrowLeft, Calendar, Bot, Sparkles, LineChart, MessageSquareText, PenSquare } from 'lucide-react';
 import { AdminProtectedRoute } from '@/components/admin/AdminProtectedRoute';
 import { useNavigate } from 'react-router-dom';
 import { AdminUsersPanel } from '@/components/admin/AdminUsersPanel';
@@ -11,11 +11,12 @@ import { DevCalendar } from '@/components/admin/DevCalendar';
 import { DevAIChat } from '@/components/admin/DevAIChat';
 import { FounderIntelligenceDashboard } from '@/components/admin/FounderIntelligenceDashboard';
 import { CustomerSuccessAIPanel } from '@/components/admin/CustomerSuccessAIPanel';
+import { MarketingContentAIPanel } from '@/components/admin/MarketingContentAIPanel';
 import { useUserRole } from '@/hooks/useUserRole';
 import CoachDashboard from '@/pages/CoachDashboard';
 import { motion, AnimatePresence } from 'framer-motion';
 
-type Tab = 'coaching' | 'users' | 'reports' | 'settings' | 'activity' | 'social' | 'calendar' | 'ai' | 'intel' | 'cs-ai';
+type Tab = 'coaching' | 'users' | 'reports' | 'settings' | 'activity' | 'social' | 'calendar' | 'ai' | 'intel' | 'cs-ai' | 'content-ai';
 
 const tabs: { id: Tab; label: string; icon: any; ownerOnly?: boolean; color: string }[] = [
   { id: 'coaching', label: 'COACHING', icon: UserCheck, color: '#FF5500' },
@@ -23,6 +24,7 @@ const tabs: { id: Tab; label: string; icon: any; ownerOnly?: boolean; color: str
   { id: 'reports', label: 'REPORTS', icon: Flag, color: '#FF5500' },
   { id: 'intel', label: 'INTEL', icon: LineChart, ownerOnly: true, color: '#FF5500' },
   { id: 'cs-ai', label: 'CS AI', icon: MessageSquareText, ownerOnly: true, color: '#FF5500' },
+  { id: 'content-ai', label: 'CONTENT AI', icon: PenSquare, ownerOnly: true, color: '#FF5500' },
   { id: 'settings', label: 'SETTINGS', icon: Settings, ownerOnly: true, color: '#FF5500' },
   { id: 'activity', label: 'LOGS', icon: Activity, color: '#FF5500' },
   { id: 'social', label: 'SOCIAL', icon: Megaphone, color: '#FF5500' },
@@ -133,6 +135,7 @@ export default function Admin() {
               {activeTab === 'reports' && <AdminReportsPanel />}
               {activeTab === 'intel' && isOwner && <FounderIntelligenceDashboard />}
               {activeTab === 'cs-ai' && isOwner && <CustomerSuccessAIPanel />}
+              {activeTab === 'content-ai' && isOwner && <MarketingContentAIPanel />}
               {activeTab === 'settings' && isOwner && <AdminSettingsPanel />}
               {activeTab === 'activity' && <AdminActivityPanel />}
               {activeTab === 'social' && <SocialCommandCentre />}
