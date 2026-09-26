@@ -60,6 +60,15 @@ function OtpInput({ value, onChange, disabled }: { value: string; onChange: (v: 
 }
 
 
+// "New Beginning" launch offer — mirrors create-checkout's own TRIAL_OFFER_CODE /
+// TRIAL_ELIGIBLE_PRICES. NEWBEGINNING7 is NOT a row in the `promo_codes` table (that
+// table is for a separate, unrelated free-tokens/tier-grant promo system) — it's a
+// Stripe-checkout-only code that create-checkout validates itself. Typing it into
+// this form's Promo Code field must go straight to that checkout, not to
+// redeem-promo-code (which would just return "Invalid or expired promo code").
+const TRIAL_OFFER_CODE = 'NEWBEGINNING7';
+const FOUNDATION_TRIAL_PRICE_ID = 'price_1TxFZED5KOEmeWH2ZSHP5Azn'; // Foundation £50/mo, matches subscriptionTiers.ts
+
 /** Age in whole years as of today, from a "yyyy-MM-dd" date-of-birth string. */
 function calculateAge(dobStr: string): number {
   const dob = new Date(dobStr);
@@ -196,6 +205,7 @@ export default function SignIn() {
         toast.error('Invalid code. Please try again.');
       } else if (data?.user) {
         // Email confirmed — now save profile extras (DOB, consent record, promo code)
+        let redirectingToCheckout = false;
         try {
           const profileUpdates: Record<string, unknown> = {};
           if (dateOfBirth) profileUpdates.date_of_birth = dateOfBirth;
@@ -216,7 +226,30 @@ export default function SignIn() {
               console.error('Profile update (DOB/consent) failed:', profileError);
             }
           }
-          if (promoCode.trim()) {
+
+          const normalizedPromo = promoCode.trim().toUpperCase();
+          // Either the "7 days free coaching" landing CTA (?plan=trial) or typing
+          // NEWBEGINNING7 directly into this form's Promo Code field should land the
+          // member on Stripe checkout for the trial — not bounce them to a plain free
+          // account, and not require a second manual code entry on AI Tokens.
+          if (wantsTrial || normalizedPromo === TRIAL_OFFER_CODE) {
+            try {
+              const { data: checkoutData, error: checkoutError } = await supabase.functions.invoke('create-checkout', {
+                body: { priceId: FOUNDATION_TRIAL_PRICE_ID, promoCode: TRIAL_OFFER_CODE },
+              });
+              if (!checkoutError && checkoutData?.url) {
+                redirectingToCheckout = true;
+                toast.success('Email verified! Taking you to checkout for your 7-day free trial. 🔥');
+                window.location.href = checkoutData.url;
+              } else {
+                console.error('Trial checkout error:', checkoutError);
+                toast.error("Couldn't start your free trial checkout — head to AI Tokens to try again.");
+              }
+            } catch (checkoutErr) {
+              console.error('Failed to start trial checkout:', checkoutErr);
+              toast.error("Couldn't start your free trial checkout — head to AI Tokens to try again.");
+            }
+          } else if (promoCode.trim()) {
             try {
               const { data: promoResult, error: promoError } = await supabase.functions.invoke('redeem-promo-code', {
                 body: { code: promoCode.trim() },
@@ -233,10 +266,9 @@ export default function SignIn() {
             }
           }
         } catch {}
-        toast.success('Email verified! Welcome to the movement. 🔥');
-        if (wantsTrial) {
-          navigate('/ai-tokens?promo=NEWBEGINNING7');
-        } else {
+
+        if (!redirectingToCheckout) {
+          toast.success('Email verified! Welcome to the movement. 🔥');
           navigate('/');
         }
       }

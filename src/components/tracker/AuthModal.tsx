@@ -16,6 +16,15 @@ interface AuthModalProps {
   defaultMode?: 'signin' | 'signup';
 }
 
+// "New Beginning" launch offer — mirrors create-checkout's own TRIAL_OFFER_CODE /
+// TRIAL_ELIGIBLE_PRICES. NEWBEGINNING7 is NOT a row in the `promo_codes` table (that
+// table is for a separate, unrelated free-tokens/tier-grant promo system) — it's a
+// Stripe-checkout-only code that create-checkout validates itself. Typing it into
+// this form's Promo Code field must go straight to that checkout, not to
+// redeem-promo-code (which would just return "Invalid or expired promo code").
+const TRIAL_OFFER_CODE = 'NEWBEGINNING7';
+const FOUNDATION_TRIAL_PRICE_ID = 'price_1TxFZED5KOEmeWH2ZSHP5Azn'; // Foundation £50/mo, matches subscriptionTiers.ts
+
 /* ═══ OTP Code Input — 6 individual digits ═══ */
 function OtpInput({ value, onChange, disabled }: { value: string; onChange: (v: string) => void; disabled?: boolean }) {
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
@@ -202,11 +211,33 @@ export function AuthModal({ isOpen, onClose, defaultMode = 'signin' }: AuthModal
         toast.error('Invalid code. Please try again.');
       } else if (data?.user) {
         // Email confirmed — now save profile extras (DOB, promo code)
+        let redirectingToCheckout = false;
         try {
           if (dateOfBirth) {
             await supabase.from('profiles').update({ date_of_birth: dateOfBirth }).eq('user_id', data.user.id);
           }
-          if (promoCode.trim()) {
+
+          const normalizedPromo = promoCode.trim().toUpperCase();
+          if (normalizedPromo === TRIAL_OFFER_CODE) {
+            // Straight to Stripe checkout for the trial — not redeem-promo-code, which
+            // doesn't know this code and would just report it invalid.
+            try {
+              const { data: checkoutData, error: checkoutError } = await supabase.functions.invoke('create-checkout', {
+                body: { priceId: FOUNDATION_TRIAL_PRICE_ID, promoCode: TRIAL_OFFER_CODE },
+              });
+              if (!checkoutError && checkoutData?.url) {
+                redirectingToCheckout = true;
+                toast.success('Email verified! Taking you to checkout for your 7-day free trial.');
+                window.location.href = checkoutData.url;
+              } else {
+                console.error('Trial checkout error:', checkoutError);
+                toast.error("Couldn't start your free trial checkout — head to AI Tokens to try again.");
+              }
+            } catch (checkoutErr) {
+              console.error('Failed to start trial checkout:', checkoutErr);
+              toast.error("Couldn't start your free trial checkout — head to AI Tokens to try again.");
+            }
+          } else if (promoCode.trim()) {
             try {
               const { data: promoResult, error: promoError } = await supabase.functions.invoke('redeem-promo-code', {
                 body: { code: promoCode.trim() },
@@ -225,12 +256,17 @@ export function AuthModal({ isOpen, onClose, defaultMode = 'signin' }: AuthModal
         } catch (dobErr) {
           console.error('Failed to save DOB:', dobErr);
         }
-        // Meta Pixel — track signup conversion
+
+        // Meta Pixel — track signup conversion (registration happened either way,
+        // even when we're about to redirect on to Stripe checkout below)
         if (typeof window !== 'undefined' && (window as any).fbq) {
           (window as any).fbq('track', 'CompleteRegistration');
         }
-        toast.success('Email verified! Welcome to the movement.');
-        onClose();
+
+        if (!redirectingToCheckout) {
+          toast.success('Email verified! Welcome to the movement.');
+          onClose();
+        }
       }
     } catch (err: any) {
       setFormError(err?.message || 'Verification failed.');
