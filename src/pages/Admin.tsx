@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Users, Flag, Settings, Activity, Shield, UserCheck, Megaphone, ArrowLeft, Calendar, Bot, Sparkles } from 'lucide-react';
+import { Users, Flag, Settings, Activity, Shield, UserCheck, Megaphone, ArrowLeft, Calendar, Bot, Sparkles, LineChart } from 'lucide-react';
 import { AdminProtectedRoute } from '@/components/admin/AdminProtectedRoute';
 import { useNavigate } from 'react-router-dom';
 import { AdminUsersPanel } from '@/components/admin/AdminUsersPanel';
@@ -9,16 +9,18 @@ import { AdminActivityPanel } from '@/components/admin/AdminActivityPanel';
 import { SocialCommandCentre } from '@/components/admin/SocialCommandCentre';
 import { DevCalendar } from '@/components/admin/DevCalendar';
 import { DevAIChat } from '@/components/admin/DevAIChat';
+import { FounderIntelligenceDashboard } from '@/components/admin/FounderIntelligenceDashboard';
 import { useUserRole } from '@/hooks/useUserRole';
 import CoachDashboard from '@/pages/CoachDashboard';
 import { motion, AnimatePresence } from 'framer-motion';
 
-type Tab = 'coaching' | 'users' | 'reports' | 'settings' | 'activity' | 'social' | 'calendar' | 'ai';
+type Tab = 'coaching' | 'users' | 'reports' | 'settings' | 'activity' | 'social' | 'calendar' | 'ai' | 'intel';
 
 const tabs: { id: Tab; label: string; icon: any; ownerOnly?: boolean; color: string }[] = [
   { id: 'coaching', label: 'COACHING', icon: UserCheck, color: '#FF5500' },
   { id: 'users', label: 'USERS', icon: Users, color: '#FF5500' },
   { id: 'reports', label: 'REPORTS', icon: Flag, color: '#FF5500' },
+  { id: 'intel', label: 'INTEL', icon: LineChart, ownerOnly: true, color: '#FF5500' },
   { id: 'settings', label: 'SETTINGS', icon: Settings, ownerOnly: true, color: '#FF5500' },
   { id: 'activity', label: 'LOGS', icon: Activity, color: '#FF5500' },
   { id: 'social', label: 'SOCIAL', icon: Megaphone, color: '#FF5500' },
@@ -127,6 +129,7 @@ export default function Admin() {
               {activeTab === 'coaching' && <CoachDashboard embedded />}
               {activeTab === 'users' && <AdminUsersPanel />}
               {activeTab === 'reports' && <AdminReportsPanel />}
+              {activeTab === 'intel' && isOwner && <FounderIntelligenceDashboard />}
               {activeTab === 'settings' && isOwner && <AdminSettingsPanel />}
               {activeTab === 'activity' && <AdminActivityPanel />}
               {activeTab === 'social' && <SocialCommandCentre />}

@@ -5906,6 +5906,15 @@ export type Database = {
         Args: { p_limit?: number; p_offset?: number; p_user_id?: string }
         Returns: Json[]
       }
+      get_founder_dashboard_metrics: {
+        Args: {
+          p_end: string
+          p_prev_end?: string
+          p_prev_start?: string
+          p_start: string
+        }
+        Returns: Json
+      }
       get_my_cards: {
         Args: { _uid?: string }
         Returns: {
