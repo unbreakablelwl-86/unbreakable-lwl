@@ -6491,6 +6491,7 @@ export type Database = {
         Args: { _coach_id: string; _end: string; _start: string }
         Returns: Json
       }
+      get_community_intelligence_overview: { Args: never; Returns: Json }
       get_customer_success_member_context: {
         Args: { p_member_user_id: string }
         Returns: Json

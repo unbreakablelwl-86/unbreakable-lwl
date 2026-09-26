@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Users, Flag, Settings, Activity, Shield, UserCheck, Megaphone, ArrowLeft, Calendar, Bot, Sparkles, LineChart, MessageSquareText, PenSquare, LayoutDashboard } from 'lucide-react';
+import { Users, Flag, Settings, Activity, Shield, UserCheck, Megaphone, ArrowLeft, Calendar, Bot, Sparkles, LineChart, MessageSquareText, PenSquare, LayoutDashboard, Users2 } from 'lucide-react';
 import { AdminProtectedRoute } from '@/components/admin/AdminProtectedRoute';
 import { useNavigate } from 'react-router-dom';
 import { AdminUsersPanel } from '@/components/admin/AdminUsersPanel';
@@ -13,11 +13,12 @@ import { FounderIntelligenceDashboard } from '@/components/admin/FounderIntellig
 import { CustomerSuccessAIPanel } from '@/components/admin/CustomerSuccessAIPanel';
 import { MarketingContentAIPanel } from '@/components/admin/MarketingContentAIPanel';
 import { UnbreakableHQPanel } from '@/components/admin/UnbreakableHQPanel';
+import { CommunityIntelligencePanel } from '@/components/admin/CommunityIntelligencePanel';
 import { useUserRole } from '@/hooks/useUserRole';
 import CoachDashboard from '@/pages/CoachDashboard';
 import { motion, AnimatePresence } from 'framer-motion';
 
-type Tab = 'coaching' | 'users' | 'reports' | 'settings' | 'activity' | 'social' | 'calendar' | 'ai' | 'intel' | 'cs-ai' | 'content-ai' | 'hq';
+type Tab = 'coaching' | 'users' | 'reports' | 'settings' | 'activity' | 'social' | 'calendar' | 'ai' | 'intel' | 'cs-ai' | 'content-ai' | 'community-ai' | 'hq';
 
 const tabs: { id: Tab; label: string; icon: any; ownerOnly?: boolean; color: string }[] = [
   { id: 'hq', label: 'HQ', icon: LayoutDashboard, ownerOnly: true, color: '#FF5500' },
@@ -27,6 +28,7 @@ const tabs: { id: Tab; label: string; icon: any; ownerOnly?: boolean; color: str
   { id: 'intel', label: 'INTEL', icon: LineChart, ownerOnly: true, color: '#FF5500' },
   { id: 'cs-ai', label: 'CS AI', icon: MessageSquareText, ownerOnly: true, color: '#FF5500' },
   { id: 'content-ai', label: 'CONTENT AI', icon: PenSquare, ownerOnly: true, color: '#FF5500' },
+  { id: 'community-ai', label: 'COMMUNITY AI', icon: Users2, ownerOnly: true, color: '#FF5500' },
   { id: 'settings', label: 'SETTINGS', icon: Settings, ownerOnly: true, color: '#FF5500' },
   { id: 'activity', label: 'LOGS', icon: Activity, color: '#FF5500' },
   { id: 'social', label: 'SOCIAL', icon: Megaphone, color: '#FF5500' },
@@ -139,6 +141,7 @@ export default function Admin() {
               {activeTab === 'intel' && isOwner && <FounderIntelligenceDashboard />}
               {activeTab === 'cs-ai' && isOwner && <CustomerSuccessAIPanel />}
               {activeTab === 'content-ai' && isOwner && <MarketingContentAIPanel />}
+              {activeTab === 'community-ai' && isOwner && <CommunityIntelligencePanel />}
               {activeTab === 'settings' && isOwner && <AdminSettingsPanel />}
               {activeTab === 'activity' && <AdminActivityPanel />}
               {activeTab === 'social' && <SocialCommandCentre />}
