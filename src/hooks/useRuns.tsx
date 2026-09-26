@@ -28,6 +28,9 @@ export interface Run {
   is_public: boolean | null;
   visibility: 'public' | 'friends' | 'private';
   comments_enabled: boolean;
+  // Set when this run was started from a scheduled cardio programme session
+  // rather than as a freeform run — see CardioTrackerModal's plannerId prop.
+  cardio_session_planner_id?: string | null;
   created_at: string;
   updated_at: string;
 }

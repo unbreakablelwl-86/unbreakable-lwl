@@ -43,7 +43,7 @@ export function MovementExecutionView({ program, onClose }: MovementExecutionVie
   // its own manual-entry tab covers the no-GPS fallback too, so the old
   // bespoke completion dialog is no longer needed.
   const [showLiveTracker, setShowLiveTracker] = useState(false);
-  const { markComplete, markSkipped, swapSession, applyProgression } = useCardioSessionPlanners(program.id);
+  const { markSkipped, swapSession, applyProgression } = useCardioSessionPlanners(program.id);
   const { startProgrammeExecution } = useCardioPrograms();
   const [viewingResultIndex, setViewingResultIndex] = useState(0);
   const { toast } = useToast();
@@ -121,11 +121,12 @@ export function MovementExecutionView({ program, onClose }: MovementExecutionVie
     const planner = activeSessionPlanner;
     if (!planner) return;
 
-    markComplete.mutate({
-      plannerId: planner.id,
-      actualDuration: durationMinutes,
-      actualDistance: distanceKm,
-    });
+    // Marking the planner complete now happens INSIDE CardioTrackerModal
+    // itself (via the plannerId/programId props passed below), not here —
+    // that's what makes it survive the user closing this view, reloading,
+    // or finishing the session later from the floating pill on a totally
+    // different page, none of which keep this component (or this callback)
+    // mounted to hear about it (JJ, Sept 2026).
 
     // Auto-award PB Card for cardio session
     try {
@@ -406,6 +407,8 @@ export function MovementExecutionView({ program, onClose }: MovementExecutionVie
           isOpen={showLiveTracker}
           onClose={() => setShowLiveTracker(false)}
           initialActivity={program.program_data.activityType}
+          plannerId={activeSessionPlanner.id}
+          programId={program.id}
           onSessionSaved={handleTrackerSessionSaved}
         />
       </div>

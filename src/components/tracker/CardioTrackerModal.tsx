@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useRuns } from '@/hooks/useRuns';
+import { useCardioSessionPlanners } from '@/hooks/useCardioSessionPlanners';
 import { usePersonalRecords } from '@/hooks/usePersonalRecords';
 import { useMedals } from '@/hooks/useMedals';
 import { useSegments } from '@/hooks/useSegments';
@@ -36,6 +37,17 @@ interface CardioTrackerModalProps {
   isOpen: boolean;
   onClose: () => void;
   initialActivity?: 'walk' | 'run' | 'cycle' | 'row' | 'swim';
+  // When set, this session was launched from a scheduled cardio programme
+  // day (MovementExecutionView) rather than as a freeform session. The
+  // modal persists these into its own localStorage session state (see
+  // STORAGE_KEY below) the moment tracking starts, and restores them from
+  // there on remount — so the link back to the programme survives a reload
+  // or a resume via the floating session pill on a completely different
+  // page/component, not just while the original caller stays mounted
+  // (JJ, Sept 2026 — a session resumed away from the programme view was
+  // saving fine as a run but silently never marking the scheduled day done).
+  plannerId?: string;
+  programId?: string;
   // Stats are passed back (not just a bare notification) so callers driving
   // a programmed session — see MovementExecutionView — can mark their own
   // planner complete with what was actually tracked, whether that came from
@@ -93,8 +105,9 @@ const ACTIVITY_CONFIG = {
   },
 };
 
-export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSessionSaved }: CardioTrackerModalProps) {
+export function CardioTrackerModal({ isOpen, onClose, initialActivity, plannerId, programId, onSessionSaved }: CardioTrackerModalProps) {
   const { createRun } = useRuns();
+  const { markComplete: markPlannerComplete } = useCardioSessionPlanners();
   const { checkAndUpdatePRs } = usePersonalRecords();
   const { checkAndAwardMedals } = useMedals();
   const { segments, matchRunToSegments, saveSegmentEfforts } = useSegments();
@@ -108,6 +121,12 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
   const [activity, setActivity] = useState<ActivityType | null>(initialActivity || null);
   const [loading, setLoading] = useState(false);
   const [showEndConfirm, setShowEndConfirm] = useState(false);
+  // The programme session this tracking run is linked to, if any — seeded
+  // from props, but the source of truth once tracking starts is whatever
+  // was persisted to/restored from localStorage (see plannerId/programId
+  // props above for why).
+  const [linkedPlannerId, setLinkedPlannerId] = useState<string | null>(plannerId || null);
+  const [linkedProgramId, setLinkedProgramId] = useState<string | null>(programId || null);
 
   const STORAGE_KEY = 'cardio_active_session';
 
@@ -508,6 +527,8 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
         const session = JSON.parse(saved);
         const restoredPositions = session.positions || [];
         setActivity(session.activity);
+        setLinkedPlannerId(session.plannerId || null);
+        setLinkedProgramId(session.programId || null);
         setPhase('tracking');
         const sessionStart = new Date(session.startTime);
         setStartTime(sessionStart);
@@ -576,8 +597,10 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
     if (phase === 'tracking') return;
     setPhase('select');
     setActivity(initialActivity || null);
+    setLinkedPlannerId(plannerId || null);
+    setLinkedProgramId(programId || null);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen, initialActivity]);
+  }, [isOpen, initialActivity, plannerId, programId]);
 
   // Save session to localStorage whenever tracking state changes
   useEffect(() => {
@@ -595,10 +618,16 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
         positions: getPersistedTrackerPositions(positions),
         lastVoiceKm: lastVoiceKmRef.current,
         currentSpeed,
+        // Carried through so a resume on a different page/component (the
+        // floating pill, a fresh page load) still knows which scheduled
+        // programme session this run belongs to — see plannerId/programId
+        // props above.
+        plannerId: linkedPlannerId,
+        programId: linkedProgramId,
       };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(sessionData));
     }
-  }, [phase, startTime, distance, pausedDuration, isPaused, positions, activity, currentSpeed, elapsedSeconds]);
+  }, [phase, startTime, distance, pausedDuration, isPaused, positions, activity, currentSpeed, elapsedSeconds, linkedPlannerId, linkedProgramId]);
 
   useEffect(() => {
     const handleVisibilityRecovery = () => {
@@ -758,6 +787,28 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
     // Trophy system hidden for now
   };
 
+  // Marks the linked programme session complete — the durable, page-agnostic
+  // replacement for relying on the onSessionSaved callback closure (which
+  // only ever fires if the same MovementExecutionView instance that started
+  // the session is still mounted to hear it). Returns whether it succeeded
+  // so callers can tell the user if programme progress didn't update, rather
+  // than showing a plain "Session saved!" that hides a silent failure.
+  const syncProgrammeSession = async (stats: { distanceKm: number; durationMinutes: number }): Promise<boolean> => {
+    if (!linkedPlannerId) return false;
+    try {
+      await markPlannerComplete.mutateAsync({
+        plannerId: linkedPlannerId,
+        actualDuration: stats.durationMinutes,
+        actualDistance: stats.distanceKm,
+      });
+      return true;
+    } catch (err) {
+      console.error('Failed to mark programme session complete:', err);
+      toast.error("Session saved, but we couldn't update your programme — check My Programmes; if it's still showing as pending, try again.");
+      return false;
+    }
+  };
+
   const handleSave = async () => {
     if (distance < 0.01) {
       toast.error('Distance is too short to save');
@@ -792,6 +843,7 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
       is_public: visibility === 'public',
       visibility: visibility,
       comments_enabled: true,
+      cardio_session_planner_id: linkedPlannerId,
     } as any);
 
     if (error) {
@@ -834,8 +886,16 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
         }
       }
       setLoading(false);
-      toast.success('Session saved!');
-      onSessionSaved?.({ distanceKm: Math.round(distance * 1000) / 1000, durationMinutes: elapsedSeconds / 60 });
+      const savedStats = { distanceKm: Math.round(distance * 1000) / 1000, durationMinutes: elapsedSeconds / 60 };
+      onSessionSaved?.(savedStats);
+      if (linkedPlannerId) {
+        const synced = await syncProgrammeSession(savedStats);
+        if (synced) toast.success('Session saved — programme updated!');
+        // On failure, syncProgrammeSession already showed its own toast —
+        // the run itself is safely saved either way.
+      } else {
+        toast.success('Session saved!');
+      }
       resetAndClose();
     }
   };
@@ -885,6 +945,7 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
       is_public: visibility === 'public',
       visibility: visibility,
       comments_enabled: true,
+      cardio_session_planner_id: linkedPlannerId,
     } as any);
 
     if (error) {
@@ -902,8 +963,14 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
         });
       }
       setLoading(false);
-      toast.success('Session saved!');
-      onSessionSaved?.({ distanceKm, durationMinutes: totalSeconds / 60 });
+      const savedStats = { distanceKm, durationMinutes: totalSeconds / 60 };
+      onSessionSaved?.(savedStats);
+      if (linkedPlannerId) {
+        const synced = await syncProgrammeSession(savedStats);
+        if (synced) toast.success('Session saved — programme updated!');
+      } else {
+        toast.success('Session saved!');
+      }
       resetAndClose();
     }
   };
@@ -911,6 +978,8 @@ export function CardioTrackerModal({ isOpen, onClose, initialActivity, onSession
   const resetAndClose = () => {
     setPhase('select');
     setActivity(null);
+    setLinkedPlannerId(null);
+    setLinkedProgramId(null);
     setEntryMode('live');
     setTitle('');
     setDescription('');
