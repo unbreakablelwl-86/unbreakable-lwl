@@ -64,6 +64,12 @@ interface FeatureGate {
    * "what you get" copy for that specific tool, not a generic upgrade nudge.
    */
   benefits?: string[];
+  /**
+   * Optional secondary link shown below the main upgrade CTA on the lock
+   * screen — for pointing to a related feature the member already has
+   * access to, rather than only offering an upgrade.
+   */
+  secondaryAction?: { label: string; path: string };
 }
 
 const FEATURE_GATES: Record<FeatureId, FeatureGate> = {
@@ -99,6 +105,10 @@ const FEATURE_GATES: Record<FeatureId, FeatureGate> = {
       'Follow athletes and coaches, build your own following',
       'Kudos and celebrate wins together',
     ],
+    secondaryAction: {
+      label: 'Your own profile & timeline are free — view them here',
+      path: '/profile',
+    },
   },
   manual_tracker: {
     id: 'manual_tracker',
@@ -109,7 +119,7 @@ const FEATURE_GATES: Record<FeatureId, FeatureGate> = {
       'Log any workout, set, rep or cardio session manually',
       'Keep a full training history in one place',
       'Track personal records as you hit them',
-      'Works alongside AI-built programmes or fully standalone',
+      'Works alongside your programme or fully standalone',
     ],
   },
   manual_food_log: {
@@ -118,7 +128,7 @@ const FEATURE_GATES: Record<FeatureId, FeatureGate> = {
     description: 'Manual food and calorie tracking',
     requiredTier: 'foundation',
     benefits: [
-      'Log meals and snacks manually, or snap a photo for AI tracking',
+      'Log meals and snacks manually, or snap a photo for automatic tracking',
       'See calories, macros and trends over time',
       'Set and track your own nutrition goals',
     ],
@@ -131,6 +141,7 @@ const FEATURE_GATES: Record<FeatureId, FeatureGate> = {
     benefits: [
       'Simple daily hydration tracking',
       'Streaks and reminders to keep you consistent',
+      'Set your own daily glass target',
     ],
   },
   habit_tracker: {
@@ -174,6 +185,7 @@ const FEATURE_GATES: Record<FeatureId, FeatureGate> = {
     benefits: [
       'Direct messages with coaches and other members',
       'All your notifications in one place',
+      'Never miss a reply, like or follow',
     ],
   },
 
@@ -185,10 +197,10 @@ const FEATURE_GATES: Record<FeatureId, FeatureGate> = {
   power_pillar: {
     id: 'power_pillar',
     name: 'Power',
-    description: 'AI & manual strength programmes, exercise library and session logs',
+    description: 'Personalised & manual strength programmes, exercise library and session logs',
     requiredTier: 'foundation',
     benefits: [
-      'AI-built strength programmes tailored to your goals and equipment',
+      'Personalised strength programmes built around your goals and equipment',
       'A fully categorised exercise library with coaching breakdowns',
       'Manual programme builder if you’d rather write your own',
       'Session logs and progress tracking as you train',
@@ -200,7 +212,7 @@ const FEATURE_GATES: Record<FeatureId, FeatureGate> = {
     description: 'Cardio & movement programmes, activity tracking and personal records',
     requiredTier: 'foundation',
     benefits: [
-      'AI-built cardio programmes — running, cycling and more',
+      'Personalised cardio programmes — running, cycling and more',
       'GPS or manual session tracking with live stats',
       'Personal records and progress over time',
       'Manual programme builder for full control',
@@ -212,7 +224,7 @@ const FEATURE_GATES: Record<FeatureId, FeatureGate> = {
     description: 'Nutrition tracking, meal planning and recipes',
     requiredTier: 'foundation',
     benefits: [
-      'AI-built meal plans matched to your goals',
+      'Personalised meal plans matched to your goals',
       'Snap-a-photo food tracking',
       'A full recipe library to plan meals around',
       'Nutrition goals and history in one place',
@@ -225,7 +237,7 @@ const FEATURE_GATES: Record<FeatureId, FeatureGate> = {
     requiredTier: 'foundation',
     benefits: [
       'Guided breathwork and cold/heat exposure training',
-      'AI-built mindset programmes',
+      'Personalised mindset programmes',
       'Focus games and mental-fitness training',
       'Track your mindset progress alongside training',
     ],
@@ -251,7 +263,7 @@ const FEATURE_GATES: Record<FeatureId, FeatureGate> = {
     requiredTier: 'foundation',
     benefits: [
       'A structured 86-day challenge across every pillar',
-      'Personalised AI-built training and movement programmes',
+      'Personalised training and movement programmes built around you',
       'Daily habit tracking built around the challenge',
       'A community of people doing it alongside you',
     ],
@@ -261,38 +273,74 @@ const FEATURE_GATES: Record<FeatureId, FeatureGate> = {
     name: 'Manual Programme Builder',
     description: 'Build your own programmes manually',
     requiredTier: 'foundation',
+    benefits: [
+      'Build your programme exercise by exercise',
+      'Set your own sets, reps, weights and rest periods',
+      'Save programmes as templates to reuse',
+      'Works alongside the guided programme generator, or fully standalone',
+    ],
   },
 
   // ─── PRO FEATURES ───
   ai_coach_full: {
     id: 'ai_coach_full',
     name: 'Unbreakable Coach (Full)',
-    description: 'Full AI coaching — programmes, nutrition, analysis (no video/image)',
+    description: 'Full coaching — programmes, nutrition, analysis (no video/image)',
     requiredTier: 'foundation',
+    benefits: [
+      'Build programmes and meal plans directly in chat',
+      'Get feedback based on what you’ve actually logged',
+      'Remembers your training history and goals as you go',
+      'Available any time — no waiting on a reply',
+    ],
   },
   ai_programme: {
     id: 'ai_programme',
-    name: 'AI Programme Generator',
-    description: 'AI-generated personalised workout programmes',
+    name: 'Programme Generator',
+    description: 'Personalised workout programmes, built around your goals and equipment',
     requiredTier: 'foundation',
+    benefits: [
+      'Answer a few questions, get a full training programme built for you',
+      'Choose strength, hybrid or sport-specific styles',
+      'Edit any session before you save it',
+      'Regenerate any time your goals or equipment change',
+    ],
   },
   ai_meal_plan: {
     id: 'ai_meal_plan',
-    name: 'AI Meal Plans',
-    description: 'AI-generated personalised nutrition plans',
+    name: 'Meal Plans',
+    description: 'Personalised nutrition plans, built around your goals',
     requiredTier: 'foundation',
+    benefits: [
+      'Meal plans built around your goals and preferences',
+      'Macro and calorie targets calculated for you',
+      'Swap any meal for an alternative you’d rather eat',
+      'Pairs with manual or photo food logging',
+    ],
   },
   exercise_library: {
     id: 'exercise_library',
     name: 'Full Exercise Library',
-    description: 'Full exercise library with AI recommendations',
+    description: 'The complete exercise library, with smart search and personalised suggestions',
     requiredTier: 'foundation',
+    benefits: [
+      'Every exercise in the library, not just the free preview',
+      'Personalised suggestions based on your goals and equipment',
+      'Advanced filtering by muscle group, equipment or difficulty',
+      'Save favourites for quick access while training',
+    ],
   },
   progress_reports: {
     id: 'progress_reports',
-    name: 'AI Progress Reports',
-    description: 'Weekly/monthly AI-generated progress summaries',
+    name: 'Progress Reports',
+    description: 'Weekly and monthly progress summaries, built automatically',
     requiredTier: 'foundation',
+    benefits: [
+      'Weekly and monthly summaries of training and nutrition',
+      'See trends across every pillar in one place',
+      'Wins and areas to focus on, called out automatically',
+      'Easy to share with your coach',
+    ],
   },
 
   // ─── ELITE FEATURES ───
@@ -301,24 +349,47 @@ const FEATURE_GATES: Record<FeatureId, FeatureGate> = {
     name: 'PT Hub',
     description: '1-to-1 coaching marketplace and sessions',
     requiredTier: 'foundation',
+    benefits: [
+      'Browse verified coaches with credentials and pricing',
+      'Message a coach before you commit to anything',
+      'Book 1-to-1 sessions alongside the app',
+      'Personal coaching on top of your existing programme',
+    ],
   },
   coach_command: {
     id: 'coach_command',
     name: 'Coach Command Centre',
     description: 'Discord-style coach management dashboard',
     requiredTier: 'foundation',
+    benefits: [
+      'Every client conversation in one dashboard',
+      'Organise clients into channels or groups',
+      'Track check-ins and engagement at a glance',
+      'Quick access to each client’s programme and progress',
+    ],
   },
   priority_ai: {
     id: 'priority_ai',
-    name: 'Priority AI',
-    description: 'Faster AI response times',
+    name: 'Priority Support',
+    description: 'Faster response times from Unbreakable Coach',
     requiredTier: 'foundation',
+    benefits: [
+      'Jump the queue at busy times',
+      'Faster replies from Unbreakable Coach',
+      'Same features, just quicker',
+    ],
   },
   advanced_analytics: {
     id: 'advanced_analytics',
     name: 'Advanced Analytics',
     description: 'Detailed performance analytics and trends',
     requiredTier: 'foundation',
+    benefits: [
+      'Deeper breakdowns of training volume and progress',
+      'Trend charts across weeks and months',
+      'Compare pillars side by side',
+      'Spot plateaus before they become a problem',
+    ],
   },
 
   // ─── PURCHASABLE (any paid tier) ───

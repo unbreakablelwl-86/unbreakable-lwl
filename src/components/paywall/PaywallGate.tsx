@@ -133,6 +133,17 @@ export function PaywallGate({ feature, children, inline, fallback }: PaywallGate
           <Zap className="w-4 h-4" />
           VIEW PLANS
         </button>
+
+        {featureInfo?.secondaryAction && (
+          <button
+            onClick={() => navigate(featureInfo.secondaryAction!.path)}
+            className="mt-4 flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground
+              underline underline-offset-4 transition-colors mx-auto"
+          >
+            {featureInfo.secondaryAction.label}
+            <ChevronRight className="w-3 h-3" />
+          </button>
+        )}
       </motion.div>
     </div>
   );

@@ -86,7 +86,7 @@ const ALL_NAV_ITEMS: NavItemDef[] = [
     // has its own brand colour; this gives Social one that reads on both
     // themes instead of assuming a permanently dark background.
     color: '#38BDF8',
-    description: 'Timeline & feed',
+    description: 'Community feed & posts',
   },
   {
     id: 'power',
@@ -242,7 +242,7 @@ const ALL_NAV_ITEMS: NavItemDef[] = [
     path: '/profile',
     activeMatch: ['/profile'],
     color: '#6366F1',
-    description: 'Your profile',
+    description: 'Your profile & timeline',
   },
   {
     id: 'help',
