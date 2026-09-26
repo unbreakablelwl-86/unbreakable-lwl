@@ -1213,6 +1213,57 @@ export type Database = {
         }
         Relationships: []
       }
+      customer_success_ai_audit_log: {
+        Row: {
+          created_at: string
+          data_sources_accessed: Json | null
+          error_message: string | null
+          escalation_flag: boolean
+          escalation_reason: string | null
+          human_feedback: Json | null
+          id: string
+          member_user_id: string | null
+          model: string | null
+          question: string
+          question_category: string | null
+          requested_by: string
+          response_status: string
+          response_text: string | null
+        }
+        Insert: {
+          created_at?: string
+          data_sources_accessed?: Json | null
+          error_message?: string | null
+          escalation_flag?: boolean
+          escalation_reason?: string | null
+          human_feedback?: Json | null
+          id?: string
+          member_user_id?: string | null
+          model?: string | null
+          question: string
+          question_category?: string | null
+          requested_by: string
+          response_status: string
+          response_text?: string | null
+        }
+        Update: {
+          created_at?: string
+          data_sources_accessed?: Json | null
+          error_message?: string | null
+          escalation_flag?: boolean
+          escalation_reason?: string | null
+          human_feedback?: Json | null
+          id?: string
+          member_user_id?: string | null
+          model?: string | null
+          question?: string
+          question_category?: string | null
+          requested_by?: string
+          response_status?: string
+          response_text?: string | null
+        }
+        Relationships: []
+      }
       daily_habits: {
         Row: {
           breathwork_done: boolean | null
@@ -5905,6 +5956,10 @@ export type Database = {
       get_feed_posts: {
         Args: { p_limit?: number; p_offset?: number; p_user_id?: string }
         Returns: Json[]
+      }
+      get_customer_success_member_context: {
+        Args: { p_member_user_id: string }
+        Returns: Json
       }
       get_founder_dashboard_metrics: {
         Args: {
