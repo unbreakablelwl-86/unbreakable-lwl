@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Users, Flag, Settings, Activity, Shield, UserCheck, Megaphone, ArrowLeft, Calendar, Bot, Sparkles, LineChart, MessageSquareText, PenSquare } from 'lucide-react';
+import { Users, Flag, Settings, Activity, Shield, UserCheck, Megaphone, ArrowLeft, Calendar, Bot, Sparkles, LineChart, MessageSquareText, PenSquare, LayoutDashboard } from 'lucide-react';
 import { AdminProtectedRoute } from '@/components/admin/AdminProtectedRoute';
 import { useNavigate } from 'react-router-dom';
 import { AdminUsersPanel } from '@/components/admin/AdminUsersPanel';
@@ -12,13 +12,15 @@ import { DevAIChat } from '@/components/admin/DevAIChat';
 import { FounderIntelligenceDashboard } from '@/components/admin/FounderIntelligenceDashboard';
 import { CustomerSuccessAIPanel } from '@/components/admin/CustomerSuccessAIPanel';
 import { MarketingContentAIPanel } from '@/components/admin/MarketingContentAIPanel';
+import { UnbreakableHQPanel } from '@/components/admin/UnbreakableHQPanel';
 import { useUserRole } from '@/hooks/useUserRole';
 import CoachDashboard from '@/pages/CoachDashboard';
 import { motion, AnimatePresence } from 'framer-motion';
 
-type Tab = 'coaching' | 'users' | 'reports' | 'settings' | 'activity' | 'social' | 'calendar' | 'ai' | 'intel' | 'cs-ai' | 'content-ai';
+type Tab = 'coaching' | 'users' | 'reports' | 'settings' | 'activity' | 'social' | 'calendar' | 'ai' | 'intel' | 'cs-ai' | 'content-ai' | 'hq';
 
 const tabs: { id: Tab; label: string; icon: any; ownerOnly?: boolean; color: string }[] = [
+  { id: 'hq', label: 'HQ', icon: LayoutDashboard, ownerOnly: true, color: '#FF5500' },
   { id: 'coaching', label: 'COACHING', icon: UserCheck, color: '#FF5500' },
   { id: 'users', label: 'USERS', icon: Users, color: '#FF5500' },
   { id: 'reports', label: 'REPORTS', icon: Flag, color: '#FF5500' },
@@ -130,6 +132,7 @@ export default function Admin() {
               exit={{ opacity: 0, y: -4 }}
               transition={{ duration: 0.2 }}
             >
+              {activeTab === 'hq' && isOwner && <UnbreakableHQPanel />}
               {activeTab === 'coaching' && <CoachDashboard embedded />}
               {activeTab === 'users' && <AdminUsersPanel />}
               {activeTab === 'reports' && <AdminReportsPanel />}

@@ -185,6 +185,125 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_roles: {
+        Row: {
+          audit_requirements: string | null
+          audit_table_name: string | null
+          authorised_data: string[]
+          authority_label: string
+          authority_level: number
+          built_at: string | null
+          created_at: string
+          edge_function_name: string | null
+          escalation_rules: string | null
+          human_approval_required: string | null
+          id: string
+          name: string
+          notes: string | null
+          output_types: string[]
+          permitted_actions: string[]
+          prohibited_actions: string[]
+          purpose: string
+          report_doc_path: string | null
+          restricted_data: string[]
+          status: Database["public"]["Enums"]["ai_role_status"]
+          tools: string[]
+          updated_at: string
+        }
+        Insert: {
+          audit_requirements?: string | null
+          audit_table_name?: string | null
+          authorised_data?: string[]
+          authority_label?: string
+          authority_level?: number
+          built_at?: string | null
+          created_at?: string
+          edge_function_name?: string | null
+          escalation_rules?: string | null
+          human_approval_required?: string | null
+          id?: string
+          name: string
+          notes?: string | null
+          output_types?: string[]
+          permitted_actions?: string[]
+          prohibited_actions?: string[]
+          purpose: string
+          report_doc_path?: string | null
+          restricted_data?: string[]
+          status?: Database["public"]["Enums"]["ai_role_status"]
+          tools?: string[]
+          updated_at?: string
+        }
+        Update: {
+          audit_requirements?: string | null
+          audit_table_name?: string | null
+          authorised_data?: string[]
+          authority_label?: string
+          authority_level?: number
+          built_at?: string | null
+          created_at?: string
+          edge_function_name?: string | null
+          escalation_rules?: string | null
+          human_approval_required?: string | null
+          id?: string
+          name?: string
+          notes?: string | null
+          output_types?: string[]
+          permitted_actions?: string[]
+          prohibited_actions?: string[]
+          purpose?: string
+          report_doc_path?: string | null
+          restricted_data?: string[]
+          status?: Database["public"]["Enums"]["ai_role_status"]
+          tools?: string[]
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      ai_scheduled_jobs: {
+        Row: {
+          cadence: string
+          created_at: string
+          description: string | null
+          enabled: boolean
+          id: string
+          job_name: string
+          last_run_at: string | null
+          next_run_at: string | null
+          target_ai_role_id: string | null
+        }
+        Insert: {
+          cadence: string
+          created_at?: string
+          description?: string | null
+          enabled?: boolean
+          id?: string
+          job_name: string
+          last_run_at?: string | null
+          next_run_at?: string | null
+          target_ai_role_id?: string | null
+        }
+        Update: {
+          cadence?: string
+          created_at?: string
+          description?: string | null
+          enabled?: boolean
+          id?: string
+          job_name?: string
+          last_run_at?: string | null
+          next_run_at?: string | null
+          target_ai_role_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_scheduled_jobs_target_ai_role_id_fkey"
+            columns: ["target_ai_role_id"]
+            isOneToOne: false
+            referencedRelation: "ai_roles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ai_tiers: {
         Row: {
           created_at: string | null
@@ -299,6 +418,48 @@ export type Database = {
           blocker_id?: string
           created_at?: string
           id?: string
+        }
+        Relationships: []
+      }
+      business_memory: {
+        Row: {
+          affected_area: string | null
+          area: string
+          can_be_revisited: boolean
+          created_at: string
+          created_by: string | null
+          decision: string
+          decision_date: string
+          id: string
+          rationale: string | null
+          source: string | null
+          status: string
+        }
+        Insert: {
+          affected_area?: string | null
+          area: string
+          can_be_revisited?: boolean
+          created_at?: string
+          created_by?: string | null
+          decision: string
+          decision_date?: string
+          id?: string
+          rationale?: string | null
+          source?: string | null
+          status?: string
+        }
+        Update: {
+          affected_area?: string | null
+          area?: string
+          can_be_revisited?: boolean
+          created_at?: string
+          created_by?: string | null
+          decision?: string
+          decision_date?: string
+          id?: string
+          rationale?: string | null
+          source?: string | null
+          status?: string
         }
         Relationships: []
       }
@@ -1939,6 +2100,116 @@ export type Database = {
             columns: ["recipe_id"]
             isOneToOne: false
             referencedRelation: "recipes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      founder_approvals: {
+        Row: {
+          created_at: string
+          decided_at: string | null
+          founder: string | null
+          id: string
+          item_reference_id: string | null
+          item_reference_table: string | null
+          item_type: string
+          notes: string | null
+          proposed_action: string
+          proposed_by: string
+          status: Database["public"]["Enums"]["hq_approval_status"]
+          version: number
+        }
+        Insert: {
+          created_at?: string
+          decided_at?: string | null
+          founder?: string | null
+          id?: string
+          item_reference_id?: string | null
+          item_reference_table?: string | null
+          item_type: string
+          notes?: string | null
+          proposed_action: string
+          proposed_by?: string
+          status?: Database["public"]["Enums"]["hq_approval_status"]
+          version?: number
+        }
+        Update: {
+          created_at?: string
+          decided_at?: string | null
+          founder?: string | null
+          id?: string
+          item_reference_id?: string | null
+          item_reference_table?: string | null
+          item_type?: string
+          notes?: string | null
+          proposed_action?: string
+          proposed_by?: string
+          status?: Database["public"]["Enums"]["hq_approval_status"]
+          version?: number
+        }
+        Relationships: []
+      }
+      founder_decisions: {
+        Row: {
+          ai_recommendation: string | null
+          consequences: string | null
+          created_at: string
+          decided_at: string | null
+          decided_by: string | null
+          decision_required: string
+          evidence: Json
+          founder_decision: string | null
+          id: string
+          options: Json
+          related_ai_role_id: string | null
+          severity: string
+          source: string | null
+          status: Database["public"]["Enums"]["hq_decision_status"]
+          updated_at: string
+          why_it_matters: string | null
+        }
+        Insert: {
+          ai_recommendation?: string | null
+          consequences?: string | null
+          created_at?: string
+          decided_at?: string | null
+          decided_by?: string | null
+          decision_required: string
+          evidence?: Json
+          founder_decision?: string | null
+          id?: string
+          options?: Json
+          related_ai_role_id?: string | null
+          severity?: string
+          source?: string | null
+          status?: Database["public"]["Enums"]["hq_decision_status"]
+          updated_at?: string
+          why_it_matters?: string | null
+        }
+        Update: {
+          ai_recommendation?: string | null
+          consequences?: string | null
+          created_at?: string
+          decided_at?: string | null
+          decided_by?: string | null
+          decision_required?: string
+          evidence?: Json
+          founder_decision?: string | null
+          id?: string
+          options?: Json
+          related_ai_role_id?: string | null
+          severity?: string
+          source?: string | null
+          status?: Database["public"]["Enums"]["hq_decision_status"]
+          updated_at?: string
+          why_it_matters?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "founder_decisions_related_ai_role_id_fkey"
+            columns: ["related_ai_role_id"]
+            isOneToOne: false
+            referencedRelation: "ai_roles"
             referencedColumns: ["id"]
           },
         ]
@@ -5998,6 +6269,21 @@ export type Database = {
       }
     }
     Views: {
+      ai_activity_log_unified: {
+        Row: {
+          activity_id: string | null
+          data_sources: Json | null
+          error: string | null
+          human_feedback: Json | null
+          occurred_at: string | null
+          output: string | null
+          requested_by: string | null
+          role: string | null
+          status: string | null
+          task: string | null
+        }
+        Relationships: []
+      }
       pb_leaderboard: {
         Row: {
           achieved_at: string | null
@@ -6222,6 +6508,7 @@ export type Database = {
         }
         Returns: Json
       }
+      get_hq_overview: { Args: never; Returns: Json }
       get_my_cards: {
         Args: { _uid?: string }
         Returns: {
@@ -6382,6 +6669,7 @@ export type Database = {
       update_presence: { Args: { p_page?: string }; Returns: undefined }
     }
     Enums: {
+      ai_role_status: "active" | "planned"
       app_role: "dev" | "coach" | "user"
       content_item_status:
         | "idea"
@@ -6394,6 +6682,8 @@ export type Database = {
         | "ready_to_publish"
         | "published"
         | "archived"
+      hq_approval_status: "pending" | "approved" | "rejected"
+      hq_decision_status: "pending" | "decided" | "deferred" | "archived"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -6521,6 +6811,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      ai_role_status: ["active", "planned"],
       app_role: ["dev", "coach", "user"],
       content_item_status: [
         "idea",
@@ -6534,6 +6825,8 @@ export const Constants = {
         "published",
         "archived",
       ],
+      hq_approval_status: ["pending", "approved", "rejected"],
+      hq_decision_status: ["pending", "decided", "deferred", "archived"],
     },
   },
 } as const
