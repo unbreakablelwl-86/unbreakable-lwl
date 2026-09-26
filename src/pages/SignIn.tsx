@@ -67,7 +67,12 @@ function OtpInput({ value, onChange, disabled }: { value: string; onChange: (v: 
 // this form's Promo Code field must go straight to that checkout, not to
 // redeem-promo-code (which would just return "Invalid or expired promo code").
 const TRIAL_OFFER_CODE = 'NEWBEGINNING7';
-const FOUNDATION_TRIAL_PRICE_ID = 'price_1TxFZED5KOEmeWH2ZSHP5Azn'; // Foundation £50/mo, matches subscriptionTiers.ts
+// Private "100% off for life" code — a real Stripe Promotion Code (not a
+// hardcoded trial like NEWBEGINNING7; create-checkout looks it up against
+// Stripe directly). JJ shares this personally — it must never be surfaced
+// anywhere in this app's copy, only recognised silently if typed here.
+const PRIVATE_LIFETIME_CODE = 'LIVEWITHOUTLIMITS';
+const FOUNDATION_PRICE_ID = 'price_1TxFZED5KOEmeWH2ZSHP5Azn'; // Foundation £50/mo, matches subscriptionTiers.ts
 
 /** Age in whole years as of today, from a "yyyy-MM-dd" date-of-birth string. */
 function calculateAge(dobStr: string): number {
@@ -228,26 +233,33 @@ export default function SignIn() {
           }
 
           const normalizedPromo = promoCode.trim().toUpperCase();
-          // Either the "7 days free coaching" landing CTA (?plan=trial) or typing
-          // NEWBEGINNING7 directly into this form's Promo Code field should land the
-          // member on Stripe checkout for the trial — not bounce them to a plain free
-          // account, and not require a second manual code entry on AI Tokens.
-          if (wantsTrial || normalizedPromo === TRIAL_OFFER_CODE) {
+          const isPrivateLifetimeCode = normalizedPromo === PRIVATE_LIFETIME_CODE;
+          // Either the "7 days free coaching" landing CTA (?plan=trial), typing
+          // NEWBEGINNING7, or typing the private lifetime-free code directly into
+          // this form's Promo Code field should land the member on Stripe checkout
+          // — not bounce them to a plain free account, and not require a second
+          // manual code entry on AI Tokens.
+          if (wantsTrial || normalizedPromo === TRIAL_OFFER_CODE || isPrivateLifetimeCode) {
             try {
+              const checkoutPromoCode = isPrivateLifetimeCode ? PRIVATE_LIFETIME_CODE : TRIAL_OFFER_CODE;
               const { data: checkoutData, error: checkoutError } = await supabase.functions.invoke('create-checkout', {
-                body: { priceId: FOUNDATION_TRIAL_PRICE_ID, promoCode: TRIAL_OFFER_CODE },
+                body: { priceId: FOUNDATION_PRICE_ID, promoCode: checkoutPromoCode },
               });
               if (!checkoutError && checkoutData?.url) {
                 redirectingToCheckout = true;
-                toast.success('Email verified! Taking you to checkout for your 7-day free trial. 🔥');
+                toast.success(
+                  isPrivateLifetimeCode
+                    ? 'Email verified! Taking you to checkout. 🔥'
+                    : 'Email verified! Taking you to checkout for your 7-day free trial. 🔥'
+                );
                 window.location.href = checkoutData.url;
               } else {
-                console.error('Trial checkout error:', checkoutError);
-                toast.error("Couldn't start your free trial checkout — head to AI Tokens to try again.");
+                console.error('Checkout error:', checkoutError);
+                toast.error("Couldn't start checkout — head to AI Tokens to try again.");
               }
             } catch (checkoutErr) {
-              console.error('Failed to start trial checkout:', checkoutErr);
-              toast.error("Couldn't start your free trial checkout — head to AI Tokens to try again.");
+              console.error('Failed to start checkout:', checkoutErr);
+              toast.error("Couldn't start checkout — head to AI Tokens to try again.");
             }
           } else if (promoCode.trim()) {
             try {

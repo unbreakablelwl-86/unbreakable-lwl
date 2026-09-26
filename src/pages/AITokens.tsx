@@ -102,10 +102,14 @@ export default function AITokens() {
 
     setCheckoutLoading(tier.key);
     try {
+      // Forward whatever was typed, not just the advertised NEWBEGINNING7 offer —
+      // create-checkout also recognises a private, unadvertised lifetime-discount
+      // code here; anything else it doesn't recognise is simply ignored server-side.
+      const trimmedPromo = promoCode.trim();
       const { data, error } = await supabase.functions.invoke('create-checkout', {
         body: {
           priceId: tier.stripePriceId,
-          ...(promoApplied ? { promoCode: TRIAL_OFFER_CODE } : {}),
+          ...(trimmedPromo ? { promoCode: trimmedPromo } : {}),
         },
       });
       if (error) throw error;
