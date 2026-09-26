@@ -31,18 +31,36 @@ serve(async (req) => {
       });
     }
 
-    // Check user is a coach
-    const { data: coachProfile } = await supabase
-      .from("coaching_profiles")
-      .select("role, stripe_connect_id, stripe_onboarded")
+    // Check user is a coach. Role lives in user_roles (app_role enum: dev/coach/user),
+    // never on a profile row -- coaching_profiles is the athlete-intake table and has
+    // no role column at all, and coach_public_profiles doesn't carry role either.
+    // Same pattern already used in create-checkout/index.ts.
+    const { data: roleRow } = await supabase
+      .from("user_roles")
+      .select("role")
       .eq("user_id", user.id)
-      .single();
+      .in("role", ["dev", "coach"])
+      .maybeSingle();
 
-    if (!coachProfile || !["coach", "owner", "admin"].includes(coachProfile.role)) {
+    if (!roleRow) {
       return new Response(JSON.stringify({ error: "Not a coach" }), {
         status: 403,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
+    }
+
+    // Stripe Connect state lives on the coach's marketplace profile
+    // (coach_public_profiles), not on coaching_profiles (athlete intake data).
+    // A coach may not have created this row yet (it's upserted the first time
+    // they save their public profile), so this must tolerate no row existing.
+    let { data: coachProfile } = await supabase
+      .from("coach_public_profiles")
+      .select("stripe_connect_id, stripe_onboarded")
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    if (!coachProfile) {
+      coachProfile = { stripe_connect_id: null, stripe_onboarded: null };
     }
 
     const { action } = await req.json();
@@ -69,11 +87,11 @@ serve(async (req) => {
         });
         accountId = account.id;
 
-        // Save to DB
+        // Save to DB (coach_public_profiles is the marketplace profile table;
+        // upsert since this coach may not have a row here yet).
         await supabase
-          .from("coaching_profiles")
-          .update({ stripe_connect_id: accountId })
-          .eq("user_id", user.id);
+          .from("coach_public_profiles")
+          .upsert({ user_id: user.id, stripe_connect_id: accountId }, { onConflict: "user_id" });
       }
 
       // Create onboarding link
@@ -116,9 +134,8 @@ serve(async (req) => {
       // Update DB if status changed
       if (onboarded !== coachProfile.stripe_onboarded) {
         await supabase
-          .from("coaching_profiles")
-          .update({ stripe_onboarded: onboarded })
-          .eq("user_id", user.id);
+          .from("coach_public_profiles")
+          .upsert({ user_id: user.id, stripe_onboarded: onboarded }, { onConflict: "user_id" });
       }
 
       return new Response(JSON.stringify({ connected: true, onboarded }), {

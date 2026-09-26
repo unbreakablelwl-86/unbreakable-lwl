@@ -33,12 +33,16 @@ serve(async (req) => {
 
     const { coach_id, service_type, block_type, session_date, session_time, price_gbp } = await req.json();
 
-    // Validate coach exists and has Stripe
+    // Validate coach exists and has Stripe. Stripe Connect state lives on the
+    // coach's marketplace profile (coach_public_profiles) -- coaching_profiles
+    // is the athlete-intake table and has no stripe fields relevant here.
+    // maybeSingle (not single) since a coach without a public profile row yet
+    // must resolve to "Coach not found" below, not throw.
     const { data: coachProfile } = await supabase
-      .from("coaching_profiles")
+      .from("coach_public_profiles")
       .select("stripe_connect_id, stripe_onboarded, user_id")
       .eq("user_id", coach_id)
-      .single();
+      .maybeSingle();
 
     if (!coachProfile) {
       return new Response(JSON.stringify({ error: "Coach not found" }), {
