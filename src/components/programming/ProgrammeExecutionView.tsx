@@ -278,16 +278,15 @@ export function ProgrammeExecutionView({ program, onClose }: ProgrammeExecutionV
     }
   }, [planners, program.id, updateProgress]);
 
-  const handleCompleteWorkout = (notes?: string, visibility?: 'public' | 'friends' | 'private', manualDurationSeconds?: number, mediaUrls?: Array<{ url: string; type: string; thumbnailUrl?: string }>) => {
+  const handleCompleteWorkout = (notes?: string, visibility?: 'public' | 'friends' | 'private', manualDurationSeconds?: number) => {
     if (!activeSession) return;
-    
+
     // Complete the workout session
     completeSession.mutate({
       sessionId: activeSession.id,
       notes,
       visibility,
       manualDurationSeconds,
-      mediaUrls,
     });
     
     // Mark the CURRENT planner (not next) as complete

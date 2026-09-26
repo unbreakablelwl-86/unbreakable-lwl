@@ -23,7 +23,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { SessionActionTiles } from './SessionActionTiles';
 import { WorkoutExerciseListItem } from './WorkoutExerciseListItem';
 import { SessionLoggingView } from './SessionLoggingView';
-import { SessionNotesView, SessionMedia } from './SessionNotesView';
+import { SessionNotesView } from './SessionNotesView';
 import { SessionResultsView } from './SessionResultsView';
 import { AIFeedbackView } from './AIFeedbackView';
 import { ProgressMetricsView } from './ProgressMetricsView';
@@ -70,7 +70,7 @@ interface ActiveWorkoutModalProps {
     completed?: boolean;
     notes?: string;
   }) => void;
-  onComplete: (notes?: string, visibility?: 'public' | 'friends' | 'private', manualDurationSeconds?: number, mediaUrls?: Array<{ url: string; type: string; thumbnailUrl?: string }>) => void;
+  onComplete: (notes?: string, visibility?: 'public' | 'friends' | 'private', manualDurationSeconds?: number) => void;
   onCancel: () => void;
   onSwapExercise?: (oldName: string, newExercise: { name: string; equipment: string; sets?: number; reps?: string }) => void;
   onAddExercise?: (exercise: { name: string; equipment: string; sets: number; reps: string }) => void;
@@ -101,7 +101,6 @@ export function ActiveWorkoutModal({
   const [timerExerciseType, setTimerExerciseType] = useState<string>('strength');
   const [sessionNotes, setSessionNotes] = useState('');
   const [visibility, setVisibility] = useState<'public' | 'friends' | 'private'>('private');
-  const [sessionMedia, setSessionMedia] = useState<SessionMedia[]>([]);
   const [showExercises, setShowExercises] = useState(false);
   const [habits, setHabits] = useState<HabitState>({
     train: false,
@@ -247,10 +246,9 @@ export function ActiveWorkoutModal({
     setTimerExerciseType(exerciseType);
   };
 
-  const handleSaveNotes = (notes: string, vis: 'public' | 'friends' | 'private', media?: SessionMedia[]) => {
+  const handleSaveNotes = (notes: string, vis: 'public' | 'friends' | 'private') => {
     setSessionNotes(notes);
     setVisibility(vis);
-    if (media) setSessionMedia(media);
   };
 
   const handleFinish = () => {
@@ -265,7 +263,7 @@ export function ActiveWorkoutModal({
       manualDurationSeconds = (parseInt(manualHours) || 0) * 3600 + (parseInt(manualMinutes) || 0) * 60;
     }
     setShowFinishConfirm(false);
-    onComplete(finishNotes, finishVisibility, manualDurationSeconds, sessionMedia.length > 0 ? sessionMedia : undefined);
+    onComplete(finishNotes, finishVisibility, manualDurationSeconds);
   };
 
   const formatElapsed = (s: number) => {
@@ -439,7 +437,6 @@ export function ActiveWorkoutModal({
           <SessionNotesView
             initialNotes={sessionNotes}
             initialVisibility={visibility}
-            initialMedia={sessionMedia}
             onSave={handleSaveNotes}
             onClose={() => setActiveTool('none')}
           />
