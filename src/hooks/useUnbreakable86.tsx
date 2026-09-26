@@ -76,7 +76,7 @@ export function useUnbreakable86() {
       .update({ status: 'reset', updated_at: new Date().toISOString() })
       .eq('id', enrolmentId);
 
-    await supabase
+    const { error: insertError } = await supabase
       .from('unbreakable86_enrolments')
       .insert({
         user_id: user.id,
@@ -86,6 +86,21 @@ export function useUnbreakable86() {
         reset_count: (currentResets || 0) + 1,
         quiz_answers: quizAnswers ?? null,
       });
+
+    // 23505 = unique_violation, from the one-active-enrolment-per-user DB
+    // constraint (migration: u86_enrolments_one_active_per_user). This hook
+    // is mounted independently in several places at once (AppLayout,
+    // HomeDashboard, Help, the Unbreakable86 page), so more than one
+    // instance can detect the same missed day and race to reset it.
+    // Whichever instance's insert loses that race hits this violation —
+    // expected and harmless, since another instance already created the new
+    // active enrolment. Returning here (instead of also firing the event
+    // below) stops the loser from recording a second, duplicate
+    // u86_reset_triggered event for the same real-world reset. Confirmed
+    // this race actually happens in production: 4 duplicate
+    // u86_reset_triggered events fired within ~150ms of each other for one
+    // account on 2026-09-26, before this constraint existed.
+    if (insertError?.code === '23505') return;
 
     trackEvent('u86_reset_triggered', {
       day_reached: dayReached ?? null,
