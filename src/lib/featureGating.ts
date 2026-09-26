@@ -1,12 +1,13 @@
 /**
  * Feature Gating — defines which features are available at each tier
  *
- * Free: Home hub, profile & timeline, inbox/messages, Un-Tunes previews, and
- * 1 free University chapter (Power L2 Unit 1 Chapter 1) — that's it.
+ * Free: Home hub, profile & timeline, inbox/messages, the social/timeline
+ * feed, Un-Tunes previews, and 1 free University chapter (Power L2 Unit 1
+ * Chapter 1) — that's it.
  * Foundation (the paid "Unbreakable" membership): everything else — AI Coach,
  * UNBREAKABLE 86, all pillar tabs and their tools, manual trackers,
- * calculators, habits, social feed, exercise library, programme
- * generator, PT Hub, full University access.
+ * calculators, habits, exercise library, programme generator, PT Hub, full
+ * University access.
  * Absolute Base: hidden retention-only tier, subset of Foundation.
  *
  * AI Coach does NOT accept or track videos or images for assessment.
@@ -21,8 +22,8 @@ export type FeatureId =
   | 'profile'
   | 'university_l1'       // Free preview: Power L2 Unit 1 Chapter 1 only
   | 'inbox'               // Messages — free so members can read their welcome DM
+  | 'social_feed'         // The community/timeline feed — free, not the paid-features group below
   // Paid features (previously free)
-  | 'social_feed'
   | 'manual_tracker'
   | 'manual_food_log'
   | 'water_tracker'
@@ -109,24 +110,24 @@ const FEATURE_GATES: Record<FeatureId, FeatureGate> = {
       'Never miss a reply, like or follow',
     ],
   },
-
-  // ─── PAID FEATURES (previously free) ───
   social_feed: {
     id: 'social_feed',
     name: 'Social Feed',
     description: 'Post, comment and connect with the Unbreakable community',
-    requiredTier: 'foundation',
+    // The main bottom-nav "Social" tab is one of the 6 default tabs every
+    // new member sees — it's meant to be a real, direct destination for
+    // free members (their timeline feed), not a paywall wall with a link
+    // elsewhere. Free tier now, same as inbox above.
+    requiredTier: 'free',
     benefits: [
       'Post progress updates and photos to the community feed',
       'Like, comment on and share other members’ posts',
       'Follow athletes and coaches, build your own following',
       'Kudos and celebrate wins together',
     ],
-    secondaryAction: {
-      label: 'Your own profile & timeline are free — view them here',
-      path: '/profile',
-    },
   },
+
+  // ─── PAID FEATURES (previously free) ───
   manual_tracker: {
     id: 'manual_tracker',
     name: 'Manual Tracker',

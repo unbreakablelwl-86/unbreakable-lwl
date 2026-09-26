@@ -131,7 +131,7 @@ const membershipFeatures = [
 
 /* ─── Token tiers ─── */
 const tokenTiers = [
-  { name: 'FREE', tokens: 0, price: '£0', desc: 'Your profile, timeline and Un-Tunes previews', highlight: false, features: ['Home hub, profile & timeline', 'Inbox & messages', 'Un-Tunes — 30-second previews', 'University preview — 1 free chapter'] },
+  { name: 'FREE', tokens: 0, price: '£0', desc: 'Your profile, timeline and Un-Tunes previews', highlight: false, features: ['Home hub, profile & timeline', 'Inbox & messages', 'Social feed & timeline', 'Un-Tunes — 30-second previews', 'University preview — 1 free chapter'] },
   { name: 'UNBREAKABLE', tokens: 1000, price: '£50', period: '/mo', desc: 'Full AI coaching, all features unlocked', highlight: true, features: ['1,000 tokens/month', 'Unbreakable Coach', 'All features'], originalPrice: '£75' },
 ];
 

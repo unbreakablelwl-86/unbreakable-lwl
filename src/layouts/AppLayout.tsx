@@ -392,35 +392,18 @@ export default function AppLayout() {
   const u86Active = !!u86Enrolment && (u86Enrolment.status === 'active' || u86Enrolment.status === 'completed');
   const isFreeUser = !tierLoading && (!currentTier || currentTier === 'free');
   // Staff-only surfaces (Devs tools, admin/content studio, 1-2-1 coaching) are hidden from clients pre-launch.
+  // The "Social" tab (one of the 6 default bottom-nav tabs) needs no
+  // per-tier override here — the community/timeline feed it points to
+  // (`social_feed` in featureGating.ts) is a free-tier feature, so every
+  // member lands on the real feed at /social directly from this tab.
   const NAV_ITEMS = useMemo(
     () => ALL_NAV_ITEMS.filter(n => {
       if (n.staffOnly && !isStaff) return false;
       if (n.flag && !FEATURES[n.flag] && !isStaff) return false;
       if (n.id === 'habits' && u86Active) return false;
       return true;
-    }).map(n => {
-      // The "Social" tab is one of the 6 default bottom-nav tabs every new
-      // member sees, but the community feed it points to (`social_feed`)
-      // stays a paid Foundation feature by design (see featureGating.ts) —
-      // that's not changing here. What free members were missing was any
-      // *direct* route to what they do have from that main tab: their own
-      // profile & timeline. Previously tapping Social just hit the paywall
-      // lock screen, with only a small secondary link to /profile buried
-      // below the upgrade button. Route the tab itself there for free
-      // members instead, so the main bottom-nav tab is a real destination
-      // rather than a wall with a hint. Foundation+ members are unaffected —
-      // they still land on the actual community feed.
-      if (n.id === 'social' && isFreeUser) {
-        return {
-          ...n,
-          path: '/profile',
-          activeMatch: ['/profile'],
-          description: 'Your profile & timeline hub',
-        };
-      }
-      return n;
     }),
-    [isStaff, u86Active, isFreeUser],
+    [isStaff, u86Active],
   );
   // pillar theme removed — all neon orange
 

@@ -49,6 +49,7 @@ export const TIERS: Record<TierKey, TierConfig> = {
     features: [
       'Home hub, profile & timeline',
       'Inbox & messages',
+      'Social feed & timeline',
       'Un-Tunes — 30-second previews',
       'University preview — 1 free chapter (Power L2)',
     ],
