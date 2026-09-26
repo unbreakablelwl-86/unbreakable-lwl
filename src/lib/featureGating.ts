@@ -1,11 +1,11 @@
 /**
  * Feature Gating — defines which features are available at each tier
  *
- * Free: Home hub, profile & timeline, Un-Tunes previews, and 1 free
- * University chapter (Power L2 Unit 1 Chapter 1) — that's it.
+ * Free: Home hub, profile & timeline, inbox/messages, Un-Tunes previews, and
+ * 1 free University chapter (Power L2 Unit 1 Chapter 1) — that's it.
  * Foundation (the paid "Unbreakable" membership): everything else — AI Coach,
  * UNBREAKABLE 86, all pillar tabs and their tools, manual trackers,
- * calculators, habits, inbox, social feed, exercise library, programme
+ * calculators, habits, social feed, exercise library, programme
  * generator, PT Hub, full University access.
  * Absolute Base: hidden retention-only tier, subset of Foundation.
  *
@@ -20,6 +20,7 @@ export type FeatureId =
   | 'home_hub'
   | 'profile'
   | 'university_l1'       // Free preview: Power L2 Unit 1 Chapter 1 only
+  | 'inbox'               // Messages — free so members can read their welcome DM
   // Paid features (previously free)
   | 'social_feed'
   | 'manual_tracker'
@@ -28,7 +29,6 @@ export type FeatureId =
   | 'habit_tracker'
   | 'calculators'
   | 'exercise_browse'     // Browse exercises
-  | 'inbox'
   // Pillar tab access (whole section locked for free accounts)
   | 'power_pillar'      // Power tab (workout builder, programmes)
   | 'movement_pillar'   // Movement tab (cardio/workout tracker)
@@ -91,6 +91,23 @@ const FEATURE_GATES: Record<FeatureId, FeatureGate> = {
     name: 'University Preview',
     description: 'Free preview: Power Level 2, Unit 1, Chapter 1',
     requiredTier: 'free',
+  },
+  inbox: {
+    id: 'inbox',
+    name: 'Inbox',
+    description: 'Messages and notifications',
+    requiredTier: 'free',
+    // Every new member gets an automatic welcome DM (and a 7-day drip of
+    // follow-up DMs) from the founder account at signup — see
+    // supabase/functions/founder-welcome. That only makes sense if members
+    // can actually open their inbox to read it, so this stays free for
+    // every tier rather than leaving free members with a permanently
+    // unread badge they can never clear.
+    benefits: [
+      'Direct messages with coaches and other members',
+      'All your notifications in one place',
+      'Never miss a reply, like or follow',
+    ],
   },
 
   // ─── PAID FEATURES (previously free) ───
@@ -175,17 +192,6 @@ const FEATURE_GATES: Record<FeatureId, FeatureGate> = {
       'Browse the full, categorised exercise library',
       'See form breakdowns and coaching cues for every movement',
       'Search by body part, equipment or goal',
-    ],
-  },
-  inbox: {
-    id: 'inbox',
-    name: 'Inbox',
-    description: 'Messages and notifications',
-    requiredTier: 'foundation',
-    benefits: [
-      'Direct messages with coaches and other members',
-      'All your notifications in one place',
-      'Never miss a reply, like or follow',
     ],
   },
 

@@ -48,6 +48,7 @@ export const TIERS: Record<TierKey, TierConfig> = {
     rank: 0,
     features: [
       'Home hub, profile & timeline',
+      'Inbox & messages',
       'Un-Tunes — 30-second previews',
       'University preview — 1 free chapter (Power L2)',
     ],
