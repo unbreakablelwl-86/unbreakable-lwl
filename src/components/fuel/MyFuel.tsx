@@ -5,22 +5,29 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { useNutritionGoals } from '@/hooks/useNutritionGoals';
 import { useMealPlans } from '@/hooks/useMealPlans';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useQuery } from '@tanstack/react-query';
 import { NutritionHistoryView } from './NutritionHistoryView';
-import { 
-  Target, 
+import { FuelForm } from '@/components/FuelForm';
+import { FuelResults } from '@/components/FuelResults';
+import { calculateFuel } from '@/lib/fuelCalculations';
+import type { Gender, ActivityLevel, Goal, MacroSplit, Unit, FuelResult } from '@/lib/fuelCalculations';
+import {
+  Target,
   TrendingUp,
   Calendar,
   Flame,
   Award,
   Settings,
   ChevronRight,
+  ChevronDown,
   History,
   RotateCcw,
+  Calculator,
 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { format, subDays, eachDayOfInterval } from 'date-fns';
@@ -30,6 +37,8 @@ export function MyFuel() {
   const { goals, saveGoals, isAutoMode } = useNutritionGoals();
   const { activePlans } = useMealPlans();
   const [showGoalsModal, setShowGoalsModal] = useState(false);
+  const [showCalculator, setShowCalculator] = useState(false);
+  const [fuelResult, setFuelResult] = useState<FuelResult | null>(null);
   const [activeTab, setActiveTab] = useState('dashboard');
   const [editedGoals, setEditedGoals] = useState({
     daily_calories: goals?.daily_calories || 2000,
@@ -111,6 +120,38 @@ export function MyFuel() {
   const handleResetToAuto = async () => {
     await saveGoals.mutateAsync({ goals_mode: 'auto' });
     setShowGoalsModal(false);
+  };
+
+  // Same calculation the standalone /calculators Fuel tab uses (JJ, Sept
+  // 2026 — the only way to work out calories/macros from scratch was
+  // onboarding or that separate Calculators page; nothing lived inside Fuel
+  // itself). Embedding it here means it also automatically picks up the
+  // Fuel pillar's emerald theme via usePillarTheme(), since FuelForm/
+  // FuelResults are styled entirely with text-primary/bg-primary rather
+  // than a hardcoded brand colour.
+  const handleFuelCalculate = (data: {
+    gender: Gender;
+    age: number;
+    heightFt: number;
+    heightIn: number;
+    weight: number;
+    activityLevel: ActivityLevel;
+    goal: Goal;
+    macroSplit: MacroSplit;
+    unit: Unit;
+  }) => {
+    const result = calculateFuel(
+      data.gender,
+      data.age,
+      data.heightFt,
+      data.heightIn,
+      data.weight,
+      data.activityLevel,
+      data.goal,
+      data.macroSplit,
+      data.unit
+    );
+    setFuelResult(result);
   };
 
   return (
@@ -218,6 +259,42 @@ export function MyFuel() {
                 </div>
               )}
             </CardContent>
+          </Card>
+
+          {/* Calculate My Macros — fuel-themed dropdown calculator, so
+              working out calories/macros from your stats no longer means
+              leaving Fuel for onboarding or the separate Calculators tab. */}
+          <Card className="border-2 border-primary/30 border-border bg-card overflow-hidden">
+            <Collapsible open={showCalculator} onOpenChange={setShowCalculator}>
+              <CollapsibleTrigger className="w-full text-left">
+                <CardHeader className="hover:bg-primary/5 transition-colors">
+                  <CardTitle className="font-display tracking-wide flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Calculator className="w-5 h-5 text-primary" />
+                      CALCULATE MY MACROS
+                    </div>
+                    <ChevronDown className={`w-5 h-5 text-muted-foreground transition-transform duration-200 ${showCalculator ? 'rotate-180' : ''}`} />
+                  </CardTitle>
+                </CardHeader>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <CardContent className="pt-0 space-y-6">
+                  <p className="text-sm text-muted-foreground">
+                    Work out your personalised calorie and macro targets from your stats, activity level, and goal — then save them straight to your Daily Goals above.
+                  </p>
+                  <FuelForm onCalculate={handleFuelCalculate} />
+                  {fuelResult && (
+                    <FuelResults
+                      result={fuelResult}
+                      onSaved={() => {
+                        setShowCalculator(false);
+                        setFuelResult(null);
+                      }}
+                    />
+                  )}
+                </CardContent>
+              </CollapsibleContent>
+            </Collapsible>
           </Card>
 
           {/* Stats Overview */}

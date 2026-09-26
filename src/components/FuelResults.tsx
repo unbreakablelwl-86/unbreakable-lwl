@@ -8,9 +8,14 @@ import type { FuelResult } from '@/lib/fuelCalculations';
 
 interface FuelResultsProps {
   result: FuelResult;
+  // Set by callers that already render this inline on the Fuel dashboard
+  // itself (e.g. MyFuel's own calculator dropdown) so they can collapse/
+  // reset their UI once goals are saved, instead of relying on the
+  // navigate('/fuel/my-fuel') below (a no-op when already on that page).
+  onSaved?: () => void;
 }
 
-export function FuelResults({ result }: FuelResultsProps) {
+export function FuelResults({ result, onSaved }: FuelResultsProps) {
   const navigate = useNavigate();
   const { saveGoals } = useNutritionGoals();
 
@@ -24,7 +29,10 @@ export function FuelResults({ result }: FuelResultsProps) {
         goals_mode: 'manual',
       },
       {
-        onSuccess: () => navigate('/fuel/my-fuel'),
+        onSuccess: () => {
+          navigate('/fuel/my-fuel');
+          onSaved?.();
+        },
       }
     );
   };
