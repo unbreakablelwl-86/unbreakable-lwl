@@ -254,6 +254,17 @@ serve(async (req) => {
         const session = event.data.object as Stripe.Checkout.Session;
         log("Checkout completed", { mode: session.mode, sessionId: session.id });
 
+        // Fired unconditionally, before any metadata/tier-lookup branching below that
+        // can `break` early — this is the generic "a Stripe checkout completed" signal
+        // JJ asked for, independent of whether the app went on to successfully map it
+        // to a known tier/course (which is itself a useful diagnostic: if this event
+        // fires without a matching subscription_started/payment_succeeded row shortly
+        // after, that's a real sign something in the mapping broke).
+        await trackServerEvent("checkout_completed", session.metadata?.user_id ?? null, {
+          mode: session.mode,
+          session_id: session.id,
+        });
+
         // ── One-time purchase: university course ──
         if (session.mode === "payment") {
           const userId = session.metadata?.user_id;
@@ -305,7 +316,7 @@ serve(async (req) => {
             }).catch(() => {});
 
             log("Top-up processed", { userId, tokensAdded: topUp.tokens, newBalance });
-            trackServerEvent("payment_succeeded", userId, { kind: "top_up", tokens: topUp.tokens, label: topUp.label });
+            await trackServerEvent("payment_succeeded", userId, { kind: "top_up", tokens: topUp.tokens, label: topUp.label });
             break;
           }
 
@@ -353,7 +364,7 @@ serve(async (req) => {
             });
           } catch (e) { log("Notification error (non-fatal)", { error: String(e) }); }
 
-          trackServerEvent("payment_succeeded", userId, { kind: "course_purchase", course_keys: courseKeys });
+          await trackServerEvent("payment_succeeded", userId, { kind: "course_purchase", course_keys: courseKeys });
         }
 
         // ── Subscription checkout: AI token tier ──
@@ -399,7 +410,7 @@ serve(async (req) => {
             false, // not a renewal
           );
 
-          trackServerEvent("subscription_started", userId, {
+          await trackServerEvent("subscription_started", userId, {
             tier: tier.name,
             trial: subscription.status === "trialing",
           });
@@ -475,7 +486,7 @@ serve(async (req) => {
           true, // is renewal
         );
 
-        trackServerEvent("payment_succeeded", userId, { kind: "subscription_renewal", tier: tier.name });
+        await trackServerEvent("payment_succeeded", userId, { kind: "subscription_renewal", tier: tier.name });
 
         break;
       }
@@ -519,7 +530,7 @@ serve(async (req) => {
           data: { subscription_id: subscriptionId, attempt: invoice.attempt_count, link: "/ai-tokens" },
         }).catch(() => {});
 
-        trackServerEvent("payment_failed", userId, { subscription_id: subscriptionId, attempt: invoice.attempt_count });
+        await trackServerEvent("payment_failed", userId, { subscription_id: subscriptionId, attempt: invoice.attempt_count });
 
         break;
       }
@@ -759,7 +770,7 @@ serve(async (req) => {
               else if (tier.monthly_tokens < oldTier.monthly_tokens) eventName = "subscription_downgraded";
             }
 
-            trackServerEvent(eventName, userId, { old_tier: oldTierName, new_tier: tier.name });
+            await trackServerEvent(eventName, userId, { old_tier: oldTierName, new_tier: tier.name });
           }
         } catch (e) {
           log("Upgrade/downgrade classification failed (non-fatal)", { error: String(e) });
@@ -823,7 +834,7 @@ serve(async (req) => {
         }).catch(() => {});
 
         log("Subscription cancelled, downgraded to free", { userId });
-        trackServerEvent("subscription_cancelled", userId, { subscription_id: subscription.id });
+        await trackServerEvent("subscription_cancelled", userId, { subscription_id: subscription.id });
 
         break;
       }

@@ -88,6 +88,24 @@ const TRIAL_ELIGIBLE_PRICES = new Set([
   "price_1TxFZED5KOEmeWH2ZSHP5Azn", // Foundation £50/mo
 ]);
 
+// Private "100% off for life" code — JJ's own, shared personally, never
+// surfaced in any user-facing copy. Unlike NEWBEGINNING7 (a hardcoded trial
+// flag), this one is a REAL Stripe Promotion Code that JJ created directly
+// in the Stripe dashboard (a 100%-off, duration=forever coupon). So rather
+// than hardcode a discount here, we look the code up live against Stripe by
+// its `code` string (Stripe matches promotion codes case-insensitively) and
+// apply it as an actual Checkout discount. That also means whatever
+// redemption limit, expiry or "first-time customer only" restriction JJ set
+// on the Promotion Code itself in Stripe is enforced by Stripe, not
+// duplicated here — if the code is inactive, maxed out, or the customer
+// isn't eligible, Stripe simply won't apply it (or the session create call
+// below will fail, caught by the outer try/catch same as any other error).
+//
+// IMPORTANT: this code must never appear in any user-facing marketing copy,
+// hero section, banner, or hint text anywhere in the app (JJ, 2026-09-26 —
+// see claude/2026-09-26-private-lifetime-promo-code.md). Do not "fix" that.
+const LIFETIME_FREE_CODE = "LIVEWITHOUTLIMITS";
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -110,6 +128,29 @@ serve(async (req) => {
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
     { auth: { persistSession: false } }
   );
+
+  // ── Analytics (Commercial event slice, see claude/ANALYTICS_ARCHITECTURE.md) ──
+  // Strictly additive / non-blocking: never throws, never changes control flow or the
+  // checkout response. Mirrors the identical helper in stripe-webhook/index.ts. Always
+  // awaited at each call site (not fire-and-forget) because a Deno edge function's
+  // isolate can be frozen immediately after the response is sent, which would silently
+  // drop an un-awaited background insert.
+  async function trackServerEvent(
+    eventName: string,
+    userId: string | null,
+    properties: Record<string, unknown> = {},
+  ) {
+    try {
+      await serviceClient.from("analytics_events").insert({
+        user_id: userId,
+        event_name: eventName,
+        properties,
+        source: "server",
+      });
+    } catch (e) {
+      logStep("Analytics insert failed (non-fatal)", { event: eventName, error: String(e) });
+    }
+  }
 
   try {
     logStep("Function started");
@@ -172,7 +213,8 @@ serve(async (req) => {
 
     logStep("Checkout mode", { mode, isSubscription });
 
-    const normalizedPromo = typeof promoCode === "string" ? promoCode.trim().toUpperCase() : "";
+    const rawPromo = typeof promoCode === "string" ? promoCode.trim() : "";
+    const normalizedPromo = rawPromo.toUpperCase();
     const grantsTrial =
       isSubscription &&
       TRIAL_ELIGIBLE_PRICES.has(priceId) &&
@@ -182,17 +224,44 @@ serve(async (req) => {
       logStep("Trial offer code presented", { grantsTrial, hadExistingCustomer: !!customerId });
     }
 
-    // Build session config
+    // Private lifetime-free code — resolve it against Stripe's real Promotion
+    // Codes rather than trusting the string. Scoped to the same subscription
+    // prices as the trial offer (the only subscription actually sold through
+    // signup/AI Tokens).
+    let lifetimePromotionCodeId: string | undefined;
+    if (isSubscription && TRIAL_ELIGIBLE_PRICES.has(priceId) && normalizedPromo === LIFETIME_FREE_CODE) {
+      try {
+        const found = await stripe.promotionCodes.list({ code: rawPromo, active: true, limit: 1 });
+        if (found.data.length > 0) {
+          lifetimePromotionCodeId = found.data[0].id;
+          logStep("Lifetime free code resolved", { promotionCodeId: lifetimePromotionCodeId });
+        } else {
+          logStep("Lifetime free code typed but not found/active in Stripe", {});
+        }
+      } catch (promoLookupErr) {
+        logStep("Lifetime free code lookup failed", { error: String(promoLookupErr) });
+      }
+    }
+
+    // Build session config. `discounts` and `allow_promotion_codes` are
+    // mutually exclusive on a Checkout Session — pre-apply the resolved
+    // lifetime discount when we found one, otherwise fall back to letting
+    // anyone enter a promo code on Stripe's own checkout page as before.
     const sessionConfig: any = {
       customer: customerId,
       customer_email: customerId ? undefined : user.email,
       line_items: [{ price: priceId, quantity: 1 }],
       mode,
-      allow_promotion_codes: true,
       success_url: `${origin}/?checkout=success`,
       cancel_url: isSubscription ? `${origin}/ai-tokens` : `${origin}/university`,
       metadata: { user_id: user.id, price_id: priceId },
     };
+
+    if (lifetimePromotionCodeId) {
+      sessionConfig.discounts = [{ promotion_code: lifetimePromotionCodeId }];
+    } else {
+      sessionConfig.allow_promotion_codes = true;
+    }
 
     if (isSubscription) {
       sessionConfig.subscription_data = {
@@ -207,21 +276,31 @@ serve(async (req) => {
     }
 
     // Idempotency key: prevents duplicate sessions from double-click / retry
-    const idempotencyKey = `checkout_${user.id}_${priceId}_${grantsTrial ? "trial" : "std"}_${Math.floor(Date.now() / 30000)}`;
+    const offerTag = grantsTrial ? "trial" : lifetimePromotionCodeId ? "lifetime" : "std";
+    const idempotencyKey = `checkout_${user.id}_${priceId}_${offerTag}_${Math.floor(Date.now() / 30000)}`;
     const session = await stripe.checkout.sessions.create(sessionConfig, {
       idempotencyKey,
     });
     logStep("Checkout session created", { sessionId: session.id, mode, idempotencyKey });
 
     // Analytics (Commercial event slice, see claude/ANALYTICS_ARCHITECTURE.md).
-    // Non-blocking — a failure here must never affect the checkout response below.
+    // Strictly additive / non-blocking: trackServerEvent never throws, so it can never
+    // affect the checkout response below — but it IS awaited (not fire-and-forget)
+    // before that response is returned, because a Deno edge function's isolate can be
+    // frozen immediately after the response is sent, which would silently drop an
+    // un-awaited background insert. Awaiting these fast inserts adds negligible latency
+    // and does not change control flow, error handling, or the checkout outcome.
+    await trackServerEvent("checkout_started", user.id, {
+      price_id: priceId,
+      mode,
+      is_trial: grantsTrial,
+      is_lifetime_discount: !!lifetimePromotionCodeId,
+    });
     if (grantsTrial) {
-      serviceClient.from("analytics_events").insert({
-        user_id: user.id,
-        event_name: "trial_started",
-        properties: { price_id: priceId, trial_days: TRIAL_OFFER_DAYS },
-        source: "server",
-      }).then(() => {}).catch((e: unknown) => logStep("Analytics insert failed (non-fatal)", { error: String(e) }));
+      await trackServerEvent("trial_started", user.id, { price_id: priceId, trial_days: TRIAL_OFFER_DAYS });
+    }
+    if (lifetimePromotionCodeId) {
+      await trackServerEvent("lifetime_discount_applied", user.id, { price_id: priceId });
     }
 
     // If Tier 2 (121 coaching), notify all dev users
