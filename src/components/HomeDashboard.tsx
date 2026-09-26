@@ -5,7 +5,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useProfile } from '@/hooks/useProfile';
 import { useTokenBalance } from '@/hooks/useTokenBalance';
 import { useLoginStreak } from '@/hooks/useLoginStreak';
-import { useUnbreakable86 } from '@/hooks/useUnbreakable86';
+import { useUnbreakable86, getCycleDay } from '@/hooks/useUnbreakable86';
 import { UpgradeNudge } from '@/components/paywall/UpgradeNudge';
 import { NotificationsPanel } from '@/components/hub/NotificationsPanel';
 import { useNotifications } from '@/hooks/useNotifications';
@@ -267,7 +267,12 @@ export function HomeDashboard() {
                   </h3>
                   {u86Active && (
                     <span className="font-display text-[10px] tracking-wider text-primary bg-primary/15 border border-primary/30 rounded-full px-2 py-0.5 shrink-0">
-                      DAY {u86.enrolment!.current_day}
+                      {/* Display-only 86-day reloop (JJ, Sept 2026) — matches
+                          the U86 dashboard's wrapped day counter, e.g.
+                          current_day=89 shows as "DAY 3" here too. The
+                          progress bar/percent just below still reflects the
+                          true raw current_day via u86.progress. */}
+                      DAY {getCycleDay(u86.enrolment!.current_day)}
                     </span>
                   )}
                 </div>

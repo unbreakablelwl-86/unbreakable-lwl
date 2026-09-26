@@ -39,6 +39,21 @@ function utcDaysBetween(fromDateStr: string, toDateStr: string): number {
   return Math.round((Date.UTC(ty, tm - 1, td) - Date.UTC(fy, fm - 1, fd)) / 86400000);
 }
 
+/* ─── Display-only 86-day cycle wrap (JJ, Sept 2026) ───
+ * The underlying `current_day` is continuous forever (see performReset /
+ * fetchEnrolment above — that "main overall tracker" is untouched by this).
+ * These two helpers derive a REPEATING 1–86 display day and a cycle counter
+ * purely for member-facing UI, e.g. current_day=89 → "Day 3 of 86" (cycle 2),
+ * current_day=87 → "Day 1 of 86" (cycle 2). Nothing that reads raw
+ * current_day for missed-day detection, streaks, resets or analytics should
+ * ever call these — they exist only for what a member sees on screen. */
+export function getCycleDay(currentDay: number): number {
+  return ((currentDay - 1) % 86) + 1;
+}
+export function getCycleNumber(currentDay: number): number {
+  return Math.floor((currentDay - 1) / 86) + 1;
+}
+
 interface U86State {
   enrolment: U86Enrolment | null;
   todayLog: U86DailyLog | null;
@@ -205,6 +220,23 @@ export function useUnbreakable86() {
               .update({ current_day: effectiveDay, updated_at: new Date().toISOString() })
               .eq('id', (enrolment as any).id);
             (enrolment as any).current_day = effectiveDay;
+
+            // Repeating milestone (JJ, Sept 2026): each subsequent full 86-day
+            // cycle (172, 258, 344, ...) fires an analytics-only event so
+            // repeat cycles are visible in HQ. This is purely a trackEvent —
+            // it must NEVER touch status, reset_count or fire another
+            // certificate email. Day 86 itself is the existing one-time
+            // certificate completion (handled in toggleHabit/updateJournal)
+            // and is deliberately excluded here (effectiveDay > 86 guard).
+            // The outer `effectiveDay > current_day` check above already
+            // means this only runs once per calendar-day advance, not on
+            // every render/poll, so no extra dedupe guard is needed.
+            if (effectiveDay > 86 && effectiveDay % 86 === 0) {
+              trackEvent('u86_cycle_completed', {
+                cycle_number: effectiveDay / 86,
+                current_day: effectiveDay,
+              });
+            }
           }
         }
       }

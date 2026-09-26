@@ -14,6 +14,7 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { u86CountDone, U86_MIN_HABITS, U86_TOTAL_HABITS } from '@/lib/unbreakable86Types';
+import { getCycleDay, getCycleNumber } from '@/hooks/useUnbreakable86';
 import type { U86Enrolment, U86DailyLog, U86Tab } from '@/lib/unbreakable86Types';
 import { U86_PHASES } from '@/lib/unbreakable86Types';
 
@@ -87,6 +88,13 @@ export function U86Dashboard({
   const [journalLogs, setJournalLogs] = useState<U86DailyLog[]>([]);
   const [journalLoading, setJournalLoading] = useState(false);
   const beyondCore = enrolment.current_day > 86;
+  // Display-only: the main "Day X of 86" counter reloops every 86 days
+  // (JJ, Sept 2026) — e.g. current_day=89 shows as "Day 3 of 86", cycle 2.
+  // The underlying enrolment.current_day stays the real, continuous total
+  // and is what everything else on this page (streak/bonus-day math,
+  // certificate banner, progress calendar) keeps using unchanged.
+  const cycleDay = getCycleDay(enrolment.current_day);
+  const cycleNumber = getCycleNumber(enrolment.current_day);
 
   useEffect(() => {
     if (activeTab === 'progress' && fetchPastRuns) {
@@ -183,15 +191,28 @@ export function U86Dashboard({
             <div className="text-center relative z-10">
               <span className="font-display text-xs text-muted-foreground tracking-widest">DAY</span>
               <span className="block font-display text-5xl text-primary neon-glow">
-                {enrolment.current_day}
+                {cycleDay}
               </span>
               <span className="font-display text-[10px] text-muted-foreground tracking-widest">
-                {beyondCore ? '🏆 BEYOND 86' : 'OF 86'}
+                OF 86
               </span>
             </div>
           </div>
         </motion.div>
       </div>
+
+      {/* ─── Bonus-streak total (raw, non-wrapped current_day) ───
+       * The hero counter above reloops for display; this badge keeps the
+       * true continuous total (and which 86-day cycle it's in) visible once
+       * a member is past the first cycle, so nothing about the real streak
+       * is hidden — it's just no longer what drives the "Day X of 86" digits. */}
+      {beyondCore && (
+        <div className="flex justify-center mb-4 -mt-2">
+          <span className="font-display text-[10px] tracking-widest text-primary bg-primary/10 border border-primary/30 rounded-full px-3 py-1">
+            🏆 BEYOND 86 · CYCLE {cycleNumber} · DAY {enrolment.current_day} TOTAL
+          </span>
+        </div>
+      )}
 
       {/* ─── Certificate unlocked banner ─── */}
       {enrolment.completed_at && onViewCertificate && (
@@ -409,7 +430,7 @@ export function U86Dashboard({
                   style={{ boxShadow: '0 0 30px rgba(255,85,0,0.15)' }}
                 >
                   <Trophy className="w-10 h-10 text-primary mx-auto mb-2" style={{ filter: 'drop-shadow(0 0 10px rgba(255,85,0,0.5))' }} />
-                  <h3 className="font-display text-lg tracking-wider text-foreground">DAY {enrolment.current_day} COMPLETE</h3>
+                  <h3 className="font-display text-lg tracking-wider text-foreground">DAY {cycleDay} COMPLETE</h3>
                   <p className="text-muted-foreground text-xs mt-1">
                     {beyondCore
                       ? `Bonus streak day ${enrolment.current_day - 86}. Keep showing up.`
